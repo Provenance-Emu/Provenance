@@ -574,6 +574,14 @@ public extension GameLaunchingViewController {
         }
     }
 
+    /// Core picker order: native cores first, then libretro cores, deprecated cores last,
+    /// alphabetical within each group.
+    static func corePickerOrder(_ a: PVCore, _ b: PVCore) -> Bool {
+        if a.isDeprecated != b.isDeprecated { return !a.isDeprecated }
+        if a.isLibretroCore != b.isLibretroCore { return !a.isLibretroCore }
+        return a.projectName.localizedCaseInsensitiveCompare(b.projectName) == .orderedAscending
+    }
+
     // MARK: - Unified Launch Flow
 
     /// Presents a unified flow for core and save state selection using the RetroAlertNavigationStack
@@ -1105,18 +1113,7 @@ extension GameLaunchingViewController where Self: UIViewController {
 
             let cores: [PVCore] = system.cores.filter {
                 (!$0.disabled || unsupportedCores) && $0.hasCoreClass && !(AppState.shared.isAppStore && $0.appStoreDisabled)
-            }.sorted { a, b in
-                // If one has "retroarch" and the other doesn't, non-retroarch comes first
-                let aHasRetroarch = a.projectName.localizedCaseInsensitiveContains("retroarch")
-                let bHasRetroarch = b.projectName.localizedCaseInsensitiveContains("retroarch")
-
-                if aHasRetroarch != bHasRetroarch {
-                    return !aHasRetroarch // non-retroarch comes first
-                }
-
-                // Within each group, sort alphabetically
-                return a.projectName < b.projectName
-            }
+            }.sorted(by: Self.corePickerOrder)
 
             guard !cores.isEmpty else {
                 displayAndLogError(withTitle: "Cannot open game", message: "No core found for game system '\(system.shortName)'.")
@@ -1339,18 +1336,7 @@ extension GameLaunchingViewController where Self: UIViewController {
 
         let cores: [PVCore] = system.cores.filter {
             (!$0.disabled || unsupportedCores) && $0.hasCoreClass && !(AppState.shared.isAppStore && $0.appStoreDisabled)
-        }.sorted(by: { core1, core2 in
-            let core1IsRetroArch = core1.projectName.localizedCaseInsensitiveContains("retroarch")
-            let core2IsRetroArch = core2.projectName.localizedCaseInsensitiveContains("retroarch")
-
-            // If both are RetroArch or both are not RetroArch, sort alphabetically
-            if core1IsRetroArch == core2IsRetroArch {
-                return core1.projectName.localizedCaseInsensitiveCompare(core2.projectName) == .orderedAscending
-            }
-
-            // If one is RetroArch and one isn't, non-RetroArch comes first
-            return !core1IsRetroArch
-        })
+        }.sorted(by: Self.corePickerOrder)
 
         let coreChoiceAlert = UIAlertController(title: "Multiple cores found",
                                                 message: "Select which core to use with this game.",
@@ -1371,8 +1357,8 @@ extension GameLaunchingViewController where Self: UIViewController {
 #endif
 
         for core in cores {
-            let action = UIAlertAction(title: core.projectName, style: .default) { [unowned self] _ in
-                let message = "Open with \(core.projectName)…"
+            let action = UIAlertAction(title: core.displayName, style: .default) { [unowned self] _ in
+                let message = "Open with \(core.displayName)…"
                 let alwaysUseAlert = UIAlertController(title: nil, message: message, preferredStyle: .actionSheet)
 #if os(macOS) || targetEnvironment(macCatalyst)
                 if let senderView = sender as? UIView ?? self.view {

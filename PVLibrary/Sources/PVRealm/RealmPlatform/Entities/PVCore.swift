@@ -104,6 +104,28 @@ public final class PVCore: RealmSwift.Object, Identifiable {
     }
 }
 
+// MARK: - Deprecated cores
+
+/// Native cores that still ship because users have save states and habits on them, but that are
+/// no longer the recommended choice: their libretro replacement is bundled and preferred.
+/// Pickers sort them last and label them; nothing migrates away from them.
+public enum DeprecatedCoreID {
+    public static let atari800 = "com.provenance.core.atari800"
+    public static let gambatte = "com.provenance.core.gambatte"
+}
+
+public extension PVCore {
+    static let deprecatedCores: Set<String> = [DeprecatedCoreID.atari800, DeprecatedCoreID.gambatte]
+
+    var isDeprecated: Bool { Self.deprecatedCores.contains(identifier) }
+
+    /// A libretro core run by the thin wrapper (`<name>.libretro.framework`), as opposed to a native PV* core.
+    var isLibretroCore: Bool { identifier.hasSuffix(Self.libretroIdentifierSuffix) }
+
+    /// `projectName`, with deprecated cores labelled so a picker can tell them from their replacement.
+    var displayName: String { isDeprecated ? "\(projectName) (Deprecated)" : projectName }
+}
+
 // MARK: - Retired cores
 
 /// Identifiers of native cores removed from the app (`PVCoreIdentifier` in each Core.plist), and of
@@ -111,10 +133,8 @@ public final class PVCore: RealmSwift.Object, Identifiable {
 /// the old cores can still be found and moved.
 public enum RetiredCoreID {
     public static let jaguar = "com.provenance.core.jaguar"
-    public static let atari800 = "com.provenance.core.atari800"
     public static let bliss = "com.provenance.core.bliss"
     public static let crabEMU = "com.provenance.core.crabemu"
-    public static let gambatte = "com.provenance.core.gambatte"
     public static let odyssey2 = "com.provenance.core.odyssey2"
     public static let pokeMini = "com.provenance.core.pokemini"
     public static let visualBoyAdvance = "com.provenance.core.visualboyadvance"
@@ -231,13 +251,10 @@ public extension PVCore {
 
         // Save-check cores (docs/superpowers/specs/2026-10-10-core-audit.md). Native save
         // states don't load in the dylibs; battery files are copied to the thin .srm.
-        RetiredCoreID.atari800: RetiredCore(replacement: LibretroCoreID.atari800,
-                                            systemReplacements: [.Atari5200: LibretroCoreID.a5200]),
         RetiredCoreID.bliss: RetiredCore(replacement: LibretroCoreID.freeIntv),
         RetiredCoreID.crabEMU: RetiredCore(replacement: LibretroCoreID.genesisPlusGX,
                                            systemReplacements: [.ColecoVision: LibretroCoreID.gearcoleco],
                                            batterySaves: [.copiedToSRM("sav")]),
-        RetiredCoreID.gambatte: RetiredCore(replacement: LibretroCoreID.gambatte, batterySaves: [.copiedToSRM("sav")]),
         RetiredCoreID.odyssey2: RetiredCore(replacement: LibretroCoreID.o2em),
         RetiredCoreID.pokeMini: RetiredCore(replacement: LibretroCoreID.pokeMini, batterySaves: [.copiedToSRM("eep")]),
         RetiredCoreID.visualBoyAdvance: RetiredCore(replacement: LibretroCoreID.vbam, batterySaves: [.copiedToSRM("sav2")]),
@@ -284,10 +301,12 @@ public extension PVCore {
         return retired.replacement
     }
 
+    static let libretroIdentifierSuffix = ".libretro.framework"
+
     /// Whether the app bundle contains the libretro core `identifier`
     /// (`<name>.libretro.framework` in its Frameworks folder).
     static func isBundledLibretroCore(_ identifier: String) -> Bool {
-        guard identifier.hasSuffix(".libretro.framework") else { return false }
+        guard identifier.hasSuffix(libretroIdentifierSuffix) else { return false }
         // The bundle doesn't change while the app runs, and `hasCoreClass` (which
         // calls this) runs inside core-picker filters.
         if let cached = bundledLibretroCoreCache.withLock({ $0[identifier] }) {

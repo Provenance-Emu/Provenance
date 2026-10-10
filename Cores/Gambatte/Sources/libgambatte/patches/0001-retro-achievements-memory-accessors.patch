@@ -1,0 +1,155 @@
+From: Provenance Emu <noreply@provenance-emu.com>
+Date: Wed, 25 Mar 2026
+Subject: [PATCH] RetroAchievements: expose WRAM/VRAM memory accessors
+
+Adds public methods to the gambatte::GB class to expose live WRAM and VRAM
+pointers needed by the rc_client RetroAchievements API.
+
+Changes:
+- gambatte.h     — declare wramData(area), vramData(), vramBankPtr(), wramSize()
+- gambatte.cpp   — implement the four accessors
+- memory.h       — expose wramdata/vramdata/vrambankptr from Cartridge via Memory
+- cpu.h          — forward wramdata/vramdata/vrambankptr from Memory via CPU
+
+All pointers are returned as `const unsigned char *`.  wramData(0) and
+vramData() are stable for the lifetime of the loaded ROM. wramData(1) and
+vramBankPtr() may change during emulation when the active CGB bank changes.
+
+Part of Provenance issue #3379 (gambatte native rcheevos integration).
+
+---
+ include/gambatte.h | 43 +++++++++++++++++++++++++++++++++++++++++++
+ src/cpu.h          |  5 +++++
+ src/gambatte.cpp   | 33 +++++++++++++++++++++++++++++++++
+ src/memory.h       | 16 ++++++++++++++++
+ 4 files changed, 97 insertions(+)
+
+diff --git a/Cores/Gambatte/Sources/libgambatte/libgambatte/include/gambatte.h b/Cores/Gambatte/Sources/libgambatte/libgambatte/include/gambatte.h
+index d6e38e208..4778fbcf1 100644
+--- a/Cores/Gambatte/Sources/libgambatte/libgambatte/include/gambatte.h
++++ b/Cores/Gambatte/Sources/libgambatte/libgambatte/include/gambatte.h
+@@ -180,6 +180,43 @@ public:
+ 	  */
+ 	void setGameShark(std::string const &codes);
+
++	// MARK: - RetroAchievements memory accessors
++
++	/**
++	  * Returns a pointer to the WRAM mapped area selected by @a area.
++	  * area 0 = fixed bank region (bus address 0xC000-0xCFFF, always bank 0).
++	  * area 1 = switchable bank region (bus address 0xD000-0xDFFF, reflects the
++	  *          currently active bank; may change during emulation on CGB).
++	  * Only area 0 and 1 are valid; each covers 4 KiB.
++	  * The pointer for area 0 is stable for the lifetime of the loaded ROM.
++	  * Returns nullptr if no ROM is loaded.
++	  */
++	const unsigned char * wramData(unsigned area) const;
++
++	/**
++	  * Returns a pointer to the physical start of the VRAM allocation.
++	  * Index 0 corresponds to GB bus address 0x8000.
++	  * Both DMG and CGB allocate 16 KiB (two 8-KiB banks); DMG uses only bank 0.
++	  * Returns nullptr if no ROM is loaded.
++	  */
++	const unsigned char * vramData() const;
++
++	/**
++	  * Returns a pre-adjusted pointer for direct VRAM address indexing.
++	  * vrambankptr[addr] for addr in [0x8000, 0x9FFF] returns the correct byte
++	  * for the currently active VRAM bank on CGB (bank register FF4F).
++	  * On DMG this always refers to bank 0. Updated in real time during emulation.
++	  * Returns nullptr if no ROM is loaded.
++	  */
++	const unsigned char * vramBankPtr() const;
++
++	/**
++	  * Returns the total WRAM size in bytes.
++	  * DMG: 8192 (8 KiB), CGB: 32768 (32 KiB).
++	  * Returns 0 if no ROM is loaded.
++	  */
++	std::size_t wramSize() const;
++
+ private:
+ 	struct Priv;
+ 	Priv *const p_;
+diff --git a/Cores/Gambatte/Sources/libgambatte/libgambatte/src/cpu.h b/Cores/Gambatte/Sources/libgambatte/libgambatte/src/cpu.h
+index 18db89c77..c2310c266 100644
+--- a/Cores/Gambatte/Sources/libgambatte/libgambatte/src/cpu.h
++++ b/Cores/Gambatte/Sources/libgambatte/libgambatte/src/cpu.h
+@@ -71,6 +71,11 @@ public:
+ 	void setGameGenie(std::string const &codes) { mem_.setGameGenie(codes); }
+ 	void setGameShark(std::string const &codes) { mem_.setGameShark(codes); }
+
++	// Memory accessors for RetroAchievements integration.
++	const unsigned char * wramdata(unsigned area) const { return mem_.wramdata(area); }
++	const unsigned char * vramdata() const { return mem_.vramdata(); }
++	const unsigned char * vrambankptr() const { return mem_.vrambankptr(); }
++
+ private:
+ 	Memory mem_;
+ 	unsigned long cycleCounter_;
+diff --git a/Cores/Gambatte/Sources/libgambatte/libgambatte/src/gambatte.cpp b/Cores/Gambatte/Sources/libgambatte/libgambatte/src/gambatte.cpp
+index 332b8fdb1..fba15f558 100644
+--- a/Cores/Gambatte/Sources/libgambatte/libgambatte/src/gambatte.cpp
++++ b/Cores/Gambatte/Sources/libgambatte/libgambatte/src/gambatte.cpp
+@@ -209,4 +209,33 @@ void GB::setGameShark(std::string const &codes) {
+ 	p_->cpu.setGameShark(codes);
+ }
+
++// MARK: - RetroAchievements memory accessors
++
++const unsigned char * GB::wramData(unsigned area) const {
++	if (area > 1)
++		return nullptr;
++	if (!p_->cpu.loaded())
++		return nullptr;
++	return p_->cpu.wramdata(area);
++}
++
++const unsigned char * GB::vramData() const {
++	if (!p_->cpu.loaded())
++		return nullptr;
++	return p_->cpu.vramdata();
++}
++
++const unsigned char * GB::vramBankPtr() const {
++	if (!p_->cpu.loaded())
++		return nullptr;
++	return p_->cpu.vrambankptr();
++}
++
++std::size_t GB::wramSize() const {
++	if (!p_->cpu.loaded())
++		return 0;
++	// CGB has 8 banks x 4 KiB = 32 KiB; DMG has 2 banks x 4 KiB = 8 KiB.
++	return p_->cpu.isCgb() ? 0x8000u : 0x2000u;
++}
++
+ }
+diff --git a/Cores/Gambatte/Sources/libgambatte/libgambatte/src/memory.h b/Cores/Gambatte/Sources/libgambatte/libgambatte/src/memory.h
+index 215f5df76..37eaa5d50 100644
+--- a/Cores/Gambatte/Sources/libgambatte/libgambatte/src/memory.h
++++ b/Cores/Gambatte/Sources/libgambatte/libgambatte/src/memory.h
+@@ -109,6 +109,22 @@ public:
+ 	void setGameShark(std::string const &codes) { interrupter_.setGameShark(codes); }
+ 	void updateInput();
+
++	// Memory accessors for RetroAchievements integration.
++	// WRAM mapped-area base: area 0 corresponds to 0xC000 (fixed bank 0),
++	// area 1 corresponds to 0xD000 (switchable bank). The pointer for area 0
++	// is stable for the lifetime of the loaded ROM; the pointer for area 1
++	// may change when the active WRAM bank changes.
++	const unsigned char * wramdata(unsigned area) const { return cart_.wramdata(area); }
++	// VRAM base pointer: index 0 corresponds to bus address 0x8000.
++	// To access VRAM bus address 'addr' in [0x8000, 0x9FFF], use vramdata()[addr - 0x8000].
++	// DMG uses only bank 0; CGB supports bank 0 and bank 1 (16 KiB total).
++	const unsigned char * vramdata() const { return cart_.vramdata(); }
++	// VRAM bank pointer: pre-adjusted for direct address indexing.
++	// vrambankptr()[addr] for addr in [0x8000, 0x9FFF] gives the correct byte
++	// for the currently active VRAM bank (updated when CGB register FF4F is written).
++	// On DMG this always points to bank 0. Use this instead of vramdata() for reads.
++	const unsigned char * vrambankptr() const { return cart_.vrambankptr(); }
++
+ private:
+ 	Cartridge cart_;
+ 	unsigned char ioamhram_[0x200];

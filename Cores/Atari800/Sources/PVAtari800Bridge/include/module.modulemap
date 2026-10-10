@@ -1,0 +1,4 @@
+module PVAtari800Bridge {
+    header "../PVAtari800Bridge.h"
+    export *
+}

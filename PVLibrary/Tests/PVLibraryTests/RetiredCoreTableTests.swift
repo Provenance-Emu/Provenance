@@ -31,13 +31,18 @@ final class RetiredCoreTableTests: XCTestCase {
     }
 
     func testTableCoversThePrunedCores() {
-        XCTAssertEqual(PVCore.retiredCores.count, 22)
+        XCTAssertEqual(PVCore.retiredCores.count, 20)
         XCTAssertEqual(PVCore.retiredCores[RetiredCoreID.crabEMU]?.replacement(forSystem: SystemIdentifier.ColecoVision.rawValue),
                        LibretroCoreID.gearcoleco)
-        XCTAssertEqual(PVCore.retiredCores[RetiredCoreID.atari800]?.replacement(forSystem: SystemIdentifier.Atari5200.rawValue),
-                       LibretroCoreID.a5200)
         XCTAssertEqual(PVCore.retiredCores[RetiredCoreID.melonDS]?.batterySaves,
                        [.movedFromSaveStates("sav", copyToSRM: true)])
         XCTAssertTrue(PVCore.retiredCores.filter { $0.key != RetiredCoreID.jaguar }.values.allSatisfy { !$0.migratesSaveStates })
+    }
+
+    func testDeprecatedCoresAreNotRetired() {
+        XCTAssertEqual(PVCore.deprecatedCores, [DeprecatedCoreID.atari800, DeprecatedCoreID.gambatte])
+        for id in PVCore.deprecatedCores {
+            XCTAssertNil(PVCore.retiredCores[id], "\(id) is deprecated, not retired")
+        }
     }
 }

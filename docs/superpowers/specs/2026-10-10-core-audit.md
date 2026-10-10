@@ -15,7 +15,8 @@ served by the thin wrapper.
 | KEEP | 8 | Azahar, FCEU, Genesis-Plus-GX, Mednafen, Mupen64Plus, ProSystem, snes9x, Stella |
 | KEEP (native-only reason) | 4 | Dolphin (AppStore-legal build, netplay, cheats, cheevos), mGBA (lockstep link cable, cheats), PicoDrive (sole 32X/Sega CD provider, cheevos maps), TGBDual (dual-GB link) |
 | RETIRE | 24 | BeetlePSX, Debug, DosBox, DuckStation, FreeIntv, GameMusicEmu, Gearcoleco, JollyGoodEmulation, Mini_vMac, Mu, Mupen64Plus-NX, Play, Potator, Reicast, Sudachi, VecX, VirtualJaguar, Yabause, fuse, opera, pcsx_rearmed, sm64ex, snesticle, supergrafx |
-| RETIRE after save check | 10 | Atari800, Bliss, CrabEMU, Desmume2015, Gambatte, O2EM, PokeMini, VisualBoyAdvance-M, emuThree, melonDS |
+| RETIRE after save check | 8 | Bliss, CrabEMU, Desmume2015, O2EM, PokeMini, VisualBoyAdvance-M, emuThree, melonDS |
+| KEEP (deprecated) | 2 | Atari800, Gambatte: the only core for their systems for years, so users have states on them; shipped, labelled "(Deprecated)", libretro replacement preferred (`PVCore.deprecatedCores`) |
 | UNSURE | 4 | PPSSPP (native vs thin default?), fmsx (#3709 trackpad mouse ported to `fmsx`/`bluemsx` dylibs?), 4DO (is `opera` acceptable for 3DO; native has cheevos), ep128emu (only EP128 core, XL-only, no dylib) |
 
 Also dead: embedded frameworks with no producing project — `PVLibRetro`, `PVFreeDO`, `PVSnesticle`,
@@ -37,7 +38,7 @@ Qualifiers:
 | Core dir (PV target) | Wraps | Embedded in | Flags | Dylib | Native unique value | Last touch | Rec |
 |---|---|---|---|---|---|---|---|
 | 4DO (PVFreeDO-Dynamic) | OpenEmu 4DO fork | LA S XL AS | — | none (`opera` differs) | RetroAchievements (Aug 2026) | 2026-08-12 | UNSURE |
-| Atari800 (PVAtari800-Dynamic) | atari800 fork | LA S XL AS | — | `atari800` | cheevos, mouse | 2026-10-02 | RETIRE-AFTER-SAVE-CHECK |
+| Atari800 (PVAtari800-Dynamic) | atari800 fork | LA S XL AS | — | `atari800` | cheevos, mouse | 2026-10-02 | KEEP (deprecated): native save states don't load in `atari800`/`a5200` |
 | Azahar (PVAzahar) | Azahar fork | L LA S XL AS | — | none | JIT, dual screen, skins, cheats | 2026-10-09 | KEEP |
 | BeetlePSX (PVBeetlePSX) | beetle-psx, PVLibRetroCoreBridge | LA XL AS | — | `mednafen_psx(_hw)` | none | 2026-04-01 | RETIRE |
 | Bliss (PVBliss-Dynamic) | OpenEmu Bliss | LA S XL AS | — | none (`freeintv` differs) | none | 2026-05-09 | RETIRE-AFTER-SAVE-CHECK |
@@ -49,7 +50,7 @@ Qualifiers:
 | DuckStation (PVDuckStation) | DuckStation fork | none | — | Beetle/pcsx dylibs | placeholder | 2026-08-05 | RETIRE |
 | FCEU (PVFCEU) | FCEUX fork | LA S XL AS | — | none (fceumm/nestopia/mesen differ) | lightgun, Game Genie, netplay, cheevos | 2026-10-08 | KEEP |
 | FreeIntv (PVFreeIntv) | FreeIntv, PVLibRetroCoreBridge | S XL | — | `freeintv` | none | 2026-04-01 | RETIRE |
-| Gambatte (PVGambatte-Dynamic) | Gambatte | XL | — | `gambatte`, `sameboy` | cheats, full GB rcheevos map | 2026-10-02 | RETIRE-AFTER-SAVE-CHECK |
+| Gambatte (PVGambatte-Dynamic) | Gambatte | XL | — | `gambatte`, `sameboy` | cheats, full GB rcheevos map | 2026-10-02 | KEEP (deprecated): native save states don't load in `gambatte`; `.rtc` not carried by the thin wrapper |
 | GameMusicEmu (PVGME) | libretro-gme | LA S XL AS | — | `gme` | none | 2026-04-01 | RETIRE |
 | Gearcoleco (PVGearcoleco) | Gearcoleco | S XL | — | `gearcoleco` | none | 2026-07-22 | RETIRE |
 | Genesis-Plus-GX (PVGenesis) | GPGX fork | LA S XL AS | — | `genesis_plus_gx(_wide)` | lightgun, cheats, cheevos maps | 2026-10-02 | KEEP |

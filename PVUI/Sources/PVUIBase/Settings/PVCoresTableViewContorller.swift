@@ -38,7 +38,7 @@ public final class PVCoresTableViewController: QuickTableViewController {
                 /// Show the project version and the systems it supports
                 let detailLabelText = "\(core.projectVersion) : \(systemsText)"
 
-                return NavigationRow(text: core.projectName, detailText: .subtitle(detailLabelText), icon: nil, customization: { cell, _ in
+                return NavigationRow(text: core.displayName, detailText: .subtitle(detailLabelText), icon: nil, customization: { cell, _ in
 #if os(iOS)
                     /// If the core has a URL, show a disclosure indicator
                     if URL(string: core.projectURL) != nil {

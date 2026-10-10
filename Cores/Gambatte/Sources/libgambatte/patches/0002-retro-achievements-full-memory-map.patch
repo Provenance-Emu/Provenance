@@ -1,0 +1,152 @@
+From: Provenance Emu <noreply@provenance-emu.com>
+Date: Fri, 2 Oct 2026
+Subject: [PATCH] RetroAchievements: expose ROM, cart RAM and OAM/IO/HRAM storage
+
+Adds public gambatte::GB accessors so Provenance can publish the full rcheevos
+GB/GBC memory map (consoleinfo.c), matching gambatte-libretro's
+retro_set_memory_maps: ROM banks 0-1 at 0x0000, cart RAM bank 0 at 0xA000 plus
+banks 1-15 at flat 0x16000, and the OAM/IO/HRAM/IE page at 0xFE00-0xFFFF.
+
+Changes:
+- gambatte.h     — declare romData(), romSize(), cartRamData(), cartRamSize(), ioamhramData()
+- gambatte.cpp   — implement them (nullptr / 0 when no ROM is loaded)
+- memory.h       — expose romdata/romsize/cartramdata/cartramsize/ioamhram
+- cpu.h          — forward the above from Memory
+- cartridge.h    — forward MemPtrs::romdata/romdataend/rambankdata/rambankdataend
+
+All pointers are `const unsigned char *` and stable for the lifetime of the
+loaded ROM (MemPtrs::reset is the only allocation; ioamhram_ is a Memory member).
+
+Applies on top of 0001-retro-achievements-memory-accessors.patch.
+
+---
+diff --git a/Cores/Gambatte/Sources/libgambatte/libgambatte/include/gambatte.h b/Cores/Gambatte/Sources/libgambatte/libgambatte/include/gambatte.h
+index 4778fbcf12..7d8587a720 100644
+--- a/Cores/Gambatte/Sources/libgambatte/libgambatte/include/gambatte.h
++++ b/Cores/Gambatte/Sources/libgambatte/libgambatte/include/gambatte.h
+@@ -217,6 +217,35 @@ public:
+ 	  */
+ 	std::size_t wramSize() const;
+ 
++	/**
++	  * Returns a pointer to the start of ROM storage (all banks, contiguous):
++	  * index 0 = bank 0 (bus 0x0000), index 0x4000 = bank 1, and so on.
++	  * Stable for the lifetime of the loaded ROM. Returns nullptr if no ROM is loaded.
++	  */
++	const unsigned char * romData() const;
++
++	/** Size of ROM storage in bytes (at least 0x8000). Returns 0 if no ROM is loaded. */
++	std::size_t romSize() const;
++
++	/**
++	  * Returns a pointer to the start of cartridge RAM storage (all banks, contiguous):
++	  * index 0x2000 * n = bank n. Stable for the lifetime of the loaded ROM.
++	  * Returns nullptr if no ROM is loaded or the cartridge has no RAM.
++	  */
++	const unsigned char * cartRamData() const;
++
++	/** Size of cartridge RAM storage in bytes. 0 if no ROM is loaded or no cart RAM. */
++	std::size_t cartRamSize() const;
++
++	/**
++	  * Returns a pointer to the 0x200-byte OAM/IO/HRAM block covering bus 0xFE00-0xFFFF:
++	  * index 0x000 = OAM (0xFE00), 0x100 = I/O (0xFF00), 0x180 = HRAM (0xFF80),
++	  * 0x1FF = IE (0xFFFF). I/O bytes are the raw register backing store (some
++	  * registers are computed lazily on bus reads). Stable for the GB object's lifetime.
++	  * Returns nullptr if no ROM is loaded.
++	  */
++	const unsigned char * ioamhramData() const;
++
+ private:
+ 	struct Priv;
+ 	Priv *const p_;
+diff --git a/Cores/Gambatte/Sources/libgambatte/libgambatte/src/cpu.h b/Cores/Gambatte/Sources/libgambatte/libgambatte/src/cpu.h
+index c2310c266a..9281722a4b 100644
+--- a/Cores/Gambatte/Sources/libgambatte/libgambatte/src/cpu.h
++++ b/Cores/Gambatte/Sources/libgambatte/libgambatte/src/cpu.h
+@@ -75,6 +75,11 @@ public:
+ 	const unsigned char * wramdata(unsigned area) const { return mem_.wramdata(area); }
+ 	const unsigned char * vramdata() const { return mem_.vramdata(); }
+ 	const unsigned char * vrambankptr() const { return mem_.vrambankptr(); }
++	const unsigned char * romdata() const { return mem_.romdata(); }
++	std::size_t romsize() const { return mem_.romsize(); }
++	const unsigned char * cartramdata() const { return mem_.cartramdata(); }
++	std::size_t cartramsize() const { return mem_.cartramsize(); }
++	const unsigned char * ioamhram() const { return mem_.ioamhram(); }
+ 
+ private:
+ 	Memory mem_;
+diff --git a/Cores/Gambatte/Sources/libgambatte/libgambatte/src/gambatte.cpp b/Cores/Gambatte/Sources/libgambatte/libgambatte/src/gambatte.cpp
+index fba15f5581..11811aa7ed 100644
+--- a/Cores/Gambatte/Sources/libgambatte/libgambatte/src/gambatte.cpp
++++ b/Cores/Gambatte/Sources/libgambatte/libgambatte/src/gambatte.cpp
+@@ -238,4 +238,34 @@ std::size_t GB::wramSize() const {
+ 	return p_->cpu.isCgb() ? 0x8000u : 0x2000u;
+ }
+ 
++const unsigned char * GB::romData() const {
++	if (!p_->cpu.loaded())
++		return nullptr;
++	return p_->cpu.romdata();
++}
++
++std::size_t GB::romSize() const {
++	if (!p_->cpu.loaded())
++		return 0;
++	return p_->cpu.romsize();
++}
++
++const unsigned char * GB::cartRamData() const {
++	if (!p_->cpu.loaded() || p_->cpu.cartramsize() == 0)
++		return nullptr;
++	return p_->cpu.cartramdata();
++}
++
++std::size_t GB::cartRamSize() const {
++	if (!p_->cpu.loaded())
++		return 0;
++	return p_->cpu.cartramsize();
++}
++
++const unsigned char * GB::ioamhramData() const {
++	if (!p_->cpu.loaded())
++		return nullptr;
++	return p_->cpu.ioamhram();
++}
++
+ }
+diff --git a/Cores/Gambatte/Sources/libgambatte/libgambatte/src/mem/cartridge.h b/Cores/Gambatte/Sources/libgambatte/libgambatte/src/mem/cartridge.h
+index 9ddb6c883c..f1048f6a42 100644
+--- a/Cores/Gambatte/Sources/libgambatte/libgambatte/src/mem/cartridge.h
++++ b/Cores/Gambatte/Sources/libgambatte/libgambatte/src/mem/cartridge.h
+@@ -53,6 +53,11 @@ public:
+ 	unsigned char const * rsrambankptr() const { return memptrs_.rsrambankptr(); }
+ 	unsigned char * wsrambankptr() const { return memptrs_.wsrambankptr(); }
+ 	unsigned char * vrambankptr() const { return memptrs_.vrambankptr(); }
++	// RetroAchievements: whole-ROM and whole-cart-RAM storage (all banks, contiguous).
++	unsigned char const * romdata() const { return memptrs_.romdata(); }
++	unsigned char const * romdataend() const { return memptrs_.romdataend(); }
++	unsigned char const * rambankdata() const { return memptrs_.rambankdata(); }
++	unsigned char const * rambankdataend() const { return memptrs_.rambankdataend(); }
+ 	OamDmaSrc oamDmaSrc() const { return memptrs_.oamDmaSrc(); }
+ 	void setVrambank(unsigned bank) { memptrs_.setVrambank(bank); }
+ 	void setWrambank(unsigned bank) { memptrs_.setWrambank(bank); }
+diff --git a/Cores/Gambatte/Sources/libgambatte/libgambatte/src/memory.h b/Cores/Gambatte/Sources/libgambatte/libgambatte/src/memory.h
+index 37eaa5d504..a058cddb13 100644
+--- a/Cores/Gambatte/Sources/libgambatte/libgambatte/src/memory.h
++++ b/Cores/Gambatte/Sources/libgambatte/libgambatte/src/memory.h
+@@ -124,6 +124,14 @@ public:
+ 	// for the currently active VRAM bank (updated when CGB register FF4F is written).
+ 	// On DMG this always points to bank 0. Use this instead of vramdata() for reads.
+ 	const unsigned char * vrambankptr() const { return cart_.vrambankptr(); }
++	// ROM storage start (index 0 = bank 0, 0x4000 = bank 1, ...); stable for the loaded ROM.
++	const unsigned char * romdata() const { return cart_.romdata(); }
++	std::size_t romsize() const { return cart_.romdataend() - cart_.romdata(); }
++	// Cartridge RAM storage start (index 0x2000 * n = bank n); stable for the loaded ROM.
++	const unsigned char * cartramdata() const { return cart_.rambankdata(); }
++	std::size_t cartramsize() const { return cart_.rambankdataend() - cart_.rambankdata(); }
++	// OAM/IO/HRAM/IE block: index 0x000 = bus 0xFE00, 0x100 = 0xFF00, 0x180 = 0xFF80, 0x1FF = 0xFFFF.
++	const unsigned char * ioamhram() const { return ioamhram_; }
+ 
+ private:
+ 	Cartridge cart_;

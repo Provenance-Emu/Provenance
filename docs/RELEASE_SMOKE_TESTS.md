@@ -23,19 +23,24 @@ before it (or seed the files below by hand, then relaunch).
       moves the `.dsv` as is and does not strip its 122-byte footer. If the
       save is missing or garbled, record it as a defect.
 - [ ] GBA: a VBA-M `Battery States/<rom>/<rom>.sav2` shows up in `vbam` after first launch.
-- [ ] GB/GBC: a Gambatte `.sav` carries over in `gambatte`. Pokemon Mini `.eep`
-      carries over in `pokemini`. Genesis/SMS/GG game with a CrabEMU `.sav` loads it.
-- [ ] Atari 5200 game with a per-game core preference on the old Atari800 core opens in `a5200`.
+- [ ] Pokemon Mini `.eep` carries over in `pokemini`. Genesis/SMS/GG game with a
+      CrabEMU `.sav` loads it.
+- [ ] Deprecated natives still work: a GB game with a native Gambatte save state
+      and an Atari 800/5200 game with a native Atari800 state both still load
+      those states. The picker lists "Gambatte (Deprecated)" / "Atari 800
+      (Deprecated)" after the libretro cores; Settings → Cores shows a
+      DEPRECATED badge; an existing default-core preference on them is kept.
 - [ ] One game per other retired system boots through its replacement:
-      Atari 800/XL (`atari800`), Intellivision (`freeintv`), Odyssey2 (`o2em`),
+      Intellivision (`freeintv`), Odyssey2 (`o2em`),
       ColecoVision (`gearcoleco`), SMS/Game Gear (Genesis Plus GX), PS1
       (`mednafen_psx_hw`, then `pcsx_rearmed`), Saturn (`yabause`), N64
       (`mupen64plus_next`), Jaguar (`virtualjaguar`, native v13 states load),
       3DO (`opera`), ZX Spectrum (`fuse`), Palm (`mu`), Mac (`minivmac`),
       Supervision (`potator`), music files (`gme`).
-- [ ] Settings → Cores: none of the 32 pruned native cores is listed (unsupported cores off).
-- [ ] A save state made with a retired core is still listed, labelled with the retired core
-      (it does not load in the replacement; formats differ).
+- [ ] Settings → Cores: none of the 30 pruned native cores is listed (unsupported cores off).
+      Libretro cores no longer carry a "(RetroArch)" suffix; native cores still list first.
+- [ ] A save state made with a retired core is still listed, labelled with the retired core.
+      Opening it shows the "no longer included in Provenance" alert, not "install the core".
 - [ ] Lite (AppStore) build, which bundles no libretro dylibs: the pruned systems
       are unavailable (accepted loss); the app does not crash on a library that has them.
 

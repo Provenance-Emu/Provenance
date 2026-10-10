@@ -29,6 +29,7 @@ let package = Package(
         .package(path: "../PVFeatureFlags/"),
 
         // MARK: Cores
+        .package(path: "../Cores/Atari800/"),
         .package(path: "../Cores/PicoDrive/"),
         .package(path: "../Cores/Stella/"),
         .package(path: "../Cores/TGBDual/"),
@@ -71,6 +72,7 @@ let package = Package(
                 "PVLogging",
                 "PVSupport"
 
+//                .product(name: "PVAtari800-Dynamic", package: "Atari800"),
 //                .product(name: "PVPicoDrive-Dynamic", package: "PicoDrive"),
 //                .product(name: "PVStella-Dynamic", package: "Stella"),
 //                .product(name: "PVTGBDual-Dynamic", package: "TGBDual")
@@ -85,6 +87,7 @@ let package = Package(
         .target(
             name: "PVCoreEnumerator",
             dependencies: [
+                .product(name: "PVAtari800-Dynamic", package: "Atari800"),
                 .product(name: "PVPicoDrive-Dynamic", package: "PicoDrive"),
                 .product(name: "PVStella-Dynamic", package: "Stella"),
                 .product(name: "PVTGBDual-Dynamic", package: "TGBDual")

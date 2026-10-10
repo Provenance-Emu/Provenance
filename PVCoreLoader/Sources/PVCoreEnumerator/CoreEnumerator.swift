@@ -8,6 +8,10 @@
 import Foundation
 import PVEmulatorCore
 
+#if canImport(PVAtari800)
+@_exported public import PVAtari800
+@_exported public import PVAtari800Swift
+#endif
 #if canImport(PVPicoDrive)
 @_exported public import PVPicoDrive
 @_exported public import PVPicoDriveSwift
@@ -22,6 +26,9 @@ import PVEmulatorCore
 #endif
 
 public enum CoreEnumerator: String, CaseIterable, Codable, Hashable {
+#if canImport(PVAtari800)
+    case Atari800
+#endif
 #if canImport(PVPicoDrive)
     case PicoDrive
 #endif
@@ -34,6 +41,9 @@ public enum CoreEnumerator: String, CaseIterable, Codable, Hashable {
 
     var core: PVEmulatorCore {
         switch self {
+#if canImport(PVAtari800)
+        case .Atari800: return ATR800GameCore()
+#endif
 #if canImport(PVPicoDrive)
         case .PicoDrive: return PicodriveGameCore()
 #endif
