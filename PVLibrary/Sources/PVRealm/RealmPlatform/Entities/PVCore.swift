@@ -11,6 +11,7 @@ import RealmSwift
 import os
 import PVLogging
 import PVPrimitives
+import PVSystems
 
 @objcMembers
 public final class PVCore: RealmSwift.Object, Identifiable {
@@ -105,27 +106,109 @@ public final class PVCore: RealmSwift.Object, Identifiable {
 
 // MARK: - Retired cores
 
+/// Identifiers of native cores removed from the app (their Core.plist `PVCoreIdentifier`).
+/// Kept so records naming them can still be found and moved.
+public enum RetiredCoreID {
+    public static let jaguar = "com.provenance.core.jaguar"
+}
+
+/// Identifiers of the libretro cores that replace them (`PVCoreIdentifier` in
+/// CoresRetro/RetroArch/Core.plist: the cores.yml name with dots, plus `.libretro.framework`).
+public enum LibretroCoreID {
+    public static let virtualJaguar = "virtualjaguar.libretro.framework"
+}
+
+/// Where a retired core kept a battery save, and how its replacement gets it.
+/// The thin wrapper reads `Battery States/<rom>/<rom>.srm` (RETRO_MEMORY_SAVE_RAM).
+public struct RetiredBatterySaveRule: Equatable, Sendable {
+    public enum Location: Equatable, Sendable {
+        /// `Battery States/<rom>/`: the core's `batterySavesPath`.
+        case batterySaves
+        /// `Save States/<rom>/`: the legacy libretro bridge answered GET_SAVE_DIRECTORY with it.
+        case saveStates
+    }
+
+    public let location: Location
+    /// Extension of `<rom>.<ext>`, the file the retired core wrote.
+    public let fileExtension: String
+    /// Move the file into `Battery States/<rom>/` (for `.saveStates`).
+    public let moveToBatterySaves: Bool
+    /// Copy it to `Battery States/<rom>/<rom>.srm` when that file doesn't exist yet.
+    public let copyToSRM: Bool
+
+    public init(location: Location, fileExtension: String, moveToBatterySaves: Bool = false, copyToSRM: Bool = false) {
+        self.location = location
+        self.fileExtension = fileExtension
+        self.moveToBatterySaves = moveToBatterySaves
+        self.copyToSRM = copyToSRM
+    }
+
+    /// A raw battery file in Battery States, copied to the thin wrapper's `.srm`.
+    public static func copiedToSRM(_ fileExtension: String) -> RetiredBatterySaveRule {
+        RetiredBatterySaveRule(location: .batterySaves, fileExtension: fileExtension, copyToSRM: true)
+    }
+
+    /// A file the legacy bridge left in Save States, moved to Battery States.
+    public static func movedFromSaveStates(_ fileExtension: String, copyToSRM: Bool = false) -> RetiredBatterySaveRule {
+        RetiredBatterySaveRule(location: .saveStates, fileExtension: fileExtension, moveToBatterySaves: true, copyToSRM: copyToSRM)
+    }
+}
+
+/// A native core removed from the app and the libretro core(s) that now run its games.
+public struct RetiredCore: Equatable, Sendable {
+    public let replacement: String
+    /// Systems whose games go to a different replacement than `replacement`.
+    public let systemReplacements: [SystemIdentifier: String]
+    /// Save states load in the replacement (same emulator code). When false they keep the
+    /// retired core, whose disabled row is never pruned.
+    public let migratesSaveStates: Bool
+    public let batterySaves: [RetiredBatterySaveRule]
+
+    public init(replacement: String, systemReplacements: [SystemIdentifier: String] = [:],
+                migratesSaveStates: Bool = false, batterySaves: [RetiredBatterySaveRule] = []) {
+        self.replacement = replacement
+        self.systemReplacements = systemReplacements
+        self.migratesSaveStates = migratesSaveStates
+        self.batterySaves = batterySaves
+    }
+
+    public func replacement(forSystem systemIdentifier: String?) -> String {
+        guard let system = systemIdentifier.flatMap(SystemIdentifier.init(rawValue:)),
+              let override = systemReplacements[system] else { return replacement }
+        return override
+    }
+
+    public var allReplacements: [String] { [replacement] + systemReplacements.values.sorted() }
+}
+
 public extension PVCore {
-    /// Cores removed from the app, mapped to the core that now runs their games
-    /// and save states.
-    static let retiredCoreReplacements: [String: String] = [
+    /// Cores removed from the app. See RetiredCoreMigration and RetiredBatterySaveMigration.
+    static let retiredCores: [String: RetiredCore] = [
         // Native PVJaguar ran the same virtualjaguar libretro.c as the dylib,
         // so its save states load there (the core reads older state versions).
-        "com.provenance.core.jaguar": "virtualjaguar.libretro.framework"
+        RetiredCoreID.jaguar: RetiredCore(replacement: LibretroCoreID.virtualJaguar, migratesSaveStates: true),
     ]
 
-    /// The retirements in effect in this build: those whose replacement is
-    /// bundled. Lite builds ship no libretro dylibs and keep the old core.
-    static let activeRetiredCoreReplacements: [String: String] =
-        retiredCoreReplacements.filter { isBundledLibretroCore($0.value) }
+    /// Retired core → its default replacement.
+    static var retiredCoreReplacements: [String: String] { retiredCores.mapValues(\.replacement) }
 
-    /// The identifier of the core that now handles `identifier`. Save states,
-    /// recents and preferences are moved over at launch (`RetiredCoreMigration`);
-    /// records arriving later from iCloud, another device or an exported save
-    /// still name the old core, so lookups of an incoming identifier go through
-    /// this.
+    /// The retirements in effect in this build: those whose replacements are all
+    /// bundled. Lite builds ship no libretro dylibs and keep the old core.
+    static let activeRetiredCores: [String: RetiredCore] =
+        retiredCores.filter { $0.value.allReplacements.allSatisfy(isBundledLibretroCore) }
+
+    static let activeRetiredCoreReplacements: [String: String] = activeRetiredCores.mapValues(\.replacement)
+
+    /// The identifier of the core that now loads `identifier`'s save states. Records arriving
+    /// from iCloud, another device or an export still name the old core, so save-state lookups
+    /// go through this. Only retirements whose save states migrate are remapped.
     static func currentIdentifier(for identifier: String) -> String {
-        activeRetiredCoreReplacements[identifier] ?? identifier
+        currentIdentifier(for: identifier, in: activeRetiredCores)
+    }
+
+    static func currentIdentifier(for identifier: String, in cores: [String: RetiredCore]) -> String {
+        guard let retired = cores[identifier], retired.migratesSaveStates else { return identifier }
+        return retired.replacement
     }
 
     /// Whether the app bundle contains the libretro core `identifier`
