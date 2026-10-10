@@ -92,6 +92,7 @@ final class HarnessOutputTests: XCTestCase {
     func testWaitSeconds() {
         XCTAssertEqual(HarnessOutput.waitSeconds(frames: 300, frameInterval: 1.0 / 60.0), 5, accuracy: 0.0001)
         XCTAssertEqual(HarnessOutput.waitSeconds(frames: 120, frameInterval: 0), 2, accuracy: 0.0001)
+        XCTAssertEqual(HarnessOutput.waitSeconds(frames: 120, frameInterval: 60), 2, accuracy: 0.0001)
     }
 
     func testReportEncodesNonFiniteDoubles() throws {
