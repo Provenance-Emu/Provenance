@@ -481,7 +481,7 @@ private struct BatchPatchResultRow: View {
                 .font(.subheadline)
             Text(result.message)
                 .font(.caption)
-                .foregroundStyle(result.success ? .secondary : .red)
+                .foregroundStyle(result.success ? Color.secondary : Color.red)
         }
     }
 }
