@@ -488,7 +488,7 @@ public final class PatchRepository {
             let patchDest = patchesDir.appendingPathComponent(patchURL.lastPathComponent)
             if patchURL.standardizedFileURL != patchDest.standardizedFileURL {
                 if FileManager.default.fileExists(atPath: patchDest.path) {
-                    try FileManager.default.removeItem(at: patchDest)
+                    try await FileManager.default.removeItem(at: patchDest)
                 }
                 try FileManager.default.copyItem(at: patchURL, to: patchDest)
             }
