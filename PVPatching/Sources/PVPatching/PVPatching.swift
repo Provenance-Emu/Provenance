@@ -26,5 +26,5 @@
 /// ```
 public enum PVPatching {
     /// Module version string.
-    public static let version = "1.3.4"
+    public static let version = "1.3.5"
 }

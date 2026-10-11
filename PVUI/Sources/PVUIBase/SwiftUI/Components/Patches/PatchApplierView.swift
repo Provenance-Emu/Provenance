@@ -100,7 +100,7 @@ public struct PatchApplierView: View {
                 SwiftUI.Section("Validation") {
                     Text(crcValidation.userMessage)
                         .font(.footnote)
-                        .foregroundStyle(crcValidation.isMismatch ? .orange : .secondary)
+                        .foregroundStyle(crcValidation.isMismatch ? Color.orange : Color.secondary)
                     if crcValidation.isMismatch {
                         Toggle("Apply anyway (ignore CRC mismatch)", isOn: $allowCRCMismatch)
                     }
