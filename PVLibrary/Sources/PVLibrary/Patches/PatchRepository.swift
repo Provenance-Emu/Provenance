@@ -443,7 +443,8 @@ public final class PatchRepository {
     }
 
     /// Result of a one-shot Patch Applier run (manual patch + ROM selection).
-    public struct StandaloneApplyResult: Sendable {
+    /// Not `Sendable` — `importedPatch` is a Realm object confined to the calling thread.
+    public struct StandaloneApplyResult {
         public var inspection: PatchInspection
         public var crcValidation: PatchCRCValidation
         public var exportURL: URL
