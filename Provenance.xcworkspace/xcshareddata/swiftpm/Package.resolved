@@ -1,4 +1,5 @@
 {
+  "originHash" : "b5015f76f30c01f2fbcb1db9c8be3dca98b88a627a787513a40399394c37a72e",
   "pins" : [
     {
       "identity" : "activityindicatorview",
@@ -502,21 +503,12 @@
       }
     },
     {
-      "identity" : "swiftcli",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/jakeheis/SwiftCLI",
-      "state" : {
-        "revision" : "2e949055d9797c1a6bddcda0e58dada16cc8e970",
-        "version" : "6.0.3"
-      }
-    },
-    {
       "identity" : "swiftgenplugin",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Provenance-Emu/SwiftGenPlugin.git",
       "state" : {
-        "branch" : "develop",
-        "revision" : "6c9745d44daf3b9db764433e4ea84c438796a714"
+        "revision" : "6c9745d44daf3b9db764433e4ea84c438796a714",
+        "version" : "1.1.3"
       }
     },
     {
@@ -547,6 +539,15 @@
       }
     },
     {
+      "identity" : "ziparchive",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/ZipArchive/ZipArchive.git",
+      "state" : {
+        "branch" : "master",
+        "revision" : "acc61be58181e635ae77718e66530b4ee7dea4be"
+      }
+    },
+    {
       "identity" : "zipfoundation",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/weichsel/ZIPFoundation.git",
@@ -564,5 +565,5 @@
       }
     }
   ],
-  "version" : 2
+  "version" : 3
 }

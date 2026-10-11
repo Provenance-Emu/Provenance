@@ -70,9 +70,13 @@ extension PVAppDelegate: MXMetricManagerSubscriber {
     /// We log it rather than assume: if extension bundle IDs show up here, MetricKit
     /// already covers extension terminations and no in-extension SDK is needed.
     private func logPayloadIdentity(_ payload: MXMetricPayload, log: PVLogChannel) {
-        var identity = "pid=\(payload.metaData.pid) build=\(payload.metaData.applicationBuildVersion)"
+        guard let metadata = payload.metaData else {
+            log.error("payload metaData is nil")
+            return
+        }
+        var identity = "pid=\(metadata.pid) build=\(metadata.applicationBuildVersion)"
         if #available(iOS 26.0, macOS 26.0, *) {
-            identity += " bundleID=\(payload.metaData.bundleIdentifier)"
+            identity += " bundleID=\(metadata.bundleIdentifier)"
         }
         log.info("Payload identity: \(identity) window=\(payload.timeStampBegin)…\(payload.timeStampEnd)")
     }
