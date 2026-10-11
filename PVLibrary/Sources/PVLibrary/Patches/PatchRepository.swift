@@ -248,7 +248,10 @@ public final class PatchRepository {
     public func ensureVariant(for patch: PVPatch, baseGame: PVGame) async throws -> PVGame {
         let realm = RomDatabase.sharedInstance.realm
         if let existingMD5 = patch.variantGameMD5,
-           let existing = realm.object(ofType: PVGame.self, forPrimaryKey: existingMD5) {
+           let existing = realm.object(ofType: PVGame.self, forPrimaryKey: existingMD5),
+           let existingURL = existing.file?.url,
+           FileManager.default.fileExists(atPath: existingURL.path) {
+            // Reuse only when the on-disk artifact (or standalone ROM) is still present.
             return existing
         }
 
@@ -478,7 +481,14 @@ public final class PatchRepository {
         return try await prepareForLaunch(patch: livePatch, progress: progress)
     }
 
-    /// Delete a patch and its variant/cache. Never deletes the original ROM.
+    /// Whether deleting a patch should also remove the linked `PVGame`.
+    /// Standalone same-MD5 library ROMs may be linked for launch but must not be deleted.
+    public nonisolated static func shouldDeleteVariantGame(isPatchVariant: Bool?) -> Bool {
+        isPatchVariant == true
+    }
+
+    /// Delete a patch and its managed variant/cache. Never deletes the original ROM
+    /// or a standalone library game that happens to share the patched content hash.
     public func deletePatch(_ patch: PVPatch, deleteVariantSaves: Bool = true) throws {
         let realm = RomDatabase.sharedInstance.realm
         guard let live = patch.thaw() ?? realm.object(ofType: PVPatch.self, forPrimaryKey: patch.id) else { return }
@@ -493,23 +503,36 @@ public final class PatchRepository {
             }
         }
 
-        let variant = live.variantGame
+        // Only remove PVGame rows we created as patch variants. A same-MD5 standalone
+        // ROM may be linked for launch — never absorb or delete it here.
+        let managedVariant = Self.shouldDeleteVariantGame(isPatchVariant: live.variantGame?.isPatchVariant)
+            ? live.variantGame
+            : nil
+        let variantFileURL = managedVariant?.file?.url
         let patchFileURL = live.file?.url
 
         try RomDatabase.sharedInstance.writeTransaction {
-            if let variant {
+            if let managedVariant, !managedVariant.isInvalidated {
                 if deleteVariantSaves {
-                    variant.saveStates.forEach { realm.delete($0) }
-                    variant.cheats.forEach { realm.delete($0) }
-                    variant.recentPlays.forEach { realm.delete($0) }
+                    managedVariant.saveStates.forEach { realm.delete($0) }
+                    managedVariant.cheats.forEach { realm.delete($0) }
+                    managedVariant.recentPlays.forEach { realm.delete($0) }
                 }
-                realm.delete(variant)
+                realm.delete(managedVariant)
             }
-            realm.delete(live)
+            if !live.isInvalidated {
+                realm.delete(live)
+            }
         }
 
         if let patchFileURL, FileManager.default.fileExists(atPath: patchFileURL.path) {
             try? FileManager.default.removeItem(at: patchFileURL)
+        }
+        if let variantFileURL, FileManager.default.fileExists(atPath: variantFileURL.path) {
+            let path = variantFileURL.path
+            if path.contains("/PatchedROMs/") || path.contains("/PVPatchedROMs/") {
+                try? FileManager.default.removeItem(at: variantFileURL)
+            }
         }
     }
 

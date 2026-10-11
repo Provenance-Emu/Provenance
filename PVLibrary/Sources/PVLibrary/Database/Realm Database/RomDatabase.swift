@@ -1248,8 +1248,8 @@ public extension RomDatabase {
         let patchFileURL = patch.file?.url
         let variant = patch.variantGame
         // Capture before Realm delete — only remove managed variant artifacts, never base ROMs.
-        let variantFileURL = variant?.isPatchVariant == true ? variant?.file?.url : nil
-        let shouldDeleteVariantGame = variant?.isPatchVariant == true
+        let shouldDeleteVariantGame = PatchRepository.shouldDeleteVariantGame(isPatchVariant: variant?.isPatchVariant)
+        let variantFileURL = shouldDeleteVariantGame ? variant?.file?.url : nil
         do {
             try writeTransaction {
                 if let variant, !variant.isInvalidated, shouldDeleteVariantGame {

@@ -82,4 +82,10 @@ final class PVPatchModelTests: XCTestCase {
         XCTAssertEqual(patch.isDefaultLaunch, false)
         XCTAssertEqual(patch.showAsLibraryTile, false)
     }
+
+    func testDeletePatchSkipsStandaloneLinkedGame() {
+        XCTAssertFalse(PatchRepository.shouldDeleteVariantGame(isPatchVariant: nil))
+        XCTAssertFalse(PatchRepository.shouldDeleteVariantGame(isPatchVariant: false))
+        XCTAssertTrue(PatchRepository.shouldDeleteVariantGame(isPatchVariant: true))
+    }
 }

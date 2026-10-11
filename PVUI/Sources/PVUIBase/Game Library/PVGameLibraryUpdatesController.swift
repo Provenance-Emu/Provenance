@@ -519,7 +519,8 @@ public final class PVGameLibraryUpdatesController: ObservableObject {
 
         do {
             let frozenGames = try await RealmContext.withBackgroundRealm { realm -> [PVGame] in
-                let allGames = realm.objects(PVGame.self)
+                // Hidden patch variants are launch-only; keep them out of Spotlight.
+                let allGames = realm.objects(PVGame.self).filter("isHiddenPatchVariant == false")
                 ILOG("Found \(allGames.count) games to process")
                 return allGames.map { $0.freeze() }
             }

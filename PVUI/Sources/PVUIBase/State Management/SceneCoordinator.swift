@@ -365,6 +365,16 @@ public class SceneCoordinator: ObservableObject {
             return
         }
 
+        // Visible variant tiles: always re-enter patch prep so a purged PatchedROMs
+        // cache is rebuilt. `bypassDefaultPatch` means prep already ran (avoids a loop).
+        if !bypassDefaultPatch, game.isPatchVariant,
+           let patchID = game.patchID, !patchID.isEmpty,
+           let patch = RomDatabase.sharedInstance.realm.object(ofType: PVPatch.self, forPrimaryKey: patchID) {
+            ILOG("SceneCoordinator: Preparing managed patch variant \(patch.displayTitle) before launch")
+            await launchPatchWithPreparation(patch, core: core)
+            return
+        }
+
         guard let system = game.system else {
             showGameLaunchError(
                 title: "Cannot Launch Game",
@@ -399,7 +409,12 @@ public class SceneCoordinator: ObservableObject {
                FileManager.default.fileExists(atPath: fileURL.path) {
                 return true
             }
-            // Check 3: current system ROMs directory (file may have been moved between systems)
+            // Check 3: system ROMs directory by filename — never for patch variants.
+            // A missing PatchedROMs artifact must not silently open (or rewrite paths to)
+            // the original ROM when stems collide.
+            if game.isPatchVariant {
+                return false
+            }
             let filename = game.file?.fileName
                 ?? (game.romPath.isEmpty ? nil : URL(fileURLWithPath: game.romPath).lastPathComponent)
             if let filename = filename, !filename.isEmpty {
@@ -1231,6 +1246,41 @@ public class SceneCoordinator: ObservableObject {
         CloudSyncManager.shared.pause(reason: .gameLaunch)
         defer { CloudSyncManager.shared.resume(reason: .gameLaunch) }
 
+        // Rebuild patched artifacts before save-state launch when needed.
+        var game = game
+        if game.isPatchVariant,
+           let patchID = game.patchID, !patchID.isEmpty,
+           let patch = RomDatabase.sharedInstance.realm.object(ofType: PVPatch.self, forPrimaryKey: patchID) {
+            do {
+                syncStatusManager.show(
+                    gameTitle: patch.displayTitle,
+                    statusMessage: "Preparing patched ROM…",
+                    onCancel: { [weak self] in
+                        self?.activeLaunchTask?.cancel()
+                        self?.syncStatusManager.hide()
+                    }
+                )
+                game = try await PatchRepository.shared.prepareForLaunch(patch: patch) { [weak self] progress in
+                    Task { @MainActor in
+                        let message = progress.status.isEmpty
+                            ? String(format: "Patching… %.0f%%", progress.fractionCompleted * 100)
+                            : progress.status
+                        self?.syncStatusManager.update(statusMessage: message)
+                    }
+                }
+                syncStatusManager.hide()
+                guard !Task.isCancelled else { return }
+            } catch {
+                syncStatusManager.hide()
+                ELOG("SceneCoordinator: Patch prep for save state failed — \(error.localizedDescription)")
+                showGameLaunchError(
+                    title: "Cannot Apply Patch",
+                    message: error.localizedDescription
+                )
+                return
+            }
+        }
+
         guard let system = game.system else {
             showGameLaunchError(
                 title: "Cannot Launch Save State",
@@ -1252,7 +1302,10 @@ public class SceneCoordinator: ObservableObject {
                FileManager.default.fileExists(atPath: fileURL.path) {
                 return true
             }
-            // Check 3: current system ROMs directory (file may have been moved between systems)
+            // Check 3: system ROMs by filename — never for patch variants.
+            if game.isPatchVariant {
+                return false
+            }
             let filename = game.file?.fileName
                 ?? (game.romPath.isEmpty ? nil : URL(fileURLWithPath: game.romPath).lastPathComponent)
             if let filename = filename, !filename.isEmpty {

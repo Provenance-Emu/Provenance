@@ -954,7 +954,10 @@ public struct RetroGameLibraryView: View {
         // and crash with "Realm accessed from incorrect thread".
         let (games, systems) = await Task.detached(priority: .userInitiated) {
             let db = RomDatabase.sharedInstance
-            let g = Array(db.all(PVGame.self,   sortedByKeyPath: "title")).map { $0.freeze() }
+            let g = Array(
+                db.all(PVGame.self, sortedByKeyPath: "title")
+                    .filter("isHiddenPatchVariant == false")
+            ).map { $0.freeze() }
             let s = Array(db.all(PVSystem.self, sortedByKeyPath: "name")).map { $0.freeze() }
             return (g, s)
         }.value
