@@ -369,8 +369,8 @@ public struct BatchPatchApplierView: View {
 
             if !results.isEmpty {
                 SwiftUI.Section("Results") {
-                    SwiftUI.ForEach(results.indices, id: \.self) { index in
-                        let result = results[index]
+                    // Avoid `.indices` — it resolves to `indices(where:)` under module shadowing here.
+                    SwiftUI.ForEach(results) { result in
                         VStack(alignment: .leading, spacing: 2) {
                             Text(result.patchURL.lastPathComponent)
                                 .font(.subheadline)

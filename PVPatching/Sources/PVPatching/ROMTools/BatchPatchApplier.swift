@@ -33,7 +33,8 @@ public struct BatchPatchJob: Sendable, Identifiable, Equatable {
     }
 }
 
-public struct BatchPatchResult: Sendable, Equatable {
+public struct BatchPatchResult: Sendable, Identifiable, Equatable {
+    public var id: String { "\(patchURL.path)|\(success)|\(outputURL?.path ?? "")" }
     public var patchURL: URL
     public var outputURL: URL?
     public var success: Bool
