@@ -16,8 +16,10 @@
 //  and the extensions in question are the memory-constrained ones we must not
 //  make heavier.
 //
-//  This path is NOT gated on MetricKit, so it works on tvOS — where MetricKit is
-//  entirely unavailable and TopShelf is the extension most likely to be killed.
+//  This path is NOT gated on MetricKit (unavailable on tvOS), so any extension
+//  that records a marker is reported on every platform. Spotlight is the only
+//  instrumented extension today: TopShelf reads the App Group library snapshot
+//  and never opens Realm, so it has no database-sized memory spike to catch.
 //
 
 import Foundation
