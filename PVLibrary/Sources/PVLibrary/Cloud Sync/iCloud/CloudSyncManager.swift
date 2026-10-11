@@ -16,6 +16,7 @@ import PVRealm
 import RealmSwift
 import Defaults
 import PVSettings
+import PVFeatureFlags
 import CloudKit
 import RxSwift
 import RxRealm
@@ -225,7 +226,7 @@ public class CloudSyncManager { // swiftlint:disable:this type_body_length
         Task { await taskCoordinator.startEventListeners() }
 
         // Initialize sync providers if iCloud sync is enabled
-        if Defaults[.iCloudSync] {
+        if Self.isSyncSupported && Defaults[.iCloudSync] {
             initializeSyncProviders()
             startMetadataBootstrap(reason: "startup")
         }
@@ -515,7 +516,7 @@ public class CloudSyncManager { // swiftlint:disable:this type_body_length
             return
         }
 
-        guard Defaults[.iCloudSync] else {
+        guard Self.isSyncSupported, Defaults[.iCloudSync] else {
             DLOG("[SYNC] iCloud sync disabled, skipping startSync.")
             updateSyncStatus(.disabled)
             return
@@ -1478,8 +1479,16 @@ public class CloudSyncManager { // swiftlint:disable:this type_body_length
         DLOG("All sync tasks submitted to coordinator")
     }
 
+    /// Lite shares the iCloud container with the full app but keeps its own library and
+    /// files, so syncing would mix the two. It doesn't sync.
+    public static let isSyncSupported = !PVFeatureFlags.getCurrentAppType().isLite
+
     /// Initialize sync providers
     private func initializeSyncProviders() {
+        guard Self.isSyncSupported else {
+            updateSyncStatus(.disabled)
+            return
+        }
         var syncMode = Defaults[.iCloudSyncMode]
 
         // Ensure tvOS always uses CloudKit

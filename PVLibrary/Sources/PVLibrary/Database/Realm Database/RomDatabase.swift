@@ -10,6 +10,7 @@ import Foundation
 import PVSupport
 import RealmSwift
 import PVLogging
+import PVFeatureFlags
 #if canImport(UIKit)
 import UIKit
 #endif
@@ -369,8 +370,10 @@ public final class RealmConfiguration {
 // MARK: - Extension-safe, migration-free access
 
 public extension RealmConfiguration {
-    /// Filename of the Realm database, shared by the app and its extensions.
-    internal static let realmFilename = "default.realm"
+    /// Filename of the Realm database, shared by the app and its extensions. Lite keeps its
+    /// own: it shares the App Group with the full app but not its ROM files, and it ships
+    /// fewer cores, so its core registration rewrote the full app's library.
+    internal static let realmFilename = PVFeatureFlags.getCurrentAppType().isLite ? "lite.realm" : "default.realm"
 
     /// Legacy, pre-App-Group location of the database (this process' own Documents
     /// directory). Only the main app ever relocates away from here.
