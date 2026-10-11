@@ -442,6 +442,94 @@ public final class PatchRepository {
         PVFile(withURL: artifactURL, relativeRoot: .platformDefault)
     }
 
+    /// Result of a one-shot Patch Applier run (manual patch + ROM selection).
+    public struct StandaloneApplyResult: Sendable {
+        public var inspection: PatchInspection
+        public var crcValidation: PatchCRCValidation
+        public var exportURL: URL
+        public var importedPatch: PVPatch?
+    }
+
+    /// Apply `patchURL` to `romURL` for the Patch Applier UI.
+    ///
+    /// Writes under `Documents/PatchedROMs/`, optionally imports/links the patch
+    /// into the library. Throws on CRC mismatch unless `allowCRCMismatch` is set.
+    public func applyStandalone(
+        patchURL: URL,
+        romURL: URL,
+        preferredGame: PVGame? = nil,
+        importToLibrary: Bool = true,
+        allowCRCMismatch: Bool = false,
+        progress: (@Sendable (PatchProgress) -> Void)? = nil
+    ) async throws -> StandaloneApplyResult {
+        let inspection = try inspector.inspect(patchURL: patchURL)
+        let crcValidation = try PatchCRCValidator.validate(romURL: romURL, inspection: inspection)
+        if crcValidation.isMismatch, !allowCRCMismatch {
+            if case .mismatched(let expected, let actual) = crcValidation {
+                throw PatchError.crcMismatch(expected: expected, actual: actual)
+            }
+        }
+
+        let dest = URL.documentsPath.appendingPathComponent("PatchedROMs", isDirectory: true)
+        let preferred = "\(PatchApplier.defaultOutputStem(romURL: romURL, patchURL: patchURL)).\(romURL.pathExtension)"
+        let exportURL = try await applier.exportPatchedCopy(
+            patchURL: patchURL,
+            romURL: romURL,
+            to: dest,
+            preferredName: preferred,
+            progress: progress
+        )
+
+        var imported: PVPatch?
+        if importToLibrary {
+            // Copy patch into the patches directory for stable library identity.
+            let patchesDir = Paths.patchesPath
+            try FileManager.default.createDirectory(at: patchesDir, withIntermediateDirectories: true)
+            let patchDest = patchesDir.appendingPathComponent(patchURL.lastPathComponent)
+            if patchURL.standardizedFileURL != patchDest.standardizedFileURL {
+                if FileManager.default.fileExists(atPath: patchDest.path) {
+                    try FileManager.default.removeItem(at: patchDest)
+                }
+                try FileManager.default.copyItem(at: patchURL, to: patchDest)
+            }
+            imported = try await importPatch(
+                at: patchDest,
+                preferredGame: preferredGame,
+                autoMatch: preferredGame == nil
+            )
+        }
+
+        return StandaloneApplyResult(
+            inspection: inspection,
+            crcValidation: crcValidation,
+            exportURL: exportURL,
+            importedPatch: imported
+        )
+    }
+
+    /// Snapshot library ROMs for batch patch matching.
+    public func batchROMCandidates() -> [BatchPatchApplier.ROMCandidate] {
+        let realm = RomDatabase.sharedInstance.realm
+        return realm.objects(PVGame.self)
+            .filter("isPatchVariant == false AND contentless == false")
+            .compactMap { game in
+                guard let fileURL = game.file?.url,
+                      let filename = game.file?.fileName,
+                      FileManager.default.fileExists(atPath: fileURL.path) else { return nil }
+                var crc: UInt32?
+                if !game.crc.isEmpty {
+                    crc = UInt32(game.crc, radix: 16)
+                }
+                return BatchPatchApplier.ROMCandidate(
+                    id: game.md5Hash,
+                    title: game.title,
+                    filename: filename,
+                    fileURL: fileURL,
+                    crc32: crc
+                )
+            }
+    }
+
     /// Export a collision-safe patched ROM copy into Documents/PatchedROMs (or provided dir).
     public func exportPatchedCopy(
         patch: PVPatch,
