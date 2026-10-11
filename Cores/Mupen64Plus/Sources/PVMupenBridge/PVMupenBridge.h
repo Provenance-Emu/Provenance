@@ -107,6 +107,14 @@ typedef enum PVN64Button: NSInteger PVN64Button;
 
 - (void) swapBuffers;
 
+/// Name of the GL framebuffer the presenter reads game pixels from, or 0 when it has none.
+///
+/// There is no window-system framebuffer 0 on iOS/tvOS, so a video plugin asking for the
+/// "default framebuffer" must be given this one. Declared in the main `@interface` rather
+/// than a category header so Swift module synthesis keeps it, and implemented in
+/// `PVMupenBridge.m` where `PVRenderDelegate` is a complete type.
+- (uint32_t) presentationFramebufferName;
+
 /// Load virtual mempak data from disk into the in-memory buffer for the given port (0–3).
 /// Called at game start. Silently succeeds if no file exists (fresh pak).
 - (void) loadMempakForPort:(NSInteger)port;

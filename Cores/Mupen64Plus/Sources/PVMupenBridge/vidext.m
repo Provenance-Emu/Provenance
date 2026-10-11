@@ -107,8 +107,12 @@ EXPORT m64p_error CALL VidExt_SetVideoMode(int Width, int Height, int BitsPerPix
 			windowMode = @"Unknown";
 			break;
 	}
-	DLOG(@"(%i,%i) %ibpp %@", Width, Height, BitsPerPixel, windowMode);
     GET_CURRENT_OR_RETURN(M64ERR_INVALID_STATE);
+    // The video plugin sets its own mode when its display window opens, after the
+    // presenter has already sized its render surface from the previous value. Logged at
+    // info level because a disagreement between the two is invisible otherwise.
+    ILOG(@"Video mode (%i,%i) %ibpp %@, was (%i,%i)",
+         Width, Height, BitsPerPixel, windowMode, current.videoWidth, current.videoHeight);
 
     current.videoWidth = Width;
     current.videoHeight = Height;
@@ -162,13 +166,27 @@ EXPORT m64p_error CALL VidExt_GL_SwapBuffers(void)
     return M64ERR_SUCCESS;
 }
 
-/// There is no window-system framebuffer 0 on iOS/tvOS: the bridge renders into its own
-/// FBO, which is the one bound on the GL thread when a plugin asks for this.
+/// There is no window-system framebuffer 0 on iOS/tvOS: the presenter renders into an
+/// IOSurface-backed FBO and that is what a plugin must treat as the default framebuffer.
+///
+/// GLideN64 caches this value once, in `DisplayWindow::start()`, and uses it for every
+/// later "present to the default framebuffer". Reading `GL_FRAMEBUFFER_BINDING` is only
+/// correct while the presenter's FBO happens to be the bound one, so ask the presenter
+/// for its name and fall back to the live binding only if it has none.
 EXPORT uint32_t CALL VidExt_GL_GetDefaultFramebuffer(void)
 {
+    GET_CURRENT_OR_RETURN(0);
+
+    uint32_t presented = [current presentationFramebufferName];
+    if (presented != 0) {
+        ILOG(@"Default framebuffer for the video plugin: %u (from the presenter)", presented);
+        return presented;
+    }
+
 #if __has_include(<OpenGLES/ES3/gl.h>)
     GLint framebuffer = 0;
     glGetIntegerv(GL_FRAMEBUFFER_BINDING, &framebuffer);
+    WLOG(@"Presenter exposed no framebuffer; falling back to the bound one (%d)", framebuffer);
     return (uint32_t)framebuffer;
 #else
     return 0;
