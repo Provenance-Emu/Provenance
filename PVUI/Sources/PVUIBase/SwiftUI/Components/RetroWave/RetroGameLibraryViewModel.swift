@@ -410,8 +410,9 @@ public class RetroGameLibraryViewModel: ObservableObject {
             return cached
         }
 
-        /// Compute sorted games and cache them
-        let sorted = sortGames(Array(games), by: sortOption)
+        /// Compute sorted games and cache them (exclude hidden patch variants).
+        let visible = Array(games).filter { !$0.isHiddenPatchVariant }
+        let sorted = sortGames(visible, by: sortOption)
         cachedSystemGames[systemId] = sorted
         return sorted
     }

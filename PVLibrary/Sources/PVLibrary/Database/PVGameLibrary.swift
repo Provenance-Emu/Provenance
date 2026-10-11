@@ -72,7 +72,8 @@ extension RealmSwift.LinkingObjects where Element: PVGame {
         }
         
         sortDescriptors.append(SortDescriptor(keyPath: #keyPath(PVGame.title), ascending: true))
-        return sorted(by: sortDescriptors)
+        // Hidden patch variants stay out of normal library lists until "Add as separate tile".
+        return filter("isHiddenPatchVariant == false").sorted(by: sortDescriptors)
     }
 }
 

@@ -20,6 +20,7 @@ import PVSettings
 import Combine
 import RealmSwift
 import PVWebServer
+import UniformTypeIdentifiers
 
 struct ConsoleGamesFilterModeFlags: OptionSet {
     let rawValue: Int
@@ -876,7 +877,29 @@ struct ConsoleGamesView: SwiftUI.View {
                         )
                     }
                 }
+                .sheet(isPresented: $gamesViewModel.showPatchManager) {
+                    NavigationStack {
+                        if let game = gamesViewModel.patchManagerGame, !game.isInvalidated {
+                            PatchManagerView(gameMD5: game.md5Hash, gameTitle: game.title)
+                        } else {
+                            Text("Game unavailable")
+                                .padding()
+                        }
+                    }
+                }
                 #if !os(tvOS)
+                .fileImporter(
+                    isPresented: $gamesViewModel.showPatchImportPicker,
+                    allowedContentTypes: [.data, .item],
+                    allowsMultipleSelection: false
+                ) { result in
+                    let game = gamesViewModel.patchImportGame
+                    gamesViewModel.patchImportGame = nil
+                    guard let game, case .success(let urls) = result else { return }
+                    Task { @MainActor in
+                        await handlePatchImport(urls: urls, for: game)
+                    }
+                }
                 .sheet(isPresented: $gamesViewModel.showSaveExportShareSheet, onDismiss: {
                     if let url = gamesViewModel.saveExportURL {
                         SaveExporter.shared.cleanupExport(at: url)

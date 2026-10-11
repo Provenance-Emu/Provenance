@@ -8,16 +8,18 @@
 
 /// PVPatching — ROM patch file support for Provenance.
 ///
-/// Supports applying patches in common formats (IPS, BPS, UPS, xdelta) to ROM files.
-/// Original ROMs are never modified; patched ROMs are cached in the app cache directory.
+/// Supports applying and creating patches in common formats (IPS, BPS, UPS, PPF).
+/// Original ROMs are never modified; patched ROMs are stored under `PatchedROMs/`
+/// with unique filenames so each variant gets isolated battery-save / save-state
+/// directories and resolves through the normal Documents/Caches file roots.
 ///
 /// ## Quick start
 /// ```swift
 /// let applier = PatchApplier()
-/// let patchedURL = try await applier.apply(patchURL: patchURL, to: romURL)
-/// // Launch core with patchedURL
+/// let artifact = try await applier.apply(patchURL: patchURL, to: romURL)
+/// // Launch core with artifact.url / artifact.patchedMD5
 /// ```
 public enum PVPatching {
     /// Module version string.
-    public static let version = "1.0.0"
+    public static let version = "1.1.0"
 }

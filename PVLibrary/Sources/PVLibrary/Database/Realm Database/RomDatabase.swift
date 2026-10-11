@@ -20,7 +20,7 @@ import AsyncAlgorithms
 import PVSystems
 import PVMediaCache
 
-public let schemaVersion: UInt64 = 28
+public let schemaVersion: UInt64 = 29
 
 public enum RomDeletionError: Error {
     case relatedFiledDeletionError
@@ -297,6 +297,35 @@ public final class RealmConfiguration {
             if oldSchemaVersion < 28 {
                 // PVControllerProfile.lightBarColorHex — optional String; Realm defaults new optional fields to nil.
                 ILOG("Migration to version 28 complete. (Added PVControllerProfile.lightBarColorHex)")
+            }
+            if oldSchemaVersion < 29 {
+                // Patch variant support: PVGame patch-variant fields + extended PVPatch metadata.
+                migration.enumerateObjects(ofType: PVGame.className()) { _, newObject in
+                    newObject?["isPatchVariant"] = false
+                    newObject?["baseGameMD5"] = nil
+                    newObject?["patchID"] = nil
+                    newObject?["isHiddenPatchVariant"] = false
+                }
+                migration.enumerateObjects(ofType: PVPatch.className()) { oldObject, newObject in
+                    // Preserve existing game links — never orphan linked patches as pending.
+                    if let linkedGame = oldObject?["game"] as? MigrationObject,
+                       let md5 = linkedGame["md5Hash"] as? String, !md5.isEmpty {
+                        newObject?["baseGameMD5"] = md5
+                        newObject?["matchState"] = "manual"
+                        newObject?["matchConfidenceRaw"] = "exact"
+                        newObject?["matchScore"] = 1.0
+                    } else {
+                        newObject?["baseGameMD5"] = nil
+                        newObject?["matchState"] = "pending"
+                        newObject?["matchConfidenceRaw"] = "none"
+                        newObject?["matchScore"] = 0.0
+                    }
+                    newObject?["hasSourceCRC32"] = false
+                    newObject?["sourceCRC32"] = 0
+                    newObject?["showAsLibraryTile"] = false
+                    newObject?["isDefaultLaunch"] = (oldObject?["isEnabled"] as? Bool) ?? false
+                }
+                ILOG("Migration to version 29 complete. (Patch variants + PVPatch matching metadata)")
             }
         }
 
@@ -1082,6 +1111,10 @@ public extension RomDatabase {
         // --- Cloud Sync Pre-Deletion Hook ---
         // Capture MD5 *before* attempting any local deletion.
         let md5 = game.md5Hash
+        let isPatchVariant = game.isPatchVariant
+        let patchID = game.patchID
+        // Prefer the real on-disk file for variants (PatchedROMs/…); never the ROMs/ path.
+        let variantFileURL = isPatchVariant ? game.file?.url : nil
 
         // Only post notification if the deletion was initiated by the user AND md5 is valid
         if source == .userInitiated {
@@ -1097,7 +1130,6 @@ public extension RomDatabase {
         }
         // --- End Cloud Sync Hook ---
 
-        let romURL = PVEmulatorConfiguration.path(forGame: game)
         if deleteArtwork, !game.customArtworkURL.isEmpty {
             do {
                 try PVMediaCache.deleteImage(forKey: game.customArtworkURL)
@@ -1125,6 +1157,40 @@ public extension RomDatabase {
                 }
             }
         }
+
+        // Patch variants: never call path(forGame:) — that points at ROMs/<system>/<filename>
+        // and can erase the original ROM when stems collide. Delete the patched artifact only.
+        if isPatchVariant {
+#if os(iOS)
+            deleteFromSpotlight(game: game)
+#endif
+            defer { RomDatabase.reloadGamesCache() }
+            deletePatchRecords(linkedToVariantMD5: md5, patchID: patchID)
+            // Orphan cleanup: if no PVPatch owned the row, still remove the PVGame.
+            if let orphan = realm.object(ofType: PVGame.self, forPrimaryKey: md5), !orphan.isInvalidated {
+                do {
+                    try writeTransaction {
+                        orphan.saveStates.forEach { realm.delete($0) }
+                        orphan.cheats.forEach { realm.delete($0) }
+                        orphan.recentPlays.forEach { realm.delete($0) }
+                        orphan.screenShots.forEach { realm.delete($0) }
+                        realm.delete(orphan)
+                    }
+                } catch {
+                    WLOG("Failed to delete orphan patch variant \(md5): \(error.localizedDescription)")
+                }
+            }
+            if let variantFileURL, FileManager.default.fileExists(atPath: variantFileURL.path) {
+                // Only remove files under PatchedROMs / cache — never ROMs/.
+                let path = variantFileURL.path
+                if path.contains("/PatchedROMs/") || path.contains("/PVPatchedROMs/") {
+                    try? FileManager.default.removeItem(at: variantFileURL)
+                }
+            }
+            return
+        }
+
+        let romURL = PVEmulatorConfiguration.path(forGame: game)
         if let romURL = romURL, FileManager.default.fileExists(atPath: romURL.path) {
             do {
                 try FileManager.default.removeItem(at: romURL)
@@ -1143,6 +1209,8 @@ public extension RomDatabase {
             RomDatabase.reloadGamesCache()
         }
         do {
+            // Deleting a base game removes its managed variants/patches (never other ROMs).
+            deletePatchRecords(ownedByBaseGameMD5: md5)
             deleteRelatedFilesGame(game)
             game.saveStates.forEach { try? $0.delete() }
             game.cheats.forEach { try? $0.delete() }
@@ -1155,6 +1223,56 @@ public extension RomDatabase {
                 ELOG("\(error.localizedDescription)")
             }
             ELOG("\(error.localizedDescription)")
+        }
+    }
+
+    /// Delete patch Realm records + variant games for a base ROM. Never deletes the base ROM file.
+    private func deletePatchRecords(ownedByBaseGameMD5 md5: String) {
+        let patches = Array(realm.objects(PVPatch.self).filter("baseGameMD5 == %@", md5))
+        for patch in patches {
+            deleteSinglePatchRecord(patch)
+        }
+    }
+
+    private func deletePatchRecords(linkedToVariantMD5 md5: String, patchID: String?) {
+        if let patchID, let patch = realm.object(ofType: PVPatch.self, forPrimaryKey: patchID) {
+            deleteSinglePatchRecord(patch)
+            return
+        }
+        if let patch = realm.objects(PVPatch.self).filter("variantGameMD5 == %@", md5).first {
+            deleteSinglePatchRecord(patch)
+        }
+    }
+
+    private func deleteSinglePatchRecord(_ patch: PVPatch) {
+        let patchFileURL = patch.file?.url
+        let variant = patch.variantGame
+        // Capture before Realm delete — only remove managed variant artifacts, never base ROMs.
+        let shouldDeleteVariantGame = PatchRepository.shouldDeleteVariantGame(isPatchVariant: variant?.isPatchVariant)
+        let variantFileURL = shouldDeleteVariantGame ? variant?.file?.url : nil
+        do {
+            try writeTransaction {
+                if let variant, !variant.isInvalidated, shouldDeleteVariantGame {
+                    variant.saveStates.forEach { realm.delete($0) }
+                    variant.cheats.forEach { realm.delete($0) }
+                    variant.recentPlays.forEach { realm.delete($0) }
+                    realm.delete(variant)
+                }
+                if !patch.isInvalidated {
+                    realm.delete(patch)
+                }
+            }
+        } catch {
+            WLOG("Failed to delete patch record \(patch.id): \(error.localizedDescription)")
+        }
+        if let patchFileURL, FileManager.default.fileExists(atPath: patchFileURL.path) {
+            try? FileManager.default.removeItem(at: patchFileURL)
+        }
+        if let variantFileURL, FileManager.default.fileExists(atPath: variantFileURL.path) {
+            let path = variantFileURL.path
+            if path.contains("/PatchedROMs/") || path.contains("/PVPatchedROMs/") {
+                try? FileManager.default.removeItem(at: variantFileURL)
+            }
         }
     }
 

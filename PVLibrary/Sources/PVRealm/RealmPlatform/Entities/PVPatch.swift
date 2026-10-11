@@ -12,6 +12,16 @@ import PVLogging
 import PVPrimitives
 import PVPatching
 
+/// How a patch was associated with a base game.
+public enum PVPatchMatchState: String, PersistableEnum, Sendable {
+    /// Imported, waiting for a base ROM or user choice.
+    case pending
+    /// Auto-matched with high confidence.
+    case matched
+    /// Explicitly linked by the user.
+    case manual
+}
+
 /// A Realm-persisted record representing a ROM patch file linked (optionally) to a game.
 @objcMembers
 public final class PVPatch: RealmSwift.Object, Identifiable, Filed, LocalFileProvider {
@@ -20,8 +30,6 @@ public final class PVPatch: RealmSwift.Object, Identifiable, Filed, LocalFilePro
 
     /// Primary key for this patch record.
     /// Derived from `file.partialPath` (relative path) when available — idempotent across re-imports.
-    /// Falls back to the absolute URL path when `partialPath` is empty, and to a random UUID
-    /// only if neither is resolvable (non-idempotent; logged as a warning at import time).
     @Persisted(primaryKey: true) public var id: String = ""
 
     // MARK: - File & Game
@@ -29,8 +37,17 @@ public final class PVPatch: RealmSwift.Object, Identifiable, Filed, LocalFilePro
     /// The on-disk patch file.
     @Persisted public var file: PVFile?
 
-    /// The ROM this patch targets.  May be `nil` if the patch was imported before its ROM.
+    /// The ROM this patch targets. May be `nil` if the patch was imported before its ROM.
     @Persisted public var game: PVGame?
+
+    /// Stable MD5 of the base game (survives temporary unlink / re-import).
+    @Persisted(indexed: true) public var baseGameMD5: String?
+
+    /// Managed variant game that launches the patched ROM with isolated saves/identity.
+    @Persisted public var variantGame: PVGame?
+
+    /// MD5 of the patched ROM artifact (uppercase), once applied.
+    @Persisted public var variantGameMD5: String?
 
     // MARK: - Metadata
 
@@ -52,9 +69,40 @@ public final class PVPatch: RealmSwift.Object, Identifiable, Filed, LocalFilePro
     /// Long-form description of the patch's changes.
     @Persisted public var patchDescription: String?
 
+    /// Expected source ROM CRC32 embedded in the patch (BPS/UPS), if any.
+    @Persisted public var sourceCRC32: Int = 0
+
+    /// Whether `sourceCRC32` is meaningful (0 is a valid CRC).
+    @Persisted public var hasSourceCRC32: Bool = false
+
+    /// SHA-256 of the patch file.
+    @Persisted public var patchSHA256: String?
+
+    /// SHA-256 of the source ROM last used to build the cache artifact.
+    @Persisted public var sourceSHA256: String?
+
+    /// Unique human-readable stem for cache / save directories.
+    @Persisted public var outputStem: String?
+
+    /// Auto-match score (0...1+) from the last ranking pass.
+    @Persisted public var matchScore: Double = 0
+
+    /// Auto-match confidence raw value (`none`/`low`/`medium`/`high`/`exact`).
+    @Persisted public var matchConfidenceRaw: String = PatchMatchConfidence.none.rawValue
+
+    /// Pending / matched / manual.
+    @Persisted public var matchState: PVPatchMatchState = .pending
+
     // MARK: - State
 
+    /// Whether this patch is the default launch choice for its base game.
+    @Persisted public var isDefaultLaunch: Bool = false
+
+    /// Whether a separate library tile should be shown for the variant.
+    @Persisted public var showAsLibraryTile: Bool = false
+
     /// Whether the patch should be applied on the next launch.
+    /// Kept for compatibility; prefer `isDefaultLaunch`.
     @Persisted public var isEnabled: Bool = false
 
     // MARK: - Origin
@@ -64,9 +112,22 @@ public final class PVPatch: RealmSwift.Object, Identifiable, Filed, LocalFilePro
 
     // MARK: - Computed
 
-    /// The strongly-typed patch format, derived from `formatRawValue`.
     public var format: PatchFormat? {
         PatchFormat(rawValue: formatRawValue)
+    }
+
+    public var matchConfidence: PatchMatchConfidence {
+        get { PatchMatchConfidence(rawValue: matchConfidenceRaw) ?? .none }
+        set { matchConfidenceRaw = newValue.rawValue }
+    }
+
+    public var displayTitle: String {
+        if let title, !title.isEmpty { return title }
+        return file?.fileName.deletingPathExtension ?? "Patch"
+    }
+
+    public var sourceCRC32Value: UInt32? {
+        hasSourceCRC32 ? UInt32(bitPattern: Int32(truncatingIfNeeded: sourceCRC32)) : nil
     }
 
     // MARK: - Initialiser
@@ -81,29 +142,24 @@ public final class PVPatch: RealmSwift.Object, Identifiable, Filed, LocalFilePro
         version: String? = nil,
         patchDescription: String? = nil,
         isEnabled: Bool = false,
-        sourceURLString: String? = nil
+        sourceURLString: String? = nil,
+        matchState: PVPatchMatchState = .pending
     ) {
         self.init()
-        // Derive a stable primary key from the file's relative path so that
-        // re-importing the same patch updates the record rather than creating a duplicate.
-        // A non-empty partialPath is ideal for idempotent imports; otherwise, we fall back to
-        // the file's absolute URL path (idempotent per stable destination path), and only use
-        // a random UUID if no path information is available.
         if file.partialPath.isEmpty {
             if let absolutePath = file.url?.path, !absolutePath.isEmpty {
-                WLOG("PVFile.partialPath is empty — using absolute URL path for patch id; imports remain idempotent as long as the destination path stays stable")
+                WLOG("PVFile.partialPath is empty — using absolute URL path for patch id")
             } else {
-                WLOG("PVFile.partialPath and file URL path are unavailable — patch import may not be idempotent; falling back to a random UUID key")
+                WLOG("PVFile.partialPath and file URL path unavailable — falling back to random UUID key")
             }
         }
-        // Use relative path for deterministic, collision-resistant key.
-        // Fall back to URL path (absolute but stable per destination) if partial path is unavailable.
         let stableKey = !file.partialPath.isEmpty
             ? file.partialPath
             : file.url?.path ?? UUID().uuidString
         self.id = stableKey
         self.file = file
         self.game = game
+        self.baseGameMD5 = game?.md5Hash
         self.date = date
         self.formatRawValue = format.rawValue
         self.title = title
@@ -111,6 +167,15 @@ public final class PVPatch: RealmSwift.Object, Identifiable, Filed, LocalFilePro
         self.version = version
         self.patchDescription = patchDescription
         self.isEnabled = isEnabled
+        self.isDefaultLaunch = isEnabled
         self.sourceURLString = sourceURLString
+        self.matchState = game == nil ? matchState : (matchState == .pending ? .manual : matchState)
+        self.outputStem = file.fileName.deletingPathExtension
+    }
+}
+
+private extension String {
+    var deletingPathExtension: String {
+        (self as NSString).deletingPathExtension
     }
 }

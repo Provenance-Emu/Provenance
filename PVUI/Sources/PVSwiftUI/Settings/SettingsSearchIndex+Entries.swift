@@ -54,6 +54,8 @@ extension SettingsSearchIndex {
               .general, SettingsSectionTitle.libraryManagement, keywords: ["battery", "sram", "save file", "restore"]),
         entry("libman.artworkmatcher", "Batch Artwork Matcher", "Find and apply artwork for multiple games at once.",
               .general, SettingsSectionTitle.libraryManagement, keywords: ["cover", "box art", "images", "metadata"]),
+        entry("libman.patches", "Patches", "Manage pending patches, create BPS/IPS files, and link unmatched imports.",
+              .general, SettingsSectionTitle.libraryManagement, keywords: ["ips", "bps", "ups", "rom hack", "translation", "patch"]),
         entry("libman.autonormalize", "Auto-Normalize Titles on Import", "Strip region/revision tags from ROM filenames (e.g. '(USA)', '[!]') when importing.",
               .general, SettingsSectionTitle.libraryManagement, keywords: ["rename", "clean", "region", "names"]),
         entry("libman.unsupportedcores", "Show Unsupported Cores", "Display experimental and unsupported cores.",

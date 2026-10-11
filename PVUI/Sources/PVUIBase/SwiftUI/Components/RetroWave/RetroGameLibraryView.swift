@@ -817,16 +817,18 @@ public struct RetroGameLibraryView: View {
         }
     }
 
-    /// Function to refresh the import queue items
-    // Import queue refresh is now handled by ImportProgressView
+}
 
+// MARK: - Import + Launch + Data Refresh
+
+extension RetroGameLibraryView {
     /// Shows import options alert with document picker and web server options
-    private func showImportOptions() {
+    fileprivate func showImportOptions() {
         showingImportOptionsAlert = true
     }
 
     /// Starts the web server for importing files
-    private func startWebServer() {
+    fileprivate func startWebServer() {
         #if canImport(PVWebServer)
         ILOG("RetroGameLibraryView: Starting web server for imports")
         Task { @MainActor in
@@ -855,7 +857,7 @@ public struct RetroGameLibraryView: View {
         #endif
     }
 
-    private func importFiles(urls: [URL]) {
+    fileprivate func importFiles(urls: [URL]) {
         ILOG("RetroGameLibraryView: Importing \(urls.count) files")
 
         guard let documentsDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first else {
@@ -912,21 +914,19 @@ public struct RetroGameLibraryView: View {
     }
 
     // Launch game
-    private func launchGame(_ game: PVGame) {
+    fileprivate func launchGame(_ game: PVGame) {
         ILOG("RetroGameLibraryView: Launching game: \(game.title) (ID: \(game.id))")
 
         // Use the SceneCoordinator to launch the game
         sceneCoordinator.launchGame(game)
     }
 
-    // MARK: - Data Refresh
-
     /// Debounced entry-point for data refreshes.
     ///
     /// - Parameter debounce: Seconds to wait before issuing the actual refresh.
     ///   Pass `0` for an immediate (but still async) refresh.
     ///   Pass a positive value (e.g. `0.5`) to coalesce rapid notifications.
-    private func scheduleRefresh(debounce seconds: Double) {
+    fileprivate func scheduleRefresh(debounce seconds: Double) {
         importDebounceTask?.cancel()
         importDebounceTask = Task(priority: .userInitiated) {
             if seconds > 0 {
@@ -939,14 +939,14 @@ public struct RetroGameLibraryView: View {
 
     /// Synchronous wrapper kept for call-sites that already run on the main actor
     /// (e.g. `.onAppear`). Schedules an immediate async refresh.
-    private func refreshGameData() {
+    fileprivate func refreshGameData() {
         scheduleRefresh(debounce: 0)
     }
 
     /// Fetches games and systems on a background thread, then publishes results
     /// back to the main actor.  Never blocks the main thread with `Array(Results)`.
     @MainActor
-    private func refreshGameDataAsync() async {
+    fileprivate func refreshGameDataAsync() async {
         DLOG("RetroGameLibraryView: Refreshing game data (async)")
 
         // Fetch and freeze Realm objects so they're safe to access from any thread.
@@ -954,7 +954,10 @@ public struct RetroGameLibraryView: View {
         // and crash with "Realm accessed from incorrect thread".
         let (games, systems) = await Task.detached(priority: .userInitiated) {
             let db = RomDatabase.sharedInstance
-            let g = Array(db.all(PVGame.self,   sortedByKeyPath: "title")).map { $0.freeze() }
+            let g = Array(
+                db.all(PVGame.self, sortedByKeyPath: "title")
+                    .filter("isHiddenPatchVariant == false")
+            ).map { $0.freeze() }
             let s = Array(db.all(PVSystem.self, sortedByKeyPath: "name")).map { $0.freeze() }
             return (g, s)
         }.value
@@ -975,7 +978,7 @@ public struct RetroGameLibraryView: View {
     /// Scans all local ROM files and updates games marked as iCloud-only
     /// that actually have local files present. Fixes race condition between CloudKit
     /// sync and local file scanning.
-    private func scanAndFixAllLocalFileStatus() async {
+    fileprivate func scanAndFixAllLocalFileStatus() async {
         // Step 1: Collect game info on main thread (fast Realm query)
         let gameInfoList: [(md5: String, systemId: String, filenames: [String], title: String)] = await MainActor.run {
             let realm = RomDatabase.sharedInstance.realm

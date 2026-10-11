@@ -8,7 +8,9 @@
 import SwiftUI
 import RealmSwift
 import PVLibrary
+import PVFileSystem
 import PVCoreBridge
+import PVRealm
 import protocol PVUIBase.GameContextMenuDelegate
 import struct PVUIBase.GameContextMenu
 import struct PVUIBase.DownloadProgress
@@ -307,6 +309,55 @@ extension ConsoleGamesView: GameContextMenuDelegate {
         Task {
             await gamesViewModel.presentDiscSelectionAlert(for: frozenGame, rootDelegate: rootDelegate)
         }
+    }
+
+    func gameContextMenu(_ menu: GameContextMenu, didRequestPlayOriginalFor game: PVGame) {
+        guard !game.isInvalidated else { return }
+        SceneCoordinator.shared.launchOriginalGame(game.isFrozen ? game : game.freeze())
+    }
+
+    func gameContextMenu(_ menu: GameContextMenu, didRequestPlayPatch patch: PVPatch, for game: PVGame) {
+        guard !patch.isInvalidated else { return }
+        SceneCoordinator.shared.launchPatch(patch.isFrozen ? patch : patch.freeze())
+    }
+
+    func gameContextMenu(_ menu: GameContextMenu, didRequestImportPatchFor game: PVGame) {
+        guard !game.isInvalidated else { return }
+        gamesViewModel.patchImportGame = game.isFrozen ? game : game.freeze()
+        gamesViewModel.showPatchImportPicker = true
+    }
+
+    func gameContextMenu(_ menu: GameContextMenu, didRequestManagePatchesFor game: PVGame) {
+        guard !game.isInvalidated else { return }
+        gamesViewModel.patchManagerGame = game.isFrozen ? game : game.freeze()
+        gamesViewModel.showPatchManager = true
+    }
+
+    @MainActor
+    func handlePatchImport(urls: [URL], for game: PVGame) async {
+        guard let fileURL = urls.first else { return }
+        let accessed = fileURL.startAccessingSecurityScopedResource()
+        defer { if accessed { fileURL.stopAccessingSecurityScopedResource() } }
+        do {
+            let dest = try Self.copyPatchIntoLibrary(fileURL)
+            _ = try await PatchRepository.shared.importPatch(at: dest, preferredGame: game, autoMatch: false)
+            rootDelegate?.showMessage("Imported patch for \(game.title).", title: "Patch Imported")
+        } catch {
+            rootDelegate?.showMessage("Patch import failed: \(error.localizedDescription)", title: "Import Error")
+        }
+    }
+
+    private static func copyPatchIntoLibrary(_ url: URL) throws -> URL {
+        let dir = Paths.patchesPath
+        try FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true)
+        var dest = dir.appendingPathComponent(url.lastPathComponent)
+        if FileManager.default.fileExists(atPath: dest.path) {
+            let stem = dest.deletingPathExtension().lastPathComponent
+            let ext = dest.pathExtension
+            dest = dir.appendingPathComponent("\(stem)-\(UUID().uuidString.prefix(8)).\(ext)")
+        }
+        try FileManager.default.copyItem(at: url, to: dest)
+        return dest
     }
 
     func gameContextMenu(_ menu: GameContextMenu, didRequestSkinSelectionFor game: PVGame) {

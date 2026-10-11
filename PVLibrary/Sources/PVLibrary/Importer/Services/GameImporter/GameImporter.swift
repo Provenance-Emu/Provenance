@@ -3170,34 +3170,17 @@ public final class GameImporter: GameImporting, ObservableObject {
         ILOG("Deleted original archive after extraction: \(archiveURL.lastPathComponent)")
     }
 
-    /// Imports a ROM patch file by creating a `PVPatch` Realm record for it.
+    /// Imports a ROM patch file via `PatchRepository` (match, variant, idempotent re-import).
     /// The file must already have been moved to its destination before calling this method.
-    /// Full patch application is handled by PatchImporter (TODO #2676).
     private func importPatchFile(_ item: ImportQueueItem) async throws {
-        // Use the destination URL set by moveImportItem, falling back to the original URL.
         let url = item.destinationUrl ?? item.url
-        guard let format = PatchFormat.detect(from: url) else {
+        guard PatchFormat.detect(from: url) != nil else {
             ELOG("Cannot determine patch format for \(url.lastPathComponent)")
             throw GameImporterError.unsupportedFile
         }
-        ILOG("Importing patch file \(url.lastPathComponent) as format: \(format.rawValue)")
-
-        // Realm objects must be created and written on the same thread.
-        // Run on MainActor to use the main-thread Realm instance safely.
-        let title = url.deletingPathExtension().lastPathComponent
-        try await MainActor.run {
-            let pvFile = PVFile(withURL: url)
-            let patch = PVPatch(
-                file: pvFile,
-                game: nil,
-                date: Date(),
-                format: format,
-                title: title
-            )
-            let database = RomDatabase.sharedInstance
-            try database.add(patch, update: true)
-        }
-        ILOG("Saved PVPatch record for \(url.lastPathComponent)")
+        ILOG("Importing patch file \(url.lastPathComponent)")
+        let patch = try await PatchRepository.shared.importPatch(at: url, preferredGame: nil, autoMatch: true)
+        ILOG("Imported patch \(patch.displayTitle) (matchState=\(patch.matchState.rawValue))")
     }
 
     private func performImport(for item: ImportQueueItem) async throws {
@@ -3378,8 +3361,7 @@ public final class GameImporter: GameImporting, ObservableObject {
             return
         }
 
-        // Handle patch files — move to Patches dir, then store in Realm.
-        // Full patch application is deferred to PatchImporter (TODO #2676).
+        // Handle patch files — move to Patches dir, then import/match via PatchRepository.
         if item.fileType == .patch {
             ILOG("Processing as ROM patch file: \(fileName)")
             do {
@@ -3530,6 +3512,8 @@ public final class GameImporter: GameImporting, ObservableObject {
                 try await gameImporterDatabaseService.importGameIntoDatabase(queueItem: item)
                 let dbDuration = Date().timeIntervalSince(dbStartTime)
                 ILOG("Successfully imported game \(fileName) into database in \(String(format: "%.2f", dbDuration))s")
+                // A newly imported ROM may unlock previously unmatched patches.
+                await PatchRepository.shared.rematchPendingPatches()
             }
         } catch {
             ELOG("Failed to import \(item.url.lastPathComponent) into database: \(error.localizedDescription)")

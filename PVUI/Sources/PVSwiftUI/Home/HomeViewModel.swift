@@ -82,8 +82,9 @@ final class HomeViewModel: ObservableObject {
                 let realm = try Realm()
                 self.modelsRealm = realm
 
-                // All games
+                // All games (exclude hidden patch variants until "Add as separate tile")
                 let allGames = realm.objects(PVGame.self)
+                    .filter("isHiddenPatchVariant == false")
                 self.allGamesToken = allGames.observe(
                     keyPaths: GameCellModel.observedKeyPaths,
                     on: self.modelsQueue
@@ -103,7 +104,7 @@ final class HomeViewModel: ObservableObject {
 
                 // Favorites
                 let favorites = realm.objects(PVGame.self)
-                    .filter("isFavorite == true")
+                    .filter("isFavorite == true AND isHiddenPatchVariant == false")
                 self.favoritesToken = favorites.observe(
                     keyPaths: GameCellModel.observedKeyPaths,
                     on: self.modelsQueue
@@ -123,7 +124,7 @@ final class HomeViewModel: ObservableObject {
 
                 // Most played
                 let mostPlayed = realm.objects(PVGame.self)
-                    .filter("playCount > 0")
+                    .filter("playCount > 0 AND isHiddenPatchVariant == false")
                 self.mostPlayedToken = mostPlayed.observe(
                     keyPaths: GameCellModel.observedKeyPaths,
                     on: self.modelsQueue

@@ -2757,6 +2757,15 @@ private struct LibrarySection2: View {
             .retroFocusButtonStyle(showBorder: false)
             #endif
 
+            NavigationLink(destination: PendingPatchesView()) {
+                SettingsRow(title: "Patches",
+                            subtitle: "Manage pending patches, create BPS/IPS files, and link unmatched imports.",
+                            icon: .sfSymbol("bandage"))
+            }
+            #if os(tvOS)
+            .retroFocusButtonStyle(showBorder: false)
+            #endif
+
             ThemedToggle(isOn: $autoNormalizeROMTitles) {
                 SettingsRow(title: "Auto-Normalize Titles on Import",
                             subtitle: "Strip region/revision tags from ROM filenames (e.g. '(USA)', '[!]') when importing.",

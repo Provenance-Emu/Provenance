@@ -10,25 +10,7 @@ import Foundation
 
 // MARK: - VLI / CRC helpers
 
-/// Encode an integer as a BPS/UPS variable-length integer.
-///
-/// Encoding mirrors the `readVLI` decode algorithm used by the patchers.
-/// Single-byte form: `0x80 | value` for value ∈ 0…127.
-/// Multi-byte form:  emit `value & 0x7F`, subtract 128, shift right 7, repeat.
-func encodeVLI(_ n: Int) -> [UInt8] {
-    var bytes: [UInt8] = []
-    var value = n
-    while true {
-        if value <= 127 {
-            bytes.append(UInt8(0x80 | value))
-            break
-        } else {
-            bytes.append(UInt8(value & 0x7F))
-            value = (value - 128) >> 7
-        }
-    }
-    return bytes
-}
+// `encodeVLI` lives in PVPatching (PatcherUtilities) and is available via `@testable import`.
 
 /// Write a UInt32 as 4 bytes little-endian.
 func le32(_ value: UInt32) -> [UInt8] {

@@ -77,8 +77,23 @@ public final class PVGame: RealmSwift.Object, Identifiable, PVGameLibraryEntry {
 
     @Persisted public var contentless: Bool = false
 
+    /// True when this game is a patched variant of another ROM (isolated identity).
+    @Persisted(indexed: true) public var isPatchVariant: Bool = false
+
+    /// MD5 of the original/base game when `isPatchVariant` is true.
+    @Persisted(indexed: true) public var baseGameMD5: String?
+
+    /// Primary key of the owning `PVPatch` when this game is a patch variant.
+    @Persisted public var patchID: String?
+
+    /// Hidden patch variants stay out of normal library queries until the user
+    /// chooses "Add as separate tile".
+    @Persisted(indexed: true) public var isHiddenPatchVariant: Bool = false
+
     /* Links to other objects */
     @Persisted(originProperty: "game") public var saveStates: LinkingObjects<PVSaveState>
+    @Persisted(originProperty: "game") public var patches: LinkingObjects<PVPatch>
+    @Persisted(originProperty: "variantGame") public var variantOfPatches: LinkingObjects<PVPatch>
     @Persisted(originProperty: "game") public var cheats: LinkingObjects<PVCheats>
     @Persisted(originProperty: "game") public var recentPlays: LinkingObjects<PVRecentGame>
     @Persisted public private(set) var screenShots: List<PVImageFile>
