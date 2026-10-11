@@ -234,6 +234,16 @@ let package = Package(
             name: "LibretroCheatDBTests",
             dependencies: ["LibretroCheatDB", "PVLogging"]
         ),
+
+        // MARK: PVSQLiteDatabase tests
+
+        .testTarget(
+            name: "PVSQLiteDatabaseTests",
+            dependencies: [
+                "PVSQLiteDatabase",
+                .product(name: "ZIPFoundation", package: "ZIPFoundation")
+            ]
+        ),
     ],
     swiftLanguageModes: [.v5, .v6],
     cLanguageStandard: .gnu18,
