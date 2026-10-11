@@ -106,12 +106,20 @@ public enum N64PakStore {
         let value: Int?
         if let md5 = gameMD5, !md5.isEmpty {
             let md5Key = "\(className).\(md5).\(optionKey)"
-            value = UserDefaults.standard.object(forKey: md5Key) as? Int
-                ?? UserDefaults.standard.object(forKey: "\(className).\(optionKey)") as? Int
+            value = intValue(forKey: md5Key)
+                ?? intValue(forKey: "\(className).\(optionKey)")
         } else {
-            value = UserDefaults.standard.object(forKey: "\(className).\(optionKey)") as? Int
+            value = intValue(forKey: "\(className).\(optionKey)")
         }
         return N64PakType(rawValue: value ?? 0) ?? .auto
+    }
+
+    /// UserDefaults bridges integers as `NSNumber`; plain `as? Int` misses that on tvOS.
+    private static func intValue(forKey key: String) -> Int? {
+        let object = UserDefaults.standard.object(forKey: key)
+        if let value = object as? Int { return value }
+        if let number = object as? NSNumber { return number.intValue }
+        return nil
     }
 
     /// Stores the pak type for the given 1-based port.

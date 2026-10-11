@@ -203,15 +203,18 @@ struct CoreOptionValueStoreTests {
 
     @Test("Adjusting steps a value and stops at either end")
     func adjust() {
+        ListMockCore.wipe()
         global.adjust(ListMockCore.region, direction: 1)
         #expect(global.int(ListMockCore.region) == 10)
         global.adjust(ListMockCore.region, direction: -1)
         global.adjust(ListMockCore.region, direction: -1)
         #expect(global.int(ListMockCore.region) == 0)
 
+        global.set(5, for: ListMockCore.volume)
         for _ in 0..<20 { global.adjust(ListMockCore.volume, direction: 1) }
         #expect(global.int(ListMockCore.volume) == 10)
 
+        global.set(false, for: ListMockCore.frameskip)
         global.adjust(ListMockCore.frameskip, direction: 1)
         #expect(global.bool(ListMockCore.frameskip))
         global.adjust(ListMockCore.frameskip, direction: -1)
