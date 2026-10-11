@@ -30,6 +30,8 @@ final class PVWebFileEventObserverTests: XCTestCase {
             objectTypes: [PVGame.self, PVSaveState.self, PVBIOS.self,
                           PVSystem.self, PVCore.self, PVFile.self,
                           PVImageFile.self, PVRecentGame.self, PVCheats.self,
+                          // PVGame.patches / variantOfPatches link here.
+                          PVPatch.self,
                           // PVGame.libraries links here. Qualified: `PVLibrary`
                           // alone names the module.
                           PVRealm.PVLibrary.self]

@@ -79,11 +79,16 @@ public extension GameContextMenuDelegate {
     }
 
     func gameContextMenu(_ menu: GameContextMenu, didRequestPlayOriginalFor game: PVGame) {
-        SceneCoordinator.shared.launchOriginalGame(game)
+        // Context menu callbacks always arrive on the main thread.
+        MainActor.assumeIsolated {
+            SceneCoordinator.shared.launchOriginalGame(game)
+        }
     }
 
     func gameContextMenu(_ menu: GameContextMenu, didRequestPlayPatch patch: PVPatch, for game: PVGame) {
-        SceneCoordinator.shared.launchPatch(patch)
+        MainActor.assumeIsolated {
+            SceneCoordinator.shared.launchPatch(patch)
+        }
     }
 
     func gameContextMenu(_ menu: GameContextMenu, didRequestImportPatchFor game: PVGame) {

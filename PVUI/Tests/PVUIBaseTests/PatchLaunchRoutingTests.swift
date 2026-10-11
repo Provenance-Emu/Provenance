@@ -18,7 +18,8 @@ struct PatchLaunchRoutingTests {
         gate.cancel()
         let second = gate.begin()
         #expect(gate.ownerID == second)
-        #expect(gate.finish(second))
+        let finishedSecond = gate.finish(second)
+        #expect(finishedSecond)
         #expect(gate.ownerID == nil)
     }
 
@@ -29,8 +30,10 @@ struct PatchLaunchRoutingTests {
         // finish of a stale id must not clear the new owner.
         gate.cancel()
         let replacement = gate.begin()
-        #expect(!gate.finish(owner))
+        let finishedStale = gate.finish(owner)
+        #expect(!finishedStale)
         #expect(gate.ownerID == replacement)
-        #expect(gate.finish(replacement))
+        let finishedReplacement = gate.finish(replacement)
+        #expect(finishedReplacement)
     }
 }
