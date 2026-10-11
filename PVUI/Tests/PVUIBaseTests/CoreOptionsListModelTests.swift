@@ -221,7 +221,9 @@ struct CoreOptionValueStoreTests {
 
     @Test("A choice saved as a legacy index still resolves")
     func legacyMultiIndex() {
+        ListMockCore.wipe()
         ListMockCore.setValue(2, forOption: ListMockCore.resolution, andMD5: nil)
+        #expect(global.multiIndex(ListMockCore.resolution) == 2)
         #expect(global.displayValue(ListMockCore.resolution) == "Quad (4x)")
         ListMockCore.wipe()
     }
