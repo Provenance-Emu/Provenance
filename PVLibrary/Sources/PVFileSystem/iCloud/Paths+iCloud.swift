@@ -54,12 +54,6 @@ public extension URL {
         return iCloudContainerDirectory != nil
     }
 
-    /// This should be called on a background thread
-    static var documentsiCloudOrLocalPath: URL { get {
-        if Defaults[.iCloudSync] && Defaults[.iCloudSyncMode].isICloudDrive {
-            return iCloudDocumentsDirectory ?? documentsPath
-        } else {
-            return documentsPath
-        }
-    }}
+    /// The library root: see `LibraryLocation`. This should be called on a background thread.
+    static var documentsiCloudOrLocalPath: URL { LibraryLocation.current.rootURL }
 }

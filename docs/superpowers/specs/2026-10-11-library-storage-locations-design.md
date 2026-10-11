@@ -82,12 +82,41 @@ A shared folder needs a layout every app agrees on:
 
 ## Data model
 
-- `PVFile` stores `partialPath` plus a `relativeRoot` (`documents`, `caches`, `iCloud`). Add a `library` root that resolves to the active library location (App storage, iCloud Drive or the picked folder). Records then survive a move unchanged, and only the root's resolution changes.
-  - This is the key simplification: a move copies files and flips one setting. It doesn't rewrite every record.
-  - One-time migration: records under `documents` or `iCloud` whose path starts with `ROMs/`, `BIOS/` or `System/` (and, when saves follow, `Save States/`, `Battery States/` or `Screenshots/`) become `library`.
-- A new setting, `libraryLocation`, takes the values `.appStorage`, `.iCloudDrive`, `.pickedFolder` and `.appGroup` (`.appGroup` is legacy and not selectable). It replaces reading `useAppGroups` and the iCloud Drive mode for paths. The iCloud Drive mode setting keeps meaning "sync method" for CloudKit.
-- The bookmark is stored in the app's own defaults, not shared, along with a display name for the settings UI.
-- `Paths.romsPath`, `biosesPath` and the rest go through one `LibraryLocation.root` instead of `documentsiCloudOrLocalPath`.
+*Revised 2026-10-11 while building phase 1. The first draft added a `library` value to `PVFile.relativeRoot` and migrated every record to it. That was dropped for two reasons:*
+- *Records don't resolve by their root. `PVFile.url` sends the stored `partialPath` (`ROMs/com.provenance.snes/Game.sfc`) to `FileLocationResolver.bestURL(for:)`, which searches the storage roots. A move therefore needs no record rewrite.*
+- *A new raw value would crash older builds. `relativeRoot` force-unwraps `RelativeRoot(rawValue:)`, so a TestFlight downgrade reading the new value would crash.*
+
+- **`LibraryLocation` (PVFileSystem) is the one place that decides the library root.** It has three values: `.appStorage`, `.appGroup` (legacy), and `.iCloudDrive`. Phase 3 adds `.pickedFolder`.
+  - `LibraryLocation.current.rootURL` backs `URL.documentsiCloudOrLocalPath`, so it also backs every `Paths` library accessor (`romsPath`, `biosesPath`, `saveSavesPath`, …).
+- **Two roots, kept apart:**
+  - The **app-files root** is `URL.documentsPath`: Imports, core configs, and the resolver's `localBaseURL`. It stays per app.
+  - The **library root** is `LibraryLocation.current.rootURL`.
+  - The two already differ today, for example with `useAppGroups` and iCloud Drive both on.
+- **Phase 1 doesn't store the location.** It derives it from today's settings, so it can't disagree with them:
+  - iCloud sync on and iCloud Drive mode → `.iCloudDrive`;
+  - otherwise `useAppGroups` → `.appGroup`;
+  - otherwise `.appStorage`;
+  - on tvOS, always `.appStorage`.
+
+  A stored `libraryLocation` setting arrives with the move engine, which then owns switching, and replaces those reads.
+- **Phase 3 picked folder:** the bookmark is stored in the app's own defaults, not shared, along with a display name for the settings UI.
+
+### Root computations not yet routed through `LibraryLocation` (phase 3 work)
+
+- **`FileLocationResolver`** searches local, then iCloud Drive whenever the *mode* is iCloud Drive, even with iCloud sync off. It needs a picked-folder root in its search order.
+- **`PVFile.realPath`** appends the partial path to the raw ubiquity container, without `/Documents`. Check its callers.
+- **`PVFile.url`**'s special case for paths containing "iCloud" or "private".
+- **`RelativeRoot.createRelativePath(fromURL:)`** pattern-matches `"Documents/"` and the like. A picked iCloud Drive folder (`…/Mobile Documents/com~apple~CloudDocs/MyLib/ROMs/x`) would match inside "Mobile Documents/" and store a wrong partial path. Before any pattern matching, strip the active library root. Today's outputs for Documents, App Group, iCloud and tvOS Caches URLs are pinned in `LibraryLocationTests`.
+- **Other sites:**
+  - `iCloudDriveSync`
+  - `Container.documentsURL`
+  - `LegacyFileMover` (compares `documentsPath` with the library root)
+  - `PVGameLibrary+Migration.oldPaths`, which phase 2 retires
+  - `GameFileStatusService`
+  - `WidgetDataWriter+Realm`
+  - `AppGroupFileBrowserView`
+  - `CloudSyncStatusView`
+  - `FeatureFlagsDebugView`
 
 ## Moving between locations
 
@@ -95,7 +124,7 @@ Use one move engine for every pair of locations, including leaving the App Group
 
 1. **Plan.** List the files that move. Check free space at the destination; for iCloud sources, count files that are only in the cloud and download them first.
 2. **Copy.** Copy into the destination, verifying size (and MD5 for ROMs, which the library already has). The copy runs in the background with progress UI and can be resumed: write a journal file `move-journal.json` in Application Support listing what's done.
-3. **Switch.** In one step: set `libraryLocation` to the destination and run the `relativeRoot` migration above if it hasn't run. The library now reads from the destination.
+3. **Switch.** Set `libraryLocation` to the destination. Records keep their partial paths, so nothing in the database is rewritten; the library now resolves against the new root.
 4. **Clean up.** Delete the source files only after a successful switch, and only files the journal recorded as copied. An option: "Keep a copy in the old location".
 5. **Conflicts.** If a file of the same name already exists with a different hash, rename the incoming file and put it in `Conflicts/`, as today.
 
@@ -142,7 +171,7 @@ Settings › Library › Storage location:
 
 ## Suggested phasing
 
-1. `LibraryLocation` + the `library` relative root + migrating existing records. No UI; behaviour unchanged.
+1. `LibraryLocation` as the single source of the library root, derived from today's settings; `Paths` routed through it; today's stored partial paths pinned by tests. No UI; behaviour unchanged. **Done.**
 2. The move engine (journal, verify, switch) with tests, starting with App Group → App storage, which retires `oldPaths`.
 3. The picked-folder location, folder picker, bookmark lifecycle, failure UI.
 4. The shared-library manifest, joining with de-duplication, and the rescan triggers.
