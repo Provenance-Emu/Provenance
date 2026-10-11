@@ -256,9 +256,8 @@ struct CoreOptionValueStoreTests {
 @Suite("CoreOptionTileProvider grouping", .serialized)
 struct CoreOptionTileGroupingTests {
 
-    init() {
-        ListMockCore.wipe()
-    }
+    // Do not wipe ListMockCore UserDefaults here — that races the serialized
+    // CoreOptionValueStore suite when Swift Testing runs suites in parallel.
 
     @Test("Options keep their categories; range options have no cell")
     func groups() {
