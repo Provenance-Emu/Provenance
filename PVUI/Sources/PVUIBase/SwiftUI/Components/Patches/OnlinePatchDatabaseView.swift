@@ -64,7 +64,7 @@ public struct OnlinePatchDatabaseView: View {
             SafariWebView(url: item.url)
         }
 #endif
-        .onChange(of: selectedResult?.id) { newID in
+        .onChange(of: selectedResult?.id) { _, newID in
             guard newID != nil else { return }
             // Fresh detail presentation — clear prior import match chrome.
             lastImportedMatchTitle = nil
@@ -99,13 +99,13 @@ public struct OnlinePatchDatabaseView: View {
     // MARK: - Opt-in
 
     private var optInContent: some View {
-        List {
-            Section {
+        SwiftUI.List {
+            SwiftUI.Section {
                 Text("Search RomHacking.net for fan translations, hacks, and bug fixes. Downloads are imported as local patches and matched to your library.")
                     .font(.footnote)
                     .foregroundStyle(.secondary)
             }
-            Section("Privacy") {
+            SwiftUI.Section("Privacy") {
                 Text("This feature is off by default. Enabling it lets Provenance query a search index and optionally open RomHacking.net pages. No account is created and no library contents are uploaded.")
                     .font(.footnote)
                 Button("Enable Online Patch Search") {
@@ -113,7 +113,7 @@ public struct OnlinePatchDatabaseView: View {
                 }
                 .buttonStyle(.borderedProminent)
             }
-            Section {
+            SwiftUI.Section {
                 Button("Open RomHacking.net in Browser") {
                     if let url = URL(string: "https://www.romhacking.net/") {
                         openSafari(url)
@@ -126,8 +126,8 @@ public struct OnlinePatchDatabaseView: View {
     // MARK: - Search
 
     private var searchContent: some View {
-        List {
-            Section {
+        SwiftUI.List {
+            SwiftUI.Section {
                 TextField("Search patches…", text: $query)
 #if os(iOS)
                     .textInputAutocapitalization(.never)
@@ -135,7 +135,7 @@ public struct OnlinePatchDatabaseView: View {
 #endif
                 Picker("Type", selection: $category) {
                     Text("Any").tag(Optional<OnlinePatchCategory>.none)
-                    ForEach([OnlinePatchCategory.translation, .hack, .improvement, .bugfix, .patch]) { item in
+                    SwiftUI.ForEach([OnlinePatchCategory.translation, .hack, .improvement, .bugfix, .patch]) { item in
                         Text(item.displayName).tag(Optional(item))
                     }
                 }
@@ -168,19 +168,19 @@ public struct OnlinePatchDatabaseView: View {
             }
 
             if let statusMessage {
-                Section {
+                SwiftUI.Section {
                     Text(statusMessage)
                         .font(.footnote)
                         .foregroundStyle(.secondary)
                 }
             }
 
-            Section("Results") {
+            SwiftUI.Section("Results") {
                 if results.isEmpty {
                     Text(isSearching ? "Searching…" : "No results yet.")
                         .foregroundStyle(.secondary)
                 } else {
-                    ForEach(results) { result in
+                    SwiftUI.ForEach(results) { result in
                         Button {
                             selectedResult = result
                         } label: {
@@ -208,7 +208,7 @@ public struct OnlinePatchDatabaseView: View {
                 }
             }
 
-            Section {
+            SwiftUI.Section {
                 ThemedToggle(isOn: $enabled) {
                     Text("Online patch search enabled")
                 }
@@ -312,8 +312,8 @@ private struct OnlinePatchDetailView: View {
 
     var body: some View {
         NavigationStack {
-            List {
-                Section("Listing") {
+            SwiftUI.List {
+                SwiftUI.Section("Listing") {
                     Text(result.title).font(.headline)
                     detailRow("Type", result.category.displayName)
                     if let author = info?.author ?? result.author {
@@ -331,14 +331,14 @@ private struct OnlinePatchDetailView: View {
                 }
 
                 if let description = info?.patchDescription ?? result.snippet {
-                    Section("Description") {
+                    SwiftUI.Section("Description") {
                         Text(description)
                             .font(.footnote)
                     }
                 }
 
                 if let loadError {
-                    Section {
+                    SwiftUI.Section {
                         Text(loadError)
                             .font(.footnote)
                             .foregroundStyle(.secondary)
@@ -346,14 +346,14 @@ private struct OnlinePatchDetailView: View {
                 }
 
                 if let statusMessage {
-                    Section {
+                    SwiftUI.Section {
                         Text(statusMessage)
                             .font(.footnote)
                             .foregroundStyle(.secondary)
                     }
                 }
 
-                Section {
+                SwiftUI.Section {
                     Button("Open Page in Safari", action: onOpenSafari)
                     Button {
                         onDownload()

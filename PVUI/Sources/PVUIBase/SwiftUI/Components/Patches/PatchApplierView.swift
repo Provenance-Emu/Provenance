@@ -47,8 +47,8 @@ public struct PatchApplierView: View {
     }
 
     public var body: some View {
-        Form {
-            Section("Patch File") {
+        SwiftUI.Form {
+            SwiftUI.Section("Patch File") {
                 Button(patchURL?.lastPathComponent ?? "Choose Patch File…") {
                     pickerTarget = .patch
                     showFilePicker = true
@@ -71,7 +71,7 @@ public struct PatchApplierView: View {
                 }
             }
 
-            Section("Target ROM") {
+            SwiftUI.Section("Target ROM") {
                 Picker("Library game", selection: Binding(
                     get: { selectedGameMD5 ?? "" },
                     set: { newValue in
@@ -84,7 +84,7 @@ public struct PatchApplierView: View {
                     }
                 )) {
                     Text("None — pick from Files").tag("")
-                    ForEach(games, id: \.md5Hash) { game in
+                    SwiftUI.ForEach(games, id: \.md5Hash) { game in
                         Text(game.title).tag(game.md5Hash)
                     }
                 }
@@ -97,7 +97,7 @@ public struct PatchApplierView: View {
             }
 
             if let crcValidation {
-                Section("Validation") {
+                SwiftUI.Section("Validation") {
                     Text(crcValidation.userMessage)
                         .font(.footnote)
                         .foregroundStyle(crcValidation.isMismatch ? .orange : .secondary)
@@ -107,7 +107,7 @@ public struct PatchApplierView: View {
                 }
             }
 
-            Section("Output") {
+            SwiftUI.Section("Output") {
                 Toggle("Import patch into library after apply", isOn: $importToLibrary)
                 Text("Patched ROM is written to Documents/PatchedROMs/.")
                     .font(.caption)
@@ -120,7 +120,7 @@ public struct PatchApplierView: View {
             }
 
             if isBusy {
-                Section {
+                SwiftUI.Section {
                     ProgressView(value: progressFraction) {
                         Text(progressStatus.isEmpty ? "Working…" : progressStatus)
                             .font(.footnote)
@@ -129,14 +129,14 @@ public struct PatchApplierView: View {
             }
 
             if let statusMessage {
-                Section {
+                SwiftUI.Section {
                     Text(statusMessage)
                         .font(.footnote)
                         .foregroundStyle(.secondary)
                 }
             }
 
-            Section {
+            SwiftUI.Section {
                 Button {
                     Task { await apply() }
                 } label: {
@@ -145,7 +145,7 @@ public struct PatchApplierView: View {
                 .disabled(isBusy || patchURL == nil || romURL == nil)
             }
 
-            Section("More") {
+            SwiftUI.Section("More") {
                 NavigationLink {
                     BatchPatchApplierView()
                 } label: {
@@ -206,7 +206,7 @@ public struct PatchApplierView: View {
 
     private func loadGames() {
         let realm = RomDatabase.sharedInstance.realm
-        games = Array(
+        games = Swift.Array(
             realm.objects(PVGame.self)
                 .filter("isPatchVariant == false AND contentless == false")
                 .sorted(byKeyPath: "title")
@@ -314,8 +314,8 @@ public struct BatchPatchApplierView: View {
     public init() {}
 
     public var body: some View {
-        Form {
-            Section("Patch Folder") {
+        SwiftUI.Form {
+            SwiftUI.Section("Patch Folder") {
 #if !os(tvOS)
                 Button(folderURL?.lastPathComponent ?? "Choose Folder of Patches…") {
                     showFolderPicker = true
@@ -330,13 +330,13 @@ public struct BatchPatchApplierView: View {
                 .disabled(isBusy || folderURL == nil)
             }
 
-            Section {
+            SwiftUI.Section {
                 Toggle("Allow CRC mismatches", isOn: $allowCRCMismatch)
             }
 
             if !jobs.isEmpty {
-                Section("Matched Jobs (\(jobs.count))") {
-                    ForEach(jobs) { job in
+                SwiftUI.Section("Matched Jobs (\(jobs.count))") {
+                    SwiftUI.ForEach(jobs) { job in
                         VStack(alignment: .leading, spacing: 2) {
                             Text(job.patchURL.lastPathComponent).font(.headline)
                             Text("→ \(job.romTitle) (\(job.confidence.rawValue))")
@@ -353,7 +353,7 @@ public struct BatchPatchApplierView: View {
             }
 
             if isBusy {
-                Section {
+                SwiftUI.Section {
                     ProgressView(value: progressFraction) {
                         Text(progressStatus.isEmpty ? "Working…" : progressStatus)
                             .font(.footnote)
@@ -362,14 +362,15 @@ public struct BatchPatchApplierView: View {
             }
 
             if let statusMessage {
-                Section {
+                SwiftUI.Section {
                     Text(statusMessage).font(.footnote).foregroundStyle(.secondary)
                 }
             }
 
             if !results.isEmpty {
-                Section("Results") {
-                    ForEach(Array(results.enumerated()), id: \.offset) { _, result in
+                SwiftUI.Section("Results") {
+                    SwiftUI.ForEach(results.indices, id: \.self) { index in
+                        let result = results[index]
                         VStack(alignment: .leading, spacing: 2) {
                             Text(result.patchURL.lastPathComponent)
                                 .font(.subheadline)
@@ -381,7 +382,7 @@ public struct BatchPatchApplierView: View {
                 }
             }
 
-            Section {
+            SwiftUI.Section {
                 Button {
                     Task { await run() }
                 } label: {
@@ -390,11 +391,11 @@ public struct BatchPatchApplierView: View {
                 .disabled(isBusy || jobs.isEmpty)
             }
 
-            Section("ROM Tools") {
+            SwiftUI.Section("ROM Tools") {
                 Text("Batch apply uses the shared ROMToolOperation foundation. Future converters (e.g. CHD) will appear here.")
                     .font(.caption)
                     .foregroundStyle(.secondary)
-                ForEach(ROMToolRegistry.default.operations, id: \.id) { tool in
+                SwiftUI.ForEach(ROMToolRegistry.default.operations, id: \.id) { tool in
                     Text(tool.displayName)
                         .font(.footnote)
                 }

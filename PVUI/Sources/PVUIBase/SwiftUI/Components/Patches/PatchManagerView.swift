@@ -47,7 +47,7 @@ public struct PatchManagerView: View {
                 }
             } else {
                 SwiftUI.Section("Installed Patches") {
-                    ForEach(patches, id: \.id) { patch in
+                    SwiftUI.ForEach(patches, id: \.id) { patch in
                         PatchRowView(
                             patch: patch,
                             isBusy: isBusy,
