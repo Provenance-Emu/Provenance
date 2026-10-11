@@ -1550,7 +1550,7 @@ extension GameLaunchingViewController where Self: UIViewController {
         let saveState : PVSaveState? = await Task {
             for save in saves {
                 if let path = await save.file?.url?.path,
-                   !foundSave && FileManager.default.fileExists(atPath: path) && save.core.identifier == core.identifier {
+                   !foundSave && FileManager.default.fileExists(atPath: path) && save.core?.identifier == core.identifier {
                     foundSave = true
                     return save
                 }

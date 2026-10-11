@@ -96,7 +96,7 @@ final class PVSaveStateInfoViewController: UIViewController, GameLaunchingViewCo
 
         nameLabel.text = saveState.game.title
         systemLabel.text = saveState.game.system?.name ?? ""
-        coreLabel.text = saveState.core.projectName
+        coreLabel.text = saveState.core?.projectName
         coreVersionLabel.text = saveState.createdWithCoreVersion
 
         let createdText = "\(PVSaveStateInfoViewController.dateFormatter.string(from: saveState.date)), \(PVSaveStateInfoViewController.timeFormatter.string(from: saveState.date))"

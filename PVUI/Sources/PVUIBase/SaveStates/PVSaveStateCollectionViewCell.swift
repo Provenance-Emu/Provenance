@@ -106,7 +106,7 @@ final class PVSaveStateCollectionViewCell: UICollectionViewCell {
             }
 
             let multipleCores = system.cores.count > 1
-            var coreOrSystem: String = (multipleCores ? saveState.core.projectName : system.shortNameAlt ?? system.shortName)
+            var coreOrSystem: String = (multipleCores ? saveState.core?.projectName ?? "" : system.shortNameAlt ?? system.shortName)
             if !coreOrSystem.isEmpty {
                 coreOrSystem = " " + coreOrSystem
             }
