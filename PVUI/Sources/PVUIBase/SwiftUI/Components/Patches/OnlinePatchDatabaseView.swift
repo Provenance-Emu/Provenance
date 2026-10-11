@@ -64,6 +64,14 @@ public struct OnlinePatchDatabaseView: View {
             SafariWebView(url: item.url)
         }
 #endif
+        .onChange(of: selectedResult?.id) { newID in
+            guard newID != nil else { return }
+            // Fresh detail presentation — clear prior import match chrome.
+            lastImportedMatchTitle = nil
+            statusMessage = nil
+            isDownloading = false
+            downloadProgress = 0
+        }
         .sheet(item: $selectedResult) { result in
             OnlinePatchDetailView(
                 result: result,
@@ -78,13 +86,6 @@ public struct OnlinePatchDatabaseView: View {
                 downloadProgress: $downloadProgress,
                 statusMessage: $statusMessage
             )
-            .onAppear {
-                // Fresh detail presentation — clear prior import match chrome.
-                lastImportedMatchTitle = nil
-                statusMessage = nil
-                isDownloading = false
-                downloadProgress = 0
-            }
         }
         .sheet(isPresented: $showPatchApplier, onDismiss: {
             patchApplierGameMD5 = nil
