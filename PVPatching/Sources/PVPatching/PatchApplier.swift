@@ -141,9 +141,23 @@ public actor PatchApplier {
         let romStem = romURL.deletingPathExtension().lastPathComponent
         let patchStem = patchURL.deletingPathExtension().lastPathComponent
         if patchStem.localizedCaseInsensitiveContains(romStem) {
-            return patchStem
+            return variantSafeStem(patchStem, romURL: romURL)
         }
         return "\(romStem) [\(patchStem)]"
+    }
+
+    /// Save states and battery saves are keyed by the ROM file stem (see `Paths.saveStatePath(forROM:)`).
+    /// A variant whose stem equals the base ROM's stem would share — and on delete, wipe — the
+    /// base game's saves. The same-filename convention (`Game.gba` + `Game.ips`) hits this
+    /// exactly, so make sure a variant stem never equals the base stem.
+    public static func variantSafeStem(_ stem: String, romURL: URL) -> String {
+        let romStem = romURL.deletingPathExtension().lastPathComponent
+        let trimmed = stem.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmed.isEmpty else { return "\(romStem) [patched]" }
+        if trimmed.compare(romStem, options: [.caseInsensitive, .diacriticInsensitive]) == .orderedSame {
+            return "\(romStem) [patched]"
+        }
+        return trimmed
     }
 
     // MARK: - Private

@@ -73,6 +73,35 @@ public enum PatchFormat: String, CaseIterable, Sendable, Codable, Identifiable {
         }
     }
 
+    /// Whether `PatchApplier` can actually apply this format today.
+    /// Formats that are declared but still throw `unsupportedFormat` return false.
+    public var isImplemented: Bool {
+        switch self {
+        case .ips, .ips32, .bps, .ups, .ppf: return true
+        case .xdelta, .xdelta3, .aps, .rup, .nsp: return false
+        }
+    }
+
+    /// Lowercased file extensions (without dot) of every format the applier can apply.
+    /// Single source of truth for file pickers, folder scanners and tool registries.
+    public static let implementedFileExtensions: Set<String> = Set(
+        allCases.filter(\.isImplemented).flatMap(\.fileExtensions)
+    )
+
+    /// Detect a patch format from the first bytes of a file, independent of its name.
+    /// Returns nil for unknown or archive content.
+    public static func detect(fromMagic data: Data) -> PatchFormat? {
+        guard data.count >= 5 else { return nil }
+        let head = data.prefix(5)
+        if head.elementsEqual("PATCH".utf8) { return .ips }
+        if head.prefix(4).elementsEqual("BPS1".utf8) { return .bps }
+        if head.prefix(4).elementsEqual("UPS1".utf8) { return .ups }
+        if head.prefix(3).elementsEqual("PPF".utf8) { return .ppf }
+        if head.prefix(5).elementsEqual("IPS32".utf8) { return .ips32 }
+        if head.prefix(3) == Data([0xD6, 0xC3, 0xC4]) { return .xdelta3 }
+        return nil
+    }
+
     /// Detect patch format from a file URL based on its extension.
     public static func detect(from url: URL) -> PatchFormat? {
         let ext = url.pathExtension.lowercased()

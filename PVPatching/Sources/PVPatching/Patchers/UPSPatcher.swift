@@ -25,6 +25,9 @@ import Foundation
 /// - Patch CRC32 (4 bytes LE)
 public struct UPSPatcher: Sendable {
 
+    /// Upper bound on either image size; bounds allocation from a corrupt header.
+    static let maxImageSize = 4 * 1024 * 1024 * 1024
+
     public init() {}
 
     /// Apply a UPS patch to source data and return the patched result.
@@ -55,6 +58,9 @@ public struct UPSPatcher: Sendable {
         var pos = 4
         let inputSize  = readVLI(patch, pos: &pos)
         let outputSize = readVLI(patch, pos: &pos)
+        guard inputSize <= Self.maxImageSize, outputSize <= Self.maxImageSize else {
+            throw PatchError.corruptPatchFile("UPS size fields are implausibly large")
+        }
 
         // Verify source CRC32
         let inputCRC  = patch.readLE32(at: patch.count - 12)
@@ -95,7 +101,11 @@ public struct UPSPatcher: Sendable {
         let dataEnd = patch.count - 12  // before the 3 CRC32 fields
 
         while pos < dataEnd {
-            offset += readVLI(patch, pos: &pos)
+            let skip = readVLI(patch, pos: &pos)
+            guard skip <= Self.maxImageSize - offset else {
+                throw PatchError.corruptPatchFile("UPS hunk offset overflows the image")
+            }
+            offset += skip
 
             // XOR bytes until null terminator
             while pos < dataEnd {
