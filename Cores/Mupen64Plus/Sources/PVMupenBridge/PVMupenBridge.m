@@ -83,6 +83,17 @@
 
 __weak PVMupenBridge *_current = nil;
 
+/// Vertical interrupts and video-plugin buffer swaps since the ROM started.
+/// A game that runs with sound and no picture looks identical in the log to one that
+/// renders fine, so these two counters separate "the plugin never presented a frame"
+/// from "the frontend never showed the frames it was given".
+static uint64_t sVICount;
+static uint64_t sSwapCount;
+
+/// How many vertical interrupts a game gets to produce its first swap before the miss
+/// is logged. Two seconds of NTSC video is long enough for any boot sequence.
+static const uint64_t kMupenNoSwapVIThreshold = 120;
+
 static void (*ptr_PV_ForceUpdateWindowSize)(int width, int height);
 static void (*ptr_SetOSDCallback)(void (*inPV_OSD_Callback)(const char *_pText, float _x, float _y));
 
@@ -608,6 +619,10 @@ static void *dlopen_myself()
 
 - (void)startEmulation {
     if(!self.isRunning) {
+        // Statics: dlclose does not really unload on iOS, so a second session in the
+        // same process would otherwise inherit the first session's counts.
+        sVICount = 0;
+        sSwapCount = 0;
         [super startEmulation];
         [NSThread detachNewThreadSelector:@selector(runMupenEmuThread) toTarget:self withObject:nil];
     }
@@ -716,12 +731,33 @@ static const NSTimeInterval kMupenPALRefreshRate  = 50.0;
         frameHandler();
     }
 
+    ++sVICount;
+    if (sVICount == kMupenNoSwapVIThreshold && sSwapCount == 0) {
+        WLOG(@"[NO-SWAP] %llu vertical interrupts with no VidExt_GL_SwapBuffers: the video plugin "
+             @"is not presenting. videoMode=(%d,%d) bitDepth=%d NTSC=%d",
+             sVICount, self.videoWidth, self.videoHeight, self.videoBitDepth, self.isNTSC);
+    }
+
     dispatch_semaphore_signal(coreWaitToEndFrameSemaphore);
 
     dispatch_semaphore_wait(mupenWaitToBeginFrameSemaphore, [self frameTime]);
 }
 
+- (uint32_t)presentationFramebufferName {
+    id<PVRenderDelegate> renderDelegate = self.renderDelegate;
+    if (![renderDelegate respondsToSelector:@selector(presentationFramebuffer)]) {
+        return 0;
+    }
+
+    id framebuffer = renderDelegate.presentationFramebuffer;
+    return [framebuffer isKindOfClass:NSNumber.class] ? [(NSNumber *)framebuffer unsignedIntValue] : 0;
+}
+
 - (void)swapBuffers {
+    if (++sSwapCount == 1) {
+        ILOG(@"First video plugin swap after %llu vertical interrupts, videoMode=(%d,%d)",
+             sVICount, self.videoWidth, self.videoHeight);
+    }
     [self.renderDelegate didRenderFrameOnAlternateThread];
 }
 
