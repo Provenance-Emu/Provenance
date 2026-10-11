@@ -301,7 +301,7 @@ public struct PatchApplierView: View {
 public struct BatchPatchApplierView: View {
     @State private var folderURL: URL?
     @State private var jobs: [BatchPatchJob] = []
-    @State private var results: [BatchPatchResult] = []
+    @State private var batchResults: [BatchPatchResult] = []
     @State private var allowCRCMismatch = false
     @State private var statusMessage: String?
     @State private var isBusy = false
@@ -336,7 +336,7 @@ public struct BatchPatchApplierView: View {
 
             if !jobs.isEmpty {
                 SwiftUI.Section("Matched Jobs (\(jobs.count))") {
-                    SwiftUI.ForEach(jobs) { job in
+                    SwiftUI.ForEach(jobs, id: \.id) { (job: BatchPatchJob) in
                         VStack(alignment: .leading, spacing: 2) {
                             Text(job.patchURL.lastPathComponent).font(.headline)
                             Text("→ \(job.romTitle) (\(job.confidence.rawValue))")
@@ -367,10 +367,10 @@ public struct BatchPatchApplierView: View {
                 }
             }
 
-            if !results.isEmpty {
+            if !batchResults.isEmpty {
                 SwiftUI.Section("Results") {
-                    // Avoid `.indices` — it resolves to `indices(where:)` under module shadowing here.
-                    SwiftUI.ForEach(results) { result in
+                    // Explicit id + element type: bare ForEach(results) picks Binding overload in this target.
+                    SwiftUI.ForEach(batchResults, id: \.id) { (result: BatchPatchResult) in
                         VStack(alignment: .leading, spacing: 2) {
                             Text(result.patchURL.lastPathComponent)
                                 .font(.subheadline)
@@ -412,7 +412,7 @@ public struct BatchPatchApplierView: View {
             if case .success(let urls) = result {
                 folderURL = urls.first
                 jobs = []
-                results = []
+                batchResults = []
             }
         }
 #endif
@@ -452,7 +452,7 @@ public struct BatchPatchApplierView: View {
         isBusy = true
         defer { isBusy = false }
         let dest = URL.documentsPath.appendingPathComponent("PatchedROMs", isDirectory: true)
-        results = await batcher.apply(
+        batchResults = await batcher.apply(
             jobs: jobs,
             outputDirectory: dest,
             allowCRCMismatch: allowCRCMismatch
@@ -462,7 +462,7 @@ public struct BatchPatchApplierView: View {
                 progressStatus = progress.status
             }
         }
-        let ok = results.filter(\.success).count
-        statusMessage = "Finished: \(ok)/\(results.count) succeeded."
+        let ok = batchResults.filter(\.success).count
+        statusMessage = "Finished: \(ok)/\(batchResults.count) succeeded."
     }
 }
