@@ -29,16 +29,16 @@ public struct PendingPatchesView: View {
     public init() {}
 
     public var body: some View {
-        List {
+        SwiftUI.List {
             if let statusMessage {
-                Section {
+                SwiftUI.Section {
                     Text(statusMessage)
                         .font(.footnote)
                         .foregroundStyle(.secondary)
                 }
             }
 
-            Section {
+            SwiftUI.Section {
                 Button {
                     showImporter = true
                 } label: {
@@ -57,7 +57,7 @@ public struct PendingPatchesView: View {
                 .disabled(isBusy || pending.isEmpty)
             }
 
-            Section("Pending / Unmatched") {
+            SwiftUI.Section("Pending / Unmatched") {
                 if pending.isEmpty {
                     Text("No pending patches.")
                         .foregroundStyle(.secondary)
@@ -86,7 +86,7 @@ public struct PendingPatchesView: View {
                 }
             }
 
-            Section("All Patches") {
+            SwiftUI.Section("All Patches") {
                 if allPatches.isEmpty {
                     Text("No patches imported yet.")
                         .foregroundStyle(.secondary)
@@ -250,7 +250,7 @@ private struct PatchGamePickerView: View {
 
     var body: some View {
         NavigationStack {
-            List(filtered, id: \.md5Hash) { game in
+            SwiftUI.List(filtered, id: \.md5Hash) { game in
                 Button {
                     onSelect(game)
                     dismiss()

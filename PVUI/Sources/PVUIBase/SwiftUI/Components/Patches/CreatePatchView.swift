@@ -39,7 +39,7 @@ public struct CreatePatchView: View {
 
     public var body: some View {
         Form {
-            Section("Source ROMs") {
+            SwiftUI.Section("Source ROMs") {
                 Button(originalURL?.lastPathComponent ?? "Choose Original ROM…") {
                     pickerTarget = .original
                     showFilePicker = true
@@ -50,7 +50,7 @@ public struct CreatePatchView: View {
                 }
             }
 
-            Section("Format") {
+            SwiftUI.Section("Format") {
                 Picker("Patch Format", selection: $format) {
                     ForEach(PatchCreator.CreationFormat.allCases) { item in
                         Text(item.displayName).tag(item)
@@ -61,12 +61,12 @@ public struct CreatePatchView: View {
 #endif
             }
 
-            Section("Metadata") {
+            SwiftUI.Section("Metadata") {
                 TextField("Title", text: $titleText)
                 TextField("Author", text: $authorText)
             }
 
-            Section("After Create") {
+            SwiftUI.Section("After Create") {
                 Toggle("Import into library", isOn: $importAfterCreate)
                 if importAfterCreate {
                     Picker("Link to game (optional)", selection: Binding(
@@ -82,14 +82,14 @@ public struct CreatePatchView: View {
             }
 
             if let statusMessage {
-                Section {
+                SwiftUI.Section {
                     Text(statusMessage)
                         .font(.footnote)
                         .foregroundStyle(.secondary)
                 }
             }
 
-            Section {
+            SwiftUI.Section {
                 Button {
                     create()
                 } label: {

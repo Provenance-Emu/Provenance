@@ -31,9 +31,9 @@ public struct PatchManagerView: View {
     }
 
     public var body: some View {
-        List {
+        SwiftUI.List {
             if let statusMessage {
-                Section {
+                SwiftUI.Section {
                     Text(statusMessage)
                         .foregroundStyle(.secondary)
                         .font(.footnote)
@@ -41,12 +41,12 @@ public struct PatchManagerView: View {
             }
 
             if patches.isEmpty {
-                Section {
+                SwiftUI.Section {
                     Text("No patches linked to this game yet. Import a patch from the game menu or ROM Tools.")
                         .foregroundStyle(.secondary)
                 }
             } else {
-                Section("Installed Patches") {
+                SwiftUI.Section("Installed Patches") {
                     ForEach(patches, id: \.id) { patch in
                         PatchRowView(
                             patch: patch,
