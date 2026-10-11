@@ -23,10 +23,10 @@ public final class RealmDatabaseDriver: DatabaseDriver, GameLibraryRealm, GameLi
     public typealias SystemType = PVSystem
     public typealias Savetype = PVSaveState
     public typealias RecentGame = PVRecentGame
-    
+
     ///
     private let database: RomDatabase
-    
+
     ///
     public lazy var saveStates: SavesObservable = {
         Observable
@@ -47,7 +47,7 @@ public final class RealmDatabaseDriver: DatabaseDriver, GameLibraryRealm, GameLi
            .collection(from: recentsResults)
            .mapMany { $0 }
     }()
-    
+
     ///
     public lazy var mostPlayed: GamesObservable = {
         Observable
@@ -65,40 +65,40 @@ public final class RealmDatabaseDriver: DatabaseDriver, GameLibraryRealm, GameLi
             .sorted(byKeyPath: #keyPath(Savetype.date),
                     ascending: false)
     }()
-    
+
     ///
     public lazy var favoritesResults: Results<GameType> = {
         database.all(GameType.self)
             .filter("isFavorite == true AND isHiddenPatchVariant == false")
             .sorted(byKeyPath: #keyPath(GameType.title), ascending: false)
     }()
-    
+
     ///
     public lazy var recentsResults: Results<RecentGame> = {
         database.all(RecentGame.self)
             .filter("game == nil OR game.isHiddenPatchVariant == false")
             .sorted(byKeyPath: #keyPath(RecentGame.lastPlayedDate), ascending: false)
     }()
-    
+
     ///
     public lazy var mostPlayedResults: Results<GameType> = {
         database.all(GameType.self)
             .filter("isHiddenPatchVariant == false")
             .sorted(byKeyPath: #keyPath(GameType.playCount), ascending: false)
     }()
-    
+
     ///
     public lazy var activeSystems: Results<SystemType> = {
         database.all(SystemType.self, filter: NSPredicate(format: "games.@count > 0")).sorted(byKeyPath: #keyPath(SystemType.name), ascending: true)
     }()
 
-    
+
     /// Init a new RealmDatabaseDriver
     /// - Parameter database: The RomDatabase to query on.
     required public init(database: RomDatabase) {
         self.database = database
     }
-    
+
     // MARK: - Query by Identifier
 
     /// Game for identifier
@@ -107,7 +107,7 @@ public final class RealmDatabaseDriver: DatabaseDriver, GameLibraryRealm, GameLi
     public func game(identifier: String) -> GameType? {
         database.object(ofType: GameType.self, wherePrimaryKeyEquals: identifier)
     }
- 
+
     /// GameType .isFavorite toggle
     /// - Returns: Completable for when finished
     public func toggleFavorite(for game: GameType) -> Completable {
@@ -128,14 +128,14 @@ public final class RealmDatabaseDriver: DatabaseDriver, GameLibraryRealm, GameLi
 /// System Query methods
 ///
 extension RealmDatabaseDriver {
-    
+
     /// System for identifier
     /// - Parameter identifier: ID String of the system
     /// - Returns: Optional matching SystemType
     public func system(identifier: String) -> SystemType? {
         database.object(ofType: SystemType.self, wherePrimaryKeyEquals: identifier)
     }
-    
+
     /// Get all games for a System
     /// - Parameter systemIdentifier: ID String of the system to query
     /// - Returns: A query result with live updating as long as the reference is active
@@ -149,18 +149,18 @@ extension RealmDatabaseDriver {
     }
 
     /// Systems sorted by Options -> RxRealm.Observable
-    
+
     public typealias SystemStruct = PVGameLibrary<RealmDatabaseDriver>.System
     public typealias SystemObservable = Observable<SystemStruct>
     public typealias SystemArrayObservable = Observable<[SystemStruct]>
-    
+
     /// Get all systems sorted by...
     /// - Parameter sortOptions: Sory options, .title, .importDate, .lastPlayed, .mostPlayed
     /// - Returns: An Observable of systems by the sort options that updates as ROMs are played or imported
     public func systems(sortedBy sortOptions: PVSettings.SortOptions) -> Observable<[PVGameLibrary<RealmDatabaseDriver>.System]> {
         let betaIDs: [SystemIdentifier] = SystemIdentifier.betas
         let unsuppotedIDs: [SystemIdentifier] = SystemIdentifier.unsupported
-        
+
         return Observable
             .collection(from: database.all(SystemType.self))
             .flatMapLatest({ systems -> SystemArrayObservable in
@@ -192,7 +192,7 @@ extension RealmDatabaseDriver {
             })
             .map { systems in systems.sorted(by: sortOptions) }
     }
-    
+
 }
 
 /// Searching methods
@@ -219,7 +219,7 @@ extension RealmDatabaseDriver {
                 .filter(visible)
                 .sorted(byKeyPath: #keyPath(GameType.title), ascending: true)
         } else {
-            
+
             /// Search by title contains
             let titlePredicate = NSPredicate(
                 format: "isHiddenPatchVariant == false AND title CONTAINS[c] %@",
@@ -229,7 +229,7 @@ extension RealmDatabaseDriver {
             let searchPredicate = NSPredicate(
                 format: "isHiddenPatchVariant == false AND (genres LIKE[c] %@ OR gameDescription CONTAINS[c] %@ OR regionName LIKE[c] %@ OR developer LIKE[c] %@ or publisher LIKE[c] %@)",
                 argumentArray: [searchText, searchText, searchText, searchText, searchText])
-            
+
             let titleResults = self.database.all(GameType.self, filter: titlePredicate)
             let generalresults = { return self.database.all(GameType.self, filter: searchPredicate) }
             let results = !titleResults.isEmpty ? titleResults : generalresults()
@@ -241,7 +241,7 @@ extension RealmDatabaseDriver {
 /// Clearing methods
 ///
 extension RealmDatabaseDriver {
-    
+
     /// Clear the library
     /// - Returns: Completable for when finished
     public func clearLibrary() -> Completable {
@@ -271,7 +271,7 @@ extension RealmDatabaseDriver {
             return Disposables.create()
         }
     }
-    
+
     /// Refrehes the library
     /// - Returns: Completable for when finished
     public func refreshLibrary() -> Completable {
