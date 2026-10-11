@@ -177,9 +177,6 @@ public final class PVWebFileEventObserver: @unchecked Sendable {
                             let cheatsToDelete = Array(game.cheats)
                             let recentPlaysToDelete = Array(game.recentPlays)
                             let screenShotsToDelete = Array(game.screenShots)
-                            // Unlink / remove patch records that point at this game so Realm
-                            // delete doesn't leave dangling optional links under load.
-                            let patchesToDelete = Array(game.patches) + Array(game.variantOfPatches)
                             // `game` is invalidated by the delete below, and reading any
                             // property of it afterwards throws. Capture what the Spotlight
                             // and cache cleanup need first.
@@ -195,7 +192,6 @@ public final class PVWebFileEventObserver: @unchecked Sendable {
                                 realm.delete(cheatsToDelete)
                                 realm.delete(recentPlaysToDelete)
                                 realm.delete(screenShotsToDelete)
-                                realm.delete(patchesToDelete)
                                 realm.delete(game)
                             }
                             // Remove from Spotlight so the game no longer appears in system search.
