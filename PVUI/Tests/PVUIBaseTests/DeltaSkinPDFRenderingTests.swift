@@ -94,6 +94,25 @@ struct DeltaSkinPDFRenderingTests {
         #expect(image == nil)
     }
 
+    @Test("A non-zero media box origin still draws visible pixels")
+    func nonZeroMediaBoxOriginIsVisible() throws {
+        let data = NSMutableData()
+        var mediaBox = CGRect(x: 40, y: 60, width: 80, height: 80)
+        guard let consumer = CGDataConsumer(data: data as CFMutableData),
+              let pdfContext = CGContext(consumer: consumer, mediaBox: &mediaBox, nil) else {
+            Issue.record("Could not create PDF context")
+            return
+        }
+        pdfContext.beginPDFPage(nil)
+        pdfContext.setFillColor(UIColor.red.cgColor)
+        pdfContext.fill(CGRect(x: 50, y: 70, width: 40, height: 40))
+        pdfContext.endPDFPage()
+        pdfContext.closePDF()
+
+        let image = try #require(UIImage(pdfData: data as Data, preserveTransparency: true, size: CGSize(width: 80, height: 80)))
+        #expect(image.hasVisibleContent)
+    }
+
     @Test("Rendered image matches requested size")
     func renderedImageHasSize() throws {
         let requestedSize = CGSize(width: 64, height: 64)

@@ -202,8 +202,38 @@ extension SystemIdentifier {
     ///   `"mastersystem"`, `"gba"`, `"virtualboy"`).
     /// - Returns: A short human-friendly label such as `"Master System"` or
     ///   `"Game Boy Advance"`.
+    /// Feed tags that mean the same system as a canonical catalog code.
+    ///
+    /// The skin feed tags Nintendo 3DS as `threeDS` / `threeds`. The app's
+    /// canonical code is `3ds`.
+    private static let skinCatalogCodeAliases: [String: Set<String>] = [
+        "3ds": ["3ds", "threeds", "three3ds"]
+    ]
+
+    /// Canonical catalog code for a feed tag. `threeds` and `three3ds` become `3ds`.
+    public static func canonicalSkinCatalogCode(_ code: String) -> String {
+        let normalized = code.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
+        guard !normalized.isEmpty else { return normalized }
+        for (canonical, aliases) in skinCatalogCodeAliases where aliases.contains(normalized) {
+            return canonical
+        }
+        return normalized
+    }
+
+    /// Alias tags that should match alongside `codes`.
+    private static func aliasCodes(matching codes: Set<String>) -> Set<String> {
+        var extra: Set<String> = []
+        for code in codes {
+            let canonical = canonicalSkinCatalogCode(code)
+            if let aliases = skinCatalogCodeAliases[canonical] {
+                extra.formUnion(aliases)
+            }
+        }
+        return extra
+    }
+
     public static func displayName(forCatalogCode code: String) -> String {
-        let normalized = code.lowercased()
+        let normalized = canonicalSkinCatalogCode(code)
         if let match = SystemIdentifier.allCases.first(where: {
             $0.skinCatalogSystemCode?.lowercased() == normalized
         }) {
@@ -223,7 +253,8 @@ extension SystemIdentifier {
     public var relatedSkinCatalogSystemCodes: [String] {
         guard let gameType = DeltaSkinGameType(systemIdentifier: self) else {
             guard let code = skinCatalogSystemCode?.lowercased() else { return [] }
-            return [code]
+            let expanded = Self.aliasCodes(matching: [code]).union([code])
+            return Array(expanded).sorted()
         }
 
         let group = gameType.skinLayoutGroup
@@ -237,10 +268,12 @@ extension SystemIdentifier {
             }
         )
 
-        if codes.isEmpty, let code = skinCatalogSystemCode?.lowercased() {
-            return [code]
+        var expanded = codes
+        if expanded.isEmpty, let code = skinCatalogSystemCode?.lowercased() {
+            expanded = [code]
         }
-        return Array(codes).sorted()
+        expanded.formUnion(Self.aliasCodes(matching: expanded))
+        return Array(expanded).sorted()
     }
 
     /// Returns all catalog system codes related to the provided catalog code via
@@ -252,13 +285,14 @@ extension SystemIdentifier {
     /// - Parameter code: A catalog system code (for example "nes" or "32x").
     /// - Returns: De-duplicated, lowercased related system codes.
     public static func relatedCatalogSystemCodes(forCatalogCode code: String) -> Set<String> {
-        let normalized = code.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
+        let normalized = canonicalSkinCatalogCode(code)
         guard !normalized.isEmpty else { return [] }
 
         guard let match = SystemIdentifier.allCases.first(where: {
             $0.skinCatalogSystemCode?.lowercased() == normalized
         }) else {
-            return [normalized]
+            let aliases = aliasCodes(matching: [normalized])
+            return aliases.isEmpty ? [normalized] : aliases.union([normalized])
         }
 
         let related = Set(match.relatedSkinCatalogSystemCodes)

@@ -187,7 +187,7 @@ struct SkinPreviewCell: View {
         let cacheKey = "\(skin.identifier)-\(traits.device.rawValue)-\(traits.displayType.rawValue)-\(traits.orientation.rawValue)"
 
         // Fast path: use SkinSelectionPreviewCell's shared cache
-        if let cached = SkinPreviewThumbnailCache.shared.thumbnail(forKey: cacheKey) {
+        if let cached = SkinPreviewThumbnailCache.shared.thumbnail(forKey: cacheKey), cached.hasVisibleContent {
             thumbnailImage = cached
             isLoadingThumbnail = false
             return
@@ -196,7 +196,9 @@ struct SkinPreviewCell: View {
         Task.detached(priority: .utility) {
             do {
                 let image = try await skin.image(for: traits)
-                SkinPreviewThumbnailCache.shared.store(image, forKey: cacheKey)
+                if image.hasVisibleContent {
+                    SkinPreviewThumbnailCache.shared.store(image, forKey: cacheKey)
+                }
                 await MainActor.run {
                     self.thumbnailImage = image
                     self.isLoadingThumbnail = false

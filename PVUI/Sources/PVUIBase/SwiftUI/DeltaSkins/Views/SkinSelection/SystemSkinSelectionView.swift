@@ -32,6 +32,11 @@ public struct SystemSkinSelectionView: View {
 
     // UI state
     @State private var isLoading = true
+    /// One list load at a time. A request that arrives mid-load runs once more when the current one finishes, so an early empty snapshot cannot discard a later full scan.
+    @State private var skinLoadInFlight = false
+    @State private var skinLoadQueued = false
+    /// Manual refresh requested while a load was already running.
+    @State private var skinLoadQueuedForce = false
     @State private var errorMessage: String?
     @State private var loadingProgress: Double = 0
     @State private var showingDocumentPicker = false
@@ -39,7 +44,6 @@ public struct SystemSkinSelectionView: View {
     @State private var importError: Error?
 
     // Animation properties
-    @State private var glowIntensity: CGFloat = 0.5
     @State private var selectedCellScale: CGFloat = 1.0
     @State private var hoveredSkinId: String? = nil
 #if !os(tvOS)
@@ -209,48 +213,18 @@ public struct SystemSkinSelectionView: View {
                 .navigationBarTitleDisplayMode(.inline)
                 #endif
                 .toolbar {
-                    ToolbarItem(placement: .topBarLeading) {
-                        NavigationLink(destination: SkinCatalogBrowserView(preselectedSystem: catalogSystemFilter)) {
-                            HStack(spacing: 4) {
-                                Image(systemName: "arrow.down.circle")
-                                Text("Get More")
-                                    .font(.system(size: 14, weight: .semibold, design: .rounded))
-                            }
-                            .foregroundStyle(RetroTheme.retroHorizontalGradient)
-                        }
-                    }
-
-                    #if !os(tvOS)
                     ToolbarItem(placement: .topBarTrailing) {
                         Button {
-                            showingDocumentPicker = true
-                        } label: {
-                            Image(systemName: "plus.circle.fill")
-                                .font(.title2)
-                                .foregroundStyle(RetroTheme.retroHorizontalGradient)
-                        }
-                    }
-                    #endif
-
-                    ToolbarItem(placement: .topBarTrailing) {
-                        Button {
-                            withAnimation {
-                                loadSkins()
-                            }
+                            loadSkins()
                         } label: {
                             Image(systemName: "arrow.clockwise")
-                                .foregroundStyle(RetroTheme.retroHorizontalGradient)
                         }
+                        .accessibilityLabel("Refresh skins")
                     }
                 }
             }
         }
         .onAppear {
-            // Start glow animation
-            withAnimation(.easeInOut(duration: 1.5).repeatForever(autoreverses: true)) {
-                glowIntensity = 0.8
-            }
-
             // Always load via async path which reads lastScannedSkins (authoritative).
             // loadedSkins (@Published) may lag behind due to MainActor scheduling.
             Task {
@@ -302,72 +276,47 @@ public struct SystemSkinSelectionView: View {
     // MARK: - UI Components
 
     private var headerView: some View {
-        VStack(spacing: 6) {
-            Text(system.fullName.uppercased())
-                .font(.system(size: 24, weight: .bold, design: .rounded))
-                .foregroundStyle(RetroTheme.retroHorizontalGradient)
-                .padding(.top, 16)
-                .shadow(color: RetroTheme.retroPink.opacity(glowIntensity * 0.5), radius: 2)
+        Text("Choose the skin for this session, game, or system.")
+            .font(.subheadline)
+            .foregroundColor(.white.opacity(0.7))
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .padding(.horizontal, 16)
+            .padding(.top, 12)
+            .padding(.bottom, 4)
+    }
 
-            Text("Select a controller skin")
-                .font(.subheadline)
-                .foregroundColor(.white.opacity(0.7))
-                .padding(.bottom, 8)
+    /// Quiet capsule used for scope, orientation, and the catalog/import actions.
+    ///
+    /// Scope and orientation chips share the row. Catalog and import hug their labels so they do not stretch into full-width bars.
+    private func selectorChip(title: String, systemImage: String? = nil, isSelected: Bool, expands: Bool = true) -> some View {
+        HStack(spacing: 6) {
+            if let systemImage {
+                Image(systemName: systemImage)
+                    .font(.system(size: 12, weight: .semibold))
+            }
+            Text(title)
+                .font(.system(size: 13, weight: .semibold))
         }
-        .frame(maxWidth: .infinity)
+        .foregroundStyle(isSelected ? Color.white : Color.white.opacity(0.72))
+        .padding(.horizontal, 12)
+        .padding(.vertical, 8)
+        .frame(maxWidth: expands ? .infinity : nil)
         .background(
-            Rectangle()
-                .fill(Color.black.opacity(0.3))
+            RoundedRectangle(cornerRadius: RetroPauseChrome.radiusSM)
+                .fill(Color.white.opacity(isSelected ? RetroPauseChrome.menuCellFillOpacityFocused : RetroPauseChrome.menuCellFillOpacityUnfocused))
                 .overlay(
-                    Rectangle()
-                        .fill(
-                            LinearGradient(
-                                gradient: Gradient(colors: [.clear, RetroTheme.retroPink.opacity(0.3), .clear]),
-                                startPoint: .leading,
-                                endPoint: .trailing
-                            )
+                    RoundedRectangle(cornerRadius: RetroPauseChrome.radiusSM)
+                        .strokeBorder(
+                            Color.retroCyan.opacity(isSelected ? RetroPauseChrome.menuCellStrokeOpacityFocused : RetroPauseChrome.menuCellStrokeOpacityUnfocused),
+                            lineWidth: isSelected ? RetroPauseChrome.menuCellStrokeWidthFocused : RetroPauseChrome.menuCellStrokeWidthUnfocused
                         )
-                        .blendMode(.overlay)
                 )
         )
     }
 
-    // Helper view for orientation tab button to simplify the complex ForEach
-    private func orientationTabButton(for orientation: SkinOrientation) -> some View {
-        Button {
-            withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
-                selectedOrientation = orientation
-            }
-        } label: {
-            HStack {
-                Image(systemName: orientation.icon)
-                    .font(.system(size: 14, weight: .bold))
-                Text(orientation.displayName.uppercased())
-                    .font(.system(size: 12, weight: .bold, design: .rounded))
-                    .tracking(1)
-            }
-            .padding(.vertical, 10)
-            .frame(maxWidth: .infinity)
-            .background(selectedOrientation == orientation ?
-                        Color.black.opacity(0.6) :
-                        Color.black.opacity(0.3))
-            .foregroundColor(selectedOrientation == orientation ?
-                             .white :
-                             .white.opacity(0.6))
-            .overlay(selectedOrientation == orientation ? tabButtonBorder : nil)
-        }
-    }
-
-    // Extract the border as a separate property to reduce nesting
-    private var tabButtonBorder: some View {
-        RoundedRectangle(cornerRadius: 0)
-            .strokeBorder(RetroTheme.retroGradient, lineWidth: 1.5)
-            .shadow(color: RetroTheme.retroPink.opacity(0.7), radius: 3)
-    }
-
     private var orientationPickerView: some View {
-        VStack(spacing: 8) {
-            HStack(spacing: 0) {
+        VStack(spacing: 10) {
+            HStack(spacing: 8) {
                 ForEach(SkinScope.allCases) { scope in
                     let enabled = scope != .game || gameId != nil
                     Button {
@@ -376,87 +325,52 @@ public struct SystemSkinSelectionView: View {
                             selectedScope = scope
                         }
                     } label: {
-                        Text(scope.rawValue.uppercased())
-                            .font(.system(size: 11, weight: .bold, design: .rounded))
-                            .tracking(1)
-                            .padding(.vertical, 8)
-                            .frame(maxWidth: .infinity)
-                            .background(effectiveScope == scope ? Color.black.opacity(0.6) : Color.black.opacity(0.3))
-                            .foregroundColor(enabled ? (effectiveScope == scope ? .white : .white.opacity(0.7)) : .white.opacity(0.35))
+                        selectorChip(title: scope.rawValue, isSelected: effectiveScope == scope)
+                            .opacity(enabled ? 1 : 0.4)
                     }
                     .disabled(!enabled)
                 }
             }
-            .background(Color.black.opacity(0.2))
-            .clipShape(RoundedRectangle(cornerRadius: 8))
-            .overlay(
-                RoundedRectangle(cornerRadius: 8)
-                    .strokeBorder(Color.white.opacity(0.1), lineWidth: 0.5)
-            )
-            .padding(.horizontal)
-            .padding(.top, 12)
 
-            // Custom segmented control with retrowave styling
-            HStack(spacing: 0) {
+            HStack(spacing: 8) {
                 ForEach(SkinOrientation.allCases, id: \.self) { orientation in
-                    orientationTabButton(for: orientation)
+                    Button {
+                        withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
+                            selectedOrientation = orientation
+                        }
+                    } label: {
+                        selectorChip(
+                            title: orientation.displayName,
+                            systemImage: orientation.icon,
+                            isSelected: selectedOrientation == orientation
+                        )
+                    }
                 }
             }
-            .background(Color.black.opacity(0.2))
-            .clipShape(RoundedRectangle(cornerRadius: 8))
-            .overlay(
-                RoundedRectangle(cornerRadius: 8)
-                    .strokeBorder(Color.white.opacity(0.1), lineWidth: 0.5)
-            )
-            .padding(.horizontal)
-            .padding(.top, 16)
-            .padding(.bottom, 8)
+
+            HStack(spacing: 8) {
+                NavigationLink(destination: SkinCatalogBrowserView(preselectedSystem: catalogSystemFilter)) {
+                    selectorChip(title: "Get More", systemImage: "arrow.down.circle", isSelected: false, expands: false)
+                }
+                #if !os(tvOS)
+                Button {
+                    showingDocumentPicker = true
+                } label: {
+                    selectorChip(title: "Import", systemImage: "plus", isSelected: false, expands: false)
+                }
+                #endif
+                Spacer(minLength: 0)
+            }
         }
+        .padding(.horizontal, 16)
+        .padding(.top, 8)
+        .padding(.bottom, 4)
     }
 
     private var loadingView: some View {
-        VStack(spacing: 30) {
-            Spacer()
-
-            // Retrowave styled loading indicator
-            ZStack {
-                Circle()
-                    .stroke(
-                        RetroTheme.retroHorizontalGradient,
-                        lineWidth: 4
-                    )
-                    .frame(width: 80, height: 80)
-                    .blur(radius: 2 * glowIntensity)
-
-                Circle()
-                    .trim(from: 0, to: loadingProgress)
-                    .stroke(
-                        RetroTheme.retroHorizontalGradient,
-                        style: StrokeStyle(lineWidth: 4, lineCap: .round)
-                    )
-                    .frame(width: 80, height: 80)
-                    .rotationEffect(.degrees(-90))
-                    .shadow(color: RetroTheme.retroPink.opacity(0.7), radius: 4)
-
-                Text("\(Int(loadingProgress * 100))%")
-                    .font(.system(size: 16, weight: .bold, design: .monospaced))
-                    .foregroundStyle(RetroTheme.retroHorizontalGradient)
-            }
-            .onAppear {
-                withAnimation(.easeInOut(duration: 1.5).repeatForever(autoreverses: false)) {
-                    loadingProgress = 1.0
-                }
-            }
-
-            Text("LOADING SKINS")
-                .font(.system(size: 16, weight: .bold, design: .rounded))
-                .foregroundStyle(RetroTheme.retroHorizontalGradient)
-                .tracking(2)
-
-            Spacer()
-        }
-        .frame(maxWidth: .infinity)
-        .padding()
+        ProgressView("Loading skins")
+            .tint(Color.retroCyan)
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 
     private func errorView(message: String) -> some View {
@@ -646,20 +560,11 @@ public struct SystemSkinSelectionView: View {
     private var skinGridView: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 12) {
-                // Show current selection status with retrowave styling
-                HStack {
-                    Image(systemName: "info.circle")
-                        .foregroundStyle(RetroTheme.retroHorizontalGradient)
-                        .font(.system(size: 14))
-
-                    Text(selectedOrientation == .portrait ?
-                         "Selected skin will be used in portrait mode" :
-                         "Selected skin will be used in landscape mode")
-                        .font(.system(size: 12, weight: .medium))
-                        .foregroundColor(.white.opacity(0.7))
-                }
-                .padding(.horizontal, 20)
-                .padding(.top, 16)
+                Text(selectedOrientation == .portrait ? "PORTRAIT" : "LANDSCAPE")
+                    .retroPauseSectionHeaderTypography()
+                    .foregroundStyle(Color.white.opacity(RetroPauseChrome.sectionTitleMutedOpacity))
+                    .padding(.horizontal, 20)
+                    .padding(.top, 16)
 
                 // Skin grid with retrowave styling (iOS: case companion skins may appear in a disclosure section below)
                 LazyVGrid(columns: skinSelectionGridColumns, spacing: 24) {
@@ -733,29 +638,28 @@ public struct SystemSkinSelectionView: View {
                 // Controller icon
                 Image(systemName: "gamecontroller.fill")
                     .font(.system(size: 40))
-                    .foregroundStyle(RetroTheme.retroHorizontalGradient)
-                    .shadow(color: RetroTheme.retroPink.opacity(glowIntensity * 0.7), radius: 3)
+                    .foregroundStyle(Color.retroCyan.opacity(0.9))
             }
             .overlay(
                 // Selection indicator
                 Group {
-                    if currentSelectedSkinId == nil {
+                    if isBuiltInSelectionHighlighted {
                         RoundedRectangle(cornerRadius: 12)
-                            .strokeBorder(RetroTheme.retroGradient, lineWidth: 2.5)
+                            .strokeBorder(Color.retroCyan, lineWidth: RetroPauseChrome.menuCellStrokeWidthFocused)
                     } else {
                         RoundedRectangle(cornerRadius: 12)
-                            .strokeBorder(Color.clear, lineWidth: 2.5)
+                            .strokeBorder(Color.white.opacity(0.12), lineWidth: RetroPauseChrome.menuCellStrokeWidthUnfocused)
                     }
                 }
-                    .shadow(color: currentSelectedSkinId == nil ? RetroTheme.retroPink.opacity(0.7) : .clear, radius: 3)
+                    .shadow(color: isBuiltInSelectionHighlighted ? Color.retroCyan.opacity(0.45) : .clear, radius: 6)
             )
-            .scaleEffect(currentSelectedSkinId == nil ? 1.05 : 1.0)
-            .animation(.spring(response: 0.3, dampingFraction: 0.7), value: currentSelectedSkinId)
+            .scaleEffect(isBuiltInSelectionHighlighted ? 1.05 : 1.0)
+            .animation(.spring(response: 0.3, dampingFraction: 0.7), value: isBuiltInSelectionHighlighted)
 
             // Label
-            Text("BUILT-IN")
-                .font(.system(size: 12, weight: .bold, design: .rounded))
-                .foregroundColor(currentSelectedSkinId == nil ? .white : .white.opacity(0.7))
+            Text("Built-in")
+                .font(.system(size: 12, weight: .semibold))
+                .foregroundColor(isBuiltInSelectionHighlighted ? .white : .white.opacity(0.7))
                 .lineLimit(1)
         }
         .onTapGesture {
@@ -766,9 +670,21 @@ public struct SystemSkinSelectionView: View {
         .padding(.bottom, 8)
     }
 
-    // Helper property to get the current selected skin ID based on orientation
-    private var currentSelectedSkinId: String? {
+    /// Raw stored id for the visible orientation, including the built-in token.
+    private var scopedSelectionIdentifier: String? {
         selectedOrientation == .portrait ? selectedPortraitSkinId : selectedLandscapeSkinId
+    }
+
+    /// Packaged skin id for the selection ring. The built-in token is not a packaged skin.
+    private var currentSelectedSkinId: String? {
+        let raw = scopedSelectionIdentifier
+        guard let raw, raw != DeltaSkinSelectionManager.builtInSkinPreferenceToken else { return nil }
+        return raw
+    }
+
+    /// Built-in cell is highlighted only when this scope stored the built-in token.
+    private var isBuiltInSelectionHighlighted: Bool {
+        scopedSelectionIdentifier == DeltaSkinSelectionManager.builtInSkinPreferenceToken
     }
 
     private func skinCell(for skin: DeltaSkinProtocol) -> some View {
@@ -793,21 +709,21 @@ public struct SystemSkinSelectionView: View {
                 Group {
                     if isSelected {
                         RoundedRectangle(cornerRadius: 12)
-                            .strokeBorder(RetroTheme.retroGradient, lineWidth: 2.5)
+                            .strokeBorder(Color.retroCyan, lineWidth: RetroPauseChrome.menuCellStrokeWidthFocused)
                     } else {
                         RoundedRectangle(cornerRadius: 12)
-                            .strokeBorder(Color.clear, lineWidth: 2.5)
+                            .strokeBorder(Color.white.opacity(0.12), lineWidth: RetroPauseChrome.menuCellStrokeWidthUnfocused)
                     }
                 }
-                    .shadow(color: isSelected ? RetroTheme.retroPink.opacity(0.7) : .clear, radius: 3)
+                    .shadow(color: isSelected ? Color.retroCyan.opacity(0.45) : .clear, radius: 6)
             )
             .scaleEffect(isSelected ? 1.05 : (isHovered ? 1.02 : 1.0))
             .animation(.spring(response: 0.3, dampingFraction: 0.7), value: isSelected)
             .animation(.spring(response: 0.2, dampingFraction: 0.8), value: isHovered)
 
             // Skin name with retrowave styling
-            Text(skin.name.uppercased())
-                .font(.system(size: 12, weight: .bold, design: .rounded))
+            Text(skin.name)
+                .font(.system(size: 12, weight: .semibold))
                 .foregroundColor(isSelected ? .white : .white.opacity(0.7))
                 .lineLimit(1)
         }
@@ -918,15 +834,50 @@ public struct SystemSkinSelectionView: View {
         await loadSkinsFromCache()
     }
 
-    /// Load skins from cache (fast path when skins are already loaded)
+    /// Load skins from the manager cache. Overlapping calls wait and run once more so a slow scan is not dropped.
     private func loadSkinsFromCache() async {
-        await MainActor.run {
-            isLoading = false
-            errorMessage = nil
-            loadingProgress = 1.0
+        await reloadDisplayedSkins(forceRescan: false)
+    }
+
+    /// Reload the grid. `forceRescan` is the manual refresh path.
+    private func reloadDisplayedSkins(forceRescan: Bool) async {
+        let shouldStart = await MainActor.run { () -> Bool in
+            if skinLoadInFlight {
+                skinLoadQueued = true
+                if forceRescan {
+                    skinLoadQueuedForce = true
+                }
+                return false
+            }
+            skinLoadInFlight = true
+            return true
+        }
+        guard shouldStart else { return }
+
+        var force = forceRescan
+        while true {
+            await performDisplayedSkinLoad(forceRescan: force)
+            let queuedForce = await MainActor.run { () -> Bool? in
+                guard skinLoadQueued else {
+                    skinLoadInFlight = false
+                    return nil
+                }
+                skinLoadQueued = false
+                let nextForce = skinLoadQueuedForce
+                skinLoadQueuedForce = false
+                return nextForce
+            }
+            guard let queuedForce else { return }
+            force = queuedForce
+        }
+    }
+
+    /// One pass of the skin list. Callers serialize this through ``reloadDisplayedSkins(forceRescan:)``.
+    private func performDisplayedSkinLoad(forceRescan: Bool) async {
+        if forceRescan {
+            await skinManager.reloadSkins()
         }
 
-        // Use the same method as RetroMenuView to ensure consistent filtering
         do {
             let allSkins = try await skinManager.availableSkins()
             ILOG("skins: [SelectionView] Total loaded skins: \(allSkins.count), filtering for system: \(system.rawValue)")
@@ -946,7 +897,7 @@ public struct SystemSkinSelectionView: View {
         }
     }
 
-    /// Process skins and update UI state
+    /// Process skins and update UI state.
     private func processSkins(_ skins: [DeltaSkinProtocol]) async {
         // Filter skins to only include those that support the current device type
         // This ensures we don't show iPhone-only skins on iPad or vice versa
@@ -976,8 +927,8 @@ public struct SystemSkinSelectionView: View {
         let portraitSelection: String?
         let landscapeSelection: String?
 
-        portraitSelection = selectionManager.effectiveSkinIdentifier(for: system, gameId: scopedGameId, orientation: .portrait)
-        landscapeSelection = selectionManager.effectiveSkinIdentifier(for: system, gameId: scopedGameId, orientation: .landscape)
+        portraitSelection = selectionManager.storedSkinIdentifier(for: system, gameId: scopedGameId, orientation: .portrait, scope: effectiveScope)
+        landscapeSelection = selectionManager.storedSkinIdentifier(for: system, gameId: scopedGameId, orientation: .landscape, scope: effectiveScope)
 
         // Update UI on main thread
         await MainActor.run {
@@ -1011,43 +962,8 @@ public struct SystemSkinSelectionView: View {
         isLoading = true
         errorMessage = nil
         loadingProgress = 0.1
-
         Task {
-            // Only show progress animation if skins aren't cached
-            if skinManager.loadedSkins.isEmpty {
-                // Simulate progress for better UX
-                Task {
-                    for progress in stride(from: 0.1, to: 0.9, by: 0.1) {
-                        try? await Task.sleep(nanoseconds: 100_000_000)
-                        await MainActor.run {
-                            loadingProgress = progress
-                        }
-                    }
-                }
-            } else {
-                // Skip progress animation if using cache
-                await MainActor.run {
-                    loadingProgress = 0.9
-                }
-            }
-
-            do {
-                // Use the same method as RetroMenuView to ensure consistent filtering
-                let filteredSkins = try await skinManager.skins(for: system)
-                await processSkins(filteredSkins)
-            } catch {
-                await MainActor.run {
-                    self.errorMessage = error.localizedDescription
-                    loadingProgress = 1.0
-
-                    // Slight delay for animation
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-                        withAnimation {
-                            self.isLoading = false
-                        }
-                    }
-                }
-            }
+            await reloadDisplayedSkins(forceRescan: true)
         }
     }
 
@@ -1067,8 +983,9 @@ public struct SystemSkinSelectionView: View {
                     await selectionManager.setSkin(stored, for: system, gameId: scopedGameId, orientation: orientation, scope: effectiveScope)
                 }
                 await MainActor.run {
-                    self.selectedPortraitSkinId = nil
-                    self.selectedLandscapeSkinId = nil
+                    let highlight = DeltaSkinSelectionManager.builtInSkinPreferenceToken
+                    self.selectedPortraitSkinId = highlight
+                    self.selectedLandscapeSkinId = highlight
                 }
             } else {
                 await selectionManager.setSkin(
@@ -1344,7 +1261,7 @@ struct SkinSelectionPreviewCell: View {
         loadFailed = false
 
         // Fast path: use shared cache
-        if let cached = SkinPreviewThumbnailCache.shared.thumbnail(forKey: key) {
+        if let cached = SkinPreviewThumbnailCache.shared.thumbnail(forKey: key), cached.hasVisibleContent {
             thumbnailImage = cached
             isLoading = false
             return
@@ -1354,7 +1271,12 @@ struct SkinSelectionPreviewCell: View {
         isLoading = true
         let skin = self.skin
         let render = Task.detached(priority: .utility) { () throws -> UIImage in
-            try await skin.thumbnail(for: traits, maxDimension: Self.thumbnailMaxPointSize)
+            if let thumbnail = try? await skin.thumbnail(for: traits, maxDimension: Self.thumbnailMaxPointSize),
+               thumbnail.hasVisibleContent {
+                return thumbnail
+            }
+            // Show a decoded render even when the coarse visibility sample misses thin artwork.
+            return try await skin.image(for: traits)
         }
         do {
             let thumbnail = try await withTaskCancellationHandler {
@@ -1364,7 +1286,9 @@ struct SkinSelectionPreviewCell: View {
             }
             // A superseded .task(id:) run must not overwrite the current orientation's state.
             try Task.checkCancellation()
-            SkinPreviewThumbnailCache.shared.store(thumbnail, forKey: key)
+            if thumbnail.hasVisibleContent {
+                SkinPreviewThumbnailCache.shared.store(thumbnail, forKey: key)
+            }
             thumbnailImage = thumbnail
             isLoading = false
         } catch is CancellationError {

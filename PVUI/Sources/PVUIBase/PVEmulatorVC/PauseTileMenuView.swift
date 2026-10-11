@@ -25,9 +25,6 @@ import PVThemes
 #if canImport(UIKit)
 import UIKit
 #endif
-#if !os(tvOS)
-import UniformTypeIdentifiers
-#endif
 #if canImport(FreemiumKit)
 import FreemiumKit
 #endif
@@ -127,17 +124,11 @@ struct PauseTileMenuView: View {
     #endif
     @State private var showingMIDIPicker = false
     @State private var showingSystemSkinSelection = false
-    @State private var showingSkinCatalog = false
     @State private var showingButtonEffectPicker = false
     @State private var showingButtonSoundPicker = false
     @State private var showingPlusPaywall = false
     @State private var showingLogViewer = false
     @State private var showingAppSettings = false
-    #if !os(tvOS)
-    @State private var showingSkinImporter = false
-    @State private var showingSkinImportError = false
-    @State private var skinImportErrorMessage: String?
-    #endif
     /// Core action awaiting option picker confirmation.
     @State private var pendingCoreAction: CoreAction?
     /// Cached result of the Realm query — refreshed on appear, not on every render.
@@ -185,8 +176,6 @@ struct PauseTileMenuView: View {
     @AppStorage(CoreOptionsScope.perGameDefaultsKey) private var coreOptionsPerGame = true
     /// Easy kill-switch for the deferred restart workflow.
     @AppStorage("PauseTileMenu.deferredRestartPromptEnabled") private var deferredRestartPromptEnabled = true
-    @AppStorage("PauseTileMenu.skinScope") private var skinScopeRaw = SkinScope.game.rawValue
-    @State private var selectedSkinOrientation: SkinOrientation = .portrait
 
     // Camera position for recording overlay — iOS only
     #if os(iOS)
@@ -751,31 +740,12 @@ struct PauseTileMenuView: View {
             #endif
 
         // MARK: Skins submenu actions
-        case "skins_pick_for_system":
-            showingSystemSkinSelection = true
-        case "skins_scope":
-            let allScopes = SkinScope.allCases
-            let currentScope = SkinScope(rawValue: skinScopeRaw) ?? .game
-            let currentIndex = allScopes.firstIndex(of: currentScope) ?? 0
-            let nextScope = allScopes[(currentIndex + 1) % allScopes.count]
-            skinScopeRaw = nextScope.rawValue
-            rebuildSections()
-        case "skins_pick_portrait":
-            selectedSkinOrientation = .portrait
-            showingSystemSkinSelection = true
-        case "skins_pick_landscape":
-            selectedSkinOrientation = .landscape
+        case "skins_choose", "skins_pick_for_system":
             showingSystemSkinSelection = true
         case "skins_button_effect":
             showingButtonEffectPicker = true
         case "skins_button_sound":
             showingButtonSoundPicker = true
-        case "skins_browse_catalog":
-            showingSkinCatalog = true
-        case "skins_import_file":
-            #if !os(tvOS)
-            showingSkinImporter = true
-            #endif
 
         // MARK: Recording / broadcast / clip
         // Recording, broadcasting, and clip export are Provenance Plus
@@ -959,17 +929,6 @@ struct PauseTileMenuView: View {
             return
         }
 
-        if tile.id == "skins_scope" {
-            if lpOption.id.hasPrefix("skinScope_") {
-                let raw = lpOption.id.replacingOccurrences(of: "skinScope_", with: "")
-                if let scope = SkinScope(rawValue: raw) {
-                    skinScopeRaw = scope.rawValue
-                    rebuildSections()
-                }
-            }
-            return
-        }
-
         if tile.id == "autoSaveState" {
             if lpOption.id == "autosave_off" {
                 Defaults[.timedAutoSaves] = false
@@ -1138,37 +1097,6 @@ struct PauseTileMenuView: View {
         guard sound != .none else { return }
         ButtonSoundGenerator.shared.playSound(sound, pan: 0, volume: 1.0)
     }
-
-    #if !os(tvOS)
-    /// Supported import types for skin package files.
-    private var supportedSkinTypes: [UTType] {
-        var skinTypes: [UTType] = [UTType.deltaSkin, UTType.deltaAppSkin, UTType.manicSkin, .archive]
-        if let deltaskinData = UTType(filenameExtension: "deltaskin", conformingTo: .data) { skinTypes.append(deltaskinData) }
-        if let manicData = UTType(filenameExtension: "manicskin", conformingTo: .data) { skinTypes.append(manicData) }
-        if let deltaskinPackage = UTType(filenameExtension: "deltaskin", conformingTo: .package) { skinTypes.append(deltaskinPackage) }
-        if let manicPackage = UTType(filenameExtension: "manicskin", conformingTo: .package) { skinTypes.append(manicPackage) }
-        if let deltaskinArchive = UTType(filenameExtension: "deltaskin", conformingTo: .archive) { skinTypes.append(deltaskinArchive) }
-        if let manicArchive = UTType(filenameExtension: "manicskin", conformingTo: .archive) { skinTypes.append(manicArchive) }
-        return skinTypes
-    }
-
-    /// Imports selected skin files and refreshes the tile badges afterward.
-    private func importSkins(from urls: [URL]) async {
-        do {
-            for url in urls {
-                guard url.startAccessingSecurityScopedResource() else { continue }
-                defer { url.stopAccessingSecurityScopedResource() }
-                try await DeltaSkinManager.shared.importSkin(from: url)
-            }
-            await DeltaSkinManager.shared.reloadSkins()
-            rebuildSections()
-        } catch {
-            skinImportErrorMessage = error.localizedDescription
-            showingSkinImportError = true
-            ELOG("Tile menu skin import failed: \(error.localizedDescription)")
-        }
-    }
-    #endif
 
     // MARK: - Layout helpers
 
@@ -1756,24 +1684,8 @@ struct PauseTileMenuView: View {
             NavigationStack {
                 SystemSkinSelectionView(
                     system: activeSystemIdentifier,
-                    game: emulatorVC.game,
-                    preferredScope: SkinScope(rawValue: skinScopeRaw) ?? .game,
-                    preferredOrientation: selectedSkinOrientation
+                    game: emulatorVC.game
                 )
-            }
-        }
-        .sheet(isPresented: $showingSkinCatalog) {
-            NavigationStack {
-                SkinCatalogBrowserView(
-                    preselectedSystem: activeSystemIdentifier.skinCatalogSystemCode,
-                    activationContextSystemIdentifier: activeSystemIdentifier,
-                    activationContextGameId: emulatorVC.game.flatMap { $0.id.isEmpty ? nil : $0.id }
-                )
-                    .toolbar {
-                        ToolbarItem(placement: .topBarTrailing) {
-                            Button(String(localized: "Done")) { showingSkinCatalog = false }
-                        }
-                    }
             }
         }
         .sheet(isPresented: $showingButtonEffectPicker) {
@@ -1868,28 +1780,6 @@ struct PauseTileMenuView: View {
         .sheet(item: $controllerLayoutContext, onDismiss: { rebuildSections() }, content: { context in
             ControllerLayoutPauseSheet(context: context, core: emulatorVC.core)
         })
-        #endif
-        #if !os(tvOS)
-        .fileImporter(
-            isPresented: $showingSkinImporter,
-            allowedContentTypes: supportedSkinTypes,
-            allowsMultipleSelection: true
-        ) { result in
-            Task {
-                do {
-                    let urls = try result.get()
-                    await importSkins(from: urls)
-                } catch {
-                    skinImportErrorMessage = error.localizedDescription
-                    showingSkinImportError = true
-                }
-            }
-        }
-        .alert(String(localized: "Skin Import Error"), isPresented: $showingSkinImportError) {
-            Button(String(localized: "OK"), role: .cancel) { }
-        } message: {
-            Text(skinImportErrorMessage ?? String(localized: "Unable to import selected skin files."))
-        }
         #endif
         #if canImport(CoreMIDI) && !os(tvOS) && !targetEnvironment(macCatalyst)
         .sheet(isPresented: $showingMIDIPicker) {

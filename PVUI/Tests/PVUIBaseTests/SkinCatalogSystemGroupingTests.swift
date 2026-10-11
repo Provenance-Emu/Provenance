@@ -50,4 +50,21 @@ struct SkinCatalogSystemGroupingTests {
         let matchesUnrelated = SkinCatalogService.matchesAnySystemCode(in: ["snes"], filterCodes: filterCodes)
         #expect(!matchesUnrelated)
     }
+
+    @Test("3DS feed tag threeds matches the canonical 3ds filter")
+    func threeDSFeedTagMatchesCanonicalFilter() {
+        let fromCanonical = SystemIdentifier.relatedCatalogSystemCodes(forCatalogCode: "3ds")
+        #expect(fromCanonical.contains("3ds"))
+        #expect(fromCanonical.contains("threeds"))
+        #expect(fromCanonical.contains("three3ds"))
+
+        let fromFeed = SystemIdentifier.relatedCatalogSystemCodes(forCatalogCode: "threeds")
+        #expect(fromFeed.contains("threeds"))
+        #expect(fromFeed.contains("3ds"))
+
+        let filterCodes = SkinCatalogService.resolvedSystemFilterCodes("3ds")
+        #expect(SkinCatalogService.matchesAnySystemCode(in: ["threeDS"], filterCodes: filterCodes ?? []))
+        #expect(SystemIdentifier.displayName(forCatalogCode: "threeds") == "Nintendo 3DS")
+        #expect(SystemIdentifier.canonicalSkinCatalogCode("threeDS") == "3ds")
+    }
 }

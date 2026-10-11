@@ -14,6 +14,8 @@ public struct SystemSkinBrowserView: View {
     @State private var systemSkinCounts: [SystemIdentifier: Int] = [:]
     @State private var isLoading = true
     @State private var loadingProgress: Double = 0
+    /// Drops a system tally when a newer scan has already been requested.
+    @State private var skinListGeneration = 0
 
     // Environment properties
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
@@ -25,10 +27,6 @@ public struct SystemSkinBrowserView: View {
     @State private var importError: Error?
     @State private var importingFiles = false
     @State private var importProgress: Double = 0
-
-    // Animation states
-    @State private var appearAnimation = false
-    @State private var glowIntensity: CGFloat = 0.5
 
     public init() {}
 
@@ -42,10 +40,6 @@ public struct SystemSkinBrowserView: View {
 
             // Main content
             VStack(spacing: 0) {
-                // Header
-                headerView
-
-                // Content
                 ScrollView {
                     LazyVStack(spacing: 24) {
                         if isLoading {
@@ -77,13 +71,9 @@ public struct SystemSkinBrowserView: View {
             #if !os(tvOS)
             ToolbarItem(placement: .topBarLeading) {
                 NavigationLink(destination: SkinCatalogBrowserView()) {
-                    HStack(spacing: 4) {
-                        Image(systemName: "arrow.down.circle")
-                        Text("Get More")
-                            .font(.system(size: 14, weight: .semibold, design: .rounded))
-                    }
-                    .foregroundStyle(RetroTheme.retroHorizontalGradient)
+                    Image(systemName: "arrow.down.circle")
                 }
+                .accessibilityLabel("Get More")
                 .transaction { $0.animation = nil }
             }
             #endif
@@ -92,12 +82,12 @@ public struct SystemSkinBrowserView: View {
                 Button {
                     isLoading = true
                     Task {
-                        await reloadAllSkins()
+                        await reloadAllSkins(forceRescan: true)
                     }
                 } label: {
                     Image(systemName: "arrow.clockwise")
-                        .foregroundStyle(RetroTheme.retroHorizontalGradient)
                 }
+                .accessibilityLabel("Refresh skins")
                 .disabled(isLoading)
                 .transaction { $0.animation = nil }
             }
@@ -107,28 +97,16 @@ public struct SystemSkinBrowserView: View {
                 Button {
                     showingDocumentPicker = true
                 } label: {
-                    Image(systemName: "plus.circle.fill")
-                        .font(.title2)
-                        .foregroundStyle(RetroTheme.retroHorizontalGradient)
+                    Image(systemName: "plus")
                 }
+                .accessibilityLabel("Import skin")
                 .transaction { $0.animation = nil }
             }
             #endif
         }
         .onAppear {
-            withAnimation(.easeInOut(duration: 0.8)) {
-                appearAnimation = true
-            }
-
-            // Start glow animation
-            withAnimation(.easeInOut(duration: 1.5).repeatForever(autoreverses: true)) {
-                glowIntensity = 0.8
-            }
-
-            // Load skins with a slight delay for animation
-            Task { @MainActor in
-                try? await Task.sleep(nanoseconds: 300_000_000)
-                loadSkins()
+            Task {
+                await reloadAllSkins(forceRescan: false)
             }
         }
         // Navigation handled in systemSection via NavigationLink
@@ -158,98 +136,11 @@ public struct SystemSkinBrowserView: View {
 
     // MARK: - UI Components
 
-    private var headerView: some View {
-        VStack(spacing: 8) {
-            Text("CONTROLLER SKINS")
-                .font(.system(size: 28, weight: .bold, design: .rounded))
-                .foregroundStyle(RetroTheme.retroHorizontalGradient)
-                .padding(.top, 20)
-                .shadow(color: RetroTheme.retroPink.opacity(glowIntensity * 0.5), radius: 3)
-
-            Text("Select and customize your game controllers")
-                .font(.subheadline)
-                .foregroundColor(.white.opacity(0.7))
-                .padding(.bottom, 16)
-        }
-        .frame(maxWidth: .infinity)
-        .background(
-            Rectangle()
-                .fill(Color.black.opacity(0.3))
-                .overlay(
-                    Rectangle()
-                        .fill(
-                            LinearGradient(
-                                gradient: Gradient(colors: [.clear, RetroTheme.retroPink.opacity(0.3), .clear]),
-                                startPoint: .leading,
-                                endPoint: .trailing
-                            )
-                        )
-                        .blendMode(.overlay)
-                )
-                .overlay(
-                    Rectangle()
-                        .frame(height: 1)
-                        .foregroundStyle(RetroTheme.retroHorizontalGradient)
-                        .blur(radius: 0.5)
-                        .opacity(glowIntensity),
-                    alignment: .bottom
-                )
-        )
-    }
-
     private var loadingView: some View {
-        VStack(spacing: 30) {
-            Spacer()
-
-            // Retrowave styled loading indicator
-            ZStack {
-                Circle()
-                    .stroke(
-                        RetroTheme.retroHorizontalGradient,
-                        lineWidth: 4
-                    )
-                    .frame(width: 80, height: 80)
-                    .blur(radius: 2 * glowIntensity)
-
-                Circle()
-                    .trim(from: 0, to: loadingProgress)
-                    .stroke(
-                        RetroTheme.retroHorizontalGradient,
-                        style: StrokeStyle(lineWidth: 4, lineCap: .round)
-                    )
-                    .frame(width: 80, height: 80)
-                    .rotationEffect(.degrees(-90))
-                    .shadow(color: RetroTheme.retroPink.opacity(0.7), radius: 4)
-
-                Text("\(Int(loadingProgress * 100))%")
-                    .font(.system(size: 16, weight: .bold, design: .monospaced))
-                    .foregroundStyle(RetroTheme.retroHorizontalGradient)
-            }
-            .onAppear {
-                withAnimation(.easeInOut(duration: 1.5).repeatForever(autoreverses: false)) {
-                    loadingProgress = 1.0
-                }
-            }
-
-            Text("LOADING SKINS")
-                .font(.system(size: 16, weight: .bold, design: .rounded))
-                .foregroundStyle(RetroTheme.retroHorizontalGradient)
-                .tracking(2)
-
-            Spacer()
-        }
-        .frame(height: 300)
-        .frame(maxWidth: .infinity)
-        .padding()
-        .background(
-            RoundedRectangle(cornerRadius: 16)
-                .fill(Color.black.opacity(0.4))
-                .overlay(
-                    RoundedRectangle(cornerRadius: 16)
-                        .strokeBorder(RetroTheme.retroGradient, lineWidth: 1)
-                )
-        )
-        .padding(.top, 40)
+        ProgressView("Loading skins")
+            .tint(Color.retroCyan)
+            .frame(maxWidth: .infinity)
+            .padding(.top, 48)
     }
 
     private var emptyStateView: some View {
@@ -375,25 +266,18 @@ public struct SystemSkinBrowserView: View {
                 // System header
                 HStack {
                     Text(system.fullName)
-                        .font(.system(size: 20, weight: .bold, design: .rounded))
-                        .foregroundStyle(RetroTheme.retroHorizontalGradient)
+                        .font(.system(size: 17, weight: .semibold))
+                        .foregroundStyle(Color.white)
                         .lineLimit(1)
 
                     Spacer()
 
                     Text("\(skinCount)")
-                        .font(.system(size: 16, weight: .bold, design: .rounded))
-                        .foregroundColor(.white)
+                        .font(.system(size: 13, weight: .semibold))
+                        .foregroundColor(.white.opacity(0.9))
                         .padding(.horizontal, 10)
                         .padding(.vertical, 4)
-                        .background(
-                            Capsule()
-                                .fill(Color.black.opacity(0.6))
-                                .overlay(
-                                    Capsule()
-                                        .strokeBorder(RetroTheme.retroGradient, lineWidth: 1)
-                                )
-                        )
+                        .background(RetroPauseInsetPillBackground(isDark: true))
                 }
                 .padding(.horizontal, 16)
                 .padding(.top, 16)
@@ -403,15 +287,9 @@ public struct SystemSkinBrowserView: View {
                     .padding(.horizontal, 12)
                     .padding(.bottom, 16)
             }
-            .background(
-                RoundedRectangle(cornerRadius: 16)
-                    .fill(Color.black.opacity(0.4))
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 16)
-                            .strokeBorder(RetroTheme.retroGradient, lineWidth: 1.5)
-                    )
-                    .shadow(color: RetroTheme.retroPurple.opacity(0.5), radius: 8)
-            )
+            .background {
+                RetroPausePanelBackground(isDark: true)
+            }
         }
         .buttonStyle(PlainButtonStyle())
     }
@@ -420,15 +298,14 @@ public struct SystemSkinBrowserView: View {
     private var catalogBrowsePromo: some View {
         NavigationLink(destination: SkinCatalogBrowserView()) {
             HStack(spacing: 12) {
-                Image(systemName: "arrow.down.circle.fill")
-                    .font(.system(size: 22))
-                    .foregroundStyle(RetroTheme.retroHorizontalGradient)
+                Image(systemName: "arrow.down.circle")
+                    .font(.system(size: 18, weight: .semibold))
+                    .foregroundStyle(Color.retroCyan)
 
                 VStack(alignment: .leading, spacing: 2) {
-                    Text("GET MORE SKINS")
-                        .font(.system(size: 14, weight: .bold, design: .rounded))
-                        .foregroundStyle(RetroTheme.retroHorizontalGradient)
-                        .tracking(1)
+                    Text("Get more skins")
+                        .font(.system(size: 15, weight: .semibold))
+                        .foregroundStyle(Color.white)
                     #if os(tvOS)
                     Text("Browse and download skins from the community catalog")
                         .font(.system(size: 12))
@@ -447,15 +324,9 @@ public struct SystemSkinBrowserView: View {
             }
             .padding(.vertical, 14)
             .padding(.horizontal, 16)
-            .background(
-                RoundedRectangle(cornerRadius: 12)
-                    .fill(Color.black.opacity(0.4))
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 12)
-                            .strokeBorder(RetroTheme.retroGradient, lineWidth: 1.5)
-                    )
-            )
-            .shadow(color: RetroTheme.retroPurple.opacity(0.3), radius: 6)
+            .background {
+                RetroPausePanelBackground(isDark: true)
+            }
         }
         .retroFocusButtonStyle(showBorder: false)
         .padding(.top, 8)
@@ -507,49 +378,29 @@ public struct SystemSkinBrowserView: View {
         systemSkinCounts.filter { $0.value > 0 }.keys.sorted()
     }
 
-    private func loadSkins() {
-        Task {
-            await reloadAllSkins()
-        }
-    }
-
-    private func reloadAllSkins() async {
-        // Check if skins are already loaded - if so, skip reload
-        if !skinManager.loadedSkins.isEmpty {
-            await MainActor.run {
-                isLoading = false
-                loadingProgress = 1.0
+    /// Rebuild the system list from the manager's scanned skins.
+    ///
+    /// `loadedSkins` is published on the main actor after the scan and can still be empty
+    /// or stale when this view appears. `availableSkins()` reads the scan result directly.
+    /// A newer request drops an older tally so a partial first pass cannot overwrite the full list.
+    private func reloadAllSkins(forceRescan: Bool) async {
+        let generation = await MainActor.run { () -> Int in
+            skinListGeneration += 1
+            if systemSkinCounts.isEmpty {
+                isLoading = true
             }
-            // Use cached skins directly
-            let allSkins = skinManager.loadedSkins
-            await updateUI(with: allSkins)
-            return
+            return skinListGeneration
         }
 
-        await MainActor.run {
-            isLoading = true
-            loadingProgress = 0.1
+        if forceRescan {
+            await skinManager.reloadSkins()
         }
 
-        // Simulate progress for better UX
-        Task {
-            for progress in stride(from: 0.1, to: 0.9, by: 0.1) {
-                try? await Task.sleep(nanoseconds: 100_000_000)
-                await MainActor.run {
-                    loadingProgress = progress
-                }
-            }
-        }
-
-        // Reload skins only if needed
-        await skinManager.reloadSkins()
-
-        // Get all available skins (will use cache now)
         let allSkins = (try? await skinManager.availableSkins(forceRescan: false)) ?? []
-        await updateUI(with: allSkins)
+        await updateUI(with: allSkins, generation: generation)
     }
 
-    private func updateUI(with allSkins: [any DeltaSkinProtocol]) async {
+    private func updateUI(with allSkins: [any DeltaSkinProtocol], generation: Int) async {
 
         // Tally skins by their skinLayoutGroup (handles families like sega-md, gb, pce, psx…)
         var groupCounts: [String: Int] = [:]
@@ -588,15 +439,11 @@ public struct SystemSkinBrowserView: View {
             }
         }
 
-        // Final update
+        // Final update. Ignore this tally when a newer load has already started.
         await MainActor.run {
+            guard generation == self.skinListGeneration else { return }
             self.systemSkinCounts = counts
             self.loadingProgress = 1.0
-        }
-
-        // Slight delay before hiding loading screen for smoother transition
-        try? await Task.sleep(nanoseconds: 300_000_000)
-        await MainActor.run {
             withAnimation(.easeOut(duration: 0.3)) {
                 self.isLoading = false
             }
@@ -631,7 +478,7 @@ public struct SystemSkinBrowserView: View {
         }
 
         // Reload after all imports
-        await reloadAllSkins()
+        await reloadAllSkins(forceRescan: false)
 
         await MainActor.run {
             importingFiles = false

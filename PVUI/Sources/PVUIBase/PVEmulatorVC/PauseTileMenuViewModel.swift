@@ -764,40 +764,13 @@ final class PauseTileMenuViewModel: ObservableObject {
                 ]
                 return [PauseMenuTileSection(id: "skins_root", title: String(localized: "SKINS"), tiles: tiles)]
             }
-            let systemIdentifier = SystemIdentifier(rawValue: emulatorVC.game?.systemIdentifier ?? emulatorVC.core.systemIdentifier ?? "")
-            let systemLabel = systemIdentifier?.fullName ?? String(localized: "Current System")
-            let savedScopeRaw = UserDefaults.standard.string(forKey: "PauseTileMenu.skinScope") ?? SkinScope.game.rawValue
-            let skinScope = SkinScope(rawValue: savedScopeRaw) ?? .game
-            let scopeLabel = skinScope.rawValue
-            var tiles: [PauseMenuTile] = [
+            let tiles: [PauseMenuTile] = [
                 PauseMenuTile(
-                    id: "skins_scope",
-                    icon: "line.3.horizontal.decrease.circle",
-                    label: String(localized: "Skin Scope"),
-                    badge: scopeLabel,
-                    description: String(localized: "Choose Session, Game, or System scope"),
-                    colorKey: .teal,
-                    dismissOnTap: false,
-                    longPressOptions: SkinScope.allCases.map {
-                        PauseMenuTileLongPressOption(id: "skinScope_\($0.rawValue)", title: $0.rawValue, isSelected: $0 == skinScope)
-                    }
-                ),
-                PauseMenuTile(
-                    id: "skins_pick_portrait",
-                    icon: "rectangle.portrait",
-                    label: String(localized: "Choose Portrait Skin"),
-                    badge: systemLabel,
-                    description: String(localized: "Pick the skin used in portrait orientation."),
+                    id: "skins_choose",
+                    icon: "paintbrush.pointed.fill",
+                    label: String(localized: "Choose Skin"),
+                    description: String(localized: "Pick a controller skin for this session, game, or system."),
                     colorKey: .orange,
-                    dismissOnTap: false
-                ),
-                PauseMenuTile(
-                    id: "skins_pick_landscape",
-                    icon: "rectangle.landscape",
-                    label: String(localized: "Choose Landscape Skin"),
-                    badge: systemLabel,
-                    description: String(localized: "Pick the skin used in landscape orientation."),
-                    colorKey: .purple,
                     dismissOnTap: false
                 ),
                 PauseMenuTile(
@@ -817,26 +790,8 @@ final class PauseTileMenuViewModel: ObservableObject {
                     description: String(localized: "Audible feedback played when on-screen buttons are pressed."),
                     colorKey: .blue,
                     dismissOnTap: false
-                ),
-                PauseMenuTile(
-                    id: "skins_browse_catalog",
-                    icon: "arrow.down.circle.fill",
-                    label: String(localized: "Browse Catalog"),
-                    description: String(localized: "Browse and download community-made skins."),
-                    colorKey: .orange,
-                    dismissOnTap: false
                 )
             ]
-            #if !os(tvOS)
-            tiles.insert(PauseMenuTile(
-                id: "skins_import_file",
-                icon: "square.and.arrow.down",
-                label: String(localized: "Import Skin File"),
-                description: String(localized: "Import a .deltaskin or .provskin file from the Files app."),
-                colorKey: .cyan,
-                dismissOnTap: false
-            ), at: 3)
-            #endif
             return [PauseMenuTileSection(id: "skins_root", title: String(localized: "SKINS"), tiles: tiles)]
         }
     }

@@ -80,14 +80,10 @@ public actor SkinSystemOverrideRegistry {
 
     // MARK: - Caches
 
-    /// skin.identifier -> override codes
-    private var overridesByIdentifier: [String: Set<String>] = [:]
-    /// skin.fileURL.standardizedFileURL.path -> override codes (used for skins
-    /// whose internal identifier collides across files or is empty).
+    /// skin.fileURL.standardizedFileURL.path -> override codes.
+    ///
+    /// Path is the key because installed skins can share or omit an identifier.
     private var overridesByPath: [String: Set<String>] = [:]
-    /// Tracks skin identifiers that have already been queried but produced no
-    /// override so we don't repeatedly hit disk / the catalog service.
-    private var negativeIdentifierCache: Set<String> = []
 
     // MARK: - File Naming
 
@@ -107,33 +103,23 @@ public actor SkinSystemOverrideRegistry {
     /// Codes are lowercased to align with `SystemIdentifier.skinCatalogSystemCode`
     /// and `SkinCatalogService.matchesAnySystemCode(in:filterCodes:)`.
     public func systemCodes(for skin: any DeltaSkinProtocol) async -> Set<String> {
-        if let cached = overridesByIdentifier[skin.identifier], !cached.isEmpty {
-            return cached
-        }
         let pathKey = skin.fileURL.standardizedFileURL.path
         if let cached = overridesByPath[pathKey], !cached.isEmpty {
             return cached
-        }
-        if negativeIdentifierCache.contains(skin.identifier) {
-            return []
         }
 
         if let sidecar = readSidecar(for: skin.fileURL) {
             let codes = Self.normalize(sidecar.systems)
             if !codes.isEmpty {
-                overridesByIdentifier[skin.identifier] = codes
                 overridesByPath[pathKey] = codes
                 return codes
             }
         }
 
         if let codes = await catalogDerivedCodes(for: skin), !codes.isEmpty {
-            overridesByIdentifier[skin.identifier] = codes
             overridesByPath[pathKey] = codes
             return codes
         }
-
-        negativeIdentifierCache.insert(skin.identifier)
         return []
     }
 
@@ -167,30 +153,22 @@ public actor SkinSystemOverrideRegistry {
         try writeSidecar(sidecar, to: Self.sidecarURL(for: skinFileURL))
 
         let codes = Self.normalize(sidecar.systems)
-        if let id = skinIdentifier, !codes.isEmpty {
-            overridesByIdentifier[id] = codes
-            negativeIdentifierCache.remove(id)
-        }
-        overridesByPath[skinFileURL.standardizedFileURL.path] = codes
+        let pathKey = skinFileURL.standardizedFileURL.path
+        overridesByPath[pathKey] = codes
     }
 
     /// Removes the sidecar (if present) and forgets any in-memory overrides
     /// associated with the skin.  Safe to call even when no sidecar exists.
-    public func removeSidecar(for skinFileURL: URL, skinIdentifier: String?) async {
+    public func removeSidecar(for skinFileURL: URL, skinIdentifier _: String?) async {
         let url = Self.sidecarURL(for: skinFileURL)
         try? FileManager.default.removeItem(at: url)
-        overridesByPath.removeValue(forKey: skinFileURL.standardizedFileURL.path)
-        if let id = skinIdentifier {
-            overridesByIdentifier.removeValue(forKey: id)
-            negativeIdentifierCache.remove(id)
-        }
+        let pathKey = skinFileURL.standardizedFileURL.path
+        overridesByPath.removeValue(forKey: pathKey)
     }
 
     /// Drops every cached override.  Tests and tooling use this to start fresh.
     public func reset() async {
-        overridesByIdentifier.removeAll()
         overridesByPath.removeAll()
-        negativeIdentifierCache.removeAll()
     }
 
     // MARK: - Sidecar IO
@@ -235,7 +213,7 @@ public actor SkinSystemOverrideRegistry {
         let entry = catalog.skins.first { entry in
             matchingInstalledSkin(for: entry, in: [skin]) != nil
         }
-        guard let entry else { return nil }
+        guard let entry else { return [] }
         return Self.normalize(entry.systems)
     }
 

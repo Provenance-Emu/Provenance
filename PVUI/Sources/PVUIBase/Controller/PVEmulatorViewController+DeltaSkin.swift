@@ -66,6 +66,65 @@ extension PVEmulatorViewController {
         )
     }
 
+    /// Applies a pause-menu or library skin pick to the running game when it matches this session.
+    ///
+    /// Session, game, and system writes all post ``DeltaSkinSelectionManager.selectionChangedNotification``.
+    /// Only the orientation currently on screen is swapped. Emulation stays paused while the pause menu is up.
+    func observeLiveSkinSelection() {
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(handleLiveSkinSelectionChanged(_:)),
+            name: DeltaSkinSelectionManager.selectionChangedNotification,
+            object: nil
+        )
+    }
+
+    @objc private func handleLiveSkinSelectionChanged(_ notification: Notification) {
+        let userInfo = notification.userInfo
+        DispatchQueue.main.async { [weak self] in
+            guard let self else { return }
+            guard self.core.supportsSkins else { return }
+            guard let systemRaw = userInfo?["systemId"] as? String,
+                  systemRaw == self.runningSystemRawIdentifier else { return }
+            guard let orientationRaw = userInfo?["orientation"] as? String,
+                  let orientation = SkinOrientation(rawValue: orientationRaw),
+                  orientation == self.currentOrientation else { return }
+
+            let keepPaused = self.isShowingMenu
+            let skinId = Self.skinIdentifier(fromSelectionNotification: userInfo)
+            Task { @MainActor in
+                if skinId == nil || skinId == DeltaSkinSelectionManager.builtInSkinPreferenceToken {
+                    guard self.currentSkin != nil || self.skinContainerView != nil else { return }
+                    try? await self.resetToBuiltInControls()
+                    if keepPaused {
+                        self.core.setPauseEmulation(true)
+                    }
+                    return
+                }
+                guard let skinId, self.currentSkin?.identifier != skinId else { return }
+                guard let skin = try? await DeltaSkinManager.shared.skin(withIdentifier: skinId) else { return }
+                try? await self.applySkin(skin, keepPaused: keepPaused)
+            }
+        }
+    }
+
+    /// System id of the game on screen, preferring the linked system over the persisted string.
+    private var runningSystemRawIdentifier: String {
+        if let linked = game.system?.systemIdentifier, linked != .Unknown {
+            return linked.rawValue
+        }
+        if !game.systemIdentifier.isEmpty {
+            return game.systemIdentifier
+        }
+        return core.systemIdentifier ?? ""
+    }
+
+    /// Skin id from a selection notification. `NSNull` and a missing value mean built-in / cleared.
+    private static func skinIdentifier(fromSelectionNotification userInfo: [AnyHashable: Any]?) -> String? {
+        guard let value = userInfo?["skinIdentifier"], !(value is NSNull) else { return nil }
+        return value as? String
+    }
+
     @objc private func handleSkinSelectionChangedForExplicitCore(_ notification: Notification) {
         DispatchQueue.main.async { [weak self] in
             guard let self, self.currentSkin != nil || self.skinContainerView != nil else { return }

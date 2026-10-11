@@ -381,6 +381,9 @@ public struct DeltaSkin: DeltaSkinProtocol {
         return String(format: "%016llx", hash)
     }
 
+    /// Bumped when rasterization changes so previously cached blank pages are not reused.
+    private static let rasterCacheRevision = "r2"
+
     /// Content-aware disk-cache filename: skin id + asset + traits + size + screen scale +
     /// the skin file's mod-date (so updating a skin invalidates stale rasters).
     private func diskCacheURL(assetName: String, traits: DeltaSkinTraits, renderSize: CGSize?) -> URL? {
@@ -388,19 +391,27 @@ public struct DeltaSkin: DeltaSkinProtocol {
         let modStamp = ((try? fileURL.resourceValues(forKeys: [.contentModificationDateKey]))?.contentModificationDate)
             .map { String(Int($0.timeIntervalSince1970)) } ?? "0"
         let sizeStamp = renderSize.map { "\(Int($0.width))x\(Int($0.height))" } ?? "native"
-        let raw = "\(identifier)|\(assetName)|\(traits.device.rawValue)|\(traits.displayType.rawValue)|\(traits.orientation.rawValue)|\(sizeStamp)|@\(UIScreen.main.scale)|\(modStamp)"
+        let raw = "\(Self.rasterCacheRevision)|\(identifier)|\(assetName)|\(traits.device.rawValue)|\(traits.displayType.rawValue)|\(traits.orientation.rawValue)|\(sizeStamp)|@\(UIScreen.main.scale)|\(modStamp)"
         return dir.appendingPathComponent(Self.stableHash(raw)).appendingPathExtension("png")
     }
 
     /// Load a rasterized image from disk at UIScreen scale (pngData stored pixels = points×scale).
+    ///
+    /// Fully transparent rasters are treated as misses and deleted. Those were written when a PDF
+    /// page's media box origin pushed the artwork off the canvas.
     private func loadFromDiskCache(_ url: URL?) -> UIImage? {
-        guard let url, let data = try? Data(contentsOf: url) else { return nil }
-        return UIImage(data: data, scale: UIScreen.main.scale)
+        guard let url, let data = try? Data(contentsOf: url), let image = UIImage(data: data, scale: UIScreen.main.scale) else { return nil }
+        guard image.hasVisibleContent else {
+            try? FileManager.default.removeItem(at: url)
+            return nil
+        }
+        return image
     }
 
     /// Write a rasterized image to disk as PNG (atomic, best-effort). Triggers a one-shot prune.
+    /// Transparent pages are not stored; those were the blank placeholders served on the next launch.
     private static func writeToDiskCache(_ image: UIImage, to url: URL?) {
-        guard let url, let png = image.pngData() else { return }
+        guard let url, image.hasVisibleContent, let png = image.pngData() else { return }
         try? png.write(to: url, options: .atomic)
         pruneDiskCacheOnce()
     }
@@ -490,7 +501,7 @@ public struct DeltaSkin: DeltaSkinProtocol {
                 } else {
                     rendered = nil
                 }
-                guard let rendered else {
+                guard let rendered, rendered.hasVisibleContent else {
                     lastError = DeltaSkinError.invalidPNG
                     continue
                 }
@@ -529,7 +540,7 @@ public struct DeltaSkin: DeltaSkinProtocol {
         for name in candidates {
             // Check cache first
             let cacheKey = "\(identifier)-\(traits.device.rawValue)-\(traits.displayType.rawValue)-\(traits.orientation.rawValue)-\(name)"
-            if let cachedImage = Self.imageCache.image(forKey: cacheKey) {
+            if let cachedImage = Self.imageCache.image(forKey: cacheKey), cachedImage.hasVisibleContent {
                 ILOG("skins: Found cached image: \(name)")
                 return cachedImage
             }
@@ -571,11 +582,14 @@ public struct DeltaSkin: DeltaSkinProtocol {
                     }
                 }
 
-                // Cache the decoded image (disk first so future launches skip the rasterize, then memory)
+                // Cache the decoded image (disk first so future launches skip the rasterize, then memory).
+                // A decoded image is still returned when the visibility sample misses, so the picker can show it.
                 if let imageToCache = decodedImage {
                     ILOG("skins: Successfully loaded and decoded image: \(name), size: \(imageToCache.size)")
-                    if isVectorAsset { Self.writeToDiskCache(imageToCache, to: diskURL) }
-                    Self.imageCache.setImage(imageToCache, forKey: cacheKey)
+                    if imageToCache.hasVisibleContent {
+                        if isVectorAsset { Self.writeToDiskCache(imageToCache, to: diskURL) }
+                        Self.imageCache.setImage(imageToCache, forKey: cacheKey)
+                    }
                     return imageToCache
                 }
             } catch {
@@ -590,7 +604,7 @@ public struct DeltaSkin: DeltaSkinProtocol {
         // Fallback: try the original filename property (legacy behavior)
         let fallbackName = rep.assets.filename
         let fallbackCacheKey = "\(identifier)-\(traits.device.rawValue)-\(traits.displayType.rawValue)-\(traits.orientation.rawValue)-\(fallbackName)"
-        if let cachedImage = Self.imageCache.image(forKey: fallbackCacheKey) {
+        if let cachedImage = Self.imageCache.image(forKey: fallbackCacheKey), cachedImage.hasVisibleContent {
             return cachedImage
         }
 
@@ -626,10 +640,12 @@ public struct DeltaSkin: DeltaSkinProtocol {
                 }
             }
 
-            // Cache the decoded image (disk + memory)
+            // Cache the decoded image (disk + memory). Return it even when the sample finds no pixels.
             if let imageToCache = decodedImage {
-                if fbIsVector { Self.writeToDiskCache(imageToCache, to: fbDiskURL) }
-                Self.imageCache.setImage(imageToCache, forKey: fallbackCacheKey)
+                if imageToCache.hasVisibleContent {
+                    if fbIsVector { Self.writeToDiskCache(imageToCache, to: fbDiskURL) }
+                    Self.imageCache.setImage(imageToCache, forKey: fallbackCacheKey)
+                }
                 return imageToCache
             }
 
@@ -1531,10 +1547,44 @@ extension UIImage {
             let yOffset = (finalSize.height - scaledHeight) / 2
             context.cgContext.translateBy(x: xOffset, y: yOffset + scaledHeight)
             context.cgContext.scaleBy(x: scale, y: -scale)
+            // Media boxes are not always origin-zero. Without this, the page draws off-canvas
+            // and the cached PNG is a blank transparent image.
+            context.cgContext.translateBy(x: -pageRect.origin.x, y: -pageRect.origin.y)
             context.cgContext.drawPDFPage(page)
         }
 
         self.init(cgImage: image.cgImage!, scale: image.scale, orientation: image.imageOrientation)
+    }
+
+    /// True when the bitmap is opaque or a coarse downsample finds any non-zero channel.
+    ///
+    /// Alpha-only checks dropped thin controller art after it was averaged into a 24×24 sample,
+    /// and the picker then treated a successful render as a blank placeholder.
+    var hasVisibleContent: Bool {
+        guard let cgImage, cgImage.width > 0, cgImage.height > 0 else { return false }
+        switch cgImage.alphaInfo {
+        case .none, .noneSkipFirst, .noneSkipLast:
+            return true
+        default:
+            break
+        }
+        let sample = 48
+        let bytesPerPixel = 4
+        var pixels = [UInt8](repeating: 0, count: sample * sample * bytesPerPixel)
+        guard let context = CGContext(
+            data: &pixels,
+            width: sample,
+            height: sample,
+            bitsPerComponent: 8,
+            bytesPerRow: sample * bytesPerPixel,
+            space: CGColorSpaceCreateDeviceRGB(),
+            bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue
+        ) else {
+            return true
+        }
+        context.interpolationQuality = .high
+        context.draw(cgImage, in: CGRect(x: 0, y: 0, width: sample, height: sample))
+        return pixels.contains { $0 > 0 }
     }
 }
 

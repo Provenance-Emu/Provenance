@@ -297,6 +297,33 @@ public final class DeltaSkinSelectionManager: ObservableObject {
         return preferences.selectedSkinIdentifier(for: systemId, orientation: orientation)
     }
 
+    /// Identifier stored for one scope only.
+    ///
+    /// Does not walk the session → game → system chain. ``builtInSkinPreferenceToken`` is returned
+    /// as stored so the picker can ring the Built-in cell. `nil` means that scope has no pick.
+    /// Session checks the game entry first, then the system-level session entry.
+    public func storedSkinIdentifier(
+        for systemId: SystemIdentifier,
+        gameId: String?,
+        orientation: SkinOrientation,
+        scope: SkinScope
+    ) -> String? {
+        queue.sync {
+            switch scope {
+            case .session:
+                if let gameId, let gameSession = getSessionSkin(for: systemId, gameId: gameId, orientation: orientation) {
+                    return gameSession
+                }
+                return getSessionSkin(for: systemId, gameId: nil, orientation: orientation)
+            case .game:
+                guard let gameId else { return nil }
+                return preferences.selectedSkinIdentifier(for: gameId, orientation: orientation)
+            case .system:
+                return preferences.selectedSkinIdentifier(for: systemId, orientation: orientation)
+            }
+        }
+    }
+
     // MARK: - Fallback Logic
 
     /// Get the effective skin identifier with fallback if the selected skin doesn't support the orientation

@@ -803,6 +803,7 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
         // Set up Delta Skin
         setupDeltaSkinDirectly()
         observeExplicitSkinRemoval()
+        observeLiveSkinSelection()
 
         // Install toast overlay AFTER skin setup so it renders above all emulator views
         #if canImport(UIKit)
@@ -2198,9 +2199,11 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
 // MARK: - Skin Management
 
 extension PVEmulatorViewController {
-    /// Apply a skin to the emulator
-    /// - Parameter skin: The skin to apply
-    public func applySkin(_ skin: DeltaSkinProtocol) async throws {
+    /// Apply a skin to the emulator.
+    /// - Parameters:
+    ///   - skin: The skin to apply.
+    ///   - keepPaused: When `true`, leave emulation paused after the rebuild. Used while the pause menu is up.
+    public func applySkin(_ skin: DeltaSkinProtocol, keepPaused: Bool = false) async throws {
         // Check if the core supports skins
         guard core.supportsSkins else {
             DLOG("Core does not support skins: \(core.description)")
@@ -2328,7 +2331,9 @@ extension PVEmulatorViewController {
             skinView = try await createSkinView(from: skinToApply)
         } catch {
             ELOG("skins: Failed to create skin view for '\(skinToApply.name)': \(error), mounting the built-in controls")
-            core.setPauseEmulation(false)
+            if !keepPaused {
+                core.setPauseEmulation(false)
+            }
             try await resetToBuiltInControls()
             return
         }
@@ -2387,8 +2392,10 @@ extension PVEmulatorViewController {
             // Make sure to reconnect all input handlers
             reconnectAllInputHandlers()
 
-            // Skin fully applied; resume emulation
-            core.setPauseEmulation(false)
+            // Skin fully applied. Stay paused while the pause menu is presenting a live swap.
+            if !keepPaused {
+                core.setPauseEmulation(false)
+            }
 
             // Re-raise virtual input overlays above the newly added skin views
             #if !os(tvOS)
