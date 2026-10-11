@@ -366,6 +366,13 @@ public struct RetroGameLibraryView: View {
             )
             .environmentObject(themeManager)
         }
+        .sheet(isPresented: $viewModel.showPatchApplier, onDismiss: {
+            viewModel.patchApplierGameMD5 = nil
+        }) {
+            NavigationStack {
+                PatchApplierView(preselectedGameMD5: viewModel.patchApplierGameMD5)
+            }
+        }
 //            .fullScreenCover(item: $viewModel.continuesManagementState) { state in
 //                let driver = RealmSaveStateDriver()
 //                // Load save states for the specific game
@@ -1194,6 +1201,12 @@ extension RetroGameLibraryView: GameContextMenuDelegate {
 
     public func gameContextMenu(_ menu: GameContextMenu, didRequestDiscSelectionFor game: PVGame) {
         // gamesViewModel.presentDiscSelectionAlert(for: game, rootDelegate: rootDelegate)
+    }
+
+    public func gameContextMenu(_ menu: GameContextMenu, didRequestApplyPatchFor game: PVGame) {
+        guard !game.isInvalidated else { return }
+        viewModel.patchApplierGameMD5 = game.md5Hash
+        viewModel.showPatchApplier = true
     }
 }
 

@@ -58,6 +58,8 @@ public class RetroGameLibraryViewModel: ObservableObject {
     @Published var continuesManagementState: RetroGameLibraryContinuesManagementState?
     @Published var showArtworkSearch = false
     @Published var showArtworkSourceAlert = false
+    @Published var showPatchApplier = false
+    @Published var patchApplierGameMD5: String?
 
     /// Reference to the GameImporter for tracking import progress
     internal let gameImporter = GameImporter.shared

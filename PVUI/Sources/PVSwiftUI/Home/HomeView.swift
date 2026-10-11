@@ -100,6 +100,8 @@ struct HomeView: SwiftUI.View {
     @State private var patchManagerGame: PVGame?
     @State private var showPatchImportPicker = false
     @State private var patchImportGame: PVGame?
+    @State private var showPatchApplier = false
+    @State private var patchApplierGameMD5: String?
 
     @State private var searchText = ""
 
@@ -597,6 +599,13 @@ struct HomeView: SwiftUI.View {
                 } else {
                     Text("Game unavailable").padding()
                 }
+            }
+        }
+        .sheet(isPresented: $showPatchApplier, onDismiss: {
+            patchApplierGameMD5 = nil
+        }) {
+            NavigationStack {
+                PatchApplierView(preselectedGameMD5: patchApplierGameMD5)
             }
         }
 #if !os(tvOS)
@@ -1502,6 +1511,12 @@ extension HomeView: GameContextMenuDelegate {
         guard !game.isInvalidated else { return }
         patchImportGame = game.isFrozen ? game : game.freeze()
         showPatchImportPicker = true
+    }
+
+    func gameContextMenu(_ menu: GameContextMenu, didRequestApplyPatchFor game: PVGame) {
+        guard !game.isInvalidated else { return }
+        patchApplierGameMD5 = game.md5Hash
+        showPatchApplier = true
     }
 
     func gameContextMenu(_ menu: GameContextMenu, didRequestManagePatchesFor game: PVGame) {

@@ -25,6 +25,7 @@ public protocol GameContextMenuDelegate {
     func gameContextMenu(_ menu: GameContextMenu, didRequestPlayOriginalFor game: PVGame)
     func gameContextMenu(_ menu: GameContextMenu, didRequestPlayPatch patch: PVPatch, for game: PVGame)
     func gameContextMenu(_ menu: GameContextMenu, didRequestImportPatchFor game: PVGame)
+    func gameContextMenu(_ menu: GameContextMenu, didRequestApplyPatchFor game: PVGame)
     func gameContextMenu(_ menu: GameContextMenu, didRequestManagePatchesFor game: PVGame)
     func gameContextMenu(_ menu: GameContextMenu, didRequestDownloadFromCloudFor game: PVGame)
     func gameContextMenu(_ menu: GameContextMenu, didRequestSkinSelectionFor game: PVGame)
@@ -93,6 +94,10 @@ public extension GameContextMenuDelegate {
 
     func gameContextMenu(_ menu: GameContextMenu, didRequestImportPatchFor game: PVGame) {
         DLOG("Default implementation: didRequestImportPatchFor not implemented")
+    }
+
+    func gameContextMenu(_ menu: GameContextMenu, didRequestApplyPatchFor game: PVGame) {
+        DLOG("Default implementation: didRequestApplyPatchFor not implemented")
     }
 
     func gameContextMenu(_ menu: GameContextMenu, didRequestManagePatchesFor game: PVGame) {

@@ -327,6 +327,12 @@ extension ConsoleGamesView: GameContextMenuDelegate {
         gamesViewModel.showPatchImportPicker = true
     }
 
+    func gameContextMenu(_ menu: GameContextMenu, didRequestApplyPatchFor game: PVGame) {
+        guard !game.isInvalidated else { return }
+        gamesViewModel.patchApplierGameMD5 = game.md5Hash
+        gamesViewModel.showPatchApplier = true
+    }
+
     func gameContextMenu(_ menu: GameContextMenu, didRequestManagePatchesFor game: PVGame) {
         guard !game.isInvalidated else { return }
         gamesViewModel.patchManagerGame = game.isFrozen ? game : game.freeze()

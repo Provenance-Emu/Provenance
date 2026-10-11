@@ -519,8 +519,19 @@ struct TVMediaMainView: View {
                 }
         }
 
-        private var layoutWithAppearance: some View {
+        private var layoutWithPatchApplier: some View {
             layoutWithCoreOptions
+                .sheet(isPresented: $gameActions.showPatchApplier, onDismiss: {
+                    gameActions.patchApplierGameMD5 = nil
+                }) {
+                    NavigationView {
+                        PatchApplierView(preselectedGameMD5: gameActions.patchApplierGameMD5)
+                    }
+                }
+        }
+
+        private var layoutWithAppearance: some View {
+            layoutWithPatchApplier
                 .preferredColorScheme(.dark)
                 .ignoresSafeArea(.all)
                 .hideHomeIndicator()
@@ -1115,6 +1126,10 @@ final class TVMediaGameActions: ObservableObject, GameContextMenuDelegate {
     @Published var coreOptionsCoreName: String?
     @Published var coreOptionsGameMD5: String?
 
+    /// Patch Applier sheet state
+    @Published var showPatchApplier = false
+    @Published var patchApplierGameMD5: String?
+
     private let retroModel = RetroGameLibraryViewModel()
 
     @MainActor
@@ -1199,6 +1214,14 @@ final class TVMediaGameActions: ObservableObject, GameContextMenuDelegate {
             coreOptionsCoreName = coreName
             coreOptionsGameMD5 = game.md5Hash.isEmpty ? nil : game.md5Hash
             showCoreOptionsSheet = true
+        }
+    }
+
+    func gameContextMenu(_ menu: GameContextMenu, didRequestApplyPatchFor game: PVGame) {
+        Task { @MainActor in
+            guard !game.isInvalidated else { return }
+            patchApplierGameMD5 = game.md5Hash
+            showPatchApplier = true
         }
     }
 

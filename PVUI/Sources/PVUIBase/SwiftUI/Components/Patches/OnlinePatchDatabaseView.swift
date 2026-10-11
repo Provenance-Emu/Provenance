@@ -39,6 +39,9 @@ public struct OnlinePatchDatabaseView: View {
     @State private var downloadProgress: Double = 0
     @State private var safariItem: SafariItem?
     @State private var selectedResult: OnlinePatchSearchResult?
+    @State private var showPatchApplier = false
+    @State private var patchApplierGameMD5: String?
+    @State private var lastImportedMatchTitle: String?
 
     private let database = RomHackingNetDatabase.shared
 
@@ -66,10 +69,29 @@ public struct OnlinePatchDatabaseView: View {
                 result: result,
                 onOpenSafari: { openSafari(result.pageURL) },
                 onDownload: { downloadAndImport(result) },
-                isDownloading: isDownloading,
-                downloadProgress: downloadProgress,
-                statusMessage: statusMessage
+                onOpenApplier: {
+                    selectedResult = nil
+                    showPatchApplier = true
+                },
+                matchedGameTitle: $lastImportedMatchTitle,
+                isDownloading: $isDownloading,
+                downloadProgress: $downloadProgress,
+                statusMessage: $statusMessage
             )
+            .onAppear {
+                // Fresh detail presentation — clear prior import match chrome.
+                lastImportedMatchTitle = nil
+                statusMessage = nil
+                isDownloading = false
+                downloadProgress = 0
+            }
+        }
+        .sheet(isPresented: $showPatchApplier, onDismiss: {
+            patchApplierGameMD5 = nil
+        }) {
+            NavigationStack {
+                PatchApplierView(preselectedGameMD5: patchApplierGameMD5)
+            }
         }
     }
 
@@ -226,6 +248,8 @@ public struct OnlinePatchDatabaseView: View {
         isDownloading = true
         downloadProgress = 0
         statusMessage = "Downloading…"
+        lastImportedMatchTitle = nil
+        patchApplierGameMD5 = nil
         Task {
             do {
                 let destDir = Paths.patchesPath
@@ -237,8 +261,17 @@ public struct OnlinePatchDatabaseView: View {
                         }
                     }
                 }
-                _ = try await PatchRepository.shared.importPatch(at: fileURL, autoMatch: true)
-                statusMessage = "Imported \(fileURL.lastPathComponent). Check Patches for match status."
+                let patch = try await PatchRepository.shared.importPatch(at: fileURL, autoMatch: true)
+                let frozen = patch.isFrozen ? patch : patch.freeze()
+                if let game = frozen.game, !game.isInvalidated {
+                    lastImportedMatchTitle = game.title
+                    patchApplierGameMD5 = game.md5Hash
+                    // Ensure a library variant exists so Apply / launch works immediately.
+                    _ = try? await PatchRepository.shared.ensureVariant(for: frozen, baseGame: game)
+                    statusMessage = "Imported \(fileURL.lastPathComponent) and matched to \(game.title)."
+                } else {
+                    statusMessage = "Imported \(fileURL.lastPathComponent). No library match yet — link it under Patches, or use Patch Applier."
+                }
             } catch let error as OnlinePatchDatabaseError where error == .blockedByUpstream {
                 statusMessage = error.localizedDescription
                 openSafari(result.pageURL)
@@ -266,9 +299,11 @@ private struct OnlinePatchDetailView: View {
     let result: OnlinePatchSearchResult
     let onOpenSafari: () -> Void
     let onDownload: () -> Void
-    let isDownloading: Bool
-    let downloadProgress: Double
-    let statusMessage: String?
+    let onOpenApplier: () -> Void
+    @Binding var matchedGameTitle: String?
+    @Binding var isDownloading: Bool
+    @Binding var downloadProgress: Double
+    @Binding var statusMessage: String?
 
     @State private var info: OnlinePatchInfo?
     @State private var loadError: String?
@@ -329,6 +364,12 @@ private struct OnlinePatchDetailView: View {
                         }
                     }
                     .disabled(isDownloading)
+                    if let matchedGameTitle {
+                        Button(action: onOpenApplier) {
+                            Label("Open Patch Applier (\(matchedGameTitle))", systemImage: "wand.and.stars")
+                        }
+                        .disabled(isDownloading)
+                    }
                 }
             }
             .navigationTitle("Patch Details")

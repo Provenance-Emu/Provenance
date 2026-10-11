@@ -38,21 +38,34 @@ public struct PendingPatchesView: View {
                 }
             }
 
-            SwiftUI.Section {
-                Button {
-                    showImporter = true
+            SwiftUI.Section("ROM Tools") {
+                NavigationLink {
+                    PatchApplierView()
                 } label: {
-                    Label("Import Patch File…", systemImage: "square.and.arrow.down")
+                    Label("Patch Applier", systemImage: "bandage")
+                }
+                NavigationLink {
+                    BatchPatchApplierView()
+                } label: {
+                    Label("Batch Apply Folder…", systemImage: "folder.badge.gearshape")
+                }
+                NavigationLink {
+                    OnlinePatchDatabaseView()
+                } label: {
+                    Label("Browse Online Patches…", systemImage: "globe")
                 }
                 NavigationLink {
                     CreatePatchView()
                 } label: {
                     Label("Create Patch (BPS / IPS)…", systemImage: "doc.badge.plus")
                 }
-                NavigationLink {
-                    OnlinePatchDatabaseView()
+            }
+
+            SwiftUI.Section {
+                Button {
+                    showImporter = true
                 } label: {
-                    Label("Browse Online Patches…", systemImage: "globe")
+                    Label("Import Patch File…", systemImage: "square.and.arrow.down")
                 }
                 Button {
                     rematchAll()
@@ -67,7 +80,7 @@ public struct PendingPatchesView: View {
                     Text("No pending patches.")
                         .foregroundStyle(.secondary)
                 } else {
-                    ForEach(pending, id: \.id) { patch in
+                    SwiftUI.ForEach(pending, id: \.id) { patch in
                         VStack(alignment: .leading, spacing: 6) {
                             Text(patch.displayTitle)
                                 .font(.headline)
@@ -96,7 +109,7 @@ public struct PendingPatchesView: View {
                     Text("No patches imported yet.")
                         .foregroundStyle(.secondary)
                 } else {
-                    ForEach(allPatches, id: \.id) { patch in
+                    SwiftUI.ForEach(allPatches, id: \.id) { patch in
                         NavigationLink {
                             if let md5 = patch.baseGameMD5 ?? patch.game?.md5Hash {
                                 PatchManagerView(
@@ -118,7 +131,7 @@ public struct PendingPatchesView: View {
                 }
             }
         }
-        .navigationTitle("Patches")
+        .navigationTitle("Patches / ROM Tools")
 #if !os(tvOS)
         .navigationBarTitleDisplayMode(.inline)
         .fileImporter(

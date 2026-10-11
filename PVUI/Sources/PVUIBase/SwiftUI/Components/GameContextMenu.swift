@@ -175,6 +175,11 @@ private struct GameContextMenuItems: View {
                             Label("Import Patch…", systemImage: "square.and.arrow.down")
                         }
                         Button {
+                            contextMenuDelegate?.gameContextMenu(menu, didRequestApplyPatchFor: game)
+                        } label: {
+                            Label("Apply Patch…", systemImage: "wand.and.stars")
+                        }
+                        Button {
                             contextMenuDelegate?.gameContextMenu(menu, didRequestManagePatchesFor: game)
                         } label: {
                             Label("Manage Patches…", systemImage: "list.bullet.rectangle")

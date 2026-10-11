@@ -2758,8 +2758,8 @@ private struct LibrarySection2: View {
             #endif
 
             NavigationLink(destination: PendingPatchesView()) {
-                SettingsRow(title: "Patches",
-                            subtitle: "Manage pending patches, create BPS/IPS, browse RomHacking.net, and link imports.",
+                SettingsRow(title: "Patches / ROM Tools",
+                            subtitle: "Patch Applier, batch apply, online search, create BPS/IPS, and manage imports.",
                             icon: .sfSymbol("bandage"))
             }
             #if os(tvOS)
