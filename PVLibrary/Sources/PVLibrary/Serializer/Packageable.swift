@@ -5,6 +5,7 @@
 //  Created by Joseph Mattiello on 8/30/24.
 //
 
+import PVLogging
 import PVPrimitives
 import PVRealm
 
@@ -37,7 +38,16 @@ extension PVSaveState: Packageable {
     public var packageType: SerializerPackageType { return .saveState }
 
     public typealias PackageType = SavePackage
+
+    /// `game` and `core` are implicitly unwrapped, but Realm nils them when the linked row is
+    /// deleted (e.g. a pruned core), and `asDomain()` would crash on the missing link.
+    var hasRequiredLinks: Bool { game != nil && core != nil }
+
     public func toPackage() async throws -> PackageType? {
+        guard hasRequiredLinks else {
+            WLOG("Not packaging save state \(file?.fileName ?? id): it has no game or core")
+            return nil
+        }
         let (data, metadata) = try await packageParts()
         guard let data = data else { return nil }
         return SavePackage(data: data, metadata: metadata)
@@ -53,7 +63,7 @@ extension PVGame: Packageable {
         guard let data = data else { return nil }
         let saveStatesArray = Array(saveStates)
         let saves = await saveStatesArray.asyncCompactMap { save async -> SavePackage? in
-            guard let url = save.file?.url else { return nil }
+            guard save.hasRequiredLinks, let url = save.file?.url else { return nil }
             guard let data = try? Data(contentsOf: url) else { return nil }
             let metadata = save.asDomain()
             return SavePackage(data: data, metadata: metadata)

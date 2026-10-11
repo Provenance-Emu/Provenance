@@ -127,6 +127,17 @@ public extension PVEmulatorConfiguration {
         !validIdentifiers.contains(identifier) && PVCore.retiredCores[identifier] == nil
     }
 
+    /// Stale core rows that are safe to delete. A row a save state still points at is kept:
+    /// deleting it would nil that state's `core` link (a core missing from this build, e.g.
+    /// one not bundled in Lite, would orphan every state made with it).
+    internal static func staleCores(in realm: Realm, validIdentifiers: Set<String>) -> [PVCore] {
+        let usedBySaveStates = Set(realm.objects(PVSaveState.self).compactMap { $0.core?.identifier })
+        return realm.objects(PVCore.self).filter { core in
+            isStaleCore(core.identifier, validIdentifiers: validIdentifiers)
+                && !usedBySaveStates.contains(core.identifier)
+        }
+    }
+
     /// Expands a plist into blueprint rows for the core plus nested sub-cores, applying the same skip rules as ``registerCore(_:)``.
     private class func collectBlueprints(from plist: EmulatorCoreInfoPlist, unsupportedCoresAvailable: Bool) -> [CoreImportBlueprint] {
         var rows: [CoreImportBlueprint] = []
@@ -297,8 +308,7 @@ public extension PVEmulatorConfiguration {
         // plist.  This cleans up phantom cores left by earlier dynamic-scanner
         // runs that extracted garbage metadata from Mach-O __cstring sections
         // (e.g. "%d.mcr", ".mv" appearing as core names).
-        let allCores = database.all(PVCore.self).toArray()
-        let staleCores = allCores.filter { isStaleCore($0.identifier, validIdentifiers: validIdentifiers) }
+        let staleCores = staleCores(in: database.realm, validIdentifiers: validIdentifiers)
         if !staleCores.isEmpty {
             ILOG("Pruning \(staleCores.count) stale PVCore entries: \(staleCores.map(\.identifier).joined(separator: ", "))")
             do {
