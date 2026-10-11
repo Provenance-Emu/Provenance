@@ -127,14 +127,15 @@ public extension PVEmulatorConfiguration {
         !validIdentifiers.contains(identifier) && PVCore.retiredCores[identifier] == nil
     }
 
-    /// Stale core rows that are safe to delete. A row a save state still points at is kept:
-    /// deleting it would nil that state's `core` link (a core missing from this build, e.g.
-    /// one not bundled in Lite, would orphan every state made with it).
+    /// Stale core rows that are safe to delete. A row a save state or recent game still
+    /// points at is kept: deleting it would nil that link. Lite shares the library with the
+    /// full app but ships fewer native cores, so it would orphan the full app's records.
     internal static func staleCores(in realm: Realm, validIdentifiers: Set<String>) -> [PVCore] {
-        let usedBySaveStates = Set(realm.objects(PVSaveState.self).compactMap { $0.core?.identifier })
+        let inUse = Set(realm.objects(PVSaveState.self).compactMap { $0.core?.identifier })
+            .union(realm.objects(PVRecentGame.self).compactMap { $0.core?.identifier })
         return realm.objects(PVCore.self).filter { core in
             isStaleCore(core.identifier, validIdentifiers: validIdentifiers)
-                && !usedBySaveStates.contains(core.identifier)
+                && !inUse.contains(core.identifier)
         }
     }
 
@@ -299,6 +300,7 @@ public extension PVEmulatorConfiguration {
         do {
             try database.writeTransaction {
                 RetiredCoreMigration.migrate(in: database.realm)
+                OrphanedSaveStateRepair.repair(in: database.realm)
             }
         } catch {
             ELOG("Retired core migration failed: \(error)")
