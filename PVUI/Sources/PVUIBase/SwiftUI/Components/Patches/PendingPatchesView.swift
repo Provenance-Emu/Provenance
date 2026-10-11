@@ -49,6 +49,11 @@ public struct PendingPatchesView: View {
                 } label: {
                     Label("Create Patch (BPS / IPS)…", systemImage: "doc.badge.plus")
                 }
+                NavigationLink {
+                    OnlinePatchDatabaseView()
+                } label: {
+                    Label("Browse Online Patches…", systemImage: "globe")
+                }
                 Button {
                     rematchAll()
                 } label: {

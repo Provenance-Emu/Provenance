@@ -2759,7 +2759,7 @@ private struct LibrarySection2: View {
 
             NavigationLink(destination: PendingPatchesView()) {
                 SettingsRow(title: "Patches",
-                            subtitle: "Manage pending patches, create BPS/IPS files, and link unmatched imports.",
+                            subtitle: "Manage pending patches, create BPS/IPS, browse RomHacking.net, and link imports.",
                             icon: .sfSymbol("bandage"))
             }
             #if os(tvOS)
