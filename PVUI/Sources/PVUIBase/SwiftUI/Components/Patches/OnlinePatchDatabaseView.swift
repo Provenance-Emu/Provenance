@@ -180,7 +180,8 @@ public struct OnlinePatchDatabaseView: View {
                     Text(isSearching ? "Searching…" : "No results yet.")
                         .foregroundStyle(.secondary)
                 } else {
-                    SwiftUI.ForEach(results, id: \.id) { (result: OnlinePatchSearchResult) in
+                    SwiftUI.ForEach(0..<results.count, id: \.self) { index in
+                        let result = results[index]
                         Button {
                             selectedResult = result
                         } label: {

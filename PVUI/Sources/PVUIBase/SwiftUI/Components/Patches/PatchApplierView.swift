@@ -336,18 +336,9 @@ public struct BatchPatchApplierView: View {
 
             if !jobs.isEmpty {
                 SwiftUI.Section("Matched Jobs (\(jobs.count))") {
-                    SwiftUI.ForEach(jobs, id: \.id) { (job: BatchPatchJob) in
-                        VStack(alignment: .leading, spacing: 2) {
-                            Text(job.patchURL.lastPathComponent).font(.headline)
-                            Text("→ \(job.romTitle) (\(job.confidence.rawValue))")
-                                .font(.caption)
-                                .foregroundStyle(.secondary)
-                            if job.crcValidation.isMismatch {
-                                Text(job.crcValidation.userMessage)
-                                    .font(.caption2)
-                                    .foregroundStyle(.orange)
-                            }
-                        }
+                    // Index-based ForEach avoids Binding<[T]> overload selection in this target.
+                    SwiftUI.ForEach(0..<jobs.count, id: \.self) { index in
+                        BatchPatchJobRow(job: jobs[index])
                     }
                 }
             }
@@ -369,15 +360,9 @@ public struct BatchPatchApplierView: View {
 
             if !batchResults.isEmpty {
                 SwiftUI.Section("Results") {
-                    // Explicit id + element type: bare ForEach(results) picks Binding overload in this target.
-                    SwiftUI.ForEach(batchResults, id: \.id) { (result: BatchPatchResult) in
-                        VStack(alignment: .leading, spacing: 2) {
-                            Text(result.patchURL.lastPathComponent)
-                                .font(.subheadline)
-                            Text(result.message)
-                                .font(.caption)
-                                .foregroundStyle(result.success ? .secondary : .red)
-                        }
+                    // Index-based ForEach avoids Binding<[T]> overload selection in this target.
+                    SwiftUI.ForEach(0..<batchResults.count, id: \.self) { index in
+                        BatchPatchResultRow(result: batchResults[index])
                     }
                 }
             }
@@ -464,5 +449,39 @@ public struct BatchPatchApplierView: View {
         }
         let ok = batchResults.filter(\.success).count
         statusMessage = "Finished: \(ok)/\(batchResults.count) succeeded."
+    }
+}
+
+// MARK: - Batch rows
+
+private struct BatchPatchJobRow: View {
+    let job: BatchPatchJob
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 2) {
+            Text(job.patchURL.lastPathComponent).font(.headline)
+            Text("→ \(job.romTitle) (\(job.confidence.rawValue))")
+                .font(.caption)
+                .foregroundStyle(.secondary)
+            if job.crcValidation.isMismatch {
+                Text(job.crcValidation.userMessage)
+                    .font(.caption2)
+                    .foregroundStyle(.orange)
+            }
+        }
+    }
+}
+
+private struct BatchPatchResultRow: View {
+    let result: BatchPatchResult
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 2) {
+            Text(result.patchURL.lastPathComponent)
+                .font(.subheadline)
+            Text(result.message)
+                .font(.caption)
+                .foregroundStyle(result.success ? .secondary : .red)
+        }
     }
 }
