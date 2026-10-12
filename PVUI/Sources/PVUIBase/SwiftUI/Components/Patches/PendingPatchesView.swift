@@ -63,11 +63,17 @@ public struct PendingPatchesView: View {
             }
 
             SwiftUI.Section {
+#if os(tvOS)
+                Text("Upload .ips / .bps / .ups / .ppf files (or a ZIP of them) through the web server or drop them in iCloud Drive; they are imported and matched automatically.")
+                    .font(.footnote)
+                    .foregroundStyle(.secondary)
+#else
                 Button {
                     showImporter = true
                 } label: {
                     Label("Import Patch File…", systemImage: "square.and.arrow.down")
                 }
+#endif
                 Button {
                     rematchAll()
                 } label: {

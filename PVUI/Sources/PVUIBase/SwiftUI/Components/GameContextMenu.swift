@@ -143,6 +143,11 @@ private struct GameContextMenuItems: View {
                     }
                 }
 
+                // A patched-copy tile: act on its base game / patch.
+                if game.isPatchVariant {
+                    VariantPatchMenu(variant: game, menu: menu)
+                }
+
                 // Patches submenu — modeled after disc selection; base games only.
                 if !game.isPatchVariant {
                     let linkedPatches = Array(
@@ -758,5 +763,60 @@ extension GameContextMenuItems {
 
         return skinManager.sessionSkinIdentifier(for: systemId, gameId: game.id, orientation: orientation) != nil ||
                DeltaSkinPreferences.shared.effectiveSkinIdentifier(for: game.id, system: systemId, orientation: orientation) != nil
+    }
+}
+
+// MARK: - Variant tile menu
+
+/// Context-menu entries for a library tile that is a patched copy: play the
+/// original, reapply the patch, or open the base game's patch manager (where
+/// Delete lives behind a confirmation).
+private struct VariantPatchMenu: View {
+    let variant: PVGame
+    let menu: GameContextMenu
+
+    private var baseGame: PVGame? {
+        guard let md5 = variant.baseGameMD5 else { return nil }
+        return RomDatabase.sharedInstance.realm.object(ofType: PVGame.self, forPrimaryKey: md5)?.freeze()
+    }
+
+    private var patch: PVPatch? {
+        guard let id = variant.patchID else { return nil }
+        return RomDatabase.sharedInstance.realm.object(ofType: PVPatch.self, forPrimaryKey: id)?.freeze()
+    }
+
+    var body: some View {
+        Menu {
+            if let baseGame {
+                Button {
+                    menu.contextMenuDelegate?.gameContextMenu(menu, didRequestPlayOriginalFor: baseGame)
+                } label: {
+                    Label("Play Original", systemImage: "play.circle")
+                }
+            }
+            if let patch {
+                Button {
+                    Task { @MainActor in
+                        do {
+                            _ = try await PatchRepository.shared.reapply(patch)
+                            PVToastManager.shared.show("Reapplied \(patch.displayTitle).", type: .success)
+                        } catch {
+                            PVToastManager.shared.show("Reapply failed: \(error.localizedDescription)", type: .error)
+                        }
+                    }
+                } label: {
+                    Label("Reapply Patch", systemImage: "arrow.clockwise")
+                }
+            }
+            if let baseGame {
+                Button {
+                    menu.contextMenuDelegate?.gameContextMenu(menu, didRequestManagePatchesFor: baseGame)
+                } label: {
+                    Label("Manage Patches…", systemImage: "list.bullet.rectangle")
+                }
+            }
+        } label: {
+            Label(patch.map { "Patch: \($0.displayTitle)" } ?? "Patch", systemImage: "bandage")
+        }
     }
 }

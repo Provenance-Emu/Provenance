@@ -92,8 +92,11 @@ public enum Extensions: String, CaseIterable {
     /// Supplementary files that accompany disc images (e.g. `.sbi` subchannel data, `.sub` subchannel tracks).
     public static let cdSupplementaryExtensions: Set<String> = Set(_cdSupplementaryExtensions.map { $0.rawValue })
     public static let skinExtensions: Set<String> = Set(_skinExtensions.map { $0.rawValue })
-    /// Patch file extensions — derived from `PatchFormat.allFileExtensions` (single source of truth).
+    /// Patch file extensions — derived from `PatchFormat.allFileExtensions` (single source of truth),
+    /// minus `.nsp`: that format is unimplemented and the extension is also a Switch package,
+    /// so claiming it would swallow those files as patches that can never apply.
     public static let patchExtensions: Set<String> = PatchFormat.allFileExtensions
+        .subtracting(PatchFormat.nsp.fileExtensions)
 
     public static let allKnownExtensions: Set<String> = archiveExtensions.union(artworkExtensions).union(discImageExtensions).union(playlistExtensions).union(specialExtensions).union(cdSupplementaryExtensions).union(skinExtensions).union(patchExtensions)
 }
