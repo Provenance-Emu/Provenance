@@ -33,7 +33,8 @@ public extension MupenGameCore { // Controls
     }
     
     func setMode(_ mode: MupenGameCore.ControllerMode, forController controller: UInt) {
-        self._bridge.controllerMode[controller] = mode
+        // The bridge owns controllerMode[] (an ivar Swift cannot reach); its setter bounds-checks.
+        _bridge.setMode(Int(mode.rawValue), forController: Int(controller))
     }
     
 }
