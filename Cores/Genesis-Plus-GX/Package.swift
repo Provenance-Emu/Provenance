@@ -64,6 +64,10 @@ let bridgeTarget: Target = .target(
 let libgenesisExtraSettings: [CSetting] = [
     .headerSearchPath("libretro"),
     .headerSearchPath("other"),
+    // zstd 1.5.6 ships lib/module.modulemap, so under -fmodules `zstd.h` is imported as the
+    // `libzstd` module and the `#define ZSTD_STATIC_LINKING_ONLY` in zstd's own sources has no
+    // effect ("has no effect on the import of 'libzstd'"). Define it on the command line.
+    .define("ZSTD_STATIC_LINKING_ONLY"),
 ]
 let libgenesisSettings: [CSetting] = GenesisSettings.defines
     + libgenesisExtraSettings
