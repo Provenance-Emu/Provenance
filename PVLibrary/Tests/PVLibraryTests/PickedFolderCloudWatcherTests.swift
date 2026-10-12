@@ -20,6 +20,6 @@ final class PickedFolderCloudWatcherTests: XCTestCase {
         XCTAssertTrue(PickedFolderCloudWatcher.shouldDownload(relativePath: "ROMs/com.provenance.snes/Game.sfc"))
         XCTAssertTrue(PickedFolderCloudWatcher.shouldDownload(relativePath: "BIOS/x.bin"))
         XCTAssertFalse(PickedFolderCloudWatcher.shouldDownload(relativePath: "Save States/x/s.svs"))
-        XCTAssertFalse(PickedFolderCloudWatcher.shouldDownload(relativePath: "Conflicts/ROMs/x"))
+        XCTAssertTrue(PickedFolderCloudWatcher.shouldDownload(relativePath: "Conflicts/ROMs/x"), "a remapped record can point at a copy filed under Conflicts/")
     }
 }

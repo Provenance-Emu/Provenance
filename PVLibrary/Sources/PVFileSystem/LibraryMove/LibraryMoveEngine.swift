@@ -152,6 +152,10 @@ public actor LibraryMoveEngine {
             sharedBaseNames = Self.sharedBaseNames(in: plan)
         }
 
+        // A shared folder is live (other apps use it), so a different file already at a path stays put and ours goes to
+        // `Conflicts/`. Anywhere else the destination is ours to arrange: its file is the one moved aside.
+        let conflictPolicy: LibraryMoveFileCopier.ConflictPolicy = journal.destination == .pickedFolder ? .fileIncoming : .displaceExisting
+
         var batchStart = 0
         while batchStart < todo.count {
             let batch = Array(todo[batchStart..<min(batchStart + Self.journalFlushInterval, todo.count)])
@@ -171,12 +175,17 @@ public actor LibraryMoveEngine {
                         journal.entries[item.relativePath] = .init(size: item.size, md5: md5, modified: item.modified, state: .deduplicated, destinationPath: shared)
                         journal.remaps = (journal.remaps ?? [:]).merging([item.relativePath: shared]) { _, new in new }
                         bytesDone += item.size
-                    } else if let entry = try copier.transfer(item, from: sourceRoot, to: destinationRoot, onConflict: .displaceExisting) {
+                    } else if let entry = try copier.transfer(item, from: sourceRoot, to: destinationRoot, onConflict: conflictPolicy) {
                         journal.entries[item.relativePath] = entry
                         bytesDone += entry.size
-                        if entry.state == .displaced {
+                        if entry.state == .conflict, journal.destination == .pickedFolder, item.relativePath.hasPrefix(Self.romsFolder + "/"),
+                           let conflictPath = entry.destinationPath {
+                            // The other app's file keeps the real path, so our record follows our copy under `Conflicts/`.
+                            journal.remaps = (journal.remaps ?? [:]).merging([item.relativePath: conflictPath]) { _, new in new }
+                        }
+                        if entry.state == .displaced || entry.state == .conflict {
                             // Rare, and a crash before the batch flush would lose the record rollback needs to put the
-                            // destination's own file back, so journal it at once.
+                            // destination's own file back (or to find our copy under `Conflicts/`), so journal it at once.
                             journal.updatedAt = Date()
                             try journalStore.save(journal)
                         }

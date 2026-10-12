@@ -186,6 +186,9 @@ final class LibraryLocationTests: XCTestCase {
         XCTAssertEqual(LibraryLocation.root(forPartialPath: "System/PSP/x", libraryRoot: picked, savesRoot: local), picked)
         XCTAssertEqual(LibraryLocation.root(forPartialPath: "Save States/Game/s.svs", libraryRoot: picked, savesRoot: local), local)
         XCTAssertEqual(LibraryLocation.root(forPartialPath: "/ROMs/x", libraryRoot: picked, savesRoot: local), picked)
+        XCTAssertEqual(LibraryLocation.root(forPartialPath: "Conflicts/ROMs/x", libraryRoot: picked, savesRoot: local), picked)
+        XCTAssertTrue(LibraryMoveFolders.isShared(partialPath: "Conflicts/ROMs/x"))
+        XCTAssertFalse(LibraryMoveFolders.shared.contains(LibraryMoveFolders.conflicts), "Conflicts is resolved with the shared folders but never moved as one")
     }
 
     func testLaunchStateFromStore() throws {

@@ -22,11 +22,13 @@ public enum LibraryMoveFolders {
     /// What a picked folder holds in addition when `PickedLibraryFolder.includesSaves` is on (D10).
     public static let saves: [String] = ["Battery States", "Save States", "Screenshots", "Cheats", "Patches"]
 
-    /// `true` when the partial path's first component is one of `shared`.
+    /// `true` when the partial path's first component is one of `shared`, or `Conflicts`: the engine files a clashing
+    /// incoming copy under `Conflicts/` at the library root, and a record can be remapped to point at it, so it lives
+    /// with the shared folders (not the saves root). `shared` itself stays the list of folders a move carries.
     public static func isShared(partialPath: String) -> Bool {
         let trimmed = partialPath.hasPrefix("/") ? String(partialPath.dropFirst()) : partialPath
         guard let top = trimmed.split(separator: "/", maxSplits: 1).first else { return false }
-        return shared.contains(String(top))
+        return shared.contains(String(top)) || String(top) == conflicts
     }
 
     /// Where the loser of a name clash goes: the destination's own file (copy phase) or the incoming file (post-switch sweep).

@@ -447,6 +447,41 @@ final class LibraryMoveEngineTests: XCTestCase {
         }
     }
 
+    func testMovingIntoAPickedFolderLeavesAnotherAppsFileAndFilesOursUnderConflicts() async throws {
+        try write(dst, "ROMs/com.provenance.snes/Game.sfc", "theirs")
+        try write(src, "ROMs/com.provenance.snes/Game.sfc", "ours")
+        let request = LibraryMoveRequest(source: .appStorage, destination: .pickedFolder, sourceRoot: src, destinationRoot: dst,
+                                         folders: LibraryMoveFolders.shared, keepCopy: false, destinationFolder: pickedFolder())
+        let outcome = try await engine().start(request)
+        XCTAssertEqual(outcome, .switched)
+        XCTAssertEqual(read(dst, "ROMs/com.provenance.snes/Game.sfc"), "theirs", "the other app's file keeps its path")
+        XCTAssertEqual(read(dst, "Conflicts/ROMs/com.provenance.snes/Game.sfc"), "ours")
+        let journal = try XCTUnwrap(store.load())
+        XCTAssertEqual(journal.entries["ROMs/com.provenance.snes/Game.sfc"]?.state, .conflict)
+        XCTAssertEqual(journal.remaps, ["ROMs/com.provenance.snes/Game.sfc": "Conflicts/ROMs/com.provenance.snes/Game.sfc"])
+    }
+
+    func testMovingToAppStorageStillDisplacesTheDestinationsFile() async throws {
+        try write(dst, "ROMs/com.provenance.snes/Game.sfc", "theirs")
+        try write(src, "ROMs/com.provenance.snes/Game.sfc", "ours")
+        _ = try await engine().start(request())
+        XCTAssertEqual(read(dst, "ROMs/com.provenance.snes/Game.sfc"), "ours")
+        XCTAssertEqual(read(dst, "Conflicts/ROMs/com.provenance.snes/Game.sfc"), "theirs")
+        XCTAssertEqual(try XCTUnwrap(store.load()).entries["ROMs/com.provenance.snes/Game.sfc"]?.state, .displaced)
+        XCTAssertNil(store.load()?.remaps)
+    }
+
+    func testAConflictInABIOSFolderIsNotRemapped() async throws {
+        try write(dst, "BIOS/scph5501.bin", "theirs")
+        try write(src, "BIOS/scph5501.bin", "ours")
+        let request = LibraryMoveRequest(source: .appStorage, destination: .pickedFolder, sourceRoot: src, destinationRoot: dst,
+                                         folders: LibraryMoveFolders.shared, keepCopy: false, destinationFolder: pickedFolder())
+        _ = try await engine().start(request)
+        XCTAssertEqual(read(dst, "BIOS/scph5501.bin"), "theirs")
+        XCTAssertEqual(read(dst, "Conflicts/BIOS/scph5501.bin"), "ours")
+        XCTAssertNil(store.load()?.remaps, "BIOS is found by path, not through a record")
+    }
+
     // MARK: - Join (phase 4)
 
     private func joinRequest(deduplicate: Bool = true) -> LibraryMoveRequest {
