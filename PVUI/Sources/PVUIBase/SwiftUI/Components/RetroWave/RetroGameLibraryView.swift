@@ -1265,7 +1265,7 @@ private struct RetroPatchSheets: ViewModifier {
                 viewModel.patchImportGame = nil
                 guard let game, case .success(let urls) = result, let url = urls.first else { return }
                 Task { @MainActor in
-                    await importPatch(url, for: game)
+                    await importPatch(url, game)
                 }
             }
 #endif
