@@ -86,7 +86,10 @@ public actor LibraryMoveEngine {
         case .copying:
             let plan = try planner.plan(root: sourceRoot, folders: journal.folders)
             let remaining = plan.items.filter { journal.entries[$0.relativePath] == nil }
-            try planner.checkSpace(for: LibraryMovePlan(items: remaining), at: destinationRoot)
+            // Nothing left to copy needs no space (the headroom alone would otherwise strand a finished copy).
+            if !remaining.isEmpty {
+                try planner.checkSpace(for: LibraryMovePlan(items: remaining), at: destinationRoot)
+            }
             ILOG("LibraryMove: resuming copy, \(journal.entries.count) of \(plan.items.count) files already journaled")
             return try await run(&journal, plan: plan, sourceRoot: sourceRoot, destinationRoot: destinationRoot, progress: progress)
         case .switched, .cleaning:
@@ -142,6 +145,12 @@ public actor LibraryMoveEngine {
                     if let entry = try copier.transfer(item, from: sourceRoot, to: destinationRoot, onConflict: .displaceExisting) {
                         journal.entries[item.relativePath] = entry
                         bytesDone += entry.size
+                        if entry.state == .displaced {
+                            // Rare, and a crash before the batch flush would lose the record rollback needs to put the
+                            // destination's own file back, so journal it at once.
+                            journal.updatedAt = Date()
+                            try journalStore.save(journal)
+                        }
                     }
                 } catch {
                     // Keep what was verified so far: the next attempt resumes instead of recopying.

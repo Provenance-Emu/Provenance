@@ -86,6 +86,19 @@ final class LibraryMoveEngineRecoveryTests: XCTestCase {
         XCTAssertTrue(switched.calls.isEmpty)
     }
 
+    func testResumeOfAFinishedCopyNeedsNoFreeSpace() async throws {
+        try write(src, "ROMs/a/Game.sfc", "rom")
+        _ = try await engine().start(request(), progress: nil)
+        var journal = try XCTUnwrap(store.load())
+        journal.phase = .copying
+        try store.save(journal)
+
+        // Nothing is left to copy, so the headroom requirement alone must not strand the journal on a nearly full device.
+        let outcome = try await engine(capacity: 10).resume(journal, sourceRoot: src, destinationRoot: dst, progress: nil)
+
+        XCTAssertEqual(outcome, .switched)
+    }
+
     // MARK: root guard
 
     func testStartAndResumeRefuseIdenticalOrNestedRoots() async throws {

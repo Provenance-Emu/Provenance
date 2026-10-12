@@ -323,6 +323,21 @@ final class LibraryMoveEngineTests: XCTestCase {
         XCTAssertEqual(snapshot.value, LibraryMoveEngine.journalFlushInterval)
     }
 
+    func testADisplacementIsJournaledAtOnceNotAtTheBatchFlush() async throws {
+        // Rollback needs the record to put the destination's own file back, so it must not wait for the batch flush.
+        try write(src, "ROMs/a/Game.sfc", "incoming")
+        try write(src, "ROMs/a/Zed.sfc", "z")
+        try write(dst, "ROMs/a/Game.sfc", "mine")
+        let displaced = IntBox()
+        let store = self.store
+        _ = try await engine().start(request()) { report in
+            if report.currentPath == "ROMs/a/Game.sfc" {
+                displaced.value = store.load()?.entries.values.filter { $0.state == .displaced }.count
+            }
+        }
+        XCTAssertEqual(displaced.value, 1)
+    }
+
     func testClaimsAreJournaledBeforeTheFilesAreWritten() async throws {
         try write(src, "ROMs/a/One.sfc", "1")
         try write(src, "ROMs/a/Two.sfc", "2")

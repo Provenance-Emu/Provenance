@@ -38,7 +38,7 @@ public struct LibraryMovePlanner: Sendable {
     /// Free space must cover the plan plus the larger of this and 5% of the plan.
     public static let minimumHeadroomBytes: Int64 = 200 * 1024 * 1024
 
-    private static let resourceKeys: Set<URLResourceKey> = [.isRegularFileKey, .fileSizeKey, .contentModificationDateKey]
+    private static let resourceKeys: Set<URLResourceKey> = [.isRegularFileKey, .isDirectoryKey, .fileSizeKey, .contentModificationDateKey]
 
     private let fileManager: FileManager
     /// Free bytes on the volume holding the URL. Injected for tests.
@@ -107,7 +107,7 @@ public struct LibraryMovePlanner: Sendable {
         var firstError: Error?
         guard let enumerator = fileManager.enumerator(at: directory, includingPropertiesForKeys: Array(Self.resourceKeys), options: [.skipsHiddenFiles],
                                                       errorHandler: { _, error in
-                                                          if firstError == nil { firstError = error }
+                                                          if firstError == nil, !Self.isVanished(error) { firstError = error }
                                                           return true
                                                       }) else {
             throw CocoaError(.fileReadUnknown, userInfo: [NSFilePathErrorKey: directory.path])
@@ -132,7 +132,12 @@ public struct LibraryMovePlanner: Sendable {
     /// The plan item for `url` if it is a regular file. Directories are walked by the caller; anything else (a symlink,
     /// a socket) can't be copied and is logged as left behind.
     private static func item(for url: URL, relativePath: String) throws -> LibraryMovePlan.Item? {
-        let values = try url.resourceValues(forKeys: resourceKeys.union([.isDirectoryKey]))
+        let values: URLResourceValues
+        do {
+            values = try url.resourceValues(forKeys: resourceKeys)
+        } catch where isVanished(error) {
+            return nil
+        }
         if values.isRegularFile == true {
             return LibraryMovePlan.Item(relativePath: relativePath, size: Int64(values.fileSize ?? 0), modified: values.contentModificationDate)
         }
@@ -140,6 +145,13 @@ public struct LibraryMovePlanner: Sendable {
             WLOG("LibraryMove: leaving \(relativePath) behind: not a regular file")
         }
         return nil
+    }
+
+    /// A file that disappeared between the listing and the read (the app is still running during the copy phase) is
+    /// skipped, like the copier skips a vanished source; any other error means the plan is incomplete.
+    private static func isVanished(_ error: Error) -> Bool {
+        let code = (error as? CocoaError)?.code
+        return code == .fileNoSuchFile || code == .fileReadNoSuchFile
     }
 
     private static func isExcluded(name: String) -> Bool {
