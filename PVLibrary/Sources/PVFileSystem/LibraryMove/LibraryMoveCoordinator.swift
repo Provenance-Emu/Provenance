@@ -22,7 +22,8 @@ public final class LibraryMoveCoordinator: @unchecked Sendable {
     public typealias RootProvider = @Sendable (LibraryLocation, PickedLibraryFolder?) -> URL?
 
     /// Rewrites the database so records named by a journal's `remaps` (source path → shared path) point at the shared copies.
-    public typealias PathRemapApplier = @Sendable ([String: String]) async throws -> Void
+    /// Returns the source paths (the keys) whose record now follows the shared copy; a key it leaves out is not safe to clean up.
+    public typealias PathRemapApplier = @Sendable ([String: String]) async throws -> Set<String>
 
     private let journalStore: LibraryMoveJournalStore?
     private let rootProvider: RootProvider
@@ -194,11 +195,24 @@ public final class LibraryMoveCoordinator: @unchecked Sendable {
                     ELOG("LibraryMove: \(remaps.count) record remaps are pending but no applier is registered; cleanup waits")
                     return nil
                 }
-                do {
-                    try await applier(remaps)
-                } catch {
-                    ELOG("LibraryMove: applying record remaps failed: \(error.localizedDescription); cleanup waits")
-                    return nil
+                guard let confirmed = await confirmedRemaps(for: journal, destinationRoot: destinationRoot, applier: applier) else { return nil }
+                let unconfirmed = Set(remaps.keys).subtracting(confirmed)
+                if !unconfirmed.isEmpty {
+                    // No record follows the shared copy (it vanished, or nothing names this source), so deleting the source
+                    // could lose the only file a record still resolves to. Drop the dedup: cleanup's sweep copies it under its own name.
+                    WLOG("LibraryMove: \(unconfirmed.count) remaps could not be confirmed; those sources are copied under their own names")
+                    for key in unconfirmed {
+                        journal.entries.removeValue(forKey: key)
+                        journal.remaps?.removeValue(forKey: key)
+                    }
+                    if journal.remaps?.isEmpty == true { journal.remaps = nil }
+                    journal.updatedAt = Date()
+                    do {
+                        try journalStore?.save(journal)
+                    } catch {
+                        ELOG("LibraryMove: could not journal the unconfirmed remaps: \(error.localizedDescription); cleanup waits")
+                        return nil
+                    }
                 }
             }
             journal = carryNewTopLevelEntries(journal, sourceRoot: sourceRoot)
@@ -211,6 +225,23 @@ public final class LibraryMoveCoordinator: @unchecked Sendable {
             return nil
         }
         #endif
+    }
+
+    /// The remap keys it is safe to clean up: the shared copy still verifies at the destination and the applier rewrote
+    /// (or had already rewritten) the record. `nil` when the applier throws, so cleanup waits for a later launch.
+    private func confirmedRemaps(for journal: LibraryMoveJournal, destinationRoot: URL, applier: PathRemapApplier) async -> Set<String>? {
+        let copier = LibraryMoveFileCopier()
+        let present = (journal.remaps ?? [:]).filter { key, sharedPath in
+            guard let entry = journal.entries[key] else { return false }
+            return copier.verify(destinationRoot.appendingPathComponent(sharedPath), expectedSize: entry.size, expectedMD5: nil)
+        }
+        guard !present.isEmpty else { return [] }
+        do {
+            return try await applier(present).intersection(present.keys)
+        } catch {
+            ELOG("LibraryMove: applying record remaps failed: \(error.localizedDescription); cleanup waits")
+            return nil
+        }
     }
 
     /// From the App Group (phase 2: every top-level entry of its Documents except hidden entries and the Realm files) or

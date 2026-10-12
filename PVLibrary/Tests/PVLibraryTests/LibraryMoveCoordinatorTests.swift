@@ -26,6 +26,7 @@ final class LibraryMoveCoordinatorTests: XCTestCase {
         var switches: [LibraryLocation] = []
         var switchedFolders: [PickedLibraryFolder?] = []
         var remaps: [[String: String]] = []
+        var sourceExistedWhenApplied = false
         func record(_ location: LibraryLocation, _ folder: PickedLibraryFolder?) {
             switches.append(location)
             switchedFolders.append(folder)
@@ -495,10 +496,63 @@ final class LibraryMoveCoordinatorTests: XCTestCase {
         _ = try switchedJoinJournal()
         let c = coordinator(launched: .pickedFolder, launchedFolder: folderA())
         let record = recorder
-        c.setPathRemapApplier { remaps in record.remaps.append(remaps) }
+        let localRoot: URL = local
+        c.setPathRemapApplier { remaps in
+            record.remaps.append(remaps)
+            // The record is rewritten first; the source must still be there while it is.
+            record.sourceExistedWhenApplied = LibraryMoveTestSupport.exists(localRoot, "ROMs/com.provenance.snes/Game.sfc")
+            return Set(remaps.keys)
+        }
         let outcome = await c.resumeIfNeeded(progress: nil)
         XCTAssertEqual(outcome, .cleanedUp)
         XCTAssertEqual(recorder.remaps, [["ROMs/com.provenance.snes/Game.sfc": "ROMs/com.provenance.snes/Game (USA).sfc"]])
+        XCTAssertTrue(recorder.sourceExistedWhenApplied, "cleanup deletes sources only after the applier ran")
+        XCTAssertFalse(exists(local, "ROMs/com.provenance.snes/Game.sfc"))
+        XCTAssertEqual(read(picked, "ROMs/com.provenance.snes/Game (USA).sfc"), "same bytes")
+        XCTAssertFalse(exists(picked, "ROMs/com.provenance.snes/Game.sfc"), "a confirmed remap is not copied under its own name")
+    }
+
+    func testAnApplierThatConfirmsNothingGetsTheSourceCopiedNotDeleted() async throws {
+        _ = try switchedJoinJournal()
+        let c = coordinator(launched: .pickedFolder, launchedFolder: folderA())
+        c.setPathRemapApplier { _ in [] }
+        let outcome = await c.resumeIfNeeded(progress: nil)
+        XCTAssertEqual(outcome, .cleanedUp)
+        XCTAssertEqual(read(picked, "ROMs/com.provenance.snes/Game.sfc"), "same bytes", "the sweep copied the source under its own name")
+        XCTAssertEqual(read(picked, "ROMs/com.provenance.snes/Game (USA).sfc"), "same bytes")
+        XCTAssertFalse(c.hasPendingMove)
+    }
+
+    func testASharedCopyDeletedBeforeRelaunchGetsTheSourceCopiedAndSkipsTheApplier() async throws {
+        _ = try switchedJoinJournal()
+        try FileManager.default.removeItem(at: picked.appendingPathComponent("ROMs/com.provenance.snes/Game (USA).sfc"))
+        let c = coordinator(launched: .pickedFolder, launchedFolder: folderA())
+        let record = recorder
+        c.setPathRemapApplier { remaps in
+            record.remaps.append(remaps)
+            return Set(remaps.keys)
+        }
+        let outcome = await c.resumeIfNeeded(progress: nil)
+        XCTAssertEqual(outcome, .cleanedUp)
+        XCTAssertTrue(recorder.remaps.isEmpty, "there is no shared copy left to point a record at")
+        XCTAssertEqual(read(picked, "ROMs/com.provenance.snes/Game.sfc"), "same bytes")
+    }
+
+    func testAnApplierThatConfirmsASubsetOnlyCleansUpThatSubset() async throws {
+        _ = try switchedJoinJournal()
+        try write(local, "ROMs/com.provenance.snes/Other.sfc", "other bytes")
+        try write(picked, "ROMs/com.provenance.snes/Other (USA).sfc", "other bytes")
+        var journal = try XCTUnwrap(store.load())
+        journal.entries["ROMs/com.provenance.snes/Other.sfc"] = .init(size: 11, md5: nil, modified: try LibraryMoveTestSupport.modificationDate(local, "ROMs/com.provenance.snes/Other.sfc"),
+                                                                     state: .deduplicated, destinationPath: "ROMs/com.provenance.snes/Other (USA).sfc")
+        journal.remaps?["ROMs/com.provenance.snes/Other.sfc"] = "ROMs/com.provenance.snes/Other (USA).sfc"
+        try store.save(journal)
+        let c = coordinator(launched: .pickedFolder, launchedFolder: folderA())
+        c.setPathRemapApplier { _ in ["ROMs/com.provenance.snes/Game.sfc"] }
+        let outcome = await c.resumeIfNeeded(progress: nil)
+        XCTAssertEqual(outcome, .cleanedUp)
+        XCTAssertFalse(exists(picked, "ROMs/com.provenance.snes/Game.sfc"), "confirmed: the record follows the shared copy")
+        XCTAssertEqual(read(picked, "ROMs/com.provenance.snes/Other.sfc"), "other bytes", "unconfirmed: copied under its own name")
         XCTAssertFalse(exists(local, "ROMs/com.provenance.snes/Game.sfc"))
     }
 
