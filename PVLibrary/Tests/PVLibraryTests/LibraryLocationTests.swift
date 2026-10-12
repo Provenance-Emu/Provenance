@@ -3,9 +3,9 @@
 //  PVLibraryTests
 //
 //  LibraryLocation is the one place that decides where library files live. Phase 1 of the
-//  storage-locations spec only routes existing paths through it, so these tests pin today's
-//  behaviour: the settings-to-location table, the root it resolves to, and the partial
-//  paths stored for files under each kind of root.
+//  storage-locations spec routes existing paths through it, and phase 2 adds the stored
+//  setting: these tests pin the settings-to-location table, the root each location
+//  resolves to, and the partial paths stored for files under each kind of root.
 //
 
 import XCTest
@@ -15,32 +15,74 @@ final class LibraryLocationTests: XCTestCase {
 
     // MARK: - Settings to location
 
+    func testRawValuesArePinned() {
+        // Stored in UserDefaults and in move-journal.json: renaming one breaks resume and downgrade.
+        XCTAssertEqual(LibraryLocation.appStorage.rawValue, "appStorage")
+        XCTAssertEqual(LibraryLocation.appGroup.rawValue, "appGroup")
+        XCTAssertEqual(LibraryLocation.iCloudDrive.rawValue, "iCloudDrive")
+        XCTAssertEqual(LibraryLocation.allCases.count, 3)
+    }
+
     func testICloudDriveNeedsSyncAndDriveMode() {
-        XCTAssertEqual(LibraryLocation.resolve(useAppGroups: false, iCloudSync: true, iCloudDriveMode: true), .iCloudDrive)
-        XCTAssertEqual(LibraryLocation.resolve(useAppGroups: true, iCloudSync: true, iCloudDriveMode: true), .iCloudDrive)
-        XCTAssertEqual(LibraryLocation.resolve(useAppGroups: false, iCloudSync: false, iCloudDriveMode: true), .appStorage)
-        XCTAssertEqual(LibraryLocation.resolve(useAppGroups: false, iCloudSync: true, iCloudDriveMode: false), .appStorage)
+        XCTAssertEqual(LibraryLocation.resolve(stored: nil, useAppGroups: false, iCloudSync: true, iCloudDriveMode: true), .iCloudDrive)
+        XCTAssertEqual(LibraryLocation.resolve(stored: nil, useAppGroups: true, iCloudSync: true, iCloudDriveMode: true), .iCloudDrive)
+        XCTAssertEqual(LibraryLocation.resolve(stored: nil, useAppGroups: false, iCloudSync: false, iCloudDriveMode: true), .appStorage)
+        XCTAssertEqual(LibraryLocation.resolve(stored: nil, useAppGroups: false, iCloudSync: true, iCloudDriveMode: false), .appStorage)
     }
 
     func testAppGroupWithoutICloudDrive() {
-        XCTAssertEqual(LibraryLocation.resolve(useAppGroups: true, iCloudSync: false, iCloudDriveMode: false), .appGroup)
-        XCTAssertEqual(LibraryLocation.resolve(useAppGroups: true, iCloudSync: true, iCloudDriveMode: false), .appGroup)
+        XCTAssertEqual(LibraryLocation.resolve(stored: nil, useAppGroups: true, iCloudSync: false, iCloudDriveMode: false), .appGroup)
+        XCTAssertEqual(LibraryLocation.resolve(stored: nil, useAppGroups: true, iCloudSync: true, iCloudDriveMode: false), .appGroup)
     }
 
     func testDefaultIsAppStorage() {
-        XCTAssertEqual(LibraryLocation.resolve(useAppGroups: false, iCloudSync: false, iCloudDriveMode: false), .appStorage)
+        XCTAssertEqual(LibraryLocation.resolve(stored: nil, useAppGroups: false, iCloudSync: false, iCloudDriveMode: false), .appStorage)
+    }
+
+    func testStoredLocationWinsOverLegacyToggle() {
+        XCTAssertEqual(LibraryLocation.resolve(stored: .appStorage, useAppGroups: true, iCloudSync: false, iCloudDriveMode: false), .appStorage)
+        XCTAssertEqual(LibraryLocation.resolve(stored: .appGroup, useAppGroups: false, iCloudSync: false, iCloudDriveMode: false), .appGroup)
+    }
+
+    func testICloudDriveStillWinsOverStoredLocation() {
+        XCTAssertEqual(LibraryLocation.resolve(stored: .appStorage, useAppGroups: false, iCloudSync: true, iCloudDriveMode: true), .iCloudDrive)
+    }
+
+    func testStoredICloudDriveIsIgnoredUntilPhase5() {
+        // Phase 5 moves the iCloud axis into the stored value; until then a stored iCloudDrive falls back to the legacy toggle.
+        XCTAssertEqual(LibraryLocation.resolve(stored: .iCloudDrive, useAppGroups: true, iCloudSync: false, iCloudDriveMode: false), .appGroup)
     }
 
     // MARK: - Root
 
-    func testICloudDriveRootFallsBackToDocumentsWithoutAContainer() {
-        let documents = URL(fileURLWithPath: "/docs", isDirectory: true)
-        let iCloud = URL(fileURLWithPath: "/icloud/Documents", isDirectory: true)
+    private let local = URL(fileURLWithPath: "/docs", isDirectory: true)
+    private let group = URL(fileURLWithPath: "/group/Documents", isDirectory: true)
+    private let iCloud = URL(fileURLWithPath: "/icloud/Documents", isDirectory: true)
 
-        XCTAssertEqual(LibraryLocation.iCloudDrive.rootURL(documents: documents, iCloudDocuments: iCloud), iCloud)
-        XCTAssertEqual(LibraryLocation.iCloudDrive.rootURL(documents: documents, iCloudDocuments: nil), documents)
-        XCTAssertEqual(LibraryLocation.appStorage.rootURL(documents: documents, iCloudDocuments: iCloud), documents)
-        XCTAssertEqual(LibraryLocation.appGroup.rootURL(documents: documents, iCloudDocuments: iCloud), documents)
+    func testAppStorageRootIsLocalDocumentsEvenWhenAGroupExists() {
+        XCTAssertEqual(LibraryLocation.appStorage.rootURL(localDocuments: local, appGroupDocuments: group, iCloudDocuments: iCloud, usesAppGroupContainer: false), local)
+    }
+
+    func testAppGroupRootIsTheGroupDocumentsAndFallsBackToLocal() {
+        XCTAssertEqual(LibraryLocation.appGroup.rootURL(localDocuments: local, appGroupDocuments: group, iCloudDocuments: nil, usesAppGroupContainer: true), group)
+        XCTAssertEqual(LibraryLocation.appGroup.rootURL(localDocuments: local, appGroupDocuments: nil, iCloudDocuments: nil, usesAppGroupContainer: true), local)
+    }
+
+    func testICloudDriveRootFallsBackToTheAppFilesRoot() {
+        XCTAssertEqual(LibraryLocation.iCloudDrive.rootURL(localDocuments: local, appGroupDocuments: group, iCloudDocuments: iCloud, usesAppGroupContainer: false), iCloud)
+        XCTAssertEqual(LibraryLocation.iCloudDrive.rootURL(localDocuments: local, appGroupDocuments: group, iCloudDocuments: nil, usesAppGroupContainer: false), local)
+        // Phase 1 behaviour kept: an App Group user without an iCloud container stays in the group.
+        XCTAssertEqual(LibraryLocation.iCloudDrive.rootURL(localDocuments: local, appGroupDocuments: group, iCloudDocuments: nil, usesAppGroupContainer: true), group)
+    }
+
+    func testAppFilesRootFollowsTheSameAxisAsTheLibraryRoot() {
+        // documentsPath is fixed at launch from the same precedence LibraryLocation uses.
+        #if os(tvOS)
+        XCTAssertEqual(URL.documentsPath, URL.cachesPathLocal)
+        #else
+        let expected = LibraryLocation.usesAppGroupContainer ? (URL.documentsPathAppGroup ?? URL.documentsPathLocal) : URL.documentsPathLocal
+        XCTAssertEqual(URL.documentsPath, expected)
+        #endif
     }
 
     func testLibraryAccessorsUseTheCurrentRoot() {

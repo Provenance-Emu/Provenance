@@ -18,34 +18,36 @@ public let PVAppGroupId = Bundle.main.infoDictionary?["APP_GROUP_IDENTIFIER"] as
 
     // MARK: - Filesystem Helpers
 public extension URL {
+    /// Legacy accessor; prefer `LibraryLocation.usesAppGroupContainer`, which also honours the stored location.
     static var USE_APP_GROUPS: Bool {
-        return Defaults[.useAppGroups]
+        return LibraryLocation.usesAppGroupContainer
     }
-    
+
+    /// The app-files root (Imports, core configs, the resolver's local base). Fixed at launch.
     static let documentsPath: URL = {
 #if os(tvOS)
         return cachesPath
 #else
-        if USE_APP_GROUPS {
+        if LibraryLocation.usesAppGroupContainer {
             return documentsPathAppGroup ?? documentsPathLocal
         } else {
             return documentsPathLocal
         }
 #endif
     }()
-    
+
     static let cachesPath: URL = {
         #if os(tvOS)
         return cachesPathLocal
         #else
-        if USE_APP_GROUPS {
+        if LibraryLocation.usesAppGroupContainer {
             return cachesPathAppGroup ?? cachesPathLocal
         } else {
             return cachesPathLocal
         }
         #endif
     }()
-    
+
     static let cachesPathLocal: URL = {
         let paths = NSSearchPathForDirectoriesInDomains(.cachesDirectory, .userDomainMask, true)
         

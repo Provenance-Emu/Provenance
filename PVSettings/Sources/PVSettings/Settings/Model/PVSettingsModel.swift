@@ -684,9 +684,14 @@ public extension Defaults.Keys {
     static let cloudKitMaxRetryAttempts = Key<Int>("cloudKitMaxRetryAttempts", default: 3)
 }
 
-// MARK: File syste
+// MARK: File system
 public extension Defaults.Keys {
+    /// Legacy App Group toggle. `libraryLocation` wins when set; the move engine mirrors it so older builds agree.
     static let useAppGroups = Key<Bool>("useAppGroups", default: false)
+
+    /// `LibraryLocation.rawValue` chosen by the move engine (PVFileSystem). `nil` until the first move;
+    /// the location is then derived from `useAppGroups` and the iCloud settings.
+    static let libraryLocation = Key<String?>("libraryLocation", default: nil)
 }
 
 // MARK: Web Server

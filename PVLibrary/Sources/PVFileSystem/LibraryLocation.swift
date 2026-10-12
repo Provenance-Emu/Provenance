@@ -7,57 +7,103 @@
 //  Where the library's files live: ROMs, BIOS, System, save states, battery saves,
 //  screenshots, cheats and patches (everything under `Paths` built on
 //  `URL.documentsiCloudOrLocalPath`). The app's own files (Imports, core configs) stay
-//  under `URL.documentsPath` whatever the location.
+//  under `URL.documentsPath`, which follows the same App Group precedence.
 //
-//  Not stored yet: derived from the settings that choose it today, so it can't disagree
-//  with them. Storing it comes with the move engine that owns switching
-//  (docs/superpowers/specs/2026-10-11-library-storage-locations-design.md).
+//  The appGroup/appStorage axis is fixed per process (`storedAtLaunch`), like
+//  `URL.documentsPath`: a switch written by `LibraryMoveEngine` takes effect at the next
+//  launch. The iCloud Drive axis is still derived live from the iCloud settings (phase 5).
+//  Spec: docs/superpowers/specs/2026-10-11-library-storage-locations-design.md
 //
 
 import Foundation
 import Defaults
 import PVSettings
 
-public enum LibraryLocation: Sendable {
+public enum LibraryLocation: String, Sendable, CaseIterable {
     /// The app's Documents (Caches on tvOS). The default.
     case appStorage
-    /// The App Group container's Documents (the legacy `useAppGroups` setting).
+    /// The App Group container's Documents (legacy; a valid move source, never a destination).
     case appGroup
     /// The iCloud Drive ubiquity container's Documents.
     case iCloudDrive
+
+    /// userInfo key of `.libraryLocationDidChange`: `true` when the new location applies at the next launch.
+    public static let requiresRelaunchUserInfoKey = "requiresRelaunch"
+
+    /// The `libraryLocation` setting as it was when this process first asked. Read once so the
+    /// library root and `URL.documentsPath` can't drift apart mid-session.
+    static let storedAtLaunch: LibraryLocation? = Defaults[.libraryLocation].flatMap(LibraryLocation.init(rawValue:))
+
+    /// `true` when this process' Documents and Caches live in the App Group container.
+    /// The stored location wins; the legacy `useAppGroups` toggle is the fallback.
+    public static var usesAppGroupContainer: Bool {
+        #if os(tvOS)
+        return false
+        #else
+        if let stored = storedAtLaunch { return stored == .appGroup }
+        return Defaults[.useAppGroups]
+        #endif
+    }
 
     /// The location the current settings select.
     public static var current: LibraryLocation {
         #if os(tvOS)
         return .appStorage
         #else
-        return resolve(useAppGroups: URL.USE_APP_GROUPS,
+        return resolve(stored: storedAtLaunch,
+                       useAppGroups: Defaults[.useAppGroups],
                        iCloudSync: Defaults[.iCloudSync],
                        iCloudDriveMode: Defaults[.iCloudSyncMode].isICloudDrive)
         #endif
     }
 
-    /// iCloud Drive mode only applies while iCloud sync is on, and wins over App Group storage.
-    static func resolve(useAppGroups: Bool, iCloudSync: Bool, iCloudDriveMode: Bool) -> LibraryLocation {
+    /// iCloud Drive mode only applies while iCloud sync is on, and wins over everything else.
+    /// A stored location (written by the move engine) wins over the legacy `useAppGroups` toggle.
+    /// A stored `.iCloudDrive` is not honoured until phase 5 moves the iCloud axis into the setting.
+    static func resolve(stored: LibraryLocation?, useAppGroups: Bool, iCloudSync: Bool, iCloudDriveMode: Bool) -> LibraryLocation {
         if iCloudSync && iCloudDriveMode { return .iCloudDrive }
+        if let stored, stored != .iCloudDrive { return stored }
         return useAppGroups ? .appGroup : .appStorage
     }
 
     /// The folder the library's subfolders (`ROMs/`, `BIOS/`, …) live in.
     /// Call on a background thread: the iCloud container lookup can block.
     public var rootURL: URL {
-        rootURL(documents: URL.documentsPath,
-                iCloudDocuments: self == .iCloudDrive ? URL.iCloudDocumentsDirectory : nil)
+        #if os(tvOS)
+        return URL.cachesPath
+        #else
+        return rootURL(localDocuments: URL.documentsPathLocal,
+                       appGroupDocuments: URL.documentsPathAppGroup,
+                       iCloudDocuments: self == .iCloudDrive ? URL.iCloudDocumentsDirectory : nil,
+                       usesAppGroupContainer: Self.usesAppGroupContainer)
+        #endif
     }
 
-    /// App Group storage is already folded into `documents` (`URL.documentsPath` picks the
-    /// group container at launch). iCloud Drive falls back to it when there is no container.
-    func rootURL(documents: URL, iCloudDocuments: URL?) -> URL {
+    /// Each location names its own root. iCloud Drive without a container falls back to the
+    /// app-files root (the group's Documents for an App Group user, else local Documents).
+    func rootURL(localDocuments: URL, appGroupDocuments: URL?, iCloudDocuments: URL?, usesAppGroupContainer: Bool) -> URL {
         switch self {
-        case .appStorage, .appGroup:
-            return documents
+        case .appStorage:
+            return localDocuments
+        case .appGroup:
+            return appGroupDocuments ?? localDocuments
         case .iCloudDrive:
-            return iCloudDocuments ?? documents
+            return iCloudDocuments ?? (usesAppGroupContainer ? appGroupDocuments : nil) ?? localDocuments
         }
     }
+
+    /// Records `location` as the library location. Only `LibraryMoveEngine` calls this, after the
+    /// copy is verified. Mirrors the legacy toggle so a build that only knows `useAppGroups` agrees.
+    /// Takes effect at the next launch (see `storedAtLaunch`).
+    public static func switchStored(to location: LibraryLocation) {
+        Defaults[.libraryLocation] = location.rawValue
+        Defaults[.useAppGroups] = (location == .appGroup)
+        NotificationCenter.default.post(name: .libraryLocationDidChange, object: nil,
+                                        userInfo: [requiresRelaunchUserInfoKey: true])
+    }
+}
+
+public extension Notification.Name {
+    /// Posted by `LibraryLocation.switchStored(to:)`. userInfo: `LibraryLocation.requiresRelaunchUserInfoKey`.
+    static let libraryLocationDidChange = Notification.Name("PVLibraryLocationDidChangeNotification")
 }
