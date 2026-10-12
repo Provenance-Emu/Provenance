@@ -32,21 +32,33 @@ public struct CoreProduct {
     public let embeds: [CoreLink]
     /// Platforms the shipping target links it on.
     public let platforms: Set<PlatformFilter>
-    /// Aggregate target that builds the core's out-of-tree library ("BuildPVlibAzahar", "Make XCFrameworks").
+    /// Aggregate target that builds the core's out-of-tree library ("BuildPVlibAzahar"). Only
+    /// meaningful for `.project` rows: Xcode schedules the aggregate as an implicit dependency.
     public let needsAggregate: String?
+    /// Build products a `.package` row needs on disk before SwiftPM can load its package (a
+    /// `.binaryTarget` path), repo-relative. A clean checkout lacks them, so the manifest check
+    /// only requires them for apps that are enabled; whoever builds such an app must produce them
+    /// first (`Makefile`: DEV_PREBUILT_CORES, `Scripts/cores/build_slice.py`).
+    public let artefacts: [String]
+    /// Run Scripts that put resources the package cannot carry into every app that embeds the core.
+    public let postScripts: [TargetScript]
 
     public init(
         id: String,
         link: CoreLink,
         embeds: [CoreLink] = [],
         platforms: Set<PlatformFilter> = [.ios, .tvos],
-        needsAggregate: String? = nil
+        needsAggregate: String? = nil,
+        artefacts: [String] = [],
+        postScripts: [TargetScript] = []
     ) {
         self.id = id
         self.link = link
         self.embeds = embeds
         self.platforms = platforms
         self.needsAggregate = needsAggregate
+        self.artefacts = artefacts
+        self.postScripts = postScripts
     }
 
     /// `link` followed by `embeds`.
@@ -87,13 +99,16 @@ public extension CoreProduct {
         link: .project(path: "Cores/Azahar/PVAzahar.xcodeproj", target: "PVAzahar", product: "PVAzahar"),
         needsAggregate: "BuildPVlibAzahar"
     )
-    // PVDolphin links PVlibDolphin.xcframework, which `Make XCFrameworks` (build_slice.py) produces.
-    // Build.xcconfig excludes both from simulator SDKs; no focused app uses Dolphin yet.
+    // PVDolphin-Dynamic wraps PVlibDolphin.xcframework as a SwiftPM `.binaryTarget`, so the package
+    // carries the emulator library: nothing to embed separately. The xcframework is a build
+    // artefact of `build_slice.py dolphin <slice>`, and SwiftPM will not load the package without it.
+    // Device only: the xcframework has no slice for a platform nobody built, and the xcodeproj's
+    // simulator stub (PVDebug.c) has no package equivalent.
     static let dolphin = CoreProduct(
         id: "dolphin",
-        link: .project(path: "Cores/Dolphin/PVDolphin.xcodeproj", target: "PVDolphin", product: "PVDolphin"),
-        embeds: [.prebuilt(path: "Cores/Dolphin/dolphin-ios/build/xcframework/PVlibDolphin.xcframework")],
-        needsAggregate: "Make XCFrameworks"
+        link: .package(path: "Cores/Dolphin", product: "PVDolphin-Dynamic"),
+        artefacts: ["Cores/Dolphin/dolphin-ios/build/xcframework/PVlibDolphin.xcframework"],
+        postScripts: [DevSettings.dolphinSysScript]
     )
 
     // MARK: Non-core products every app embeds

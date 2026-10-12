@@ -22,7 +22,11 @@
 #endif
 
 #import <Foundation/Foundation.h>
+#if SWIFT_PACKAGE
+#import "PVDolphinCore.h"
+#else
 #import <PVDolphin/PVDolphinCore.h>
+#endif
 
 #include <memory>
 #include <string>
