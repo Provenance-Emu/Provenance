@@ -236,17 +236,18 @@ final class LibraryMoveEngineTests: XCTestCase {
         XCTAssertEqual(store.load()?.phase, .switched)
     }
 
-    func testResumeOfAnAlreadySwitchedJournalDoesNotTouchDiskOrSwitchAgain() async throws {
+    func testResumeOfAnAlreadySwitchedJournalRunsCleanupAndDoesNotSwitchAgain() async throws {
         try write(src, "ROMs/a/Game.sfc", "rom")
         _ = try await engine().start(request(), progress: nil)
         let first = try XCTUnwrap(store.load())
 
         let outcome = try await engine().resume(first, sourceRoot: src, destinationRoot: dst, progress: nil)
 
-        XCTAssertEqual(outcome, .switched)
+        XCTAssertEqual(outcome, .cleanedUp)
         XCTAssertEqual(switched.calls, [.appStorage], "no second switch")
-        XCTAssertEqual(store.load(), first, "the journal is untouched")
-        XCTAssertEqual(read(src, "ROMs/a/Game.sfc"), "rom")
+        XCTAssertFalse(exists(src, "ROMs/a/Game.sfc"))
+        XCTAssertEqual(read(dst, "ROMs/a/Game.sfc"), "rom")
+        XCTAssertNil(store.load())
     }
 
     // MARK: cancel

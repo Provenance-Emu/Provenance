@@ -31,27 +31,24 @@ public struct LibraryMoveFileCopier: Sendable {
     /// - Returns: the journal entry, or `nil` when the source no longer exists (skipped, not an error).
     /// - Throws: `LibraryMoveError.verificationFailed` after one retry; file-system errors as thrown.
     public func transfer(_ item: LibraryMovePlan.Item, from sourceRoot: URL, to destinationRoot: URL) throws -> LibraryMoveJournal.Entry? {
-        let source = sourceRoot.appendingPathComponent(item.relativePath)
-        guard fileManager.fileExists(atPath: source.path) else {
-            WLOG("LibraryMove: \(item.relativePath) disappeared before it was copied; skipping")
-            return nil
-        }
-        let values = try source.resourceValues(forKeys: [.fileSizeKey, .contentModificationDateKey])
-        let size = Int64(values.fileSize ?? 0)
-        let modified = values.contentModificationDate
-        let md5 = Self.needsMD5(item.relativePath) ? md5Provider.md5ForFile(at: source, fromOffset: 0) : nil
-
+        guard let facts = try sourceFacts(of: item, under: sourceRoot) else { return nil }
         let destination = destinationRoot.appendingPathComponent(item.relativePath)
         guard fileManager.fileExists(atPath: destination.path) else {
-            try copyVerified(from: source, to: destination, size: size, md5: md5, relativePath: item.relativePath)
-            return .init(size: size, md5: md5, modified: modified, state: .copied, destinationPath: nil)
+            try copyVerified(from: facts.url, to: destination, size: facts.size, md5: facts.md5, relativePath: item.relativePath)
+            return .init(size: facts.size, md5: facts.md5, modified: facts.modified, state: .copied, destinationPath: nil)
         }
-        if verify(destination, expectedSize: size, expectedMD5: md5) {
-            return .init(size: size, md5: md5, modified: modified, state: .identical, destinationPath: nil)
+        if verify(destination, expectedSize: facts.size, expectedMD5: facts.md5) {
+            return .init(size: facts.size, md5: facts.md5, modified: facts.modified, state: .identical, destinationPath: nil)
         }
-        let conflictPath = Self.conflictPath(for: item.relativePath, under: destinationRoot, fileManager: fileManager)
-        try copyVerified(from: source, to: destinationRoot.appendingPathComponent(conflictPath), size: size, md5: md5, relativePath: item.relativePath)
-        return .init(size: size, md5: md5, modified: modified, state: .conflict, destinationPath: conflictPath)
+        return try copyToConflicts(item, facts, destinationRoot: destinationRoot)
+    }
+
+    /// Like `transfer`, but for a source known to differ from what the destination holds (a file that changed after it
+    /// was copied). The destination is never consulted: the source always goes to `Conflicts/`, even when a size-only
+    /// check would call the two files identical.
+    public func transferAsConflict(_ item: LibraryMovePlan.Item, from sourceRoot: URL, to destinationRoot: URL) throws -> LibraryMoveJournal.Entry? {
+        guard let facts = try sourceFacts(of: item, under: sourceRoot) else { return nil }
+        return try copyToConflicts(item, facts, destinationRoot: destinationRoot)
     }
 
     /// `true` when the file at `url` exists with `expectedSize` bytes and, when given, `expectedMD5`.
@@ -75,6 +72,31 @@ public struct LibraryMoveFileCopier: Sendable {
             if !fileManager.fileExists(atPath: destinationRoot.appendingPathComponent(candidate).path) { return candidate }
             n += 1
         }
+    }
+
+    private struct SourceFacts {
+        let url: URL
+        let size: Int64
+        let modified: Date?
+        let md5: String?
+    }
+
+    /// The source's size, modification date and (under `ROMs/` and `BIOS/`) MD5, or `nil` when it no longer exists.
+    private func sourceFacts(of item: LibraryMovePlan.Item, under sourceRoot: URL) throws -> SourceFacts? {
+        let source = sourceRoot.appendingPathComponent(item.relativePath)
+        guard fileManager.fileExists(atPath: source.path) else {
+            WLOG("LibraryMove: \(item.relativePath) disappeared before it was copied; skipping")
+            return nil
+        }
+        let values = try source.resourceValues(forKeys: [.fileSizeKey, .contentModificationDateKey])
+        let md5 = Self.needsMD5(item.relativePath) ? md5Provider.md5ForFile(at: source, fromOffset: 0) : nil
+        return SourceFacts(url: source, size: Int64(values.fileSize ?? 0), modified: values.contentModificationDate, md5: md5)
+    }
+
+    private func copyToConflicts(_ item: LibraryMovePlan.Item, _ facts: SourceFacts, destinationRoot: URL) throws -> LibraryMoveJournal.Entry {
+        let conflictPath = Self.conflictPath(for: item.relativePath, under: destinationRoot, fileManager: fileManager)
+        try copyVerified(from: facts.url, to: destinationRoot.appendingPathComponent(conflictPath), size: facts.size, md5: facts.md5, relativePath: item.relativePath)
+        return .init(size: facts.size, md5: facts.md5, modified: facts.modified, state: .conflict, destinationPath: conflictPath)
     }
 
     private func copyVerified(from source: URL, to target: URL, size: Int64, md5: String?, relativePath: String) throws {

@@ -71,7 +71,7 @@ public actor LibraryMoveEngine {
 
     // MARK: - Resume
 
-    /// Continues a journaled move. `copying` → finish the copy and switch. Anything later → already switched.
+    /// Continues a journaled move. `copying` → finish the copy and switch. Anything later → cleanup.
     public func resume(_ journal: LibraryMoveJournal, sourceRoot: URL, destinationRoot: URL,
                        progress: (@Sendable (LibraryMoveProgress) -> Void)? = nil) async throws -> LibraryMoveOutcome {
         guard !isRunning else { throw LibraryMoveError.moveInProgress }
@@ -85,7 +85,7 @@ public actor LibraryMoveEngine {
             ILOG("LibraryMove: resuming copy, \(journal.entries.count) of \(plan.items.count) files already journaled")
             return try await run(&journal, plan: plan, sourceRoot: sourceRoot, destinationRoot: destinationRoot, progress: progress)
         case .switched, .cleaning:
-            return .switched
+            return try await cleanup(&journal, sourceRoot: sourceRoot, destinationRoot: destinationRoot, progress: progress)
         }
     }
 

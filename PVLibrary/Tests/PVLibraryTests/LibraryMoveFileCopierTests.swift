@@ -126,4 +126,19 @@ final class LibraryMoveFileCopierTests: XCTestCase {
         XCTAssertFalse(copier.verify(url, expectedSize: 3, expectedMD5: "nope"))
         XCTAssertFalse(copier.verify(dst.appendingPathComponent("missing"), expectedSize: 0, expectedMD5: nil))
     }
+
+    func testTransferAsConflictFilesASameSizeSourceUnderConflictsEvenInAnUnhashedFolder() throws {
+        _ = try write(dst, "Battery States/Game/Game.srm", "AAAA")
+        let item = try write(src, "Battery States/Game/Game.srm", "BBBB")
+        let entry = try LibraryMoveFileCopier().transferAsConflict(item, from: src, to: dst)
+        XCTAssertEqual(entry?.state, .conflict)
+        XCTAssertEqual(entry?.destinationPath, "Conflicts/Battery States/Game/Game.srm")
+        XCTAssertEqual(LibraryMoveTestSupport.read(dst, "Battery States/Game/Game.srm"), "AAAA", "the verified copy is never overwritten")
+        XCTAssertEqual(LibraryMoveTestSupport.read(dst, "Conflicts/Battery States/Game/Game.srm"), "BBBB")
+    }
+
+    func testTransferAsConflictSkipsASourceThatIsGone() throws {
+        let item = LibraryMovePlan.Item(relativePath: "ROMs/a/Gone.sfc", size: 1, modified: nil)
+        XCTAssertNil(try LibraryMoveFileCopier().transferAsConflict(item, from: src, to: dst))
+    }
 }
