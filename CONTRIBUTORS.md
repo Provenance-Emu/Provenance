@@ -5,9 +5,9 @@
 ## Summary
 
 - **Total Contributors**: 101
-- **Total Commits**: 10344
-- **Total Lines Added**: 16366177
-- **Total Lines Removed**: 9949691
+- **Total Commits**: 10623
+- **Total Lines Added**: 16466465
+- **Total Lines Removed**: 11751667
 
 ## Contributor Details
 
@@ -18,9 +18,9 @@
 ![Joseph Mattiello](https://www.gravatar.com/avatar/79585fbd531fa1438a73a53fb2c9eacd?s=100&d=identicon)
 
 - **Emails Used**: git@joemattiello.com, jmattiello@MacBook-Pro-M2.local, jmattiello@hearst.com, joe.mattiello@salido.com, mail@joemattiello.com
-- **Commits**: `7998`
-- **Lines Added**: `13748087`
-- **Lines Removed**: `9044908`
+- **Commits**: `8274`
+- **Lines Added**: `13848179`
+- **Lines Removed**: `10846751`
 - **Most Active File**: `Provenance.xcodeproj/project.pbxproj`
 - **Activity**: `▰▰▰▰▰▰▰▰▰▰`
 
@@ -70,9 +70,9 @@
 ![github-actions[bot]](https://www.gravatar.com/avatar/af2ab225b7c0eec44a8d0eba6b5c869a?s=100&d=identicon)
 
 - **Emails Used**: 41898282+github-actions[bot]@users.noreply.github.com
-- **Commits**: `464`
-- **Lines Added**: `389725`
-- **Lines Removed**: `109763`
+- **Commits**: `466`
+- **Lines Added**: `389742`
+- **Lines Removed**: `109877`
 - **Most Active File**: `CHANGELOG.md`
 - **Activity**: `▰▰▰▰▰▰▰▰▰▰`
 
@@ -452,6 +452,19 @@
 - **Lines Removed**: `104`
 - **Most Active File**: `TopShelf/ServiceProvider.swift`
 - **Activity**: `▰▰▰▱▱▱▱▱▱▱`
+
+---
+
+### sentry[bot]
+
+![sentry[bot]](https://www.gravatar.com/avatar/4daacc1121dacdf8f6abc1422249f7d1?s=100&d=identicon)
+
+- **Emails Used**: 39604003+sentry[bot]@users.noreply.github.com
+- **Commits**: `2`
+- **Lines Added**: `182`
+- **Lines Removed**: `22`
+- **Most Active File**: `PVLookup/Package.swift`
+- **Activity**: `▰▰▱▱▱▱▱▱▱▱`
 
 ---
 
@@ -972,19 +985,6 @@
 - **Lines Removed**: `1`
 - **Most Active File**: `Provenance/http/GCDWebUploader/GCDWebUploader.bundle/index.html`
 - **Activity**: `▰▰▰▰▰▰▱▱▱▱`
-
----
-
-### sentry[bot]
-
-![sentry[bot]](https://www.gravatar.com/avatar/4daacc1121dacdf8f6abc1422249f7d1?s=100&d=identicon)
-
-- **Emails Used**: 39604003+sentry[bot]@users.noreply.github.com
-- **Commits**: `1`
-- **Lines Added**: `3`
-- **Lines Removed**: `3`
-- **Most Active File**: `PVArchiving/Sources/PVArchiving/Backends/CompressedStreamBackends.swift`
-- **Activity**: `▰▱▱▱▱▱▱▱▱▱`
 
 ---
 
