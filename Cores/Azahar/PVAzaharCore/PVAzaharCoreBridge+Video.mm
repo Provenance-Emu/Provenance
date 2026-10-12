@@ -1,6 +1,5 @@
 #import "PVAzaharCoreBridge+Video.h"
 #import "PVAzaharCoreBridge+Private.h"
-#import <PVAzahar/PVAzahar-Swift.h>
 #import <PVLogging/PVLoggingObjC.h>
 @import PVCoreBridge;
 #include "Glue/AzaharEmuWindow.h"
@@ -63,7 +62,12 @@ void ApplyLayoutSettings(bool skin, bool singleArea, CGRect top, CGRect bottom, 
 - (void)setupRenderView {
     if (!self.touchViewController) { ELOG(@"[PVAzahar] touchViewController is nil; host must set it before start"); return; }
     UIView *host = self.touchViewController.view;
-    PVAzaharRenderView *view = [[PVAzaharRenderView alloc] initWithFrame:host.bounds];
+    Class viewClass = self.renderViewClass;
+    if (![viewClass isSubclassOfClass:[UIView class]] || ![viewClass conformsToProtocol:@protocol(PVAzaharRenderSurface)]) {
+        ELOG(@"[PVAzahar] renderViewClass %@ is not a UIView<PVAzaharRenderSurface>; PVAzaharCore sets it in init", viewClass);
+        return;
+    }
+    UIView<PVAzaharRenderSurface> *view = [(UIView<PVAzaharRenderSurface> *)[viewClass alloc] initWithFrame:host.bounds];
     view.translatesAutoresizingMaskIntoConstraints = NO;
     _renderView = view;
     // Stack just above the host GPU view when they share a superview (tvOS), else at the back.
@@ -139,12 +143,12 @@ void ApplyLayoutSettings(bool skin, bool singleArea, CGRect top, CGRect bottom, 
 
 - (void)relayoutWindow {
     if (!NSThread.isMainThread) { dispatch_async(dispatch_get_main_queue(), ^{ [self relayoutWindow]; }); return; }
-    PVAzaharRenderView *view = (PVAzaharRenderView *)_renderView;
+    UIView<PVAzaharRenderSurface> *view = _renderView;
     if (view) { [self resizeWindowToPixelSize:view.metalLayer.drawableSize]; }
 }
 
 - (void)teardownRenderView {
-    PVAzaharRenderView *view = (PVAzaharRenderView *)_renderView;
+    UIView<PVAzaharRenderSurface> *view = _renderView;
     NSArray<NSLayoutConstraint *> *constraints = _renderViewConstraints;
     _renderView = nil;
     _renderViewConstraints = nil;
@@ -187,7 +191,7 @@ void ApplyLayoutSettings(bool skin, bool singleArea, CGRect top, CGRect bottom, 
 - (void)sendTouchEvent:(UITouch *)touch ended:(BOOL)ended {
     if (!_renderView || !_window) { return; }
     const CGPoint p = [touch locationInView:_renderView];
-    const CGFloat scale = ((PVAzaharRenderView *)_renderView).metalLayer.contentsScale;
+    const CGFloat scale = _renderView.metalLayer.contentsScale;
     const float x = (float)(p.x * scale), y = (float)(p.y * scale);
     [self runOnEmuThread:[self, x, y, ended] { if (_window) { _window->Touch(!ended, x, y); } }];
 }
@@ -246,7 +250,7 @@ void ApplyLayoutSettings(bool skin, bool singleArea, CGRect top, CGRect bottom, 
     _renderView.translatesAutoresizingMaskIntoConstraints = YES;
     _renderView.frame = unionRect;
     [_renderView layoutIfNeeded];
-    const CGFloat scale = ((PVAzaharRenderView *)_renderView).metalLayer.contentsScale ?: UIScreen.mainScreen.nativeScale;
+    const CGFloat scale = _renderView.metalLayer.contentsScale ?: UIScreen.mainScreen.nativeScale;
     auto toPx = [&](CGRect r) {
         return CGRectMake((r.origin.x - unionRect.origin.x) * scale, (r.origin.y - unionRect.origin.y) * scale,
                           r.size.width * scale, r.size.height * scale);

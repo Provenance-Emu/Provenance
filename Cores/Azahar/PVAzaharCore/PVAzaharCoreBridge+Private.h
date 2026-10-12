@@ -1,6 +1,9 @@
 #pragma once
 // Private to the PVAzahar framework: C++ ivars shared by the bridge's categories. Include only from .mm files.
 #import "PVAzaharCoreBridge.h"
+#if defined(PVAZAHAR_LIBRARY_MISSING)   // set by Package.swift when the xcframework was absent at resolution
+#error "PVlibAzahar.xcframework is missing: run 'python3 Scripts/cores/build_slice.py azahar <ios|ios-sim|tvos|tvos-sim> --xcframework' (or 'make dev-generate'), then reset package caches."
+#endif
 #include <atomic>
 #include <condition_variable>
 #include <deque>
@@ -80,7 +83,7 @@ private:
     std::atomic<bool> _emuThreadExited; // last statement of the emu thread; stop pumps main until it is set
     std::atomic<bool> _stopping;        // stopEmulationWithMessage: in progress (its pumped run loop can re-enter it)
     NSString *_romPath;              // set in loadFileAtPath:, loaded on the emu thread
-    UIView *_renderView;             // PVAzaharRenderView, added to touchViewController.view
+    UIView<PVAzaharRenderSurface> *_renderView; // a renderViewClass instance, added to touchViewController.view
     NSArray<NSLayoutConstraint *> *_renderViewConstraints;
     BOOL _useCustomRenderViewLayout;
     BOOL _skinLayoutActive;          // a dual-screen skin supplied both screen rects (custom layout)
@@ -105,7 +108,6 @@ private:
 - (void)applySettingsFromOptions;
 /// Executes a MAP_JIT test page (Dolphin's probe); YES on the simulator.
 - (BOOL)probeJITAvailable;
-- (NSString *)userDirectoryPath;     // PVAzaharCore.userRootURL: <Documents>/Azahar (iOS), <Caches>/Azahar (tvOS)
 @end
 
 @interface PVAzaharCoreBridge (Cheats)

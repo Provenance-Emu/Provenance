@@ -1,11 +1,26 @@
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
+#import <QuartzCore/CAMetalLayer.h>
 #import <PVCoreObjCBridge/PVCoreObjCBridge.h>
 
 @protocol ObjCBridgedCoreBridge;
 typedef enum PV3DSButton: NSInteger PV3DSButton;
 
 NS_ASSUME_NONNULL_BEGIN
+
+/// The Metal-backed view the bridge renders into (PVAzaharRenderView, Swift). The bridge never imports the
+/// Swift module: under SwiftPM it is its own target below the Swift one (Cores/Azahar/Package.swift), and a
+/// back-reference would be a dependency cycle. The Swift core hands the class over via `renderViewClass`.
+NS_SWIFT_UI_ACTOR
+@protocol PVAzaharRenderSurface <NSObject>
+@property (nonatomic, readonly) CAMetalLayer *metalLayer;
+/// Called from layoutSubviews with the new drawable size in pixels.
+@property (nonatomic, copy, nullable) void (^onDrawableSizeChange)(CGSize size);
+#if !TARGET_OS_TV
+/// Bottom-screen touch; `ended` is YES on touch up/cancel.
+@property (nonatomic, copy, nullable) void (^onTouch)(UITouch *touch, BOOL ended);
+#endif
+@end
 
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Weverything"
@@ -29,6 +44,15 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, assign) BOOL realtimeAudio;
 @property (nonatomic, assign) NSInteger regionValue;
 @property (nonatomic, assign) NSInteger frameLimitPercent;
+
+/// Values the Swift core (PVAzaharCore) pushes in, so the bridge needs nothing from the Swift module.
+/// A UIView subclass conforming to PVAzaharRenderSurface; set in PVAzaharCore's init.
+@property (nonatomic, strong, nullable) Class renderViewClass;
+/// azahar's user directory (PVAzaharCore.userRootURL: Documents/Azahar on iOS, Caches/Azahar on tvOS).
+/// Set before `loadFileAtPath:`, which hands it to FileUtil::SetUserPath.
+@property (nonatomic, copy, nullable) NSString *userDirectoryPath;
+/// The "Respect mute switch" setting: `.ambient` audio session when YES, `.playback` otherwise. Set before start.
+@property (nonatomic, assign) BOOL respectsMuteSwitch;
 
 /// The host (`PVEmulatorCore.startEmulation`) reads this: `Load` runs on the emu thread, so the core
 /// is only marked running once `onEmulationStarted` fires, and a failed boot fires `onEmulationFailed`.
