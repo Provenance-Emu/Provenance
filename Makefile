@@ -278,6 +278,8 @@ dev: dev-generate
 	open $(DEV_WORKSPACE)
 
 # Build one focused app: make _dev-build DEV_SCHEME=Provenance-Dev-UI
+# SWIFT_ENABLE_EXPLICIT_MODULES=NO: Hummingbird imports ServiceContextModule without declaring
+# it, which fails the explicit-modules scan at random (see dev-workspace.yml).
 _dev-build: dev-generate
 	xcodebuild build \
 		-workspace $(DEV_WORKSPACE) \
@@ -286,6 +288,7 @@ _dev-build: dev-generate
 		-derivedDataPath "$(DEV_DERIVED)" \
 		-skipPackagePluginValidation \
 		-skipMacroValidation \
+		SWIFT_ENABLE_EXPLICIT_MODULES=NO \
 		$(DEV_BUILD_SETTINGS)
 
 dev-ui:

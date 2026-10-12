@@ -650,13 +650,16 @@ jobs:
         run: |
           set -eo pipefail
           start_time=$(date +%s)
+          # Ad-hoc signed like dev-workspace.yml (Dev.xcconfig); never CODE_SIGNING_ALLOWED=NO
+          # for a dev build. SWIFT_ENABLE_EXPLICIT_MODULES=NO: see dev-workspace.yml (Hummingbird's
+          # undeclared ServiceContextModule import breaks the explicit-modules scan at random).
           xcodebuild build \
             -workspace Provenance-Dev.xcworkspace \
             -scheme "Provenance-Dev-Coreless" \
             -destination "generic/platform=iOS Simulator" \
             -skipPackagePluginValidation \
             -skipMacroValidation \
-            CODE_SIGNING_ALLOWED=NO \
+            SWIFT_ENABLE_EXPLICIT_MODULES=NO \
             -quiet \
             2>&1 | tail -100
           build_exit=${PIPESTATUS[0]}
