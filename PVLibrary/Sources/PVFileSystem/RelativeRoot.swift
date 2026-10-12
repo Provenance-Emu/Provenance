@@ -26,6 +26,15 @@ public extension RelativeRoot {
     static var iCloudDocumentsDirectory: URL? { URL.iCloudDocumentsDirectory }
 
     func createRelativePath(fromURL url: URL) -> String {
+        createRelativePath(fromURL: url, stripping: LibraryLocation.pickedRootsAtLaunch)
+    }
+
+    /// `roots` are stripped before any pattern matching: a picked folder under iCloud Drive or a file provider
+    /// has "Documents/" inside its own path and would otherwise store a wrong partial path (D8, Review Focus 2).
+    func createRelativePath(fromURL url: URL, stripping roots: [URL]) -> String {
+        if let stripped = Self.strip(url: url, roots: roots) {
+            return stripped
+        }
         let urlPath = url.path
         let dirPath = directoryURL.path
 
@@ -96,6 +105,21 @@ public extension RelativeRoot {
 
         // Fallback: return just the filename
         return url.lastPathComponent
+    }
+
+    /// The part of `url` below the first matching root, in raw, standardized or symlink-resolved form.
+    static func strip(url: URL, roots: [URL]) -> String? {
+        let paths = [url.path, url.standardizedFileURL.path, url.resolvingSymlinksInPath().path]
+        for root in roots {
+            let bases = [root.path, root.standardizedFileURL.path, root.resolvingSymlinksInPath().path]
+            for base in bases {
+                let prefix = base.hasSuffix("/") ? base : base + "/"
+                for path in paths where path.hasPrefix(prefix) {
+                    return String(path.dropFirst(prefix.count))
+                }
+            }
+        }
+        return nil
     }
 
     var directoryURL: URL {
