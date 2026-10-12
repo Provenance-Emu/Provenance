@@ -66,15 +66,16 @@ public extension CoreProduct {
         id: "genesis",
         link: .package(path: "Cores/Genesis-Plus-GX", product: "PVCoreGenesisPlus-Dynamic")
     )
+    // Plugins are dlopen'd by name from PVMupenBridge.m; the SwiftPM bridge/core live inside the main
+    // dynamic product, so only the four plugins are embedded separately.
     static let mupen64Plus = CoreProduct(
         id: "mupen64plus",
-        link: .project(path: "Cores/Mupen64Plus/PVMupen64Plus.xcodeproj", target: "PVMupen64Plus", product: "PVMupen64Plus"),
+        link: .package(path: "Cores/Mupen64Plus", product: "PVMupenGameCore-Dynamic"),
         embeds: [
-            .project(path: "Cores/Mupen64Plus/PVMupen64Plus.xcodeproj", target: "PVMupen64PlusRspHLE", product: "PVMupen64PlusRspHLE"),
-            .project(path: "Cores/Mupen64Plus/PVMupen64Plus.xcodeproj", target: "PVMupen64PlusBridge", product: "PVMupen64PlusBridge"),
-            .project(path: "Cores/Mupen64Plus/PVMupen64Plus.xcodeproj", target: "PVMupen64PlusVideoGlideN64", product: "PVMupen64PlusVideoGlideN64"),
-            .project(path: "Cores/Mupen64Plus/PVMupen64Plus.xcodeproj", target: "PVMupen64PlusVideoRice", product: "PVMupen64PlusVideoRice"),
-            .project(path: "Cores/Mupen64Plus/PVMupen64Plus.xcodeproj", target: "PVRSPCXD4", product: "PVRSPCXD4")
+            .package(path: "Cores/Mupen64Plus", product: "PVMupen64PlusRspHLE-Dynamic"),
+            .package(path: "Cores/Mupen64Plus", product: "PVMupen64PlusVideoGlideN64-Dynamic"),
+            .package(path: "Cores/Mupen64Plus", product: "PVMupen64PlusVideoRice-Dynamic"),
+            .package(path: "Cores/Mupen64Plus", product: "PVRSPCXD4-Dynamic")
         ]
     )
     static let mednafen = CoreProduct(id: "mednafen", link: .package(path: "Cores/Mednafen", product: "PVCoreMednafen-Dynamic"))
