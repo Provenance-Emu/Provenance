@@ -100,22 +100,79 @@ extension PVAppDelegate: MXMetricManagerSubscriber {
 
     /// Forward abnormal-exit counts to Sentry as a tagged event so jetsam and
     /// `0xdead10cc` are filterable in the dashboard, not just in a device log file.
+    ///
+    /// `MXMetricManager` delivers on a background queue, and this subscriber is
+    /// registered before `SentryBootstrapTask` runs (debug builds never start
+    /// Sentry at all). Constructing `Event` is what first messages
+    /// `SentryDependencyContainer`, and that class's `+initialize` reads
+    /// `UIApplication.applicationState`, which must happen on the main thread.
     private func reportExitSummaryToSentry(_ summary: AppExitSummary, payload: MXMetricPayload) {
 #if canImport(Sentry)
+        let message = "MetricKit app exits: \(summary.dominantClass)"
+        let tags = summary.sentryTags
+        let foreground = summary.foreground.summaryLine
+        let background = summary.background.summaryLine
+        let windowBegin = "\(payload.timeStampBegin)"
+        let windowEnd = "\(payload.timeStampEnd)"
+        DispatchQueue.main.async {
+            Self.captureExitSummary(
+                message: message,
+                tags: tags,
+                foreground: foreground,
+                background: background,
+                windowBegin: windowBegin,
+                windowEnd: windowEnd,
+                allowRetry: true
+            )
+        }
+#endif
+    }
+
+#if canImport(Sentry)
+    /// Captures one exit summary. No-ops until `SentrySDK.start` has run, and retries
+    /// once: a payload queued at launch can arrive before the bootstrap task.
+    private static func captureExitSummary(
+        message: String,
+        tags: [String: String],
+        foreground: String,
+        background: String,
+        windowBegin: String,
+        windowEnd: String,
+        allowRetry: Bool
+    ) {
+        guard SentrySDK.isEnabled else {
+            guard allowRetry else {
+                metricLog.debug("Skipping exit report; Sentry is not enabled")
+                return
+            }
+            DispatchQueue.main.asyncAfter(deadline: .now() + 5) {
+                captureExitSummary(
+                    message: message,
+                    tags: tags,
+                    foreground: foreground,
+                    background: background,
+                    windowBegin: windowBegin,
+                    windowEnd: windowEnd,
+                    allowRetry: false
+                )
+            }
+            return
+        }
+
         let event = Event(level: .warning)
-        event.message = SentryMessage(formatted: "MetricKit app exits: \(summary.dominantClass)")
-        event.tags = summary.sentryTags
+        event.message = SentryMessage(formatted: message)
+        event.tags = tags
         event.context = [
             "app_exit": [
-                "foreground": summary.foreground.summaryLine,
-                "background": summary.background.summaryLine,
-                "window_begin": "\(payload.timeStampBegin)",
-                "window_end": "\(payload.timeStampEnd)"
+                "foreground": foreground,
+                "background": background,
+                "window_begin": windowBegin,
+                "window_end": windowEnd
             ]
         ]
         SentrySDK.capture(event: event)
-#endif
     }
+#endif
 
     public func didReceive(_ payloads: [MXDiagnosticPayload]) {
         for payload in payloads {
