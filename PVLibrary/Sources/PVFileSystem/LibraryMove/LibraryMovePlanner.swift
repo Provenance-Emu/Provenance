@@ -45,7 +45,7 @@ public struct LibraryMovePlanner: Sendable {
     public let availableCapacity: @Sendable (URL) throws -> Int64
 
     public init(fileManager: FileManager = .default,
-                availableCapacity: @escaping @Sendable (URL) throws -> Int64 = LibraryMovePlanner.volumeCapacity) {
+                availableCapacity: @escaping @Sendable (URL) throws -> Int64 = { try LibraryMovePlanner.volumeCapacity($0) }) {
         self.fileManager = fileManager
         self.availableCapacity = availableCapacity
     }

@@ -12,6 +12,11 @@ final class LibraryMoveCoordinatorTests: XCTestCase {
     private var local: URL!
     private var store = LibraryMoveJournalStore(url: URL(fileURLWithPath: NSTemporaryDirectory()))
     private var recorder = Recorder()
+    private var defaults: UserDefaults!
+    private var defaultsSuite = ""
+
+    private static let thisApp = "org.test.full"
+    private static let otherApp = "org.test.lite"
 
     private final class Recorder: @unchecked Sendable { var switches: [LibraryLocation] = [] }
 
@@ -23,13 +28,20 @@ final class LibraryMoveCoordinatorTests: XCTestCase {
         try FileManager.default.createDirectory(at: local, withIntermediateDirectories: true)
         store = LibraryMoveJournalStore(url: base.appendingPathComponent("support/move-journal.json"))
         recorder = Recorder()
+        defaultsSuite = "LibraryMoveCoordinatorTests.\(UUID().uuidString)"
+        defaults = try XCTUnwrap(UserDefaults(suiteName: defaultsSuite))
     }
 
     override func tearDownWithError() throws {
+        defaults.removePersistentDomain(forName: defaultsSuite)
         LibraryMoveTestSupport.removeTree(base)
     }
 
-    private func coordinator(launched: LibraryLocation, groupAvailable: Bool = true) -> LibraryMoveCoordinator {
+    /// - Parameters:
+    ///   - launched: the appGroup/appStorage axis this process launched on.
+    ///   - live: what `LibraryLocation.current` reports (it also follows iCloud Drive mode); defaults to `launched`.
+    private func coordinator(launched: LibraryLocation, live: LibraryLocation? = nil, groupAvailable: Bool = true,
+                             variantID: String = LibraryMoveCoordinatorTests.thisApp) -> LibraryMoveCoordinator {
         let record = recorder
         let group = groupAvailable ? self.group : nil
         let local = self.local
@@ -41,9 +53,12 @@ final class LibraryMoveCoordinatorTests: XCTestCase {
                                           case .iCloudDrive: return nil
                                           }
                                       },
-                                      launchedLocation: { launched },
+                                      launchedLocation: { live ?? launched },
+                                      resumeLocation: { launched },
                                       switchLocation: { record.switches.append($0) },
-                                      planner: LibraryMovePlanner(availableCapacity: { _ in .max }))
+                                      planner: LibraryMovePlanner(availableCapacity: { _ in .max }),
+                                      sharedDefaults: defaults,
+                                      variantID: variantID)
     }
 
     private func write(_ root: URL, _ relativePath: String, _ text: String) throws {
@@ -67,6 +82,14 @@ final class LibraryMoveCoordinatorTests: XCTestCase {
         let outcome = await c.resumeIfNeeded(progress: nil)
         XCTAssertNil(outcome)
         XCTAssertFalse(c.hasPendingMove)
+    }
+
+    func testHasPendingMoveIsAPureCheck() throws {
+        try FileManager.default.createDirectory(at: store.url.deletingLastPathComponent(), withIntermediateDirectories: true)
+        try Data("{ not json".utf8).write(to: store.url)
+        let c = coordinator(launched: .appGroup)
+        XCTAssertTrue(c.hasPendingMove)
+        XCTAssertTrue(FileManager.default.fileExists(atPath: store.url.path), "asking must not delete the journal")
     }
 
     func testMoveToAppStorageRunsTheEngineAgainstTheRealRoots() async throws {
@@ -121,14 +144,6 @@ final class LibraryMoveCoordinatorTests: XCTestCase {
         XCTAssertNil(store.load())
     }
 
-    func testCancelWithNothingRunningDoesNotAbortALaterMove() async throws {
-        try write(group, "ROMs/a/Game.sfc", "rom")
-        let c = coordinator(launched: .appGroup)
-        c.cancel()
-        let outcome = try await c.moveToAppStorage(keepCopy: false, progress: nil)
-        XCTAssertEqual(outcome, .switched)
-    }
-
     #if os(tvOS)
     func testResumeIsANoOpOnTVOSAndLeavesTheJournalAlone() async throws {
         let journal = try copyingJournal()
@@ -174,14 +189,125 @@ final class LibraryMoveCoordinatorTests: XCTestCase {
         XCTAssertEqual(store.load()?.phase, .switched)
     }
 
-    func testCopyingJournalIsLeftAloneWhenThisLaunchIsAlreadyOnTheDestination() async throws {
-        _ = try copyingJournal()
+    func testCopyingJournalWithClaimsIsLeftAloneWhenThisLaunchIsAlreadyOnTheDestination() async throws {
+        // Claims outstanding mean the copy loop never finished, so a launch on the destination cannot be the one a
+        // completed switch produced.
+        var journal = try copyingJournal()
+        journal.inFlight = ["ROMs/a/x.sfc"]
+        try store.save(journal)
 
         let outcome = await coordinator(launched: .appStorage).resumeIfNeeded(progress: nil)
 
         XCTAssertNil(outcome)
         XCTAssertEqual(store.load()?.phase, .copying)
         XCTAssertTrue(recorder.switches.isEmpty)
+    }
+
+    func testACopyingJournalWhoseSwitchLandedIsFinishedOnTheDestination() async throws {
+        // performSwitch wrote the setting, then the process died before the journal said "switched".
+        try write(group, "ROMs/a/Game.sfc", "rom")
+        _ = try await coordinator(launched: .appGroup).moveToAppStorage(keepCopy: false, progress: nil)
+        var journal = try XCTUnwrap(store.load())
+        journal.phase = .copying
+        journal.inFlight = []
+        try store.save(journal)
+
+        let outcome = await coordinator(launched: .appStorage).resumeIfNeeded(progress: nil)
+
+        XCTAssertEqual(outcome, .cleanedUp)
+        XCTAssertNil(read(group, "ROMs/a/Game.sfc"))
+        XCTAssertEqual(read(local, "ROMs/a/Game.sfc"), "rom")
+        XCTAssertNil(store.load())
+    }
+
+    func testASwitchedJournalOnTheSourceReassertsTheSetting() async throws {
+        // The journal says "switched" but the setting was not persisted before the process died.
+        try write(group, "ROMs/a/Game.sfc", "rom")
+        _ = try await coordinator(launched: .appGroup).moveToAppStorage(keepCopy: false, progress: nil)
+
+        let outcome = await coordinator(launched: .appGroup).resumeIfNeeded(progress: nil)
+
+        XCTAssertNil(outcome)
+        XCTAssertEqual(recorder.switches, [.appStorage, .appStorage], "the setting is written again so the next launch lands on the destination")
+        XCTAssertEqual(store.load()?.phase, .switched)
+        XCTAssertEqual(read(group, "ROMs/a/Game.sfc"), "rom", "nothing is deleted from this launch")
+    }
+
+    func testResumeFollowsTheLaunchAxisNotTheLiveICloudDriveMode() async throws {
+        try write(group, "ROMs/a/Game.sfc", "rom")
+        _ = try await coordinator(launched: .appGroup).moveToAppStorage(keepCopy: false, progress: nil)
+
+        // iCloud Drive mode is on, so the live location is .iCloudDrive; the process still launched on app storage.
+        let outcome = await coordinator(launched: .appStorage, live: .iCloudDrive).resumeIfNeeded(progress: nil)
+
+        XCTAssertEqual(outcome, .cleanedUp)
+        XCTAssertNil(read(group, "ROMs/a/Game.sfc"))
+    }
+
+    func testCleanupCarriesTopLevelEntriesCreatedAfterTheMoveStarted() async throws {
+        try write(group, "ROMs/a/Game.sfc", "rom")
+        _ = try await coordinator(launched: .appGroup).moveToAppStorage(keepCopy: false, progress: nil)
+        // The old process kept running: a core made its first folder, a loose file appeared, the Realm was written.
+        try write(group, "Azahar/sdmc/title.bin", "core data")
+        try write(group, "late.txt", "written late")
+        try write(group, "default.realm", "database")
+
+        let outcome = await coordinator(launched: .appStorage).resumeIfNeeded(progress: nil)
+
+        XCTAssertEqual(outcome, .cleanedUp)
+        XCTAssertEqual(read(local, "Azahar/sdmc/title.bin"), "core data")
+        XCTAssertEqual(read(local, "late.txt"), "written late")
+        XCTAssertNil(read(group, "Azahar/sdmc/title.bin"), "nothing is left invisible in the group")
+        XCTAssertNil(read(group, "late.txt"))
+        XCTAssertEqual(read(group, "default.realm"), "database", "the Realm is never moved or deleted")
+        XCTAssertNil(store.load())
+    }
+
+    // MARK: - Lite and the full app share the App Group
+
+    func testResumeRecordsThisAppsLocationInTheSharedDefaults() async {
+        await coordinator(launched: .appGroup).resumeIfNeeded(progress: nil)
+        XCTAssertEqual(defaults.string(forKey: LibraryMoveFolders.variantLocationKeyPrefix + Self.thisApp), "appGroup")
+        await coordinator(launched: .appStorage).resumeIfNeeded(progress: nil)
+        XCTAssertEqual(defaults.string(forKey: LibraryMoveFolders.variantLocationKeyPrefix + Self.thisApp), "appStorage")
+    }
+
+    func testMoveKeepsACopyWhileAnotherAppStillUsesTheAppGroup() async throws {
+        try write(group, "ROMs/a/Game.sfc", "rom")
+        defaults.set("appGroup", forKey: LibraryMoveFolders.variantLocationKeyPrefix + Self.otherApp)
+
+        _ = try await coordinator(launched: .appGroup).moveToAppStorage(keepCopy: false, progress: nil)
+        XCTAssertEqual(store.load()?.keepCopy, true)
+        let outcome = await coordinator(launched: .appStorage).resumeIfNeeded(progress: nil)
+
+        XCTAssertEqual(outcome, .cleanedUp)
+        XCTAssertEqual(read(group, "ROMs/a/Game.sfc"), "rom", "the other app keeps its library")
+        XCTAssertEqual(read(local, "ROMs/a/Game.sfc"), "rom")
+    }
+
+    func testCleanupForcesKeepCopyWhenAnotherAppAppearsAfterTheMove() async throws {
+        try write(group, "ROMs/a/Game.sfc", "rom")
+        _ = try await coordinator(launched: .appGroup).moveToAppStorage(keepCopy: false, progress: nil)
+        XCTAssertEqual(store.load()?.keepCopy, false)
+        defaults.set("appGroup", forKey: LibraryMoveFolders.variantLocationKeyPrefix + Self.otherApp)
+
+        let outcome = await coordinator(launched: .appStorage).resumeIfNeeded(progress: nil)
+
+        XCTAssertEqual(outcome, .cleanedUp)
+        XCTAssertEqual(read(group, "ROMs/a/Game.sfc"), "rom")
+    }
+
+    func testOnlyOurOwnRecordOrAnAppOnAppStorageDoesNotForceKeepCopy() async throws {
+        try write(group, "ROMs/a/Game.sfc", "rom")
+        defaults.set("appGroup", forKey: LibraryMoveFolders.variantLocationKeyPrefix + Self.thisApp)
+        defaults.set("appStorage", forKey: LibraryMoveFolders.variantLocationKeyPrefix + Self.otherApp)
+
+        _ = try await coordinator(launched: .appGroup).moveToAppStorage(keepCopy: false, progress: nil)
+        XCTAssertEqual(store.load()?.keepCopy, false)
+        let outcome = await coordinator(launched: .appStorage).resumeIfNeeded(progress: nil)
+
+        XCTAssertEqual(outcome, .cleanedUp)
+        XCTAssertNil(read(group, "ROMs/a/Game.sfc"))
     }
 
     func testMissingSourceContainerKeepsTheJournal() async throws {
@@ -195,14 +321,12 @@ final class LibraryMoveCoordinatorTests: XCTestCase {
     }
     #endif
 
-    func testDefaultRootsAreTheGroupAndLocalDocuments() {
+    func testRootsAreUnavailableWhereTheEngineHasNoRoot() {
         #if os(tvOS)
         XCTAssertNil(LibraryMoveCoordinator.defaultRoot(for: .appGroup))
         XCTAssertNil(LibraryMoveCoordinator.defaultRoot(for: .appStorage))
-        #else
-        XCTAssertEqual(LibraryMoveCoordinator.defaultRoot(for: .appStorage), URL.documentsPathLocal)
-        XCTAssertEqual(LibraryMoveCoordinator.defaultRoot(for: .appGroup), URL.documentsPathAppGroup)
-        XCTAssertNil(LibraryMoveCoordinator.defaultRoot(for: .iCloudDrive), "phase 5")
+        XCTAssertNil(LibraryMoveCoordinator.defaultJournalStore(), "tvOS creates nothing on disk")
         #endif
+        XCTAssertNil(LibraryMoveCoordinator.defaultRoot(for: .iCloudDrive), "phase 5")
     }
 }

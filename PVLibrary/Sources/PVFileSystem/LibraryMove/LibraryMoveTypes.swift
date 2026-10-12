@@ -16,8 +16,12 @@ public enum LibraryMoveFolders {
     /// Folders whose files are MD5-verified after copying (size alone for the rest).
     public static let md5Verified: Set<String> = ["ROMs", "BIOS"]
 
-    /// Where an incoming file goes when the destination already has a different file of that name.
+    /// Where the loser of a name clash goes: the destination's own file (copy phase) or the incoming file (post-switch sweep).
     public static let conflicts = "Conflicts"
+
+    /// Prefix of the keys, in the App Group's shared defaults, under which each app (by bundle id) records the
+    /// `LibraryLocation` it last launched on.
+    public static let variantLocationKeyPrefix = "libraryLocation."
 
     /// Top-level names the planner never moves, whatever the folder list says.
     static let neverMoved: Set<String> = ["move-journal.json"]
