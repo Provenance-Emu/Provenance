@@ -16,6 +16,9 @@ import PVShaders
 import PVSettings
 import Defaults
 import PVPrimitives
+#if canImport(PVDolphinBridge)
+import PVDolphinBridge
+#endif
 
 @objc public class DolphinVulkanViewController: UIViewController {
     private var core: PVDolphinCoreBridge!

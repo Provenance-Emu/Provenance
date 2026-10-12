@@ -13,6 +13,9 @@ import PVLogging
 import PVAudio
 import PVEmulatorCore
 import PVRcheevosBridge
+#if canImport(PVDolphinBridge)
+import PVDolphinBridge
+#endif
 
 @objc
 @objcMembers
