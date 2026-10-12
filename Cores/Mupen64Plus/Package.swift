@@ -188,6 +188,8 @@ let pvMupenBridgeDeps: [Target.Dependency] = [
 let pvMupenBridgeExtraCSettings: [CSetting] = [
     .headerSearchPath("../Plugins/Core/Core/src/"),
     .headerSearchPath("../Plugins/Core/Core/src/api"),
+    .headerSearchPath("../Plugins/Core/Core/subprojects/md5/"),
+    .headerSearchPath("../Plugins/Core/Core/subprojects/xxhash/"),
 ]
 let pvMupenBridgeCSettings: [CSetting] = sharedCSettings + pvMupenBridgeExtraCSettings
 
