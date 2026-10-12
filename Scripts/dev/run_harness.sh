@@ -42,7 +42,7 @@ fi
 # Ad-hoc signing for simulator SDKs comes from Dev/Config/Dev.xcconfig.
 xcodebuild build -workspace "$ROOT/Provenance-Dev.xcworkspace" -scheme "$SCHEME" \
     -destination "generic/platform=iOS Simulator" -derivedDataPath "$DERIVED" \
-    -skipPackagePluginValidation -skipMacroValidation ${EXTRA_SETTINGS[@]+"${EXTRA_SETTINGS[@]}"} 2>&1 | tail -3
+    -skipPackagePluginValidation -skipMacroValidation EXCLUDED_ARCHS=x86_64 ${EXTRA_SETTINGS[@]+"${EXTRA_SETTINGS[@]}"} 2>&1 | tail -3
 
 APP="$DERIVED/Build/Products/Debug-iphonesimulator/$SCHEME.app"
 [ -d "$APP" ] || { echo "run_harness: build produced no $APP" >&2; exit 2; }

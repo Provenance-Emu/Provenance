@@ -207,8 +207,10 @@ A second, generated workspace for fast iteration. `Provenance.xcodeproj` still s
   MoltenVK.
 - **Dev apps are arm64-only; Intel is unsupported** (decided 2026-10-12: no Intel Mac runs a
   supported Xcode). `DevSettings` sets `EXCLUDED_ARCHS[sdk=*simulator*] = x86_64` for every focused
-  app, so prebuilt cores need no x86_64 slice and SwiftPM core targets need no per-arch source
-  lists. Don't add x86_64 workarounds (stubs, generic-source fallbacks) to the dev workspace.
+  app, and the Makefile, harness and both CI workflows also pass `EXCLUDED_ARCHS=x86_64` to
+  xcodebuild, because a project setting never reaches package targets (CI kept compiling x86_64
+  for every package without it). Prebuilt cores need no x86_64 slice and SwiftPM core targets need
+  no per-arch source lists. Don't add x86_64 workarounds (stubs, generic-source fallbacks) here.
 - **The dev workspace has no committed Package.resolved, so it resolves the newest remote
   packages.** Anything that only works because `Provenance.xcworkspace`'s resolved file pins an
   older version breaks here first. Known case: Hummingbird imports `ServiceContextModule` without

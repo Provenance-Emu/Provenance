@@ -278,6 +278,8 @@ dev: dev-generate
 	open $(DEV_WORKSPACE)
 
 # Build one focused app: make _dev-build DEV_SCHEME=Provenance-Dev-UI
+# EXCLUDED_ARCHS=x86_64: Intel is unsupported; as an xcodebuild argument it also reaches the
+# package targets (DevSettings' copy covers only the app target).
 _dev-build: dev-generate
 	xcodebuild build \
 		-workspace $(DEV_WORKSPACE) \
@@ -286,6 +288,7 @@ _dev-build: dev-generate
 		-derivedDataPath "$(DEV_DERIVED)" \
 		-skipPackagePluginValidation \
 		-skipMacroValidation \
+		EXCLUDED_ARCHS=x86_64 \
 		$(DEV_BUILD_SETTINGS)
 
 dev-ui:

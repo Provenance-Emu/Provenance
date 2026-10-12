@@ -117,11 +117,14 @@ jobs:
       - name: Build
         run: |
           set -o pipefail
+          # EXCLUDED_ARCHS=x86_64: Intel is unsupported. It has to be an xcodebuild argument so it
+          # reaches the package targets; DevSettings' copy only covers the app target.
           xcodebuild build \
             -workspace Provenance-Dev.xcworkspace \
             -scheme "${{ matrix.scheme }}" \
             -destination "${{ matrix.destination }}" \
             -skipPackagePluginValidation -skipMacroValidation \
+            EXCLUDED_ARCHS=x86_64 \
             2>&1 | tee /tmp/dev-xcodebuild.log | grep -E "(: (fatal )?error:|BUILD (SUCCEEDED|FAILED)|The following build commands failed)" | tail -60
 
       - name: Upload log on failure
