@@ -291,11 +291,10 @@ _dev-build: dev-generate
 dev-ui:
 	$(MAKE) _dev-build DEV_SCHEME=Provenance-Dev-UI
 
-# PVlibAzahar is arm64-only (no x86_64 simulator slice), and a generic simulator destination builds
-# both archs, so ARCHS=arm64. Device: make dev-azahar DEV_SLICE=ios DEV_DESTINATION="generic/platform=iOS"
+# Device: make dev-azahar DEV_SLICE=ios DEV_DESTINATION="generic/platform=iOS"
+# (every dev app is arm64-only on simulators via DevSettings, so no ARCHS override is needed).
 dev-azahar:
-	$(MAKE) _dev-build DEV_SCHEME=Provenance-Dev-Azahar DEV_PREBUILT_CORES="azahar $(DEV_PREBUILT_CORES)" \
-		DEV_BUILD_SETTINGS="ARCHS=arm64 $(DEV_BUILD_SETTINGS)"
+	$(MAKE) _dev-build DEV_SCHEME=Provenance-Dev-Azahar DEV_PREBUILT_CORES="azahar $(DEV_PREBUILT_CORES)"
 
 dev-thin:
 	$(MAKE) _dev-build DEV_SCHEME=Provenance-Dev-Thin
