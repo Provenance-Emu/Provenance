@@ -22,7 +22,7 @@ extension PVCoreGenesisPlus: CoreOptional {
     }
 }
 
-@objc
+@objc(PVCoreGenesisPlusOptions)   // stable runtime name: the SwiftPM bridge looks it up with NSClassFromString
 public class PVCoreGenesisPlusOptions: NSObject, CoreOptions {
     
     enum Options {
