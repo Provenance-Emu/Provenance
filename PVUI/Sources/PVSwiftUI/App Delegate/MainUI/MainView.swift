@@ -113,6 +113,10 @@ struct MainView: View {
             appDelegate.installLibraryNotificationHandlersIfNeeded()
         }
         .edgesIgnoringSafeArea(.all)
+        #if !os(tvOS)
+        // The stored library folder could not be opened this launch (D9): offer re-pick or App storage.
+        .modifier(LibraryFolderUnavailableAlert())
+        #endif
         // Pre-launch Transfer Pak setup sheet — covers all UI modes (RetroMainView,
         // TVMediaMainView, UIKit) so the launch continuation is never left pending.
         // Presentation is derived from preLaunchTransferPakGame (single source of truth).

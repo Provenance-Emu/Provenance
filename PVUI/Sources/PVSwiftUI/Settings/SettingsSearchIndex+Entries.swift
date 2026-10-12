@@ -46,6 +46,9 @@ extension SettingsSearchIndex {
         entry("library.migration", "Import from Another Emulator", "Bring your games and saves over from another emulator app.",
               .general, SettingsSectionTitle.library, keywords: ["migrate", "migration", "delta", "retroarch", "transfer", "import"]),
 
+        entry("library.storage", "Storage Location", "App storage, iCloud Drive, or a folder you choose in Files.",
+              .general, SettingsSectionTitle.libraryManagement, keywords: ["folder", "files", "storage", "move", "share", "icube", "ifly", "roms", "bios"], tvOS: false),
+
         entry("libman.cloudsync", "Cloud Sync Settings", "Manage CloudKit and iCloud Drive sync settings.",
               .general, SettingsSectionTitle.libraryManagement, keywords: ["icloud", "sync", "cloudkit", "backup", "devices"]),
         entry("libman.backup", "Backup & Restore", "Manually back up and restore saves, database, and artwork.",

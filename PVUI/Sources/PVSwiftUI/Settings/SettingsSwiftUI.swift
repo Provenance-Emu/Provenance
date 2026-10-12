@@ -2684,6 +2684,14 @@ private struct LibrarySection2: View {
     var body: some View {
         Section {
 
+            #if !os(tvOS)
+            NavigationLink(destination: LibraryStorageView()) {
+                SettingsRow(title: "Storage Location",
+                            subtitle: "App storage, iCloud Drive, or a folder you choose in Files.",
+                            icon: .sfSymbol("externaldrive"))
+            }
+            #endif
+
             #if os(tvOS)
                 // Cloud Sync Settings
                 NavigationLink(destination: CloudSyncSettingsView()) {
