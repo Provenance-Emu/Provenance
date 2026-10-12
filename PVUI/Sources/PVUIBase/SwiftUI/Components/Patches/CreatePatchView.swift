@@ -38,7 +38,7 @@ public struct CreatePatchView: View {
     public init() {}
 
     public var body: some View {
-        Form {
+        SwiftUI.Form {
             SwiftUI.Section("Source ROMs") {
                 Button(originalURL?.lastPathComponent ?? "Choose Original ROM…") {
                     pickerTarget = .original
@@ -52,7 +52,7 @@ public struct CreatePatchView: View {
 
             SwiftUI.Section("Format") {
                 Picker("Patch Format", selection: $format) {
-                    ForEach(PatchCreator.CreationFormat.allCases) { item in
+                    SwiftUI.ForEach(PatchCreator.CreationFormat.allCases) { item in
                         Text(item.displayName).tag(item)
                     }
                 }
@@ -74,7 +74,7 @@ public struct CreatePatchView: View {
                         set: { linkGameMD5 = $0.isEmpty ? nil : $0 }
                     )) {
                         Text("Auto-match").tag("")
-                        ForEach(games, id: \.md5Hash) { game in
+                        SwiftUI.ForEach(games, id: \.md5Hash) { game in
                             Text(game.title).tag(game.md5Hash)
                         }
                     }

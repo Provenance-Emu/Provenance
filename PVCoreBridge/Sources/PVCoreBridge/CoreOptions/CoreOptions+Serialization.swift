@@ -47,7 +47,15 @@ public extension CoreOptional { // where Self:PVEmulatorCore {
 
         // TODO: Make sure the value matches the option type
         DLOG("Options: Setting key: \(key) to value: \(value ?? "nil")")
-        UserDefaults.standard.set(value, forKey: key)
+        // UserDefaults only accepts property-list types. Passing an `Encodable`
+        // existential can silently no-op; unwrap to a concrete plist value.
+        if let value, let plist = propertyListValue(from: value) {
+            UserDefaults.standard.set(plist, forKey: key)
+        } else if value == nil {
+            UserDefaults.standard.removeObject(forKey: key)
+        } else {
+            UserDefaults.standard.set(value, forKey: key)
+        }
         UserDefaults.standard.synchronize()
 
         // Call the value handler if available
@@ -58,6 +66,22 @@ public extension CoreOptional { // where Self:PVEmulatorCore {
         let broadcast = NotificationCenter.default
         let info:Dictionary=[option.key: "\(value ?? "nil")"]
         broadcast.post(name: Notification.Name("OptionUpdated"), object: nil, userInfo:info)
+    }
+
+    /// Concrete plist payload for `UserDefaults`, if `value` is a supported scalar.
+    private static func propertyListValue(from value: Encodable) -> Any? {
+        switch value {
+        case let v as Bool: return v
+        case let v as Int: return v
+        case let v as UInt: return v
+        case let v as Int64: return v
+        case let v as UInt64: return v
+        case let v as Float: return v
+        case let v as Double: return v
+        case let v as String: return v
+        case let v as NSNumber: return v
+        default: return nil
+        }
     }
 
     // MARK: - Typed valueForOption overloads

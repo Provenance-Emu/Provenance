@@ -304,7 +304,8 @@ struct N64PakTypeTests {
 
 // MARK: - N64PakStore Tests
 
-@Suite("N64PakStore Tests")
+/// Serialized: tests share UserDefaults keys and fall back to global port settings.
+@Suite("N64PakStore Tests", .serialized)
 struct N64PakStoreTests {
 
     // Helper to clean up specific UserDefaults keys after tests.
@@ -322,7 +323,13 @@ struct N64PakStoreTests {
     func defaultIsAuto() {
         // Use a made-up MD5 that will never have been set.
         let fakeMD5 = "n64pakstore_default_\(#function)"
-        defer { cleanup(port: 1, gameMD5: fakeMD5) }
+        // Clear both per-game and global — pakType falls back to the global port key.
+        defer {
+            cleanup(port: 1, gameMD5: fakeMD5)
+            cleanup(port: 1)
+        }
+        cleanup(port: 1, gameMD5: fakeMD5)
+        cleanup(port: 1)
         let result = N64PakStore.pakType(forPort: 1, gameMD5: fakeMD5)
         #expect(result == .auto)
     }

@@ -72,11 +72,15 @@ public struct IPSPatcher: Sendable {
         let eofMarker = isIPS32 ? Self.eof32 : Self.eof
 
         while pos < patch.count {
-            // Check for EOF marker
+            // "EOF" (0x45 0x4F 0x46) is also a valid 3-byte record offset (0x454F46).
+            // Only treat it as the terminator when nothing but the optional 3-byte
+            // truncation size can follow; otherwise it is a record at that offset.
             let markerSize = eofMarker.count
             if pos + markerSize <= patch.count {
+                let remaining = patch.count - pos
                 let candidate = Array(patch[pos..<(pos + markerSize)])
-                if candidate == eofMarker { break }
+                let isTrailer = remaining == markerSize || (!isIPS32 && remaining == markerSize + 3)
+                if candidate == eofMarker && isTrailer { break }
             }
 
             guard pos + offsetSize + 2 <= patch.count else {
@@ -108,9 +112,7 @@ public struct IPSPatcher: Sendable {
                 pos += 1
 
                 let needed = offset + rleCount
-                if result.count < needed {
-                    result.append(contentsOf: Data(repeating: 0, count: needed - result.count))
-                }
+                try growIfNeeded(&result, to: needed, source: source)
                 result.replaceSubrange(offset..<(offset + rleCount), with: Data(repeating: rleByte, count: rleCount))
             } else {
                 // Standard record
@@ -121,9 +123,7 @@ public struct IPSPatcher: Sendable {
                 pos += length
 
                 let needed = offset + length
-                if result.count < needed {
-                    result.append(contentsOf: Data(repeating: 0, count: needed - result.count))
-                }
+                try growIfNeeded(&result, to: needed, source: source)
                 result.replaceSubrange(offset..<(offset + length), with: patchData)
             }
         }
@@ -142,6 +142,18 @@ public struct IPSPatcher: Sendable {
     }
 
     // MARK: - Private helpers
+
+    /// Classic IPS offsets top out at 16 MiB. IPS32 can address 4 GiB, so cap how far a
+    /// single patch may extend the image to keep a hostile offset from allocating gigabytes.
+    static let maxGrowth = 256 * 1024 * 1024
+
+    private func growIfNeeded(_ result: inout Data, to needed: Int, source: Data) throws {
+        guard result.count < needed else { return }
+        guard needed - source.count <= Self.maxGrowth else {
+            throw PatchError.corruptPatchFile("IPS record extends the image by more than \(Self.maxGrowth / (1024 * 1024)) MiB")
+        }
+        result.append(contentsOf: Data(repeating: 0, count: needed - result.count))
+    }
 
     private func readBE24(_ data: Data, at offset: Int) -> Int {
         Int(data[offset]) << 16 | Int(data[offset + 1]) << 8 | Int(data[offset + 2])

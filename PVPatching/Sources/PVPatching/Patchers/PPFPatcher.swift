@@ -7,57 +7,57 @@
 //
 //  PPF (PlayStation Patch Format) implementation for versions 1, 2, and 3.
 //
-//  Format references:
-//  - PPF 1.0: header "PPF10", 50-byte description, 4-byte file size, then patch records
-//  - PPF 2.0: header "PPF20", encoding byte, 50-byte description, image type, flags, then records
-//  - PPF 3.0: header "PPF30", like 2.0 but with 8-byte offsets (supports larger images)
+//  Layouts follow the PPF3.0 specification by Icarus/Paradox (also the reference
+//  for how ppf-o-matic / applyppf / DuckStation / RetroArch read v1 and v2):
 //
-//  Patch record format:
-//  - PPF 1/2: offset (4 bytes LE), length (1 byte), data (length bytes)
-//  - PPF 3:   offset (8 bytes LE), length (1 byte), data (length bytes)
+//  Common header (all versions):
+//    0x00  5   magic "PPF10" / "PPF20" / "PPF30"
+//    0x05  1   version index: 0x00 = 1.0, 0x01 = 2.0, 0x02 = 3.0
+//    0x06  50  description (space padded)
+//
+//  PPF 1.0:
+//    0x38  …   records: offset (4 LE), length (1), data
+//
+//  PPF 2.0:
+//    0x38  4   size of the original image (LE)
+//    0x3C  1024 block check: bytes 0x9320…0x971F of the original image
+//    0x43C …   records: offset (4 LE), length (1), data
+//
+//  PPF 3.0:
+//    0x38  1   image type: 0x00 = BIN (block check from 0x9320), 0x01 = GI (from 0x80A0)
+//    0x39  1   block check present (0/1)
+//    0x3A  1   undo data present (0/1)
+//    0x3B  1   dummy
+//    0x3C  1024 block check (only when flagged)
+//    …     …   records: offset (8 LE), length (1), data, [undo data: length bytes]
+//
+//  v2 and v3 may be followed by "@BEGIN_FILE_ID.DIZ" … "@END_FILE_ID.DIZ" plus a
+//  length word. Parsing stops at that marker.
 //
 
 import Foundation
 
-/// Applies PPF (PlayStation Patch Format) patches to ROM/disc image data.
-///
-/// Supports PPF versions 1.0, 2.0, and 3.0.
-///
-/// PPF 1.0 format:
-/// - Magic: "PPF10" (5 bytes)
-/// - Description: 50 bytes
-/// - File size check: 4 bytes LE
-/// - Records: (offset: 4 bytes LE, length: 1 byte, data: N bytes)
-///
-/// PPF 2.0 format:
-/// - Magic: "PPF20" (5 bytes)
-/// - Encoding method: 1 byte
-/// - Description: 50 bytes
-/// - Image type: 4 bytes
-/// - Block check flag: 1 byte
-/// - Undo data flag: 1 byte
-/// - Dummy: 1 byte
-/// - Records: (offset: 4 bytes LE, length: 1 byte, data: N bytes)
-/// - Optional "@BEGIN_FILE" / "@END_FILE" block data suffix
-///
-/// PPF 3.0 format:
-/// - Magic: "PPF30" (5 bytes)
-/// - Encoding method: 1 byte
-/// - Description: 50 bytes
-/// - Image type: 1 byte
-/// - Block check flag: 1 byte
-/// - Undo data flag: 1 byte
-/// - Dummy: 1 byte
-/// - Records: (offset: 8 bytes LE, length: 1 byte, data: N bytes)
+/// Applies PPF (PlayStation Patch Format) patches to disc image data.
 public struct PPFPatcher: Sendable {
 
     private static let magicV1 = Array("PPF10".utf8)
     private static let magicV2 = Array("PPF20".utf8)
     private static let magicV3 = Array("PPF30".utf8)
 
-    /// Marker appended after patch records in some PPF 2/3 files indicating
-    /// additional block-check data follows — we stop parsing at this point.
-    private static let beginFileMarker = Array("@BEGIN_FILE".utf8)
+    /// Optional trailer that follows the records in v2/v3 files.
+    private static let beginFileMarker = Array("@BEGIN_FILE_ID.DIZ".utf8)
+
+    /// Offsets in the header shared by every version.
+    static let versionByteOffset = 5
+    static let descriptionOffset = 6
+    static let descriptionLength = 50
+    /// First byte after the common header (0x38).
+    static let commonHeaderLength = 56
+    static let blockCheckLength = 1024
+
+    /// Where the 1024-byte block check is sampled from in the original image.
+    static let binBlockCheckOffset = 0x9320
+    static let giBlockCheckOffset = 0x80A0
 
     public init() {}
 
@@ -65,7 +65,7 @@ public struct PPFPatcher: Sendable {
     ///
     /// - Parameters:
     ///   - patch: The raw PPF patch file data.
-    ///   - source: The source disc image or ROM data to patch.
+    ///   - source: The source disc image data to patch.
     /// - Returns: The patched data.
     /// - Throws: `PatchError` on format or integrity issues.
     public func apply(patch: Data, to source: Data) throws -> Data {
@@ -96,186 +96,145 @@ public struct PPFPatcher: Sendable {
     // MARK: - Version-specific parsers
 
     private func applyV1(patch: Data, to source: Data) throws -> Data {
-        // Layout: magic(5) + description(50) + fileSize(4) = 59 bytes minimum header
-        let headerSize = 59
+        let headerSize = Self.commonHeaderLength
         guard patch.count >= headerSize else {
             throw PatchError.corruptPatchFile("PPF 1.0 header truncated (need \(headerSize) bytes, got \(patch.count))")
         }
 
-        // Read the 4-byte expected file size (at offset 55, after magic+description).
-        // If non-zero, validate it against the source size to catch wrong-file mistakes.
-        let expectedSize = Int(patch.readLE32(at: 55))
-        if expectedSize != 0 && expectedSize != source.count {
-            throw PatchError.sourceROMMismatch
-        }
-
         var result = source
-        var pos = headerSize  // skip magic + description + 4-byte file size
-
-        try applyRecords4ByteOffset(patch: patch, pos: &pos, result: &result, maxOutputSize: source.count)
+        var pos = headerSize
+        try applyRecords(
+            patch: patch, pos: &pos, result: &result,
+            offsetWidth: 4, hasUndoData: false
+        )
         return result
     }
 
     private func applyV2(patch: Data, to source: Data) throws -> Data {
-        // Layout: magic(5) + encoding(1) + description(50) + imageType(4) +
-        //         blockCheck(1) + undoData(1) + dummy(1) = 63 bytes minimum header
-        let headerSize = 63
+        // size(4) + block check(1024) always follow the common header in v2.
+        let headerSize = Self.commonHeaderLength + 4 + Self.blockCheckLength
         guard patch.count >= headerSize else {
             throw PatchError.corruptPatchFile("PPF 2.0 header truncated (need \(headerSize) bytes, got \(patch.count))")
         }
 
-        // Validate that only the simplest PPF 2.0 variant is used:
-        // encoding method 0 (no special encoding), no block-check, no undo-data.
-        let encodingMethod = patch[5]
-        let blockCheckFlag = patch[60]
-        let undoDataFlag   = patch[61]
+        let expectedSize = Int(patch.readLE32(at: Self.commonHeaderLength))
+        if expectedSize != 0 && expectedSize != source.count {
+            throw PatchError.sourceROMMismatch
+        }
 
-        if encodingMethod != 0 {
-            throw PatchError.unsupportedFormat("PPF 2.0 encoding method \(encodingMethod) is not supported (only method 0)")
-        }
-        if blockCheckFlag != 0 {
-            throw PatchError.unsupportedFormat("PPF 2.0 block-check data is not supported")
-        }
-        if undoDataFlag != 0 {
-            throw PatchError.unsupportedFormat("PPF 2.0 undo-data section is not supported")
-        }
+        let blockStart = Self.commonHeaderLength + 4
+        try verifyBlockCheck(
+            patch: patch,
+            at: blockStart,
+            source: source,
+            sourceOffset: Self.binBlockCheckOffset
+        )
 
         var result = source
-        var pos = headerSize  // skip validated header fields
-
-        try applyRecords4ByteOffset(patch: patch, pos: &pos, result: &result, maxOutputSize: source.count)
+        var pos = headerSize
+        try applyRecords(
+            patch: patch, pos: &pos, result: &result,
+            offsetWidth: 4, hasUndoData: false
+        )
         return result
     }
 
     private func applyV3(patch: Data, to source: Data) throws -> Data {
-        // Layout: magic(5) + encoding(1) + description(50) + imageType(1) +
-        //         blockCheck(1) + undoData(1) + dummy(1) = 60 bytes minimum header
-        let headerSize = 60
-        guard patch.count >= headerSize else {
-            throw PatchError.corruptPatchFile("PPF 3.0 header truncated (need \(headerSize) bytes, got \(patch.count))")
+        // imageType(1) + blockCheck(1) + undoData(1) + dummy(1) after the common header.
+        let fixedHeader = Self.commonHeaderLength + 4
+        guard patch.count >= fixedHeader else {
+            throw PatchError.corruptPatchFile("PPF 3.0 header truncated (need \(fixedHeader) bytes, got \(patch.count))")
         }
 
-        // Validate that only the simplest PPF 3.0 variant is used:
-        // encoding method 0, no block-check, no undo-data.
-        let encodingMethod = patch[5]
-        let blockCheckFlag = patch[57]
-        let undoDataFlag   = patch[58]
+        let imageType = patch[Self.commonHeaderLength]
+        let hasBlockCheck = patch[Self.commonHeaderLength + 1] != 0
+        let hasUndoData = patch[Self.commonHeaderLength + 2] != 0
 
-        if encodingMethod != 0 {
-            throw PatchError.unsupportedFormat("PPF 3.0 encoding method \(encodingMethod) is not supported (only method 0)")
-        }
-        if blockCheckFlag != 0 {
-            throw PatchError.unsupportedFormat("PPF 3.0 block-check data is not supported")
-        }
-        if undoDataFlag != 0 {
-            throw PatchError.unsupportedFormat("PPF 3.0 undo-data section is not supported")
+        var pos = fixedHeader
+        if hasBlockCheck {
+            guard patch.count >= pos + Self.blockCheckLength else {
+                throw PatchError.corruptPatchFile("PPF 3.0 block-check data truncated")
+            }
+            let sourceOffset = imageType == 1 ? Self.giBlockCheckOffset : Self.binBlockCheckOffset
+            try verifyBlockCheck(patch: patch, at: pos, source: source, sourceOffset: sourceOffset)
+            pos += Self.blockCheckLength
         }
 
         var result = source
-        var pos = headerSize  // skip validated header fields
-
-        try applyRecords8ByteOffset(patch: patch, pos: &pos, result: &result, maxOutputSize: source.count)
+        try applyRecords(
+            patch: patch, pos: &pos, result: &result,
+            offsetWidth: 8, hasUndoData: hasUndoData
+        )
         return result
     }
 
     // MARK: - Record application
 
-    /// Apply patch records using 4-byte (32-bit) offsets (PPF 1.0 and 2.0).
+    /// Apply records starting at `pos` until the end of the patch or the FILE_ID.DIZ trailer.
     ///
-    /// - Parameter maxOutputSize: The original source size; records that would write beyond this
-    ///   are rejected as corrupt to prevent unbounded allocation from malicious patches.
-    private func applyRecords4ByteOffset(patch: Data, pos: inout Int, result: inout Data, maxOutputSize: Int) throws {
+    /// Records never grow the image: a write past `result.count` is rejected as corrupt,
+    /// which also bounds allocation against malicious offsets.
+    private func applyRecords(
+        patch: Data,
+        pos: inout Int,
+        result: inout Data,
+        offsetWidth: Int,
+        hasUndoData: Bool
+    ) throws {
+        let maxOutputSize = result.count
         while pos < patch.count {
-            // Check for @BEGIN_FILE marker (optional suffix block in some PPF 2 files)
             if isBeginFileMarker(patch, at: pos) { break }
 
-            // Each record: 4-byte LE offset + 1-byte length + N bytes of data
-            guard pos + 5 <= patch.count else {
+            guard pos + offsetWidth + 1 <= patch.count else {
                 throw PatchError.corruptPatchFile("Truncated PPF record header at offset \(pos)")
             }
 
-            let offset = Int(patch.readLE32(at: pos))
-            pos += 4
+            let offset64: UInt64 = offsetWidth == 8
+                ? patch.readLE64(at: pos)
+                : UInt64(patch.readLE32(at: pos))
+            pos += offsetWidth
             let length = Int(patch[pos])
             pos += 1
 
             guard length > 0 else {
                 throw PatchError.corruptPatchFile("PPF record with zero-length data at file offset \(pos - 1)")
             }
-            guard pos + length <= patch.count else {
+            let payload = hasUndoData ? length * 2 : length
+            guard pos + payload <= patch.count else {
                 throw PatchError.corruptPatchFile("PPF record data truncated at file offset \(pos)")
             }
-            guard offset + length <= maxOutputSize else {
-                throw PatchError.corruptPatchFile("PPF record writes beyond source image boundary (offset \(offset), length \(length), sourceSize \(maxOutputSize))")
+            guard offset64 <= UInt64(Int.max - length) else {
+                throw PatchError.corruptPatchFile("PPF record offset \(offset64) is out of range")
             }
-
-            let patchBytes = patch[pos..<(pos + length)]
-            pos += length
-
-            applyBytes(patchBytes, at: offset, into: &result)
-        }
-    }
-
-    /// Apply patch records using 8-byte (64-bit) offsets (PPF 3.0).
-    ///
-    /// - Parameter maxOutputSize: The original source size; records that would write beyond this
-    ///   are rejected as corrupt to prevent unbounded allocation from malicious patches.
-    private func applyRecords8ByteOffset(patch: Data, pos: inout Int, result: inout Data, maxOutputSize: Int) throws {
-        while pos < patch.count {
-            // Check for @BEGIN_FILE marker
-            if isBeginFileMarker(patch, at: pos) { break }
-
-            // Each record: 8-byte LE offset + 1-byte length + N bytes of data
-            guard pos + 9 <= patch.count else {
-                throw PatchError.corruptPatchFile("Truncated PPF record header at offset \(pos)")
-            }
-
-            let offset64 = patch.readLE64(at: pos)
-            pos += 8
-            let length = Int(patch[pos])
-            pos += 1
-
-            guard length > 0 else {
-                throw PatchError.corruptPatchFile("PPF record with zero-length data at file offset \(pos - 1)")
-            }
-            guard pos + length <= patch.count else {
-                throw PatchError.corruptPatchFile("PPF record data truncated at file offset \(pos)")
-            }
-
-            // Validate that the 64-bit offset fits in Int on this platform.
-            guard offset64 <= UInt64(Int.max) else {
-                throw PatchError.corruptPatchFile("PPF record offset \(offset64) is out of range for this platform")
-            }
-
             let offset = Int(offset64)
-            let patchBytes = patch[pos..<(pos + length)]
-            pos += length
-
-            // Ensure offset + patchBytes.count does not overflow Int before applying.
-            let byteCount = patchBytes.count
-            guard offset <= Int.max - byteCount else {
-                throw PatchError.corruptPatchFile("PPF record offset + length overflows addressable range")
-            }
-            guard offset + byteCount <= maxOutputSize else {
-                throw PatchError.corruptPatchFile("PPF record writes beyond source image boundary (offset \(offset), length \(byteCount), sourceSize \(maxOutputSize))")
+            guard offset + length <= maxOutputSize else {
+                throw PatchError.corruptPatchFile(
+                    "PPF record writes beyond source image boundary (offset \(offset), length \(length), sourceSize \(maxOutputSize))"
+                )
             }
 
-            applyBytes(patchBytes, at: offset, into: &result)
+            result.replaceSubrange(offset..<(offset + length), with: patch[pos..<(pos + length)])
+            pos += payload // skip the undo bytes too when present
         }
     }
 
     // MARK: - Helpers
 
-    /// Write `bytes` starting at `offset` into `result`.
-    ///
-    /// Callers must ensure that `offset + bytes.count` does not exceed `result.count`;
-    /// the record-processing logic enforces this via `maxOutputSize` bounds checks.
-    private func applyBytes(_ bytes: Data.SubSequence, at offset: Int, into result: inout Data) {
-        let end = offset + bytes.count
-        result.replaceSubrange(offset..<end, with: bytes)
+    /// Compare the patch's 1024-byte block check against the same window of the source.
+    /// Images shorter than the window (unit tests, odd dumps) skip the check.
+    private func verifyBlockCheck(patch: Data, at patchOffset: Int, source: Data, sourceOffset: Int) throws {
+        let length = Self.blockCheckLength
+        guard source.count >= sourceOffset + length else { return }
+        let expected = patch[patchOffset..<(patchOffset + length)]
+        // An all-zero block means the author skipped the check.
+        guard expected.contains(where: { $0 != 0 }) else { return }
+        let actual = source[sourceOffset..<(sourceOffset + length)]
+        guard expected.elementsEqual(actual) else {
+            throw PatchError.sourceROMMismatch
+        }
     }
 
-    /// Returns true if the `@BEGIN_FILE` marker appears at `pos`.
+    /// Returns true if the `@BEGIN_FILE_ID.DIZ` marker appears at `pos`.
     private func isBeginFileMarker(_ data: Data, at pos: Int) -> Bool {
         let markerLen = Self.beginFileMarker.count
         guard pos + markerLen <= data.count else { return false }

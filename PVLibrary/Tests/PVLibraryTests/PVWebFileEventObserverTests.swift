@@ -58,13 +58,26 @@ final class PVWebFileEventObserverTests: XCTestCase {
 
     /// Polls the Realm until `condition` holds or `timeout` passes. The observer
     /// writes on a background queue; the fixed 0.3 s wait these tests used was
-    /// flaky under load. The assertions that follow report a timeout.
-    private func waitForRealm(timeout: TimeInterval = 5, until condition: (Realm) -> Bool) throws {
+    /// flaky under load. Throws on timeout so CI failures are unambiguous.
+    private func waitForRealm(
+        timeout: TimeInterval = 15,
+        file: StaticString = #filePath,
+        line: UInt = #line,
+        until condition: (Realm) -> Bool
+    ) throws {
         let realm = try Realm(configuration: realmConfig)
         let deadline = Date().addingTimeInterval(timeout)
         while !condition(realm) && Date() < deadline {
             RunLoop.current.run(until: Date().addingTimeInterval(0.05))
             realm.refresh()
+        }
+        guard condition(realm) else {
+            XCTFail("Timed out waiting for Realm condition after \(timeout)s", file: file, line: line)
+            throw NSError(
+                domain: "PVWebFileEventObserverTests",
+                code: 1,
+                userInfo: [NSLocalizedDescriptionKey: "Timed out waiting for Realm condition"]
+            )
         }
     }
 
@@ -159,6 +172,7 @@ final class PVWebFileEventObserverTests: XCTestCase {
         let realm = try Realm(configuration: realmConfig)
 
         let game = PVGame()
+        game.md5Hash = "NOCLOUDRECORDHARDDELETE000001"
         game.title = "Donkey Kong"
         game.romPath = "NES/donkeykong.nes"
         game.cloudRecordID = nil
@@ -192,6 +206,8 @@ final class PVWebFileEventObserverTests: XCTestCase {
         let realm = try Realm(configuration: realmConfig)
 
         let game = PVGame()
+        // Distinct MD5 — PVGame.md5Hash is the primary key and defaults to "".
+        game.md5Hash = "EMPTYCLOUDRECORDIDHARDDELETE01"
         game.title = "Pac-Man"
         game.romPath = "Arcade/pacman.rom"
         game.cloudRecordID = "" // empty string — treated as "no record"
@@ -199,6 +215,8 @@ final class PVWebFileEventObserverTests: XCTestCase {
 
         try realm.write { realm.add(game) }
 
+        let handlerInvoked = expectation(description: "delete handler invoked")
+        observer._testOnDeleteHandlerInvoked = { _ in handlerInvoked.fulfill() }
         observer.start()
 
         NotificationCenter.default.post(
@@ -206,6 +224,8 @@ final class PVWebFileEventObserverTests: XCTestCase {
             object: nil,
             userInfo: ["filePath": romsPrefix + "Arcade/pacman.rom"]
         )
+
+        wait(for: [handlerInvoked], timeout: 5)
 
         try waitForRealm { realm in
             realm.objects(PVGame.self).filter("romPath == %@", "Arcade/pacman.rom").isEmpty

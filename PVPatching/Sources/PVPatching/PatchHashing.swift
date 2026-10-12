@@ -35,10 +35,14 @@ enum PatchHashing {
 #endif
     }
 
+    /// Bump whenever a patcher's output for the same inputs can change (decoder bug fixes,
+    /// new format handling). Old entries are then simply misses instead of stale bad output.
+    static let patcherRevision = "r2"
+
     static func cacheKey(romData: Data, patchData: Data) -> String {
         let romHash = sha256Hex(romData)
         let patchHash = sha256Hex(patchData)
-        let combined = Data((romHash + patchHash).utf8)
+        let combined = Data((romHash + patchHash + patcherRevision).utf8)
         return String(sha256Hex(combined).prefix(32))
     }
 }

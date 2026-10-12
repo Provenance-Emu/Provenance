@@ -169,10 +169,18 @@ private struct GameContextMenuItems: View {
                             }
                             Divider()
                         }
+#if !os(tvOS)
+                        // Needs the Files picker; on tvOS patches arrive via the web server / iCloud.
                         Button {
                             contextMenuDelegate?.gameContextMenu(menu, didRequestImportPatchFor: game)
                         } label: {
                             Label("Import Patch…", systemImage: "square.and.arrow.down")
+                        }
+#endif
+                        Button {
+                            contextMenuDelegate?.gameContextMenu(menu, didRequestApplyPatchFor: game)
+                        } label: {
+                            Label("Apply Patch…", systemImage: "wand.and.stars")
                         }
                         Button {
                             contextMenuDelegate?.gameContextMenu(menu, didRequestManagePatchesFor: game)

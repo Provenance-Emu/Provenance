@@ -27,6 +27,10 @@ import Foundation
 /// - Patch CRC32 (4 bytes LE) — checksum of entire patch file excluding last 4 bytes
 public struct BPSPatcher: Sendable {
 
+    /// Upper bound on a target image. Keeps a corrupt or hostile size field from
+    /// allocating terabytes; real BPS targets are well under this.
+    static let maxTargetSize = 4 * 1024 * 1024 * 1024
+
     public init() {}
 
     /// Apply a BPS patch to source data and return the patched result.
@@ -59,7 +63,18 @@ public struct BPSPatcher: Sendable {
         let sourceSize = readVLI(patch, pos: &pos)
         let targetSize = readVLI(patch, pos: &pos)
         let metadataLength = readVLI(patch, pos: &pos)
-        pos += metadataLength  // skip metadata (JSON string)
+        let actionsEnd = patch.count - 12  // before the 3 CRC32 fields
+        guard sourceSize <= source.count else {
+            // The patch expects a larger base image than it was given.
+            throw PatchError.sourceROMMismatch
+        }
+        guard targetSize <= Self.maxTargetSize else {
+            throw PatchError.corruptPatchFile("BPS target size \(targetSize) is implausibly large")
+        }
+        guard metadataLength <= actionsEnd - pos else {
+            throw PatchError.corruptPatchFile("BPS metadata length overruns the patch")
+        }
+        pos += metadataLength  // skip metadata (BML/JSON string)
 
         // Verify source CRC32
         let sourceCRC = patch.readLE32(at: patch.count - 12)
@@ -73,12 +88,13 @@ public struct BPSPatcher: Sendable {
         var targetRelOffset = 0
         var outputOffset = 0
 
-        let actionsEnd = patch.count - 12  // before the 3 CRC32 fields
-
         while pos < actionsEnd {
             let data = readVLI(patch, pos: &pos)
             let command = data & 3
             let length = (data >> 2) + 1
+            guard length <= targetSize - outputOffset else {
+                throw PatchError.corruptPatchFile("BPS action at output offset \(outputOffset) overflows the target")
+            }
 
             switch command {
             case 0:  // SourceRead

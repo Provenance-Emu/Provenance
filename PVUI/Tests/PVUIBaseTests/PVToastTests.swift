@@ -223,10 +223,15 @@ struct PVToastManagerTests {
         reset()
         PVToastManager.shared.show("Quick", type: .info, duration: 0.1)
         #expect(PVToastManager.shared.toasts.contains { $0.message == "Quick" })
-        // Wait for slightly longer than the 0.1 s duration
-        try await Task.sleep(nanoseconds: 400_000_000) // 0.4 s
-        // Other suites (e.g. controller assignment) can post to the shared manager
-        // concurrently, so check only this test's toast rather than an empty queue.
+        // Poll instead of a fixed sleep — under CI load the MainActor dismiss
+        // Task can land well after duration+slack.
+        let deadline = ContinuousClock.now + .seconds(5)
+        while ContinuousClock.now < deadline {
+            if !PVToastManager.shared.toasts.contains(where: { $0.message == "Quick" }) {
+                return
+            }
+            try await Task.sleep(nanoseconds: 50_000_000)
+        }
         #expect(!PVToastManager.shared.toasts.contains { $0.message == "Quick" })
     }
 

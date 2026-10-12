@@ -327,6 +327,12 @@ extension ConsoleGamesView: GameContextMenuDelegate {
         gamesViewModel.showPatchImportPicker = true
     }
 
+    func gameContextMenu(_ menu: GameContextMenu, didRequestApplyPatchFor game: PVGame) {
+        guard !game.isInvalidated else { return }
+        gamesViewModel.patchApplierGameMD5 = game.md5Hash
+        gamesViewModel.showPatchApplier = true
+    }
+
     func gameContextMenu(_ menu: GameContextMenu, didRequestManagePatchesFor game: PVGame) {
         guard !game.isInvalidated else { return }
         gamesViewModel.patchManagerGame = game.isFrozen ? game : game.freeze()
@@ -339,25 +345,13 @@ extension ConsoleGamesView: GameContextMenuDelegate {
         let accessed = fileURL.startAccessingSecurityScopedResource()
         defer { if accessed { fileURL.stopAccessingSecurityScopedResource() } }
         do {
-            let dest = try Self.copyPatchIntoLibrary(fileURL)
-            _ = try await PatchRepository.shared.importPatch(at: dest, preferredGame: game, autoMatch: false)
+            // Handles bare patches and archives, and never clobbers a different
+            // patch that shares the filename.
+            _ = try await PatchRepository.shared.importPatchFile(at: fileURL, preferredGame: game, autoMatch: false)
             rootDelegate?.showMessage("Imported patch for \(game.title).", title: "Patch Imported")
         } catch {
             rootDelegate?.showMessage("Patch import failed: \(error.localizedDescription)", title: "Import Error")
         }
-    }
-
-    private static func copyPatchIntoLibrary(_ url: URL) throws -> URL {
-        let dir = Paths.patchesPath
-        try FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true)
-        var dest = dir.appendingPathComponent(url.lastPathComponent)
-        if FileManager.default.fileExists(atPath: dest.path) {
-            let stem = dest.deletingPathExtension().lastPathComponent
-            let ext = dest.pathExtension
-            dest = dir.appendingPathComponent("\(stem)-\(UUID().uuidString.prefix(8)).\(ext)")
-        }
-        try FileManager.default.copyItem(at: url, to: dest)
-        return dest
     }
 
     func gameContextMenu(_ menu: GameContextMenu, didRequestSkinSelectionFor game: PVGame) {

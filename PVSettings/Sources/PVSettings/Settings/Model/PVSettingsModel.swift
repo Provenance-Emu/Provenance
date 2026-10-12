@@ -985,6 +985,10 @@ public extension Defaults.Keys {
     /// native cores other than mGBA have stub conformances.
     static let netplayEnabled = Key<Bool>("netplayEnabled", default: false)
 
+    /// Opt-in online patch catalog search (RomHacking.net via privacy-preserving
+    /// discovery). Off by default — no network calls until the user enables it.
+    static let onlinePatchDatabaseEnabled = Key<Bool>("onlinePatchDatabaseEnabled", default: false)
+
     /// Mupen64Plus Transfer Pak slot UI — assign a Game Boy ROM to a
     /// controller port for Pokémon Stadium / Mario Golf integration.
     /// Works on native PVMupen + thin libretro wrapper; ~20-game registry.
