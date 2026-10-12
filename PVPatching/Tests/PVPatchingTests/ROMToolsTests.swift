@@ -137,14 +137,67 @@ final class ROMToolsTests: XCTestCase {
                 crc32: crc
             )
         ]
-        let jobs = try await batcher.plan(patchURLs: [patchURL], roms: roms)
+        let plan = await batcher.plan(patchURLs: [patchURL], roms: roms)
+        let jobs = plan.jobs
         XCTAssertEqual(jobs.count, 1)
+        XCTAssertTrue(plan.failed.isEmpty)
+        XCTAssertTrue(plan.unmatched.isEmpty)
         XCTAssertFalse(jobs[0].crcValidation.isMismatch)
 
         let results = await batcher.apply(jobs: jobs, outputDirectory: outDir, allowCRCMismatch: false)
         XCTAssertEqual(results.count, 1)
         XCTAssertTrue(results[0].success)
-        XCTAssertEqual(try Data(contentsOf: results[0].outputURL!), modified)
+        XCTAssertEqual(try Data(contentsOf: XCTUnwrap(results[0].outputURL)), modified)
+    }
+
+    func testBatchPlanSkipsUnreadablePatchAndKeepsOthers() async throws {
+        let dir = FileManager.default.temporaryDirectory
+            .appendingPathComponent("ROMToolsBatchSkip-\(UUID().uuidString)", isDirectory: true)
+        try FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true)
+        defer { try? FileManager.default.removeItem(at: dir) }
+
+        let original = Data((0..<48).map { UInt8($0) })
+        var modified = original
+        modified[1] = 0x5A
+        let romURL = dir.appendingPathComponent("Pitfall.rom")
+        let modifiedURL = dir.appendingPathComponent("Pitfall-hack.rom")
+        let goodPatch = dir.appendingPathComponent("Pitfall.bps")
+        let badPatch = dir.appendingPathComponent("Broken.bps")
+        try original.write(to: romURL)
+        try modified.write(to: modifiedURL)
+        try Data().write(to: badPatch)
+        _ = try PatchCreator().create(
+            originalURL: romURL,
+            modifiedURL: modifiedURL,
+            outputURL: goodPatch,
+            format: .bps,
+            metadata: PatchMetadata(title: "Pitfall")
+        )
+
+        let batcher = BatchPatchApplier()
+        let roms = [
+            BatchPatchApplier.ROMCandidate(
+                id: "md5-pitfall", title: "Pitfall", filename: "Pitfall.rom", fileURL: romURL, crc32: nil
+            )
+        ]
+        // CRC is only requested for name-matched ROMs lacking one.
+        let plan = await batcher.plan(patchURLs: [badPatch, goodPatch], roms: roms) { rom in
+            try? PatchCRCValidator.crc32(ofFileAt: rom.fileURL)
+        }
+        XCTAssertEqual(plan.failed.map(\.patchURL.lastPathComponent), ["Broken.bps"])
+        XCTAssertEqual(plan.jobs.map(\.patchURL.lastPathComponent), ["Pitfall.bps"])
+        XCTAssertEqual(plan.jobs.first?.confidence, .exact)
+        XCTAssertFalse(plan.jobs[0].crcValidation.isMismatch)
+    }
+
+    func testPatchFormatMagicSniffing() {
+        XCTAssertEqual(PatchFormat.detect(fromMagic: Data("PATCH\u{0}".utf8)), .ips)
+        XCTAssertEqual(PatchFormat.detect(fromMagic: Data("BPS1\u{0}".utf8)), .bps)
+        XCTAssertEqual(PatchFormat.detect(fromMagic: Data("UPS1\u{0}".utf8)), .ups)
+        XCTAssertEqual(PatchFormat.detect(fromMagic: Data("PPF30".utf8)), .ppf)
+        XCTAssertNil(PatchFormat.detect(fromMagic: Data([0x50, 0x4B, 0x03, 0x04, 0x14])))
+        XCTAssertTrue(PatchFormat.implementedFileExtensions.isSuperset(of: ["ips", "bps", "ups", "ppf"]))
+        XCTAssertFalse(PatchFormat.implementedFileExtensions.contains("xdelta"))
     }
 
     func testBatchSkipsCRCMismatchUnlessAllowed() async throws {
@@ -165,5 +218,37 @@ final class ROMToolsTests: XCTestCase {
         XCTAssertEqual(blocked.count, 1)
         XCTAssertFalse(blocked[0].success)
         XCTAssertTrue(blocked[0].message.contains("Warning"))
+    }
+}
+
+final class VariableLengthIntegerTests: XCTestCase {
+    /// Regression: the decoder used `|=` where the BPS/UPS spec adds, so any value
+    /// whose implicit carry bit collided with the next group decoded wrong
+    /// (`[0x00, 0x81]` came back as 128 instead of 256).
+    func testRoundTripAcrossGroupBoundaries() {
+        let values = [0, 1, 127, 128, 129, 255, 256, 257, 16_383, 16_384, 16_511, 16_512,
+                      1 << 20, (1 << 21) - 1, 1 << 24, 0x1234_5678, 1 << 32, (1 << 40) + 3]
+        for value in values {
+            let bytes = Data(encodeVLI(value))
+            var pos = 0
+            XCTAssertEqual(readVLI(bytes, pos: &pos), value, "VLI \(value) did not round-trip")
+            XCTAssertEqual(pos, bytes.count)
+        }
+    }
+
+    func testKnownEncodings() {
+        var pos = 0
+        XCTAssertEqual(readVLI(Data([0x00, 0x81]), pos: &pos), 256)
+        pos = 0
+        XCTAssertEqual(readVLI(Data([0x03, 0x81]), pos: &pos), 259)
+        pos = 0
+        XCTAssertEqual(readVLI(Data([0xFF]), pos: &pos), 127)
+    }
+
+    func testUnterminatedAndOversizedEncodingsFailLoudly() {
+        var pos = 0
+        XCTAssertEqual(readVLI(Data([0x00, 0x00, 0x00]), pos: &pos), Int.max)
+        pos = 0
+        XCTAssertEqual(readVLI(Data(repeating: 0x7F, count: 12), pos: &pos), Int.max)
     }
 }

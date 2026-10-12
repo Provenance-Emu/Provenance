@@ -179,6 +179,8 @@ public enum OnlinePatchDatabaseError: Error, LocalizedError, Sendable, Equatable
     case invalidQuery
     case network(String)
     case blockedByUpstream
+    /// The search index (DuckDuckGo HTML) returned a bot challenge instead of results.
+    case searchBlocked
     case notFound
     case parseFailed(String)
     case downloadFailed(String)
@@ -194,6 +196,8 @@ public enum OnlinePatchDatabaseError: Error, LocalizedError, Sendable, Equatable
             return "Network error: \(message)"
         case .blockedByUpstream:
             return "RomHacking.net blocked the in-app request. Open the page in Safari instead."
+        case .searchBlocked:
+            return "The search index is rate-limiting this device. Wait a minute and retry, or open the search in Safari."
         case .notFound:
             return "No patch listing found."
         case .parseFailed(let message):

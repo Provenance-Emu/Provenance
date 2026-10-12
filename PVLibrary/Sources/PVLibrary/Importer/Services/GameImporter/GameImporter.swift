@@ -3179,8 +3179,13 @@ public final class GameImporter: GameImporting, ObservableObject {
             throw GameImporterError.unsupportedFile
         }
         ILOG("Importing patch file \(url.lastPathComponent)")
-        let patch = try await PatchRepository.shared.importPatch(at: url, preferredGame: nil, autoMatch: true)
-        ILOG("Imported patch \(patch.displayTitle) (matchState=\(patch.matchState.rawValue))")
+        // PatchRepository is @MainActor and returns a live (main-thread) Realm object.
+        // Read what we log on the main actor instead of touching it from the import queue.
+        let summary: String = try await Task { @MainActor in
+            let patch = try await PatchRepository.shared.importPatch(at: url, preferredGame: nil, autoMatch: true)
+            return "\(patch.displayTitle) (matchState=\(patch.matchState.rawValue))"
+        }.value
+        ILOG("Imported patch \(summary)")
     }
 
     private func performImport(for item: ImportQueueItem) async throws {

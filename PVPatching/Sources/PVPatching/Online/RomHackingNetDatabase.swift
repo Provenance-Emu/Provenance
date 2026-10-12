@@ -22,7 +22,11 @@ public actor RomHackingNetDatabase: PatchDatabase {
 
     private let session: URLSession
     private let rateLimiter: PatchDatabaseRateLimiter
-    private let userAgent = "Provenance/1.0 (iOS; Online Patch Search; +https://provenance-emu.com)"
+    private let userAgent = "Provenance/1.0 (Online Patch Search; +https://provenance-emu.com)"
+
+    /// Extensions we accept from a Content-Disposition / URL filename.
+    private static let downloadExtensions: Set<String> = PatchFormat.implementedFileExtensions
+        .union(["zip", "7z", "rar"])
 
     public init(
         session: URLSession = .shared,
@@ -67,11 +71,15 @@ public actor RomHackingNetDatabase: PatchDatabase {
             throw OnlinePatchDatabaseError.network("Invalid search URL")
         }
 
-        let data = try await fetchData(from: url, cacheKey: cacheKey)
+        let (data, _) = try await fetchData(from: url)
         guard let html = String(data: data, encoding: .utf8) else {
             throw OnlinePatchDatabaseError.parseFailed("Search response was not UTF-8 text")
         }
+        if Self.isSearchChallenge(html) {
+            throw OnlinePatchDatabaseError.searchBlocked
+        }
         let results = DuckDuckGoHTMLParser.parseSearchResults(html)
+        await rateLimiter.store(data, for: cacheKey)
         ILOG("RomHackingNetDatabase: search '\(trimmed)' → \(results.count) hit(s)")
         return results
     }
@@ -83,20 +91,22 @@ public actor RomHackingNetDatabase: PatchDatabase {
 
         let cacheKey = "detail:" + pageURL.absoluteString
         if let cached = await rateLimiter.cachedData(for: cacheKey),
-           let html = String(data: cached, encoding: .utf8),
-           !isCloudflareChallenge(html) {
+           let html = String(data: cached, encoding: .utf8) {
             return try RomHackingNetHTMLParser.parseDetail(html: html, pageURL: pageURL)
         }
 
         do {
-            let data = try await fetchData(from: pageURL, cacheKey: cacheKey)
+            let (data, _) = try await fetchData(from: pageURL)
             guard let html = String(data: data, encoding: .utf8) else {
                 throw OnlinePatchDatabaseError.parseFailed("Detail response was not UTF-8 text")
             }
-            if isCloudflareChallenge(html) {
+            if Self.isCloudflareChallenge(html) {
+                // Never cache a challenge page — the next retry must hit the network.
                 throw OnlinePatchDatabaseError.blockedByUpstream
             }
-            return try RomHackingNetHTMLParser.parseDetail(html: html, pageURL: pageURL)
+            let info = try RomHackingNetHTMLParser.parseDetail(html: html, pageURL: pageURL)
+            await rateLimiter.store(data, for: cacheKey)
+            return info
         } catch let error as OnlinePatchDatabaseError {
             throw error
         } catch {
@@ -118,28 +128,31 @@ public actor RomHackingNetDatabase: PatchDatabase {
 
         progress?(OnlinePatchDownloadProgress(fractionCompleted: 0.05, status: "Downloading…"))
         let data: Data
+        let response: HTTPURLResponse?
         do {
-            data = try await fetchData(from: downloadURL, cacheKey: nil)
+            (data, response) = try await fetchData(from: downloadURL)
         } catch {
             throw OnlinePatchDatabaseError.downloadFailed(error.localizedDescription)
         }
 
-        if let text = String(data: data.prefix(256), encoding: .utf8), isCloudflareChallenge(text) {
+        if let text = String(data: data.prefix(512), encoding: .utf8), Self.isCloudflareChallenge(text) {
             throw OnlinePatchDatabaseError.blockedByUpstream
         }
 
         // Reject HTML error pages masquerading as downloads.
-        let lowerNameHint = downloadURL.lastPathComponent.lowercased()
-        let looksLikePatch = ["ips", "bps", "ups", "xdelta", "ppf", "zip", "7z", "rar"]
-            .contains(where: { lowerNameHint.hasSuffix(".\($0)") })
-        if !looksLikePatch, let head = String(data: data.prefix(64), encoding: .utf8)?
+        if let head = String(data: data.prefix(64), encoding: .utf8)?
             .trimmingCharacters(in: .whitespacesAndNewlines).lowercased(),
            head.hasPrefix("<!doctype") || head.hasPrefix("<html") {
             throw OnlinePatchDatabaseError.blockedByUpstream
         }
 
         try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
-        let filename = suggestedFilename(for: info, downloadURL: downloadURL)
+        let filename = Self.suggestedFilename(
+            for: info,
+            downloadURL: downloadURL,
+            contentDisposition: response?.value(forHTTPHeaderField: "Content-Disposition"),
+            data: data
+        )
         var destination = directory.appendingPathComponent(filename)
         if FileManager.default.fileExists(atPath: destination.path) {
             let stem = destination.deletingPathExtension().lastPathComponent
@@ -175,10 +188,9 @@ public actor RomHackingNetDatabase: PatchDatabase {
 
     // MARK: - Internals
 
-    private func fetchData(from url: URL, cacheKey: String?) async throws -> Data {
-        if let cacheKey, let cached = await rateLimiter.cachedData(for: cacheKey) {
-            return cached
-        }
+    /// Rate-limited GET. Callers validate the body and decide whether to cache it;
+    /// nothing is stored here so challenge/anomaly pages never poison the cache.
+    private func fetchData(from url: URL) async throws -> (Data, HTTPURLResponse?) {
         await rateLimiter.waitIfNeeded()
 
         var request = URLRequest(url: url)
@@ -188,16 +200,14 @@ public actor RomHackingNetDatabase: PatchDatabase {
 
         do {
             let (data, response) = try await session.data(for: request)
-            if let http = response as? HTTPURLResponse, !(200...299).contains(http.statusCode) {
-                if http.statusCode == 403 || http.statusCode == 503 {
+            let http = response as? HTTPURLResponse
+            if let http, !(200...299).contains(http.statusCode) {
+                if http.statusCode == 403 || http.statusCode == 429 || http.statusCode == 503 {
                     throw OnlinePatchDatabaseError.blockedByUpstream
                 }
                 throw OnlinePatchDatabaseError.network("HTTP \(http.statusCode)")
             }
-            if let cacheKey {
-                await rateLimiter.store(data, for: cacheKey)
-            }
-            return data
+            return (data, http)
         } catch let error as OnlinePatchDatabaseError {
             throw error
         } catch {
@@ -205,7 +215,7 @@ public actor RomHackingNetDatabase: PatchDatabase {
         }
     }
 
-    private nonisolated func isCloudflareChallenge(_ html: String) -> Bool {
+    static func isCloudflareChallenge(_ html: String) -> Bool {
         let lower = html.lowercased()
         return lower.contains("cf-mitigated")
             || lower.contains("cdn-cgi/challenge")
@@ -213,16 +223,91 @@ public actor RomHackingNetDatabase: PatchDatabase {
             || (lower.contains("cloudflare") && lower.contains("enable javascript"))
     }
 
-    private nonisolated func suggestedFilename(for info: OnlinePatchInfo, downloadURL: URL) -> String {
-        let last = downloadURL.lastPathComponent
-        if last.contains("."), last.lowercased() != "download" {
-            return last
+    /// DuckDuckGo's HTML endpoint answers suspected bots with an "anomaly" page (HTTP 200,
+    /// no result markup). Treat that as a block rather than an empty result set.
+    static func isSearchChallenge(_ html: String) -> Bool {
+        let lower = html.lowercased()
+        guard !lower.contains("result__a") else { return false }
+        return lower.contains("anomaly")
+            || lower.contains("unusual traffic")
+            || lower.contains("captcha")
+            || lower.contains("challenge-form")
+            || lower.contains("bot detection")
+    }
+
+    /// Pick a filename whose extension reflects the actual payload.
+    ///
+    /// RHDN serves `/download/{id}` with no extension and usually as a ZIP, so the order is:
+    /// Content-Disposition filename → URL filename → magic bytes → `.zip` for PK archives
+    /// → `.bps` as a last resort.
+    static func suggestedFilename(
+        for info: OnlinePatchInfo,
+        downloadURL: URL,
+        contentDisposition: String?,
+        data: Data
+    ) -> String {
+        if let header = contentDisposition,
+           let name = filename(fromContentDisposition: header),
+           downloadExtensions.contains((name as NSString).pathExtension.lowercased()) {
+            return sanitized(name)
         }
-        let stem = info.title
+        let last = downloadURL.lastPathComponent
+        if downloadExtensions.contains((last as NSString).pathExtension.lowercased()) {
+            return sanitized(last)
+        }
+
+        let stem = sanitized(info.title)
+        let fallbackStem: String = {
+            if !stem.isEmpty { return stem }
+            if let entryID = RomHackingNetHTMLParser.entryID(from: downloadURL)
+                ?? RomHackingNetHTMLParser.entryID(from: info.pageURL) {
+                return "rhdn-\(entryID)"
+            }
+            return "patch"
+        }()
+
+        if let format = PatchFormat.detect(fromMagic: data), let ext = format.fileExtensions.first {
+            return "\(fallbackStem).\(ext)"
+        }
+        if data.starts(with: [0x50, 0x4B, 0x03, 0x04]) || data.starts(with: [0x50, 0x4B, 0x05, 0x06]) {
+            return "\(fallbackStem).zip"
+        }
+        if data.starts(with: [0x37, 0x7A, 0xBC, 0xAF, 0x27, 0x1C]) {
+            return "\(fallbackStem).7z"
+        }
+        if data.starts(with: [0x52, 0x61, 0x72, 0x21]) {
+            return "\(fallbackStem).rar"
+        }
+        return "\(fallbackStem).bps"
+    }
+
+    /// `attachment; filename="x.zip"` or RFC 5987 `filename*=UTF-8''x.zip`.
+    static func filename(fromContentDisposition header: String) -> String? {
+        for part in header.split(separator: ";") {
+            let trimmed = part.trimmingCharacters(in: .whitespaces)
+            let lower = trimmed.lowercased()
+            if lower.hasPrefix("filename*=") {
+                var value = String(trimmed.dropFirst("filename*=".count))
+                if let quote = value.range(of: "''") {
+                    value = String(value[quote.upperBound...])
+                }
+                let unquoted = value.trimmingCharacters(in: CharacterSet(charactersIn: "\""))
+                if let decoded = unquoted.removingPercentEncoding, !decoded.isEmpty { return decoded }
+            } else if lower.hasPrefix("filename=") {
+                let value = String(trimmed.dropFirst("filename=".count))
+                    .trimmingCharacters(in: CharacterSet(charactersIn: "\""))
+                if !value.isEmpty { return value }
+            }
+        }
+        return nil
+    }
+
+    private static func sanitized(_ name: String) -> String {
+        let last = (name as NSString).lastPathComponent // drop any directory component
+        return last
             .replacingOccurrences(of: "/", with: "-")
             .replacingOccurrences(of: ":", with: "-")
+            .replacingOccurrences(of: "\\", with: "-")
             .trimmingCharacters(in: .whitespacesAndNewlines)
-        let safe = stem.isEmpty ? "patch-\(info.id.hashValue)" : stem
-        return "\(safe).bps"
     }
 }

@@ -188,7 +188,7 @@ public struct PatchApplierView: View {
     }
 
     private static var patchTypes: [UTType] {
-        ["ips", "bps", "ups", "ppf", "xdelta", "vcdiff"].compactMap {
+        PatchFormat.implementedFileExtensions.sorted().compactMap {
             UTType(filenameExtension: $0)
         } + [.data]
     }
@@ -301,6 +301,8 @@ public struct PatchApplierView: View {
 public struct BatchPatchApplierView: View {
     @State private var folderURL: URL?
     @State private var jobs: [BatchPatchJob] = []
+    @State private var skipped: [BatchPatchApplier.BatchPatchFailure] = []
+    @State private var unmatchedCount = 0
     @State private var batchResults: [BatchPatchResult] = []
     @State private var allowCRCMismatch = false
     @State private var statusMessage: String?
@@ -339,6 +341,17 @@ public struct BatchPatchApplierView: View {
                     // Index-based ForEach avoids Binding<[T]> overload selection in this target.
                     SwiftUI.ForEach(0..<jobs.count, id: \.self) { index in
                         BatchPatchJobRow(job: jobs[index])
+                    }
+                }
+            }
+
+            if !skipped.isEmpty {
+                SwiftUI.Section("Skipped (\(skipped.count))") {
+                    SwiftUI.ForEach(0..<skipped.count, id: \.self) { index in
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text(skipped[index].patchURL.lastPathComponent).font(.subheadline)
+                            Text(skipped[index].message).font(.caption).foregroundStyle(Color.orange)
+                        }
                     }
                 }
             }
@@ -397,6 +410,8 @@ public struct BatchPatchApplierView: View {
             if case .success(let urls) = result {
                 folderURL = urls.first
                 jobs = []
+                skipped = []
+                unmatchedCount = 0
                 batchResults = []
             }
         }
@@ -411,24 +426,23 @@ public struct BatchPatchApplierView: View {
         defer { isBusy = false }
         let scoped = folderURL.startAccessingSecurityScopedResource()
         defer { if scoped { folderURL.stopAccessingSecurityScopedResource() } }
-        do {
-            let patches = await batcher.patchFiles(in: folderURL)
-            let roms = PatchRepository.shared.batchROMCandidates()
-            // Compute missing CRCs off-main for better matching.
-            let enriched: [BatchPatchApplier.ROMCandidate] = await Task.detached(priority: .userInitiated) {
-                roms.map { rom in
-                    var copy = rom
-                    if copy.crc32 == nil {
-                        copy.crc32 = try? PatchCRCValidator.crc32(ofFileAt: rom.fileURL)
-                    }
-                    return copy
-                }
-            }.value
-            jobs = try await batcher.plan(patchURLs: patches, roms: enriched)
-            statusMessage = "Found \(patches.count) patch(es); matched \(jobs.count)."
-        } catch {
-            statusMessage = error.localizedDescription
-        }
+        let patches = await batcher.patchFiles(in: folderURL)
+        let roms = PatchRepository.shared.batchROMCandidates()
+        // The planner hashes only name-matched ROMs that lack a stored CRC, so a large
+        // library isn't read wholesale. Run it off-main; it's pure file IO + CPU.
+        let batcher = self.batcher
+        let plan = await Task.detached(priority: .userInitiated) {
+            await batcher.plan(patchURLs: patches, roms: roms) { rom in
+                try? PatchCRCValidator.crc32(ofFileAt: rom.fileURL)
+            }
+        }.value
+        jobs = plan.jobs
+        skipped = plan.failed
+        unmatchedCount = plan.unmatched.count
+        var summary = "Found \(patches.count) patch(es); matched \(jobs.count)"
+        if unmatchedCount > 0 { summary += ", \(unmatchedCount) without a library match" }
+        if !skipped.isEmpty { summary += ", \(skipped.count) unreadable" }
+        statusMessage = summary + "."
     }
 
     @MainActor
@@ -436,6 +450,10 @@ public struct BatchPatchApplierView: View {
         guard !jobs.isEmpty else { return }
         isBusy = true
         defer { isBusy = false }
+        // The patch URLs live inside the Files-picked folder; its security scope was
+        // released when plan() returned, so hold it again for the whole apply.
+        let scoped = folderURL?.startAccessingSecurityScopedResource() ?? false
+        defer { if scoped { folderURL?.stopAccessingSecurityScopedResource() } }
         let dest = URL.documentsPath.appendingPathComponent("PatchedROMs", isDirectory: true)
         batchResults = await batcher.apply(
             jobs: jobs,

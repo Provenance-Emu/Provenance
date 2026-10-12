@@ -53,9 +53,7 @@ public struct ROMToolRegistry: Sendable {
 public struct ApplyPatchToolOperation: ROMToolOperation, Sendable {
     public let id = "apply-patch"
     public let displayName = "Apply Patch"
-    public let supportedInputExtensions: Set<String> = [
-        "ips", "ips32", "bps", "ups", "ppf", "xdelta", "vcdiff"
-    ]
+    public let supportedInputExtensions: Set<String> = PatchFormat.implementedFileExtensions
 
     private let applier: PatchApplier
 

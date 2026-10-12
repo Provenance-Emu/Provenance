@@ -235,6 +235,8 @@ public struct OnlinePatchDatabaseView: View {
                 : "\(results.count) result(s). Tap one for details."
         } catch let error as OnlinePatchDatabaseError {
             statusMessage = error.localizedDescription
+            // A Cloudflare block on RHDN itself → Safari can get through. A DuckDuckGo
+            // anomaly page is a rate limit on us; opening Safari to RHDN won't help.
             if error == .blockedByUpstream,
                let url = database.safariSearchURL(query: query, filter: filter) {
                 openSafari(url)
@@ -254,7 +256,11 @@ public struct OnlinePatchDatabaseView: View {
         patchApplierGameMD5 = nil
         Task {
             do {
-                let destDir = Paths.patchesPath
+                // Download to a scratch folder; importPatchFile moves the patch (or the
+                // patches inside a ZIP — RHDN usually serves archives) into Patches/.
+                let destDir = FileManager.default.temporaryDirectory
+                    .appendingPathComponent("OnlinePatchDownload-\(UUID().uuidString)", isDirectory: true)
+                defer { try? FileManager.default.removeItem(at: destDir) }
                 let fileURL = try await database.downloadPatch(id: result.id, to: destDir) { progress in
                     Task { @MainActor in
                         downloadProgress = progress.fractionCompleted
@@ -263,7 +269,7 @@ public struct OnlinePatchDatabaseView: View {
                         }
                     }
                 }
-                let patch = try await PatchRepository.shared.importPatch(at: fileURL, autoMatch: true)
+                let patch = try await PatchRepository.shared.importPatchFile(at: fileURL, autoMatch: true)
                 let frozen = patch.isFrozen ? patch : patch.freeze()
                 if let game = frozen.game, !game.isInvalidated {
                     lastImportedMatchTitle = game.title

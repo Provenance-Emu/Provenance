@@ -104,10 +104,22 @@ public enum DuckDuckGoHTMLParser: Sendable {
     private static func nearbySnippet(in html: String, around range: NSRange) -> String? {
         let ns = html as NSString
         let start = max(0, range.location)
-        let end = min(ns.length, range.location + range.length + 800)
+        // The snippet anchor follows the title anchor within the same result block;
+        // stop at the next result's title so we never borrow a neighbour's snippet.
+        var end = min(ns.length, range.location + range.length + 4000)
+        let nextTitle = ns.range(
+            of: "class=\"result__a\"",
+            options: [.caseInsensitive],
+            range: NSRange(location: min(ns.length, range.location + range.length), length: end - min(ns.length, range.location + range.length))
+        )
+        if nextTitle.location != NSNotFound {
+            end = nextTitle.location
+        }
         let window = ns.substring(with: NSRange(location: start, length: end - start))
+        // Capture through the closing anchor — DDG bolds query terms with <b>, so
+        // stopping at the first closing tag would truncate the snippet.
         guard let regex = try? NSRegularExpression(
-            pattern: #"class="result__snippet"[^>]*>(.*?)</"#,
+            pattern: #"class="result__snippet"[^>]*>(.*?)</a>"#,
             options: [.caseInsensitive, .dotMatchesLineSeparators]
         ),
         let match = regex.firstMatch(in: window, options: [], range: NSRange(location: 0, length: (window as NSString).length)),

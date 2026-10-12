@@ -40,14 +40,7 @@ public enum PatchCRCValidation: Sendable, Equatable {
 public enum PatchCRCValidator: Sendable {
 
     public static func crc32(of data: Data) -> UInt32 {
-        var crc: UInt32 = 0xFFFF_FFFF
-        for byte in data {
-            crc ^= UInt32(byte)
-            for _ in 0..<8 {
-                crc = (crc >> 1) ^ (0xEDB8_8320 * (crc & 1))
-            }
-        }
-        return ~crc
+        patchCRC32(data)
     }
 
     public static func crc32(ofFileAt url: URL) throws -> UInt32 {

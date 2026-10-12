@@ -13,6 +13,7 @@ import PVPatching
 import PVRealm
 import PVFileSystem
 import PVPrimitives
+import PVArchiving
 
 /// Owns patch import, matching, variant lifecycle, and launch preparation.
 @MainActor
@@ -62,6 +63,12 @@ public final class PatchRepository {
         let inspection = try inspector.inspect(patchURL: url)
         let database = RomDatabase.sharedInstance
         let realm = database.realm
+        // Callers hand us frozen games from the UI; a new PVPatch cannot link to a frozen
+        // object (Realm rejects objects owned by another Realm on add).
+        let preferredGame: PVGame? = preferredGame.flatMap { game in
+            guard !game.isInvalidated else { return nil }
+            return game.isFrozen ? game.thaw() : game
+        }
 
         let pvFile = PVFile(withURL: url)
         let existingID = !pvFile.partialPath.isEmpty ? pvFile.partialPath : url.path
@@ -99,6 +106,10 @@ public final class PatchRepository {
                     romURL: preferredGame?.file?.url ?? url,
                     patchURL: url
                 )
+            } else if let romURL = preferredGame?.file?.url, let stem = live.outputStem {
+                // Same-filename patches (Game.ips for Game.gba) must not share the base
+                // game's save directories.
+                live.outputStem = PatchApplier.variantSafeStem(stem, romURL: romURL)
             }
             if let preferredGame {
                 live.game = preferredGame.thaw() ?? preferredGame
@@ -259,7 +270,10 @@ public final class PatchRepository {
             throw PatchError.sourceROMNotFound(baseGame.file?.url ?? URL(fileURLWithPath: "/"))
         }
 
-        let stem = patch.outputStem ?? PatchApplier.defaultOutputStem(romURL: romURL, patchURL: patchURL)
+        let stem = PatchApplier.variantSafeStem(
+            patch.outputStem ?? PatchApplier.defaultOutputStem(romURL: romURL, patchURL: patchURL),
+            romURL: romURL
+        )
         let artifact = try await applier.apply(patchURL: patchURL, to: romURL, outputStem: stem)
         let variantMD5 = artifact.patchedMD5
         let patchedCRC: String = {
@@ -374,7 +388,10 @@ public final class PatchRepository {
             throw PatchError.sourceROMNotFound(baseGame.file?.url ?? URL(fileURLWithPath: "/"))
         }
 
-        let stem = livePatch.outputStem ?? PatchApplier.defaultOutputStem(romURL: romURL, patchURL: patchURL)
+        let stem = PatchApplier.variantSafeStem(
+            livePatch.outputStem ?? PatchApplier.defaultOutputStem(romURL: romURL, patchURL: patchURL),
+            romURL: romURL
+        )
         let artifact = try await applier.apply(
             patchURL: patchURL,
             to: romURL,
@@ -484,15 +501,7 @@ public final class PatchRepository {
         var imported: PVPatch?
         if importToLibrary {
             // Copy patch into the patches directory for stable library identity.
-            let patchesDir = Paths.patchesPath
-            try FileManager.default.createDirectory(at: patchesDir, withIntermediateDirectories: true)
-            let patchDest = patchesDir.appendingPathComponent(patchURL.lastPathComponent)
-            if patchURL.standardizedFileURL != patchDest.standardizedFileURL {
-                if FileManager.default.fileExists(atPath: patchDest.path) {
-                    try await FileManager.default.removeItem(at: patchDest)
-                }
-                try FileManager.default.copyItem(at: patchURL, to: patchDest)
-            }
+            let patchDest = try copyIntoPatchesDirectory(patchURL, sha256: inspection.patchSHA256)
             imported = try await importPatch(
                 at: patchDest,
                 preferredGame: preferredGame,
@@ -506,6 +515,75 @@ public final class PatchRepository {
             exportURL: exportURL,
             importedPatch: imported
         )
+    }
+
+    /// Copy `patchURL` into `Paths.patchesPath` without clobbering a different patch that
+    /// happens to share its filename. Same bytes reuse the existing file (so the existing
+    /// `PVPatch` row is reused); different bytes get a short content-hash suffix.
+    public func copyIntoPatchesDirectory(_ patchURL: URL, sha256: String? = nil) throws -> URL {
+        let patchesDir = Paths.patchesPath
+        try FileManager.default.createDirectory(at: patchesDir, withIntermediateDirectories: true)
+        var dest = patchesDir.appendingPathComponent(patchURL.lastPathComponent)
+        guard patchURL.standardizedFileURL != dest.standardizedFileURL else { return dest }
+
+        if FileManager.default.fileExists(atPath: dest.path) {
+            let incoming = try sha256 ?? inspector.inspect(patchURL: patchURL).patchSHA256
+            let existing = try? inspector.inspect(patchURL: dest).patchSHA256
+            if existing == incoming {
+                return dest
+            }
+            let stem = dest.deletingPathExtension().lastPathComponent
+            let ext = dest.pathExtension
+            dest = patchesDir.appendingPathComponent("\(stem)-\(incoming.prefix(8)).\(ext)")
+        }
+        if !FileManager.default.fileExists(atPath: dest.path) {
+            try FileManager.default.copyItem(at: patchURL, to: dest)
+        }
+        return dest
+    }
+
+    /// Import a downloaded or picked file that may be a bare patch *or* an archive
+    /// (RomHacking.net serves ZIPs). Archives are extracted and every supported patch
+    /// inside is imported; the first one is returned.
+    @discardableResult
+    public func importPatchFile(
+        at url: URL,
+        preferredGame: PVGame? = nil,
+        autoMatch: Bool = true
+    ) async throws -> PVPatch {
+        let manager = ArchiveManager.shared
+        guard manager.isArchive(at: url) else {
+            let dest = try copyIntoPatchesDirectory(url)
+            return try await importPatch(at: dest, preferredGame: preferredGame, autoMatch: autoMatch)
+        }
+
+        let scratch = FileManager.default.temporaryDirectory
+            .appendingPathComponent("PatchArchive-\(UUID().uuidString)", isDirectory: true)
+        try FileManager.default.createDirectory(at: scratch, withIntermediateDirectories: true)
+        defer { try? FileManager.default.removeItem(at: scratch) }
+
+        let extracted = try await manager.extractAll(at: url, to: scratch)
+        let patches = extracted
+            .filter { PatchFormat.implementedFileExtensions.contains($0.pathExtension.lowercased()) }
+            .sorted { $0.lastPathComponent.localizedCaseInsensitiveCompare($1.lastPathComponent) == .orderedAscending }
+        guard !patches.isEmpty else {
+            throw PatchError.unsupportedFormat("\(url.lastPathComponent) contains no supported patch file")
+        }
+
+        var imported: [PVPatch] = []
+        for extractedPatch in patches {
+            let dest = try copyIntoPatchesDirectory(extractedPatch)
+            let patch = try await importPatch(at: dest, preferredGame: preferredGame, autoMatch: autoMatch)
+            imported.append(patch)
+        }
+        // The archive itself has been consumed; keep Patches/ free of stray zips.
+        if url.standardizedFileURL.path.hasPrefix(Paths.patchesPath.standardizedFileURL.path) {
+            try? FileManager.default.removeItem(at: url)
+        }
+        guard let first = imported.first else {
+            throw PatchError.unsupportedFormat("\(url.lastPathComponent) contains no supported patch file")
+        }
+        return first
     }
 
     /// Snapshot library ROMs for batch patch matching.
@@ -547,7 +625,11 @@ public final class PatchRepository {
         }
         let dest = directory ?? URL.documentsPath
             .appendingPathComponent("PatchedROMs", isDirectory: true)
-        let preferred = "\(livePatch.outputStem ?? PatchApplier.defaultOutputStem(romURL: romURL, patchURL: patchURL)).\(romURL.pathExtension)"
+        let exportStem = PatchApplier.variantSafeStem(
+            livePatch.outputStem ?? PatchApplier.defaultOutputStem(romURL: romURL, patchURL: patchURL),
+            romURL: romURL
+        )
+        let preferred = "\(exportStem).\(romURL.pathExtension)"
         return try await applier.exportPatchedCopy(
             patchURL: patchURL,
             romURL: romURL,

@@ -68,9 +68,7 @@ public actor BatchPatchApplier {
 
     private let inspector = PatchInspector()
     private let applier: PatchApplier
-    private let patchExtensions: Set<String> = [
-        "ips", "ips32", "bps", "ups", "ppf", "xdelta", "vcdiff"
-    ]
+    private let patchExtensions = PatchFormat.implementedFileExtensions
 
     public init(applier: PatchApplier = PatchApplier()) {
         self.applier = applier
@@ -96,14 +94,47 @@ public actor BatchPatchApplier {
         return urls.sorted { $0.lastPathComponent.localizedCaseInsensitiveCompare($1.lastPathComponent) == .orderedAscending }
     }
 
+    /// Outcome of `plan(...)`: jobs to run plus everything that was skipped and why.
+    public struct Plan: Sendable, Equatable {
+        public var jobs: [BatchPatchJob]
+        /// Patches that inspected fine but had no unambiguous library match.
+        public var unmatched: [URL]
+        /// Patches that could not be read or parsed, with the reason.
+        public var failed: [BatchPatchFailure]
+
+        public init(jobs: [BatchPatchJob] = [], unmatched: [URL] = [], failed: [BatchPatchFailure] = []) {
+            self.jobs = jobs
+            self.unmatched = unmatched
+            self.failed = failed
+        }
+    }
+
+    public struct BatchPatchFailure: Sendable, Equatable, Identifiable {
+        public var id: String { patchURL.path }
+        public var patchURL: URL
+        public var message: String
+
+        public init(patchURL: URL, message: String) {
+            self.patchURL = patchURL
+            self.message = message
+        }
+    }
+
     /// Build apply jobs by matching each patch to the best unambiguous ROM candidate.
+    ///
+    /// A patch that fails to inspect is reported in `Plan.failed` and does not abort
+    /// the rest of the folder. `crcProvider` is asked for a ROM's CRC32 only when a
+    /// patch embeds a source CRC and that ROM is a name-based candidate without a
+    /// stored CRC — so a large library is never hashed wholesale.
     public func plan(
         patchURLs: [URL],
         roms: [ROMCandidate],
-        minimumConfidence: PatchMatchConfidence = .medium
-    ) throws -> [BatchPatchJob] {
-        var jobs: [BatchPatchJob] = []
-        let candidates: [PatchMatchCandidate] = roms.map {
+        minimumConfidence: PatchMatchConfidence = .medium,
+        crcProvider: (@Sendable (ROMCandidate) -> UInt32?)? = nil
+    ) -> Plan {
+        var plan = Plan()
+        var romsByID = Dictionary(roms.map { ($0.id, $0) }, uniquingKeysWith: { first, _ in first })
+        var candidates: [PatchMatchCandidate] = roms.map {
             PatchMatchCandidate(
                 id: $0.id,
                 title: $0.title,
@@ -116,19 +147,51 @@ public actor BatchPatchApplier {
         }
 
         for patchURL in patchURLs {
-            let inspection = try inspector.inspect(patchURL: patchURL)
-            let ranked = inspector.rank(
+            let inspection: PatchInspection
+            do {
+                inspection = try inspector.inspect(patchURL: patchURL)
+            } catch {
+                WLOG("BatchPatchApplier: skipping \(patchURL.lastPathComponent) — \(error.localizedDescription)")
+                plan.failed.append(BatchPatchFailure(patchURL: patchURL, message: error.localizedDescription))
+                continue
+            }
+
+            var ranked = inspector.rank(
                 candidates: candidates,
                 inspection: inspection,
                 patchFilename: patchURL.lastPathComponent
             )
+
+            // Lazily hash only the name-based candidates for this patch.
+            if inspection.sourceCRC32 != nil, let crcProvider {
+                var filled = false
+                for candidate in ranked where candidate.score > 0 && candidate.crc32 == nil {
+                    guard let rom = romsByID[candidate.id], let crc = crcProvider(rom) else { continue }
+                    var updatedROM = rom
+                    updatedROM.crc32 = crc
+                    romsByID[candidate.id] = updatedROM
+                    if let index = candidates.firstIndex(where: { $0.id == candidate.id }) {
+                        candidates[index].crc32 = crc
+                    }
+                    filled = true
+                }
+                if filled {
+                    ranked = inspector.rank(
+                        candidates: candidates,
+                        inspection: inspection,
+                        patchFilename: patchURL.lastPathComponent
+                    )
+                }
+            }
+
             guard let best = inspector.unambiguousMatch(from: ranked),
                   best.confidence >= minimumConfidence,
-                  let rom = roms.first(where: { $0.id == best.id }) else {
+                  let rom = romsByID[best.id] else {
+                plan.unmatched.append(patchURL)
                 continue
             }
             let validation = PatchCRCValidator.validate(romCRC: rom.crc32, inspection: inspection)
-            jobs.append(
+            plan.jobs.append(
                 BatchPatchJob(
                     patchURL: patchURL,
                     romURL: rom.fileURL,
@@ -138,7 +201,7 @@ public actor BatchPatchApplier {
                 )
             )
         }
-        return jobs
+        return plan
     }
 
     /// Apply planned jobs. Skips CRC mismatches unless `allowCRCMismatch` is true.
