@@ -446,6 +446,64 @@ final class LibraryMoveEngineTests: XCTestCase {
             XCTAssertEqual(error as? LibraryMoveError, .unsupportedMove(from: .appStorage, to: .pickedFolder))
         }
     }
+
+    // MARK: - Join (phase 4)
+
+    private func joinRequest(deduplicate: Bool = true) -> LibraryMoveRequest {
+        LibraryMoveRequest(source: .appStorage, destination: .pickedFolder, sourceRoot: src, destinationRoot: dst,
+                           folders: LibraryMoveFolders.shared, keepCopy: false, destinationFolder: pickedFolder(), deduplicateByMD5: deduplicate)
+    }
+
+    func testJoinRecordsASharedCopyUnderAnotherNameInsteadOfCopying() async throws {
+        try write(dst, "ROMs/com.provenance.snes/Game (USA).sfc", "same bytes")
+        try write(src, "ROMs/com.provenance.snes/Game.sfc", "same bytes")
+        try write(src, "ROMs/com.provenance.snes/New.sfc", "new")
+        let outcome = try await engine().start(joinRequest())
+        XCTAssertEqual(outcome, .switched)
+        XCTAssertFalse(exists(dst, "ROMs/com.provenance.snes/Game.sfc"))
+        XCTAssertEqual(read(dst, "ROMs/com.provenance.snes/New.sfc"), "new")
+        let journal = try XCTUnwrap(store.load())
+        XCTAssertEqual(journal.entries["ROMs/com.provenance.snes/Game.sfc"]?.state, .deduplicated)
+        XCTAssertEqual(journal.entries["ROMs/com.provenance.snes/Game.sfc"]?.destinationPath, "ROMs/com.provenance.snes/Game (USA).sfc")
+        XCTAssertEqual(journal.remaps, ["ROMs/com.provenance.snes/Game.sfc": "ROMs/com.provenance.snes/Game (USA).sfc"])
+        XCTAssertEqual(journal.entries["ROMs/com.provenance.snes/New.sfc"]?.state, .copied)
+    }
+
+    func testSamePathStillGoesThroughTheIdenticalRule() async throws {
+        try write(dst, "ROMs/com.provenance.snes/Game.sfc", "same bytes")
+        try write(src, "ROMs/com.provenance.snes/Game.sfc", "same bytes")
+        _ = try await engine().start(joinRequest())
+        let journal = try XCTUnwrap(store.load())
+        XCTAssertEqual(journal.entries["ROMs/com.provenance.snes/Game.sfc"]?.state, .identical)
+        XCTAssertNil(journal.remaps)
+    }
+
+    func testWithoutDeduplicationTheFileIsCopied() async throws {
+        try write(dst, "ROMs/com.provenance.snes/Game (USA).sfc", "same bytes")
+        try write(src, "ROMs/com.provenance.snes/Game.sfc", "same bytes")
+        _ = try await engine().start(joinRequest(deduplicate: false))
+        XCTAssertEqual(read(dst, "ROMs/com.provenance.snes/Game.sfc"), "same bytes")
+    }
+
+    func testSavesAreNeverDeduplicated() async throws {
+        try write(dst, "Save States/Other/s.svs", "same bytes")
+        try write(src, "Save States/Game/s.svs", "same bytes")
+        let request = LibraryMoveRequest(source: .appStorage, destination: .pickedFolder, sourceRoot: src, destinationRoot: dst,
+                                         folders: LibraryMoveFolders.shared + LibraryMoveFolders.saves, keepCopy: false,
+                                         destinationFolder: pickedFolder(), deduplicateByMD5: true)
+        _ = try await engine().start(request)
+        XCTAssertEqual(read(dst, "Save States/Game/s.svs"), "same bytes")
+    }
+
+    func testRollbackLeavesTheSharedCopyAlone() async throws {
+        try write(dst, "ROMs/com.provenance.snes/Game (USA).sfc", "same bytes")
+        try write(src, "ROMs/com.provenance.snes/Game.sfc", "same bytes")
+        var journal = LibraryMoveJournal(request: joinRequest())
+        journal.entries["ROMs/com.provenance.snes/Game.sfc"] = .init(size: 10, md5: nil, modified: nil, state: .deduplicated, destinationPath: "ROMs/com.provenance.snes/Game (USA).sfc")
+        try store.save(journal)
+        try await engine().rollback(journal, destinationRoot: dst)
+        XCTAssertEqual(read(dst, "ROMs/com.provenance.snes/Game (USA).sfc"), "same bytes")
+    }
 }
 
 /// Real MD5 everywhere except one destination path, which always hashes wrong.

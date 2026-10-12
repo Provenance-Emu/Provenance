@@ -223,4 +223,19 @@ final class LibraryMoveCleanupTests: XCTestCase {
         XCTAssertEqual(read(dst, "ROMs/a/Two.sfc"), "2")
         XCTAssertNil(store.load())
     }
+
+    func testCleanupDeletesADeduplicatedSourceOnceTheSharedCopyVerifies() async throws {
+        try write(src, "ROMs/com.provenance.snes/Game.sfc", "same bytes")
+        try write(dst, "ROMs/com.provenance.snes/Game (USA).sfc", "same bytes")
+        var journal = LibraryMoveJournal(request: .init(source: .appStorage, destination: .pickedFolder, sourceRoot: src, destinationRoot: dst,
+                                                        folders: ["ROMs"], keepCopy: false))
+        journal.phase = .switched
+        journal.entries["ROMs/com.provenance.snes/Game.sfc"] = .init(size: 10, md5: nil, modified: try LibraryMoveTestSupport.modificationDate(src, "ROMs/com.provenance.snes/Game.sfc"),
+                                                                     state: .deduplicated, destinationPath: "ROMs/com.provenance.snes/Game (USA).sfc")
+        try store.save(journal)
+        let outcome = try await engine().resume(journal, sourceRoot: src, destinationRoot: dst, progress: nil)
+        XCTAssertEqual(outcome, .cleanedUp)
+        XCTAssertFalse(exists(src, "ROMs/com.provenance.snes/Game.sfc"))
+        XCTAssertEqual(read(dst, "ROMs/com.provenance.snes/Game (USA).sfc"), "same bytes")
+    }
 }

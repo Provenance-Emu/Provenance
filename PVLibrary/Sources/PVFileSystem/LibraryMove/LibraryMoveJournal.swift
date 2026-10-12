@@ -27,6 +27,9 @@ public struct LibraryMoveJournal: Codable, Sendable, Equatable {
             /// The destination had a different file at the path: it was moved aside to `displacedPath` under
             /// `Conflicts/`, and the incoming copy is at the real path (the journal key).
             case displaced
+            /// Joining a shared library: the destination already holds the file under `destinationPath`; nothing was
+            /// copied, and `LibraryMoveJournal.remaps` points the record at it. Cleanup deletes the source like `identical`.
+            case deduplicated
         }
 
         /// Size of the source file when it was copied.

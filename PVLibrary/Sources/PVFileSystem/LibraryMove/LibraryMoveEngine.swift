@@ -30,6 +30,8 @@ public actor LibraryMoveEngine {
     let fileManager: FileManager
     let planner: LibraryMovePlanner
     let copier: LibraryMoveFileCopier
+    /// Hashes source files and the destination's shared files when joining a library (D15).
+    let md5Provider: any MD5Provider
     /// Named as the creator of a shared folder's manifest (D14). The main bundle id in production.
     let manifestAuthor: String
     /// Writes the setting that names the destination (and stores or clears the picked folder).
@@ -48,6 +50,7 @@ public actor LibraryMoveEngine {
         self.journalStore = journalStore
         self.fileManager = fileManager
         self.planner = planner
+        self.md5Provider = md5Provider
         self.copier = LibraryMoveFileCopier(fileManager: fileManager, md5Provider: md5Provider)
         self.manifestAuthor = manifestAuthor
         self.switchLocation = switchLocation
@@ -140,6 +143,12 @@ public actor LibraryMoveEngine {
             }
         }
 
+        // Joining a shared library (D15): a ROM or BIOS the destination already holds under another name is recorded, not copied.
+        var sharedIndex: SharedLibraryIndex?
+        if journal.deduplicateByMD5 ?? false {
+            sharedIndex = try SharedLibraryIndex(root: destinationRoot, folders: Array(LibraryMoveFolders.md5Verified), fileManager: fileManager, md5Provider: md5Provider)
+        }
+
         var batchStart = 0
         while batchStart < todo.count {
             let batch = Array(todo[batchStart..<min(batchStart + Self.journalFlushInterval, todo.count)])
@@ -152,7 +161,13 @@ public actor LibraryMoveEngine {
                     return false
                 }
                 do {
-                    if let entry = try copier.transfer(item, from: sourceRoot, to: destinationRoot, onConflict: .displaceExisting) {
+                    if sharedIndex != nil, LibraryMoveFileCopier.needsMD5(item.relativePath), !exists(item.relativePath, under: destinationRoot),
+                       let md5 = md5Provider.md5ForFile(at: sourceRoot.appendingPathComponent(item.relativePath), fromOffset: 0),
+                       let shared = sharedIndex?.match(size: item.size, md5: md5, excluding: item.relativePath) {
+                        journal.entries[item.relativePath] = .init(size: item.size, md5: md5, modified: item.modified, state: .deduplicated, destinationPath: shared)
+                        journal.remaps = (journal.remaps ?? [:]).merging([item.relativePath: shared]) { _, new in new }
+                        bytesDone += item.size
+                    } else if let entry = try copier.transfer(item, from: sourceRoot, to: destinationRoot, onConflict: .displaceExisting) {
                         journal.entries[item.relativePath] = entry
                         bytesDone += entry.size
                         if entry.state == .displaced {
@@ -303,10 +318,10 @@ public actor LibraryMoveEngine {
 
     /// Deletes what this move put in the destination: `copied` files at their path, `conflict` copies at their
     /// `Conflicts/` path, and any claimed file no entry accounts for. A `displaced` entry loses our copy and gets the
-    /// destination's own file back from `Conflicts/`. `identical` files pre-existed and stay, as does every directory
+    /// destination's own file back from `Conflicts/`. `identical` and `deduplicated` files pre-existed and stay, as does every directory
     /// the move did not create. Then the journal goes.
     func rollback(_ journal: LibraryMoveJournal, destinationRoot: URL) throws {
-        for (relativePath, entry) in journal.entries where entry.state != .identical {
+        for (relativePath, entry) in journal.entries where entry.state != .identical && entry.state != .deduplicated {
             if entry.state == .displaced {
                 try restoreDisplaced(entry, relativePath: relativePath, under: destinationRoot)
             } else {
