@@ -18,6 +18,7 @@ import UniformTypeIdentifiers
 /// Global ROM Tools screen for unmatched / pending patches and patch creation entry.
 public struct PendingPatchesView: View {
     @State private var pending: [PVPatch] = []
+    @State private var patchPendingDeletion: PVPatch?
     @State private var allPatches: [PVPatch] = []
     @State private var games: [PVGame] = []
     @State private var selectedPatch: PVPatch?
@@ -94,7 +95,7 @@ public struct PendingPatchesView: View {
                                 }
                                 .buttonStyle(.bordered)
                                 Button("Delete", role: .destructive) {
-                                    delete(patch)
+                                    patchPendingDeletion = patch
                                 }
                                 .buttonStyle(.bordered)
                             }
@@ -132,6 +133,22 @@ public struct PendingPatchesView: View {
             }
         }
         .navigationTitle("Patches / ROM Tools")
+        .confirmationDialog(
+            "Delete this patch?",
+            isPresented: Binding(
+                get: { patchPendingDeletion != nil },
+                set: { if !$0 { patchPendingDeletion = nil } }
+            ),
+            titleVisibility: .visible
+        ) {
+            Button("Delete Patch", role: .destructive) {
+                if let patch = patchPendingDeletion { delete(patch) }
+                patchPendingDeletion = nil
+            }
+            Button("Cancel", role: .cancel) { patchPendingDeletion = nil }
+        } message: {
+            Text("The patch file and any save states for its patched copy are removed. The original ROM is not touched.")
+        }
 #if !os(tvOS)
         .navigationBarTitleDisplayMode(.inline)
         .fileImporter(
@@ -228,35 +245,28 @@ public struct PendingPatchesView: View {
             statusMessage = error.localizedDescription
         case .success(let urls):
             isBusy = true
-            Task {
+            Task { @MainActor in
+                var imported = 0
+                var failures: [String] = []
                 for url in urls {
                     let accessed = url.startAccessingSecurityScopedResource()
                     defer { if accessed { url.stopAccessingSecurityScopedResource() } }
                     do {
-                        let dest = try copyIntoPatchesDirectory(url)
-                        _ = try await PatchRepository.shared.importPatch(at: dest)
+                        _ = try await PatchRepository.shared.importPatchFile(at: url)
+                        imported += 1
                     } catch {
-                        statusMessage = error.localizedDescription
+                        failures.append("\(url.lastPathComponent): \(error.localizedDescription)")
                     }
                 }
-                statusMessage = "Import finished."
+                if failures.isEmpty {
+                    statusMessage = "Imported \(imported) patch\(imported == 1 ? "" : "es")."
+                } else {
+                    statusMessage = "Imported \(imported), failed \(failures.count): " + failures.joined(separator: "; ")
+                }
                 reload()
                 isBusy = false
             }
         }
-    }
-
-    private func copyIntoPatchesDirectory(_ url: URL) throws -> URL {
-        let dir = Paths.patchesPath
-        try FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true)
-        var dest = dir.appendingPathComponent(url.lastPathComponent)
-        if FileManager.default.fileExists(atPath: dest.path) {
-            let stem = dest.deletingPathExtension().lastPathComponent
-            let ext = dest.pathExtension
-            dest = dir.appendingPathComponent("\(stem)-\(UUID().uuidString.prefix(8)).\(ext)")
-        }
-        try FileManager.default.copyItem(at: url, to: dest)
-        return dest
     }
 }
 

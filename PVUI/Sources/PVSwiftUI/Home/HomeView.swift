@@ -1546,16 +1546,9 @@ extension HomeView: GameContextMenuDelegate {
         let accessed = url.startAccessingSecurityScopedResource()
         defer { if accessed { url.stopAccessingSecurityScopedResource() } }
         do {
-            let dir = Paths.patchesPath
-            try FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true)
-            var dest = dir.appendingPathComponent(url.lastPathComponent)
-            if FileManager.default.fileExists(atPath: dest.path) {
-                let stem = dest.deletingPathExtension().lastPathComponent
-                let ext = dest.pathExtension
-                dest = dir.appendingPathComponent("\(stem)-\(UUID().uuidString.prefix(8)).\(ext)")
-            }
-            try FileManager.default.copyItem(at: url, to: dest)
-            _ = try await PatchRepository.shared.importPatch(at: dest, preferredGame: game, autoMatch: false)
+            // Handles bare patches and archives, and never clobbers a different
+            // patch that shares the filename.
+            _ = try await PatchRepository.shared.importPatchFile(at: url, preferredGame: game, autoMatch: false)
             rootDelegate?.showMessage("Imported patch for \(game.title).", title: "Patch Imported")
         } catch {
             rootDelegate?.showMessage("Patch import failed: \(error.localizedDescription)", title: "Import Error")

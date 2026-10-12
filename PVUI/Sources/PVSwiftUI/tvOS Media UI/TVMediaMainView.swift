@@ -524,8 +524,17 @@ struct TVMediaMainView: View {
                 .sheet(isPresented: $gameActions.showPatchApplier, onDismiss: {
                     gameActions.patchApplierGameMD5 = nil
                 }) {
-                    NavigationView {
+                    NavigationStack {
                         PatchApplierView(preselectedGameMD5: gameActions.patchApplierGameMD5)
+                    }
+                }
+                .sheet(isPresented: $gameActions.showPatchManager, onDismiss: {
+                    gameActions.patchManagerGame = nil
+                }) {
+                    NavigationStack {
+                        if let game = gameActions.patchManagerGame, !game.isInvalidated {
+                            PatchManagerView(gameMD5: game.md5Hash, gameTitle: game.title)
+                        }
                     }
                 }
         }
@@ -1066,7 +1075,7 @@ final class TVMediaLibraryModel: ObservableObject {
             do {
                 let realm = try Realm()
                 let results = realm.objects(PVGame.self)
-                    .filter("systemIdentifier == %@", identifier)
+                    .filter("systemIdentifier == %@ AND isHiddenPatchVariant == false", identifier)
                     .sorted(byKeyPath: "title", ascending: true)
                 return Array(results).map { $0.freeze() }
             } catch {
@@ -1090,7 +1099,7 @@ final class TVMediaLibraryModel: ObservableObject {
             do {
                 let realm = try Realm()
                 let results = realm.objects(PVGame.self)
-                    .filter("isFavorite == true")
+                    .filter("isFavorite == true AND isHiddenPatchVariant == false")
                     .sorted(byKeyPath: "title", ascending: true)
                 return Array(results.prefix(100)).map { $0.freeze() }
             } catch {
@@ -1126,9 +1135,11 @@ final class TVMediaGameActions: ObservableObject, GameContextMenuDelegate {
     @Published var coreOptionsCoreName: String?
     @Published var coreOptionsGameMD5: String?
 
-    /// Patch Applier sheet state
+    /// Patch Applier / Manager sheet state
     @Published var showPatchApplier = false
     @Published var patchApplierGameMD5: String?
+    @Published var showPatchManager = false
+    @Published var patchManagerGame: PVGame?
 
     private let retroModel = RetroGameLibraryViewModel()
 
@@ -1222,6 +1233,15 @@ final class TVMediaGameActions: ObservableObject, GameContextMenuDelegate {
             guard !game.isInvalidated else { return }
             patchApplierGameMD5 = game.md5Hash
             showPatchApplier = true
+        }
+    }
+
+    func gameContextMenu(_ menu: GameContextMenu, didRequestManagePatchesFor game: PVGame) {
+        guard !game.isInvalidated else { return }
+        let frozen = game.isFrozen ? game : game.freeze()
+        Task { @MainActor in
+            patchManagerGame = frozen
+            showPatchManager = true
         }
     }
 
@@ -3859,7 +3879,7 @@ struct TVMediaSystemGamesView: View {
             do {
                 let realm = try Realm()
                 let results = realm.objects(PVGame.self)
-                    .filter("systemIdentifier == %@ AND lastPlayed != nil", system.identifier)
+                    .filter("systemIdentifier == %@ AND lastPlayed != nil AND isHiddenPatchVariant == false", system.identifier)
                     .sorted(byKeyPath: #keyPath(PVGame.lastPlayed), ascending: false)
                 return Array(results.prefix(24)).map { $0.freeze() }
             } catch {

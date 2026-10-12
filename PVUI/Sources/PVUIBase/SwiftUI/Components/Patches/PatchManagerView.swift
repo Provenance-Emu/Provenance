@@ -19,6 +19,8 @@ public struct PatchManagerView: View {
     let gameTitle: String
 
     @State private var patches: [PVPatch] = []
+
+    @State private var patchPendingDeletion: PVPatch?
     @State private var statusMessage: String?
     @State private var isBusy = false
     @State private var exportURL: URL?
@@ -56,13 +58,29 @@ public struct PatchManagerView: View {
                             onToggleTile: { toggleTile(patch) },
                             onReapply: { reapply(patch) },
                             onExport: { export(patch) },
-                            onDelete: { delete(patch) }
+                            onDelete: { patchPendingDeletion = patch }
                         )
                     }
                 }
             }
         }
         .navigationTitle("Patches")
+        .confirmationDialog(
+            "Delete this patch?",
+            isPresented: Binding(
+                get: { patchPendingDeletion != nil },
+                set: { if !$0 { patchPendingDeletion = nil } }
+            ),
+            titleVisibility: .visible
+        ) {
+            Button("Delete Patch", role: .destructive) {
+                if let patch = patchPendingDeletion { delete(patch) }
+                patchPendingDeletion = nil
+            }
+            Button("Cancel", role: .cancel) { patchPendingDeletion = nil }
+        } message: {
+            Text("The patch file and any save states for its patched copy are removed. The original ROM is not touched.")
+        }
 #if !os(tvOS)
         .navigationBarTitleDisplayMode(.inline)
 #endif

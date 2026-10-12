@@ -60,6 +60,10 @@ public class RetroGameLibraryViewModel: ObservableObject {
     @Published var showArtworkSourceAlert = false
     @Published var showPatchApplier = false
     @Published var patchApplierGameMD5: String?
+    @Published var showPatchManager = false
+    @Published var patchManagerGame: PVGame?
+    @Published var showPatchImportPicker = false
+    @Published var patchImportGame: PVGame?
 
     /// Reference to the GameImporter for tracking import progress
     internal let gameImporter = GameImporter.shared
