@@ -42,7 +42,7 @@ extension PVSNES9xEmulatorCore: EmulatorCoreInfoPlistProvider {
             fatalError("Could not read Core.plist")
         }
 
-        guard let plistObject = try? PropertyListSerialization.propertyList(from: data, options: [], format: nil) as? [String: Any] else {
+        guard let plistObject = try? PropertyListSerialization.propertyList(from: data, format: nil) as? [String: Any] else {
             fatalError("Could not generate parse Core.plist")
         }
 
