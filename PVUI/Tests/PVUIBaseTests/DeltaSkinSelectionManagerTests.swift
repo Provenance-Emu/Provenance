@@ -101,6 +101,26 @@ final class DeltaSkinSelectionManagerTests: XCTestCase {
         XCTAssertFalse(DeltaSkinSelectionManager.shared.hasExplicitPackagedSkinSelection(for: testSystem, gameIds: gameIds))
     }
 
+    func testEffectiveIdentifierFindsPickStoredUnderADifferentGameKey() {
+        let manager = DeltaSkinSelectionManager.shared
+        let prefs = DeltaSkinPreferences.shared
+        defer { cleanupSelectionState() }
+
+        prefs.setSelectedSkin("skin-from-boot", for: testSystem, orientation: .portrait)
+        manager.setSkin("skin-picked-live", for: testSystem, gameId: testGameId, orientation: .portrait, scope: .session)
+
+        let resolved = manager.effectiveSkinIdentifier(
+            for: testSystem,
+            gameIds: [testGameId, testGameAltId],
+            orientation: .portrait
+        )
+        XCTAssertEqual(resolved, "skin-picked-live")
+        XCTAssertEqual(
+            manager.effectiveSkinIdentifier(for: testSystem, gameIds: [testGameAltId], orientation: .portrait),
+            "skin-from-boot"
+        )
+    }
+
     func testExplicitSelectionTrueForGameSkinInEitherOrientationOrKey() {
         let manager = DeltaSkinSelectionManager.shared
         defer { cleanupSelectionState() }

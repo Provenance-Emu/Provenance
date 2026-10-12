@@ -258,9 +258,10 @@ public extension DeltaSkinProtocol {
             }
             return data
         } else {
-            // Load from archive
+            // Load from archive. info.json names are often the file stem while the zip
+            // entry lives in a folder or differs only by case.
             guard let archive = Archive(url: fileURL, accessMode: .read),
-                  let assetEntry = archive[filename],
+                  let assetEntry = archive.entry(matchingAssetNamed: filename),
                   let data = archive.extractData(assetEntry) else {
                 ELOG("Failed to extract asset from archive: \(filename)")
                 throw DeltaSkinError.missingAsset

@@ -338,11 +338,23 @@ extension PVEmulatorViewController {
     }
 
     /// Re-runs the boot apply once the core is running; thin AV-info updates also re-run it.
+    ///
+    /// Not KVO on `isRunning`: that property is a computed pass-through, and
+    /// `publisher(for:)` crashes (bad access at a null ivar) while the skin view is
+    /// still being installed.
     private func observeCoreStartForControllerVariant() {
-        overlayCoreRunningCancellable = core.publisher(for: \.isRunning)
-            .first(where: { $0 })
-            .receive(on: DispatchQueue.main)
-            .sink { [weak self] _ in self?.applyResolvedControllerVariantIfNeeded() }
+        let center = NotificationCenter.default
+        center.removeObserver(self, name: .pvEmulatorCoreDidStartRunning, object: core)
+        center.addObserver(self, selector: #selector(handleCoreDidStartRunning(_:)),
+                           name: .pvEmulatorCoreDidStartRunning, object: core)
+        if core.isRunning {
+            applyResolvedControllerVariantIfNeeded()
+        }
+    }
+
+    @objc private func handleCoreDidStartRunning(_ notification: Notification) {
+        guard notification.object as AnyObject === core else { return }
+        applyResolvedControllerVariantIfNeeded()
     }
 
     @objc private func handleThinCoreAVInfoForControllerVariant(_ notification: Notification) {

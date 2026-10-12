@@ -266,6 +266,9 @@ import PVLogging
         isRunning = true
         shouldStop = false
         isOn = true
+        // `isRunning` is a computed pass-through to the bridge, so there is no ivar for
+        // KVO. Observers listen for this instead of `publisher(for: \.isRunning)`.
+        NotificationCenter.default.post(name: .pvEmulatorCoreDidStartRunning, object: self)
         // Update the singleton state
         let coreId = self.coreIdentifier ?? ""
         let sysId = self.systemIdentifier ?? ""
@@ -321,4 +324,12 @@ import PVLogging
     @objc open func emulationLoopThread() {
         bridge.emulationLoopThread?()
     }
+}
+
+public extension Notification.Name {
+    /// Posted on the main thread from `PVEmulatorCore.markEmulationRunning()`, once per successful start.
+    ///
+    /// `isRunning` is a computed pass-through to the bridge and has no ivar, so key-value
+    /// observation on it crashes. Listen for this instead.
+    static let pvEmulatorCoreDidStartRunning = Notification.Name("PVEmulatorCoreDidStartRunning")
 }

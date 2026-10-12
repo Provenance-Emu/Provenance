@@ -1416,6 +1416,30 @@ public enum DeltaSkinError: Error {
 }
 
 extension Archive {
+    /// Exact path, then a case-insensitive match on the last path component.
+    ///
+    /// If that file was never packed, try the same stem as `.pdf`, `.png`, or `.svg`.
+    /// Delta skins often name a PNG in `info.json` while the archive only contains the PDF.
+    func entry(matchingAssetNamed filename: String) -> Entry? {
+        if let exact = self[filename] { return exact }
+        let wanted = (filename as NSString).lastPathComponent
+        let wantedLower = wanted.lowercased()
+        guard !wantedLower.isEmpty else { return nil }
+        if let match = first(where: { ($0.path as NSString).lastPathComponent.lowercased() == wantedLower }) {
+            return match
+        }
+        let stem = (wanted as NSString).deletingPathExtension.lowercased()
+        guard !stem.isEmpty else { return nil }
+        for ext in ["pdf", "png", "svg"] {
+            let candidate = "\(stem).\(ext)"
+            guard candidate != wantedLower else { continue }
+            if let match = first(where: { ($0.path as NSString).lastPathComponent.lowercased() == candidate }) {
+                return match
+            }
+        }
+        return nil
+    }
+
     func extractData(_ entry: Entry) -> Data? {
         var data = Data()
         do {

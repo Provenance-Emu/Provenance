@@ -948,6 +948,7 @@ extension PVEmulatorViewController: PVViewportLayoutDelegate {
             if let rects = dualScreenViewportRects(),
                applyDualScreenFramesToPositioningBridge([rects.top, rects.bottom]) {
                 logViewportApply("RA-dual:\(reason)", frame: rects.top.union(rects.bottom))
+                ensureGPUViewVisibilityAndZOrder()
                 return
             }
             // With no skin at all (tvOS, skins off, desktop input mode) the only frame on offer is the
@@ -1095,12 +1096,16 @@ extension PVEmulatorViewController: PVViewportLayoutDelegate {
 
     // MARK: - Utilities
 
+    /// False for own-surface cores (Dolphin, Azahar): they draw into a view of their own inside the
+    /// touch view, so the host GPU view has nothing to show and, stacked above theirs, blacks them out.
+    internal var hostGPUViewDrawsGame: Bool {
+        !(core.skipLayout && core.bridge is EmulatorCoreViewportPositioning)
+    }
+
     /// Ensure GPU view is visible and below skin
     internal func ensureGPUViewVisibilityAndZOrder() {
         guard let gameScreenView = gpuViewController.view else { return }
-        // Own-surface cores (Dolphin, Azahar) draw into a view of their own inside the touch view;
-        // the host GPU view has nothing to show and, stacked above theirs, blacked them out.
-        if core.skipLayout, core.bridge is EmulatorCoreViewportPositioning {
+        guard hostGPUViewDrawsGame else {
             gameScreenView.isHidden = true
             return
         }

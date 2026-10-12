@@ -171,6 +171,36 @@ public final class DeltaSkinSelectionManager: ObservableObject {
         }
     }
 
+    /// Effective skin for one orientation, checking every key a game may be stored under.
+    ///
+    /// Pickers write `PVGame.id`. Rotation used to read `md5Hash` or `crc`, so a pick
+    /// applied live and then disappeared after leaving that orientation and coming back.
+    /// ``builtInSkinPreferenceToken`` maps to `nil` and does not fall through.
+    public func effectiveSkinIdentifier(
+        for systemId: SystemIdentifier,
+        gameIds: [String],
+        orientation: SkinOrientation
+    ) -> String? {
+        let keys = gameIds.filter { !$0.isEmpty }
+        return queue.sync {
+            let raw = firstSelection(for: systemId, gameIds: keys, orientation: orientation)
+            if raw == Self.builtInSkinPreferenceToken { return nil }
+            return raw
+        }
+    }
+
+    /// `true` when the first stored pick across `gameIds` is the built-in controller token.
+    public func prefersBuiltInControllerSkin(
+        for systemId: SystemIdentifier,
+        gameIds: [String],
+        orientation: SkinOrientation
+    ) -> Bool {
+        let keys = gameIds.filter { !$0.isEmpty }
+        return queue.sync {
+            firstSelection(for: systemId, gameIds: keys, orientation: orientation) == Self.builtInSkinPreferenceToken
+        }
+    }
+
     /// Get the effective skin identifier for a game (convenience method)
     public func effectiveGameSkinIdentifier(
         for systemId: SystemIdentifier,

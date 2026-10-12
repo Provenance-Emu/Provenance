@@ -168,9 +168,6 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
     /// that cannot take it is not asked again on every change notification.
     var hostAppliedControllerVariantID: String?
 
-    /// Runs the controller-variant boot apply once the core starts running.
-    var overlayCoreRunningCancellable: AnyCancellable?
-
     /// Re-applies the overlay's viewport when the scaling mode changes.
     var overlayScalingModeCancellable: AnyCancellable?
 
@@ -2236,7 +2233,7 @@ extension PVEmulatorViewController {
         }
 
         if let gpuView = gpuViewController.view {
-            gpuView.isHidden = false
+            gpuView.isHidden = !hostGPUViewDrawsGame
             gpuView.alpha = 1.0
         }
 
@@ -2753,6 +2750,17 @@ extension PVEmulatorViewController {
         }
     }
 
+    /// A view the emulator core owns and draws into. Skin cleanup must not detach it.
+    private static func isCoreOwnedRenderSurface(_ view: UIView) -> Bool {
+        let name = String(describing: type(of: view))
+        return name.contains("RenderView")
+            || name.contains("Azahar")
+            || name.contains("Dolphin")
+            || name.contains("EmuThree")
+            || name.contains("Citra")
+            || name.contains("PPSSPP")
+    }
+
     /// Perform a radical cleanup of the entire view hierarchy
     private func radicalCleanup() {
         DLOG("Performing RADICAL cleanup of view hierarchy")
@@ -2803,23 +2811,25 @@ extension PVEmulatorViewController {
             return set
         }()
         for child in children {
-            if !preservedControllers.contains(ObjectIdentifier(child)) {
-                DLOG("Removing controller: \(child)")
-                child.willMove(toParent: nil)
-                child.view.removeFromSuperview()
-                child.removeFromParent()
-            }
+            if preservedControllers.contains(ObjectIdentifier(child)) { continue }
+            if child.isViewLoaded, Self.isCoreOwnedRenderSurface(child.view) { continue }
+            DLOG("Removing controller: \(child)")
+            child.willMove(toParent: nil)
+            child.view.removeFromSuperview()
+            child.removeFromParent()
         }
 
         // 3. Clear all tracked hosting controllers
         skinHostingControllers.removeAll()
 
-        // 4. Remove ALL subviews from the main view except preserved views
+        // 4. Remove skin chrome from the main view. Core render surfaces (Azahar, Dolphin,
+        // PPSSPP, and similar) live as direct subviews and must stay: removing them
+        // detaches the Metal layer and the picture stays black until the next launch.
         for subview in view.subviews {
-            if !preservedViews.contains(ObjectIdentifier(subview)) {
-                DLOG("Removing view: \(subview)")
-                subview.removeFromSuperview()
-            }
+            if preservedViews.contains(ObjectIdentifier(subview)) { continue }
+            if Self.isCoreOwnedRenderSurface(subview) { continue }
+            DLOG("Removing view: \(subview)")
+            subview.removeFromSuperview()
         }
 
         // Also remove any skin containers that might be nested
@@ -3126,6 +3136,10 @@ extension PVEmulatorViewController {
             if gpuView.superview == view && skinContainer.superview == view {
                 view.insertSubview(gpuView, belowSubview: skinContainer)
             }
+            // The move above stacks the host GPU view over an own-surface core's render view.
+            if !hostGPUViewDrawsGame {
+                gpuView.isHidden = true
+            }
             view.bringSubviewToFront(skinContainer)
             keepOverlayMenuButtonInFront()
         }
@@ -3199,6 +3213,19 @@ extension PVEmulatorViewController {
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.05, execute: work)
     }
 
+    /// Game keys a skin preference may be stored under, `PVGame.id` first.
+    private var runningGameSkinKeys: [String] {
+        var keys: [String] = []
+        func append(_ value: String) {
+            guard !value.isEmpty, !keys.contains(value) else { return }
+            keys.append(value)
+        }
+        append(game.id)
+        append(game.md5Hash)
+        append(game.crc)
+        return keys
+    }
+
     private func coordinatorAnimateRotation(previousSkin: DeltaSkinProtocol?, newOrientation: SkinOrientation, completion: @escaping () -> Void) {
         let coordinator = self.transitionCoordinator
         let animateBlock = {
@@ -3215,19 +3242,17 @@ extension PVEmulatorViewController {
             if self.isDeltaSkinEnabled {
                 Task { @MainActor in
                     defer { completion() }
-                    // Determine effective skin id for the new orientation
+                    // Determine effective skin id for the new orientation.
+                    // Check every game key: the picker writes `PVGame.id`, older paths wrote md5 or crc.
                     let systemId = self.game.system?.systemIdentifier
-                    let gameId = self.game.md5Hash ?? self.game.crc
+                    let gameIds = self.runningGameSkinKeys
                     let effectiveId = systemId.flatMap {
-                        DeltaSkinManager.shared.effectiveSkinIdentifier(for: $0, gameId: gameId, orientation: newOrientation)
+                        DeltaSkinSelectionManager.shared.effectiveSkinIdentifier(for: $0, gameIds: gameIds, orientation: newOrientation)
                     }
 
                     let prefersBuiltIn: Bool = {
                         guard let sid = systemId else { return false }
-                        if !gameId.isEmpty {
-                            return DeltaSkinSelectionManager.shared.prefersBuiltInControllerSkin(for: sid, gameId: gameId, orientation: newOrientation)
-                        }
-                        return DeltaSkinSelectionManager.shared.prefersBuiltInControllerSkin(for: sid, gameId: nil, orientation: newOrientation)
+                        return DeltaSkinSelectionManager.shared.prefersBuiltInControllerSkin(for: sid, gameIds: gameIds, orientation: newOrientation)
                     }()
 
                     let currentId = self.currentSkin?.identifier
