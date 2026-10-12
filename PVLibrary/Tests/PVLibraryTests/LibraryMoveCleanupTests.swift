@@ -105,6 +105,21 @@ final class LibraryMoveCleanupTests: XCTestCase {
         XCTAssertFalse(exists(src, "Battery States"), "the source goes only after its content is safe")
     }
 
+    func testAPreexistingSameSizeDestinationFileNeverCostsTheSource() async throws {
+        // The destination already holds a stale same-size save. Size alone must not make the live source "identical":
+        // cleanup would then delete the only copy of the live data.
+        try write(dst, "Battery States/G/G.srm", "OLD1")
+        try write(src, "Battery States/G/G.srm", "NEW1")
+        let journal = try await switchedJournal()
+
+        let outcome = try await engine().resume(journal, sourceRoot: src, destinationRoot: dst, progress: nil)
+
+        XCTAssertEqual(outcome, .cleanedUp)
+        XCTAssertFalse(exists(src, "Battery States"), "the source goes only after its content is safe at the destination")
+        let survivors = [read(dst, "Battery States/G/G.srm"), read(dst, "Conflicts/Battery States/G/G.srm")]
+        XCTAssertTrue(survivors.contains("NEW1"), "the live save still exists somewhere under the destination")
+    }
+
     func testChangedSinceJournalUsesSizeThenMtimeWithOneSecondTolerance() {
         let t = Date(timeIntervalSince1970: 1_700_000_000)
         let entry = LibraryMoveJournal.Entry(size: 10, md5: nil, modified: t, state: .copied, destinationPath: nil)

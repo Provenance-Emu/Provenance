@@ -100,6 +100,23 @@ final class LibraryMoveFileCopierTests: XCTestCase {
         XCTAssertEqual(try LibraryMoveFileCopier().transfer(item, from: src, to: dst)?.state, .conflict)
     }
 
+    func testSameSizeDifferentContentInASizeOnlyFolderIsAConflict() throws {
+        let item = try write(src, "Battery States/G/G.srm", "AAAA")
+        _ = try write(dst, "Battery States/G/G.srm", "BBBB")
+        let entry = try LibraryMoveFileCopier().transfer(item, from: src, to: dst)
+        XCTAssertEqual(entry?.state, .conflict, "a fixed-size save must not be called identical on size alone")
+        XCTAssertEqual(LibraryMoveTestSupport.read(dst, "Battery States/G/G.srm"), "BBBB")
+        XCTAssertEqual(LibraryMoveTestSupport.read(dst, "Conflicts/Battery States/G/G.srm"), "AAAA")
+    }
+
+    func testSameContentInASizeOnlyFolderIsIdentical() throws {
+        let item = try write(src, "Battery States/G/G.srm", "AAAA")
+        _ = try write(dst, "Battery States/G/G.srm", "AAAA")
+        let entry = try LibraryMoveFileCopier().transfer(item, from: src, to: dst)
+        XCTAssertEqual(entry?.state, .identical)
+        XCTAssertFalse(LibraryMoveTestSupport.exists(dst, "Conflicts"))
+    }
+
     func testVanishedSourceReturnsNil() throws {
         let item = LibraryMovePlan.Item(relativePath: "ROMs/gone.sfc", size: 3, modified: nil)
         XCTAssertNil(try LibraryMoveFileCopier().transfer(item, from: src, to: dst))

@@ -6,6 +6,7 @@
 //
 //  Moves one planned file: copy, verify (size always; MD5 under ROMs/ and BIOS/), and the
 //  conflict rule (never overwrite; a different file of the same name goes to Conflicts/).
+//  A pre-existing destination file counts as identical only when its size and MD5 match, in every folder.
 //  The source is left in place; cleanup deletes it after the switch.
 //
 
@@ -37,7 +38,11 @@ public struct LibraryMoveFileCopier: Sendable {
             try copyVerified(from: facts.url, to: destination, size: facts.size, md5: facts.md5, relativePath: item.relativePath)
             return .init(size: facts.size, md5: facts.md5, modified: facts.modified, state: .copied, destinationPath: nil)
         }
-        if verify(destination, expectedSize: facts.size, expectedMD5: facts.md5) {
+        // A pre-existing destination file is "identical" only when its content hash matches, in every folder:
+        // fixed-size files (SRAM saves, many save states) collide on size alone, and cleanup deletes the source of an
+        // identical entry. The folder policy (`needsMD5`) only governs post-copy verification.
+        if let sourceMD5 = facts.md5 ?? md5Provider.md5ForFile(at: facts.url, fromOffset: 0),
+           verify(destination, expectedSize: facts.size, expectedMD5: sourceMD5) {
             return .init(size: facts.size, md5: facts.md5, modified: facts.modified, state: .identical, destinationPath: nil)
         }
         return try copyToConflicts(item, facts, destinationRoot: destinationRoot)
