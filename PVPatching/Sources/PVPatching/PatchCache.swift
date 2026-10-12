@@ -41,6 +41,92 @@ public actor PatchCache {
         return base.appendingPathComponent("PatchedROMs", isDirectory: true)
     }
 
+    // MARK: - Fingerprint fast path
+
+    /// Cheap identity of the inputs: paths, sizes and modification dates. If none of these
+    /// changed since the artifact was produced, the artifact is still valid and we can skip
+    /// reading and hashing a possibly multi-hundred-megabyte ROM on every launch.
+    struct InputFingerprint: Codable, Equatable {
+        var romPath: String
+        var romSize: Int
+        var romModified: Double
+        var patchPath: String
+        var patchSize: Int
+        var patchModified: Double
+        var outputStem: String
+        var revision: String
+
+        static func make(romURL: URL, patchURL: URL, outputStem: String) -> InputFingerprint? {
+            guard let rom = stat(romURL), let patch = stat(patchURL) else { return nil }
+            return InputFingerprint(
+                romPath: romURL.standardizedFileURL.path, romSize: rom.size, romModified: rom.modified,
+                patchPath: patchURL.standardizedFileURL.path, patchSize: patch.size, patchModified: patch.modified,
+                outputStem: outputStem, revision: PatchHashing.patcherRevision
+            )
+        }
+
+        /// Stable file name for the sidecar; derived from the fingerprint itself.
+        var fileName: String {
+            let text = "\(romPath)|\(romSize)|\(romModified)|\(patchPath)|\(patchSize)|\(patchModified)|\(outputStem)|\(revision)"
+            return String(PatchHashing.sha256Hex(Data(text.utf8)).prefix(32)) + ".json"
+        }
+    }
+
+    struct CachedArtifactRecord: Codable {
+        var fingerprint: InputFingerprint
+        var artifact: PatchArtifact
+        var outputSize: Int
+        var outputModified: Double
+    }
+
+    static func stat(_ url: URL) -> (size: Int, modified: Double)? {
+        guard let attrs = try? FileManager.default.attributesOfItem(atPath: url.path),
+              let size = (attrs[.size] as? NSNumber)?.intValue,
+              let date = attrs[.modificationDate] as? Date else { return nil }
+        return (size, date.timeIntervalSince1970)
+    }
+
+    private var fingerprintDirectory: URL {
+        cacheDirectory.appendingPathComponent(".fingerprints", isDirectory: true)
+    }
+
+    /// Return the artifact for these inputs without touching ROM bytes, when the sidecar
+    /// says nothing changed and the cached output is still intact.
+    public func fastLookup(romURL: URL, patchURL: URL, outputStem: String) -> PatchArtifact? {
+        guard let fingerprint = InputFingerprint.make(romURL: romURL, patchURL: patchURL, outputStem: outputStem) else {
+            return nil
+        }
+        let sidecar = fingerprintDirectory.appendingPathComponent(fingerprint.fileName)
+        guard let data = try? Data(contentsOf: sidecar),
+              let record = try? JSONDecoder().decode(CachedArtifactRecord.self, from: data),
+              record.fingerprint == fingerprint,
+              let output = Self.stat(record.artifact.url),
+              output.size == record.outputSize,
+              output.modified == record.outputModified else {
+            return nil
+        }
+        var artifact = record.artifact
+        artifact.wasCached = true
+        return artifact
+    }
+
+    /// Remember a produced (or verified) artifact so the next lookup can skip hashing.
+    public func recordFastLookup(_ artifact: PatchArtifact, romURL: URL, patchURL: URL) {
+        guard let fingerprint = InputFingerprint.make(romURL: romURL, patchURL: patchURL, outputStem: artifact.outputStem),
+              let output = Self.stat(artifact.url) else { return }
+        let record = CachedArtifactRecord(
+            fingerprint: fingerprint, artifact: artifact,
+            outputSize: output.size, outputModified: output.modified
+        )
+        do {
+            try FileManager.default.createDirectory(at: fingerprintDirectory, withIntermediateDirectories: true)
+            let data = try JSONEncoder().encode(record)
+            try data.write(to: fingerprintDirectory.appendingPathComponent(fingerprint.fileName), options: .atomic)
+        } catch {
+            // Best effort: the slow path still works without the sidecar.
+        }
+    }
+
     /// Look up a cached patched ROM using already-loaded file data.
     public func cachedURL(
         romData: Data,
