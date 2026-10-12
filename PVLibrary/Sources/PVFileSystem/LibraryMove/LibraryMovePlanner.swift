@@ -159,7 +159,7 @@ public struct LibraryMovePlanner: Sendable {
     }
 
     /// Strips `root` from `url`, accepting either side in its raw or symlink-resolved form (`/var` vs `/private/var`).
-    static func relativePath(of url: URL, under root: URL) -> String? {
+    public static func relativePath(of url: URL, under root: URL) -> String? {
         let candidates = [url.standardizedFileURL.path, url.resolvingSymlinksInPath().path]
         let bases = [root.standardizedFileURL.path, root.resolvingSymlinksInPath().path].map { $0.hasSuffix("/") ? $0 : $0 + "/" }
         for path in candidates {

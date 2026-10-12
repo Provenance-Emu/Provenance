@@ -294,6 +294,13 @@ public final class PVAppDelegate: UIResponder, UIApplicationDelegate, Observable
             }
             .sink(receiveCompletion: { _ in }, receiveValue: { _ in })
             .store(in: &cancellables)
+
+        #if !os(tvOS)
+        // An iCloud Drive picked folder: download placeholders other apps add, and rescan when they arrive. Idempotent.
+        PickedFolderCloudWatcher.shared.startIfNeeded {
+            LibraryRescanRequester.shared.requestRescan(reason: "iCloud metadata update")
+        }
+        #endif
     }
     // Initialize the UI theme
     @MainActor
