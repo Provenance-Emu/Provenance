@@ -23,11 +23,12 @@ final class LibraryMoveJournalTests: XCTestCase {
         let request = LibraryMoveRequest(source: .appGroup, destination: .appStorage,
                                          sourceRoot: URL(fileURLWithPath: "/src"), destinationRoot: URL(fileURLWithPath: "/dst"),
                                          folders: ["ROMs", "Save States"], keepCopy: false)
-        // Whole-second dates: the journal round-trips through ISO-8601 without fractions, and the test compares for equality.
         var journal = LibraryMoveJournal(request: request, now: Date(timeIntervalSince1970: 1_700_000_000))
         journal.entries["ROMs/com.provenance.snes/Game.sfc"] = .init(size: 42, md5: "abc", modified: Date(timeIntervalSince1970: 1_700_000_000), state: .copied, destinationPath: nil)
         journal.entries["Save States/Game/s.svs"] = .init(size: 7, md5: nil, modified: Date(timeIntervalSince1970: 1_700_000_100),
                                                           state: .conflict, destinationPath: "Conflicts/Save States/Game/s.svs")
+        journal.entries["Battery States/Game/Game.srm"] = .init(size: 4, md5: nil, modified: Date(timeIntervalSince1970: 1_700_000_200.25),
+                                                                state: .displaced, destinationPath: nil, displacedPath: "Conflicts/Battery States/Game/Game.srm")
         journal.inFlight = ["ROMs/com.provenance.snes/Next.sfc"]
         journal.createdDirectories = ["ROMs/com.provenance.snes"]
         return journal
@@ -67,11 +68,41 @@ final class LibraryMoveJournalTests: XCTestCase {
         XCTAssertNil(store.load())
     }
 
-    func testNewerVersionIsDiscarded() throws {
+    func testDatesRoundTripWithFractionsOfASecond() throws {
+        try store.save(makeJournal())
+        XCTAssertEqual(store.load()?.entries["Battery States/Game/Game.srm"]?.modified, Date(timeIntervalSince1970: 1_700_000_200.25))
+    }
+
+    func testDisplacedEntryRoundTripsItsDisplacedPath() throws {
+        try store.save(makeJournal())
+        let entry = store.load()?.entries["Battery States/Game/Game.srm"]
+        XCTAssertEqual(entry?.state, .displaced)
+        XCTAssertNil(entry?.destinationPath)
+        XCTAssertEqual(entry?.displacedPath, "Conflicts/Battery States/Game/Game.srm")
+    }
+
+    func testNewerVersionIsIgnoredButKept() throws {
         var journal = makeJournal()
         journal.version = LibraryMoveJournal.currentVersion + 1
         try store.save(journal)
         XCTAssertNil(store.load())
+        XCTAssertTrue(store.exists, "a newer build may still need this journal to finish its cleanup")
+    }
+
+    func testNewerVersionWithAnUnreadableBodyIsStillKept() throws {
+        try FileManager.default.createDirectory(at: store.url.deletingLastPathComponent(), withIntermediateDirectories: true)
+        try Data(#"{"version": 99, "phase": "somethingNew"}"#.utf8).write(to: store.url)
+        XCTAssertNil(store.load())
+        XCTAssertTrue(store.exists)
+    }
+
+    func testExistsDoesNotDeleteAnUnreadableJournal() throws {
+        try FileManager.default.createDirectory(at: store.url.deletingLastPathComponent(), withIntermediateDirectories: true)
+        try Data("{ not json".utf8).write(to: store.url)
+        XCTAssertTrue(store.exists)
+        XCTAssertTrue(store.exists, "asking twice changes nothing")
+        XCTAssertNil(store.load())
+        XCTAssertFalse(store.exists)
     }
 
     func testEntryRecordsSourceSizeAndModificationDate() throws {
@@ -88,6 +119,7 @@ final class LibraryMoveJournalTests: XCTestCase {
         XCTAssertEqual(LibraryMoveJournal.Entry.State.copied.rawValue, "copied")
         XCTAssertEqual(LibraryMoveJournal.Entry.State.identical.rawValue, "identical")
         XCTAssertEqual(LibraryMoveJournal.Entry.State.conflict.rawValue, "conflict")
+        XCTAssertEqual(LibraryMoveJournal.Entry.State.displaced.rawValue, "displaced")
     }
 
     func testFolderConstantsArePinned() {

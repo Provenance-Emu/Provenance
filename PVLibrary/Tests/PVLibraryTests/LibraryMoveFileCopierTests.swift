@@ -126,11 +126,76 @@ final class LibraryMoveFileCopierTests: XCTestCase {
     func testVerificationFailureRemovesThePartialCopyAndThrows() throws {
         let item = try write(src, "ROMs/a/Game.sfc", "rom")
         let md5 = StubMD5()
-        md5.answers["dst/ROMs/a/Game.sfc"] = "deadbeef"   // the destination hashes "wrong" every time
+        // The copy is verified at its hidden temp name, before the rename, so that is the path that must hash "wrong".
+        md5.answers["dst/ROMs/a/.Game.sfc" + LibraryMoveFileCopier.partialSuffix] = "deadbeef"
         XCTAssertThrowsError(try LibraryMoveFileCopier(md5Provider: md5).transfer(item, from: src, to: dst)) { error in
             XCTAssertEqual(error as? LibraryMoveError, .verificationFailed(relativePath: "ROMs/a/Game.sfc"))
         }
         XCTAssertFalse(LibraryMoveTestSupport.exists(dst, "ROMs/a/Game.sfc"))
+        XCTAssertFalse(LibraryMoveTestSupport.exists(dst, "ROMs/a/.Game.sfc" + LibraryMoveFileCopier.partialSuffix), "the failed temp file is removed")
+    }
+
+    func testAStalePartialIsReplacedAndNeverPlanned() throws {
+        let item = try write(src, "ROMs/a/Game.sfc", "rom")
+        let stale = "ROMs/a/.Game.sfc" + LibraryMoveFileCopier.partialSuffix
+        _ = try write(dst, stale, "garbage left by a crash")
+        let entry = try LibraryMoveFileCopier().transfer(item, from: src, to: dst)
+        XCTAssertEqual(entry?.state, .copied)
+        XCTAssertEqual(LibraryMoveTestSupport.read(dst, "ROMs/a/Game.sfc"), "rom")
+        XCTAssertFalse(LibraryMoveTestSupport.exists(dst, stale), "the temp file is renamed away")
+        let planned = try LibraryMovePlanner().plan(root: dst, folders: ["ROMs"])
+        XCTAssertEqual(planned.items.map(\.relativePath), ["ROMs/a/Game.sfc"], "a temp file is hidden, so the planner never sees it")
+    }
+
+    // MARK: - Copy-phase conflicts: the destination's own file is moved aside
+
+    func testDisplacePolicyMovesTheExistingFileAsideAndPutsTheIncomingFileAtTheRealPath() throws {
+        let item = try write(src, "Battery States/G/G.srm", "LIVE")
+        _ = try write(dst, "Battery States/G/G.srm", "OLD!")
+        let entry = try LibraryMoveFileCopier().transfer(item, from: src, to: dst, onConflict: .displaceExisting)
+        XCTAssertEqual(entry?.state, .displaced)
+        XCTAssertNil(entry?.destinationPath, "the incoming file is at the real path")
+        XCTAssertEqual(entry?.displacedPath, "Conflicts/Battery States/G/G.srm")
+        XCTAssertEqual(LibraryMoveTestSupport.read(dst, "Battery States/G/G.srm"), "LIVE")
+        XCTAssertEqual(LibraryMoveTestSupport.read(dst, "Conflicts/Battery States/G/G.srm"), "OLD!", "nothing is deleted")
+        XCTAssertFalse(LibraryMoveTestSupport.exists(dst, "Battery States/G/.G.srm" + LibraryMoveFileCopier.partialSuffix))
+    }
+
+    func testDisplacedFilesGetNumberedNamesWhenConflictsIsTaken() throws {
+        let item = try write(src, "ROMs/a/Game.sfc", "incoming")
+        _ = try write(dst, "ROMs/a/Game.sfc", "existing")
+        _ = try write(dst, "Conflicts/ROMs/a/Game.sfc", "earlier")
+        let entry = try LibraryMoveFileCopier().transfer(item, from: src, to: dst, onConflict: .displaceExisting)
+        XCTAssertEqual(entry?.displacedPath, "Conflicts/ROMs/a/Game-2.sfc")
+        XCTAssertEqual(LibraryMoveTestSupport.read(dst, "Conflicts/ROMs/a/Game.sfc"), "earlier")
+        XCTAssertEqual(LibraryMoveTestSupport.read(dst, "Conflicts/ROMs/a/Game-2.sfc"), "existing")
+        XCTAssertEqual(LibraryMoveTestSupport.read(dst, "ROMs/a/Game.sfc"), "incoming")
+    }
+
+    func testDisplacePolicyStillCallsAnIdenticalFileIdenticalAndMovesNothing() throws {
+        let item = try write(src, "Battery States/G/G.srm", "SAME")
+        _ = try write(dst, "Battery States/G/G.srm", "SAME")
+        let entry = try LibraryMoveFileCopier().transfer(item, from: src, to: dst, onConflict: .displaceExisting)
+        XCTAssertEqual(entry?.state, .identical)
+        XCTAssertFalse(LibraryMoveTestSupport.exists(dst, "Conflicts"))
+    }
+
+    func testDisplacePolicyFilesIncomingUnderConflictsWhenTheDestinationPathIsAFolder() throws {
+        let item = try write(src, "ROMs/a/Game.sfc", "incoming")
+        try FileManager.default.createDirectory(at: dst.appendingPathComponent("ROMs/a/Game.sfc"), withIntermediateDirectories: true)
+        let entry = try LibraryMoveFileCopier().transfer(item, from: src, to: dst, onConflict: .displaceExisting)
+        XCTAssertEqual(entry?.state, .conflict, "a folder is never moved aside")
+        XCTAssertEqual(LibraryMoveTestSupport.read(dst, "Conflicts/ROMs/a/Game.sfc"), "incoming")
+    }
+
+    func testDisplacePolicyLeavesTheExistingFileInPlaceWhenTheIncomingCopyFailsVerification() throws {
+        let item = try write(src, "ROMs/a/Game.sfc", "incoming")
+        _ = try write(dst, "ROMs/a/Game.sfc", "existing")
+        let md5 = StubMD5()
+        md5.answers["dst/ROMs/a/.Game.sfc" + LibraryMoveFileCopier.partialSuffix] = "deadbeef"
+        XCTAssertThrowsError(try LibraryMoveFileCopier(md5Provider: md5).transfer(item, from: src, to: dst, onConflict: .displaceExisting))
+        XCTAssertEqual(LibraryMoveTestSupport.read(dst, "ROMs/a/Game.sfc"), "existing", "nothing is moved aside until the incoming copy has verified")
+        XCTAssertFalse(LibraryMoveTestSupport.exists(dst, "Conflicts"))
     }
 
     func testVerifyChecksSizeAndOptionalMD5() throws {

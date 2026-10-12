@@ -78,6 +78,8 @@ public struct LibraryMovePlanner: Sendable {
     /// Regular files under `root/<name>` for each name that exists. A name may be a directory
     /// (planned recursively) or a regular file (planned as one item). Hidden entries, files
     /// whose name contains `.realm`, and the journal file name are never planned.
+    /// - Throws: when anything under a listed name can't be read. A file the plan silently dropped would be skipped by
+    ///   the copy, left behind by cleanup and invisible after the switch, so an incomplete plan never proceeds.
     public func plan(root: URL, folders: [String]) throws -> LibraryMovePlan {
         var items: [LibraryMovePlan.Item] = []
         for name in folders where !Self.isExcluded(name: name) {
@@ -85,8 +87,8 @@ public struct LibraryMovePlanner: Sendable {
             var isDirectory: ObjCBool = false
             guard fileManager.fileExists(atPath: entryURL.path, isDirectory: &isDirectory) else { continue }
             if isDirectory.boolValue {
-                items.append(contentsOf: planDirectory(entryURL, under: root))
-            } else if let item = Self.item(for: entryURL, relativePath: name) {
+                items.append(contentsOf: try planDirectory(entryURL, under: root))
+            } else if let item = try Self.item(for: entryURL, relativePath: name) {
                 items.append(item)
             }
         }
@@ -101,10 +103,14 @@ public struct LibraryMovePlanner: Sendable {
         }
     }
 
-    private func planDirectory(_ directory: URL, under root: URL) -> [LibraryMovePlan.Item] {
-        guard let enumerator = fileManager.enumerator(at: directory, includingPropertiesForKeys: Array(Self.resourceKeys), options: [.skipsHiddenFiles]) else {
-            WLOG("LibraryMove: cannot enumerate \(directory.path)")
-            return []
+    private func planDirectory(_ directory: URL, under root: URL) throws -> [LibraryMovePlan.Item] {
+        var firstError: Error?
+        guard let enumerator = fileManager.enumerator(at: directory, includingPropertiesForKeys: Array(Self.resourceKeys), options: [.skipsHiddenFiles],
+                                                      errorHandler: { _, error in
+                                                          if firstError == nil { firstError = error }
+                                                          return true
+                                                      }) else {
+            throw CocoaError(.fileReadUnknown, userInfo: [NSFilePathErrorKey: directory.path])
         }
         var items: [LibraryMovePlan.Item] = []
         for case let url as URL in enumerator {
@@ -112,17 +118,28 @@ public struct LibraryMovePlanner: Sendable {
                 enumerator.skipDescendants()
                 continue
             }
-            guard let relative = Self.relativePath(of: url, under: root),
-                  let item = Self.item(for: url, relativePath: relative) else { continue }
-            items.append(item)
+            guard let relative = Self.relativePath(of: url, under: root) else {
+                throw CocoaError(.fileReadInvalidFileName, userInfo: [NSFilePathErrorKey: url.path])
+            }
+            if let item = try Self.item(for: url, relativePath: relative) {
+                items.append(item)
+            }
         }
+        if let firstError { throw firstError }
         return items
     }
 
-    /// The plan item for `url` if it is a regular file.
-    private static func item(for url: URL, relativePath: String) -> LibraryMovePlan.Item? {
-        guard let values = try? url.resourceValues(forKeys: resourceKeys), values.isRegularFile == true else { return nil }
-        return LibraryMovePlan.Item(relativePath: relativePath, size: Int64(values.fileSize ?? 0), modified: values.contentModificationDate)
+    /// The plan item for `url` if it is a regular file. Directories are walked by the caller; anything else (a symlink,
+    /// a socket) can't be copied and is logged as left behind.
+    private static func item(for url: URL, relativePath: String) throws -> LibraryMovePlan.Item? {
+        let values = try url.resourceValues(forKeys: resourceKeys.union([.isDirectoryKey]))
+        if values.isRegularFile == true {
+            return LibraryMovePlan.Item(relativePath: relativePath, size: Int64(values.fileSize ?? 0), modified: values.contentModificationDate)
+        }
+        if values.isDirectory != true {
+            WLOG("LibraryMove: leaving \(relativePath) behind: not a regular file")
+        }
+        return nil
     }
 
     private static func isExcluded(name: String) -> Bool {

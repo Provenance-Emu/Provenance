@@ -118,14 +118,50 @@ final class LibraryMoveCleanupTests: XCTestCase {
         XCTAssertFalse(exists(src, "Battery States"), "the source goes only after its content is safe at the destination")
         let survivors = [read(dst, "Battery States/G/G.srm"), read(dst, "Conflicts/Battery States/G/G.srm")]
         XCTAssertTrue(survivors.contains("NEW1"), "the live save still exists somewhere under the destination")
+        XCTAssertTrue(survivors.contains("OLD1"), "and the stale one is kept too")
+        XCTAssertNil(store.load(), "the journal is gone")
     }
 
-    func testChangedSinceJournalUsesSizeThenMtimeWithOneSecondTolerance() {
+    func testADisplacedEntryDeletesItsSourceLikeACopiedOne() async throws {
+        try write(dst, "Battery States/G/G.srm", "OLD1")
+        try write(src, "Battery States/G/G.srm", "NEW1")
+        let journal = try await switchedJournal()
+        XCTAssertEqual(journal.entries["Battery States/G/G.srm"]?.state, .displaced)
+        XCTAssertEqual(read(dst, "Battery States/G/G.srm"), "NEW1", "the live save is at the real path")
+        XCTAssertEqual(read(dst, "Conflicts/Battery States/G/G.srm"), "OLD1")
+
+        _ = try await engine().resume(journal, sourceRoot: src, destinationRoot: dst, progress: nil)
+
+        XCTAssertFalse(exists(src, "Battery States"))
+        XCTAssertEqual(read(dst, "Battery States/G/G.srm"), "NEW1")
+        XCTAssertEqual(read(dst, "Conflicts/Battery States/G/G.srm"), "OLD1")
+    }
+
+    func testCleanupRemovesStalePartials() async throws {
+        try write(src, "ROMs/a/Game.sfc", "rom")
+        let journal = try await switchedJournal()
+        let partial = "ROMs/a/.Next.sfc" + LibraryMoveFileCopier.partialSuffix
+        try write(dst, partial, "half a copy from a sweep that died")
+        try write(dst, "Conflicts/ROMs/.Late.sfc" + LibraryMoveFileCopier.partialSuffix, "and one in Conflicts")
+        try write(dst, "ROMs/a/.keep-me", "a hidden file that is not ours")
+
+        let outcome = try await engine().resume(journal, sourceRoot: src, destinationRoot: dst, progress: nil)
+
+        XCTAssertEqual(outcome, .cleanedUp)
+        XCTAssertFalse(exists(dst, partial))
+        XCTAssertFalse(exists(dst, "Conflicts/ROMs/.Late.sfc" + LibraryMoveFileCopier.partialSuffix))
+        XCTAssertEqual(read(dst, "ROMs/a/.keep-me"), "a hidden file that is not ours", "only the engine's own temp files are removed")
+        XCTAssertEqual(read(dst, "ROMs/a/Game.sfc"), "rom")
+    }
+
+    func testChangedSinceJournalUsesSizeThenMtimeWithMillisecondTolerance() {
         let t = Date(timeIntervalSince1970: 1_700_000_000)
         let entry = LibraryMoveJournal.Entry(size: 10, md5: nil, modified: t, state: .copied, destinationPath: nil)
-        XCTAssertFalse(LibraryMoveEngine.changedSinceJournal(.init(relativePath: "x", size: 10, modified: t.addingTimeInterval(0.4)), entry: entry),
-                       "sub-second drift from the ISO-8601 round trip is not a change")
-        XCTAssertFalse(LibraryMoveEngine.changedSinceJournal(.init(relativePath: "x", size: 10, modified: t.addingTimeInterval(-0.4)), entry: entry))
+        XCTAssertFalse(LibraryMoveEngine.changedSinceJournal(.init(relativePath: "x", size: 10, modified: t.addingTimeInterval(0.0001)), entry: entry),
+                       "floating-point noise is not a change")
+        XCTAssertTrue(LibraryMoveEngine.changedSinceJournal(.init(relativePath: "x", size: 10, modified: t.addingTimeInterval(0.4)), entry: entry),
+                      "a same-size rewrite a fraction of a second later is a change: the journal keeps dates exactly")
+        XCTAssertTrue(LibraryMoveEngine.changedSinceJournal(.init(relativePath: "x", size: 10, modified: t.addingTimeInterval(-0.4)), entry: entry))
         XCTAssertTrue(LibraryMoveEngine.changedSinceJournal(.init(relativePath: "x", size: 11, modified: t), entry: entry))
         XCTAssertTrue(LibraryMoveEngine.changedSinceJournal(.init(relativePath: "x", size: 10, modified: t.addingTimeInterval(2)), entry: entry))
         XCTAssertTrue(LibraryMoveEngine.changedSinceJournal(.init(relativePath: "x", size: 10, modified: t.addingTimeInterval(-2)), entry: entry))

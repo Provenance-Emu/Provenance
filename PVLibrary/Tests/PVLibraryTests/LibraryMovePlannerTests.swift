@@ -51,8 +51,30 @@ final class LibraryMovePlannerTests: XCTestCase {
         try seed("ROMs/default.realm.lock", 9)
         try seed("ROMs/default.realm.management/lockfile", 9)
         try seed("ROMs/move-journal.json", 9)
+        try seed("ROMs/com.provenance.snes/.Game.sfc" + LibraryMoveFileCopier.partialSuffix, 9)
         let plan = try LibraryMovePlanner().plan(root: root, folders: ["ROMs"])
         XCTAssertEqual(plan.items.map(\.relativePath), ["ROMs/com.provenance.snes/Game.sfc"])
+    }
+
+    func testPlanThrowsWhenASubfolderCannotBeRead() throws {
+        try seed("ROMs/open/Game.sfc", 1)
+        try seed("ROMs/locked/Hidden.sfc", 1)
+        let locked = root.appendingPathComponent("ROMs/locked").path
+        try FileManager.default.setAttributes([.posixPermissions: 0o000], ofItemAtPath: locked)
+        addTeardownBlock {
+            // Runs before tearDownWithError's removeTree could fail on an unreadable folder.
+            try? FileManager.default.setAttributes([.posixPermissions: 0o755], ofItemAtPath: locked)
+        }
+        XCTAssertThrowsError(try LibraryMovePlanner().plan(root: root, folders: ["ROMs"]),
+                             "a plan that silently dropped files would let the switch happen with an incomplete copy")
+    }
+
+    func testSymlinksAreLeftOutOfThePlan() throws {
+        try seed("ROMs/a/Game.sfc", 2)
+        try FileManager.default.createSymbolicLink(at: root.appendingPathComponent("ROMs/a/link.sfc"),
+                                                   withDestinationURL: root.appendingPathComponent("ROMs/a/Game.sfc"))
+        let plan = try LibraryMovePlanner().plan(root: root, folders: ["ROMs"])
+        XCTAssertEqual(plan.items.map(\.relativePath), ["ROMs/a/Game.sfc"])
     }
 
     func testRelativePathsSurviveThePrivateVarSymlink() throws {

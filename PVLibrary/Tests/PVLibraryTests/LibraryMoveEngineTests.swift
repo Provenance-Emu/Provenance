@@ -140,7 +140,8 @@ final class LibraryMoveEngineTests: XCTestCase {
     func testVerificationFailureStopsBeforeTheSwitchAndKeepsTheJournal() async throws {
         try write(src, "ROMs/a/Bad.sfc", "rom")
         try write(src, "BIOS/ok.bin", "bios")
-        let md5 = FailingMD5(badSuffix: "app/Documents/ROMs/a/Bad.sfc")
+        // Verification happens on the hidden temp file, before it is renamed into place.
+        let md5 = FailingMD5(badSuffix: "app/Documents/ROMs/a/.Bad.sfc" + LibraryMoveFileCopier.partialSuffix)
         do {
             _ = try await engine(md5: md5).start(request(), progress: nil)
             XCTFail("expected verificationFailed")
@@ -153,6 +154,7 @@ final class LibraryMoveEngineTests: XCTestCase {
         XCTAssertEqual(journal?.entries["BIOS/ok.bin"]?.state, .copied, "verified files before the failure stay journaled so the retry resumes")
         XCTAssertNil(journal?.entries["ROMs/a/Bad.sfc"])
         XCTAssertFalse(exists(dst, "ROMs/a/Bad.sfc"), "the copier removes the copy that failed verification")
+        XCTAssertFalse(exists(dst, "ROMs/a/.Bad.sfc" + LibraryMoveFileCopier.partialSuffix), "and its temp file")
     }
 
     func testSourceThatVanishesAfterPlanningIsSkippedNotFatal() async throws {
@@ -215,12 +217,14 @@ final class LibraryMoveEngineTests: XCTestCase {
         let outcome = try await engine().resume(journal, sourceRoot: src, destinationRoot: dst, progress: nil)
 
         XCTAssertEqual(outcome, .switched)
-        XCTAssertEqual(read(dst, "ROMs/a/Foreign.sfc"), "mine", "the destination's own file is never deleted or overwritten")
-        XCTAssertEqual(read(dst, "Conflicts/ROMs/a/Foreign.sfc"), "incoming version")
-        XCTAssertEqual(store.load()?.entries["ROMs/a/Foreign.sfc"]?.state, .conflict)
+        XCTAssertEqual(read(dst, "ROMs/a/Foreign.sfc"), "incoming version", "the live file the app was using takes the real path")
+        XCTAssertEqual(read(dst, "Conflicts/ROMs/a/Foreign.sfc"), "mine", "the destination's own file is moved aside, never deleted")
+        let entry = store.load()?.entries["ROMs/a/Foreign.sfc"]
+        XCTAssertEqual(entry?.state, .displaced)
+        XCTAssertEqual(entry?.displacedPath, "Conflicts/ROMs/a/Foreign.sfc")
     }
 
-    func testResumeOfACompleteCopyingJournalDoesNotRecopyAndSwitchesOnce() async throws {
+    func testResumeOfACompleteCopyingJournalDoesNotRecopyAndReassertsTheSwitch() async throws {
         try write(src, "ROMs/a/Game.sfc", "rom")
         _ = try await engine().start(request(), progress: nil)
         var journal = try XCTUnwrap(store.load())
@@ -273,6 +277,7 @@ final class LibraryMoveEngineTests: XCTestCase {
 
         XCTAssertEqual(outcome, .cancelled)
         XCTAssertEqual(seen.reports.count, 10, "cancel stops the copy at the next file")
+        XCTAssertFalse(exists(dst, "Conflicts"), "the destination's own file was moved aside during the copy; rollback put it back")
         XCTAssertTrue(switched.calls.isEmpty)
         XCTAssertNil(store.load())
         XCTAssertEqual(read(dst, "ROMs/a/A-Same.sfc"), "same", "identical pre-existing files are untouched")
@@ -289,8 +294,11 @@ final class LibraryMoveEngineTests: XCTestCase {
     func testCancelAfterSwitchIsIgnored() async throws {
         try write(src, "ROMs/a/Game.sfc", "rom")
         let e = engine()
-        _ = try await e.start(request(), progress: nil)
-        e.cancel()
+        // The final report is delivered after the switch: a cancel requested from there must change nothing.
+        let outcome = try await e.start(request()) { report in
+            if report.phase == .switched { e.cancel() }
+        }
+        XCTAssertEqual(outcome, .switched)
         XCTAssertEqual(store.load()?.phase, .switched)
         XCTAssertEqual(read(dst, "ROMs/a/Game.sfc"), "rom")
     }

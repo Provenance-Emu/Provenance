@@ -56,7 +56,9 @@ public actor LibraryMoveEngine {
         guard Self.supportedMoves.contains([request.source, request.destination]) else {
             throw LibraryMoveError.unsupportedMove(from: request.source, to: request.destination)
         }
-        guard !isRunning, journalStore.load() == nil else { throw LibraryMoveError.moveInProgress }
+        // `exists` as well as `load()`: a journal from a newer build loads as nil but must not be overwritten.
+        guard !isRunning, journalStore.load() == nil, !journalStore.exists else { throw LibraryMoveError.moveInProgress }
+        try requireDistinctRoots(request.sourceRoot, request.destinationRoot, source: request.source, destination: request.destination)
         isRunning = true
         defer { isRunning = false }
 
@@ -75,6 +77,7 @@ public actor LibraryMoveEngine {
     public func resume(_ journal: LibraryMoveJournal, sourceRoot: URL, destinationRoot: URL,
                        progress: (@Sendable (LibraryMoveProgress) -> Void)? = nil) async throws -> LibraryMoveOutcome {
         guard !isRunning else { throw LibraryMoveError.moveInProgress }
+        try requireDistinctRoots(sourceRoot, destinationRoot, source: journal.source, destination: journal.destination)
         isRunning = true
         defer { isRunning = false }
 
@@ -82,6 +85,8 @@ public actor LibraryMoveEngine {
         switch journal.phase {
         case .copying:
             let plan = try planner.plan(root: sourceRoot, folders: journal.folders)
+            let remaining = plan.items.filter { journal.entries[$0.relativePath] == nil }
+            try planner.checkSpace(for: LibraryMovePlan(items: remaining), at: destinationRoot)
             ILOG("LibraryMove: resuming copy, \(journal.entries.count) of \(plan.items.count) files already journaled")
             return try await run(&journal, plan: plan, sourceRoot: sourceRoot, destinationRoot: destinationRoot, progress: progress)
         case .switched, .cleaning:
@@ -134,7 +139,7 @@ public actor LibraryMoveEngine {
                     return false
                 }
                 do {
-                    if let entry = try copier.transfer(item, from: sourceRoot, to: destinationRoot) {
+                    if let entry = try copier.transfer(item, from: sourceRoot, to: destinationRoot, onConflict: .displaceExisting) {
                         journal.entries[item.relativePath] = entry
                         bytesDone += entry.size
                     }
@@ -167,15 +172,18 @@ public actor LibraryMoveEngine {
 
     /// Records, in the journal and before any file is written, which destination paths and directories this batch
     /// will create. Only paths that don't exist yet are claimed, so a pre-existing destination file is never ours.
-    /// For a file that already exists at the destination the claim is the `Conflicts/` path the copier will pick.
+    /// A file that already exists at the destination is the destination's own: the copier may move it aside into
+    /// `Conflicts/`, never delete it, so nothing is claimed for it (a claim makes a crash recovery delete the path).
+    /// Only the directories the aside move would create are recorded.
     private func claim(_ batch: [LibraryMovePlan.Item], in journal: inout LibraryMoveJournal, destinationRoot: URL) throws {
         journal.inFlight = []
         for item in batch {
             var target = item.relativePath
             if exists(target, under: destinationRoot) {
                 target = LibraryMoveFileCopier.conflictPath(for: item.relativePath, under: destinationRoot, fileManager: fileManager)
+            } else {
+                journal.inFlight.append(target)
             }
-            journal.inFlight.append(target)
             for directory in missingDirectories(above: target, under: destinationRoot) where !journal.createdDirectories.contains(directory) {
                 journal.createdDirectories.append(directory)
             }
@@ -184,15 +192,46 @@ public actor LibraryMoveEngine {
         try journalStore.save(journal)
     }
 
-    /// Removes files at claimed paths that no journal entry accounts for: torn copies of an interrupted run.
-    /// Anything else in the destination, including a same-named file the user already had, is left alone.
+    /// Recovers from an interrupted run: removes every leftover temp file, then any file at a claimed path that no
+    /// journal entry accounts for. Copies are renamed into place only after they verify, so such a file is a complete
+    /// copy of ours that was never recorded; it is removed and copied again. Anything else in the destination,
+    /// including a same-named file the user already had, is left alone.
     private func discardTornCopies(_ journal: LibraryMoveJournal, destinationRoot: URL) {
+        removeStalePartials(under: destinationRoot, folders: journal.folders)
         let accountedFor = Set(journal.entries.map { $0.value.destinationPath ?? $0.key })
         for path in journal.inFlight where !accountedFor.contains(path) {
             let url = destinationRoot.appendingPathComponent(path)
             guard (try? url.resourceValues(forKeys: [.isRegularFileKey]))?.isRegularFile == true else { continue }
-            WLOG("LibraryMove: removing torn copy \(path)")
+            WLOG("LibraryMove: removing unjournaled copy \(path)")
             try? fileManager.removeItem(at: url)
+        }
+    }
+
+    /// Deletes the hidden temp files (`LibraryMoveFileCopier.partialSuffix`) an interrupted copy left under the
+    /// destination's `folders`, `Conflicts/` and top level (where a loose file's temp file lives). Only the engine
+    /// writes that suffix, and `isRunning` serialises the engine.
+    func removeStalePartials(under root: URL, folders: [String]) {
+        var candidates: [URL] = (try? fileManager.contentsOfDirectory(at: root, includingPropertiesForKeys: nil)) ?? []
+        for folder in Set(folders + [LibraryMoveFolders.conflicts]) {
+            guard let enumerator = fileManager.enumerator(at: root.appendingPathComponent(folder, isDirectory: true), includingPropertiesForKeys: nil) else { continue }
+            for case let url as URL in enumerator {
+                candidates.append(url)
+            }
+        }
+        for url in candidates where url.lastPathComponent.hasSuffix(LibraryMoveFileCopier.partialSuffix) {
+            guard (try? url.resourceValues(forKeys: [.isRegularFileKey]))?.isRegularFile == true else { continue }
+            WLOG("LibraryMove: removing leftover temp file \(url.lastPathComponent)")
+            try? fileManager.removeItem(at: url)
+        }
+    }
+
+    /// Roots that are the same folder, or one inside the other, would make every file "identical" (and cleanup would
+    /// then delete the only copy) or have the copy enumerate its own output.
+    private func requireDistinctRoots(_ sourceRoot: URL, _ destinationRoot: URL, source: LibraryLocation, destination: LibraryLocation) throws {
+        let first = sourceRoot.resolvingSymlinksInPath().standardizedFileURL.path
+        let second = destinationRoot.resolvingSymlinksInPath().standardizedFileURL.path
+        guard first != second, !first.hasPrefix(second + "/"), !second.hasPrefix(first + "/") else {
+            throw LibraryMoveError.unsupportedMove(from: source, to: destination)
         }
     }
 
@@ -228,16 +267,22 @@ public actor LibraryMoveEngine {
     // MARK: - Rollback (cancel before switch)
 
     /// Deletes what this move put in the destination: `copied` files at their path, `conflict` copies at their
-    /// `Conflicts/` path, and any claimed file no entry accounts for. `identical` files pre-existed and stay, as
-    /// does every directory the move did not create. Then the journal goes.
+    /// `Conflicts/` path, and any claimed file no entry accounts for. A `displaced` entry loses our copy and gets the
+    /// destination's own file back from `Conflicts/`. `identical` files pre-existed and stay, as does every directory
+    /// the move did not create. Then the journal goes.
     func rollback(_ journal: LibraryMoveJournal, destinationRoot: URL) throws {
         for (relativePath, entry) in journal.entries where entry.state != .identical {
-            try removeIfPresent(entry.destinationPath ?? relativePath, under: destinationRoot)
+            if entry.state == .displaced {
+                try restoreDisplaced(entry, relativePath: relativePath, under: destinationRoot)
+            } else {
+                try removeIfPresent(entry.destinationPath ?? relativePath, under: destinationRoot)
+            }
         }
         let accountedFor = Set(journal.entries.map { $0.value.destinationPath ?? $0.key })
         for path in journal.inFlight where !accountedFor.contains(path) {
             try removeIfPresent(path, under: destinationRoot)
         }
+        removeStalePartials(under: destinationRoot, folders: journal.folders)
         for directory in journal.createdDirectories.sorted(by: { $0.count > $1.count }) {
             let url = destinationRoot.appendingPathComponent(directory)
             if let contents = try? fileManager.contentsOfDirectory(atPath: url.path), contents.isEmpty {
@@ -245,6 +290,18 @@ public actor LibraryMoveEngine {
             }
         }
         try journalStore.delete()
+    }
+
+    /// Removes our copy at the real path and moves the destination's own file back over it from `Conflicts/`.
+    /// Only acts while the aside file is still there: once it is back, the file at the real path is the user's and a
+    /// retried rollback must not touch it.
+    private func restoreDisplaced(_ entry: LibraryMoveJournal.Entry, relativePath: String, under root: URL) throws {
+        guard let displacedPath = entry.displacedPath, exists(displacedPath, under: root) else {
+            WLOG("LibraryMove: \(relativePath) has no displaced file to restore; leaving the real path alone")
+            return
+        }
+        try removeIfPresent(relativePath, under: root)
+        try fileManager.moveItem(at: root.appendingPathComponent(displacedPath), to: root.appendingPathComponent(relativePath))
     }
 
     private func removeIfPresent(_ relativePath: String, under root: URL) throws {

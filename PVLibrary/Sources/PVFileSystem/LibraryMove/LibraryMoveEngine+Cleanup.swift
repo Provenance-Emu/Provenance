@@ -23,6 +23,7 @@ extension LibraryMoveEngine {
             try journalStore.save(journal)
         }
 
+        removeStalePartials(under: destinationRoot, folders: journal.folders)
         try await sweepDelta(&journal, sourceRoot: sourceRoot, destinationRoot: destinationRoot, progress: progress)
 
         if journal.keepCopy {
@@ -36,11 +37,14 @@ extension LibraryMoveEngine {
         return .cleanedUp
     }
 
-    /// Size first; then modification time with one second of tolerance (the journal stores ISO-8601 whole seconds).
+    /// Size first; then modification time. The journal stores dates exactly, so the tolerance only absorbs
+    /// floating-point noise: a rewrite a fraction of a second after the copy still counts as a change.
+    static let modificationTolerance: TimeInterval = 0.001
+
     static func changedSinceJournal(_ item: LibraryMovePlan.Item, entry: LibraryMoveJournal.Entry) -> Bool {
         if item.size != entry.size { return true }
         guard let now = item.modified, let then = entry.modified else { return false }
-        return abs(now.timeIntervalSince(then)) >= 1
+        return abs(now.timeIntervalSince(then)) >= modificationTolerance
     }
 
     /// Copies whatever the source holds that the journal doesn't: new files go through the normal copy rules, changed
