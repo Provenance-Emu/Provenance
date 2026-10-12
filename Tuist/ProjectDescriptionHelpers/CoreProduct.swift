@@ -61,10 +61,7 @@ public extension CoreProduct {
 
     // The Swift module is PVSNES (Core.plist's principal class); the emulator links in statically.
     static let snes9x = CoreProduct(id: "snes9x", link: .package(path: "Cores/snes9x", product: "PVSNES9x-Dynamic"))
-    static let fceu = CoreProduct(
-        id: "fceu",
-        link: .project(path: "Cores/FCEU/PVFCEU.xcodeproj", target: "PVFCEU", product: "PVFCEU")
-    )
+    static let fceu = CoreProduct(id: "fceu", link: .package(path: "Cores/FCEU", product: "PVFCEU-Dynamic"))
     static let genesis = CoreProduct(
         id: "genesis",
         link: .project(path: "Cores/Genesis-Plus-GX/PVGenesis.xcodeproj", target: "PVGenesis", product: "PVGenesis")

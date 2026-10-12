@@ -3,23 +3,277 @@
 
 import PackageDescription
 
-/* NOTE: this package does not build yet.
- *
- * This manifest was a verbatim copy of Cores/Stella/Package.swift -- package
- * "PVStella" with targets "PVStella", "PVStellaSwift", "PVStellaCPP" and
- * "libstella", and a body full of Stella-specific excludes, defines and
- * `stella/src/...` header paths. Those names belong to Cores/Stella, which IS
- * registered as an XCLocalSwiftPackageReference in Provenance.xcodeproj, and
- * SPM requires target and product names to be unique across the whole package
- * graph -- so the copy was a latent collision.
- *
- * The names below are PVFCEU's own and the Stella-specific settings are gone,
- * which removes the collision. The targets still have no sources: PVFCEU has
- * never been migrated to SPM and has no Sources/ layout, so `swift build`
- * fails with "Source files for target ... should be located under". Wiring
- * that up means splitting the mixed ObjC++/Swift core at the repo root and enumerating fceux/, which is a source
- * migration, not a manifest change. PVFCEU.xcodeproj remains the build path.
- */
+/// FCEUX core sources, relative to the package root (target `libfceu`).
+/// Mirrors the Sources phase of the `fceux` static-library target in
+/// PVFCEU.xcodeproj. Upstream's src/CMakeLists.txt is the reference when bumping the submodule.
+let fceuxCoreSources: [String] = [
+    "fceux/src/boards/01-222.cpp",
+    "fceux/src/boards/09-034a.cpp",
+    "fceux/src/boards/103.cpp",
+    "fceux/src/boards/106.cpp",
+    "fceux/src/boards/108.cpp",
+    "fceux/src/boards/112.cpp",
+    "fceux/src/boards/116.cpp",
+    "fceux/src/boards/117.cpp",
+    "fceux/src/boards/120.cpp",
+    "fceux/src/boards/121.cpp",
+    "fceux/src/boards/12in1.cpp",
+    "fceux/src/boards/15.cpp",
+    "fceux/src/boards/156.cpp",
+    "fceux/src/boards/158B.cpp",
+    "fceux/src/boards/164.cpp",
+    "fceux/src/boards/168.cpp",
+    "fceux/src/boards/170.cpp",
+    "fceux/src/boards/175.cpp",
+    "fceux/src/boards/176.cpp",
+    "fceux/src/boards/177.cpp",
+    "fceux/src/boards/178.cpp",
+    "fceux/src/boards/18.cpp",
+    "fceux/src/boards/183.cpp",
+    "fceux/src/boards/185.cpp",
+    "fceux/src/boards/186.cpp",
+    "fceux/src/boards/187.cpp",
+    "fceux/src/boards/189.cpp",
+    "fceux/src/boards/190.cpp",
+    "fceux/src/boards/193.cpp",
+    "fceux/src/boards/199.cpp",
+    "fceux/src/boards/206.cpp",
+    "fceux/src/boards/208.cpp",
+    "fceux/src/boards/222.cpp",
+    "fceux/src/boards/225.cpp",
+    "fceux/src/boards/228.cpp",
+    "fceux/src/boards/230.cpp",
+    "fceux/src/boards/232.cpp",
+    "fceux/src/boards/234.cpp",
+    "fceux/src/boards/235.cpp",
+    "fceux/src/boards/244.cpp",
+    "fceux/src/boards/246.cpp",
+    "fceux/src/boards/252.cpp",
+    "fceux/src/boards/253.cpp",
+    "fceux/src/boards/28.cpp",
+    "fceux/src/boards/32.cpp",
+    "fceux/src/boards/33.cpp",
+    "fceux/src/boards/34.cpp",
+    "fceux/src/boards/354.cpp",
+    "fceux/src/boards/36.cpp",
+    "fceux/src/boards/3d-block.cpp",
+    "fceux/src/boards/40.cpp",
+    "fceux/src/boards/41.cpp",
+    "fceux/src/boards/411120-c.cpp",
+    "fceux/src/boards/413.cpp",
+    "fceux/src/boards/42.cpp",
+    "fceux/src/boards/43.cpp",
+    "fceux/src/boards/451.cpp",
+    "fceux/src/boards/46.cpp",
+    "fceux/src/boards/471.cpp",
+    "fceux/src/boards/50.cpp",
+    "fceux/src/boards/51.cpp",
+    "fceux/src/boards/57.cpp",
+    "fceux/src/boards/603-5052.cpp",
+    "fceux/src/boards/62.cpp",
+    "fceux/src/boards/65.cpp",
+    "fceux/src/boards/67.cpp",
+    "fceux/src/boards/68.cpp",
+    "fceux/src/boards/69.cpp",
+    "fceux/src/boards/71.cpp",
+    "fceux/src/boards/72.cpp",
+    "fceux/src/boards/77.cpp",
+    "fceux/src/boards/79.cpp",
+    "fceux/src/boards/80.cpp",
+    "fceux/src/boards/80013-B.cpp",
+    "fceux/src/boards/8157.cpp",
+    "fceux/src/boards/82.cpp",
+    "fceux/src/boards/8237.cpp",
+    "fceux/src/boards/830118C.cpp",
+    "fceux/src/boards/88.cpp",
+    "fceux/src/boards/8in1.cpp",
+    "fceux/src/boards/90.cpp",
+    "fceux/src/boards/91.cpp",
+    "fceux/src/boards/96.cpp",
+    "fceux/src/boards/99.cpp",
+    "fceux/src/boards/__dummy_mapper.cpp",
+    "fceux/src/boards/a9746.cpp",
+    "fceux/src/boards/ac-08.cpp",
+    "fceux/src/boards/addrlatch.cpp",
+    "fceux/src/boards/ax5705.cpp",
+    "fceux/src/boards/bandai.cpp",
+    "fceux/src/boards/bb.cpp",
+    "fceux/src/boards/bmc13in1jy110.cpp",
+    "fceux/src/boards/bmc42in1r.cpp",
+    "fceux/src/boards/bmc64in1nr.cpp",
+    "fceux/src/boards/bmc70in1.cpp",
+    "fceux/src/boards/BMW8544.cpp",
+    "fceux/src/boards/bonza.cpp",
+    "fceux/src/boards/bs-5.cpp",
+    "fceux/src/boards/bs4xxxr.cpp",
+    "fceux/src/boards/cheapocabra.cpp",
+    "fceux/src/boards/cityfighter.cpp",
+    "fceux/src/boards/coolboy.cpp",
+    "fceux/src/boards/coolgirl.cpp",
+    "fceux/src/boards/dance2000.cpp",
+    "fceux/src/boards/datalatch.cpp",
+    "fceux/src/boards/dream.cpp",
+    "fceux/src/boards/edu2000.cpp",
+    "fceux/src/boards/eh8813a.cpp",
+    "fceux/src/boards/emu2413.c",
+    "fceux/src/boards/et-100.cpp",
+    "fceux/src/boards/et-4320.cpp",
+    "fceux/src/boards/F-15.cpp",
+    "fceux/src/boards/famicombox.cpp",
+    "fceux/src/boards/ffe.cpp",
+    "fceux/src/boards/fk23c.cpp",
+    "fceux/src/boards/fns.cpp",
+    "fceux/src/boards/ghostbusters63in1.cpp",
+    "fceux/src/boards/gs-2004.cpp",
+    "fceux/src/boards/gs-2013.cpp",
+    "fceux/src/boards/h2288.cpp",
+    "fceux/src/boards/hp10xx_hp20xx.cpp",
+    "fceux/src/boards/hp898f.cpp",
+    "fceux/src/boards/inlnsf.cpp",
+    "fceux/src/boards/inx007t.cpp",
+    "fceux/src/boards/karaoke.cpp",
+    "fceux/src/boards/kof97.cpp",
+    "fceux/src/boards/ks7010.cpp",
+    "fceux/src/boards/ks7012.cpp",
+    "fceux/src/boards/ks7013.cpp",
+    "fceux/src/boards/ks7016.cpp",
+    "fceux/src/boards/ks7017.cpp",
+    "fceux/src/boards/ks7030.cpp",
+    "fceux/src/boards/ks7031.cpp",
+    "fceux/src/boards/ks7032.cpp",
+    "fceux/src/boards/ks7037.cpp",
+    "fceux/src/boards/ks7057.cpp",
+    "fceux/src/boards/le05.cpp",
+    "fceux/src/boards/lh32.cpp",
+    "fceux/src/boards/lh53.cpp",
+    "fceux/src/boards/malee.cpp",
+    "fceux/src/boards/mihunche.cpp",
+    "fceux/src/boards/mmc1.cpp",
+    "fceux/src/boards/mmc2and4.cpp",
+    "fceux/src/boards/mmc3.cpp",
+    "fceux/src/boards/mmc5.cpp",
+    "fceux/src/boards/n106.cpp",
+    "fceux/src/boards/n625092.cpp",
+    "fceux/src/boards/novel.cpp",
+    "fceux/src/boards/onebus.cpp",
+    "fceux/src/boards/pec-586.cpp",
+    "fceux/src/boards/rt-01.cpp",
+    "fceux/src/boards/sa-9602b.cpp",
+    "fceux/src/boards/sachen.cpp",
+    "fceux/src/boards/sb-2000.cpp",
+    "fceux/src/boards/sc-127.cpp",
+    "fceux/src/boards/sheroes.cpp",
+    "fceux/src/boards/sl1632.cpp",
+    "fceux/src/boards/subor.cpp",
+    "fceux/src/boards/super24.cpp",
+    "fceux/src/boards/supervision.cpp",
+    "fceux/src/boards/t-227-1.cpp",
+    "fceux/src/boards/t-262.cpp",
+    "fceux/src/boards/tengen.cpp",
+    "fceux/src/boards/tf-1201.cpp",
+    "fceux/src/boards/transformer.cpp",
+    "fceux/src/boards/unrom512.cpp",
+    "fceux/src/boards/vrc1.cpp",
+    "fceux/src/boards/vrc2and4.cpp",
+    "fceux/src/boards/vrc3.cpp",
+    "fceux/src/boards/vrc5.cpp",
+    "fceux/src/boards/vrc6.cpp",
+    "fceux/src/boards/vrc7.cpp",
+    "fceux/src/boards/vrc7p.cpp",
+    "fceux/src/boards/yoko.cpp",
+    "fceux/src/drivers/common/hq2x.cpp",
+    "fceux/src/drivers/common/hq3x.cpp",
+    "fceux/src/drivers/common/nes_ntsc.c",
+    "fceux/src/drivers/common/scale2x.cpp",
+    "fceux/src/drivers/common/scale3x.cpp",
+    "fceux/src/drivers/common/scalebit.cpp",
+    "fceux/src/drivers/common/vidblit.cpp",
+    "fceux/src/input/arkanoid.cpp",
+    "fceux/src/input/bworld.cpp",
+    "fceux/src/input/cursor.cpp",
+    "fceux/src/input/fkb.cpp",
+    "fceux/src/input/fns.cpp",
+    "fceux/src/input/ftrainer.cpp",
+    "fceux/src/input/hypershot.cpp",
+    "fceux/src/input/lcdcompzapper.cpp",
+    "fceux/src/input/mahjong.cpp",
+    "fceux/src/input/mouse.cpp",
+    "fceux/src/input/oekakids.cpp",
+    "fceux/src/input/pec586kb.cpp",
+    "fceux/src/input/powerpad.cpp",
+    "fceux/src/input/quiz.cpp",
+    "fceux/src/input/shadow.cpp",
+    "fceux/src/input/snesmouse.cpp",
+    "fceux/src/input/suborkb.cpp",
+    "fceux/src/input/toprider.cpp",
+    "fceux/src/input/virtualboy.cpp",
+    "fceux/src/input/zapper.cpp",
+    "fceux/src/utils/backward.cpp",
+    "fceux/src/utils/crc32.cpp",
+    "fceux/src/utils/endian.cpp",
+    "fceux/src/utils/general.cpp",
+    "fceux/src/utils/guid.cpp",
+    "fceux/src/utils/ioapi.cpp",
+    "fceux/src/utils/md5.cpp",
+    "fceux/src/utils/memory.cpp",
+    "fceux/src/utils/mutex.cpp",
+    "fceux/src/utils/timeStamp.cpp",
+    "fceux/src/utils/unzip.cpp",
+    "fceux/src/utils/xstring.cpp",
+    "fceux/src/asm.cpp",
+    "fceux/src/cart.cpp",
+    "fceux/src/cheat.cpp",
+    "fceux/src/conddebug.cpp",
+    "fceux/src/config.cpp",
+    "fceux/src/debug.cpp",
+    "fceux/src/debugsymboltable.cpp",
+    "fceux/src/drawing.cpp",
+    "fceux/src/emufile.cpp",
+    "fceux/src/fceu.cpp",
+    "fceux/src/fds.cpp",
+    "fceux/src/file.cpp",
+    "fceux/src/filter.cpp",
+    "fceux/src/ines.cpp",
+    "fceux/src/input.cpp",
+    "fceux/src/ld65dbg.cpp",
+    "fceux/src/movie.cpp",
+    "fceux/src/netplay.cpp",
+    "fceux/src/nsf.cpp",
+    "fceux/src/oldmovie.cpp",
+    "fceux/src/palette.cpp",
+    "fceux/src/ppu.cpp",
+    "fceux/src/profiler.cpp",
+    "fceux/src/sound.cpp",
+    "fceux/src/state.cpp",
+    "fceux/src/unif.cpp",
+    "fceux/src/video.cpp",
+    "fceux/src/vsuni.cpp",
+    "fceux/src/wave.cpp",
+    "fceux/src/x6502.cpp",
+]
+
+/// Settings shared by every target that includes fceux headers (the pbxproj's project-level OTHER_CFLAGS
+/// plus BuildFlags.xcconfig's HEADER_SEARCH_PATHS). `root` is the fceux submodule path relative to the target.
+func cSettings(root: String) -> [CSetting] {
+    [
+        .define("HAVE_ASPRINTF"),
+        .define("PSS_STYLE", to: "1"),
+        .define("LSB_FIRST"),
+        .headerSearchPath("\(root)/src"),
+        .headerSearchPath("\(root)/src/drivers"),
+    ]
+}
+
+func cxxSettings(root: String) -> [CXXSetting] {
+    [
+        .define("HAVE_ASPRINTF"),
+        .define("PSS_STYLE", to: "1"),
+        .define("LSB_FIRST"),
+        .headerSearchPath("\(root)/src"),
+        .headerSearchPath("\(root)/src/drivers"),
+    ]
+}
+
 let package = Package(
     name: "PVCoreFCEU",
     platforms: [
@@ -31,111 +285,104 @@ let package = Package(
         .visionOS(.v1)
     ],
     products: [
-        // Products define the executables and libraries produced by a package, and make them visible to other packages.
         .library(
             name: "PVFCEU",
-            targets: ["PVFCEU", "PVFCEUSwift"]),
+            targets: ["PVFCEU"]),
         .library(
             name: "PVFCEU-Dynamic",
             type: .dynamic,
-            targets: ["PVFCEU", "PVFCEUSwift"]),
+            targets: ["PVFCEU"]),
         .library(
             name: "PVFCEU-Static",
             type: .static,
-            targets: ["PVFCEU", "PVFCEUSwift"]),
+            targets: ["PVFCEU"]),
     ],
     dependencies: [
         .package(path: "../../PVCoreBridge"),
         .package(path: "../../PVCoreObjCBridge"),
+        .package(path: "../../PVPlists"),
         .package(path: "../../PVEmulatorCore"),
         .package(path: "../../PVSupport"),
         .package(path: "../../PVAudio"),
         .package(path: "../../PVLogging"),
-        .package(path: "../../PVObjCUtils")
+        .package(path: "../../PVObjCUtils"),
+        .package(name: "PVPrimitives", path: "../../PVPrimitives/"),
+        .package(path: "../../PVRcheevos"),
+        .package(name: "PVRcheevosBridge", path: "../../PVRcheevosBridge"),
     ],
     targets: [
+        // MARK: ------- Core (Swift) ---------
+        // Module name PVFCEU must match Core.plist's PVPrincipleClass ("PVFCEU.PVFCEUEmulatorCore").
+        // Sources stay at the package root, where PVFCEU.xcodeproj also compiles them.
         .target(
             name: "PVFCEU",
             dependencies: [
                 "PVEmulatorCore",
                 "PVCoreBridge",
                 "PVCoreObjCBridge",
+                "PVLogging",
                 "PVSupport",
-                "PVObjCUtils",
-                "PVFCEUSwift",
-                "PVFCEUCPP",
-                "libfceu",
+                "PVPlists",
+                "PVPrimitives",
+                "PVFCEUBridge",
+                .product(name: "PVRcheevos", package: "PVRcheevos"),
+                .product(name: "PVRcheevosBridge", package: "PVRcheevosBridge"),
+            ],
+            path: ".",
+            sources: [
+                "CoreOptions.swift",
+                "CorePlist-Generated.swift",
+                "CorePlist.swift",
+                "PVFCEUEmulatorCore.swift",
+                "PVFCEUEmulatorCore+RetroAchievements.swift",
             ],
             resources: [
-                .process("Resources/Core.plist")
+                .process("PVFCEU/Core.plist")
+            ]
+        ),
+
+        // MARK: ------- Bridge (ObjC++) ---------
+        .target(
+            name: "PVFCEUBridge",
+            dependencies: [
+                "PVEmulatorCore",
+                "PVCoreBridge",
+                "PVCoreObjCBridge",
+                "PVSupport",
+                "PVObjCUtils",
+                "libfceu",
+            ],
+            path: ".",
+            sources: [
+                "PVFCEUEmulatorCore.mm",
+                "PVFCEUEmulatorCore+Controls.mm",
             ],
             publicHeadersPath: "include",
-            cSettings: CommonSettings.c,
-            cxxSettings: CommonSettings.cxx,
-            swiftSettings: [
-                .interoperabilityMode(.Cxx)
+            cSettings: cSettings(root: "fceux"),
+            cxxSettings: cxxSettings(root: "fceux") + [
+                .unsafeFlags(["-fmodules", "-fcxx-modules", "-Wno-write-strings"]),
             ]
         ),
 
-        .target(
-            name: "PVFCEUSwift",
-            dependencies: [
-                "PVEmulatorCore",
-                "PVCoreBridge",
-                "PVLogging",
-                "PVAudio",
-                "PVSupport",
-                "libfceu",
-                "PVFCEUCPP"
-            ],
-            cSettings: CommonSettings.c,
-            cxxSettings: CommonSettings.cxx,
-            swiftSettings: [
-                .interoperabilityMode(.Cxx)
-            ]
-        ),
-
-        .target(
-            name: "PVFCEUCPP",
-            dependencies: [
-                "PVEmulatorCore",
-                "PVCoreBridge",
-                "PVLogging",
-                "PVAudio",
-                "PVSupport",
-                "libfceu",
-            ],
-            publicHeadersPath: "./",
-            cSettings: CommonSettings.c,
-            cxxSettings: CommonSettings.cxx
-        ),
-
+        // MARK: ------- Emulator ---------
         .target(
             name: "libfceu",
-            packageAccess: true,
-            cSettings: CommonSettings.c,
-            cxxSettings: CommonSettings.cxx
-        )
+            path: ".",
+            sources: fceuxCoreSources,
+            // SwiftPM needs a public headers dir; it holds only a placeholder because the
+            // bridge reaches fceux headers through its own header search paths.
+            publicHeadersPath: "libfceu-include",
+            cSettings: cSettings(root: "fceux") + [
+                .headerSearchPath("PVFCEU/Shims"),
+                .unsafeFlags(["-w"]),
+            ],
+            cxxSettings: cxxSettings(root: "fceux") + [
+                .headerSearchPath("PVFCEU/Shims"),
+                .unsafeFlags(["-w", "-Wno-write-strings"]),
+            ]
+        ),
     ],
     swiftLanguageVersions: [.v5],
     cLanguageStandard: .gnu99,
     cxxLanguageStandard: .gnucxx17
 )
-
-enum CommonSettings {
-    static let c: [CSetting] = [
-        .define("INLINE", to: "inline"),
-        .define("USE_STRUCTS", to: "1"),
-        .define("__LIBRETRO__", to: "1"),
-        .define("HAVE_COCOATOJUCH", to: "1"),
-        .define("__GCCUNIX__", to: "1"),
-    ]
-
-    static let cxx: [CXXSetting] = [
-        .define("INLINE", to: "inline"),
-        .define("USE_STRUCTS", to: "1"),
-        .define("__LIBRETRO__", to: "1"),
-        .define("HAVE_COCOATOJUCH", to: "1"),
-        .define("__GCCUNIX__", to: "1"),
-    ]
-}
