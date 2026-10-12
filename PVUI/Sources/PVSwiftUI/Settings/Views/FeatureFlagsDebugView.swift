@@ -19,6 +19,7 @@ import RxRealm
 import RxSwift
 import RealmSwift
 import PVFeatureFlags
+import PVFileSystem
 import Defaults
 import AudioToolbox
 
@@ -535,6 +536,7 @@ private struct DebugControlsSection: View {
                         flags = featureFlags.getAllFeatureFlags()
                         showFeatureFlagsDebug = false
                         Defaults.Keys.useAppGroups.reset()
+                        Defaults.Keys.libraryLocation.reset()
                         Defaults.Keys.unsupportedCores.reset()
                         Defaults.Keys.iCloudSync.reset()
                     } catch {
@@ -631,7 +633,6 @@ private struct RetroDebugButton: View {
 // MARK: - User Defaults Section (Unified)
 
 private struct UserDefaultsSection: View {
-    @Default(.useAppGroups) var useAppGroups
     @Default(.unsupportedCores) var unsupportedCores
     @Default(.iCloudSync) var iCloudSync
     @Default(.obfuscateArtwork) var obfuscateArtwork
@@ -641,7 +642,7 @@ private struct UserDefaultsSection: View {
             SectionHeader(title: "USER DEFAULTS")
 
             VStack(spacing: 4) {
-                UserDefaultRow(title: "useAppGroups", subtitle: "Shared storage via App Groups", isOn: $useAppGroups)
+                LibraryLocationRow()
                 UserDefaultRow(title: "unsupportedCores", subtitle: "Experimental cores", isOn: $unsupportedCores)
                 UserDefaultRow(title: "iCloudSync", subtitle: "Sync saves with iCloud", isOn: $iCloudSync)
                 UserDefaultRow(title: "obfuscateArtwork", subtitle: "Blur artwork for screenshots", isOn: $obfuscateArtwork)
@@ -687,6 +688,89 @@ private struct UserDefaultRow: View {
                 .fill(RetroTheme.retroBlack.opacity(0.3))
         )
     }
+}
+
+// MARK: - Library location (phase 2 hook; Settings > Library > Storage arrives later)
+
+/// Shows where the library lives and, for legacy App Group users, offers the one move phase 2
+/// supports. The location is fixed per launch, so a finished move asks the user to quit and reopen.
+private struct LibraryLocationRow: View {
+    @State private var location = LibraryLocation.current
+    @State private var progress: LibraryMoveProgress?
+    @State private var message: String?
+    @State private var didSwitch = false
+    @State private var showsRelaunchAlert = false
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 6) {
+            HStack(alignment: .top, spacing: 8) {
+                VStack(alignment: .leading, spacing: 2) {
+                    Text("libraryLocation")
+                        .font(.system(size: 13, weight: .semibold))
+                        .foregroundColor(.white)
+                    Text("Where ROMs, BIOS and saves live")
+                        .font(.system(size: 11))
+                        .foregroundColor(RetroTheme.retroBlue.opacity(0.6))
+                }
+                Spacer(minLength: 4)
+                Text(location.rawValue)
+                    .font(.system(size: 11, design: .monospaced))
+                    .foregroundColor(RetroTheme.retroBlue)
+            }
+            #if !os(tvOS)
+            if location == .appGroup, !didSwitch {
+                Button(action: startMove) {
+                    Text(progress.map { "MOVING... \(Int($0.fraction * 100))%" } ?? "MOVE TO APP STORAGE")
+                        .font(.system(size: 11, weight: .bold, design: .monospaced))
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 6)
+                        .background(RetroTheme.retroPink.opacity(progress == nil ? 1 : 0.4))
+                        .foregroundColor(.white)
+                        .clipShape(RoundedRectangle(cornerRadius: 6))
+                }
+                .disabled(progress != nil)
+                .buttonStyle(.plain)
+            }
+            #endif
+            if let message {
+                Text(message)
+                    .font(.system(size: 11))
+                    .foregroundColor(RetroTheme.retroBlue.opacity(0.6))
+            }
+        }
+        .padding(.vertical, 6)
+        .padding(.horizontal, 6)
+        .background(
+            RoundedRectangle(cornerRadius: 6)
+                .fill(RetroTheme.retroBlack.opacity(0.3))
+        )
+        .alert("Library moved", isPresented: $showsRelaunchAlert) {
+            Button("OK", role: .cancel) {}
+        } message: {
+            Text("Quit and reopen Provenance to finish. The old files are removed on the next launch.")
+        }
+    }
+
+    #if !os(tvOS)
+    private func startMove() {
+        progress = LibraryMoveProgress(phase: .copying, filesDone: 0, filesTotal: 0, bytesDone: 0, bytesTotal: 0)
+        message = nil
+        Task { @MainActor in
+            do {
+                let outcome = try await LibraryMoveCoordinator.shared.moveToAppStorage { report in
+                    Task { @MainActor in progress = report }
+                }
+                progress = nil
+                didSwitch = (outcome == .switched)
+                showsRelaunchAlert = didSwitch
+                message = didSwitch ? "Switched. Relaunch required." : "Move ended: \(outcome)"
+            } catch {
+                progress = nil
+                message = error.localizedDescription
+            }
+        }
+    }
+    #endif
 }
 
 // MARK: - Shared Section Header
