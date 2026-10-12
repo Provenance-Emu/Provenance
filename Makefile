@@ -287,6 +287,9 @@ dev-azahar:
 dev-thin:
 	$(MAKE) _dev-build DEV_SCHEME=Provenance-Dev-Thin
 
+dev-n64:
+	$(MAKE) _dev-build DEV_SCHEME=Provenance-Dev-N64
+
 ## Run the dev harness on the booted simulator:
 ##   make dev-harness ROM=path/to/rom [TARGET=ui|azahar] [FRAMES=300] [CORE=com.provenance.core.stella]
 ## Provenance-Dev-Thin is device-only (libretro dylibs don't load in the simulator).

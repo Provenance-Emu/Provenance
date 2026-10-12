@@ -145,5 +145,8 @@ public extension FocusedApp {
     // implicit dependency on PVAzahar also builds (or cache-links) the PVlibAzahar slice.
     static let azahar = FocusedApp(slug: "azahar", title: "Azahar", cores: [.azahar], flags: [DevSettings.harnessFlag])
 
-    static let all: [FocusedApp] = [.ui, .azahar, .thin]
+    /// Mupen64Plus + its plugin frameworks, all as SwiftPM products (Phase 2 of the core conversion).
+    static let n64 = FocusedApp(slug: "n64", title: "N64", cores: [.mupen64Plus], flags: [DevSettings.harnessFlag])
+
+    static let all: [FocusedApp] = [.ui, .azahar, .thin, .n64]
 }
