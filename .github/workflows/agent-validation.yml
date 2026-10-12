@@ -658,6 +658,7 @@ jobs:
             -destination "generic/platform=iOS Simulator" \
             -skipPackagePluginValidation \
             -skipMacroValidation \
+            EXCLUDED_ARCHS=x86_64 \
             -quiet \
             2>&1 | tail -100
           build_exit=${PIPESTATUS[0]}

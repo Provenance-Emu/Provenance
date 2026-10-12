@@ -119,6 +119,7 @@ let packageDependencies: [Package.Dependency] = [
     .package(path: "../../PVObjCUtils"),
     .package(name: "PVPrimitives", path: "../../PVPrimitives/"),
     .package(path: "../../PVSettings"),
+    .package(url: "https://github.com/sindresorhus/Defaults.git", from: "9.0.2"),   // same spec as PVSettings
     .package(path: "../../PVNetplay"),
     .package(path: "../../PVRcheevos"),
     .package(name: "PVRcheevosBridge", path: "../../PVRcheevosBridge"),
@@ -137,7 +138,8 @@ let pvMupenDeps: [Target.Dependency] = [
     "PVLogging",
     "PVPlists",
     "PVPrimitives",   // SystemIdentifier; a dynamic product links only what its target declares
-    "PVSettings",     // imported by MupenGameCore (+ Defaults through it)
+    "PVSettings",     // imported by MupenGameCore
+    .product(name: "Defaults", package: "Defaults"),   // imported directly; its generic subscript is not re-exported by PVSettings' link
     "PVSupport",
     "PVMupenBridge",
     "PVMupen64PlusCore",
