@@ -19,7 +19,6 @@ let coreTarget: Target = .target(
         "PVAudio",
         "PVSupport",
         "PVCoreGenesisPlusBridge",
-        "libgenesisplus",
         .product(name: "PVRcheevos", package: "PVRcheevos"),
         .product(name: "PVRcheevosBridge", package: "PVRcheevosBridge"),
     ],
