@@ -691,7 +691,7 @@ public extension Defaults.Keys {
 
     /// `LibraryLocation.rawValue` chosen by the move engine (PVFileSystem). `nil` until the first move;
     /// the location is then derived from `useAppGroups` and the iCloud settings.
-    static let libraryLocation = Key<String?>("libraryLocation", default: nil)
+    static let libraryLocation = Key<String?>("libraryLocation")
 }
 
 // MARK: Web Server

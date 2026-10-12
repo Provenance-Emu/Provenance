@@ -535,8 +535,6 @@ private struct DebugControlsSection: View {
                         try await loadDefaultConfiguration()
                         flags = featureFlags.getAllFeatureFlags()
                         showFeatureFlagsDebug = false
-                        Defaults.Keys.useAppGroups.reset()
-                        Defaults.Keys.libraryLocation.reset()
                         Defaults.Keys.unsupportedCores.reset()
                         Defaults.Keys.iCloudSync.reset()
                     } catch {
@@ -700,6 +698,10 @@ private struct LibraryLocationRow: View {
     @State private var message: String?
     @State private var didSwitch = false
     @State private var showsRelaunchAlert = false
+    /// A journaled move is waiting for a relaunch (or a copy to finish at launch); starting another would be refused.
+    @State private var movePending = LibraryMoveCoordinator.shared.hasPendingMove
+    /// Identifies the running move, so a progress report that lands after it finished cannot revive the progress UI.
+    @State private var runID = UUID()
 
     var body: some View {
         VStack(alignment: .leading, spacing: 6) {
@@ -719,17 +721,23 @@ private struct LibraryLocationRow: View {
             }
             #if !os(tvOS)
             if location == .appGroup, !didSwitch {
-                Button(action: startMove) {
-                    Text(progress.map { "MOVING... \(Int($0.fraction * 100))%" } ?? "MOVE TO APP STORAGE")
+                if movePending && progress == nil {
+                    Text("Move pending: relaunch to finish")
                         .font(.system(size: 11, weight: .bold, design: .monospaced))
-                        .frame(maxWidth: .infinity)
-                        .padding(.vertical, 6)
-                        .background(RetroTheme.retroPink.opacity(progress == nil ? 1 : 0.4))
-                        .foregroundColor(.white)
-                        .clipShape(RoundedRectangle(cornerRadius: 6))
+                        .foregroundColor(RetroTheme.retroPink)
+                } else {
+                    Button(action: startMove) {
+                        Text(progress.map { "MOVING... \(Int($0.fraction * 100))%" } ?? "MOVE TO APP STORAGE")
+                            .font(.system(size: 11, weight: .bold, design: .monospaced))
+                            .frame(maxWidth: .infinity)
+                            .padding(.vertical, 6)
+                            .background(RetroTheme.retroPink.opacity(progress == nil ? 1 : 0.4))
+                            .foregroundColor(.white)
+                            .clipShape(RoundedRectangle(cornerRadius: 6))
+                    }
+                    .disabled(progress != nil)
+                    .buttonStyle(.plain)
                 }
-                .disabled(progress != nil)
-                .buttonStyle(.plain)
             }
             #endif
             if let message {
@@ -753,19 +761,27 @@ private struct LibraryLocationRow: View {
 
     #if !os(tvOS)
     private func startMove() {
+        let token = UUID()
+        runID = token
         progress = LibraryMoveProgress(phase: .copying, filesDone: 0, filesTotal: 0, bytesDone: 0, bytesTotal: 0)
         message = nil
         Task { @MainActor in
             do {
                 let outcome = try await LibraryMoveCoordinator.shared.moveToAppStorage { report in
-                    Task { @MainActor in progress = report }
+                    Task { @MainActor in
+                        if runID == token { progress = report }
+                    }
                 }
+                runID = UUID()
                 progress = nil
+                movePending = LibraryMoveCoordinator.shared.hasPendingMove
                 didSwitch = (outcome == .switched)
                 showsRelaunchAlert = didSwitch
                 message = didSwitch ? "Switched. Relaunch required." : "Move ended: \(outcome)"
             } catch {
+                runID = UUID()
                 progress = nil
+                movePending = LibraryMoveCoordinator.shared.hasPendingMove
                 message = error.localizedDescription
             }
         }
