@@ -34,12 +34,13 @@ env:
 
 jobs:
   build:
-    name: Provenance-Dev-UI (${{ matrix.destination }})
+    name: ${{ matrix.scheme }} (${{ matrix.destination }})
     runs-on: macos-26
     timeout-minutes: 90
     strategy:
       fail-fast: false
       matrix:
+        scheme: ["Provenance-Dev-UI", "Provenance-Dev-N64"]
         destination: ["generic/platform=iOS Simulator", "generic/platform=tvOS Simulator"]
     steps:
       - name: Checkout
@@ -52,7 +53,8 @@ jobs:
         run: sudo xcode-select -s /Applications/Xcode_26.3.app
 
       # Same set as agent-validation's smoke build (package resolution needs them), plus the
-      # three cores Provenance-Dev-UI embeds.
+      # cores Provenance-Dev-UI (mGBA, Stella, snes9x, FCEU, Genesis) and Provenance-Dev-N64
+      # (Mupen64Plus + plugins) embed as SwiftPM packages.
       - name: Init required submodules (shallow)
         run: |
           git submodule update --init --depth 1 \
@@ -66,7 +68,14 @@ jobs:
             Cores/mGBA/Sources/libmGBA-embed/mgba \
             Cores/Stella/Sources/libstella/stella \
             Cores/snes9x/snes9x-src \
-            Cores/snes9x/libretro-snes9x
+            Cores/snes9x/libretro-snes9x \
+            Cores/FCEU/fceux \
+            Cores/Genesis-Plus-GX/Sources/libgenesisplus/Genesis-Plus-GX \
+            Cores/Mupen64Plus/Sources/Plugins/Core/Core \
+            Cores/Mupen64Plus/Sources/Plugins/Video/gliden64 \
+            Cores/Mupen64Plus/Sources/Plugins/Video/rice/rice \
+            Cores/Mupen64Plus/Sources/Plugins/rsp/hle \
+            Cores/Mupen64Plus/Sources/Plugins/rsp/cxd4
           if ! git submodule update --init --depth 1 Dependencies/ZipArchive 2>/dev/null; then
             rm -rf Dependencies/ZipArchive
             git clone --depth 1 https://github.com/ZipArchive/ZipArchive.git Dependencies/ZipArchive
@@ -110,7 +119,7 @@ jobs:
           set -o pipefail
           xcodebuild build \
             -workspace Provenance-Dev.xcworkspace \
-            -scheme Provenance-Dev-UI \
+            -scheme "${{ matrix.scheme }}" \
             -destination "${{ matrix.destination }}" \
             -skipPackagePluginValidation -skipMacroValidation \
             2>&1 | tee /tmp/dev-xcodebuild.log | grep -E "(: (fatal )?error:|BUILD (SUCCEEDED|FAILED)|The following build commands failed)" | tail -60
