@@ -513,7 +513,7 @@ static void *dlopen_myself()
 	EAGLContext* context = [self bestContext];
 #endif
 
-    if(MupenGameCoreOptions.useRice) {
+    if([MupenGameCoreOptions useRice]) {
         success = LoadPlugin(M64PLUGIN_GFX, @"PVMupen64PlusVideoRice");
         ptr_PV_ForceUpdateWindowSize = dlsym(RTLD_DEFAULT, "_PV_ForceUpdateWindowSize");
     } else {

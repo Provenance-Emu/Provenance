@@ -273,7 +273,7 @@ void ConfigureGLideN64(NSString *romFolder) {
     ConfigSetParameter(gliden64, "AspectRatio", M64TYPE_INT, &aspectRatio);
 
     // Per-pixel lighting
-    int enableHWLighting = MupenGameCoreOptions.perPixelLighting ? 1 : 0;
+    int enableHWLighting = [MupenGameCoreOptions perPixelLighting] ? 1 : 0;
     ConfigSetParameter(gliden64, "EnableHWLighting", M64TYPE_BOOL, &enableHWLighting);
 
     // HiRez & texture options

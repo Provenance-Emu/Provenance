@@ -432,7 +432,7 @@ void MupenControllerCommand(int Control, unsigned char *Command) {
 }
 
 - (void)didMoveN64JoystickDirection:(PVN64Button)button withXValue:(CGFloat)xValue withYValue:(CGFloat)yValue forPlayer:(NSUInteger)player {
-    if (MupenGameCoreOptions.dualJoystickOption && player == 0) {
+    if ([MupenGameCoreOptions dualJoystickOption] && player == 0) {
         player = 1;
     }
     yAxis[player] = yValue * N64_ANALOG_MAX;
