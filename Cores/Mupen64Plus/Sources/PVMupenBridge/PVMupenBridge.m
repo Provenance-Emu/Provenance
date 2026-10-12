@@ -28,7 +28,11 @@
 #define M64P_CORE_PROTOTYPES 1
 
 #import "PVMupenBridge.h"
+#if SWIFT_PACKAGE
+#import "PVMupenSwiftInterop.h"
+#else
 #import "PVMupen64PlusBridge/PVMupen64PlusBridge-Swift.h"
+#endif
 @import PVSupport;
 @import PVCoreBridge;
 @import PVCoreObjCBridge;

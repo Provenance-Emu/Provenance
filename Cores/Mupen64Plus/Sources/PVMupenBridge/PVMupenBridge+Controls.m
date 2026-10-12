@@ -1,6 +1,10 @@
 #import "PVMupenBridge.h"
 #import "PVMupenBridge+Controls.h"
+#if SWIFT_PACKAGE
+#import "PVMupenSwiftInterop.h"
+#else
 #import "PVMupen64PlusBridge/PVMupen64PlusBridge-Swift.h"
+#endif
 #import "api/config.h"
 #import "api/m64p_common.h"
 #import "api/m64p_config.h"

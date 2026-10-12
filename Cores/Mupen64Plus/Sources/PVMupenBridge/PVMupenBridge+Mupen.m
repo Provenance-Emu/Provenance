@@ -1,6 +1,10 @@
 #import "PVMupenBridge+Mupen.h"
 #import "PVMupenBridge+Controls.h"
+#if SWIFT_PACKAGE
+#import "PVMupenSwiftInterop.h"
+#else
 #import "PVMupen64PlusBridge/PVMupen64PlusBridge-Swift.h"
+#endif
 @import PVAudio;
 @import PVSettings;
 @import PVLogging;
