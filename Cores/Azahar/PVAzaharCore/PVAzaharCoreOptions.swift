@@ -2,6 +2,9 @@ import Foundation
 import PVCoreBridge
 import PVLogging
 import PVSupport
+#if canImport(PVAzaharBridge)
+import PVAzaharBridge   // SwiftPM: the ObjC++ bridge is its own target (Cores/Azahar/Package.swift)
+#endif
 import UIKit
 
 /// Option definitions for the Azahar 3DS core. Enumeration values are the raw numbers the bridge expects

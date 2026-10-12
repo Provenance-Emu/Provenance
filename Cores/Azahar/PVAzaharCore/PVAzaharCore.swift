@@ -4,6 +4,9 @@ import PVEmulatorCore
 import PVLogging
 import PVSettings
 import PVSupport
+#if canImport(PVAzaharBridge)
+import PVAzaharBridge   // SwiftPM: the ObjC++ bridge is its own target (Cores/Azahar/Package.swift)
+#endif
 
 enum PVAzaharCoreError {
     static let domain = "PVAzaharCore"
@@ -13,7 +16,7 @@ enum PVAzaharCoreError {
 @objc @objcMembers
 public final class PVAzaharCore: PVEmulatorCore, @unchecked Sendable {
     /// azahar's user directory: Documents/Azahar on iOS, Library/Caches/Azahar on tvOS (Documents is not
-    /// writable there). `PVAzaharCoreBridge.mm` hands it to FileUtil::SetUserPath.
+    /// writable there). `loadFile` pushes it into the bridge, which hands it to FileUtil::SetUserPath.
     public static var userRootURL: URL { PVAzaharDataMigrator.defaultTargetRoot() }
     /// Mirrors PVCoreAudio: `.ambient` (silenced by the ring/silent switch) when true, `.playback` otherwise.
     public static var respectsMuteSwitch: Bool { Defaults[.respectMuteSwitch] }
@@ -40,6 +43,8 @@ public final class PVAzaharCore: PVEmulatorCore, @unchecked Sendable {
             fatalError("PVAzaharCoreBridge must conform to ObjCBridgedCoreBridge")
         }
         self.bridge = objcBridge
+        // The bridge never imports this Swift module (see PVAzaharRenderSurface), so it gets the view class here.
+        _bridge.renderViewClass = PVAzaharRenderView.self
         // Load runs on the bridge's emulation thread, so the host only learns the outcome from these.
         _bridge.onEmulationStarted = { [weak self] in
             // Bind `self` before entering the main-actor region: capturing the weak optional
@@ -67,6 +72,8 @@ public final class PVAzaharCore: PVEmulatorCore, @unchecked Sendable {
     public override func loadFile(atPath path: String) throws {
         Self.migrateEmuThreeDataIfNeeded()
         PVAzaharCoreOptions.apply(to: _bridge)
+        _bridge.userDirectoryPath = Self.userRootURL.path
+        _bridge.respectsMuteSwitch = Self.respectsMuteSwitch
         observeOptionUpdates()
         try super.loadFile(atPath: path)
     }
@@ -150,3 +157,6 @@ extension PVAzaharCore: GameWithCheat {
 extension PVAzaharCore: CoreOptional {
     public static var options: [CoreOption] { PVAzaharCoreOptions.options }
 }
+
+/// The bridge creates the render view from `renderViewClass` and talks to it through this protocol.
+extension PVAzaharRenderView: PVAzaharRenderSurface {}

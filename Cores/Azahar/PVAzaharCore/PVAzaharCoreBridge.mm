@@ -1,7 +1,6 @@
 #import "PVAzaharCoreBridge.h"
 #import "PVAzaharCoreBridge+Private.h"
 #import "PVAzaharCoreBridge+Video.h"
-#import <PVAzahar/PVAzahar-Swift.h>
 #import <PVLogging/PVLoggingObjC.h>
 @import PVCoreBridge;  // defines the protocols the public header only forward-declares
 #include <chrono>
@@ -126,12 +125,16 @@ void PVAzaharJITProbeSignalHandler(int sig) {
     if (_emuThread.joinable()) { _emuThread.detach(); }
 }
 
-- (NSString *)userDirectoryPath {
-    return PVAzaharCore.userRootURL.path;   // Documents/Azahar on iOS, Caches/Azahar on tvOS
-}
-
 - (BOOL)loadFileAtPath:(NSString *)path error:(NSError **)error {
-    NSString *userDir = [self userDirectoryPath];
+    NSString *userDir = self.userDirectoryPath;   // pushed by PVAzaharCore.loadFile
+    if (userDir.length == 0) {
+        ELOG(@"[PVAzahar] userDirectoryPath is not set; PVAzaharCore sets it before loadFileAtPath:");
+        if (error) {
+            *error = [NSError errorWithDomain:@"PVAzaharCore" code:1
+                                     userInfo:@{NSLocalizedDescriptionKey: @"Azahar has no user directory"}];
+        }
+        return NO;
+    }
     NSError *dirError = nil;
     if (![[NSFileManager defaultManager] createDirectoryAtPath:userDir withIntermediateDirectories:YES attributes:nil error:&dirError]) {
         ELOG(@"[PVAzahar] could not create user directory %@: %@", userDir, dirError);
