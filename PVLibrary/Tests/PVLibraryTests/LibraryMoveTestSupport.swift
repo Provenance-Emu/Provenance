@@ -51,4 +51,10 @@ enum LibraryMoveTestSupport {
     static func modificationDate(_ root: URL, _ relativePath: String) throws -> Date? {
         try root.appendingPathComponent(relativePath).resourceValues(forKeys: [.contentModificationDateKey]).contentModificationDate
     }
+
+    /// The planner item for an existing file: its current size and modification date.
+    static func planItem(_ root: URL, _ relativePath: String) throws -> LibraryMovePlan.Item {
+        let values = try root.appendingPathComponent(relativePath).resourceValues(forKeys: [.fileSizeKey, .contentModificationDateKey])
+        return LibraryMovePlan.Item(relativePath: relativePath, size: Int64(values.fileSize ?? 0), modified: values.contentModificationDate)
+    }
 }
