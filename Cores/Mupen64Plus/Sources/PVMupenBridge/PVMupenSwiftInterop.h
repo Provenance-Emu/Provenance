@@ -21,6 +21,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (class, nonatomic, readonly) BOOL useRice;
 @property (class, nonatomic, readonly) BOOL perPixelLighting;
 @property (class, nonatomic, readonly) BOOL dualJoystickOption;
+@property (class, nonatomic, readonly) BOOL useCXD4;
 @end
 
 @protocol PVMupenBridgeRumbleHelperClass <NSObject>

@@ -566,7 +566,7 @@ static void *dlopen_myself()
     plugin_start(M64PLUGIN_INPUT);
 
 
-    if(MupenGameCoreOptions.useCXD4) {
+    if([MupenGameCoreOptions useCXD4]) {
             // Load RSP
             // Configure if using rsp-cxd4 plugin
         m64p_handle configRSP;
