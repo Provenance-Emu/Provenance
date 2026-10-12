@@ -10,6 +10,9 @@ import PVLogging
 import PVCoreBridge
 import PVEmulatorCore
 import PVPlists
+#if canImport(PVFCEUBridge)
+import PVFCEUBridge   // SwiftPM package: the ObjC bridge target (the Xcode target sees it directly)
+#endif
 
 #if SWIFT_PACKAGE
 public extension PVBundleFinder {
