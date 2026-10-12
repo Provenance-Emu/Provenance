@@ -131,7 +131,7 @@ public struct FocusedApp {
 }
 
 public extension FocusedApp {
-    static let ui = FocusedApp(slug: "ui", title: "UI", cores: [.mGBA, .stella, .snes9x], flags: [DevSettings.harnessFlag])
+    static let ui = FocusedApp(slug: "ui", title: "UI", cores: [.mGBA, .stella, .snes9x, .fceu], flags: [DevSettings.harnessFlag])
 
     static let thin = FocusedApp(
         slug: "thin",

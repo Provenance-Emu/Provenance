@@ -6,7 +6,7 @@
 //  Copyright © 2018 Provenance Emu. All rights reserved.
 //
 
-#import <PVFCEU/PVFCEU.h>
+#import "PVFCEUEmulatorCore.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
