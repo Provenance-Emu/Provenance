@@ -205,6 +205,10 @@ A second, generated workspace for fast iteration. `Provenance.xcodeproj` still s
 - **Simulator builds are ad-hoc signed by `Dev/Config/Dev.xcconfig`.** Never pass
   `CODE_SIGNING_ALLOWED=NO` to a dev build: the app then dies in dyld on the unsigned embedded
   MoltenVK.
+- **Build the dev workspace with `SWIFT_ENABLE_EXPLICIT_MODULES=NO`** (the Makefile and both CI
+  workflows pass it). Hummingbird imports `ServiceContextModule` without declaring it, so Xcode's
+  explicit-modules scan fails at random with "Unable to find module dependency". It must be an
+  xcodebuild argument: project settings never reach package targets.
 - **Helpers:** `Tuist/ProjectDescriptionHelpers/` holds `CoreProduct` (the core table),
   `FocusedApp` (the target template plus `FocusedApp.all`), `LibretroCores` and `DevSettings`. Tuist
   only finds helpers at `<root>/Tuist/ProjectDescriptionHelpers`; don't add a `Dev/Tuist/`.

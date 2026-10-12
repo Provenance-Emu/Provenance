@@ -117,11 +117,17 @@ jobs:
       - name: Build
         run: |
           set -o pipefail
+          # SWIFT_ENABLE_EXPLICIT_MODULES=NO: Hummingbird imports ServiceContextModule without
+          # declaring it (only Tracing), so the explicit-modules dependency scan fails whenever
+          # that module has not been built yet ("Unable to find module dependency"). Implicit
+          # modules find it on the search path. Command-line settings reach package targets;
+          # project settings do not.
           xcodebuild build \
             -workspace Provenance-Dev.xcworkspace \
             -scheme "${{ matrix.scheme }}" \
             -destination "${{ matrix.destination }}" \
             -skipPackagePluginValidation -skipMacroValidation \
+            SWIFT_ENABLE_EXPLICIT_MODULES=NO \
             2>&1 | tee /tmp/dev-xcodebuild.log | grep -E "(: (fatal )?error:|BUILD (SUCCEEDED|FAILED)|The following build commands failed)" | tail -60
 
       - name: Upload log on failure
