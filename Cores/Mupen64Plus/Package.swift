@@ -153,9 +153,7 @@ let pvMupenExtraCSettings: [CSetting] = [
 ]
 let pvMupenCSettings: [CSetting] = pvMupenExtraCSettings + sharedCSettings
 
-let pvMupenPlugins: [Target.PluginUsage] = [
-    .plugin(name: "SwiftGenPlugin", package: "SwiftGenPlugin")
-]
+let pvMupenPlugins: [Target.PluginUsage] = [] // CorePlist-Generated.swift is committed; the SwiftGen plugin would try to rewrite it in the source tree
 
 let pvMupenTarget: Target = .target(
     name: "PVMupen",
