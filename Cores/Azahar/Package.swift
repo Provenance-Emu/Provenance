@@ -73,7 +73,6 @@ let linkerFlags: [String] = [
 /// Paths every target leaves out; each target then lists only its own files in `sources`.
 let sharedExcludes: [String] = [
     "azahar",
-    "build",
     "cmake",
     "Tests",
     "PVAzahar.xcodeproj",
@@ -84,7 +83,7 @@ let sharedExcludes: [String] = [
     "project.yml",
     "swiftgen.yml",
     "unexported_symbols.txt",
-]
+] + (FileManager.default.fileExists(atPath: "\(packageDir)/build") ? ["build"] : [])   // gitignored output
 
 let swiftSources: [String] = [
     "PVAzaharCore/CorePlist.swift",
