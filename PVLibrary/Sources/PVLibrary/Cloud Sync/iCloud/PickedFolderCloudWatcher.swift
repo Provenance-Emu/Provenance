@@ -46,7 +46,7 @@ public final class PickedFolderCloudWatcher: @unchecked Sendable {
         self.onChange = onChange
         let query = NSMetadataQuery()
         query.notificationBatchingInterval = 3
-        query.searchScopes = [NSMetadataQueryUbiquitousExternalDocumentsScope, NSMetadataQueryUbiquitousDocumentsScope]
+        query.searchScopes = [NSMetadataQueryAccessibleUbiquitousExternalDocumentsScope, NSMetadataQueryUbiquitousDocumentsScope]
         query.predicate = Self.predicate(rootPath: root.standardizedFileURL.path)
         NotificationCenter.default.addObserver(self, selector: #selector(handle(_:)), name: .NSMetadataQueryDidFinishGathering, object: query)
         NotificationCenter.default.addObserver(self, selector: #selector(handle(_:)), name: .NSMetadataQueryDidUpdate, object: query)
