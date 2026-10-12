@@ -18,6 +18,11 @@ let coreTarget: Target = .target(
         "PVLogging",
         "PVAudio",
         "PVSupport",
+        // Used directly (CorePlist, SystemIdentifier, settings); a dynamic product links only
+        // what its target declares, so these can't ride in on PVEmulatorCore's closure.
+        "PVPlists",
+        "PVPrimitives",
+        "PVSettings",
         "PVCoreGenesisPlusBridge",
         .product(name: "PVRcheevos", package: "PVRcheevos"),
         .product(name: "PVRcheevosBridge", package: "PVRcheevosBridge"),
@@ -113,6 +118,9 @@ let package = Package(
         .package(path: "../../PVAudio"),
         .package(path: "../../PVLogging"),
         .package(path: "../../PVObjCUtils"),
+        .package(path: "../../PVPlists"),
+        .package(name: "PVPrimitives", path: "../../PVPrimitives/"),
+        .package(path: "../../PVSettings"),
         .package(path: "../../PVRcheevos"),
         .package(name: "PVRcheevosBridge", path: "../../PVRcheevosBridge"),
         .package(url: "https://github.com/Provenance-Emu/SwiftGenPlugin.git", from: "1.1.3"),

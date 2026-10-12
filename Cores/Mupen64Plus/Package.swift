@@ -117,6 +117,8 @@ let packageDependencies: [Package.Dependency] = [
     .package(path: "../../PVAudio"),
     .package(path: "../../PVLogging"),
     .package(path: "../../PVObjCUtils"),
+    .package(name: "PVPrimitives", path: "../../PVPrimitives/"),
+    .package(path: "../../PVSettings"),
     .package(path: "../../PVNetplay"),
     .package(path: "../../PVRcheevos"),
     .package(name: "PVRcheevosBridge", path: "../../PVRcheevosBridge"),
@@ -134,6 +136,8 @@ let pvMupenDeps: [Target.Dependency] = [
     "PVEmulatorCore",
     "PVLogging",
     "PVPlists",
+    "PVPrimitives",   // SystemIdentifier; a dynamic product links only what its target declares
+    "PVSettings",     // imported by MupenGameCore (+ Defaults through it)
     "PVSupport",
     "PVMupenBridge",
     "PVMupen64PlusCore",
