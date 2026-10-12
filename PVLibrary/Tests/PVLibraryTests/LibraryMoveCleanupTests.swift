@@ -28,7 +28,7 @@ final class LibraryMoveCleanupTests: XCTestCase {
     }
 
     private func engine() -> LibraryMoveEngine {
-        LibraryMoveEngine(journalStore: store, planner: LibraryMovePlanner(availableCapacity: { _ in .max }), switchLocation: { _ in })
+        LibraryMoveEngine(journalStore: store, planner: LibraryMovePlanner(availableCapacity: { _ in .max }), switchLocation: { _, _ in })
     }
 
     private func request(keepCopy: Bool = false) -> LibraryMoveRequest {

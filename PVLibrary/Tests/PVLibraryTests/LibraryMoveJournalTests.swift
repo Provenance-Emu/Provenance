@@ -132,4 +132,29 @@ final class LibraryMoveJournalTests: XCTestCase {
         XCTAssertEqual(LibraryMoveProgress(phase: .copying, filesDone: 1, filesTotal: 4, bytesDone: 0, bytesTotal: 0).fraction, 0.25)
         XCTAssertEqual(LibraryMoveProgress(phase: .copying, filesDone: 0, filesTotal: 0, bytesDone: 0, bytesTotal: 0).fraction, 1)
     }
+
+    func testVersionIsTwoAndAVersionOneJournalStillDecodes() throws {
+        XCTAssertEqual(LibraryMoveJournal.currentVersion, 2)
+        // Review Focus 5: the shape phase 2 wrote (no folder fields, no remaps).
+        let v1 = """
+        {"createdAt":780000000,"createdDirectories":[],"destination":"appStorage","entries":{},"folders":["ROMs"],"id":"\(UUID().uuidString)",
+         "inFlight":[],"keepCopy":false,"phase":"copying","source":"appGroup","updatedAt":780000000,"version":1}
+        """
+        try FileManager.default.createDirectory(at: store.url.deletingLastPathComponent(), withIntermediateDirectories: true)
+        try Data(v1.utf8).write(to: store.url)
+        let journal = try XCTUnwrap(store.load())
+        XCTAssertNil(journal.sourceFolder)
+        XCTAssertNil(journal.destinationFolder)
+        XCTAssertNil(journal.remaps)
+        XCTAssertEqual(journal.deduplicateByMD5 ?? false, false)
+    }
+
+    func testFolderFieldsRoundTrip() throws {
+        let folder = PickedLibraryFolder(bookmark: Data([9, 9]), displayName: "Retro", includesSaves: true, pickedAt: Date(timeIntervalSinceReferenceDate: 12.5))
+        var journal = LibraryMoveJournal(request: .init(source: .appStorage, destination: .pickedFolder, sourceRoot: URL(fileURLWithPath: "/a"),
+                                                        destinationRoot: URL(fileURLWithPath: "/b"), folders: ["ROMs"], keepCopy: false, destinationFolder: folder))
+        journal.remaps = ["ROMs/x/A.sfc": "ROMs/x/B.sfc"]
+        try store.save(journal)
+        XCTAssertEqual(store.load(), journal)
+    }
 }

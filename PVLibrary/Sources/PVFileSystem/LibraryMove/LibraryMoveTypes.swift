@@ -51,14 +51,24 @@ public struct LibraryMoveRequest: Sendable, Equatable {
     public let folders: [String]
     /// Leave the source files in place after the switch ("Keep a copy in the old location").
     public let keepCopy: Bool
+    /// The picked folder being left (`source == .pickedFolder`); lets a resume after the switch re-resolve it.
+    public let sourceFolder: PickedLibraryFolder?
+    /// The picked folder being moved to (`destination == .pickedFolder`); stored by the switch.
+    public let destinationFolder: PickedLibraryFolder?
+    /// Phase 4: journal `ROMs/` and `BIOS/` files that already exist in the destination under another name instead of copying them.
+    public let deduplicateByMD5: Bool
 
-    public init(source: LibraryLocation, destination: LibraryLocation, sourceRoot: URL, destinationRoot: URL, folders: [String], keepCopy: Bool) {
+    public init(source: LibraryLocation, destination: LibraryLocation, sourceRoot: URL, destinationRoot: URL, folders: [String], keepCopy: Bool,
+                sourceFolder: PickedLibraryFolder? = nil, destinationFolder: PickedLibraryFolder? = nil, deduplicateByMD5: Bool = false) {
         self.source = source
         self.destination = destination
         self.sourceRoot = sourceRoot
         self.destinationRoot = destinationRoot
         self.folders = folders
         self.keepCopy = keepCopy
+        self.sourceFolder = sourceFolder
+        self.destinationFolder = destinationFolder
+        self.deduplicateByMD5 = deduplicateByMD5
     }
 }
 

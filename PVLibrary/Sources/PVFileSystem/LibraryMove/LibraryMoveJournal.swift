@@ -14,7 +14,7 @@ import Foundation
 import PVLogging
 
 public struct LibraryMoveJournal: Codable, Sendable, Equatable {
-    public static let currentVersion = 1
+    public static let currentVersion = 2
 
     public struct Entry: Codable, Sendable, Equatable {
         public enum State: String, Codable, Sendable {
@@ -69,6 +69,14 @@ public struct LibraryMoveJournal: Codable, Sendable, Equatable {
     public var inFlight: [String]
     /// Destination directories (relative) that did not exist when claimed. Rollback removes the ones still empty.
     public var createdDirectories: [String]
+    /// Phase 3: the picked folders at each end, when either end is `.pickedFolder`.
+    public var sourceFolder: PickedLibraryFolder?
+    public var destinationFolder: PickedLibraryFolder?
+    /// Phase 4: see `LibraryMoveRequest.deduplicateByMD5`. Optional so a version 1 journal decodes.
+    public var deduplicateByMD5: Bool?
+    /// Phase 4: source relative path → the destination relative path a de-duplicated file resolved to. The
+    /// coordinator applies these to the database before cleanup deletes the sources.
+    public var remaps: [String: String]?
 
     public init(request: LibraryMoveRequest, now: Date = Date()) {
         version = Self.currentVersion
@@ -83,6 +91,10 @@ public struct LibraryMoveJournal: Codable, Sendable, Equatable {
         entries = [:]
         inFlight = []
         createdDirectories = []
+        sourceFolder = request.sourceFolder
+        destinationFolder = request.destinationFolder
+        deduplicateByMD5 = request.deduplicateByMD5 ? true : nil
+        remaps = nil
     }
 }
 

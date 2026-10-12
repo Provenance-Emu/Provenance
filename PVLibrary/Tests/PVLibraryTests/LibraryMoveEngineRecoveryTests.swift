@@ -17,7 +17,14 @@ final class LibraryMoveEngineRecoveryTests: XCTestCase {
 
     private static let folders = ["ROMs", "BIOS", "Save States"]
 
-    private final class SwitchRecorder: @unchecked Sendable { var calls: [LibraryLocation] = [] }
+    private final class SwitchRecorder: @unchecked Sendable {
+        var switches: [LibraryLocation] = []
+        var switchedFolders: [PickedLibraryFolder?] = []
+        func record(_ location: LibraryLocation, _ folder: PickedLibraryFolder?) {
+            switches.append(location)
+            switchedFolders.append(folder)
+        }
+    }
 
     override func setUpWithError() throws {
         base = try LibraryMoveTestSupport.makeTempDirectory(named: "LibraryMoveEngineRecoveryTests")
@@ -37,7 +44,7 @@ final class LibraryMoveEngineRecoveryTests: XCTestCase {
         let recorder = switched
         return LibraryMoveEngine(journalStore: store,
                                  planner: LibraryMovePlanner(availableCapacity: { _ in capacity }),
-                                 switchLocation: { recorder.calls.append($0) })
+                                 switchLocation: { recorder.record($0, $1) })
     }
 
     private func request() -> LibraryMoveRequest {
@@ -83,7 +90,7 @@ final class LibraryMoveEngineRecoveryTests: XCTestCase {
             guard case .insufficientSpace = error else { return XCTFail("\(error)") }
         }
         XCTAssertEqual(store.load()?.phase, .copying, "the journal is kept")
-        XCTAssertTrue(switched.calls.isEmpty)
+        XCTAssertTrue(switched.switches.isEmpty)
     }
 
     func testResumeOfAFinishedCopyNeedsNoFreeSpace() async throws {

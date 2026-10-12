@@ -26,7 +26,7 @@ public final class LibraryMoveCoordinator: @unchecked Sendable {
     /// The appGroup/appStorage axis this process launched on. Unlike `launchedLocation` it ignores the live iCloud Drive
     /// setting, so a resume is not refused just because iCloud Drive mode is on.
     private let resumeLocation: @Sendable () -> LibraryLocation
-    private let switchLocation: @Sendable (LibraryLocation) throws -> Void
+    private let switchLocation: @Sendable (LibraryLocation, PickedLibraryFolder?) throws -> Void
     private let planner: LibraryMovePlanner
     private let engine: LibraryMoveEngine?
     /// Defaults shared by every app of the App Group; each app records its location here (see `anotherVariantUsesAppGroup`).
@@ -38,7 +38,7 @@ public final class LibraryMoveCoordinator: @unchecked Sendable {
                 rootProvider: @escaping @Sendable (LibraryLocation) -> URL? = { LibraryMoveCoordinator.defaultRoot(for: $0) },
                 launchedLocation: @escaping @Sendable () -> LibraryLocation = { LibraryLocation.current },
                 resumeLocation: @escaping @Sendable () -> LibraryLocation = { LibraryLocation.launchAxis },
-                switchLocation: @escaping @Sendable (LibraryLocation) throws -> Void = { try LibraryLocation.switchStored(to: $0) },
+                switchLocation: @escaping @Sendable (LibraryLocation, PickedLibraryFolder?) throws -> Void = { try LibraryLocation.switchStored(to: $0, pickedFolder: $1) },
                 planner: LibraryMovePlanner = LibraryMovePlanner(),
                 md5Provider: any MD5Provider = FileManager.default,
                 sharedDefaults: UserDefaults? = UserDefaults(suiteName: PVAppGroupId),
@@ -52,7 +52,7 @@ public final class LibraryMoveCoordinator: @unchecked Sendable {
         self.sharedDefaults = sharedDefaults
         self.variantID = variantID
         self.engine = journalStore.map {
-            LibraryMoveEngine(journalStore: $0, md5Provider: md5Provider, planner: planner, switchLocation: switchLocation)
+            LibraryMoveEngine(journalStore: $0, md5Provider: md5Provider, planner: planner, manifestAuthor: variantID, switchLocation: switchLocation)
         }
     }
 
@@ -123,7 +123,7 @@ public final class LibraryMoveCoordinator: @unchecked Sendable {
                 if launched == journal.source {
                     // The switch is journaled but the setting didn't stick (UserDefaults not persisted before the process
                     // died). Re-assert it; cleanup runs on the next launch.
-                    try? switchLocation(journal.destination)
+                    try? switchLocation(journal.destination, journal.destinationFolder)
                 }
                 ILOG("LibraryMove: switch recorded but this launch is still on \(launched.rawValue); cleanup waits for a relaunch")
                 return nil

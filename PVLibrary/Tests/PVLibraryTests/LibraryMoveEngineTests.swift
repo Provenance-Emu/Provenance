@@ -7,6 +7,7 @@ import XCTest
 import PVHashing
 @testable import PVFileSystem
 
+// swiftlint:disable:next type_body_length
 final class LibraryMoveEngineTests: XCTestCase {
     private var base: URL!
     private var src: URL!
@@ -16,7 +17,14 @@ final class LibraryMoveEngineTests: XCTestCase {
 
     private static let folders = ["ROMs", "BIOS", "Save States"]
 
-    private final class SwitchRecorder: @unchecked Sendable { var calls: [LibraryLocation] = [] }
+    private final class SwitchRecorder: @unchecked Sendable {
+        var switches: [LibraryLocation] = []
+        var switchedFolders: [PickedLibraryFolder?] = []
+        func record(_ location: LibraryLocation, _ folder: PickedLibraryFolder?) {
+            switches.append(location)
+            switchedFolders.append(folder)
+        }
+    }
 
     /// Progress closures are `@Sendable`, so they can't mutate captured `var`s; collect through a box instead.
     private final class ProgressBox: @unchecked Sendable {
@@ -46,7 +54,8 @@ final class LibraryMoveEngineTests: XCTestCase {
         let recorder = switched
         return LibraryMoveEngine(journalStore: store, md5Provider: md5,
                                  planner: LibraryMovePlanner(availableCapacity: { _ in capacity }),
-                                 switchLocation: { recorder.calls.append($0) })
+                                 manifestAuthor: "org.test.full",
+                                 switchLocation: { recorder.record($0, $1) })
     }
 
     private func request(keepCopy: Bool = false) -> LibraryMoveRequest {
@@ -77,7 +86,7 @@ final class LibraryMoveEngineTests: XCTestCase {
         let outcome = try await engine().start(request()) { seen.append($0) }
 
         XCTAssertEqual(outcome, .switched)
-        XCTAssertEqual(switched.calls, [.appStorage])
+        XCTAssertEqual(switched.switches, [.appStorage])
         XCTAssertEqual(read(dst, "ROMs/com.provenance.snes/Game.sfc"), "rom")
         XCTAssertEqual(read(dst, "BIOS/scph1001.bin"), "bios")
         XCTAssertEqual(read(dst, "Save States/Game/s.svs"), "state")
@@ -98,7 +107,7 @@ final class LibraryMoveEngineTests: XCTestCase {
     func testStartWithNothingToMoveStillSwitches() async throws {
         let outcome = try await engine().start(request(), progress: nil)
         XCTAssertEqual(outcome, .switched)
-        XCTAssertEqual(switched.calls, [.appStorage])
+        XCTAssertEqual(switched.switches, [.appStorage])
         XCTAssertEqual(store.load()?.phase, .switched)
     }
 
@@ -122,7 +131,7 @@ final class LibraryMoveEngineTests: XCTestCase {
             guard case .insufficientSpace = error else { return XCTFail("\(error)") }
         }
         XCTAssertNil(store.load(), "no journal is written when the plan is refused")
-        XCTAssertTrue(switched.calls.isEmpty)
+        XCTAssertTrue(switched.switches.isEmpty)
     }
 
     func testStartRefusesWhileAJournalExists() async throws {
@@ -148,7 +157,7 @@ final class LibraryMoveEngineTests: XCTestCase {
         } catch let error as LibraryMoveError {
             XCTAssertEqual(error, .verificationFailed(relativePath: "ROMs/a/Bad.sfc"))
         }
-        XCTAssertTrue(switched.calls.isEmpty)
+        XCTAssertTrue(switched.switches.isEmpty)
         let journal = store.load()
         XCTAssertEqual(journal?.phase, .copying)
         XCTAssertEqual(journal?.entries["BIOS/ok.bin"]?.state, .copied, "verified files before the failure stay journaled so the retry resumes")
@@ -205,7 +214,7 @@ final class LibraryMoveEngineTests: XCTestCase {
         XCTAssertEqual(after?.phase, .switched)
         XCTAssertEqual(after?.entries.count, 3)
         XCTAssertEqual(after?.entries["ROMs/a/Torn.sfc"]?.state, .copied)
-        XCTAssertEqual(switched.calls, [.appStorage])
+        XCTAssertEqual(switched.switches, [.appStorage])
     }
 
     func testResumeNeverDeletesAPreexistingDestinationFileTheJournalDoesNotOwn() async throws {
@@ -236,7 +245,7 @@ final class LibraryMoveEngineTests: XCTestCase {
 
         XCTAssertEqual(outcome, .switched)
         XCTAssertEqual(try LibraryMoveTestSupport.modificationDate(dst, "ROMs/a/Game.sfc"), before, "nothing was recopied")
-        XCTAssertEqual(switched.calls, [.appStorage, .appStorage], "the interrupted run had switched once; the resume's switch is the second and is harmless")
+        XCTAssertEqual(switched.switches, [.appStorage, .appStorage], "the interrupted run had switched once; the resume's switch is the second and is harmless")
         XCTAssertEqual(store.load()?.phase, .switched)
     }
 
@@ -248,7 +257,7 @@ final class LibraryMoveEngineTests: XCTestCase {
         let outcome = try await engine().resume(first, sourceRoot: src, destinationRoot: dst, progress: nil)
 
         XCTAssertEqual(outcome, .cleanedUp)
-        XCTAssertEqual(switched.calls, [.appStorage], "no second switch")
+        XCTAssertEqual(switched.switches, [.appStorage], "no second switch")
         XCTAssertFalse(exists(src, "ROMs/a/Game.sfc"))
         XCTAssertEqual(read(dst, "ROMs/a/Game.sfc"), "rom")
         XCTAssertNil(store.load())
@@ -278,7 +287,7 @@ final class LibraryMoveEngineTests: XCTestCase {
         XCTAssertEqual(outcome, .cancelled)
         XCTAssertEqual(seen.reports.count, 10, "cancel stops the copy at the next file")
         XCTAssertFalse(exists(dst, "Conflicts"), "the destination's own file was moved aside during the copy; rollback put it back")
-        XCTAssertTrue(switched.calls.isEmpty)
+        XCTAssertTrue(switched.switches.isEmpty)
         XCTAssertNil(store.load())
         XCTAssertEqual(read(dst, "ROMs/a/A-Same.sfc"), "same", "identical pre-existing files are untouched")
         XCTAssertEqual(read(dst, "ROMs/a/B-Conflict.sfc"), "mine", "the destination's own file is untouched")
@@ -350,6 +359,92 @@ final class LibraryMoveEngineTests: XCTestCase {
         }
         XCTAssertEqual(inFlight.value, 2, "the whole batch was claimed in the journal before the first report")
         XCTAssertEqual(store.load()?.createdDirectories, ["ROMs", "ROMs/a"])
+    }
+
+    // MARK: - Picked folder (phase 3)
+
+    private func pickedFolder(name: String = "Retro") -> PickedLibraryFolder {
+        PickedLibraryFolder(bookmark: Data([1]), displayName: name, includesSaves: false)
+    }
+
+    func testAppStorageToPickedFolderCopiesTheSharedFoldersAndWritesTheManifest() async throws {
+        try write(src, "ROMs/com.provenance.snes/Game.sfc", "rom")
+        try write(src, "BIOS/scph5501.bin", "bios")
+        try write(src, "System/PSP/font.pgf", "font")
+        try write(src, "Save States/Game/s.svs", "save")
+        let folder = pickedFolder()
+        let request = LibraryMoveRequest(source: .appStorage, destination: .pickedFolder, sourceRoot: src, destinationRoot: dst,
+                                         folders: LibraryMoveFolders.shared, keepCopy: false, destinationFolder: folder)
+        let outcome = try await engine().start(request)
+        XCTAssertEqual(outcome, .switched)
+        XCTAssertEqual(read(dst, "ROMs/com.provenance.snes/Game.sfc"), "rom")
+        XCTAssertEqual(read(dst, "BIOS/scph5501.bin"), "bios")
+        XCTAssertEqual(read(dst, "System/PSP/font.pgf"), "font")
+        XCTAssertFalse(exists(dst, "Save States/Game/s.svs"))
+        XCTAssertTrue(LibraryManifest.exists(in: dst))
+        XCTAssertEqual(try LibraryManifest.read(from: dst).createdBy, "org.test.full")
+        XCTAssertEqual(switched.switchedFolders.last??.displayName, "Retro")
+        let journal = try XCTUnwrap(store.load())
+        XCTAssertEqual(journal.destinationFolder, folder)
+        XCTAssertEqual(journal.version, 2)
+    }
+
+    func testJoiningKeepsAnExistingManifest() async throws {
+        try write(dst, LibraryManifest.fileName, #"{"version":1,"createdBy":"com.ifly"}"#)
+        try write(src, "ROMs/com.provenance.snes/Game.sfc", "rom")
+        let request = LibraryMoveRequest(source: .appStorage, destination: .pickedFolder, sourceRoot: src, destinationRoot: dst,
+                                         folders: LibraryMoveFolders.shared, keepCopy: false, destinationFolder: pickedFolder())
+        _ = try await engine().start(request)
+        XCTAssertEqual(try LibraryManifest.read(from: dst).createdBy, "com.ifly")
+    }
+
+    func testPickedFolderToAppStorageCarriesTheSourceFolderInTheJournal() async throws {
+        try write(src, "ROMs/com.provenance.snes/Game.sfc", "rom")
+        let folder = pickedFolder()
+        let request = LibraryMoveRequest(source: .pickedFolder, destination: .appStorage, sourceRoot: src, destinationRoot: dst,
+                                         folders: LibraryMoveFolders.shared, keepCopy: true, sourceFolder: folder)
+        let outcome = try await engine().start(request)
+        XCTAssertEqual(outcome, .switched)
+        XCTAssertEqual(try XCTUnwrap(store.load()).sourceFolder, folder)
+        XCTAssertEqual(switched.switches.last, .appStorage)
+        XCTAssertNil(switched.switchedFolders.last ?? nil)
+        XCTAssertFalse(LibraryManifest.exists(in: dst), "no manifest in App storage")
+    }
+
+    func testAppGroupToPickedFolderIsRefused() async {
+        let request = LibraryMoveRequest(source: .appGroup, destination: .pickedFolder, sourceRoot: src, destinationRoot: dst,
+                                         folders: LibraryMoveFolders.shared, keepCopy: false, destinationFolder: pickedFolder())
+        do {
+            _ = try await engine().start(request)
+            XCTFail("expected unsupportedMove")
+        } catch {
+            XCTAssertEqual(error as? LibraryMoveError, .unsupportedMove(from: .appGroup, to: .pickedFolder))
+        }
+    }
+
+    func testADestinationInsideTheSourceRootIsAllowedOutsideMovedFolders() async throws {
+        // Review Focus 1 / D12: Documents/MyLib as the picked folder.
+        try write(src, "ROMs/com.provenance.snes/Game.sfc", "rom")
+        let nested = src.appendingPathComponent("MyLib", isDirectory: true)
+        try FileManager.default.createDirectory(at: nested, withIntermediateDirectories: true)
+        let request = LibraryMoveRequest(source: .appStorage, destination: .pickedFolder, sourceRoot: src, destinationRoot: nested,
+                                         folders: LibraryMoveFolders.shared, keepCopy: false, destinationFolder: pickedFolder())
+        let outcome = try await engine().start(request)
+        XCTAssertEqual(outcome, .switched)
+        XCTAssertEqual(read(nested, "ROMs/com.provenance.snes/Game.sfc"), "rom")
+    }
+
+    func testADestinationInsideAMovedFolderIsRefused() async throws {
+        let inside = src.appendingPathComponent("ROMs/Lib", isDirectory: true)
+        try FileManager.default.createDirectory(at: inside, withIntermediateDirectories: true)
+        let request = LibraryMoveRequest(source: .appStorage, destination: .pickedFolder, sourceRoot: src, destinationRoot: inside,
+                                         folders: LibraryMoveFolders.shared, keepCopy: false, destinationFolder: pickedFolder())
+        do {
+            _ = try await engine().start(request)
+            XCTFail("expected unsupportedMove")
+        } catch {
+            XCTAssertEqual(error as? LibraryMoveError, .unsupportedMove(from: .appStorage, to: .pickedFolder))
+        }
     }
 }
 

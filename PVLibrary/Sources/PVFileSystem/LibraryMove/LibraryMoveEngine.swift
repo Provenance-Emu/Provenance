@@ -18,15 +18,23 @@ public actor LibraryMoveEngine {
     /// The journal is written after this many files (and at every phase change).
     static let journalFlushInterval = 25
 
-    /// Pairs the engine knows how to move. Phase 5 adds iCloud Drive both ways.
-    static let supportedMoves: Set<[LibraryLocation]> = [[.appGroup, .appStorage]]
+    /// Pairs the engine knows how to move (D11). Phase 5 adds iCloud Drive both ways.
+    static let supportedMoves: Set<[LibraryLocation]> = [
+        [.appGroup, .appStorage],
+        [.appStorage, .pickedFolder],
+        [.pickedFolder, .appStorage],
+        [.pickedFolder, .pickedFolder]
+    ]
 
     let journalStore: LibraryMoveJournalStore
     let fileManager: FileManager
     let planner: LibraryMovePlanner
     let copier: LibraryMoveFileCopier
-    /// Writes the setting that names the destination. `LibraryLocation.switchStored(to:pickedFolder:)` in production.
-    let switchLocation: @Sendable (LibraryLocation) throws -> Void
+    /// Named as the creator of a shared folder's manifest (D14). The main bundle id in production.
+    let manifestAuthor: String
+    /// Writes the setting that names the destination (and stores or clears the picked folder).
+    /// `LibraryLocation.switchStored(to:pickedFolder:)` in production.
+    let switchLocation: @Sendable (LibraryLocation, PickedLibraryFolder?) throws -> Void
 
     public internal(set) var isRunning = false
     private let cancelFlag = CancelFlag()
@@ -35,11 +43,13 @@ public actor LibraryMoveEngine {
                 fileManager: FileManager = .default,
                 md5Provider: any MD5Provider = FileManager.default,
                 planner: LibraryMovePlanner = LibraryMovePlanner(),
-                switchLocation: @escaping @Sendable (LibraryLocation) throws -> Void) {
+                manifestAuthor: String = Bundle.main.bundleIdentifier ?? "",
+                switchLocation: @escaping @Sendable (LibraryLocation, PickedLibraryFolder?) throws -> Void) {
         self.journalStore = journalStore
         self.fileManager = fileManager
         self.planner = planner
         self.copier = LibraryMoveFileCopier(fileManager: fileManager, md5Provider: md5Provider)
+        self.manifestAuthor = manifestAuthor
         self.switchLocation = switchLocation
     }
 
@@ -58,7 +68,7 @@ public actor LibraryMoveEngine {
         }
         // `exists` as well as `load()`: a journal from a newer build loads as nil but must not be overwritten.
         guard !isRunning, journalStore.load() == nil, !journalStore.exists else { throw LibraryMoveError.moveInProgress }
-        try requireDistinctRoots(request.sourceRoot, request.destinationRoot, source: request.source, destination: request.destination)
+        try requireDistinctRoots(request.sourceRoot, request.destinationRoot, folders: request.folders, source: request.source, destination: request.destination)
         isRunning = true
         defer { isRunning = false }
 
@@ -77,7 +87,7 @@ public actor LibraryMoveEngine {
     public func resume(_ journal: LibraryMoveJournal, sourceRoot: URL, destinationRoot: URL,
                        progress: (@Sendable (LibraryMoveProgress) -> Void)? = nil) async throws -> LibraryMoveOutcome {
         guard !isRunning else { throw LibraryMoveError.moveInProgress }
-        try requireDistinctRoots(sourceRoot, destinationRoot, source: journal.source, destination: journal.destination)
+        try requireDistinctRoots(sourceRoot, destinationRoot, folders: journal.folders, source: journal.source, destination: journal.destination)
         isRunning = true
         defer { isRunning = false }
 
@@ -107,7 +117,7 @@ public actor LibraryMoveEngine {
             try rollback(journal, destinationRoot: destinationRoot)
             return .cancelled
         }
-        try performSwitch(&journal)
+        try performSwitch(&journal, destinationRoot: destinationRoot)
         progress?(progressReport(journal, plan: plan, filesDone: plan.items.count, bytesDone: plan.totalBytes, current: nil))
         return .switched
     }
@@ -234,14 +244,26 @@ public actor LibraryMoveEngine {
         }
     }
 
-    /// Roots that are the same folder, or one inside the other, would make every file "identical" (and cleanup would
-    /// then delete the only copy) or have the copy enumerate its own output.
-    private func requireDistinctRoots(_ sourceRoot: URL, _ destinationRoot: URL, source: LibraryLocation, destination: LibraryLocation) throws {
+    /// Roots that are the same folder, or where one sits in a folder the move carries, would make every file
+    /// "identical" (cleanup would then delete the only copy) or have the copy enumerate its own output.
+    /// Nesting outside the moved folders is fine (`Documents/MyLib` as a picked folder, D12).
+    private func requireDistinctRoots(_ sourceRoot: URL, _ destinationRoot: URL, folders: [String],
+                                      source: LibraryLocation, destination: LibraryLocation) throws {
         let first = sourceRoot.resolvingSymlinksInPath().standardizedFileURL.path
         let second = destinationRoot.resolvingSymlinksInPath().standardizedFileURL.path
-        guard first != second, !first.hasPrefix(second + "/"), !second.hasPrefix(first + "/") else {
+        guard first != second,
+              !Self.isInsideMovedFolder(inner: second, outer: first, folders: folders),
+              !Self.isInsideMovedFolder(inner: first, outer: second, folders: folders) else {
             throw LibraryMoveError.unsupportedMove(from: source, to: destination)
         }
+    }
+
+    /// `inner` nested in `outer` is a problem only when its first component under `outer` is one of `folders`.
+    static func isInsideMovedFolder(inner: String, outer: String, folders: [String]) -> Bool {
+        let prefix = outer.hasSuffix("/") ? outer : outer + "/"
+        guard inner.hasPrefix(prefix) else { return false }
+        let first = inner.dropFirst(prefix.count).split(separator: "/", maxSplits: 1).first.map(String.init) ?? ""
+        return folders.contains(first)
     }
 
     private func exists(_ relativePath: String, under root: URL) -> Bool {
@@ -265,8 +287,12 @@ public actor LibraryMoveEngine {
 
     // MARK: - Switch
 
-    func performSwitch(_ journal: inout LibraryMoveJournal) throws {
-        try switchLocation(journal.destination)
+    func performSwitch(_ journal: inout LibraryMoveJournal, destinationRoot: URL) throws {
+        if journal.destination == .pickedFolder {
+            // After the copy verified, before the setting: a shared folder is marked as a library exactly once (D14).
+            try LibraryManifest.writeIfAbsent(in: destinationRoot, createdBy: manifestAuthor, fileManager: fileManager)
+        }
+        try switchLocation(journal.destination, journal.destinationFolder)
         journal.phase = .switched
         journal.updatedAt = Date()
         try journalStore.save(journal)

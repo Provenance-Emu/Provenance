@@ -18,7 +18,14 @@ final class LibraryMoveCoordinatorTests: XCTestCase {
     private static let thisApp = "org.test.full"
     private static let otherApp = "org.test.lite"
 
-    private final class Recorder: @unchecked Sendable { var switches: [LibraryLocation] = [] }
+    private final class Recorder: @unchecked Sendable {
+        var switches: [LibraryLocation] = []
+        var switchedFolders: [PickedLibraryFolder?] = []
+        func record(_ location: LibraryLocation, _ folder: PickedLibraryFolder?) {
+            switches.append(location)
+            switchedFolders.append(folder)
+        }
+    }
 
     override func setUpWithError() throws {
         base = try LibraryMoveTestSupport.makeTempDirectory(named: "LibraryMoveCoordinatorTests")
@@ -55,7 +62,7 @@ final class LibraryMoveCoordinatorTests: XCTestCase {
                                       },
                                       launchedLocation: { live ?? launched },
                                       resumeLocation: { launched },
-                                      switchLocation: { record.switches.append($0) },
+                                      switchLocation: { record.record($0, $1) },
                                       planner: LibraryMovePlanner(availableCapacity: { _ in .max }),
                                       sharedDefaults: defaults,
                                       variantID: variantID)
