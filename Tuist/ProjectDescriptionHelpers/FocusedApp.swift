@@ -44,9 +44,6 @@ public struct FocusedApp {
 
     public var name: String { "Provenance-Dev-\(title)" }
 
-    /// True when a core's library lacks an x86_64 simulator slice (PVlibAzahar).
-    public var isArm64Only: Bool { cores.contains(where: \.arm64Only) }
-
     /// `cores` plus the non-core products every app embeds.
     public var allCores: [CoreProduct] { CoreProduct.nonCore + cores }
 

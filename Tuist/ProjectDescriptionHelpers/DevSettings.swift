@@ -195,12 +195,12 @@ public enum DevSettings {
             "MTL_FAST_MATH": "YES",
             "DEAD_CODE_STRIPPING": "YES",
         ]
-        if app.isArm64Only {
-            // No x86_64 simulator slice to link; SwiftPM has no arch-conditioned flag to stub it the way
-            // PVAzahar.xcodeproj does (-undefined dynamic_lookup), so the app is arm64-only on simulators.
-            base["EXCLUDED_ARCHS[sdk=iphonesimulator*]"] = "x86_64"
-            base["EXCLUDED_ARCHS[sdk=appletvsimulator*]"] = "x86_64"
-        }
+        // Intel is unsupported (2026-10-12): no Intel Mac can run the Xcode we need, so the dev apps
+        // build arm64 only on simulator SDKs. Device SDKs are arm64 anyway. This also means the
+        // prebuilt cores (PVlibAzahar) need no x86_64 slice and SwiftPM targets need no per-arch
+        // source lists.
+        base["EXCLUDED_ARCHS[sdk=iphonesimulator*]"] = "x86_64"
+        base["EXCLUDED_ARCHS[sdk=appletvsimulator*]"] = "x86_64"
         base.merge(app.linkerSettings) { _, new in new }
         return .settings(
             base: base,
