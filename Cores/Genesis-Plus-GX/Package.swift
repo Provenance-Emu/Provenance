@@ -17,11 +17,11 @@ let package = Package(
         // Products define the executables and libraries produced by a package, and make them visible to other packages.
         .library(
             name: "PVCoreGenesisPlus",
-            targets: ["PVCoreGenesisPlus"]),
+            targets: ["PVGenesis"]),
         .library(
             name: "PVCoreGenesisPlus-Dynamic",
             type: .dynamic,
-            targets: ["PVCoreGenesisPlus"]),
+            targets: ["PVGenesis"]),
     ],
     dependencies: [
         .package(path: "../../PVCoreBridge"),
@@ -40,8 +40,11 @@ let package = Package(
 
         // MARK: ------- Core --------
 
+        // Module is PVGenesis so Core.plist's principal class `PVGenesis.PVCoreGenesisPlus`
+        // resolves in both the xcodeproj and the SwiftPM build.
         .target(
-            name: "PVCoreGenesisPlus",
+            name: "PVGenesis",
+            path: "Sources/PVCoreGenesisPlus",
             dependencies: [
                 "PVEmulatorCore",
                 "PVCoreBridge",
