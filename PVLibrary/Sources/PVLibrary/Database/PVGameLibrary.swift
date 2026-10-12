@@ -14,6 +14,7 @@ import RxRealm
 import PVLogging
 import PVRealm
 import PVFeatureFlags
+import PVFileSystem
 @_exported public import PVSettings
 
 public class PVGameLibrary<T> where T: DatabaseDriver {
@@ -36,15 +37,15 @@ public class PVGameLibrary<T> where T: DatabaseDriver {
         self.databaseDriver = .init(database: database)
         self.romMigrator = migrator
         
-        // Kick off ROM migration
+        // Finish or clean up a journaled library move, then repair misplaced ROM records.
         Task {
+            await LibraryMoveCoordinator.shared.resumeIfNeeded()
             if PVFeatureFlags.shared.isEnabled(.romPathMigrator) {
                 do {
-                    try await self.romMigrator.migrateIfNeeded()
                     try await self.romMigrator.fixOrphanedFiles()
-                    ILOG("ROM migration completed successfully")
+                    ILOG("ROM record repair completed successfully")
                 } catch {
-                    ELOG("ROM migration failed: \(error.localizedDescription)")
+                    ELOG("ROM record repair failed: \(error.localizedDescription)")
                 }
             }
         }
