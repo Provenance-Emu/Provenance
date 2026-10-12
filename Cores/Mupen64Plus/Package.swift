@@ -775,7 +775,10 @@ let glidenhqTarget: Target = .target(
     dependencies: glidenhqDeps,
     path: "Sources/Plugins/Video/gliden64/src/",
     sources: glidenhqSources,
-    publicHeadersPath: "inc",
+    // Its own headers, not "inc": PVMupen64PlusVideoGlideN64 already publishes src/inc, and two
+    // generated umbrella modules over one directory fail the app's Swift compile
+    // ("umbrella for module 'glidenhq' already covers this directory").
+    publicHeadersPath: "GLideNHQ",
     cSettings: glidenhqCSettings
 )
 
