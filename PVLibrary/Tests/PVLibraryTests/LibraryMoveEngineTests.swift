@@ -495,6 +495,58 @@ final class LibraryMoveEngineTests: XCTestCase {
         XCTAssertEqual(read(dst, "Save States/Game/s.svs"), "same bytes")
     }
 
+    func testBIOSIsNeverDeduplicated() async throws {
+        // Cores find BIOS files by path, so a copy under another name would not help them.
+        try write(dst, "BIOS/scph5501-copy.bin", "same bytes")
+        try write(src, "BIOS/scph5501.bin", "same bytes")
+        _ = try await engine().start(joinRequest())
+        XCTAssertEqual(read(dst, "BIOS/scph5501.bin"), "same bytes")
+        let journal = try XCTUnwrap(store.load())
+        XCTAssertEqual(journal.entries["BIOS/scph5501.bin"]?.state, .copied)
+        XCTAssertNil(journal.remaps)
+    }
+
+    func testAMatchInAnotherSystemFolderIsCopiedNotDeduplicated() async throws {
+        try write(dst, "ROMs/com.provenance.gba/Game.gba", "same bytes")
+        try write(src, "ROMs/com.provenance.gb/Game.gb", "same bytes")
+        _ = try await engine().start(joinRequest())
+        XCTAssertEqual(read(dst, "ROMs/com.provenance.gb/Game.gb"), "same bytes")
+        XCTAssertEqual(try XCTUnwrap(store.load()).entries["ROMs/com.provenance.gb/Game.gb"]?.state, .copied)
+    }
+
+    func testADiscSetIsCopiedWholeEvenWhenItsTrackMatchesAnotherName() async throws {
+        try write(dst, "ROMs/com.provenance.psx/Game (USA).bin", "same bytes")
+        try write(src, "ROMs/com.provenance.psx/Game.cue", "FILE \"Game.bin\" BINARY")
+        try write(src, "ROMs/com.provenance.psx/Game.bin", "same bytes")
+        _ = try await engine().start(joinRequest())
+        XCTAssertEqual(read(dst, "ROMs/com.provenance.psx/Game.bin"), "same bytes")
+        XCTAssertNotNil(read(dst, "ROMs/com.provenance.psx/Game.cue"))
+        let journal = try XCTUnwrap(store.load())
+        XCTAssertEqual(journal.entries["ROMs/com.provenance.psx/Game.bin"]?.state, .copied)
+        XCTAssertNil(journal.remaps)
+    }
+
+    func testIsDeduplicableRules() {
+        let plan = LibraryMovePlan(items: [
+            .init(relativePath: "ROMs/a/Game.sfc", size: 1, modified: nil),
+            .init(relativePath: "ROMs/a/Disc.cue", size: 1, modified: nil),
+            .init(relativePath: "ROMs/a/Disc.bin", size: 1, modified: nil),
+            .init(relativePath: "ROMs/a/Solo.BIN", size: 1, modified: nil),
+            .init(relativePath: "ROMs/a/Twin.nes", size: 1, modified: nil),
+            .init(relativePath: "ROMs/a/Twin.srm", size: 1, modified: nil),
+            .init(relativePath: "BIOS/bios.rom", size: 1, modified: nil)
+        ])
+        func deduplicable(_ path: String) -> Bool {
+            plan.items.first { $0.relativePath == path }.map { LibraryMoveEngine.isDeduplicable($0, in: plan) } ?? false
+        }
+        XCTAssertTrue(deduplicable("ROMs/a/Game.sfc"))
+        XCTAssertFalse(deduplicable("ROMs/a/Disc.cue"))
+        XCTAssertFalse(deduplicable("ROMs/a/Disc.bin"))
+        XCTAssertFalse(deduplicable("ROMs/a/Solo.BIN"))
+        XCTAssertFalse(deduplicable("ROMs/a/Twin.nes"), "its base name is shared")
+        XCTAssertFalse(deduplicable("BIOS/bios.rom"))
+    }
+
     func testRollbackLeavesTheSharedCopyAlone() async throws {
         try write(dst, "ROMs/com.provenance.snes/Game (USA).sfc", "same bytes")
         try write(src, "ROMs/com.provenance.snes/Game.sfc", "same bytes")

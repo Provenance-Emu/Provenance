@@ -42,8 +42,25 @@ final class SharedLibraryIndexTests: XCTestCase {
     func testOnlyTheListedFoldersAreIndexed() throws {
         try LibraryMoveTestSupport.write(root, "Save States/x/s.svs", "same bytes")
         try LibraryMoveTestSupport.write(root, "Conflicts/ROMs/x/y.sfc", "same bytes")
+        let md5 = try XCTUnwrap(FileManager.default.md5ForFile(at: root.appendingPathComponent("Save States/x/s.svs"), fromOffset: 0))
         var index = try index()
-        XCTAssertNil(index.match(size: 10, md5: "any", excluding: ""))
+        XCTAssertFalse(index.hasCandidates(size: 10))
+        XCTAssertNil(index.match(size: 10, md5: md5, excluding: "ROMs/x/y.sfc"))
+    }
+
+    func testAMatchInAnotherFolderIsIgnored() throws {
+        try LibraryMoveTestSupport.write(root, "ROMs/com.provenance.gba/Game.bin", "same bytes")
+        let md5 = try XCTUnwrap(FileManager.default.md5ForFile(at: root.appendingPathComponent("ROMs/com.provenance.gba/Game.bin"), fromOffset: 0))
+        var index = try index()
+        XCTAssertNil(index.match(size: 10, md5: md5, excluding: "ROMs/com.provenance.snes/Game.sfc"))
+        XCTAssertEqual(index.match(size: 10, md5: md5, excluding: "ROMs/com.provenance.gba/Other.bin"), "ROMs/com.provenance.gba/Game.bin")
+    }
+
+    func testHasCandidatesReflectsTheIndexedSizes() throws {
+        try LibraryMoveTestSupport.write(root, "ROMs/com.provenance.snes/Game.sfc", "same bytes")
+        let index = try index()
+        XCTAssertTrue(index.hasCandidates(size: 10))
+        XCTAssertFalse(index.hasCandidates(size: 11))
     }
 
     func testMissingFoldersAreFine() throws {

@@ -4,8 +4,9 @@
 //
 //  Copyright © 2026 Provenance Emu. All rights reserved.
 //
-//  The destination's `ROMs/` and `BIOS/` files grouped by size, with MD5s computed only on a size match, so
+//  The destination's `ROMs/` files grouped by size, with MD5s computed only on a size match, so
 //  joining a shared library can recognise a ROM it already holds under another name (D15).
+//  A match must sit in the same folder as the source (`ROMs/<system>/`), so a ROM is never pointed at another system's copy.
 //
 
 import Foundation
@@ -34,14 +35,24 @@ struct SharedLibraryIndex {
         }
     }
 
-    /// A file of the same size and MD5 at a path other than `excluding`, or `nil`.
+    /// `true` when some indexed file has this size, so the caller only hashes a source that could match.
+    func hasCandidates(size: Int64) -> Bool {
+        !(bySize[size] ?? []).isEmpty
+    }
+
+    /// A file of the same size and MD5 at a path other than `excluding`, in the same parent folder, or `nil`.
     mutating func match(size: Int64, md5: String, excluding relativePath: String) -> String? {
-        for candidate in bySize[size] ?? [] where candidate != relativePath {
+        let folder = Self.parentFolder(of: relativePath)
+        for candidate in bySize[size] ?? [] where candidate != relativePath && Self.parentFolder(of: candidate) == folder {
             if md5s[candidate] == nil {
                 md5s[candidate] = md5Provider.md5ForFile(at: root.appendingPathComponent(candidate), fromOffset: 0) ?? ""
             }
             if md5s[candidate] == md5 { return candidate }
         }
         return nil
+    }
+
+    private static func parentFolder(of relativePath: String) -> String {
+        (relativePath as NSString).deletingLastPathComponent
     }
 }

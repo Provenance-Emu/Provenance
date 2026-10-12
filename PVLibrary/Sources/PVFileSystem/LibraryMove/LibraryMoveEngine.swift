@@ -143,10 +143,13 @@ public actor LibraryMoveEngine {
             }
         }
 
-        // Joining a shared library (D15): a ROM or BIOS the destination already holds under another name is recorded, not copied.
+        // Joining a shared library (D15): a single-file ROM the destination already holds under another name, in the same
+        // system folder, is recorded, not copied. BIOS files are found by path, never through a record, so `BIOS/` is not indexed.
         var sharedIndex: SharedLibraryIndex?
+        var sharedBaseNames: Set<String> = []
         if journal.deduplicateByMD5 ?? false {
-            sharedIndex = try SharedLibraryIndex(root: destinationRoot, folders: Array(LibraryMoveFolders.md5Verified), fileManager: fileManager, md5Provider: md5Provider)
+            sharedIndex = try SharedLibraryIndex(root: destinationRoot, folders: Self.deduplicatedFolders, fileManager: fileManager, md5Provider: md5Provider)
+            sharedBaseNames = Self.sharedBaseNames(in: plan)
         }
 
         var batchStart = 0
@@ -161,7 +164,8 @@ public actor LibraryMoveEngine {
                     return false
                 }
                 do {
-                    if sharedIndex != nil, LibraryMoveFileCopier.needsMD5(item.relativePath), !exists(item.relativePath, under: destinationRoot),
+                    if sharedIndex?.hasCandidates(size: item.size) == true, Self.isDeduplicable(item, sharedBaseNames: sharedBaseNames),
+                       !exists(item.relativePath, under: destinationRoot),
                        let md5 = md5Provider.md5ForFile(at: sourceRoot.appendingPathComponent(item.relativePath), fromOffset: 0),
                        let shared = sharedIndex?.match(size: item.size, md5: md5, excluding: item.relativePath) {
                         journal.entries[item.relativePath] = .init(size: item.size, md5: md5, modified: item.modified, state: .deduplicated, destinationPath: shared)
@@ -196,6 +200,43 @@ public actor LibraryMoveEngine {
         journal.updatedAt = Date()
         try journalStore.save(journal)
         return true
+    }
+
+    /// Folders de-duplication looks in and applies to.
+    static let romsFolder = "ROMs"
+    static let deduplicatedFolders = [romsFolder]
+
+    /// Extensions of files that belong to a disc set or are companions of one; a record names the cue or playlist, so the
+    /// loose track files must keep their names.
+    private static let nonDeduplicableExtensions: Set<String> = Extensions.discImageExtensions
+        .union(Extensions.playlistExtensions)
+        .union(Extensions.cdSupplementaryExtensions)
+        .union(["bin", "img", "iso", "raw", "wav", "chd"])
+
+    /// `true` when the item is a `ROMs/` file that stands alone: not a disc image, playlist or track file, and with a
+    /// base name no other file in the plan shares (a `Game.cue` + `Game.bin` pair).
+    static func isDeduplicable(_ item: LibraryMovePlan.Item, in plan: LibraryMovePlan) -> Bool {
+        isDeduplicable(item, sharedBaseNames: sharedBaseNames(in: plan))
+    }
+
+    /// Base names (folder plus name without extension) that two or more plan items share.
+    static func sharedBaseNames(in plan: LibraryMovePlan) -> Set<String> {
+        var seen: Set<String> = []
+        var shared: Set<String> = []
+        for item in plan.items where !seen.insert(baseName(of: item.relativePath)).inserted {
+            shared.insert(baseName(of: item.relativePath))
+        }
+        return shared
+    }
+
+    private static func isDeduplicable(_ item: LibraryMovePlan.Item, sharedBaseNames: Set<String>) -> Bool {
+        guard item.relativePath.hasPrefix(romsFolder + "/") else { return false }
+        let ext = (item.relativePath as NSString).pathExtension.lowercased()
+        return !nonDeduplicableExtensions.contains(ext) && !sharedBaseNames.contains(baseName(of: item.relativePath))
+    }
+
+    private static func baseName(of relativePath: String) -> String {
+        (relativePath as NSString).deletingPathExtension
     }
 
     /// A journaled entry still holds: its destination file exists with the recorded size.
