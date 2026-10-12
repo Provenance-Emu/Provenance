@@ -205,10 +205,13 @@ A second, generated workspace for fast iteration. `Provenance.xcodeproj` still s
 - **Simulator builds are ad-hoc signed by `Dev/Config/Dev.xcconfig`.** Never pass
   `CODE_SIGNING_ALLOWED=NO` to a dev build: the app then dies in dyld on the unsigned embedded
   MoltenVK.
-- **Build the dev workspace with `SWIFT_ENABLE_EXPLICIT_MODULES=NO`** (the Makefile and both CI
-  workflows pass it). Hummingbird imports `ServiceContextModule` without declaring it, so Xcode's
-  explicit-modules scan fails at random with "Unable to find module dependency". It must be an
-  xcodebuild argument: project settings never reach package targets.
+- **The dev workspace has no committed Package.resolved, so it resolves the newest remote
+  packages.** Anything that only works because `Provenance.xcworkspace`'s resolved file pins an
+  older version breaks here first. Known case: Hummingbird imports `ServiceContextModule` without
+  declaring it, and swift-service-context 1.4.0 / swift-distributed-tracing 1.6.0 (2026-10-12)
+  dropped it from `Tracing`'s dependency chain, so builds failed at random with "no such module
+  'ServiceContextModule'"; `PVWebServer/Package.swift` caps both packages. Fix such breaks with a
+  version cap in the declaring package, not with xcodebuild flags.
 - **Helpers:** `Tuist/ProjectDescriptionHelpers/` holds `CoreProduct` (the core table),
   `FocusedApp` (the target template plus `FocusedApp.all`), `LibretroCores` and `DevSettings`. Tuist
   only finds helpers at `<root>/Tuist/ProjectDescriptionHelpers`; don't add a `Dev/Tuist/`.
