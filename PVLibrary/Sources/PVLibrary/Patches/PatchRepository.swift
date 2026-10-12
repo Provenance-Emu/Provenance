@@ -560,7 +560,8 @@ public final class PatchRepository {
         let scratch = FileManager.default.temporaryDirectory
             .appendingPathComponent("PatchArchive-\(UUID().uuidString)", isDirectory: true)
         try FileManager.default.createDirectory(at: scratch, withIntermediateDirectories: true)
-        defer { try? FileManager.default.removeItem(at: scratch) }
+        // atPath: — the URL overload is shadowed by PVLibrary's async extension, and defer can't await.
+        defer { try? FileManager.default.removeItem(atPath: scratch.path) }
 
         let extracted = try await manager.extractAll(at: url, to: scratch)
         let patches = extracted
