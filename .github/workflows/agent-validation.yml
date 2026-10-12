@@ -548,18 +548,10 @@ jobs:
       #      and are NOT found by the command above. Swap `.package\(.*path:` for
       #      `\.(target|systemLibrary|binaryTarget)\(` to enumerate them.
       #
-      #      Only two are actually resolved by the CI scheme: PVRcheevos/rcheevos
-      #      (target CRcheevos) and Cores/Mednafen/ThirdParty/libchdr (target zstd — its
-      #      deps/ is vendored, not nested submodules, so libchdr alone is enough).
-      #
-      #      The scan also turns up gliden64, rsp/cxd4, rsp/hle, potator, libretro-vecx
-      #      and SNESticle. Those are deliberately NOT listed: SwiftPM reports every
-      #      invalid target path at once and named none of them, so their packages
-      #      aren't in the resolved graph. Three of them (gliden64, libretro-vecx,
-      #      SNESticle) have pinned commits that no longer exist on their remotes, so
-      #      adding them speculatively would REPLACE a passing build with a fetch
-      #      failure. If they ever do surface, they need ZipArchive's clone-the-public-
-      #      remote treatment, not a plain init.
+      # Tuist resolves every local package in the dev workspace, not just the ones the
+      # Coreless app embeds, so the core submodules behind the SwiftPM core packages
+      # must be present (same list as dev-workspace.yml). An empty submodule dir fails
+      # resolution with "invalid custom path ... for target".
       - name: Init required Core submodules (shallow)
         run: |
           git submodule update --init --depth 1 \
@@ -569,7 +561,18 @@ jobs:
             Dependencies/HexColors \
             Dependencies/SWCompression \
             Cores/Mednafen/ThirdParty/libchdr \
-            PVRcheevos/rcheevos
+            PVRcheevos/rcheevos \
+            Cores/mGBA/Sources/libmGBA-embed/mgba \
+            Cores/Stella/Sources/libstella/stella \
+            Cores/snes9x/snes9x-src \
+            Cores/snes9x/libretro-snes9x \
+            Cores/FCEU/fceux \
+            Cores/Genesis-Plus-GX/Sources/libgenesisplus/Genesis-Plus-GX \
+            Cores/Mupen64Plus/Sources/Plugins/Core/Core \
+            Cores/Mupen64Plus/Sources/Plugins/Video/gliden64 \
+            Cores/Mupen64Plus/Sources/Plugins/Video/rice/rice \
+            Cores/Mupen64Plus/Sources/Plugins/rsp/hle \
+            Cores/Mupen64Plus/Sources/Plugins/rsp/cxd4
 
           # ZipArchive: custom commit not available on public remote — clone public instead
           if ! git submodule update --init --depth 1 Dependencies/ZipArchive 2>/dev/null; then
