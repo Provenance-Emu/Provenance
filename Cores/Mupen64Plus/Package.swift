@@ -377,6 +377,9 @@ let videoRiceExtraCSettings: [CSetting] = [
 let videoRiceCSettings: [CSetting] = videoRiceExtraCSettings + sharedCSettings
 
 let videoRiceLinkerSettings: [LinkerSetting] = [
+    .linkedFramework("OpenGLES", .when(platforms: [.iOS, .tvOS, .visionOS])),
+    .linkedFramework("OpenGL", .when(platforms: [.macOS, .macCatalyst])),
+    .linkedFramework("Foundation"),
     .linkedLibrary("z")
 ]
 
