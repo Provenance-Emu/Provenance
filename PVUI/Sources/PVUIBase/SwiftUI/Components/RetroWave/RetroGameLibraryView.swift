@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import UniformTypeIdentifiers
 import PVLibrary
 import PVThemes
 import RealmSwift
@@ -366,6 +367,7 @@ public struct RetroGameLibraryView: View {
             )
             .environmentObject(themeManager)
         }
+        .modifier(RetroPatchSheets(viewModel: viewModel, importPatch: importPatch))
 //            .fullScreenCover(item: $viewModel.continuesManagementState) { state in
 //                let driver = RealmSaveStateDriver()
 //                // Load save states for the specific game
@@ -1194,6 +1196,79 @@ extension RetroGameLibraryView: GameContextMenuDelegate {
 
     public func gameContextMenu(_ menu: GameContextMenu, didRequestDiscSelectionFor game: PVGame) {
         // gamesViewModel.presentDiscSelectionAlert(for: game, rootDelegate: rootDelegate)
+    }
+
+    public func gameContextMenu(_ menu: GameContextMenu, didRequestApplyPatchFor game: PVGame) {
+        guard !game.isInvalidated else { return }
+        viewModel.patchApplierGameMD5 = game.md5Hash
+        viewModel.showPatchApplier = true
+    }
+
+    public func gameContextMenu(_ menu: GameContextMenu, didRequestManagePatchesFor game: PVGame) {
+        guard !game.isInvalidated else { return }
+        viewModel.patchManagerGame = game.isFrozen ? game : game.freeze()
+        viewModel.showPatchManager = true
+    }
+
+    public func gameContextMenu(_ menu: GameContextMenu, didRequestImportPatchFor game: PVGame) {
+        guard !game.isInvalidated else { return }
+        viewModel.patchImportGame = game.isFrozen ? game : game.freeze()
+        viewModel.showPatchImportPicker = true
+    }
+
+    @MainActor
+    func importPatch(_ url: URL, for game: PVGame) async {
+        let accessed = url.startAccessingSecurityScopedResource()
+        defer { if accessed { url.stopAccessingSecurityScopedResource() } }
+        do {
+            _ = try await PatchRepository.shared.importPatchFile(at: url, preferredGame: game, autoMatch: false)
+            PVToastManager.shared.show("Imported patch for \(game.title).", type: .success)
+        } catch {
+            PVToastManager.shared.show("Patch import failed: \(error.localizedDescription)", type: .error)
+        }
+    }
+}
+
+// MARK: - Patch sheets
+
+/// Patch Applier / Manager sheets and the patch file importer, kept out of the main
+/// view body (SwiftLint type_body_length) and shared by the context-menu delegate.
+private struct RetroPatchSheets: ViewModifier {
+    @ObservedObject var viewModel: RetroGameLibraryViewModel
+    let importPatch: @MainActor (URL, PVGame) async -> Void
+
+    func body(content: Content) -> some View {
+        content
+            .sheet(isPresented: $viewModel.showPatchApplier, onDismiss: {
+                viewModel.patchApplierGameMD5 = nil
+            }) {
+                NavigationStack {
+                    PatchApplierView(preselectedGameMD5: viewModel.patchApplierGameMD5)
+                }
+            }
+            .sheet(isPresented: $viewModel.showPatchManager, onDismiss: {
+                viewModel.patchManagerGame = nil
+            }) {
+                NavigationStack {
+                    if let game = viewModel.patchManagerGame, !game.isInvalidated {
+                        PatchManagerView(gameMD5: game.md5Hash, gameTitle: game.title)
+                    }
+                }
+            }
+#if !os(tvOS)
+            .fileImporter(
+                isPresented: $viewModel.showPatchImportPicker,
+                allowedContentTypes: [.data, .item],
+                allowsMultipleSelection: false
+            ) { result in
+                let game = viewModel.patchImportGame
+                viewModel.patchImportGame = nil
+                guard let game, case .success(let urls) = result, let url = urls.first else { return }
+                Task { @MainActor in
+                    await importPatch(url, game)
+                }
+            }
+#endif
     }
 }
 

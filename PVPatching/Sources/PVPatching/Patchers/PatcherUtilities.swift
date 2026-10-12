@@ -32,29 +32,49 @@ extension Data {
     }
 }
 
-/// Read a variable-length integer (VLI) from `data` starting at `pos`, advancing `pos`.
+/// Read a BPS/UPS variable-length integer from `data` starting at `pos`, advancing `pos`.
+///
+/// Reference decoder (beat): `data += (x & 0x7f) * shift; if (x & 0x80) break; shift <<= 7; data += shift`.
+/// The accumulation must be an addition, not an OR: the implicit `+ shift` carry can
+/// set the same bit the next group contributes (e.g. `[0x00, 0x81]` is 256, not 128).
+/// Unterminated or absurdly long encodings return `Int.max` so size checks fail loudly
+/// instead of trapping on shift overflow.
 func readVLI(_ data: Data, pos: inout Int) -> Int {
-    var result = 0
-    var shift = 0
+    var result: UInt64 = 0
+    var shift: UInt64 = 0
     while pos < data.count {
-        let byte = Int(data[pos])
+        let byte = UInt64(data[pos])
         pos += 1
-        result |= (byte & 0x7F) << shift
-        if byte & 0x80 != 0 { break }
+        guard shift <= 56 else { return Int.max }
+        let (added, overflow) = result.addingReportingOverflow((byte & 0x7F) << shift)
+        guard !overflow else { return Int.max }
+        result = added
+        if byte & 0x80 != 0 {
+            return result > UInt64(Int.max) ? Int.max : Int(result)
+        }
         shift += 7
-        result += 1 << shift
+        let (carried, carryOverflow) = result.addingReportingOverflow(1 << shift)
+        guard !carryOverflow else { return Int.max }
+        result = carried
     }
-    return result
+    // Ran off the end without a terminator byte.
+    return Int.max
 }
 
-/// Compute CRC32 over arbitrary data.
+/// CRC-32/ISO-HDLC lookup table (reflected polynomial 0xEDB88320).
+private let crc32Table: [UInt32] = (0..<256).map { index -> UInt32 in
+    var crc = UInt32(index)
+    for _ in 0..<8 {
+        crc = (crc >> 1) ^ (0xEDB8_8320 * (crc & 1))
+    }
+    return crc
+}
+
+/// Compute CRC32 over arbitrary data (table-driven; whole ROMs go through here).
 func patchCRC32(_ data: some DataProtocol) -> UInt32 {
     var crc: UInt32 = 0xFFFF_FFFF
     for byte in data {
-        crc ^= UInt32(byte)
-        for _ in 0..<8 {
-            crc = (crc >> 1) ^ (0xEDB8_8320 * (crc & 1))
-        }
+        crc = crc32Table[Int((crc ^ UInt32(byte)) & 0xFF)] ^ (crc >> 8)
     }
     return ~crc
 }

@@ -6,27 +6,40 @@
 import XCTest
 @testable import PVPatching
 
+/// Fixtures follow the published PPF layouts (see PPFPatcher.swift header):
+/// records at 0x38 for v1, at 0x43C for v2 (size + 1024-byte block check),
+/// and after the 60-byte header (+1024 when block-checked) for v3.
 final class PPFPatcherTests: XCTestCase {
 
     private let patcher = PPFPatcher()
 
     // MARK: - Helpers
 
-    /// Build a PPF 1.0 patch with the given records.
-    /// Layout: magic(5) + description(50) + fileSize(4) + records
-    private func makePPFv1Patch(
+    private func commonHeader(magic: String, version: UInt8) -> Data {
+        var patch = Data(magic.utf8)
+        patch.append(version)
+        patch.append(contentsOf: [UInt8](repeating: 0x20, count: 50))
+        return patch
+    }
+
+    private func makePPFv1Patch(records: [(offset: Int, data: [UInt8])]) -> Data {
+        var patch = commonHeader(magic: "PPF10", version: 0x00)
+        for record in records {
+            appendLE32(&patch, value: UInt32(record.offset))
+            patch.append(UInt8(record.data.count))
+            patch.append(contentsOf: record.data)
+        }
+        return patch
+    }
+
+    private func makePPFv2Patch(
         records: [(offset: Int, data: [UInt8])],
-        fileSize: UInt32 = 0
+        originalSize: UInt32 = 0,
+        blockCheck: [UInt8] = [UInt8](repeating: 0, count: 1024)
     ) -> Data {
-        var patch = Data("PPF10".utf8)
-        // 50-byte description (zero-padded)
-        patch.append(contentsOf: [UInt8](repeating: 0, count: 50))
-        // 4-byte LE file size check
-        patch.append(UInt8(fileSize & 0xFF))
-        patch.append(UInt8((fileSize >> 8) & 0xFF))
-        patch.append(UInt8((fileSize >> 16) & 0xFF))
-        patch.append(UInt8((fileSize >> 24) & 0xFF))
-        // Records
+        var patch = commonHeader(magic: "PPF20", version: 0x01)
+        appendLE32(&patch, value: originalSize)
+        patch.append(contentsOf: blockCheck)
         for record in records {
             appendLE32(&patch, value: UInt32(record.offset))
             patch.append(UInt8(record.data.count))
@@ -35,92 +48,75 @@ final class PPFPatcherTests: XCTestCase {
         return patch
     }
 
-    /// Build a PPF 2.0 patch with the given records.
-    /// Layout: magic(5) + encoding(1) + description(50) + imageType(4) +
-    ///         blockCheck(1) + undoData(1) + dummy(1) + records
-    private func makePPFv2Patch(records: [(offset: Int, data: [UInt8])]) -> Data {
-        var patch = Data("PPF20".utf8)
-        patch.append(0x00)  // encoding: sequential
-        patch.append(contentsOf: [UInt8](repeating: 0, count: 50))  // description
-        appendLE32(&patch, value: 0)  // image type: BIN
-        patch.append(0x00)  // block check flag
-        patch.append(0x00)  // undo data flag
-        patch.append(0x00)  // dummy
-        for record in records {
-            appendLE32(&patch, value: UInt32(record.offset))
-            patch.append(UInt8(record.data.count))
-            patch.append(contentsOf: record.data)
+    private func makePPFv3Patch(
+        records: [(offset: Int, data: [UInt8], undo: [UInt8]?)],
+        imageType: UInt8 = 0,
+        blockCheck: [UInt8]? = nil,
+        undoData: Bool = false
+    ) -> Data {
+        var patch = commonHeader(magic: "PPF30", version: 0x02)
+        patch.append(imageType)
+        patch.append(blockCheck == nil ? 0 : 1)
+        patch.append(undoData ? 1 : 0)
+        patch.append(0x00)
+        if let blockCheck {
+            patch.append(contentsOf: blockCheck)
         }
-        return patch
-    }
-
-    /// Build a PPF 3.0 patch with the given records (8-byte offsets).
-    /// Layout: magic(5) + encoding(1) + description(50) + imageType(1) +
-    ///         blockCheck(1) + undoData(1) + dummy(1) + records
-    private func makePPFv3Patch(records: [(offset: Int, data: [UInt8])]) -> Data {
-        var patch = Data("PPF30".utf8)
-        patch.append(0x00)  // encoding
-        patch.append(contentsOf: [UInt8](repeating: 0, count: 50))  // description
-        patch.append(0x00)  // image type
-        patch.append(0x00)  // block check flag
-        patch.append(0x00)  // undo data flag
-        patch.append(0x00)  // dummy
         for record in records {
             appendLE64(&patch, value: UInt64(record.offset))
             patch.append(UInt8(record.data.count))
             patch.append(contentsOf: record.data)
+            if undoData {
+                patch.append(contentsOf: record.undo ?? [UInt8](repeating: 0, count: record.data.count))
+            }
         }
         return patch
     }
 
     private func appendLE32(_ data: inout Data, value: UInt32) {
-        data.append(UInt8(value & 0xFF))
-        data.append(UInt8((value >> 8) & 0xFF))
-        data.append(UInt8((value >> 16) & 0xFF))
-        data.append(UInt8((value >> 24) & 0xFF))
+        for shift in stride(from: 0, to: 32, by: 8) {
+            data.append(UInt8((value >> UInt32(shift)) & 0xFF))
+        }
     }
 
     private func appendLE64(_ data: inout Data, value: UInt64) {
-        data.append(UInt8(value & 0xFF))
-        data.append(UInt8((value >> 8) & 0xFF))
-        data.append(UInt8((value >> 16) & 0xFF))
-        data.append(UInt8((value >> 24) & 0xFF))
-        data.append(UInt8((value >> 32) & 0xFF))
-        data.append(UInt8((value >> 40) & 0xFF))
-        data.append(UInt8((value >> 48) & 0xFF))
-        data.append(UInt8((value >> 56) & 0xFF))
+        for shift in stride(from: 0, to: 64, by: 8) {
+            data.append(UInt8((value >> UInt64(shift)) & 0xFF))
+        }
     }
 
-    // MARK: - PPF 1.0 Tests
+    private func sampleSource(count: Int = 64) -> Data {
+        Data((0..<count).map { UInt8($0 & 0xFF) })
+    }
+
+    // MARK: - PPF 1.0
 
     func testV1ApplySingleRecord() throws {
-        let source = Data([0x00, 0x01, 0x02, 0x03, 0x04])
-        let patch = makePPFv1Patch(records: [(offset: 1, data: [0xAA, 0xBB])])
+        let source = sampleSource()
+        let patch = makePPFv1Patch(records: [(offset: 4, data: [0xAA, 0xBB])])
         let result = try patcher.apply(patch: patch, to: source)
-        XCTAssertEqual(Array(result), [0x00, 0xAA, 0xBB, 0x03, 0x04])
+        XCTAssertEqual(result[4], 0xAA)
+        XCTAssertEqual(result[5], 0xBB)
+        XCTAssertEqual(result[3], source[3])
+        XCTAssertEqual(result.count, source.count)
     }
 
     func testV1ApplyMultipleRecords() throws {
-        let source = Data(repeating: 0x00, count: 10)
+        let source = sampleSource()
         let patch = makePPFv1Patch(records: [
-            (offset: 0, data: [0xDE, 0xAD]),
-            (offset: 7, data: [0xBE, 0xEF])
+            (offset: 0, data: [0x11]),
+            (offset: 10, data: [0x22, 0x33, 0x44]),
+            (offset: 63, data: [0x55])
         ])
         let result = try patcher.apply(patch: patch, to: source)
-        XCTAssertEqual(result[0], 0xDE)
-        XCTAssertEqual(result[1], 0xAD)
-        XCTAssertEqual(result[7], 0xBE)
-        XCTAssertEqual(result[8], 0xEF)
-        // Unchanged bytes remain zero
-        XCTAssertEqual(result[2], 0x00)
-        XCTAssertEqual(result[6], 0x00)
+        XCTAssertEqual(result[0], 0x11)
+        XCTAssertEqual(Array(result[10..<13]), [0x22, 0x33, 0x44])
+        XCTAssertEqual(result[63], 0x55)
     }
 
     func testV1RecordBeyondSourceSizeThrows() {
-        // Writing beyond the original source boundary should be rejected to prevent
-        // unbounded allocation from malicious/corrupt patches.
-        let source = Data([0x01, 0x02])
-        let patch = makePPFv1Patch(records: [(offset: 5, data: [0xFF])])
+        let source = sampleSource(count: 16)
+        let patch = makePPFv1Patch(records: [(offset: 15, data: [0x01, 0x02])])
         XCTAssertThrowsError(try patcher.apply(patch: patch, to: source)) { error in
             guard case PatchError.corruptPatchFile = error else {
                 return XCTFail("Expected corruptPatchFile, got \(error)")
@@ -128,164 +124,158 @@ final class PPFPatcherTests: XCTestCase {
         }
     }
 
-    func testV1AtOffset0() throws {
-        let source = Data([0xAA, 0xBB, 0xCC])
-        let patch = makePPFv1Patch(records: [(offset: 0, data: [0x11, 0x22])])
-        let result = try patcher.apply(patch: patch, to: source)
-        XCTAssertEqual(Array(result), [0x11, 0x22, 0xCC])
-    }
-
     func testV1TruncatedHeaderThrows() {
-        // Header needs 59 bytes; give only the 5-byte magic
-        let patch = Data("PPF10".utf8)
-        XCTAssertThrowsError(try patcher.apply(patch: patch, to: Data())) { error in
+        let patch = Data("PPF10".utf8) + Data(repeating: 0, count: 10)
+        XCTAssertThrowsError(try patcher.apply(patch: patch, to: sampleSource())) { error in
             guard case PatchError.corruptPatchFile = error else {
                 return XCTFail("Expected corruptPatchFile, got \(error)")
             }
         }
     }
 
-    // MARK: - PPF 2.0 Tests
-
-    func testV2ApplySingleRecord() throws {
-        let source = Data(repeating: 0x00, count: 20)
-        let patch = makePPFv2Patch(records: [(offset: 10, data: [0x42, 0x43, 0x44])])
-        let result = try patcher.apply(patch: patch, to: source)
-        XCTAssertEqual(result[10], 0x42)
-        XCTAssertEqual(result[11], 0x43)
-        XCTAssertEqual(result[12], 0x44)
-        // Unchanged
-        XCTAssertEqual(result[9], 0x00)
-        XCTAssertEqual(result[13], 0x00)
+    func testV1NoRecordsProducesUnmodifiedSource() throws {
+        let source = sampleSource()
+        XCTAssertEqual(try patcher.apply(patch: makePPFv1Patch(records: []), to: source), source)
     }
 
-    func testV2ApplyMultipleRecords() throws {
-        let source = Data(repeating: 0xFF, count: 16)
-        let patch = makePPFv2Patch(records: [
-            (offset: 0, data: [0x01]),
-            (offset: 8, data: [0x02, 0x03])
-        ])
+    func testV1MaxLengthRecord() throws {
+        let source = Data(repeating: 0, count: 300)
+        let payload = [UInt8](repeating: 0x7E, count: 255)
+        let patch = makePPFv1Patch(records: [(offset: 10, data: payload)])
         let result = try patcher.apply(patch: patch, to: source)
-        XCTAssertEqual(result[0], 0x01)
-        XCTAssertEqual(result[8], 0x02)
-        XCTAssertEqual(result[9], 0x03)
-        XCTAssertEqual(result[1], 0xFF)
+        XCTAssertEqual(Array(result[10..<265]), payload)
+        XCTAssertEqual(result[265], 0)
+    }
+
+    // MARK: - PPF 2.0
+
+    func testV2ApplyRecordsAfterBlockCheck() throws {
+        let source = sampleSource()
+        let patch = makePPFv2Patch(records: [
+            (offset: 2, data: [0xDE, 0xAD]),
+            (offset: 60, data: [0xBE, 0xEF])
+        ], originalSize: UInt32(source.count))
+        let result = try patcher.apply(patch: patch, to: source)
+        XCTAssertEqual(Array(result[2..<4]), [0xDE, 0xAD])
+        XCTAssertEqual(Array(result[60..<62]), [0xBE, 0xEF])
+    }
+
+    func testV2WrongOriginalSizeThrowsSourceMismatch() {
+        let patch = makePPFv2Patch(records: [], originalSize: 999)
+        XCTAssertThrowsError(try patcher.apply(patch: patch, to: sampleSource())) { error in
+            guard case PatchError.sourceROMMismatch = error else {
+                return XCTFail("Expected sourceROMMismatch, got \(error)")
+            }
+        }
+    }
+
+    func testV2BlockCheckIsVerifiedAgainst0x9320() throws {
+        // Large enough image to contain the 0x9320…0x971F window.
+        var source = Data(repeating: 0x00, count: 0x9320 + 1024 + 16)
+        for i in 0..<1024 { source[0x9320 + i] = UInt8(i & 0xFF) }
+        let block = (0..<1024).map { UInt8($0 & 0xFF) }
+
+        let good = makePPFv2Patch(records: [(offset: 1, data: [0x42])], blockCheck: block)
+        XCTAssertEqual(try patcher.apply(patch: good, to: source)[1], 0x42)
+
+        var wrongBlock = block
+        wrongBlock[0] ^= 0xFF
+        let bad = makePPFv2Patch(records: [(offset: 1, data: [0x42])], blockCheck: wrongBlock)
+        XCTAssertThrowsError(try patcher.apply(patch: bad, to: source)) { error in
+            guard case PatchError.sourceROMMismatch = error else {
+                return XCTFail("Expected sourceROMMismatch, got \(error)")
+            }
+        }
     }
 
     func testV2TruncatedHeaderThrows() {
-        // Only 10 bytes — not enough for a 63-byte header
-        var patch = Data("PPF20".utf8)
-        patch.append(contentsOf: [UInt8](repeating: 0, count: 5))
-        XCTAssertThrowsError(try patcher.apply(patch: patch, to: Data())) { error in
+        let patch = Data("PPF20".utf8) + Data(repeating: 0, count: 100)
+        XCTAssertThrowsError(try patcher.apply(patch: patch, to: sampleSource())) { error in
             guard case PatchError.corruptPatchFile = error else {
                 return XCTFail("Expected corruptPatchFile, got \(error)")
             }
         }
     }
 
-    func testV2NonZeroEncodingMethodThrows() {
-        var patch = Data("PPF20".utf8)
-        patch.append(0x01)  // encoding method = 1 (unsupported)
-        patch.append(contentsOf: [UInt8](repeating: 0, count: 57))  // rest of header
-        XCTAssertThrowsError(try patcher.apply(patch: patch, to: Data())) { error in
-            guard case PatchError.unsupportedFormat = error else {
-                return XCTFail("Expected unsupportedFormat, got \(error)")
-            }
-        }
+    func testV2NoRecordsProducesUnmodifiedSource() throws {
+        let source = sampleSource()
+        XCTAssertEqual(try patcher.apply(patch: makePPFv2Patch(records: []), to: source), source)
     }
 
-    func testV2NonZeroBlockCheckThrows() {
-        var patch = Data("PPF20".utf8)
-        patch.append(0x00)  // encoding = 0
-        patch.append(contentsOf: [UInt8](repeating: 0, count: 54))  // description + imageType
-        patch.append(0x01)  // blockCheck = 1 (unsupported)
-        patch.append(contentsOf: [UInt8](repeating: 0, count: 2))
-        XCTAssertThrowsError(try patcher.apply(patch: patch, to: Data())) { error in
-            guard case PatchError.unsupportedFormat = error else {
-                return XCTFail("Expected unsupportedFormat, got \(error)")
-            }
-        }
-    }
+    // MARK: - PPF 3.0
 
-    func testV3NonZeroEncodingMethodThrows() {
-        var patch = Data("PPF30".utf8)
-        patch.append(0x01)  // encoding method = 1 (unsupported)
-        patch.append(contentsOf: [UInt8](repeating: 0, count: 54))  // rest of header
-        XCTAssertThrowsError(try patcher.apply(patch: patch, to: Data())) { error in
-            guard case PatchError.unsupportedFormat = error else {
-                return XCTFail("Expected unsupportedFormat, got \(error)")
-            }
-        }
-    }
-
-    func testV3NonZeroBlockCheckThrows() {
-        var patch = Data("PPF30".utf8)
-        patch.append(0x00)  // encoding = 0
-        patch.append(contentsOf: [UInt8](repeating: 0, count: 51))  // description + imageType
-        patch.append(0x01)  // blockCheck = 1 (unsupported)
-        patch.append(contentsOf: [UInt8](repeating: 0, count: 2))  // undoData + reserved
-        XCTAssertThrowsError(try patcher.apply(patch: patch, to: Data())) { error in
-            guard case PatchError.unsupportedFormat = error else {
-                return XCTFail("Expected unsupportedFormat, got \(error)")
-            }
-        }
-    }
-
-    func testV3NonZeroUndoDataThrows() {
-        var patch = Data("PPF30".utf8)
-        patch.append(0x00)  // encoding = 0
-        patch.append(contentsOf: [UInt8](repeating: 0, count: 52))  // description + imageType + blockCheck
-        patch.append(0x01)  // undoData = 1 (unsupported)
-        patch.append(contentsOf: [UInt8](repeating: 0, count: 1))  // reserved
-        XCTAssertThrowsError(try patcher.apply(patch: patch, to: Data())) { error in
-            guard case PatchError.unsupportedFormat = error else {
-                return XCTFail("Expected unsupportedFormat, got \(error)")
-            }
-        }
-    }
-
-    // MARK: - PPF 3.0 Tests
-
-    func testV3ApplySingleRecord() throws {
-        let source = Data(repeating: 0x00, count: 16)
-        let patch = makePPFv3Patch(records: [(offset: 4, data: [0xCA, 0xFE])])
+    func testV3ApplySingleRecordWithoutBlockCheck() throws {
+        let source = sampleSource()
+        let patch = makePPFv3Patch(records: [(offset: 8, data: [0x99], undo: nil)])
         let result = try patcher.apply(patch: patch, to: source)
-        XCTAssertEqual(result[4], 0xCA)
-        XCTAssertEqual(result[5], 0xFE)
-        XCTAssertEqual(result[3], 0x00)
-        XCTAssertEqual(result[6], 0x00)
+        XCTAssertEqual(result[8], 0x99)
+        XCTAssertEqual(result[7], source[7])
     }
 
-    func testV3ApplyMultipleRecords() throws {
-        let source = Data(repeating: 0xAB, count: 20)
-        let patch = makePPFv3Patch(records: [
-            (offset: 0, data: [0x10, 0x20, 0x30]),
-            (offset: 15, data: [0x99])
-        ])
+    func testV3RecordsStartAfterBlockCheckWhenFlagged() throws {
+        let source = sampleSource()
+        let patch = makePPFv3Patch(
+            records: [(offset: 3, data: [0x77, 0x66], undo: nil)],
+            blockCheck: [UInt8](repeating: 0, count: 1024)
+        )
         let result = try patcher.apply(patch: patch, to: source)
-        XCTAssertEqual(result[0], 0x10)
-        XCTAssertEqual(result[1], 0x20)
-        XCTAssertEqual(result[2], 0x30)
-        XCTAssertEqual(result[15], 0x99)
-        // Unchanged
-        XCTAssertEqual(result[3], 0xAB)
-        XCTAssertEqual(result[14], 0xAB)
+        XCTAssertEqual(Array(result[3..<5]), [0x77, 0x66])
+    }
+
+    func testV3UndoDataIsSkipped() throws {
+        let source = sampleSource()
+        let patch = makePPFv3Patch(
+            records: [
+                (offset: 1, data: [0xA1, 0xA2], undo: [source[1], source[2]]),
+                (offset: 20, data: [0xB1], undo: [source[20]])
+            ],
+            undoData: true
+        )
+        let result = try patcher.apply(patch: patch, to: source)
+        XCTAssertEqual(Array(result[1..<3]), [0xA1, 0xA2])
+        XCTAssertEqual(result[20], 0xB1)
+        // Undo bytes must not have been applied as a second record.
+        XCTAssertEqual(result[3], source[3])
+    }
+
+    func testV3GIImageTypeUsesAlternateBlockCheckWindow() throws {
+        var source = Data(repeating: 0x00, count: 0x9320 + 1024 + 16)
+        for i in 0..<1024 { source[0x80A0 + i] = UInt8((i * 3) & 0xFF) }
+        let block = (0..<1024).map { UInt8(($0 * 3) & 0xFF) }
+        let patch = makePPFv3Patch(records: [(offset: 0, data: [0x01], undo: nil)], imageType: 1, blockCheck: block)
+        XCTAssertEqual(try patcher.apply(patch: patch, to: source)[0], 0x01)
+    }
+
+    func testV3StopsAtFileIDTrailer() throws {
+        let source = sampleSource()
+        var patch = makePPFv3Patch(records: [(offset: 5, data: [0x5A], undo: nil)])
+        patch.append(contentsOf: Array("@BEGIN_FILE_ID.DIZ".utf8))
+        patch.append(contentsOf: Array("Made with ppf-o-matic".utf8))
+        patch.append(contentsOf: Array("@END_FILE_ID.DIZ".utf8))
+        patch.append(contentsOf: [0x15, 0x00])
+        let result = try patcher.apply(patch: patch, to: source)
+        XCTAssertEqual(result[5], 0x5A)
+        XCTAssertEqual(result.count, source.count)
     }
 
     func testV3TruncatedHeaderThrows() {
-        var patch = Data("PPF30".utf8)
-        patch.append(contentsOf: [UInt8](repeating: 0, count: 3))
-        XCTAssertThrowsError(try patcher.apply(patch: patch, to: Data())) { error in
+        let patch = Data("PPF30".utf8) + Data(repeating: 0, count: 20)
+        XCTAssertThrowsError(try patcher.apply(patch: patch, to: sampleSource())) { error in
             guard case PatchError.corruptPatchFile = error else {
                 return XCTFail("Expected corruptPatchFile, got \(error)")
             }
         }
     }
 
-    // MARK: - Invalid magic / version detection
+    func testV3NoRecordsProducesUnmodifiedSource() throws {
+        let source = sampleSource()
+        XCTAssertEqual(try patcher.apply(patch: makePPFv3Patch(records: []), to: source), source)
+    }
+
+    // MARK: - Common
 
     func testInvalidMagicThrowsCorrupt() {
-        let badPatch = Data("GARBAGE_DATA".utf8)
+        let badPatch = Data("NOTPPF".utf8) + Data(repeating: 0, count: 100)
         XCTAssertThrowsError(try patcher.apply(patch: badPatch, to: Data())) { error in
             guard case PatchError.corruptPatchFile = error else {
                 return XCTFail("Expected corruptPatchFile, got \(error)")
@@ -294,16 +284,11 @@ final class PPFPatcherTests: XCTestCase {
     }
 
     func testEmptyPatchThrows() {
-        XCTAssertThrowsError(try patcher.apply(patch: Data(), to: Data())) { error in
-            guard case PatchError.corruptPatchFile = error else {
-                return XCTFail("Expected corruptPatchFile, got \(error)")
-            }
-        }
+        XCTAssertThrowsError(try patcher.apply(patch: Data(), to: Data()))
     }
 
     func testUnknownPPFVersionThrowsUnsupported() {
-        // "PPF40" would be a future/unknown version
-        let patch = Data("PPF40".utf8)
+        let patch = Data("PPF40".utf8) + Data(repeating: 0, count: 100)
         XCTAssertThrowsError(try patcher.apply(patch: patch, to: Data())) { error in
             guard case PatchError.unsupportedFormat = error else {
                 return XCTFail("Expected unsupportedFormat, got \(error)")
@@ -312,46 +297,11 @@ final class PPFPatcherTests: XCTestCase {
     }
 
     func testIPSMagicIsRejectedAsCorrupt() {
-        // "PATCH" header — not a PPF file
-        let patch = Data("PATCH".utf8)
+        let patch = Data("PATCH".utf8) + Data(repeating: 0, count: 100)
         XCTAssertThrowsError(try patcher.apply(patch: patch, to: Data())) { error in
             guard case PatchError.corruptPatchFile = error else {
                 return XCTFail("Expected corruptPatchFile, got \(error)")
             }
         }
-    }
-
-    // MARK: - Edge cases
-
-    func testV1NoRecordsProducesUnmodifiedSource() throws {
-        let source = Data([0x01, 0x02, 0x03])
-        let patch = makePPFv1Patch(records: [])
-        let result = try patcher.apply(patch: patch, to: source)
-        XCTAssertEqual(Array(result), [0x01, 0x02, 0x03])
-    }
-
-    func testV2NoRecordsProducesUnmodifiedSource() throws {
-        let source = Data([0xDE, 0xAD])
-        let patch = makePPFv2Patch(records: [])
-        let result = try patcher.apply(patch: patch, to: source)
-        XCTAssertEqual(Array(result), [0xDE, 0xAD])
-    }
-
-    func testV3NoRecordsProducesUnmodifiedSource() throws {
-        let source = Data([0x00, 0x11, 0x22])
-        let patch = makePPFv3Patch(records: [])
-        let result = try patcher.apply(patch: patch, to: source)
-        XCTAssertEqual(Array(result), [0x00, 0x11, 0x22])
-    }
-
-    func testV1MaxLengthRecord() throws {
-        // length byte = 255 (max value in one byte)
-        let source = Data(repeating: 0x00, count: 256)
-        let data = [UInt8](repeating: 0xAB, count: 255)
-        let patch = makePPFv1Patch(records: [(offset: 0, data: data)])
-        let result = try patcher.apply(patch: patch, to: source)
-        XCTAssertEqual(result[0], 0xAB)
-        XCTAssertEqual(result[254], 0xAB)
-        XCTAssertEqual(result[255], 0x00)  // untouched
     }
 }

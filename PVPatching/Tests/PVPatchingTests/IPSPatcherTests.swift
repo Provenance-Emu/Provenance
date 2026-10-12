@@ -104,3 +104,52 @@ final class IPSPatcherTests: XCTestCase {
         XCTAssertThrowsError(try patcher.apply(patch: Data(), to: Data()))
     }
 }
+
+final class IPSEOFOffsetTests: XCTestCase {
+    /// A record whose 3-byte offset is 0x454F46 spells "EOF". Decoders must only treat
+    /// "EOF" as the terminator when it is actually the trailer.
+    func testRecordAtEOFOffsetIsAppliedNotTreatedAsTerminator() throws {
+        let eofOffset = 0x454F46
+        let source = Data(repeating: 0x00, count: eofOffset + 8)
+        var patch = Data("PATCH".utf8)
+        patch.append(contentsOf: [0x45, 0x4F, 0x46])      // offset 0x454F46
+        patch.append(contentsOf: [0x00, 0x02, 0xAB, 0xCD]) // length 2, data
+        patch.append(contentsOf: Data("EOF".utf8))
+        let result = try IPSPatcher().apply(patch: patch, to: source)
+        XCTAssertEqual(result[eofOffset], 0xAB)
+        XCTAssertEqual(result[eofOffset + 1], 0xCD)
+    }
+
+    func testCreatorRoundTripsAChangeAtTheEOFOffset() throws {
+        let eofOffset = 0x454F46
+        let original = Data(repeating: 0x11, count: eofOffset + 4)
+        var modified = original
+        modified[eofOffset] = 0x22
+        modified[eofOffset + 1] = 0x33
+
+        let dir = FileManager.default.temporaryDirectory
+            .appendingPathComponent("IPSEOF-\(UUID().uuidString)", isDirectory: true)
+        try FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true)
+        defer { try? FileManager.default.removeItem(at: dir) }
+        let originalURL = dir.appendingPathComponent("o.bin")
+        let modifiedURL = dir.appendingPathComponent("m.bin")
+        let patchURL = dir.appendingPathComponent("p.ips")
+        try original.write(to: originalURL)
+        try modified.write(to: modifiedURL)
+
+        _ = try PatchCreator().create(
+            originalURL: originalURL, modifiedURL: modifiedURL, outputURL: patchURL,
+            format: .ips, metadata: PatchMetadata(title: "eof")
+        )
+        let applied = try IPSPatcher().apply(patch: try Data(contentsOf: patchURL), to: original)
+        XCTAssertEqual(applied, modified)
+    }
+
+    func testIPS32RefusesAbsurdGrowth() {
+        var patch = Data("PATCH".utf8)
+        patch.append(contentsOf: [0xF0, 0x00, 0x00, 0x00]) // offset ~3.75 GiB
+        patch.append(contentsOf: [0x00, 0x01, 0xFF])
+        patch.append(contentsOf: Data("EEOF".utf8))
+        XCTAssertThrowsError(try IPSPatcher().apply(patch: patch, to: Data(count: 16), isIPS32: true))
+    }
+}

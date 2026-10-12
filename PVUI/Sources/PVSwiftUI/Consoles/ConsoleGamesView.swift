@@ -887,6 +887,13 @@ struct ConsoleGamesView: SwiftUI.View {
                         }
                     }
                 }
+                .sheet(isPresented: $gamesViewModel.showPatchApplier, onDismiss: {
+                    gamesViewModel.patchApplierGameMD5 = nil
+                }) {
+                    NavigationStack {
+                        PatchApplierView(preselectedGameMD5: gamesViewModel.patchApplierGameMD5)
+                    }
+                }
                 #if !os(tvOS)
                 .fileImporter(
                     isPresented: $gamesViewModel.showPatchImportPicker,

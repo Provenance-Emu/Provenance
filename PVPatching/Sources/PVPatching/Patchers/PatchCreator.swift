@@ -191,8 +191,9 @@ public struct PatchCreator: Sendable {
                 if bytes.count >= 0xFFFF { break }
             }
 
-            // Prefer RLE when a single byte repeats.
-            if bytes.count >= 3, Set(bytes).count == 1 {
+            // Prefer RLE when a single byte repeats (never at the "EOF" offset — that
+            // path shifts the record start back one byte below).
+            if bytes.count >= 3, Set(bytes).count == 1, isIPS32 || recordStart != 0x454F46 {
                 appendIPSOffset(&patch, offset: recordStart, isIPS32: isIPS32)
                 patch.append(contentsOf: [0x00, 0x00]) // length 0 => RLE
                 patch.append(contentsOf: [
@@ -201,16 +202,20 @@ public struct PatchCreator: Sendable {
                     bytes[0]
                 ])
             } else {
-                // Avoid writing a record whose 3-byte offset looks like "EOF".
-                if !isIPS32 && recordStart == 0x454F46 {
-                    throw PatchError.patchApplicationFailed("IPS cannot encode a record at offset 0x454F46 (EOF)")
+                // A record at offset 0x454F46 spells "EOF". The standard workaround is to
+                // start the record one byte earlier and include the unchanged byte.
+                var start = recordStart
+                var payload = bytes
+                if !isIPS32 && start == 0x454F46 && start > 0 && payload.count < 0xFFFF {
+                    start -= 1
+                    payload.insert(modified[start], at: 0)
                 }
-                appendIPSOffset(&patch, offset: recordStart, isIPS32: isIPS32)
+                appendIPSOffset(&patch, offset: start, isIPS32: isIPS32)
                 patch.append(contentsOf: [
-                    UInt8((bytes.count >> 8) & 0xFF),
-                    UInt8(bytes.count & 0xFF)
+                    UInt8((payload.count >> 8) & 0xFF),
+                    UInt8(payload.count & 0xFF)
                 ])
-                patch.append(contentsOf: bytes)
+                patch.append(contentsOf: payload)
             }
         }
 

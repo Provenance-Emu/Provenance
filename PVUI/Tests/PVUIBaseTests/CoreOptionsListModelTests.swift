@@ -203,15 +203,18 @@ struct CoreOptionValueStoreTests {
 
     @Test("Adjusting steps a value and stops at either end")
     func adjust() {
+        ListMockCore.wipe()
         global.adjust(ListMockCore.region, direction: 1)
         #expect(global.int(ListMockCore.region) == 10)
         global.adjust(ListMockCore.region, direction: -1)
         global.adjust(ListMockCore.region, direction: -1)
         #expect(global.int(ListMockCore.region) == 0)
 
+        global.set(5, for: ListMockCore.volume)
         for _ in 0..<20 { global.adjust(ListMockCore.volume, direction: 1) }
         #expect(global.int(ListMockCore.volume) == 10)
 
+        global.set(false, for: ListMockCore.frameskip)
         global.adjust(ListMockCore.frameskip, direction: 1)
         #expect(global.bool(ListMockCore.frameskip))
         global.adjust(ListMockCore.frameskip, direction: -1)
@@ -221,7 +224,9 @@ struct CoreOptionValueStoreTests {
 
     @Test("A choice saved as a legacy index still resolves")
     func legacyMultiIndex() {
+        ListMockCore.wipe()
         ListMockCore.setValue(2, forOption: ListMockCore.resolution, andMD5: nil)
+        #expect(global.multiIndex(ListMockCore.resolution) == 2)
         #expect(global.displayValue(ListMockCore.resolution) == "Quad (4x)")
         ListMockCore.wipe()
     }
@@ -251,9 +256,8 @@ struct CoreOptionValueStoreTests {
 @Suite("CoreOptionTileProvider grouping", .serialized)
 struct CoreOptionTileGroupingTests {
 
-    init() {
-        ListMockCore.wipe()
-    }
+    // Do not wipe ListMockCore UserDefaults here — that races the serialized
+    // CoreOptionValueStore suite when Swift Testing runs suites in parallel.
 
     @Test("Options keep their categories; range options have no cell")
     func groups() {

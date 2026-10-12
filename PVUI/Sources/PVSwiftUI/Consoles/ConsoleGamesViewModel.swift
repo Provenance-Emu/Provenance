@@ -68,11 +68,13 @@ class ConsoleGamesViewModel: ObservableObject {
     @Published var showControllerPakSlots = false
     @Published var controllerPakGame: PVGame?
 
-    /// Patch manager / import state
+    /// Patch manager / import / applier state
     @Published var showPatchManager = false
     @Published var patchManagerGame: PVGame?
     @Published var showPatchImportPicker = false
     @Published var patchImportGame: PVGame?
+    @Published var showPatchApplier = false
+    @Published var patchApplierGameMD5: String?
     @Published var patchStatusMessage: String?
 
     /// Save Export share sheet state

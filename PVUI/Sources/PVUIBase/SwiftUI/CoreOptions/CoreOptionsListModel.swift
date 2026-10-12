@@ -167,12 +167,17 @@ struct CoreOptionValueStore {
 
     func bool(_ option: CoreOption) -> Bool {
         if let value = stored(option) as? Bool { return value }
+        // `__NSCFBoolean` is an NSNumber subclass; only accept real booleans.
+        if let number = stored(option) as? NSNumber,
+           CFGetTypeID(number as CFTypeRef) == CFBooleanGetTypeID() {
+            return number.boolValue
+        }
         if case let .bool(_, defaultValue, _) = option { return defaultValue }
         return false
     }
 
     func int(_ option: CoreOption) -> Int {
-        if let value = stored(option) as? Int { return value }
+        if let value = userDefaultsInt(stored(option)) { return value }
         switch option {
         case let .enumeration(_, _, defaultValue, _): return defaultValue
         case let .range(_, _, defaultValue, _): return defaultValue
@@ -183,8 +188,22 @@ struct CoreOptionValueStore {
     func float(_ option: CoreOption) -> Float {
         if let value = stored(option) as? Float { return value }
         if let value = stored(option) as? Double { return Float(value) }
+        if let number = stored(option) as? NSNumber,
+           CFGetTypeID(number as CFTypeRef) != CFBooleanGetTypeID() {
+            return number.floatValue
+        }
         if case let .rangef(_, _, defaultValue, _) = option { return defaultValue }
         return 0
+    }
+
+    /// UserDefaults integer payloads arrive as `Int` or `NSNumber` depending on platform.
+    private func userDefaultsInt(_ object: Any?) -> Int? {
+        if let value = object as? Int { return value }
+        if let number = object as? NSNumber,
+           CFGetTypeID(number as CFTypeRef) != CFBooleanGetTypeID() {
+            return number.intValue
+        }
+        return nil
     }
 
     func string(_ option: CoreOption) -> String {
@@ -208,6 +227,9 @@ struct CoreOptionValueStore {
         case let index as Int where values.indices.contains(index):
             return index
         default:
+            if let index = userDefaultsInt(stored(option)), values.indices.contains(index) {
+                return index
+            }
             return fallback
         }
     }
