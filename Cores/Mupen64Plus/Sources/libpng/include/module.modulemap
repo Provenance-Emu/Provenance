@@ -1,0 +1,6 @@
+// Only png.h is public API. Without this map SwiftPM synthesises an umbrella directory
+// module that also imports pngstruct.h / pngpriv.h, which refuse to be included directly.
+module libpng {
+    umbrella header "png.h"
+    export *
+}
