@@ -64,7 +64,7 @@ public extension CoreProduct {
     static let fceu = CoreProduct(id: "fceu", link: .package(path: "Cores/FCEU", product: "PVFCEU-Dynamic"))
     static let genesis = CoreProduct(
         id: "genesis",
-        link: .project(path: "Cores/Genesis-Plus-GX/PVGenesis.xcodeproj", target: "PVGenesis", product: "PVGenesis")
+        link: .package(path: "Cores/Genesis-Plus-GX", product: "PVCoreGenesisPlus-Dynamic")
     )
     static let mupen64Plus = CoreProduct(
         id: "mupen64plus",
