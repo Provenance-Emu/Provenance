@@ -578,7 +578,8 @@ public final class PatchRepository {
         }
         // The archive itself has been consumed; keep Patches/ free of stray zips.
         if url.standardizedFileURL.path.hasPrefix(Paths.patchesPath.standardizedFileURL.path) {
-            try? FileManager.default.removeItem(at: url)
+            // PVLibrary's FileManager.removeItem(at:) is the async overload (DirectoryWatcher.swift).
+            try? await FileManager.default.removeItem(at: url)
         }
         guard let first = imported.first else {
             throw PatchError.unsupportedFormat("\(url.lastPathComponent) contains no supported patch file")
