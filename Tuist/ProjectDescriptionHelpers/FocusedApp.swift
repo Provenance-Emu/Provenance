@@ -179,7 +179,12 @@ public extension FocusedApp {
     static let dolphin = FocusedApp(slug: "dolphin", title: "Dolphin", cores: [.dolphin], optInVariable: DevSettings.dolphinOptIn)
 
     /// Every app that exists, enabled or not (the manifest checks validate all of them).
-    static let catalog: [FocusedApp] = [.ui, .azahar, .thin, .n64, .dolphin]
+    /// No emulator cores at all: the fastest build of the full UI (library, settings, importer,
+    /// skins). Use it for UI/unit-test iteration and as CI's smoke build (Phase 4 of the core
+    /// SwiftPM conversion). Games can't launch in it; everything else works.
+    static let coreless = FocusedApp(slug: "coreless", title: "Coreless", cores: [], flags: [DevSettings.harnessFlag])
+
+    static let catalog: [FocusedApp] = [.ui, .azahar, .thin, .n64, .dolphin, .coreless]
 
     /// The apps in the generated project.
     static var all: [FocusedApp] { catalog.filter(\.isEnabled) }

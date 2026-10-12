@@ -5,7 +5,7 @@ SHELL := /bin/bash
 # `export` makes the values visible to recipes (release.sh, fastlane, etc.).
 -include .env
 export
-.PHONY: dev dev-generate dev-ui dev-azahar dev-thin dev-n64 dev-dolphin dev-harness help ios update tvos lite ci maint maint-status maint-run-stale maint-hooks \
+.PHONY: dev dev-generate dev-ui dev-azahar dev-thin dev-n64 dev-dolphin dev-coreless dev-harness help ios update tvos lite ci maint maint-status maint-run-stale maint-hooks \
 	generate-all generate-cheatdb generate-contributors generate-core-lists \
 	generate-default-skins generate-licenses generate-uti generate-changelog \
 	update-cheatdb update-skin-catalog update-core-versions update-core-licenses \
@@ -302,6 +302,9 @@ dev-thin:
 
 dev-n64:
 	$(MAKE) _dev-build DEV_SCHEME=Provenance-Dev-N64
+
+dev-coreless:
+	$(MAKE) _dev-build DEV_SCHEME=Provenance-Dev-Coreless
 
 ## Dolphin is device only (PVlibDolphin has no usable simulator build). The Dolphin app is opt-in
 ## (TUIST_DEV_DOLPHIN) so a clean checkout, and CI, never load a package whose xcframework is missing.

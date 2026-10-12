@@ -40,7 +40,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        scheme: ["Provenance-Dev-UI", "Provenance-Dev-N64"]
+        scheme: ["Provenance-Dev-UI", "Provenance-Dev-N64", "Provenance-Dev-Coreless"]
         destination: ["generic/platform=iOS Simulator", "generic/platform=tvOS Simulator"]
     steps:
       - name: Checkout
