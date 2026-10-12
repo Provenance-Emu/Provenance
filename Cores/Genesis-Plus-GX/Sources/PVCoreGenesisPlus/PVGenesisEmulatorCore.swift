@@ -12,9 +12,8 @@ import GameController
 import PVLogging
 import PVAudio
 import PVEmulatorCore
-#if canImport(libgenesisplus)
-import libgenesisplus
-#endif
+// The emulator is reached through PVCoreGenesisPlusBridge; the Swift module does not import the
+// C library module directly (its module map points outside the package's public header dir).
 
 @objc
 @objcMembers
