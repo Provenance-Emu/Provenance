@@ -63,13 +63,35 @@ public final class FileLocationResolver: @unchecked Sendable {
 
     public static let shared = FileLocationResolver()
 
-    private init() {}
+    private let localBase: @Sendable () -> URL
+    private let libraryRootProvider: @Sendable () -> URL
+    private let savesRootProvider: @Sendable () -> URL
+    private let iCloudBase: @Sendable () -> URL?
+    private let iCloudDriveMode: @Sendable () -> Bool
 
-    // MARK: - Base URLs
+    /// Production roots: the app-files root, `LibraryLocation.current`'s two roots, the ubiquity Documents folder.
+    private convenience init() {
+        self.init(localBase: { FileLocationResolver.platformLocalBase },
+                  libraryRoot: { LibraryLocation.current.rootURL },
+                  savesRoot: { LibraryLocation.current.savesRootURL },
+                  iCloudBase: { FileLocationResolver.platformICloudBase },
+                  iCloudDriveMode: { FileLocationResolver.platformICloudDriveMode })
+    }
 
-    /// Platform-appropriate local base directory.
-    /// Documents on iOS/macOS, Caches on tvOS.
-    public var localBaseURL: URL {
+    /// Injected roots, for tests.
+    init(localBase: @escaping @Sendable () -> URL,
+         libraryRoot: @escaping @Sendable () -> URL,
+         savesRoot: @escaping @Sendable () -> URL,
+         iCloudBase: @escaping @Sendable () -> URL?,
+         iCloudDriveMode: @escaping @Sendable () -> Bool) {
+        self.localBase = localBase
+        self.libraryRootProvider = libraryRoot
+        self.savesRootProvider = savesRoot
+        self.iCloudBase = iCloudBase
+        self.iCloudDriveMode = iCloudDriveMode
+    }
+
+    private static var platformLocalBase: URL {
         #if os(tvOS)
         return URL.cachesPath
         #else
@@ -77,15 +99,7 @@ public final class FileLocationResolver: @unchecked Sendable {
         #endif
     }
 
-    /// Base URL for resolving partialPaths under iCloud Drive.
-    ///
-    /// Returns `<ubiquityContainer>/Documents/` — the root of the ubiquity
-    /// Documents folder, NOT the raw container. Files synced via iCloud Drive
-    /// live at `<ubiquityContainer>/Documents/<partialPath>`, so callers should
-    /// treat this as a drop-in peer of `localBaseURL`.
-    ///
-    /// Returns `nil` when iCloud is not configured or on tvOS.
-    public var iCloudBaseURL: URL? {
+    private static var platformICloudBase: URL? {
         #if os(tvOS)
         return nil
         #else
@@ -93,13 +107,50 @@ public final class FileLocationResolver: @unchecked Sendable {
         #endif
     }
 
-    /// Whether iCloud Drive sync mode is currently active.
-    public var isICloudDriveMode: Bool {
+    private static var platformICloudDriveMode: Bool {
         #if os(tvOS)
         return false
         #else
         return Defaults[.iCloudSyncMode].isICloudDrive
         #endif
+    }
+
+    // MARK: - Base URLs
+
+    /// The app-files root (Documents on iOS/macOS, Caches on tvOS). Imports and core configs live here.
+    public var localBaseURL: URL { localBase() }
+
+    /// `<ubiquityContainer>/Documents/`, or `nil` when iCloud is not configured or on tvOS.
+    public var iCloudBaseURL: URL? { iCloudBase() }
+
+    public var isICloudDriveMode: Bool { iCloudDriveMode() }
+
+    /// The root a partial path belongs to: the library root for `ROMs/`, `BIOS/`, `System/`, the saves root otherwise (D10).
+    public func libraryRoot(for partialPath: String) -> URL {
+        LibraryMoveFolders.isShared(partialPath: partialPath) ? libraryRootProvider() : savesRootProvider()
+    }
+
+    /// Search order for one partial path: its root, the app-files root, then iCloud Drive in Drive mode. No repeats.
+    func searchBases(for partialPath: String) -> [(url: URL, isCloud: Bool)] {
+        var bases: [(URL, Bool)] = [(libraryRoot(for: partialPath), false), (localBase(), false)]
+        if iCloudDriveMode(), let cloud = iCloudBase() { bases.append((cloud, true)) }
+        return Self.dedupe(bases)
+    }
+
+    /// Every root a library file may be under, for whole-library scans.
+    private var allBases: [(url: URL, isCloud: Bool)] {
+        var bases: [(URL, Bool)] = [(libraryRootProvider(), false), (savesRootProvider(), false), (localBase(), false)]
+        if iCloudDriveMode(), let cloud = iCloudBase() { bases.append((cloud, true)) }
+        return Self.dedupe(bases)
+    }
+
+    private static func dedupe(_ bases: [(URL, Bool)]) -> [(url: URL, isCloud: Bool)] {
+        var seen = Set<String>()
+        var out: [(url: URL, isCloud: Bool)] = []
+        for (url, isCloud) in bases where seen.insert(url.standardizedFileURL.path).inserted {
+            out.append((url: url, isCloud: isCloud))
+        }
+        return out
     }
 
     // MARK: - Single File Resolution
@@ -114,23 +165,12 @@ public final class FileLocationResolver: @unchecked Sendable {
     /// - Returns: A ``FileResolution`` indicating where the file was found.
     public func resolve(_ partialPath: String) -> FileResolution {
         let fm = FileManager.default
-
-        // 1. Always check local first
-        let localURL = localBaseURL.appendingPathComponent(partialPath)
-        if fm.fileExists(atPath: localURL.path) {
-            return .local(localURL)
-        }
-
-        // 2. Check iCloud Drive container (iOS/macOS only, Drive mode only)
-        #if !os(tvOS)
-        if isICloudDriveMode, let container = iCloudBaseURL {
-            let driveURL = container.appendingPathComponent(partialPath)
-            if fm.fileExists(atPath: driveURL.path) {
-                return .cloudDrive(driveURL)
+        for base in searchBases(for: partialPath) {
+            let url = base.url.appendingPathComponent(partialPath)
+            if fm.fileExists(atPath: url.path) {
+                return base.isCloud ? .cloudDrive(url) : .local(url)
             }
         }
-        #endif
-
         return .notFound
     }
 
@@ -152,7 +192,7 @@ public final class FileLocationResolver: @unchecked Sendable {
     /// Returns the expected local URL without checking file existence.
     /// Use for download destinations or path construction.
     public func expectedLocalURL(for partialPath: String) -> URL {
-        localBaseURL.appendingPathComponent(partialPath)
+        libraryRoot(for: partialPath).appendingPathComponent(partialPath)
     }
 
     /// Returns `true` if the file exists at any known location.
@@ -183,35 +223,16 @@ public final class FileLocationResolver: @unchecked Sendable {
     public func resolveByFilename(under subdirectory: String, filename: String) -> FileResolution {
         guard !filename.isEmpty else { return .notFound }
         let lowered = filename.lowercased()
-
-        // ROMs live under "ROMs/<systemID>/" while save states / BIOS use the
-        // raw subdirectory. Try both layouts so this resolver works for any
-        // file type.
         let romsScopedSubdir = "ROMs/" + subdirectory
-        let candidateLocalDirs = [
-            localBaseURL.appendingPathComponent(romsScopedSubdir),
-            localBaseURL.appendingPathComponent(subdirectory)
-        ]
-        for dir in candidateLocalDirs {
-            if let match = firstMatch(in: dir, filename: lowered) {
-                return .local(match)
-            }
-        }
-
-        #if !os(tvOS)
-        if isICloudDriveMode, let container = iCloudBaseURL {
-            let candidateCloudDirs = [
-                container.appendingPathComponent(romsScopedSubdir),
-                container.appendingPathComponent(subdirectory)
-            ]
-            for dir in candidateCloudDirs {
+        // ROMs live under "ROMs/<systemID>/" while save states / BIOS use the raw subdirectory; try both under every base.
+        let bases = Self.dedupe((searchBases(for: romsScopedSubdir) + searchBases(for: subdirectory)).map { ($0.url, $0.isCloud) })
+        for base in bases {
+            for dir in [base.url.appendingPathComponent(romsScopedSubdir), base.url.appendingPathComponent(subdirectory)] {
                 if let match = firstMatch(in: dir, filename: lowered) {
-                    return .cloudDrive(match)
+                    return base.isCloud ? .cloudDrive(match) : .local(match)
                 }
             }
         }
-        #endif
-
         return .notFound
     }
 
@@ -256,15 +277,9 @@ public final class FileLocationResolver: @unchecked Sendable {
     /// base locations. Tolerates the `/var` ↔ `/private/var` symlink that
     /// iOS uses for the sandbox.
     public func relativePath(for url: URL) -> String? {
-        if let stripped = stripPrefix(url: url, base: localBaseURL) {
-            return stripped
+        for base in allBases {
+            if let stripped = stripPrefix(url: url, base: base.url) { return stripped }
         }
-        #if !os(tvOS)
-        if let container = iCloudBaseURL,
-           let stripped = stripPrefix(url: url, base: container) {
-            return stripped
-        }
-        #endif
         return nil
     }
 
@@ -313,7 +328,12 @@ public final class FileLocationResolver: @unchecked Sendable {
     ///   scan the entire local directory tree.
     /// - Returns: A set of relative paths (relative to `localBaseURL`).
     public func buildLocalFileIndex(under subdirectory: String? = nil) -> Set<String> {
-        return enumerateRelativePaths(base: localBaseURL, subdirectory: subdirectory)
+        let bases = subdirectory.map { searchBases(for: $0) } ?? allBases
+        var index = Set<String>()
+        for base in bases where !base.isCloud {
+            index.formUnion(enumerateRelativePaths(base: base.url, subdirectory: subdirectory))
+        }
+        return index
     }
 
     /// Scan every base where ROM/save files may live (local Documents/Caches
@@ -326,12 +346,11 @@ public final class FileLocationResolver: @unchecked Sendable {
     /// - Parameter subdirectory: Optional subdirectory to scope the scan.
     /// - Returns: Union of relative paths across all bases.
     public func buildAvailabilityIndex(under subdirectory: String? = nil) -> Set<String> {
-        var index = enumerateRelativePaths(base: localBaseURL, subdirectory: subdirectory)
-        #if !os(tvOS)
-        if isICloudDriveMode, let cloudBase = iCloudBaseURL {
-            index.formUnion(enumerateRelativePaths(base: cloudBase, subdirectory: subdirectory))
+        let bases = subdirectory.map { searchBases(for: $0) } ?? allBases
+        var index = Set<String>()
+        for base in bases {
+            index.formUnion(enumerateRelativePaths(base: base.url, subdirectory: subdirectory))
         }
-        #endif
         return index
     }
 
