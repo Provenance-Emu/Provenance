@@ -15,6 +15,7 @@
 @import PVSettings;
 #if SWIFT_MODULE
 @import libgenesisplus;
+#include "zlib.h"
 #else
 #import <PVGenesis/PVGenesis-Swift.h>
 // shared.h pulls in osd.h before the hardware headers (cdd.h needs its cdStream type).
