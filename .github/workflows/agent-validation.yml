@@ -23,8 +23,15 @@ on:
         type: string
         default: 'push'
 
+# Rebase-dispatched runs (auto-rebase-on-develop.yml, triggered_by=rebase) get
+# their own "-rebase" group. They skip smoke-build, so when they shared the PR's
+# group each rebase cancelled the pull_request run before its smoke build
+# finished; with develop moving every few minutes no head ever got built
+# (PR #3739, 2026-10-12). Now a new rebase cancels only the previous rebase run,
+# a new PR push cancels only the previous PR run, and manual dispatches still
+# share the PR group as before.
 concurrency:
-  group: agent-validation-${{ github.head_ref || github.event.inputs.branch }}
+  group: agent-validation-${{ github.head_ref || github.event.inputs.branch }}${{ github.event.inputs.triggered_by == 'rebase' && '-rebase' || '' }}
   cancel-in-progress: true
 
 jobs:
