@@ -40,6 +40,11 @@ public struct CreatePatchView: View {
     public var body: some View {
         SwiftUI.Form {
             SwiftUI.Section("Source ROMs") {
+#if os(tvOS)
+                Text("Creating a patch needs two ROM files picked from Files, which tvOS doesn't have. Create the patch on iPhone, iPad or Mac, then send it here through the web server or iCloud Drive.")
+                    .font(.footnote)
+                    .foregroundStyle(.secondary)
+#else
                 Button(originalURL?.lastPathComponent ?? "Choose Original ROM…") {
                     pickerTarget = .original
                     showFilePicker = true
@@ -48,6 +53,7 @@ public struct CreatePatchView: View {
                     pickerTarget = .modified
                     showFilePicker = true
                 }
+#endif
             }
 
             SwiftUI.Section("Format") {

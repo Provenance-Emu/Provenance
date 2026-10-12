@@ -29,4 +29,11 @@ public protocol GameItemPresentable {
 
     var discCount: Int { get }
     var isInvalidated: Bool { get }
+
+    /// True for a library tile that represents a patched copy of another game.
+    var isPatchVariant: Bool { get }
+}
+
+public extension GameItemPresentable {
+    var isPatchVariant: Bool { false }
 }

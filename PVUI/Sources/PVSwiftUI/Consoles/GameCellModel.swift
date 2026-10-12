@@ -36,6 +36,9 @@ public struct GameCellModel: Identifiable, Hashable {
     // Multi-disc indicator
     public let discCount: Int
 
+    /// Patched-copy tile (drives the PATCH badge and the variant context menu).
+    public let isPatchVariant: Bool
+
     public init(
         id: String,
         md5: String,
@@ -50,7 +53,8 @@ public struct GameCellModel: Identifiable, Hashable {
         isFavorite: Bool,
         hasCloudAssets: Bool,
         isDownloaded: Bool,
-        discCount: Int
+        discCount: Int,
+        isPatchVariant: Bool = false
     ) {
         self.id = id
         self.md5 = md5
@@ -66,6 +70,7 @@ public struct GameCellModel: Identifiable, Hashable {
         self.hasCloudAssets = hasCloudAssets
         self.isDownloaded = isDownloaded
         self.discCount = discCount
+        self.isPatchVariant = isPatchVariant
     }
 
     public init(game: PVGame) {
@@ -92,6 +97,8 @@ public struct GameCellModel: Identifiable, Hashable {
         // Precompute disc count from related files.
         let paths = g.relatedFiles.toArray().compactMap { $0.url?.path }
         self.discCount = Set(paths).count
+
+        self.isPatchVariant = g.isPatchVariant
     }
 
     /// Key paths used by Realm notifications to rebuild models only when relevant fields change.
@@ -112,7 +119,8 @@ public struct GameCellModel: Identifiable, Hashable {
         "isFavorite",
         "hasCloudAssets",
         "isDownloaded",
-        "relatedFiles"
+        "relatedFiles",
+        "isPatchVariant"
     ]
 }
 

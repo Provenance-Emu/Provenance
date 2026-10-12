@@ -276,6 +276,13 @@ public struct GameItemPresentableView<Presentable: GameItemPresentable>: SwiftUI
                                     .scaleEffect(CompactShelfDiscOverlay.scale(constrainHeight: constrainHeight, shelfRowHeightScale: shelfRowHeightScale), anchor: .topTrailing)
                             }
                         }
+                        .overlay(alignment: .topLeading) {
+                            if game.isPatchVariant {
+                                PatchIndicatorView()
+                                    .padding(CompactShelfDiscOverlay.padding(constrainHeight: constrainHeight, shelfRowHeightScale: shelfRowHeightScale))
+                                    .scaleEffect(CompactShelfDiscOverlay.scale(constrainHeight: constrainHeight, shelfRowHeightScale: shelfRowHeightScale), anchor: .topLeading)
+                            }
+                        }
                 case .row:
                     GameItemViewRow(game: game, artwork: artwork, constrainHeight: constrainHeight, viewType: viewType)
                 }
@@ -382,6 +389,21 @@ struct FocusEffectsModifier: ViewModifier {
             }
             .animation(.easeInOut(duration: 0.15), value: isFocused)
         #endif
+    }
+}
+
+/// "PATCH" capsule for library tiles that are patched copies (ROM hacks, translations).
+struct PatchIndicatorView: View {
+    var body: some View {
+        HStack(spacing: 2) {
+            Image(systemName: "bandage")
+            Text("PATCH")
+        }
+        .font(.system(size: 11, weight: .bold))
+        .padding(4)
+        .background(Material.ultraThin)
+        .clipShape(Capsule())
+        .accessibilityLabel("Patched copy")
     }
 }
 
