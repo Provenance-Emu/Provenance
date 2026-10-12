@@ -23,6 +23,21 @@ public enum CoreLink: Equatable {
     }
 }
 
+/// A `.binaryTarget` xcframework that `Scripts/cores/build_slice.py <core> <slice> --xcframework` packs
+/// from the slice cache. Xcode resolves binary targets with the package graph, before any build phase,
+/// so it must exist before `tuist generate`: `make dev-generate DEV_PREBUILT_CORES=<core> DEV_SLICE=<slice>`.
+public struct CoreSlice: Equatable {
+    /// build_slice.py core name ("azahar").
+    public let core: String
+    /// Repo-relative xcframework path the package's binary target points at.
+    public let xcframework: String
+
+    public init(core: String, xcframework: String) {
+        self.core = core
+        self.xcframework = xcframework
+    }
+}
+
 /// One audited core (see docs/superpowers/specs/2026-10-10-core-audit.md, KEEP rows) or a
 /// non-core product every app embeds. Only how the app consumes it lives here.
 public struct CoreProduct {
@@ -42,6 +57,10 @@ public struct CoreProduct {
     public let artefacts: [String]
     /// Run Scripts that put resources the package cannot carry into every app that embeds the core.
     public let postScripts: [TargetScript]
+    /// Slice-cache xcframework the core's package links (see `CoreSlice`).
+    public let slice: CoreSlice?
+    /// The core's library has no x86_64 simulator slice; apps embedding it build arm64 only.
+    public let arm64Only: Bool
 
     public init(
         id: String,
@@ -50,7 +69,9 @@ public struct CoreProduct {
         platforms: Set<PlatformFilter> = [.ios, .tvos],
         needsAggregate: String? = nil,
         artefacts: [String] = [],
-        postScripts: [TargetScript] = []
+        postScripts: [TargetScript] = [],
+        slice: CoreSlice? = nil,
+        arm64Only: Bool = false
     ) {
         self.id = id
         self.link = link
@@ -59,6 +80,8 @@ public struct CoreProduct {
         self.needsAggregate = needsAggregate
         self.artefacts = artefacts
         self.postScripts = postScripts
+        self.slice = slice
+        self.arm64Only = arm64Only
     }
 
     /// `link` followed by `embeds`.
@@ -94,10 +117,13 @@ public extension CoreProduct {
     static let proSystem = CoreProduct(id: "prosystem", link: .package(path: "Cores/ProSystem", product: "PVProSystem-Dynamic"))
     static let picoDrive = CoreProduct(id: "picodrive", link: .package(path: "Cores/PicoDrive", product: "PVPicoDrive-Dynamic"))
     static let tgbDual = CoreProduct(id: "tgbdual", link: .package(path: "Cores/TGBDual", product: "PVTGBDual-Dynamic"))
+    // Swift module PVAzahar + ObjC++ PVAzaharBridge over the PVlibAzahar binary target (slice cache).
+    // PVAzahar.xcodeproj and its BuildPVlibAzahar aggregate stay the shipping build.
     static let azahar = CoreProduct(
         id: "azahar",
-        link: .project(path: "Cores/Azahar/PVAzahar.xcodeproj", target: "PVAzahar", product: "PVAzahar"),
-        needsAggregate: "BuildPVlibAzahar"
+        link: .package(path: "Cores/Azahar", product: "PVAzahar-Dynamic"),
+        slice: CoreSlice(core: "azahar", xcframework: "Cores/Azahar/build/xcframework/PVlibAzahar.xcframework"),
+        arm64Only: true
     )
     // PVDolphin-Dynamic wraps PVlibDolphin.xcframework as a SwiftPM `.binaryTarget`, so the package
     // carries the emulator library: nothing to embed separately. The xcframework is a build

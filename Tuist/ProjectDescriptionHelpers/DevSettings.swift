@@ -195,6 +195,12 @@ public enum DevSettings {
             "MTL_FAST_MATH": "YES",
             "DEAD_CODE_STRIPPING": "YES",
         ]
+        if app.isArm64Only {
+            // No x86_64 simulator slice to link; SwiftPM has no arch-conditioned flag to stub it the way
+            // PVAzahar.xcodeproj does (-undefined dynamic_lookup), so the app is arm64-only on simulators.
+            base["EXCLUDED_ARCHS[sdk=iphonesimulator*]"] = "x86_64"
+            base["EXCLUDED_ARCHS[sdk=appletvsimulator*]"] = "x86_64"
+        }
         base.merge(app.linkerSettings) { _, new in new }
         return .settings(
             base: base,
