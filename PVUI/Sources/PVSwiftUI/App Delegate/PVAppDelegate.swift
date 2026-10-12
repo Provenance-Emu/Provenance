@@ -296,6 +296,8 @@ public final class PVAppDelegate: UIResponder, UIApplicationDelegate, Observable
             .store(in: &cancellables)
 
         #if !os(tvOS)
+        // Foregrounding rescans a picked folder. The scene delegate owns the lifecycle, so this listens for the notification.
+        LibraryRescanRequester.shared.startObservingForeground()
         // An iCloud Drive picked folder: download placeholders other apps add, and rescan when they arrive. Idempotent.
         PickedFolderCloudWatcher.shared.startIfNeeded {
             LibraryRescanRequester.shared.requestRescan(reason: "iCloud metadata update")
@@ -707,9 +709,6 @@ public final class PVAppDelegate: UIResponder, UIApplicationDelegate, Observable
         Task { @MainActor in
             CrossAppEntitlementReader.applySiblingGrantIfNeeded()
             CrossAppEntitlementPublisher.publishPlusState()
-            #if !os(tvOS)
-            LibraryRescanRequester.shared.requestRescan(reason: "foreground")
-            #endif
         }
     }
 

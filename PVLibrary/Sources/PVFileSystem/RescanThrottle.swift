@@ -25,4 +25,10 @@ public struct RescanThrottle: Sendable {
         last = now
         return true
     }
+
+    /// How long until `shouldFire` would next succeed: `0` when it would now (or never fired).
+    public func remainingInterval(now: Date = Date()) -> TimeInterval {
+        guard let last else { return 0 }
+        return max(0, interval - now.timeIntervalSince(last))
+    }
 }
