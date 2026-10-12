@@ -12,7 +12,6 @@ import PackageDescription
 // resolves in both the xcodeproj and the SwiftPM build.
 let coreTarget: Target = .target(
     name: "PVGenesis",
-    path: "Sources/PVCoreGenesisPlus",
     dependencies: [
         "PVEmulatorCore",
         "PVCoreBridge",
@@ -24,6 +23,7 @@ let coreTarget: Target = .target(
         .product(name: "PVRcheevos", package: "PVRcheevos"),
         .product(name: "PVRcheevosBridge", package: "PVRcheevosBridge"),
     ],
+    path: "Sources/PVCoreGenesisPlus",
     resources: [
         .process("Resources/Core.plist")
     ],

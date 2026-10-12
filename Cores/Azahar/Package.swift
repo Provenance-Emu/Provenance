@@ -129,6 +129,93 @@ let systemLinks: [LinkerSetting] = [
     .linkedLibrary("c++"),
 ]
 
+// Targets and their settings are typed constants: one `Package(...)` literal with inline
+// `map`/`+` expressions made the manifest type-check time out on CI.
+
+let coreDependencies: [Target.Dependency] = [
+    "PVAzaharBridge",
+    .product(name: "PVCoreBridge", package: "PVCoreBridge"),
+    .product(name: "PVCoreObjCBridge", package: "PVCoreObjCBridge"),
+    .product(name: "PVEmulatorCore", package: "PVEmulatorCore"),
+    .product(name: "PVLogging", package: "PVLogging"),
+    .product(name: "PVPlists", package: "PVPlists"),
+    .product(name: "PVPrimitives", package: "PVPrimitives"),
+    .product(name: "PVSettings", package: "PVSettings"),
+    .product(name: "PVSupport", package: "PVSupport"),
+]
+let coreExcludes: [String] = sharedExcludes + bridgeSources + bridgeHeaders + ["SwiftPM"]
+
+// MARK: Core (Swift)
+let coreTarget: Target = .target(
+    name: "PVAzahar",
+    dependencies: coreDependencies,
+    path: ".",
+    exclude: coreExcludes,
+    sources: swiftSources,
+    resources: [
+        .process("PVAzahar/Core.plist"),
+    ],
+    swiftSettings: [
+        .interoperabilityMode(.Cxx),   // SWIFT_OBJC_INTEROP_MODE = objcxx in the xcodeproj
+    ]
+)
+
+var bridgeDependencies: [Target.Dependency] = [
+    .product(name: "PVAudio", package: "PVAudio"),
+    .product(name: "PVCoreBridge", package: "PVCoreBridge"),
+    .product(name: "PVCoreObjCBridge", package: "PVCoreObjCBridge"),
+    .product(name: "PVEmulatorCore", package: "PVEmulatorCore"),
+    .product(name: "PVJIT", package: "PVJIT"),
+    .product(name: "PVLogging", package: "PVLogging"),
+    .product(name: "PVObjCUtils", package: "PVObjCUtils"),
+    .product(name: "PVSupport", package: "PVSupport"),
+]
+if libraryPresent { bridgeDependencies.append("PVlibAzahar") }
+
+let bridgeExcludes: [String] = sharedExcludes + swiftSources + ["PVAzahar/Core.plist"]
+let bridgeSourceList: [String] = bridgeSources + bridgeHeaders
+
+var bridgeCSettings: [CSetting] = defines.map { CSetting.define($0, to: "1") }
+if !bridgeCFlags.isEmpty { bridgeCSettings.append(.unsafeFlags(bridgeCFlags)) }
+var bridgeCXXSettings: [CXXSetting] = defines.map { CXXSetting.define($0, to: "1") }
+bridgeCXXSettings.append(.unsafeFlags(bridgeCXXFlags))
+var bridgeLinkerSettings: [LinkerSetting] = systemLinks
+bridgeLinkerSettings.append(.unsafeFlags(linkerFlags))
+
+// MARK: Bridge (ObjC++)
+let bridgeTarget: Target = .target(
+    name: "PVAzaharBridge",
+    dependencies: bridgeDependencies,
+    path: ".",
+    exclude: bridgeExcludes,
+    sources: bridgeSourceList,
+    // A custom module map exposing only PVAzaharCoreBridge.h: the other headers pull in azahar's C++.
+    publicHeadersPath: "SwiftPM/PVAzaharBridge",
+    cSettings: bridgeCSettings,
+    cxxSettings: bridgeCXXSettings,
+    linkerSettings: bridgeLinkerSettings
+)
+
+var allTargets: [Target] = [coreTarget, bridgeTarget]
+if libraryPresent {
+    // MARK: Emulator (prebuilt, arm64 only)
+    allTargets.append(.binaryTarget(name: "PVlibAzahar", path: xcframework))
+}
+
+let packageDependencies: [Package.Dependency] = [
+    .package(path: "../../PVAudio"),
+    .package(path: "../../PVCoreBridge"),
+    .package(path: "../../PVCoreObjCBridge"),
+    .package(path: "../../PVEmulatorCore"),
+    .package(path: "../../PVJIT"),
+    .package(path: "../../PVLogging"),
+    .package(path: "../../PVObjCUtils"),
+    .package(path: "../../PVPlists"),
+    .package(path: "../../PVPrimitives"),
+    .package(path: "../../PVSettings"),
+    .package(path: "../../PVSupport"),
+]
+
 let package = Package(
     name: "PVAzahar",
     platforms: [
@@ -139,74 +226,8 @@ let package = Package(
         .library(name: "PVAzahar", targets: ["PVAzahar"]),
         .library(name: "PVAzahar-Dynamic", type: .dynamic, targets: ["PVAzahar"]),
     ],
-    dependencies: [
-        .package(path: "../../PVAudio"),
-        .package(path: "../../PVCoreBridge"),
-        .package(path: "../../PVCoreObjCBridge"),
-        .package(path: "../../PVEmulatorCore"),
-        .package(path: "../../PVJIT"),
-        .package(path: "../../PVLogging"),
-        .package(path: "../../PVObjCUtils"),
-        .package(path: "../../PVPlists"),
-        .package(path: "../../PVPrimitives"),
-        .package(path: "../../PVSettings"),
-        .package(path: "../../PVSupport"),
-    ],
-    targets: [
-        // MARK: Core (Swift)
-
-        .target(
-            name: "PVAzahar",
-            dependencies: [
-                "PVAzaharBridge",
-                .product(name: "PVCoreBridge", package: "PVCoreBridge"),
-                .product(name: "PVCoreObjCBridge", package: "PVCoreObjCBridge"),
-                .product(name: "PVEmulatorCore", package: "PVEmulatorCore"),
-                .product(name: "PVLogging", package: "PVLogging"),
-                .product(name: "PVPlists", package: "PVPlists"),
-                .product(name: "PVPrimitives", package: "PVPrimitives"),
-                .product(name: "PVSettings", package: "PVSettings"),
-                .product(name: "PVSupport", package: "PVSupport"),
-            ],
-            path: ".",
-            exclude: sharedExcludes + bridgeSources + bridgeHeaders + ["SwiftPM"],
-            sources: swiftSources,
-            resources: [
-                .process("PVAzahar/Core.plist"),
-            ],
-            swiftSettings: [
-                .interoperabilityMode(.Cxx),   // SWIFT_OBJC_INTEROP_MODE = objcxx in the xcodeproj
-            ]
-        ),
-
-        // MARK: Bridge (ObjC++)
-
-        .target(
-            name: "PVAzaharBridge",
-            dependencies: [
-                .product(name: "PVAudio", package: "PVAudio"),
-                .product(name: "PVCoreBridge", package: "PVCoreBridge"),
-                .product(name: "PVCoreObjCBridge", package: "PVCoreObjCBridge"),
-                .product(name: "PVEmulatorCore", package: "PVEmulatorCore"),
-                .product(name: "PVJIT", package: "PVJIT"),
-                .product(name: "PVLogging", package: "PVLogging"),
-                .product(name: "PVObjCUtils", package: "PVObjCUtils"),
-                .product(name: "PVSupport", package: "PVSupport"),
-            ] + (libraryPresent ? ["PVlibAzahar"] : []),
-            path: ".",
-            exclude: sharedExcludes + swiftSources + ["PVAzahar/Core.plist"],
-            sources: bridgeSources + bridgeHeaders,
-            // A custom module map exposing only PVAzaharCoreBridge.h: the other headers pull in azahar's C++.
-            publicHeadersPath: "SwiftPM/PVAzaharBridge",
-            cSettings: defines.map { CSetting.define($0, to: "1") } + (bridgeCFlags.isEmpty ? [] : [.unsafeFlags(bridgeCFlags)]),
-            cxxSettings: defines.map { CXXSetting.define($0, to: "1") } + [.unsafeFlags(bridgeCXXFlags)],
-            linkerSettings: systemLinks + [.unsafeFlags(linkerFlags)]
-        ),
-    ] + (libraryPresent ? [
-        // MARK: Emulator (prebuilt, arm64 only)
-
-        .binaryTarget(name: "PVlibAzahar", path: xcframework),
-    ] : []),
+    dependencies: packageDependencies,
+    targets: allTargets,
     swiftLanguageModes: [.v6],
     cLanguageStandard: .gnu11,
     cxxLanguageStandard: .gnucxx20
