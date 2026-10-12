@@ -65,7 +65,7 @@ public final class PatchRepository {
         let realm = database.realm
         // Callers hand us frozen games from the UI; a new PVPatch cannot link to a frozen
         // object (Realm rejects objects owned by another Realm on add).
-        let preferredGame: PVGame? = preferredGame.flatMap { game in
+        let linkedGame: PVGame? = preferredGame.flatMap { game in
             guard !game.isInvalidated else { return nil }
             return game.isFrozen ? game.thaw() : game
         }
@@ -78,13 +78,13 @@ public final class PatchRepository {
         } else {
             patch = PVPatch(
                 file: pvFile,
-                game: preferredGame,
+                game: linkedGame,
                 format: format,
                 title: inspection.title ?? url.deletingPathExtension().lastPathComponent,
                 author: inspection.author,
                 version: inspection.version,
                 patchDescription: inspection.patchDescription,
-                matchState: preferredGame == nil ? .pending : .manual
+                matchState: linkedGame == nil ? .pending : .manual
             )
             try database.add(patch, update: true)
         }
@@ -103,27 +103,27 @@ public final class PatchRepository {
             }
             if live.outputStem == nil || live.outputStem?.isEmpty == true {
                 live.outputStem = PatchApplier.defaultOutputStem(
-                    romURL: preferredGame?.file?.url ?? url,
+                    romURL: linkedGame?.file?.url ?? url,
                     patchURL: url
                 )
-            } else if let romURL = preferredGame?.file?.url, let stem = live.outputStem {
+            } else if let romURL = linkedGame?.file?.url, let stem = live.outputStem {
                 // Same-filename patches (Game.ips for Game.gba) must not share the base
                 // game's save directories.
                 live.outputStem = PatchApplier.variantSafeStem(stem, romURL: romURL)
             }
-            if let preferredGame {
-                live.game = preferredGame.thaw() ?? preferredGame
-                live.baseGameMD5 = preferredGame.md5Hash
+            if let linkedGame {
+                live.game = linkedGame.thaw() ?? linkedGame
+                live.baseGameMD5 = linkedGame.md5Hash
                 live.matchState = .manual
                 live.matchConfidenceRaw = PatchMatchConfidence.exact.rawValue
                 live.matchScore = 1
             }
         }
 
-        if preferredGame == nil, autoMatch {
+        if linkedGame == nil, autoMatch {
             _ = try await matchPatch(patch)
-        } else if let preferredGame {
-            _ = try await ensureVariant(for: patch, baseGame: preferredGame)
+        } else if let linkedGame {
+            _ = try await ensureVariant(for: patch, baseGame: linkedGame)
         }
 
         return realm.object(ofType: PVPatch.self, forPrimaryKey: patch.id) ?? patch
