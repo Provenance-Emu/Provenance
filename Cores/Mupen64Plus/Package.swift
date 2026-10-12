@@ -584,6 +584,9 @@ let glideN64CSettings: [CSetting] = glideN64ExtraCSettings + sharedCSettings
 
 let glideN64LinkerSettings: [LinkerSetting] = [
     .linkedLibrary("z"),
+    // osal_*.mm / Log.cpp use NSFileManager, NSLog and ObjC ARC runtime calls.
+    .linkedFramework("Foundation"),
+    .linkedLibrary("objc"),
     .linkedFramework("OpenGL", .when(platforms: [.macOS, .macCatalyst])),
     .linkedFramework("OpenGLES", .when(platforms: [.iOS, .tvOS, .watchOS, .visionOS]))
 ]
@@ -629,10 +632,7 @@ let glidenOSDExtraCSettings: [CSetting] = [
     .unsafeFlags([
         "-ffast-math",
         "-fno-strict-aliasing",
-        "-fvisibility=hidden",
         "-fomit-frame-pointer",
-        "-fvisibility-inlines-hidden",
-        "-flto",
         "-fPIC",
         "-pthread"
     ]),
