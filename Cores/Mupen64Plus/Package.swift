@@ -85,6 +85,28 @@ let package = Package(
             name: "PVMupenGameCore-Static",
             type: .static,
             targets: ["PVMupen"]),
+
+        // Plugins the core dlopens at runtime (PVMupenBridge.m `LoadPlugin`). Each is its own
+        // dynamic framework, embedded next to the core. They are NOT linked into PVMupen:
+        // linking one statically would duplicate its PluginStartup/PluginShutdown exports.
+        // PVMupenBridge and PVMupen64PlusCore are static members of PVMupenGameCore-Dynamic
+        // (the old PVMupen64PlusBridge framework), so they get no product of their own.
+        .library(
+            name: "PVMupen64PlusRspHLE-Dynamic",
+            type: .dynamic,
+            targets: ["PVMupen64PlusRspHLE"]),
+        .library(
+            name: "PVRSPCXD4-Dynamic",
+            type: .dynamic,
+            targets: ["PVRSPCXD4"]),
+        .library(
+            name: "PVMupen64PlusVideoRice-Dynamic",
+            type: .dynamic,
+            targets: ["PVMupen64PlusVideoRice"]),
+        .library(
+            name: "PVMupen64PlusVideoGlideN64-Dynamic",
+            type: .dynamic,
+            targets: ["PVMupen64PlusVideoGlideN64"]),
         ],
     dependencies: [
         .package(path: "../../PVCoreBridge"),
@@ -117,10 +139,6 @@ let package = Package(
                 "PVSupport",
                 "PVMupenBridge",
                 "PVMupen64PlusCore",
-//                "PVMupen64PlusRspHLE",
-//                "PVMupen64PlusVideoGlideN64",
-//                "PVMupen64PlusVideoRice",
-                "PVRSPCXD4",
                 .product(name: "CRcheevos", package: "PVRcheevos"),
                 .product(name: "PVRcheevos", package: "PVRcheevos"),
                 .product(name: "PVRcheevosBridge", package: "PVRcheevosBridge"),
@@ -331,9 +349,10 @@ let package = Package(
             ].map { "rice/src/\($0)" },
             cSettings: [
                 .headerSearchPath("./"),
+                .headerSearchPath("rice/src/"),
                 .headerSearchPath("../../Core/Core/src/"),
                 .headerSearchPath("../../Core/Core/src/api"),
-                .headerSearchPath("../../Compatability/SDL/"),
+                .headerSearchPath("../../../Compatibility/SDL/"),
             ] + sharedCSettings,
             linkerSettings: [
                 .linkedLibrary("z")
