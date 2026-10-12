@@ -271,7 +271,8 @@ let pvMupen64PlusCoreSourceFiles: [String] = [
     "device/rdram/rdram.c",
     "main/cheat.c",
     "main/lirc.c",
-    "main/main.c",   // g_dev, main_run, open_pif, ...: the core itself (the xcodeproj compiles it too)
+    // main/main.c is compiled via PVMupen64PlusCoreMain.c (see below): a file named main.c
+    // would make SwiftPM treat this target as an executable.
     "main/rom.c",
     "main/savestates.c",
     "main/sdl_key_converter.c",
@@ -291,7 +292,7 @@ let pvMupen64PlusCoreSubprojectFiles: [String] = [
     "minizip/unzip.c",
     "minizip/zip.c"
 ].map { "Core/subprojects/\($0)" }
-let pvMupen64PlusCoreSources: [String] = pvMupen64PlusCoreSourceFiles + pvMupen64PlusCoreSubprojectFiles
+let pvMupen64PlusCoreSources: [String] = pvMupen64PlusCoreSourceFiles + pvMupen64PlusCoreSubprojectFiles + ["PVMupen64PlusCoreMain.c"]
 
 
 
