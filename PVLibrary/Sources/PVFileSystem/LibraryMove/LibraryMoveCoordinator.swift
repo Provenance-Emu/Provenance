@@ -300,20 +300,39 @@ public final class LibraryMoveCoordinator: @unchecked Sendable {
     }
 
     /// The saved folder no longer resolves and the user pointed at where it is now. A fresh bookmark; no files move;
-    /// applies at the next launch.
+    /// applies at the next launch. The pick keeps its `pickedAt`, so the launch recognises the rebound folder as the same
+    /// pick, and a journal naming it (a move to or from it that is still pending) takes the fresh bookmark too.
     public func rebindPickedFolder(to url: URL, displayName: String) throws {
         let launched = resumeLocation()
         guard launched == .pickedFolder else { throw LibraryMoveError.unsupportedMove(from: launched, to: .pickedFolder) }
         let previous = launchedFolder() ?? folderStore.load()
         let folder = PickedLibraryFolder(bookmark: try LibraryFolderBookmark.make(from: url), displayName: displayName,
-                                         includesSaves: previous?.includesSaves ?? false)
+                                         includesSaves: previous?.includesSaves ?? false, pickedAt: previous?.pickedAt ?? Date())
+        if let previous, let journalStore, var journal = journalStore.load() {
+            let rebindsDestination = journal.destinationFolder?.pickedAt == previous.pickedAt
+            let rebindsSource = journal.sourceFolder?.pickedAt == previous.pickedAt
+            if rebindsDestination { journal.destinationFolder?.bookmark = folder.bookmark }
+            if rebindsSource { journal.sourceFolder?.bookmark = folder.bookmark }
+            if rebindsDestination || rebindsSource {
+                journal.updatedAt = Date()
+                try journalStore.save(journal)
+            }
+        }
         try switchLocation(.pickedFolder, folder)
     }
 
     /// The saved folder is gone for good: back to App storage without a move. Records stay and show as missing.
+    /// A pending move *to* that folder is dropped (its sources are intact until cleanup starts); one already
+    /// cleaning has deleted some of them, so it is refused.
     public func abandonPickedFolder() throws {
         let launched = resumeLocation()
         guard launched == .pickedFolder else { throw LibraryMoveError.unsupportedMove(from: launched, to: .appStorage) }
+        if let journalStore, let journal = journalStore.load(), journal.destination == .pickedFolder {
+            switch journal.phase {
+            case .copying, .switched: try journalStore.delete()
+            case .cleaning: throw LibraryMoveError.moveInProgress
+            }
+        }
         try switchLocation(.appStorage, nil)
     }
 

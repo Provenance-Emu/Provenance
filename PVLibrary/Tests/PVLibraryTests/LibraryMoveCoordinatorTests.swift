@@ -622,6 +622,64 @@ final class LibraryMoveCoordinatorTests: XCTestCase {
         XCTAssertThrowsError(try coordinator(launched: .appStorage).abandonPickedFolder())
     }
 
+    #if !os(tvOS)
+    private func pendingMoveToFolderA(phase: LibraryMovePhase) throws -> LibraryMoveJournal {
+        try write(local, "ROMs/com.provenance.snes/Game.sfc", "rom")
+        try write(picked, "ROMs/com.provenance.snes/Game.sfc", "rom")
+        var journal = LibraryMoveJournal(request: .init(source: .appStorage, destination: .pickedFolder, sourceRoot: local, destinationRoot: picked,
+                                                        folders: ["ROMs"], keepCopy: false, destinationFolder: folderA()))
+        journal.phase = phase
+        journal.entries["ROMs/com.provenance.snes/Game.sfc"] = .init(size: 3, md5: nil, modified: try LibraryMoveTestSupport.modificationDate(local, "ROMs/com.provenance.snes/Game.sfc"),
+                                                                     state: .copied, destinationPath: nil)
+        try store.save(journal)
+        return journal
+    }
+
+    func testRebindKeepsThePickAndUpdatesAPendingJournalsBookmark() async throws {
+        _ = try pendingMoveToFolderA(phase: .switched)
+        let c = coordinator(launched: .pickedFolder, launchedFolder: folderA())
+        try c.rebindPickedFolder(to: picked2, displayName: "Moved")
+        let rebound = try XCTUnwrap(recorder.switchedFolders.last ?? nil)
+        XCTAssertEqual(rebound.pickedAt, folderA().pickedAt, "the same pick, so the launch still recognises it")
+        let journal = try XCTUnwrap(store.load())
+        XCTAssertEqual(journal.destinationFolder?.bookmark, rebound.bookmark)
+        XCTAssertEqual(journal.destinationFolder?.pickedAt, folderA().pickedAt)
+        XCTAssertNotEqual(journal.destinationFolder?.bookmark, folderA().bookmark)
+
+        // The next launch is on the rebound folder and still cleans up.
+        let outcome = await coordinator(launched: .pickedFolder, launchedFolder: rebound).resumeIfNeeded(progress: nil)
+        XCTAssertEqual(outcome, .cleanedUp)
+        XCTAssertFalse(exists(local, "ROMs/com.provenance.snes/Game.sfc"))
+    }
+
+    func testRebindLeavesAJournalForAnotherFolderAlone() throws {
+        var journal = try pendingMoveToFolderA(phase: .switched)
+        journal.destinationFolder = PickedLibraryFolder(bookmark: Data([9]), displayName: "B", includesSaves: false, pickedAt: Date(timeIntervalSinceReferenceDate: 99))
+        try store.save(journal)
+        try coordinator(launched: .pickedFolder, launchedFolder: folderA()).rebindPickedFolder(to: picked2, displayName: "Moved")
+        XCTAssertEqual(store.load()?.destinationFolder?.bookmark, Data([9]))
+    }
+
+    func testAbandonDropsAPendingMoveToThatFolder() throws {
+        for phase in [LibraryMovePhase.copying, .switched] {
+            _ = try pendingMoveToFolderA(phase: phase)
+            let c = coordinator(launched: .pickedFolder, launchedFolder: folderA())
+            try c.abandonPickedFolder()
+            XCTAssertFalse(c.hasPendingMove, "\(phase) journal is dropped")
+            XCTAssertTrue(exists(local, "ROMs/com.provenance.snes/Game.sfc"), "the source is intact")
+        }
+        XCTAssertEqual(recorder.switches, [.appStorage, .appStorage])
+    }
+
+    func testAbandonDuringCleanupIsRefusedAndKeepsTheJournal() throws {
+        _ = try pendingMoveToFolderA(phase: .cleaning)
+        let c = coordinator(launched: .pickedFolder, launchedFolder: folderA())
+        XCTAssertThrowsError(try c.abandonPickedFolder()) { XCTAssertEqual($0 as? LibraryMoveError, .moveInProgress) }
+        XCTAssertTrue(c.hasPendingMove)
+        XCTAssertTrue(recorder.switches.isEmpty)
+    }
+    #endif
+
     func testRootsAreUnavailableWhereTheEngineHasNoRoot() {
         #if os(tvOS)
         XCTAssertNil(LibraryMoveCoordinator.defaultRoot(for: .appGroup, folder: nil))
