@@ -27,10 +27,7 @@ let coreTarget: Target = .target(
     resources: [
         .process("Resources/Core.plist")
     ],
-    cSettings: GenesisSettings.defines,
-    plugins: [
-        .plugin(name: "SwiftGenPlugin", package: "SwiftGenPlugin")
-    ]
+    cSettings: GenesisSettings.defines
 )
 
 // MARK: ------- Bridge --------
