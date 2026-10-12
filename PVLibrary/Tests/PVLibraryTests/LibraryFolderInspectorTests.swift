@@ -66,6 +66,16 @@ final class LibraryFolderInspectorTests: XCTestCase {
         XCTAssertThrowsError(try inspector().inspect(saves))
     }
 
+    func testTheImportsFolderAndAnythingInsideItIsRefused() throws {
+        let imports = try folder("app/Documents/Imports")
+        let inside = try folder("app/Documents/Imports/Lib")
+        for url in [imports, inside] {
+            XCTAssertThrowsError(try inspector().inspect(url)) { error in
+                guard case LibraryFolderError.isCurrentRoot = error else { return XCTFail("\(error)") }
+            }
+        }
+    }
+
     func testAFolderContainingTheRootIsRefused() {
         XCTAssertThrowsError(try inspector().inspect(base.appendingPathComponent("app", isDirectory: true))) { error in
             guard case LibraryFolderError.isCurrentRoot = error else { return XCTFail("\(error)") }

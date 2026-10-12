@@ -31,6 +31,8 @@ public struct LibraryFolderInspection: Sendable, Equatable {
 
 public struct LibraryFolderInspector: Sendable {
     static let probePrefix = ".provenance-write-probe-"
+    /// The importer's drop folder (`Paths.romsImportPath`). Not moved, but a library there would be swept up as imports.
+    static let importsFolder = "Imports"
 
     private let fileManager: FileManager
     private let appDocuments: URL
@@ -52,7 +54,7 @@ public struct LibraryFolderInspector: Sendable {
         guard fileManager.fileExists(atPath: url.path, isDirectory: &isDirectory), isDirectory.boolValue else {
             throw LibraryFolderError.notADirectory(url.path)
         }
-        let folders = LibraryMoveFolders.shared + LibraryMoveFolders.saves
+        let folders = LibraryMoveFolders.shared + LibraryMoveFolders.saves + [Self.importsFolder]
         for root in libraryRoots() where Self.conflicts(url, withRoot: root, folders: folders) {
             throw LibraryFolderError.isCurrentRoot(url.path)
         }

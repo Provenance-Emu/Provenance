@@ -38,7 +38,7 @@ struct LibraryStorageView: View {
         .navigationTitle("Storage Location")
         .navigationBarTitleDisplayMode(.inline)
         .sheet(isPresented: $showsPicker) { LibraryFolderPicker { model.folderPicked($0) } }
-        .sheet(isPresented: $showsRecoveryPicker) { LibraryFolderPicker { model.rebind(to: $0) } }
+        .sheet(isPresented: $showsRecoveryPicker) { LibraryFolderPicker { url in Task { @MainActor in await model.rebind(to: url) } } }
         .sheet(isPresented: Binding(get: { if case .confirming = model.step { return true }; return false },
                                     set: { if !$0 { model.dismissConfirmation() } })) {
             LibraryMoveConfirmationSheet(model: model)
@@ -299,18 +299,22 @@ struct LibraryFolderUnavailableAlert: ViewModifier {
     @State private var isPresented = LibraryLocation.pickedFolderAtLaunch.isUnavailable
     @State private var showsPicker = false
     @State private var showsRelaunch = false
-    @State private var model = LibraryStorageViewModel()
 
     func body(content: Content) -> some View {
         content
             .alert("Library folder unavailable", isPresented: $isPresented) {
                 Button("Choose Folder…") { showsPicker = true }
-                Button("Use App Storage") { model.abandon(); showsRelaunch = model.step == .relaunchRequired }
+                // A model per action: this modifier lives on the root view, so it holds none for the whole session.
+                Button("Use App Storage") { showsRelaunch = LibraryStorageViewModel().abandon() == .relaunchRequired }
                 Button("Later", role: .cancel) {}
             } message: {
                 if case .unavailable(let reason) = LibraryLocation.pickedFolderAtLaunch { Text(reason) }
             }
-            .sheet(isPresented: $showsPicker) { LibraryFolderPicker { model.rebind(to: $0); showsRelaunch = model.step == .relaunchRequired } }
+            .sheet(isPresented: $showsPicker) {
+                LibraryFolderPicker { url in
+                    Task { @MainActor in showsRelaunch = await LibraryStorageViewModel().rebind(to: url) == .relaunchRequired }
+                }
+            }
             .alert("Relaunch required", isPresented: $showsRelaunch) {
                 Button("OK", role: .cancel) {}
             } message: {

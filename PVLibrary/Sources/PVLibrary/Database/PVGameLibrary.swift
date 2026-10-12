@@ -39,6 +39,9 @@ public class PVGameLibrary<T> where T: DatabaseDriver {
         
         // Finish or clean up a journaled library move, then repair misplaced ROM records.
         Task {
+            // `pickedFolderAtLaunch` resolves the security-scoped bookmark on first use, which can block on a file
+            // provider. Warm it here, off the main thread, so the first main-thread read finds it done.
+            _ = LibraryLocation.pickedFolderAtLaunch
             LibraryMoveCoordinator.shared.setPathRemapApplier { try await LibraryPathRemapper.apply($0) }
             await LibraryMoveCoordinator.shared.resumeIfNeeded()
             if PVFeatureFlags.shared.isEnabled(.romPathMigrator) {

@@ -70,7 +70,8 @@ final class LibraryStorageViewModel {
                 let inspection = try LibraryFolderInspector().inspect(url)
                 let preview = try LibraryMoveCoordinator.shared.preview(destinationRoot: inspection.url, includeSaves: saves)
                 await MainActor.run {
-                    self.pendingURL = inspection.url
+                    // The picker's own URL, not `inspection.url`: it is the one security-scoped access was started on.
+                    self.pendingURL = url
                     self.step = .confirming(inspection, preview)
                 }
             } catch {
@@ -155,22 +156,33 @@ final class LibraryStorageViewModel {
 
     // MARK: - Recovery (folder unavailable at launch)
 
-    func rebind(to url: URL) {
-        do {
-            try LibraryMoveCoordinator.shared.rebindPickedFolder(to: url, displayName: url.lastPathComponent)
-            step = .relaunchRequired
-        } catch {
-            step = .failed(error.localizedDescription)
-        }
+    /// Checks the new folder off the main thread, then points the library at it. Returns the resulting step so a caller
+    /// without the storage view (the launch alert) can tell whether a relaunch is now due.
+    @discardableResult
+    func rebind(to url: URL) async -> Step {
+        step = .inspecting
+        let result = await Task.detached(priority: .userInitiated) { () -> Step in
+            do {
+                _ = try LibraryFolderInspector().inspect(url)
+                try LibraryMoveCoordinator.shared.rebindPickedFolder(to: url, displayName: url.lastPathComponent)
+                return .relaunchRequired
+            } catch {
+                return .failed(error.localizedDescription)
+            }
+        }.value
+        step = result
+        return result
     }
 
-    func abandon() {
+    @discardableResult
+    func abandon() -> Step {
         do {
             try LibraryMoveCoordinator.shared.abandonPickedFolder()
             step = .relaunchRequired
         } catch {
             step = .failed(error.localizedDescription)
         }
+        return step
     }
 }
 #endif
