@@ -11,6 +11,9 @@ import Foundation
 import PVCoreBridge
 import PVCoreObjCBridge
 import PVEmulatorCore
+#if canImport(PVFCEUBridge)
+import PVFCEUBridge   // SwiftPM package: the ObjC bridge target (the Xcode target sees it directly)
+#endif
 
 internal final class PVFCEUOptions: CoreOptions, Sendable {
 

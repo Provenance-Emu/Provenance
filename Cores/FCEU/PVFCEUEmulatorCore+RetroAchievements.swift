@@ -23,6 +23,9 @@ import PVCoreBridge
 import PVLogging
 import PVRcheevos
 import PVRcheevosBridge
+#if canImport(PVFCEUBridge)
+import PVFCEUBridge   // SwiftPM package: the ObjC bridge target (the Xcode target sees it directly)
+#endif
 
 extension PVFCEUEmulatorCore: CoreRetroAchievements, RcheevosRegionProviding {
 

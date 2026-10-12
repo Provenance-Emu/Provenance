@@ -6,6 +6,9 @@ import Foundation
 #if canImport(PVCoreBridge)
 @_exported import PVCoreBridge
 @_exported import PVPlists
+#if canImport(PVFCEUBridge)
+import PVFCEUBridge   // SwiftPM package: the ObjC bridge target (the Xcode target sees it directly)
+#endif
 #endif
 
 // swiftlint:disable superfluous_disable_command
