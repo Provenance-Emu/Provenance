@@ -6,14 +6,18 @@
 import XCTest
 @testable import PVFileSystem
 
+// swiftlint:disable:next type_body_length
 final class LibraryMoveCoordinatorTests: XCTestCase {
     private var base: URL!
     private var group: URL!
     private var local: URL!
+    private var picked: URL!
+    private var picked2: URL!
     private var store = LibraryMoveJournalStore(url: URL(fileURLWithPath: NSTemporaryDirectory()))
     private var recorder = Recorder()
     private var defaults: UserDefaults!
     private var defaultsSuite = ""
+    private var folderStore: PickedLibraryFolderStore!
 
     private static let thisApp = "org.test.full"
     private static let otherApp = "org.test.lite"
@@ -33,10 +37,15 @@ final class LibraryMoveCoordinatorTests: XCTestCase {
         local = base.appendingPathComponent("app/Documents", isDirectory: true)
         try FileManager.default.createDirectory(at: group, withIntermediateDirectories: true)
         try FileManager.default.createDirectory(at: local, withIntermediateDirectories: true)
+        picked = base.appendingPathComponent("picked/A", isDirectory: true)
+        picked2 = base.appendingPathComponent("picked/B", isDirectory: true)
+        try FileManager.default.createDirectory(at: picked, withIntermediateDirectories: true)
+        try FileManager.default.createDirectory(at: picked2, withIntermediateDirectories: true)
         store = LibraryMoveJournalStore(url: base.appendingPathComponent("support/move-journal.json"))
         recorder = Recorder()
         defaultsSuite = "LibraryMoveCoordinatorTests.\(UUID().uuidString)"
         defaults = try XCTUnwrap(UserDefaults(suiteName: defaultsSuite))
+        folderStore = PickedLibraryFolderStore(defaults: defaults, key: "libraryPickedFolder")
     }
 
     override func tearDownWithError() throws {
@@ -45,35 +54,54 @@ final class LibraryMoveCoordinatorTests: XCTestCase {
     }
 
     /// - Parameters:
-    ///   - launched: the appGroup/appStorage axis this process launched on.
+    ///   - launched: the launch axis (`appGroup`, `appStorage` or `pickedFolder`).
+    ///   - launchedFolder: the stored picked folder when `launched == .pickedFolder`.
     ///   - live: what `LibraryLocation.current` reports (it also follows iCloud Drive mode); defaults to `launched`.
-    private func coordinator(launched: LibraryLocation, live: LibraryLocation? = nil, groupAvailable: Bool = true,
-                             variantID: String = LibraryMoveCoordinatorTests.thisApp) -> LibraryMoveCoordinator {
+    private func coordinator(launched: LibraryLocation, launchedFolder: PickedLibraryFolder? = nil, live: LibraryLocation? = nil,
+                             groupAvailable: Bool = true, variantID: String = LibraryMoveCoordinatorTests.thisApp) -> LibraryMoveCoordinator {
         let record = recorder
         let group = groupAvailable ? self.group : nil
-        let local = self.local
+        let local: URL = self.local
+        let picked: URL = self.picked
+        let picked2: URL = self.picked2
         return LibraryMoveCoordinator(journalStore: store,
-                                      rootProvider: { location in
+                                      rootProvider: { location, folder in
                                           switch location {
                                           case .appGroup: return group
                                           case .appStorage: return local
-                                          case .iCloudDrive, .pickedFolder: return nil
+                                          case .iCloudDrive: return nil
+                                          // Tests name picked roots by display name: "A" is `picked`, "B" is `picked2`.
+                                          case .pickedFolder: return (folder ?? launchedFolder)?.displayName == "B" ? picked2 : picked
                                           }
                                       },
                                       launchedLocation: { live ?? launched },
                                       resumeLocation: { launched },
+                                      launchedFolder: { launchedFolder },
                                       switchLocation: { record.record($0, $1) },
+                                      folderStore: folderStore,
                                       planner: LibraryMovePlanner(availableCapacity: { _ in .max }),
                                       sharedDefaults: defaults,
                                       variantID: variantID)
+    }
+
+    private func folderA(includesSaves: Bool = false) -> PickedLibraryFolder {
+        PickedLibraryFolder(bookmark: Data([1]), displayName: "A", includesSaves: includesSaves, pickedAt: Date(timeIntervalSinceReferenceDate: 1))
     }
 
     private func write(_ root: URL, _ relativePath: String, _ text: String) throws {
         try LibraryMoveTestSupport.write(root, relativePath, text)
     }
 
+    private func write(_ root: URL, _ relativePath: String, bytes: Int) throws {
+        try LibraryMoveTestSupport.write(root, relativePath, bytes: bytes)
+    }
+
     private func read(_ root: URL, _ relativePath: String) -> String? {
         LibraryMoveTestSupport.read(root, relativePath)
+    }
+
+    private func exists(_ root: URL, _ relativePath: String) -> Bool {
+        LibraryMoveTestSupport.exists(root, relativePath)
     }
 
     private func copyingJournal() throws -> LibraryMoveJournal {
@@ -328,12 +356,162 @@ final class LibraryMoveCoordinatorTests: XCTestCase {
     }
     #endif
 
+    // MARK: - Picked folder (phase 3)
+
+    func testMoveToPickedFolderCopiesSharedFoldersOnly() async throws {
+        try write(local, "ROMs/com.provenance.snes/Game.sfc", "rom")
+        try write(local, "BIOS/x.bin", "bios")
+        try write(local, "Save States/Game/s.svs", "save")
+        try write(local, "Imports/new.zip", "zip")
+        let c = coordinator(launched: .appStorage)
+        let outcome = try await c.moveToPickedFolder(picked, displayName: "A", includeSaves: false)
+        XCTAssertEqual(outcome, .switched)
+        XCTAssertEqual(read(picked, "ROMs/com.provenance.snes/Game.sfc"), "rom")
+        XCTAssertEqual(read(picked, "BIOS/x.bin"), "bios")
+        XCTAssertFalse(exists(picked, "Save States/Game/s.svs"))
+        XCTAssertFalse(exists(picked, "Imports/new.zip"))
+        XCTAssertTrue(LibraryManifest.exists(in: picked))
+        XCTAssertEqual(recorder.switches, [.pickedFolder])
+        let folder = try XCTUnwrap(recorder.switchedFolders.last ?? nil)
+        XCTAssertEqual(folder.displayName, "A")
+        XCTAssertFalse(folder.includesSaves)
+        XCTAssertNoThrow(try LibraryFolderBookmark.resolve(folder.bookmark))
+        XCTAssertEqual(try XCTUnwrap(store.load()).keepCopy, false)
+    }
+
+    func testIncludeSavesMovesTheSavesFoldersToo() async throws {
+        try write(local, "ROMs/com.provenance.snes/Game.sfc", "rom")
+        try write(local, "Save States/Game/s.svs", "save")
+        try write(local, "Battery States/Game/g.sav", "sram")
+        let c = coordinator(launched: .appStorage)
+        _ = try await c.moveToPickedFolder(picked, displayName: "A", includeSaves: true)
+        XCTAssertEqual(read(picked, "Save States/Game/s.svs"), "save")
+        XCTAssertEqual(read(picked, "Battery States/Game/g.sav"), "sram")
+        XCTAssertEqual((recorder.switchedFolders.last ?? nil)?.includesSaves, true)
+    }
+
+    func testMoveToPickedFolderFromAppGroupIsRefused() async throws {
+        let c = coordinator(launched: .appGroup)
+        do {
+            _ = try await c.moveToPickedFolder(picked, displayName: "A", includeSaves: false)
+            XCTFail("expected unsupportedMove")
+        } catch {
+            XCTAssertEqual(error as? LibraryMoveError, .unsupportedMove(from: .appGroup, to: .pickedFolder))
+        }
+        XCTAssertFalse(c.hasPendingMove)
+    }
+
+    func testMoveToPickedFolderWhileICloudDriveModeIsOnIsRefused() async throws {
+        let c = coordinator(launched: .appStorage, live: .iCloudDrive)
+        do {
+            _ = try await c.moveToPickedFolder(picked, displayName: "A", includeSaves: false)
+            XCTFail("expected unsupportedMove")
+        } catch {
+            XCTAssertEqual(error as? LibraryMoveError, .unsupportedMove(from: .iCloudDrive, to: .pickedFolder))
+        }
+    }
+
+    func testLeavingAPickedFolderKeepsACopyAndCarriesItsSaves() async throws {
+        try write(picked, "ROMs/com.provenance.snes/Game.sfc", "rom")
+        try write(picked, "Save States/Game/s.svs", "save")
+        let c = coordinator(launched: .pickedFolder, launchedFolder: folderA(includesSaves: true))
+        let outcome = try await c.moveToAppStorage(keepCopy: false)
+        XCTAssertEqual(outcome, .switched)
+        XCTAssertEqual(read(local, "ROMs/com.provenance.snes/Game.sfc"), "rom")
+        XCTAssertEqual(read(local, "Save States/Game/s.svs"), "save")
+        let journal = try XCTUnwrap(store.load())
+        XCTAssertTrue(journal.keepCopy, "the shared folder is left untouched")
+        XCTAssertEqual(journal.sourceFolder?.displayName, "A")
+        XCTAssertEqual(recorder.switches, [.appStorage])
+        XCTAssertNil(recorder.switchedFolders.last ?? nil)
+    }
+
+    func testLeavingAPickedFolderWithoutSavesLeavesSavesAlone() async throws {
+        try write(picked, "ROMs/com.provenance.snes/Game.sfc", "rom")
+        try write(picked, "Save States/Game/s.svs", "someone else's")
+        let c = coordinator(launched: .pickedFolder, launchedFolder: folderA(includesSaves: false))
+        _ = try await c.moveToAppStorage()
+        XCTAssertFalse(exists(local, "Save States/Game/s.svs"))
+    }
+
+    #if !os(tvOS)
+    func testCleanupAfterLeavingResolvesTheOldFolderFromTheJournal() async throws {
+        // The stored folder was cleared at the switch; the journal's sourceFolder names the old root.
+        try write(picked, "ROMs/com.provenance.snes/Game.sfc", "rom")
+        let leaving = coordinator(launched: .pickedFolder, launchedFolder: folderA())
+        _ = try await leaving.moveToAppStorage()
+        let relaunched = coordinator(launched: .appStorage)
+        let outcome = await relaunched.resumeIfNeeded(progress: nil)
+        XCTAssertEqual(outcome, .cleanedUp)
+        XCTAssertEqual(read(picked, "ROMs/com.provenance.snes/Game.sfc"), "rom", "keep-copy: nothing deleted in the shared folder")
+        XCTAssertFalse(relaunched.hasPendingMove)
+    }
+
+    func testMovingBetweenTwoPickedFoldersTellsThemApartByPick() async throws {
+        try write(picked, "ROMs/com.provenance.snes/Game.sfc", "rom")
+        let a = folderA()
+        let c = coordinator(launched: .pickedFolder, launchedFolder: a)
+        let outcome = try await c.moveToPickedFolder(picked2, displayName: "B", includeSaves: false)
+        XCTAssertEqual(outcome, .switched)
+        XCTAssertEqual(read(picked2, "ROMs/com.provenance.snes/Game.sfc"), "rom")
+        let journal = try XCTUnwrap(store.load())
+        XCTAssertEqual(journal.sourceFolder, a)
+        XCTAssertEqual(journal.destinationFolder?.displayName, "B")
+        XCTAssertTrue(journal.keepCopy)
+
+        // Relaunch still on A (the setting didn't stick): the switch is re-asserted, cleanup waits.
+        let stillOnA = coordinator(launched: .pickedFolder, launchedFolder: a)
+        let waiting = await stillOnA.resumeIfNeeded(progress: nil)
+        XCTAssertNil(waiting)
+        XCTAssertEqual(recorder.switches.last, .pickedFolder)
+        XCTAssertEqual((recorder.switchedFolders.last ?? nil)?.displayName, "B")
+
+        // Relaunch on B: cleanup runs.
+        let b = try XCTUnwrap(journal.destinationFolder)
+        let onB = coordinator(launched: .pickedFolder, launchedFolder: b)
+        let cleaned = await onB.resumeIfNeeded(progress: nil)
+        XCTAssertEqual(cleaned, .cleanedUp)
+    }
+    #endif
+
+    func testPreviewCountsTheFilesThatWouldMove() throws {
+        try write(local, "ROMs/com.provenance.snes/Game.sfc", bytes: 10)
+        try write(local, "Save States/Game/s.svs", bytes: 5)
+        let c = coordinator(launched: .appStorage)
+        let withoutSaves = try c.preview(destinationRoot: picked, includeSaves: false)
+        XCTAssertEqual(withoutSaves.fileCount, 1)
+        XCTAssertEqual(withoutSaves.totalBytes, 10)
+        XCTAssertEqual(withoutSaves.requiredBytes, LibraryMovePlanner.requiredBytes(for: 10))
+        XCTAssertTrue(withoutSaves.fits)
+        XCTAssertEqual(try c.preview(destinationRoot: picked, includeSaves: true).fileCount, 2)
+    }
+
+    func testRebindSavesAFreshBookmarkWithoutAMove() throws {
+        try folderStore.save(folderA(includesSaves: true))
+        let c = coordinator(launched: .pickedFolder, launchedFolder: folderA(includesSaves: true))
+        try c.rebindPickedFolder(to: picked2, displayName: "Moved")
+        XCTAssertEqual(recorder.switches, [.pickedFolder])
+        let folder = try XCTUnwrap(recorder.switchedFolders.last ?? nil)
+        XCTAssertEqual(folder.displayName, "Moved")
+        XCTAssertTrue(folder.includesSaves, "inherited from the previous pick")
+        XCTAssertFalse(c.hasPendingMove)
+    }
+
+    func testAbandonSwitchesToAppStorageWithoutAMove() throws {
+        let c = coordinator(launched: .pickedFolder, launchedFolder: folderA())
+        try c.abandonPickedFolder()
+        XCTAssertEqual(recorder.switches, [.appStorage])
+        XCTAssertNil(recorder.switchedFolders.last ?? nil)
+        XCTAssertFalse(c.hasPendingMove)
+        XCTAssertThrowsError(try coordinator(launched: .appStorage).abandonPickedFolder())
+    }
+
     func testRootsAreUnavailableWhereTheEngineHasNoRoot() {
         #if os(tvOS)
-        XCTAssertNil(LibraryMoveCoordinator.defaultRoot(for: .appGroup))
-        XCTAssertNil(LibraryMoveCoordinator.defaultRoot(for: .appStorage))
+        XCTAssertNil(LibraryMoveCoordinator.defaultRoot(for: .appGroup, folder: nil))
+        XCTAssertNil(LibraryMoveCoordinator.defaultRoot(for: .appStorage, folder: nil))
         XCTAssertNil(LibraryMoveCoordinator.defaultJournalStore(), "tvOS creates nothing on disk")
         #endif
-        XCTAssertNil(LibraryMoveCoordinator.defaultRoot(for: .iCloudDrive), "phase 5")
+        XCTAssertNil(LibraryMoveCoordinator.defaultRoot(for: .iCloudDrive, folder: nil), "phase 5")
     }
 }

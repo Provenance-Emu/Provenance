@@ -72,6 +72,23 @@ public struct LibraryMoveRequest: Sendable, Equatable {
     }
 }
 
+/// What the confirmation sheet shows before a move starts.
+public struct LibraryMovePreview: Sendable, Equatable {
+    public let fileCount: Int
+    public let totalBytes: Int64
+    /// `totalBytes` plus the planner's headroom.
+    public let requiredBytes: Int64
+    public let availableBytes: Int64
+    public var fits: Bool { availableBytes >= requiredBytes }
+
+    public init(fileCount: Int, totalBytes: Int64, requiredBytes: Int64, availableBytes: Int64) {
+        self.fileCount = fileCount
+        self.totalBytes = totalBytes
+        self.requiredBytes = requiredBytes
+        self.availableBytes = availableBytes
+    }
+}
+
 /// Where a move is. Persisted in the journal, so the raw values are a contract.
 public enum LibraryMovePhase: String, Codable, Sendable {
     /// Files are being copied and verified. Cancel rolls back.

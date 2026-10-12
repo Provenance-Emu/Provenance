@@ -5,8 +5,8 @@
 //  Copyright © 2026 Provenance Emu. All rights reserved.
 //
 //  The app-facing side of the move engine: knows the real roots, resumes a journaled move at
-//  launch (`PVGameLibrary.init` calls `resumeIfNeeded()`), and starts the one move phase 2
-//  supports, App Group → App storage. tvOS: no-op.
+//  launch (`PVGameLibrary.init` calls `resumeIfNeeded()`), and starts the moves phases 2 and 3 support:
+//  App Group → App storage, and App storage ⇄ a picked folder (and picked folder → picked folder). tvOS: no-op.
 //
 //  Leaving the App Group: Lite and the full app share one group container, so each app records where it
 //  launched in the group's shared defaults, and a move forces "keep a copy" while another app still uses the group.
@@ -19,14 +19,19 @@ import PVLogging
 public final class LibraryMoveCoordinator: @unchecked Sendable {
     public static let shared = LibraryMoveCoordinator()
 
+    public typealias RootProvider = @Sendable (LibraryLocation, PickedLibraryFolder?) -> URL?
+
     private let journalStore: LibraryMoveJournalStore?
-    private let rootProvider: @Sendable (LibraryLocation) -> URL?
+    private let rootProvider: RootProvider
     /// The location the library resolves to (`LibraryLocation.current`); gates starting a move.
     private let launchedLocation: @Sendable () -> LibraryLocation
-    /// The appGroup/appStorage axis this process launched on. Unlike `launchedLocation` it ignores the live iCloud Drive
-    /// setting, so a resume is not refused just because iCloud Drive mode is on.
+    /// The axis this process launched on (`LibraryLocation.launchAxis`). Unlike `launchedLocation` it ignores the live
+    /// iCloud Drive setting, so a resume is not refused just because iCloud Drive mode is on.
     private let resumeLocation: @Sendable () -> LibraryLocation
+    /// The picked folder this process launched on; `nil` unless `resumeLocation()` is `.pickedFolder`.
+    private let launchedFolder: @Sendable () -> PickedLibraryFolder?
     private let switchLocation: @Sendable (LibraryLocation, PickedLibraryFolder?) throws -> Void
+    private let folderStore: PickedLibraryFolderStore
     private let planner: LibraryMovePlanner
     private let engine: LibraryMoveEngine?
     /// Defaults shared by every app of the App Group; each app records its location here (see `anotherVariantUsesAppGroup`).
@@ -35,10 +40,12 @@ public final class LibraryMoveCoordinator: @unchecked Sendable {
     private let variantID: String
 
     public init(journalStore: LibraryMoveJournalStore? = LibraryMoveCoordinator.defaultJournalStore(),
-                rootProvider: @escaping @Sendable (LibraryLocation) -> URL? = { LibraryMoveCoordinator.defaultRoot(for: $0) },
+                rootProvider: @escaping RootProvider = { LibraryMoveCoordinator.defaultRoot(for: $0, folder: $1) },
                 launchedLocation: @escaping @Sendable () -> LibraryLocation = { LibraryLocation.current },
                 resumeLocation: @escaping @Sendable () -> LibraryLocation = { LibraryLocation.launchAxis },
+                launchedFolder: @escaping @Sendable () -> PickedLibraryFolder? = { LibraryLocation.launchAxis == .pickedFolder ? PickedLibraryFolderStore.shared.load() : nil },
                 switchLocation: @escaping @Sendable (LibraryLocation, PickedLibraryFolder?) throws -> Void = { try LibraryLocation.switchStored(to: $0, pickedFolder: $1) },
+                folderStore: PickedLibraryFolderStore = .shared,
                 planner: LibraryMovePlanner = LibraryMovePlanner(),
                 md5Provider: any MD5Provider = FileManager.default,
                 sharedDefaults: UserDefaults? = UserDefaults(suiteName: PVAppGroupId),
@@ -47,7 +54,9 @@ public final class LibraryMoveCoordinator: @unchecked Sendable {
         self.rootProvider = rootProvider
         self.launchedLocation = launchedLocation
         self.resumeLocation = resumeLocation
+        self.launchedFolder = launchedFolder
         self.switchLocation = switchLocation
+        self.folderStore = folderStore
         self.planner = planner
         self.sharedDefaults = sharedDefaults
         self.variantID = variantID
@@ -66,8 +75,9 @@ public final class LibraryMoveCoordinator: @unchecked Sendable {
         #endif
     }
 
-    /// The `Documents/` folder of each location. iCloud Drive is phase 5. Always `nil` on tvOS.
-    public static func defaultRoot(for location: LibraryLocation) -> URL? {
+    /// The root of each location. A picked folder is resolved from `folder` (a journaled one) or, when `nil`, the
+    /// one this process launched on. iCloud Drive is phase 5. Always `nil` on tvOS.
+    public static func defaultRoot(for location: LibraryLocation, folder: PickedLibraryFolder?) -> URL? {
         #if os(tvOS)
         return nil
         #else
@@ -75,7 +85,16 @@ public final class LibraryMoveCoordinator: @unchecked Sendable {
         case .appStorage: return URL.documentsPathLocal
         case .appGroup: return URL.documentsPathAppGroup
         case .iCloudDrive: return nil
-        case .pickedFolder: return LibraryLocation.pickedFolderAtLaunch.url
+        case .pickedFolder:
+            if let folder {
+                do {
+                    return try LibraryFolderBookmark.resolve(folder.bookmark).url
+                } catch {
+                    ELOG("LibraryMove: the journaled folder \(folder.displayName) does not resolve: \(error.localizedDescription)")
+                    return nil
+                }
+            }
+            return LibraryLocation.pickedFolderAtLaunch.url
         }
         #endif
     }
@@ -83,6 +102,23 @@ public final class LibraryMoveCoordinator: @unchecked Sendable {
     /// A journal file exists: either a copy to finish or a cleanup owed on the next launch. A pure check.
     public var hasPendingMove: Bool {
         journalStore?.exists ?? false
+    }
+
+    /// Stops the running copy (before the switch). A no-op otherwise.
+    public func cancelRunningMove() {
+        engine?.cancel()
+    }
+
+    /// The folders a picked-folder move carries (D10).
+    public static func folders(includeSaves: Bool) -> [String] {
+        LibraryMoveFolders.shared + (includeSaves ? LibraryMoveFolders.saves : [])
+    }
+
+    /// `launched` is `location`, and for a picked folder the same pick (two picks of one folder differ by `pickedAt`).
+    private func launchedOn(_ location: LibraryLocation, _ folder: PickedLibraryFolder?, launched: LibraryLocation) -> Bool {
+        guard launched == location else { return false }
+        guard location == .pickedFolder else { return true }
+        return folder?.pickedAt == launchedFolder()?.pickedAt
     }
 
     /// Call once per launch, off the main thread. Finishes an interrupted copy (then switches), or runs
@@ -96,13 +132,16 @@ public final class LibraryMoveCoordinator: @unchecked Sendable {
         let launched = resumeLocation()
         recordLaunchLocation(launched)
         guard let engine, var journal = journalStore?.load() else { return nil }
-        guard let sourceRoot = rootProvider(journal.source), let destinationRoot = rootProvider(journal.destination) else {
+        guard let sourceRoot = rootProvider(journal.source, journal.sourceFolder),
+              let destinationRoot = rootProvider(journal.destination, journal.destinationFolder) else {
             ELOG("LibraryMove: a root for \(journal.source.rawValue) → \(journal.destination.rawValue) is unavailable; keeping the journal")
             return nil
         }
+        let onDestination = launchedOn(journal.destination, journal.destinationFolder, launched: launched)
+        let onSource = launchedOn(journal.source, journal.sourceFolder, launched: launched)
         switch journal.phase {
         case .copying:
-            if launched == journal.destination, journal.inFlight.isEmpty {
+            if onDestination, journal.inFlight.isEmpty {
                 // `performSwitch` wrote the setting, then the process died before the journal said so (`inFlight` is
                 // cleared only when the copy loop completes). Record the switch and clean up now: this launch is on the
                 // destination, and the delta sweep copies anything the journal lacks before any source is deleted.
@@ -114,13 +153,13 @@ public final class LibraryMoveCoordinator: @unchecked Sendable {
                     ELOG("LibraryMove: could not record the switch: \(error.localizedDescription)")
                     return nil
                 }
-            } else if launched != journal.source {
+            } else if !onSource {
                 ELOG("LibraryMove: journal is mid-copy but this launch is on \(launched.rawValue); keeping the journal")
                 return nil
             }
         case .switched, .cleaning:
-            guard launched == journal.destination else {
-                if launched == journal.source {
+            guard onDestination else {
+                if onSource {
                     // The switch is journaled but the setting didn't stick (UserDefaults not persisted before the process
                     // died). Re-assert it; cleanup runs on the next launch.
                     try? switchLocation(journal.destination, journal.destinationFolder)
@@ -142,19 +181,77 @@ public final class LibraryMoveCoordinator: @unchecked Sendable {
         #endif
     }
 
-    /// Phase 2's one supported move. Moves every top-level entry of the App Group's Documents (except hidden
-    /// entries and the Realm files), verifies, writes the setting and returns `.switched`; the caller tells the
-    /// user to quit and reopen. Cleanup happens on that next launch.
+    /// From the App Group (phase 2: every top-level entry of its Documents except hidden entries and the Realm files) or
+    /// from a picked folder (phase 3: the shared folders and, when that folder holds them, the saves folders; always keep a
+    /// copy so the shared folder is left untouched). Verifies, writes the setting and returns `.switched`; the caller tells
+    /// the user to quit and reopen. Cleanup happens on that next launch.
     public func moveToAppStorage(keepCopy: Bool = false,
                                  progress: (@Sendable (LibraryMoveProgress) -> Void)? = nil) async throws -> LibraryMoveOutcome {
         let source = launchedLocation()
-        guard source == .appGroup else { throw LibraryMoveError.unsupportedMove(from: source, to: .appStorage) }
+        guard source == .appGroup || source == .pickedFolder else { throw LibraryMoveError.unsupportedMove(from: source, to: .appStorage) }
         guard let engine else { throw LibraryMoveError.rootUnavailable(.appStorage) }
-        guard let sourceRoot = rootProvider(.appGroup) else { throw LibraryMoveError.rootUnavailable(.appGroup) }
-        guard let destinationRoot = rootProvider(.appStorage) else { throw LibraryMoveError.rootUnavailable(.appStorage) }
-        let request = LibraryMoveRequest(source: .appGroup, destination: .appStorage, sourceRoot: sourceRoot, destinationRoot: destinationRoot,
-                                         folders: try planner.topLevelEntries(at: sourceRoot), keepCopy: keepCopy || anotherVariantUsesAppGroup())
+        let sourceFolder = source == .pickedFolder ? launchedFolder() : nil
+        guard let sourceRoot = rootProvider(source, sourceFolder) else { throw LibraryMoveError.rootUnavailable(source) }
+        guard let destinationRoot = rootProvider(.appStorage, nil) else { throw LibraryMoveError.rootUnavailable(.appStorage) }
+        let folders: [String]
+        let keep: Bool
+        if source == .appGroup {
+            folders = try planner.topLevelEntries(at: sourceRoot)
+            keep = keepCopy || anotherVariantUsesAppGroup()
+        } else {
+            folders = Self.folders(includeSaves: sourceFolder?.includesSaves ?? false)
+            keep = true
+        }
+        let request = LibraryMoveRequest(source: source, destination: .appStorage, sourceRoot: sourceRoot, destinationRoot: destinationRoot,
+                                         folders: folders, keepCopy: keep, sourceFolder: sourceFolder)
         return try await engine.start(request, progress: progress)
+    }
+
+    /// Moves the shared folders (and the saves folders when `includeSaves`) into `url`, a folder from the picker that
+    /// `LibraryFolderInspector` accepted. From App storage, or from another picked folder (which then keeps a copy and
+    /// whose `includesSaves` decides what moves). `deduplicate` is phase 4's join (D15).
+    public func moveToPickedFolder(_ url: URL, displayName: String, includeSaves: Bool, deduplicate: Bool = false,
+                                   progress: (@Sendable (LibraryMoveProgress) -> Void)? = nil) async throws -> LibraryMoveOutcome {
+        let source = launchedLocation()
+        guard source == .appStorage || source == .pickedFolder else { throw LibraryMoveError.unsupportedMove(from: source, to: .pickedFolder) }
+        guard let engine else { throw LibraryMoveError.rootUnavailable(.pickedFolder) }
+        let sourceFolder = source == .pickedFolder ? launchedFolder() : nil
+        guard let sourceRoot = rootProvider(source, sourceFolder) else { throw LibraryMoveError.rootUnavailable(source) }
+        let saves = sourceFolder?.includesSaves ?? includeSaves
+        let folder = PickedLibraryFolder(bookmark: try LibraryFolderBookmark.make(from: url), displayName: displayName, includesSaves: saves)
+        let request = LibraryMoveRequest(source: source, destination: .pickedFolder, sourceRoot: sourceRoot, destinationRoot: url.standardizedFileURL,
+                                         folders: Self.folders(includeSaves: saves), keepCopy: source == .pickedFolder,
+                                         sourceFolder: sourceFolder, destinationFolder: folder, deduplicateByMD5: deduplicate)
+        return try await engine.start(request, progress: progress)
+    }
+
+    /// What `moveToPickedFolder` would carry and whether `destinationRoot` has room.
+    public func preview(destinationRoot: URL, includeSaves: Bool) throws -> LibraryMovePreview {
+        let source = launchedLocation()
+        let sourceFolder = source == .pickedFolder ? launchedFolder() : nil
+        guard let sourceRoot = rootProvider(source, sourceFolder) else { throw LibraryMoveError.rootUnavailable(source) }
+        let plan = try planner.plan(root: sourceRoot, folders: Self.folders(includeSaves: sourceFolder?.includesSaves ?? includeSaves))
+        return LibraryMovePreview(fileCount: plan.items.count, totalBytes: plan.totalBytes,
+                                  requiredBytes: LibraryMovePlanner.requiredBytes(for: plan.totalBytes),
+                                  availableBytes: try planner.availableCapacity(destinationRoot))
+    }
+
+    /// The saved folder no longer resolves and the user pointed at where it is now. A fresh bookmark; no files move;
+    /// applies at the next launch.
+    public func rebindPickedFolder(to url: URL, displayName: String) throws {
+        let launched = resumeLocation()
+        guard launched == .pickedFolder else { throw LibraryMoveError.unsupportedMove(from: launched, to: .pickedFolder) }
+        let previous = launchedFolder() ?? folderStore.load()
+        let folder = PickedLibraryFolder(bookmark: try LibraryFolderBookmark.make(from: url), displayName: displayName,
+                                         includesSaves: previous?.includesSaves ?? false)
+        try switchLocation(.pickedFolder, folder)
+    }
+
+    /// The saved folder is gone for good: back to App storage without a move. Records stay and show as missing.
+    public func abandonPickedFolder() throws {
+        let launched = resumeLocation()
+        guard launched == .pickedFolder else { throw LibraryMoveError.unsupportedMove(from: launched, to: .appStorage) }
+        try switchLocation(.appStorage, nil)
     }
 
     // MARK: - Shared App Group
