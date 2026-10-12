@@ -22,7 +22,8 @@ final class LibraryLocationTests: XCTestCase {
         XCTAssertEqual(LibraryLocation.appStorage.rawValue, "appStorage")
         XCTAssertEqual(LibraryLocation.appGroup.rawValue, "appGroup")
         XCTAssertEqual(LibraryLocation.iCloudDrive.rawValue, "iCloudDrive")
-        XCTAssertEqual(LibraryLocation.allCases.count, 3)
+        XCTAssertEqual(LibraryLocation.pickedFolder.rawValue, "pickedFolder")
+        XCTAssertEqual(LibraryLocation.allCases.count, 4)
     }
 
     func testICloudDriveNeedsSyncAndDriveMode() {
@@ -104,19 +105,19 @@ final class LibraryLocationTests: XCTestCase {
         let token = NotificationCenter.default.addObserver(forName: .libraryLocationDidChange, object: nil, queue: nil) { received.append($0) }
         addTeardownBlock { NotificationCenter.default.removeObserver(token) }
 
-        LibraryLocation.switchStored(to: .appGroup)
+        try LibraryLocation.switchStored(to: .appGroup)
         XCTAssertEqual(Defaults[.libraryLocation], "appGroup")
         XCTAssertTrue(Defaults[.useAppGroups])
         XCTAssertEqual(received.count, 1)
         XCTAssertEqual(received.first?.userInfo?[LibraryLocation.requiresRelaunchUserInfoKey] as? Bool, true)
 
-        LibraryLocation.switchStored(to: .appStorage)
+        try LibraryLocation.switchStored(to: .appStorage)
         XCTAssertEqual(Defaults[.libraryLocation], "appStorage")
         XCTAssertFalse(Defaults[.useAppGroups])
         XCTAssertEqual(received.count, 2)
     }
 
-    func testSwitchStoredDoesNotMoveTheRunningProcess() {
+    func testSwitchStoredDoesNotMoveTheRunningProcess() throws {
         // The first switch of a legacy user rewrites useAppGroups; the library root and the app-files
         // root of this process must stay where they were at launch.
         _ = LibraryLocation.storedAtLaunch
@@ -134,7 +135,7 @@ final class LibraryLocationTests: XCTestCase {
         let cachesBefore = URL.cachesPath
         let legacyBefore = URL.USE_APP_GROUPS
 
-        LibraryLocation.switchStored(to: axisBefore ? .appStorage : .appGroup)
+        try LibraryLocation.switchStored(to: axisBefore ? .appStorage : .appGroup)
 
         XCTAssertEqual(LibraryLocation.usesAppGroupContainer, axisBefore)
         XCTAssertEqual(LibraryLocation.current, currentBefore)
@@ -149,7 +150,74 @@ final class LibraryLocationTests: XCTestCase {
         XCTAssertEqual(URL.documentsiCloudOrLocalPath, root)
         XCTAssertEqual(Paths.romsPath, root.appendingPathComponent("ROMs", isDirectory: true))
         XCTAssertEqual(Paths.biosesPath, root.appendingPathComponent("BIOS", isDirectory: true))
-        XCTAssertEqual(Paths.saveSavesPath, root.appendingPathComponent("Save States", isDirectory: true))
+        #if !os(tvOS)
+        XCTAssertEqual(Paths.systemPath, root.appendingPathComponent("System", isDirectory: true))
+        #endif
+    }
+
+    // MARK: - Picked folder
+
+    func testStoredPickedFolderIsHonoured() {
+        XCTAssertEqual(LibraryLocation.resolve(stored: .pickedFolder, useAppGroups: true, iCloudSync: false, iCloudDriveMode: false), .pickedFolder)
+        XCTAssertEqual(LibraryLocation.resolve(stored: .pickedFolder, useAppGroups: false, iCloudSync: true, iCloudDriveMode: true), .iCloudDrive)
+        XCTAssertFalse(LibraryLocation.usesAppGroupContainer(stored: .pickedFolder, useAppGroupsAtLaunch: true))
+    }
+
+    func testPickedFolderRootFallsBackToLocalDocuments() {
+        let picked = URL(fileURLWithPath: "/picked", isDirectory: true)
+        XCTAssertEqual(LibraryLocation.pickedFolder.rootURL(localDocuments: local, appGroupDocuments: group, iCloudDocuments: nil, pickedFolder: picked, usesAppGroupContainer: false), picked)
+        XCTAssertEqual(LibraryLocation.pickedFolder.rootURL(localDocuments: local, appGroupDocuments: group, iCloudDocuments: nil, pickedFolder: nil, usesAppGroupContainer: false), local)
+        // The other cases ignore the picked folder.
+        XCTAssertEqual(LibraryLocation.appStorage.rootURL(localDocuments: local, appGroupDocuments: group, iCloudDocuments: nil, pickedFolder: picked, usesAppGroupContainer: false), local)
+    }
+
+    func testSavesRootStaysInTheAppUnlessIncluded() {
+        let picked = URL(fileURLWithPath: "/picked", isDirectory: true)
+        XCTAssertEqual(LibraryLocation.pickedFolder.savesRootURL(rootURL: picked, appFilesRoot: local, includesSaves: false), local)
+        XCTAssertEqual(LibraryLocation.pickedFolder.savesRootURL(rootURL: picked, appFilesRoot: local, includesSaves: true), picked)
+        XCTAssertEqual(LibraryLocation.appStorage.savesRootURL(rootURL: local, appFilesRoot: local, includesSaves: false), local)
+        XCTAssertEqual(LibraryLocation.appGroup.savesRootURL(rootURL: group, appFilesRoot: group, includesSaves: false), group)
+    }
+
+    func testRootForPartialPathSplitsSharedAndSaves() {
+        let picked = URL(fileURLWithPath: "/picked", isDirectory: true)
+        XCTAssertEqual(LibraryLocation.root(forPartialPath: "ROMs/com.provenance.snes/Game.sfc", libraryRoot: picked, savesRoot: local), picked)
+        XCTAssertEqual(LibraryLocation.root(forPartialPath: "BIOS/scph5501.bin", libraryRoot: picked, savesRoot: local), picked)
+        XCTAssertEqual(LibraryLocation.root(forPartialPath: "System/PSP/x", libraryRoot: picked, savesRoot: local), picked)
+        XCTAssertEqual(LibraryLocation.root(forPartialPath: "Save States/Game/s.svs", libraryRoot: picked, savesRoot: local), local)
+        XCTAssertEqual(LibraryLocation.root(forPartialPath: "/ROMs/x", libraryRoot: picked, savesRoot: local), picked)
+    }
+
+    func testLaunchStateFromStore() throws {
+        let base = try LibraryMoveTestSupport.makeTempDirectory(named: "LibraryLocationTests")
+        addTeardownBlock { LibraryMoveTestSupport.removeTree(base) }
+        let suite = "LibraryLocationTests.\(UUID().uuidString)"
+        let defaults = try XCTUnwrap(UserDefaults(suiteName: suite))
+        addTeardownBlock { defaults.removePersistentDomain(forName: suite) }
+        let store = PickedLibraryFolderStore(defaults: defaults, key: "k")
+
+        XCTAssertEqual(LibraryLocation.launchState(folder: nil, store: store), .unavailable(reason: "No library folder is saved."))
+
+        let folder = PickedLibraryFolder(bookmark: try LibraryFolderBookmark.make(from: base), displayName: "x", includesSaves: false)
+        try store.save(folder)
+        XCTAssertEqual(LibraryLocation.launchState(folder: folder, store: store).url?.resolvingSymlinksInPath().path, base.resolvingSymlinksInPath().path)
+
+        let broken = PickedLibraryFolder(bookmark: Data("junk".utf8), displayName: "x", includesSaves: false)
+        XCTAssertTrue(LibraryLocation.launchState(folder: broken, store: store).isUnavailable)
+    }
+
+    func testSwitchStoredToPickedFolderNeedsAFolder() {
+        XCTAssertThrowsError(try LibraryLocation.switchStored(to: .pickedFolder, pickedFolder: nil)) { error in
+            XCTAssertEqual(error as? LibraryFolderError, .missingPickedFolder)
+        }
+    }
+
+    func testSavesAccessorsUseTheSavesRoot() {
+        let saves = LibraryLocation.current.savesRootURL
+        XCTAssertEqual(URL.savesRootPath, saves)
+        XCTAssertEqual(Paths.saveSavesPath, saves.appendingPathComponent("Save States", isDirectory: true))
+        XCTAssertEqual(Paths.batterySavesPath, saves.appendingPathComponent("Battery States", isDirectory: true))
+        XCTAssertEqual(Paths.cheatsPath, saves.appendingPathComponent("Cheats", isDirectory: true))
     }
 
     // MARK: - Stored partial paths (unchanged by phase 1)

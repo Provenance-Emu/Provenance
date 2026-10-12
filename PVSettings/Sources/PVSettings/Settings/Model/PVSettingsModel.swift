@@ -692,6 +692,10 @@ public extension Defaults.Keys {
     /// `LibraryLocation.rawValue` chosen by the move engine (PVFileSystem). `nil` until the first move;
     /// the location is then derived from `useAppGroups` and the iCloud settings.
     static let libraryLocation = Key<String?>("libraryLocation")
+
+    /// JSON of `PickedLibraryFolder` (PVFileSystem): the security-scoped bookmark of the folder the user chose,
+    /// its display name and whether saves live there too. Only `LibraryLocation.switchStored` writes it.
+    static let libraryPickedFolder = Key<Data?>("libraryPickedFolder")
 }
 
 // MARK: Web Server

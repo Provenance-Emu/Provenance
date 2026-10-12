@@ -26,6 +26,8 @@ public enum LibraryLocation: String, Sendable, CaseIterable {
     case appGroup
     /// The iCloud Drive ubiquity container's Documents.
     case iCloudDrive
+    /// A folder the user picked in Files, reached through a security-scoped bookmark (`PickedLibraryFolder`).
+    case pickedFolder
 
     /// userInfo key of `.libraryLocationDidChange`: `true` when the new location applies at the next launch.
     public static let requiresRelaunchUserInfoKey = "requiresRelaunch"
@@ -76,6 +78,57 @@ public enum LibraryLocation: String, Sendable, CaseIterable {
         return useAppGroups ? .appGroup : .appStorage
     }
 
+    /// The appGroup/appStorage/pickedFolder axis this process launched on. Unlike `current` it ignores the live
+    /// iCloud Drive setting. The move engine starts and resumes against this.
+    public static var launchAxis: LibraryLocation {
+        #if os(tvOS)
+        return .appStorage
+        #else
+        if storedAtLaunch == .pickedFolder { return .pickedFolder }
+        return usesAppGroupContainer ? .appGroup : .appStorage
+        #endif
+    }
+
+    // MARK: - Picked folder
+
+    /// Resolved once per process from the stored bookmark (D9). The access it starts is never stopped.
+    public static let pickedFolderAtLaunch: PickedFolderLaunchState = {
+        #if os(tvOS)
+        return .notConfigured
+        #else
+        guard storedAtLaunch == .pickedFolder else { return .notConfigured }
+        let store = PickedLibraryFolderStore.shared
+        return launchState(folder: store.load(), store: store)
+        #endif
+    }()
+
+    /// Whether the picked folder also holds the saves folders. `true` for every other location (one root).
+    static let pickedFolderIncludesSavesAtLaunch: Bool = {
+        guard storedAtLaunch == .pickedFolder else { return true }
+        return PickedLibraryFolderStore.shared.load()?.includesSaves ?? false
+    }()
+
+    /// Resolves `folder`; a stale bookmark is re-saved through `store`. Pure apart from that write.
+    static func launchState(folder: PickedLibraryFolder?, store: PickedLibraryFolderStore) -> PickedFolderLaunchState {
+        guard let folder else { return .unavailable(reason: "No library folder is saved.") }
+        do {
+            let resolution = try LibraryFolderBookmark.resolve(folder.bookmark)
+            if resolution.isStale, let fresh = try? LibraryFolderBookmark.make(from: resolution.url) {
+                var refreshed = folder
+                refreshed.bookmark = fresh
+                try? store.save(refreshed)
+            }
+            return .available(resolution.url)
+        } catch {
+            return .unavailable(reason: error.localizedDescription)
+        }
+    }
+
+    /// Roots `RelativeRoot.createRelativePath` strips before pattern matching (Task 4).
+    public static var pickedRootsAtLaunch: [URL] {
+        pickedFolderAtLaunch.url.map { [$0] } ?? []
+    }
+
     /// The folder the library's subfolders (`ROMs/`, `BIOS/`, …) live in.
     /// Call on a background thread: the iCloud container lookup can block.
     public var rootURL: URL {
@@ -85,13 +138,15 @@ public enum LibraryLocation: String, Sendable, CaseIterable {
         return rootURL(localDocuments: URL.documentsPathLocal,
                        appGroupDocuments: URL.documentsPathAppGroup,
                        iCloudDocuments: self == .iCloudDrive ? URL.iCloudDocumentsDirectory : nil,
+                       pickedFolder: self == .pickedFolder ? Self.pickedFolderAtLaunch.url : nil,
                        usesAppGroupContainer: Self.usesAppGroupContainer)
         #endif
     }
 
     /// Each location names its own root. iCloud Drive without a container falls back to the
     /// app-files root (the group's Documents for an App Group user, else local Documents).
-    func rootURL(localDocuments: URL, appGroupDocuments: URL?, iCloudDocuments: URL?, usesAppGroupContainer: Bool) -> URL {
+    /// An unavailable picked folder falls back to local Documents so nothing crashes; the UI reports it (D9).
+    func rootURL(localDocuments: URL, appGroupDocuments: URL?, iCloudDocuments: URL?, pickedFolder: URL? = nil, usesAppGroupContainer: Bool) -> URL {
         switch self {
         case .appStorage:
             return localDocuments
@@ -99,13 +154,44 @@ public enum LibraryLocation: String, Sendable, CaseIterable {
             return appGroupDocuments ?? localDocuments
         case .iCloudDrive:
             return iCloudDocuments ?? (usesAppGroupContainer ? appGroupDocuments : nil) ?? localDocuments
+        case .pickedFolder:
+            return pickedFolder ?? localDocuments
         }
     }
 
-    /// Records `location` as the library location. Only `LibraryMoveEngine` calls this, after the
-    /// copy is verified. Mirrors the legacy toggle so a build that only knows `useAppGroups` agrees.
-    /// Takes effect at the next launch (see `storedAtLaunch`).
-    public static func switchStored(to location: LibraryLocation) {
+    /// Where the saves folders live: the app-files root for a picked folder without saves, else the library root (D10).
+    public var savesRootURL: URL {
+        #if os(tvOS)
+        return rootURL
+        #else
+        return savesRootURL(rootURL: rootURL, appFilesRoot: URL.documentsPath, includesSaves: Self.pickedFolderIncludesSavesAtLaunch)
+        #endif
+    }
+
+    func savesRootURL(rootURL: URL, appFilesRoot: URL, includesSaves: Bool) -> URL {
+        self == .pickedFolder && !includesSaves ? appFilesRoot : rootURL
+    }
+
+    /// The root a partial path resolves against: the library root for `ROMs/`, `BIOS/`, `System/`, the saves root otherwise.
+    public static func root(forPartialPath partialPath: String) -> URL {
+        let current = LibraryLocation.current
+        return root(forPartialPath: partialPath, libraryRoot: current.rootURL, savesRoot: current.savesRootURL)
+    }
+
+    static func root(forPartialPath partialPath: String, libraryRoot: URL, savesRoot: URL) -> URL {
+        LibraryMoveFolders.isShared(partialPath: partialPath) ? libraryRoot : savesRoot
+    }
+
+    /// Records the library location. Only `LibraryMoveEngine` (and the picked-folder recovery actions) call this.
+    /// `pickedFolder` is required for `.pickedFolder` and cleared for every other location, so the stored
+    /// bookmark can never outlive the location that uses it. Mirrors the legacy toggle. Applies at the next launch.
+    public static func switchStored(to location: LibraryLocation, pickedFolder: PickedLibraryFolder? = nil) throws {
+        if location == .pickedFolder {
+            guard let pickedFolder else { throw LibraryFolderError.missingPickedFolder }
+            try PickedLibraryFolderStore.shared.save(pickedFolder)
+        } else {
+            PickedLibraryFolderStore.shared.clear()
+        }
         Defaults[.libraryLocation] = location.rawValue
         Defaults[.useAppGroups] = (location == .appGroup)
         NotificationCenter.default.post(name: .libraryLocationDidChange, object: nil,
@@ -113,7 +199,26 @@ public enum LibraryLocation: String, Sendable, CaseIterable {
     }
 }
 
+/// What `LibraryLocation.pickedFolderAtLaunch` found.
+public enum PickedFolderLaunchState: Sendable, Equatable {
+    /// The stored location is not `.pickedFolder`.
+    case notConfigured
+    case available(URL)
+    /// The folder was deleted, iCloud signed out, the provider removed, or the stored value is missing.
+    case unavailable(reason: String)
+
+    public var url: URL? {
+        if case .available(let url) = self { return url }
+        return nil
+    }
+
+    public var isUnavailable: Bool {
+        if case .unavailable = self { return true }
+        return false
+    }
+}
+
 public extension Notification.Name {
-    /// Posted by `LibraryLocation.switchStored(to:)`. userInfo: `LibraryLocation.requiresRelaunchUserInfoKey`.
+    /// Posted by `LibraryLocation.switchStored(to:pickedFolder:)`. userInfo: `LibraryLocation.requiresRelaunchUserInfoKey`.
     static let libraryLocationDidChange = Notification.Name("PVLibraryLocationDidChangeNotification")
 }

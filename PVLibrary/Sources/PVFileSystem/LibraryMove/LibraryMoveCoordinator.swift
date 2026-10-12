@@ -37,8 +37,8 @@ public final class LibraryMoveCoordinator: @unchecked Sendable {
     public init(journalStore: LibraryMoveJournalStore? = LibraryMoveCoordinator.defaultJournalStore(),
                 rootProvider: @escaping @Sendable (LibraryLocation) -> URL? = { LibraryMoveCoordinator.defaultRoot(for: $0) },
                 launchedLocation: @escaping @Sendable () -> LibraryLocation = { LibraryLocation.current },
-                resumeLocation: @escaping @Sendable () -> LibraryLocation = { LibraryLocation.usesAppGroupContainer ? .appGroup : .appStorage },
-                switchLocation: @escaping @Sendable (LibraryLocation) throws -> Void = { LibraryLocation.switchStored(to: $0) },
+                resumeLocation: @escaping @Sendable () -> LibraryLocation = { LibraryLocation.launchAxis },
+                switchLocation: @escaping @Sendable (LibraryLocation) throws -> Void = { try LibraryLocation.switchStored(to: $0) },
                 planner: LibraryMovePlanner = LibraryMovePlanner(),
                 md5Provider: any MD5Provider = FileManager.default,
                 sharedDefaults: UserDefaults? = UserDefaults(suiteName: PVAppGroupId),
@@ -75,6 +75,7 @@ public final class LibraryMoveCoordinator: @unchecked Sendable {
         case .appStorage: return URL.documentsPathLocal
         case .appGroup: return URL.documentsPathAppGroup
         case .iCloudDrive: return nil
+        case .pickedFolder: return LibraryLocation.pickedFolderAtLaunch.url
         }
         #endif
     }

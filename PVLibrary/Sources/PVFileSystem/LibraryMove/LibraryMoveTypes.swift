@@ -16,6 +16,19 @@ public enum LibraryMoveFolders {
     /// Folders whose files are MD5-verified after copying (size alone for the rest).
     public static let md5Verified: Set<String> = ["ROMs", "BIOS"]
 
+    /// What a picked folder holds (the shared layout contract: `ROMs/<system id>/`, `BIOS/`, `System/<console>/`).
+    public static let shared: [String] = ["ROMs", "BIOS", "System"]
+
+    /// What a picked folder holds in addition when `PickedLibraryFolder.includesSaves` is on (D10).
+    public static let saves: [String] = ["Battery States", "Save States", "Screenshots", "Cheats", "Patches"]
+
+    /// `true` when the partial path's first component is one of `shared`.
+    public static func isShared(partialPath: String) -> Bool {
+        let trimmed = partialPath.hasPrefix("/") ? String(partialPath.dropFirst()) : partialPath
+        guard let top = trimmed.split(separator: "/", maxSplits: 1).first else { return false }
+        return shared.contains(String(top))
+    }
+
     /// Where the loser of a name clash goes: the destination's own file (copy phase) or the incoming file (post-switch sweep).
     public static let conflicts = "Conflicts"
 

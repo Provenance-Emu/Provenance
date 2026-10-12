@@ -111,17 +111,17 @@ public struct Paths {
 
     /// Should be called on BG Thread, iCloud blocks
     public static var batterySavesPath: URL { get {
-        return URL.documentsiCloudOrLocalPath.appendingPathComponent("Battery States", isDirectory: true)
+        return URL.savesRootPath.appendingPathComponent("Battery States", isDirectory: true)
     }}
 
     /// Should be called on BG Thread, iCloud blocks
     public static var saveSavesPath: URL { get {
-        return URL.documentsiCloudOrLocalPath.appendingPathComponent("Save States", isDirectory: true)
+        return URL.savesRootPath.appendingPathComponent("Save States", isDirectory: true)
     }}
 
     /// Should be called on BG Thread, iCloud blocks
     public static var screenShotsPath: URL { get {
-        return URL.documentsiCloudOrLocalPath.appendingPathComponent("Screenshots", isDirectory: true)
+        return URL.savesRootPath.appendingPathComponent("Screenshots", isDirectory: true)
     }}
 
     /// Should be called on BG Thread, iCloud blocks
@@ -131,12 +131,12 @@ public struct Paths {
 
     /// Should be called on BG Thread, iCloud blocks
     public static var cheatsPath: URL { get {
-        return URL.documentsiCloudOrLocalPath.appendingPathComponent("Cheats", isDirectory: true)
+        return URL.savesRootPath.appendingPathComponent("Cheats", isDirectory: true)
     }}
 
     /// Should be called on BG Thread, iCloud blocks
     public static var patchesPath: URL { get {
-        return URL.documentsiCloudOrLocalPath.appendingPathComponent("Patches", isDirectory: true)
+        return URL.savesRootPath.appendingPathComponent("Patches", isDirectory: true)
     }}
 
     /// Root `System/` directory for per-console system files (BIOS, firmware, fonts, etc.)

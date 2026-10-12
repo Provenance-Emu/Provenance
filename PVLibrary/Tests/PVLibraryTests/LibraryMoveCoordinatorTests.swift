@@ -50,7 +50,7 @@ final class LibraryMoveCoordinatorTests: XCTestCase {
                                           switch location {
                                           case .appGroup: return group
                                           case .appStorage: return local
-                                          case .iCloudDrive: return nil
+                                          case .iCloudDrive, .pickedFolder: return nil
                                           }
                                       },
                                       launchedLocation: { live ?? launched },

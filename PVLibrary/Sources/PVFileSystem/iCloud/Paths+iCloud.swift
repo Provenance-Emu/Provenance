@@ -56,4 +56,7 @@ public extension URL {
 
     /// The library root: see `LibraryLocation`. This should be called on a background thread.
     static var documentsiCloudOrLocalPath: URL { LibraryLocation.current.rootURL }
+
+    /// Where saves, screenshots, cheats and patches live: see `LibraryLocation.savesRootURL` (D10). Background thread.
+    static var savesRootPath: URL { LibraryLocation.current.savesRootURL }
 }

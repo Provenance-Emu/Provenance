@@ -25,7 +25,7 @@ public actor LibraryMoveEngine {
     let fileManager: FileManager
     let planner: LibraryMovePlanner
     let copier: LibraryMoveFileCopier
-    /// Writes the setting that names the destination. `LibraryLocation.switchStored(to:)` in production.
+    /// Writes the setting that names the destination. `LibraryLocation.switchStored(to:pickedFolder:)` in production.
     let switchLocation: @Sendable (LibraryLocation) throws -> Void
 
     public internal(set) var isRunning = false
