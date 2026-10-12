@@ -154,6 +154,11 @@ public final class PVAppDelegate: UIResponder, UIApplicationDelegate, Observable
                             await updatesController.importROMDirectories()
                         }
 
+                        if LibraryLocation.current == .pickedFolder {
+                            // Review Focus 3: a ROM another app removed shows as missing, never as gone.
+                            _ = await GameFileStatusService.shared.refreshAllStatuses()
+                        }
+
                         RomDatabase.sharedInstance.recoverAllSaveStates()
 
                         if migratorEnabled, let migrator = romMigrator {
@@ -695,6 +700,9 @@ public final class PVAppDelegate: UIResponder, UIApplicationDelegate, Observable
         Task { @MainActor in
             CrossAppEntitlementReader.applySiblingGrantIfNeeded()
             CrossAppEntitlementPublisher.publishPlusState()
+            #if !os(tvOS)
+            LibraryRescanRequester.shared.requestRescan(reason: "foreground")
+            #endif
         }
     }
 
