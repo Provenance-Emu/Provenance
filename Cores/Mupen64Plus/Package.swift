@@ -271,7 +271,7 @@ let pvMupen64PlusCoreSourceFiles: [String] = [
     "device/rdram/rdram.c",
     "main/cheat.c",
     "main/lirc.c",
-//                "main/main.c",
+    "main/main.c",   // g_dev, main_run, open_pif, ...: the core itself (the xcodeproj compiles it too)
     "main/rom.c",
     "main/savestates.c",
     "main/sdl_key_converter.c",
