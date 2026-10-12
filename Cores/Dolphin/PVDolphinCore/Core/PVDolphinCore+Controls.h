@@ -6,7 +6,11 @@
 //  Copyright © 2021 Provenance. All rights reserved.
 //
 
+#if SWIFT_PACKAGE
+#import "PVDolphinCore.h"
+#else
 #import <PVDolphin/PVDolphinCore.h>
+#endif
 //#include "Core/MachineContext.h"
 
 NS_ASSUME_NONNULL_BEGIN

@@ -4,6 +4,9 @@ import PVSettings
 import PVCoreBridge
 import PVCoreObjCBridge
 import PVEmulatorCore
+#if canImport(PVDolphinBridge)
+import PVDolphinBridge
+#endif
 
 @objc
 // Already over the 600-line limit on develop; it is one declaration per Dolphin

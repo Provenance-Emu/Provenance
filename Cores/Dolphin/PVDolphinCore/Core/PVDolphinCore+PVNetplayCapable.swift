@@ -33,6 +33,9 @@ import PVNetplay
 import PVSettings
 import PVLogging
 import ObjectiveC
+#if canImport(PVDolphinBridge)
+import PVDolphinBridge
+#endif
 
 // MARK: - Session context
 

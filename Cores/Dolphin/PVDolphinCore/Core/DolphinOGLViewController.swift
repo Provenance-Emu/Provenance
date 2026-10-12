@@ -7,6 +7,9 @@
 import Foundation
 import GLKit
 import os
+#if canImport(PVDolphinBridge)
+import PVDolphinBridge
+#endif
 
 @objc public class DolphinOGLViewController: GLKViewController {
 	private var core: PVDolphinCoreBridge!

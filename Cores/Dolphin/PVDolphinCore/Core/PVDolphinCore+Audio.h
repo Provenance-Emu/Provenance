@@ -6,7 +6,12 @@
 //  Copyright © 2021 Provenance. All rights reserved.
 //
 
+#if SWIFT_PACKAGE
+// The SwiftPM bridge target has no framework umbrella header; PVDolphinCore.h carries the class.
+#import "PVDolphinCore.h"
+#else
 #import <PVDolphin/PVDolphin.h>
+#endif
 
 NS_ASSUME_NONNULL_BEGIN
 

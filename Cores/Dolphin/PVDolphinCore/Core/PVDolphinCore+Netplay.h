@@ -28,7 +28,11 @@
 
 #pragma once
 #import <Foundation/Foundation.h>
+#if SWIFT_PACKAGE
+#import "PVDolphinCore.h"
+#else
 #import <PVDolphin/PVDolphinCore.h>
+#endif
 
 NS_ASSUME_NONNULL_BEGIN
 

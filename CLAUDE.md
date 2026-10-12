@@ -192,6 +192,12 @@ A second, generated workspace for fast iteration. `Provenance.xcodeproj` still s
   - `Provenance-Dev-UI`: mGBA, Stella, snes9x.
   - `Provenance-Dev-Thin`: no native cores; 4 libretro dylibs (mednafen_psx_hw, mupen64plus_next, snes9x, ppsspp).
   - `Provenance-Dev-Azahar`: Azahar.
+  - `Provenance-Dev-Dolphin` (opt-in, device only): `Cores/Dolphin/Package.swift` wraps
+    `PVlibDolphin.xcframework` as a `.binaryTarget`. SwiftPM will not load the package until
+    `build_slice.py dolphin <slice>` has produced the xcframework, so `make dev-dolphin` runs it first
+    and sets `TUIST_DEV_DOLPHIN=1`; without that variable the app and package are not in the generated
+    project (CI never sets it). The ObjC++ target reaches the Swift module through the runtime
+    (`#if SWIFT_PACKAGE` in `PVDolphinCore.mm`), because SwiftPM can't build the mixed target as one.
 
   Build with `make dev-ui|dev-azahar|dev-thin` (derived data in `build/dev-dd`; override with
   `DEV_DERIVED=`). Each app is one iOS+tvOS target with bundle id
