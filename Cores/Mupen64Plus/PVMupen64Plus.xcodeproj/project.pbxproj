@@ -984,7 +984,7 @@
 		B34601D320813330008C049C /* gliden_osd.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = gliden_osd.cpp; sourceTree = "<group>"; };
 		B34CB0ED2274BA8C009134B4 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		B35B31CB206CA65900AEAF88 /* CRC_OPT_NEON.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CRC_OPT_NEON.cpp; sourceTree = "<group>"; };
-		B35E6C3B207EE3750040709A /* MupenOptions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MupenOptions.swift; sourceTree = "<group>"; };
+		B35E6C3B207EE3750040709A /* MupenOptions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = MupenOptions.swift; path = ../PVMupen/MupenOptions.swift; sourceTree = "<group>"; };
 		B36EF440279C5AB1005C7ED4 /* assem_arm64.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = assem_arm64.h; sourceTree = "<group>"; };
 		B36EF441279C5AB1005C7ED4 /* linkage_arm64.S */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.asm; path = linkage_arm64.S; sourceTree = "<group>"; };
 		B36EF442279C5AB1005C7ED4 /* assem_arm64.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = assem_arm64.c; sourceTree = "<group>"; };
@@ -1252,7 +1252,7 @@
 		B3EA4488206E372400E608F6 /* TextDrawerStub.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TextDrawerStub.cpp; sourceTree = "<group>"; };
 		B3F2058226FBCBC600A4196B /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX11.3.sdk/System/Library/Frameworks/OpenGL.framework; sourceTree = DEVELOPER_DIR; };
 		B3FAC9B8292B522C005E8B11 /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS16.1.sdk/System/Library/Frameworks/OpenGLES.framework; sourceTree = DEVELOPER_DIR; };
-		D2A1A1B02D0E7A2F00C0FFEE /* PVMupenBridgeRumbleHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PVMupenBridgeRumbleHelper.swift; sourceTree = "<group>"; };
+		D2A1A1B02D0E7A2F00C0FFEE /* PVMupenBridgeRumbleHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = PVMupenBridgeRumbleHelper.swift; path = ../PVMupen/PVMupenBridgeRumbleHelper.swift; sourceTree = "<group>"; };
 		D2F7E65807B2D6F200F64583 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = /System/Library/Frameworks/CoreData.framework; sourceTree = "<absolute>"; };
 		DFB601802038AD13001E70F1 /* PVMupen64PlusVideoGlideN64.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PVMupen64PlusVideoGlideN64.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		DFB6018E2038AE78001E70F1 /* LICENSE */ = {isa = PBXFileReference; lastKnownFileType = text; path = LICENSE; sourceTree = "<group>"; };
