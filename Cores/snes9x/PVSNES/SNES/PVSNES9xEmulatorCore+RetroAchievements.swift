@@ -22,6 +22,9 @@ import PVCoreBridge
 import PVLogging
 import PVRcheevos
 import PVRcheevosBridge
+#if canImport(PVSNES9xBridge)
+import PVSNES9xBridge
+#endif
 
 /// rcheevos flat addresses for the SNES regions (consoleinfo.c column 1).
 private enum SNESRcheevosAddress {

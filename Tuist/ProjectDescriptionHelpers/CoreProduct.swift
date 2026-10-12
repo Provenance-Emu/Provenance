@@ -59,12 +59,8 @@ public extension CoreProduct {
     static let mGBA = CoreProduct(id: "mgba", link: .package(path: "Cores/mGBA", product: "PVCoremGBA-Dynamic"))
     static let stella = CoreProduct(id: "stella", link: .package(path: "Cores/Stella", product: "PVStella-Dynamic"))
 
-    // PVSNES9x.xcodeproj: target "PVSNES9x" builds PVSNES.framework, target "snes9x" builds snes9x.framework.
-    static let snes9x = CoreProduct(
-        id: "snes9x",
-        link: .project(path: "Cores/snes9x/PVSNES9x.xcodeproj", target: "PVSNES9x", product: "PVSNES"),
-        embeds: [.project(path: "Cores/snes9x/PVSNES9x.xcodeproj", target: "snes9x", product: "snes9x")]
-    )
+    // The Swift module is PVSNES (Core.plist's principal class); the emulator links in statically.
+    static let snes9x = CoreProduct(id: "snes9x", link: .package(path: "Cores/snes9x", product: "PVSNES9x-Dynamic"))
     static let fceu = CoreProduct(
         id: "fceu",
         link: .project(path: "Cores/FCEU/PVFCEU.xcodeproj", target: "PVFCEU", product: "PVFCEU")
