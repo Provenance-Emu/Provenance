@@ -9,7 +9,11 @@
 import Foundation
 import PVSupport
 import PVLogging
-import PVMupen64PlusBridge
+#if canImport(PVMupen64PlusBridge)
+import PVMupen64PlusBridge   // Xcode project: the bridge is a framework of this name
+#else
+import PVMupenBridge         // SwiftPM package: the ObjC bridge target
+#endif
 
 fileprivate let highResDirs: [String] = ["/hires_texture/", "/cache/", "/texture_dump/"]
 fileprivate let iniFiles: [String] = ["GLideN64.ini", "GLideN64.custom.ini", "RiceVideoLinux.ini", "mupen64plus.ini"]

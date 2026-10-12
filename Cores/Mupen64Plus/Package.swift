@@ -189,6 +189,9 @@ let pvMupenBridgeExtraCSettings: [CSetting] = [
     .headerSearchPath("../Plugins/Core/Core/src/"),
     .headerSearchPath("../Plugins/Core/Core/src/api"),
     .headerSearchPath("../Plugins/Core/Core/subprojects/md5/"),
+    // m64p_frontend.h only declares CoreDoCommand & co. as prototypes with this set
+    // (the xcodeproj sets it in its build settings).
+    .define("M64P_CORE_PROTOTYPES", to: "1"),
     .headerSearchPath("../Plugins/Core/Core/subprojects/xxhash/"),
 ]
 let pvMupenBridgeCSettings: [CSetting] = sharedCSettings + pvMupenBridgeExtraCSettings

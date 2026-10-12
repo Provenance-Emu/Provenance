@@ -29,7 +29,11 @@
 import Foundation
 import PVCoreBridge
 import PVLogging
-import PVMupen64PlusBridge
+#if canImport(PVMupen64PlusBridge)
+import PVMupen64PlusBridge   // Xcode project: the bridge is a framework of this name
+#else
+import PVMupenBridge         // SwiftPM package: the ObjC bridge target
+#endif
 import PVRcheevos
 import PVRcheevosBridge
 
