@@ -1,0 +1,6 @@
+// SwiftPM only (Package.swift, target PVAzaharBridge). Exposes just the bridge's public header: the other
+// headers in PVAzaharCore/ include azahar's C++ headers and must stay out of the module Swift imports.
+module PVAzaharBridge {
+    header "../../PVAzaharCore/PVAzaharCoreBridge.h"
+    export *
+}

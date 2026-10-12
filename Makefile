@@ -262,10 +262,16 @@ DEV_DESTINATION ?= generic/platform=iOS Simulator
 # A Run Script phase is too late for either, so this Makefile step is the producer. For Dolphin,
 # build_slice.py repacks PVlibDolphin.xcframework from whichever slices exist; the xcframework only
 # gains a slice when you build it, so `make dev-dolphin` for iOS then tvOS needs DOLPHIN_SLICE per run.
+# Slice-cache xcframeworks (.prebuilt links, package binary targets such as PVlibAzahar) must exist
+# before `tuist generate`: Tuist and Xcode resolve them before any build phase runs. `--xcframework`
+# packs every slice built so far, so run once per slice you need (device: DEV_SLICE=ios).
+# Not on by default: a cold Azahar slice takes 30-40 minutes. `make dev-azahar` sets it.
 DEV_PREBUILT_CORES ?=
 DEV_SLICE ?= ios-sim
+# Extra xcodebuild arguments (build settings) for _dev-build.
+DEV_BUILD_SETTINGS ?=
 dev-generate:
-	@for core in $(DEV_PREBUILT_CORES); do python3 Scripts/cores/build_slice.py $$core $(DEV_SLICE) || exit 1; done
+	@for core in $(DEV_PREBUILT_CORES); do python3 Scripts/cores/build_slice.py $$core $(DEV_SLICE) --xcframework || exit 1; done
 	$(TUIST) generate --no-open
 
 dev: dev-generate
@@ -279,13 +285,17 @@ _dev-build: dev-generate
 		-destination "$(DEV_DESTINATION)" \
 		-derivedDataPath "$(DEV_DERIVED)" \
 		-skipPackagePluginValidation \
-		-skipMacroValidation
+		-skipMacroValidation \
+		$(DEV_BUILD_SETTINGS)
 
 dev-ui:
 	$(MAKE) _dev-build DEV_SCHEME=Provenance-Dev-UI
 
+# PVlibAzahar is arm64-only (no x86_64 simulator slice), and a generic simulator destination builds
+# both archs, so ARCHS=arm64. Device: make dev-azahar DEV_SLICE=ios DEV_DESTINATION="generic/platform=iOS"
 dev-azahar:
-	$(MAKE) _dev-build DEV_SCHEME=Provenance-Dev-Azahar
+	$(MAKE) _dev-build DEV_SCHEME=Provenance-Dev-Azahar DEV_PREBUILT_CORES="azahar $(DEV_PREBUILT_CORES)" \
+		DEV_BUILD_SETTINGS="ARCHS=arm64 $(DEV_BUILD_SETTINGS)"
 
 dev-thin:
 	$(MAKE) _dev-build DEV_SCHEME=Provenance-Dev-Thin

@@ -32,11 +32,18 @@ else
 fi || { echo "run_harness: boot a simulator first (xcrun simctl boot \"iPhone 17\")" >&2; exit 2; }
 
 DERIVED="${DEV_DERIVED:-$ROOT/build/dev-dd}"
+EXTRA_SETTINGS=()
+if [ "$TARGET" = azahar ]; then
+    # PVAzahar's package links PVlibAzahar.xcframework, which must exist before generation; it is
+    # arm64-only, so the generic simulator destination must not also build x86_64.
+    python3 "$ROOT/Scripts/cores/build_slice.py" azahar ios-sim --xcframework
+    EXTRA_SETTINGS=(ARCHS=arm64)
+fi
 (cd "$ROOT" && mise exec -- tuist generate --no-open)
 # Ad-hoc signing for simulator SDKs comes from Dev/Config/Dev.xcconfig.
 xcodebuild build -workspace "$ROOT/Provenance-Dev.xcworkspace" -scheme "$SCHEME" \
     -destination "generic/platform=iOS Simulator" -derivedDataPath "$DERIVED" \
-    -skipPackagePluginValidation -skipMacroValidation 2>&1 | tail -3
+    -skipPackagePluginValidation -skipMacroValidation ${EXTRA_SETTINGS[@]+"${EXTRA_SETTINGS[@]}"} 2>&1 | tail -3
 
 APP="$DERIVED/Build/Products/Debug-iphonesimulator/$SCHEME.app"
 [ -d "$APP" ] || { echo "run_harness: build produced no $APP" >&2; exit 2; }
