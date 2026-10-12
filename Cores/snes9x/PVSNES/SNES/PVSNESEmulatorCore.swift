@@ -11,6 +11,9 @@ import PVEmulatorCore
 import PVLogging
 import PVRcheevosBridge
 import PVSupport
+#if canImport(PVSNES9xBridge)
+import PVSNES9xBridge
+#endif
 #if canImport(GameController)
 import GameController
 #endif
