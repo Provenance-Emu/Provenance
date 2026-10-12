@@ -460,11 +460,28 @@ static void *dlopen_myself()
     // Assistane block to load frameworks
     BOOL (^LoadPlugin)(m64p_plugin_type, NSString *) = ^(m64p_plugin_type pluginType, NSString *pluginName){
         m64p_dynlib_handle rsp_handle;
-        NSString *frameworkPath = [NSString stringWithFormat:@"%@.framework/%@", pluginName,pluginName];
         NSBundle *frameworkBundle = [NSBundle mainBundle]; //[NSBundle bundleWithIdentifier:@"org.provenance-emu.Cores"];
-        NSString *rspPath = [frameworkBundle.privateFrameworksPath stringByAppendingPathComponent:frameworkPath];
+        // The Xcode project names the framework "<name>"; the SwiftPM dynamic product
+        // ("<name>-Dynamic") that replaced it produces "<name>-Dynamic.framework/<name>-Dynamic".
+        NSString *rspPath = nil;
+        for (NSString *binaryName in @[pluginName, [pluginName stringByAppendingString:@"-Dynamic"]]) {
+            NSString *frameworkPath = [NSString stringWithFormat:@"%@.framework/%@", binaryName, binaryName];
+            NSString *candidate = [frameworkBundle.privateFrameworksPath stringByAppendingPathComponent:frameworkPath];
+            if ([[NSFileManager defaultManager] fileExistsAtPath:candidate]) {
+                rspPath = candidate;
+                break;
+            }
+        }
+        if (rspPath == nil) {
+            ELOG(@"Could not find plugin framework %@ (type %i) in %@", pluginName, pluginType, frameworkBundle.privateFrameworksPath);
+            return NO;
+        }
 
         rsp_handle = dlopen([rspPath fileSystemRepresentation], RTLD_LAZY | RTLD_LOCAL);
+        if (rsp_handle == NULL) {
+            ELOG(@"dlopen failed for plugin %@: %s", pluginName, dlerror());
+            return NO;
+        }
         ptr_PluginStartup rsp_start = (ptr_PluginStartup)osal_dynlib_getproc(rsp_handle, "PluginStartup");
         m64p_error err = rsp_start(core_handle, (__bridge void *)self, MupenDebugCallback);
         if (err != M64ERR_SUCCESS) {
