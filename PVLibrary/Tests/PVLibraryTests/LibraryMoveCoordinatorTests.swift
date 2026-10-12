@@ -25,6 +25,7 @@ final class LibraryMoveCoordinatorTests: XCTestCase {
     private final class Recorder: @unchecked Sendable {
         var switches: [LibraryLocation] = []
         var switchedFolders: [PickedLibraryFolder?] = []
+        var remaps: [[String: String]] = []
         func record(_ location: LibraryLocation, _ folder: PickedLibraryFolder?) {
             switches.append(location)
             switchedFolders.append(folder)
@@ -471,6 +472,67 @@ final class LibraryMoveCoordinatorTests: XCTestCase {
         let onB = coordinator(launched: .pickedFolder, launchedFolder: b)
         let cleaned = await onB.resumeIfNeeded(progress: nil)
         XCTAssertEqual(cleaned, .cleanedUp)
+    }
+    #endif
+
+    // MARK: - Remaps (phase 4)
+
+    #if !os(tvOS)
+    private func switchedJoinJournal() throws -> LibraryMoveJournal {
+        try write(local, "ROMs/com.provenance.snes/Game.sfc", "same bytes")
+        try write(picked, "ROMs/com.provenance.snes/Game (USA).sfc", "same bytes")
+        var journal = LibraryMoveJournal(request: .init(source: .appStorage, destination: .pickedFolder, sourceRoot: local, destinationRoot: picked,
+                                                        folders: ["ROMs"], keepCopy: false, destinationFolder: folderA()))
+        journal.phase = .switched
+        journal.entries["ROMs/com.provenance.snes/Game.sfc"] = .init(size: 10, md5: nil, modified: try LibraryMoveTestSupport.modificationDate(local, "ROMs/com.provenance.snes/Game.sfc"),
+                                                                     state: .deduplicated, destinationPath: "ROMs/com.provenance.snes/Game (USA).sfc")
+        journal.remaps = ["ROMs/com.provenance.snes/Game.sfc": "ROMs/com.provenance.snes/Game (USA).sfc"]
+        try store.save(journal)
+        return journal
+    }
+
+    func testRemapsAreAppliedBeforeCleanupDeletesSources() async throws {
+        _ = try switchedJoinJournal()
+        let c = coordinator(launched: .pickedFolder, launchedFolder: folderA())
+        let record = recorder
+        c.setPathRemapApplier { remaps in record.remaps.append(remaps) }
+        let outcome = await c.resumeIfNeeded(progress: nil)
+        XCTAssertEqual(outcome, .cleanedUp)
+        XCTAssertEqual(recorder.remaps, [["ROMs/com.provenance.snes/Game.sfc": "ROMs/com.provenance.snes/Game (USA).sfc"]])
+        XCTAssertFalse(exists(local, "ROMs/com.provenance.snes/Game.sfc"))
+    }
+
+    func testCleanupWaitsWhenTheRemapApplierThrows() async throws {
+        // Review Focus 4: a record that still names the old path must not lose its file.
+        _ = try switchedJoinJournal()
+        let c = coordinator(launched: .pickedFolder, launchedFolder: folderA())
+        struct Boom: Error {}
+        c.setPathRemapApplier { _ in throw Boom() }
+        let outcome = await c.resumeIfNeeded(progress: nil)
+        XCTAssertNil(outcome)
+        XCTAssertTrue(c.hasPendingMove)
+        XCTAssertTrue(exists(local, "ROMs/com.provenance.snes/Game.sfc"))
+    }
+
+    func testCleanupWaitsWhenNoApplierIsRegistered() async throws {
+        _ = try switchedJoinJournal()
+        let c = coordinator(launched: .pickedFolder, launchedFolder: folderA())
+        let outcome = await c.resumeIfNeeded(progress: nil)
+        XCTAssertNil(outcome)
+        XCTAssertTrue(exists(local, "ROMs/com.provenance.snes/Game.sfc"))
+    }
+
+    func testAJournalWithoutRemapsNeedsNoApplier() async throws {
+        try write(local, "ROMs/com.provenance.snes/Game.sfc", "rom")
+        try write(picked, "ROMs/com.provenance.snes/Game.sfc", "rom")
+        var journal = LibraryMoveJournal(request: .init(source: .appStorage, destination: .pickedFolder, sourceRoot: local, destinationRoot: picked,
+                                                        folders: ["ROMs"], keepCopy: false, destinationFolder: folderA()))
+        journal.phase = .switched
+        journal.entries["ROMs/com.provenance.snes/Game.sfc"] = .init(size: 3, md5: nil, modified: try LibraryMoveTestSupport.modificationDate(local, "ROMs/com.provenance.snes/Game.sfc"),
+                                                                     state: .copied, destinationPath: nil)
+        try store.save(journal)
+        let outcome = await coordinator(launched: .pickedFolder, launchedFolder: folderA()).resumeIfNeeded(progress: nil)
+        XCTAssertEqual(outcome, .cleanedUp)
     }
     #endif
 

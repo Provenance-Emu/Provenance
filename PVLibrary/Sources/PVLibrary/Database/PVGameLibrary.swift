@@ -39,6 +39,7 @@ public class PVGameLibrary<T> where T: DatabaseDriver {
         
         // Finish or clean up a journaled library move, then repair misplaced ROM records.
         Task {
+            LibraryMoveCoordinator.shared.setPathRemapApplier { try await LibraryPathRemapper.apply($0) }
             await LibraryMoveCoordinator.shared.resumeIfNeeded()
             if PVFeatureFlags.shared.isEnabled(.romPathMigrator) {
                 do {

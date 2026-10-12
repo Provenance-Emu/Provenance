@@ -21,6 +21,9 @@ public final class LibraryMoveCoordinator: @unchecked Sendable {
 
     public typealias RootProvider = @Sendable (LibraryLocation, PickedLibraryFolder?) -> URL?
 
+    /// Rewrites the database so records named by a journal's `remaps` (source path → shared path) point at the shared copies.
+    public typealias PathRemapApplier = @Sendable ([String: String]) async throws -> Void
+
     private let journalStore: LibraryMoveJournalStore?
     private let rootProvider: RootProvider
     /// The location the library resolves to (`LibraryLocation.current`); gates starting a move.
@@ -34,6 +37,8 @@ public final class LibraryMoveCoordinator: @unchecked Sendable {
     private let folderStore: PickedLibraryFolderStore
     private let planner: LibraryMovePlanner
     private let engine: LibraryMoveEngine?
+    private let remapLock = NSLock()
+    private var remapApplier: PathRemapApplier?
     /// Defaults shared by every app of the App Group; each app records its location here (see `anotherVariantUsesAppGroup`).
     private let sharedDefaults: UserDefaults?
     /// This app's key suffix in `sharedDefaults`.
@@ -97,6 +102,20 @@ public final class LibraryMoveCoordinator: @unchecked Sendable {
             return LibraryLocation.pickedFolderAtLaunch.url
         }
         #endif
+    }
+
+    /// Registers what rewrites the database when a join de-duplicated files (`LibraryPathRemapper` in PVLibrary).
+    /// `PVGameLibrary.init` calls this before `resumeIfNeeded()`.
+    public func setPathRemapApplier(_ applier: @escaping PathRemapApplier) {
+        remapLock.lock()
+        remapApplier = applier
+        remapLock.unlock()
+    }
+
+    private func currentRemapApplier() -> PathRemapApplier? {
+        remapLock.lock()
+        defer { remapLock.unlock() }
+        return remapApplier
     }
 
     /// A journal file exists: either a copy to finish or a cleanup owed on the next launch. A pure check.
@@ -169,6 +188,19 @@ public final class LibraryMoveCoordinator: @unchecked Sendable {
             }
         }
         if journal.phase != .copying {
+            if let remaps = journal.remaps, !remaps.isEmpty {
+                // D15: records must point at the shared copies before their sources are deleted.
+                guard let applier = currentRemapApplier() else {
+                    ELOG("LibraryMove: \(remaps.count) record remaps are pending but no applier is registered; cleanup waits")
+                    return nil
+                }
+                do {
+                    try await applier(remaps)
+                } catch {
+                    ELOG("LibraryMove: applying record remaps failed: \(error.localizedDescription); cleanup waits")
+                    return nil
+                }
+            }
             journal = carryNewTopLevelEntries(journal, sourceRoot: sourceRoot)
             journal = keepingCopyWhileAnotherVariantUsesTheGroup(journal)
         }
