@@ -3,6 +3,88 @@
 
 import PackageDescription
 
+// Targets and their settings are built up as typed constants: one giant `Package(...)`
+// literal with inline `+` concatenations made the manifest type-check time out.
+
+// MARK: ------- Core --------
+
+// Module is PVGenesis so Core.plist's principal class `PVGenesis.PVCoreGenesisPlus`
+// resolves in both the xcodeproj and the SwiftPM build.
+let coreTarget: Target = .target(
+    name: "PVGenesis",
+    path: "Sources/PVCoreGenesisPlus",
+    dependencies: [
+        "PVEmulatorCore",
+        "PVCoreBridge",
+        "PVLogging",
+        "PVAudio",
+        "PVSupport",
+        "PVCoreGenesisPlusBridge",
+        "libgenesisplus",
+        .product(name: "PVRcheevos", package: "PVRcheevos"),
+        .product(name: "PVRcheevosBridge", package: "PVRcheevosBridge"),
+    ],
+    resources: [
+        .process("Resources/Core.plist")
+    ],
+    cSettings: GenesisSettings.defines,
+    plugins: [
+        .plugin(name: "SwiftGenPlugin", package: "SwiftGenPlugin")
+    ]
+)
+
+// MARK: ------- Bridge --------
+
+let bridgeExtraSettings: [CSetting] = [
+    // The bridge picks `@import libgenesisplus` over the framework's -Swift.h.
+    .define("SWIFT_MODULE", to: "1"),
+    .define("HAVE_COCOATOUCH", to: "1"),
+    .headerSearchPath("../libgenesisplus/libretro"),
+    .headerSearchPath("../libgenesisplus/other"),
+]
+let bridgeSettings: [CSetting] = GenesisSettings.defines
+    + bridgeExtraSettings
+    + GenesisSettings.headerPaths(prefix: "../libgenesisplus/")
+
+let bridgeTarget: Target = .target(
+    name: "PVCoreGenesisPlusBridge",
+    dependencies: [
+        "PVEmulatorCore",
+        "PVCoreBridge",
+        "PVCoreObjCBridge",
+        "PVSupport",
+        "PVObjCUtils",
+        "PVLogging",
+        "PVAudio",
+        "libgenesisplus"
+    ],
+    publicHeadersPath: "include",
+    cSettings: bridgeSettings
+)
+
+// MARK: ------- libgenesisplus --------
+
+let libgenesisExtraSettings: [CSetting] = [
+    .headerSearchPath("libretro"),
+    .headerSearchPath("other"),
+]
+let libgenesisSettings: [CSetting] = GenesisSettings.defines
+    + libgenesisExtraSettings
+    + GenesisSettings.headerPaths(prefix: "")
+
+let libgenesisTarget: Target = .target(
+    name: "libgenesisplus",
+    exclude: [
+        "other"
+    ],
+    sources: Sources.libgenesis,
+    packageAccess: true,
+    cSettings: libgenesisSettings,
+    linkerSettings: [
+        .linkedLibrary("z")
+    ]
+)
+
 let package = Package(
     name: "PVCoreGenesisPlus",
     platforms: [
@@ -36,77 +118,7 @@ let package = Package(
         .package(url: "https://github.com/Provenance-Emu/SwiftGenPlugin.git", from: "1.1.3"),
 
     ],
-    targets: [
-
-        // MARK: ------- Core --------
-
-        // Module is PVGenesis so Core.plist's principal class `PVGenesis.PVCoreGenesisPlus`
-        // resolves in both the xcodeproj and the SwiftPM build.
-        .target(
-            name: "PVGenesis",
-            path: "Sources/PVCoreGenesisPlus",
-            dependencies: [
-                "PVEmulatorCore",
-                "PVCoreBridge",
-                "PVLogging",
-                "PVAudio",
-                "PVSupport",
-                "PVCoreGenesisPlusBridge",
-                "libgenesisplus",
-                .product(name: "PVRcheevos", package: "PVRcheevos"),
-                .product(name: "PVRcheevosBridge", package: "PVRcheevosBridge"),
-            ],
-            resources: [
-                .process("Resources/Core.plist")
-            ],
-            cSettings: GenesisSettings.defines,
-            plugins: [
-                .plugin(name: "SwiftGenPlugin", package: "SwiftGenPlugin")
-            ]
-        ),
-
-        // MARK: ------- Bridge --------
-        .target(
-            name: "PVCoreGenesisPlusBridge",
-            dependencies: [
-                "PVEmulatorCore",
-                "PVCoreBridge",
-                "PVCoreObjCBridge",
-                "PVSupport",
-                "PVObjCUtils",
-                "PVLogging",
-                "PVAudio",
-                "libgenesisplus"
-            ],
-            publicHeadersPath: "include",
-            cSettings: GenesisSettings.defines + [
-                // The bridge picks `@import libgenesisplus` over the framework's -Swift.h.
-                .define("SWIFT_MODULE", to: "1"),
-                .define("HAVE_COCOATOUCH", to: "1"),
-                .headerSearchPath("../libgenesisplus/libretro"),
-                .headerSearchPath("../libgenesisplus/other"),
-            ] + GenesisSettings.headerPaths(prefix: "../libgenesisplus/")
-        ),
-
-        // MARK: ------- libgenesisplus --------
-
-        .target(
-            name: "libgenesisplus",
-            exclude: [
-                "other"
-            ],
-            sources: Sources.libgenesis,
-            packageAccess: true,
-            cSettings: GenesisSettings.defines + [
-                .headerSearchPath("libretro"),
-                .headerSearchPath("other"),
-            ] + GenesisSettings.headerPaths(prefix: ""),
-            linkerSettings: [
-                .linkedLibrary("z")
-            ]
-        ),
-
-    ],
+    targets: [coreTarget, bridgeTarget, libgenesisTarget],
     swiftLanguageVersions: [.v5, .v6],
     cLanguageStandard: .gnu11,
     cxxLanguageStandard: .gnucxx14
