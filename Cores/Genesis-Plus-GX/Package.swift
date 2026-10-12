@@ -119,7 +119,7 @@ let package = Package(
 
     ],
     targets: [coreTarget, bridgeTarget, libgenesisTarget],
-    swiftLanguageVersions: [.v5, .v6],
+    swiftLanguageVersions: [.v5], // v6 strict concurrency rejects the options table (nonisolated static state)
     cLanguageStandard: .gnu11,
     cxxLanguageStandard: .gnucxx14
 )
