@@ -28,6 +28,8 @@ final class LibraryMoveJournalTests: XCTestCase {
         journal.entries["ROMs/com.provenance.snes/Game.sfc"] = .init(size: 42, md5: "abc", modified: Date(timeIntervalSince1970: 1_700_000_000), state: .copied, destinationPath: nil)
         journal.entries["Save States/Game/s.svs"] = .init(size: 7, md5: nil, modified: Date(timeIntervalSince1970: 1_700_000_100),
                                                           state: .conflict, destinationPath: "Conflicts/Save States/Game/s.svs")
+        journal.inFlight = ["ROMs/com.provenance.snes/Next.sfc"]
+        journal.createdDirectories = ["ROMs/com.provenance.snes"]
         return journal
     }
 

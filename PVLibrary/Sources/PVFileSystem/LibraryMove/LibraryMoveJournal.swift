@@ -55,6 +55,12 @@ public struct LibraryMoveJournal: Codable, Sendable, Equatable {
     public var updatedAt: Date
     /// Relative source path → what happened to it.
     public var entries: [String: Entry]
+    /// Destination paths (relative to the destination root) that did not exist when the engine claimed them and that it
+    /// is about to write. After a crash an unjournaled file at one of these paths is a torn copy of ours and may be
+    /// removed; a file anywhere else is not ours and is never deleted or overwritten.
+    public var inFlight: [String]
+    /// Destination directories (relative) that did not exist when claimed. Rollback removes the ones still empty.
+    public var createdDirectories: [String]
 
     public init(request: LibraryMoveRequest, now: Date = Date()) {
         version = Self.currentVersion
@@ -67,6 +73,8 @@ public struct LibraryMoveJournal: Codable, Sendable, Equatable {
         createdAt = now
         updatedAt = now
         entries = [:]
+        inFlight = []
+        createdDirectories = []
     }
 }
 
