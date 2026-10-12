@@ -365,7 +365,10 @@ void GBIInfo::loadMicrocode(u32 uc_start, u32 uc_dstart, u16 uc_dsize)
 		current.NoN = info.NoN;
 		current.negativeY = info.negativeY;
 		current.fast3DPersp = info.fast3DPerspNorm;
-		LOG(LOG_VERBOSE, "Load microcode type: %d crc: 0x%08x romname: %s\n", current.type, uc_crc, RSP.romname);
+		// Warning, not verbose: the iOS logger drops anything above LOG_WARNING, and this
+		// line is the one that says whether a game got its real microcode or Fast3D.
+		// 11 = F3DGOLDEN (GoldenEye), 0 = F3D, 17 = F3DZEX2OOT (Zelda).
+		LOG(LOG_WARNING, "Microcode by CRC type %d crc 0x%08x rom %s\n", current.type, uc_crc, RSP.romname);
 		_makeCurrent(&current);
 		return;
 	}
@@ -450,7 +453,9 @@ void GBIInfo::loadMicrocode(u32 uc_start, u32 uc_dstart, u16 uc_dsize)
 
 			if (type != NONE) {
 				current.type = type;
-				LOG(LOG_VERBOSE, "Load microcode (%s) type: %d crc: 0x%08x romname: %s\n", uc_str, current.type, uc_crc, RSP.romname);
+				// CRC missed, so the banner text decided the microcode. "RSP SW …" lands on
+				// F3D (type 0), which does not implement GoldenEye's display lists.
+				LOG(LOG_WARNING, "Microcode by text \"%s\" type %d crc 0x%08x rom %s\n", uc_str, current.type, uc_crc, RSP.romname);
 				_makeCurrent(&current);
 				return;
 			}
@@ -459,6 +464,7 @@ void GBIInfo::loadMicrocode(u32 uc_start, u32 uc_dstart, u16 uc_dsize)
 		}
 	}
 
+	LOG(LOG_WARNING, "Microcode unrecognized crc 0x%08x banner \"%s\" rom %s\n", uc_crc, uc_str, RSP.romname);
 	assert(false && "unknown ucode!!!'n");
 	_makeCurrent(&current);
 }
