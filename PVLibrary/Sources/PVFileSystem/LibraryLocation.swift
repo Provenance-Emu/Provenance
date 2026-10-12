@@ -34,24 +34,34 @@ public enum LibraryLocation: String, Sendable, CaseIterable {
     /// library root and `URL.documentsPath` can't drift apart mid-session.
     static let storedAtLaunch: LibraryLocation? = Defaults[.libraryLocation].flatMap(LibraryLocation.init(rawValue:))
 
+    /// The legacy `useAppGroups` toggle as it was when this process first asked. Snapshotted like
+    /// `storedAtLaunch`: `switchStored(to:)` rewrites the toggle, and the running process must not follow.
+    static let useAppGroupsAtLaunch: Bool = Defaults[.useAppGroups]
+
     /// `true` when this process' Documents and Caches live in the App Group container.
-    /// The stored location wins; the legacy `useAppGroups` toggle is the fallback.
+    /// The stored location wins; the legacy `useAppGroups` toggle is the fallback. Fixed per process.
     public static var usesAppGroupContainer: Bool {
         #if os(tvOS)
         return false
         #else
-        if let stored = storedAtLaunch { return stored == .appGroup }
-        return Defaults[.useAppGroups]
+        return usesAppGroupContainer(stored: storedAtLaunch, useAppGroupsAtLaunch: useAppGroupsAtLaunch)
         #endif
     }
 
-    /// The location the current settings select.
+    /// A stored `.iCloudDrive` is not honoured until phase 5 (see `resolve`), so it counts as unset here too.
+    static func usesAppGroupContainer(stored: LibraryLocation?, useAppGroupsAtLaunch: Bool) -> Bool {
+        if let stored, stored != .iCloudDrive { return stored == .appGroup }
+        return useAppGroupsAtLaunch
+    }
+
+    /// The location this process uses. The appGroup/appStorage axis is the launch snapshot; only the
+    /// iCloud Drive axis follows the live iCloud settings.
     public static var current: LibraryLocation {
         #if os(tvOS)
         return .appStorage
         #else
         return resolve(stored: storedAtLaunch,
-                       useAppGroups: Defaults[.useAppGroups],
+                       useAppGroups: useAppGroupsAtLaunch,
                        iCloudSync: Defaults[.iCloudSync],
                        iCloudDriveMode: Defaults[.iCloudSyncMode].isICloudDrive)
         #endif

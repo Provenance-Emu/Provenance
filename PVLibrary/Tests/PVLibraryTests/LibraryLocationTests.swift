@@ -9,6 +9,8 @@
 //
 
 import XCTest
+import Defaults
+import PVSettings
 @testable import PVFileSystem
 
 final class LibraryLocationTests: XCTestCase {
@@ -75,14 +77,71 @@ final class LibraryLocationTests: XCTestCase {
         XCTAssertEqual(LibraryLocation.iCloudDrive.rootURL(localDocuments: local, appGroupDocuments: group, iCloudDocuments: nil, usesAppGroupContainer: true), group)
     }
 
-    func testAppFilesRootFollowsTheSameAxisAsTheLibraryRoot() {
-        // documentsPath is fixed at launch from the same precedence LibraryLocation uses.
-        #if os(tvOS)
-        XCTAssertEqual(URL.documentsPath, URL.cachesPathLocal)
-        #else
-        let expected = LibraryLocation.usesAppGroupContainer ? (URL.documentsPathAppGroup ?? URL.documentsPathLocal) : URL.documentsPathLocal
-        XCTAssertEqual(URL.documentsPath, expected)
-        #endif
+    // MARK: - Launch snapshot
+
+    func testAppGroupAxisFollowsStoredThenLaunchToggle() {
+        XCTAssertTrue(LibraryLocation.usesAppGroupContainer(stored: .appGroup, useAppGroupsAtLaunch: false))
+        XCTAssertFalse(LibraryLocation.usesAppGroupContainer(stored: .appStorage, useAppGroupsAtLaunch: true))
+        XCTAssertTrue(LibraryLocation.usesAppGroupContainer(stored: nil, useAppGroupsAtLaunch: true))
+        XCTAssertFalse(LibraryLocation.usesAppGroupContainer(stored: nil, useAppGroupsAtLaunch: false))
+        // A stored iCloudDrive is ignored (like `resolve`), so the toggle decides.
+        XCTAssertTrue(LibraryLocation.usesAppGroupContainer(stored: .iCloudDrive, useAppGroupsAtLaunch: true))
+        XCTAssertFalse(LibraryLocation.usesAppGroupContainer(stored: .iCloudDrive, useAppGroupsAtLaunch: false))
+    }
+
+    func testSwitchStoredWritesTheSettingMirrorsTheToggleAndPostsOnce() throws {
+        // Force the launch snapshots before this test writes anything.
+        _ = LibraryLocation.storedAtLaunch
+        _ = LibraryLocation.useAppGroupsAtLaunch
+        let savedLocation = Defaults[.libraryLocation]
+        let savedToggle = Defaults[.useAppGroups]
+        addTeardownBlock {
+            Defaults[.libraryLocation] = savedLocation
+            Defaults[.useAppGroups] = savedToggle
+        }
+
+        var received: [Notification] = []
+        let token = NotificationCenter.default.addObserver(forName: .libraryLocationDidChange, object: nil, queue: nil) { received.append($0) }
+        addTeardownBlock { NotificationCenter.default.removeObserver(token) }
+
+        LibraryLocation.switchStored(to: .appGroup)
+        XCTAssertEqual(Defaults[.libraryLocation], "appGroup")
+        XCTAssertTrue(Defaults[.useAppGroups])
+        XCTAssertEqual(received.count, 1)
+        XCTAssertEqual(received.first?.userInfo?[LibraryLocation.requiresRelaunchUserInfoKey] as? Bool, true)
+
+        LibraryLocation.switchStored(to: .appStorage)
+        XCTAssertEqual(Defaults[.libraryLocation], "appStorage")
+        XCTAssertFalse(Defaults[.useAppGroups])
+        XCTAssertEqual(received.count, 2)
+    }
+
+    func testSwitchStoredDoesNotMoveTheRunningProcess() {
+        // The first switch of a legacy user rewrites useAppGroups; the library root and the app-files
+        // root of this process must stay where they were at launch.
+        _ = LibraryLocation.storedAtLaunch
+        _ = LibraryLocation.useAppGroupsAtLaunch
+        let savedLocation = Defaults[.libraryLocation]
+        let savedToggle = Defaults[.useAppGroups]
+        addTeardownBlock {
+            Defaults[.libraryLocation] = savedLocation
+            Defaults[.useAppGroups] = savedToggle
+        }
+
+        let axisBefore = LibraryLocation.usesAppGroupContainer
+        let currentBefore = LibraryLocation.current
+        let documentsBefore = URL.documentsPath
+        let cachesBefore = URL.cachesPath
+        let legacyBefore = URL.USE_APP_GROUPS
+
+        LibraryLocation.switchStored(to: axisBefore ? .appStorage : .appGroup)
+
+        XCTAssertEqual(LibraryLocation.usesAppGroupContainer, axisBefore)
+        XCTAssertEqual(LibraryLocation.current, currentBefore)
+        XCTAssertEqual(URL.documentsPath, documentsBefore)
+        XCTAssertEqual(URL.cachesPath, cachesBefore)
+        XCTAssertEqual(URL.USE_APP_GROUPS, legacyBefore)
+        XCTAssertEqual(URL.documentsiCloudOrLocalPath, currentBefore.rootURL)
     }
 
     func testLibraryAccessorsUseTheCurrentRoot() {
