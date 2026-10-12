@@ -310,6 +310,8 @@ let package = Package(
                 "SDL"
             ],
             path: "Sources/Plugins/Video/rice/",
+            // Plugins are dlopen'd, not imported: no include/ dir, so the whole target dir is the header root.
+            publicHeadersPath: "./",
             sources: [
                 "Blender.cpp",
                 "Combiner.cpp",
