@@ -46,13 +46,21 @@ public actor PatchApplier {
             throw PatchError.unsupportedFormat(patchURL.pathExtension)
         }
 
-        progress?(PatchProgress(fractionCompleted: 0.05, status: "Reading files…"))
-        let patchFileData = try Data(contentsOf: patchURL, options: .mappedIfSafe)
-        let romData = try Data(contentsOf: romURL, options: .mappedIfSafe)
         let stem = outputStem ?? Self.defaultOutputStem(
             romURL: romURL,
             patchURL: patchURL
         )
+
+        // Fast path: unchanged inputs (size + mtime) and an intact output → no ROM read at all.
+        if let fast = await cache.fastLookup(romURL: romURL, patchURL: patchURL, outputStem: stem) {
+            progress?(PatchProgress(fractionCompleted: 1.0, status: "Using cached patch…"))
+            ILOG("PatchApplier: fingerprint hit for \(patchURL.lastPathComponent)")
+            return fast
+        }
+
+        progress?(PatchProgress(fractionCompleted: 0.05, status: "Reading files…"))
+        let patchFileData = try Data(contentsOf: patchURL, options: .mappedIfSafe)
+        let romData = try Data(contentsOf: romURL, options: .mappedIfSafe)
         let sourceSHA = PatchHashing.sha256Hex(romData)
         let patchSHA = PatchHashing.sha256Hex(patchFileData)
 
@@ -65,7 +73,7 @@ public actor PatchApplier {
             progress?(PatchProgress(fractionCompleted: 1.0, status: "Using cached patch…"))
             let patchedData = try Data(contentsOf: cached, options: .mappedIfSafe)
             ILOG("PatchApplier: returning cached result for \(patchURL.lastPathComponent)")
-            return PatchArtifact(
+            let artifact = PatchArtifact(
                 url: cached,
                 outputStem: stem,
                 patchedMD5: PatchHashing.md5Hex(patchedData),
@@ -75,6 +83,8 @@ public actor PatchApplier {
                 format: format,
                 wasCached: true
             )
+            await cache.recordFastLookup(artifact, romURL: romURL, patchURL: patchURL)
+            return artifact
         }
 
         progress?(PatchProgress(fractionCompleted: 0.25, status: "Applying \(format.displayName)…"))
@@ -92,7 +102,7 @@ public actor PatchApplier {
             )
             progress?(PatchProgress(fractionCompleted: 1.0, status: "Done"))
             ILOG("PatchApplier: cached patched ROM at \(cachedURL.path)")
-            return PatchArtifact(
+            let artifact = PatchArtifact(
                 url: cachedURL,
                 outputStem: stem,
                 patchedMD5: PatchHashing.md5Hex(patched),
@@ -102,6 +112,8 @@ public actor PatchApplier {
                 format: format,
                 wasCached: false
             )
+            await cache.recordFastLookup(artifact, romURL: romURL, patchURL: patchURL)
+            return artifact
         } catch {
             throw PatchError.outputWriteFailed(error)
         }

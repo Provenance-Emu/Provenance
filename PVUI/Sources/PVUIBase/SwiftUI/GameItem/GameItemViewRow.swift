@@ -92,6 +92,13 @@ struct GameItemViewRow<Presentable: GameItemPresentable>: SwiftUI.View, Equatabl
                     GameItemThumbnail(artwork: artwork, gameTitle: game.title, boxartAspectRatio: game.boxartAspectRatio)
                         .frame(width: 60, height: 60)
                         .scaleEffect(hoverScale)
+                        .overlay(alignment: .bottomLeading) {
+                            if game.isPatchVariant {
+                                PatchIndicatorView()
+                                    .scaleEffect(0.75, anchor: .bottomLeading)
+                                    .padding(2)
+                            }
+                        }
                         .overlay(alignment: .topTrailing) {
                             if shouldShowCloudIndicator {
                                 CloudSyncIndicatorView(

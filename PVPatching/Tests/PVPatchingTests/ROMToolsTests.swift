@@ -252,3 +252,30 @@ final class VariableLengthIntegerTests: XCTestCase {
         XCTAssertEqual(readVLI(Data(repeating: 0x7F, count: 12), pos: &pos), Int.max)
     }
 }
+
+final class VariantOutputStemTests: XCTestCase {
+    private let rom = URL(fileURLWithPath: "/roms/Game.gba")
+
+    /// Save-state and battery folders are keyed by the ROM stem, so a variant named
+    /// exactly like its base ROM would share (and on delete, wipe) the base game's saves.
+    func testSameNamedPatchNeverReusesTheBaseStem() {
+        let patch = URL(fileURLWithPath: "/patches/Game.ips")
+        let stem = PatchApplier.defaultOutputStem(romURL: rom, patchURL: patch)
+        XCTAssertNotEqual(stem.lowercased(), "game")
+        XCTAssertEqual(stem, "Game [patched]")
+    }
+
+    func testCaseAndWhitespaceVariantsOfTheBaseStemAreRejected() {
+        XCTAssertEqual(PatchApplier.variantSafeStem("GAME", romURL: rom), "Game [patched]")
+        XCTAssertEqual(PatchApplier.variantSafeStem("  game ", romURL: rom), "Game [patched]")
+        XCTAssertEqual(PatchApplier.variantSafeStem("", romURL: rom), "Game [patched]")
+    }
+
+    func testDistinctStemsPassThrough() {
+        XCTAssertEqual(PatchApplier.variantSafeStem("Game (Hard Mode)", romURL: rom), "Game (Hard Mode)")
+        let patch = URL(fileURLWithPath: "/patches/Game - English v1.2.bps")
+        XCTAssertEqual(PatchApplier.defaultOutputStem(romURL: rom, patchURL: patch), "Game - English v1.2")
+        let unrelated = URL(fileURLWithPath: "/patches/translation.bps")
+        XCTAssertEqual(PatchApplier.defaultOutputStem(romURL: rom, patchURL: unrelated), "Game [translation]")
+    }
+}
