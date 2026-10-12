@@ -271,6 +271,9 @@ A second, generated workspace for fast iteration. `Provenance.xcodeproj` still s
 
 ### Code conventions
 
+- **Library storage: `LibraryLocation` owns the roots; never move library folders by hand.** `URL.documentsPath`/`cachesPath` and `LibraryLocation.current` share one launch-fixed precedence (stored `libraryLocation` → legacy `useAppGroups`, both snapshotted at launch). Flipping `useAppGroups` alone no longer moves files.
+  - Moves go through `LibraryMoveCoordinator` (PVFileSystem `LibraryMove/`): journaled in the app's Application Support, verified (size; MD5 under `ROMs/`+`BIOS/`), switched by writing the setting, and cleaned up on the *next* launch after a delta sweep.
+  - Leaving the App Group moves every top-level entry except hidden files, `.realm` names and the journal. A source changed since the journal goes to `Conflicts/`; recovery never deletes a destination file the move didn't write.
 - **Notification names — no magic strings.** Declare `FOUNDATION_EXPORT NSNotificationName const FooBarNotification;` in an ObjC `.h`, define in the matching `.mm`, mirror via `Notification.Name` extension in Swift referencing the same string. Posters reference the const; observers reference `Notification.Name.fooBar`. Single string literal lives in one `.mm` — never at a call site.
 - **Email in public-facing files / comments:** use `git@joemattiello.com` (SECURITY.md, README, GitHub issue comments, anything that ships publicly).
 - **ObjC categories in SwiftPM modules can be silently elided.** When a category is declared in a separate `.h` file referenced by a modulemap, Swift module synthesis may drop it entirely — no error, just "no member" at call sites. Workaround: declare methods in the main `@interface` block. Known to affect `(LightGun)` categories on PVStellaBridge and PVProSystemGameCore. Other categories (Cheats, Trackball) in the same files work fine — root cause unclear.

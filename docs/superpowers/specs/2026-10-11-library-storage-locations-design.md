@@ -92,13 +92,9 @@ A shared folder needs a layout every app agrees on:
   - The **app-files root** is `URL.documentsPath`: Imports, core configs, and the resolver's `localBaseURL`. It stays per app.
   - The **library root** is `LibraryLocation.current.rootURL`.
   - The two already differ today, for example with `useAppGroups` and iCloud Drive both on.
-- **Phase 1 doesn't store the location.** It derives it from today's settings, so it can't disagree with them:
-  - iCloud sync on and iCloud Drive mode → `.iCloudDrive`;
-  - otherwise `useAppGroups` → `.appGroup`;
-  - otherwise `.appStorage`;
-  - on tvOS, always `.appStorage`.
-
-  A stored `libraryLocation` setting arrives with the move engine, which then owns switching, and replaces those reads.
+- **The location is stored since phase 2** as `Defaults[.libraryLocation]` (`LibraryLocation.rawValue`, `nil` until the first move). Precedence, in `LibraryLocation.resolve`: iCloud Drive (sync on + Drive mode, still derived from the iCloud settings until phase 5) → the stored value → the legacy `useAppGroups` toggle. The move engine's switch writes both the stored value and `useAppGroups`, so a build that only knows `useAppGroups` agrees after a downgrade.
+  - The appGroup/appStorage axis, including `useAppGroups`, is snapshotted once per process (`storedAtLaunch`, `useAppGroupsAtLaunch`), and `URL.documentsPath` / `URL.cachesPath` follow the same value (`LibraryLocation.usesAppGroupContainer`), so the app-files root and the library root cannot disagree mid-session. A switch takes effect at the next launch; the UI tells the user to quit and reopen.
+  - On tvOS the location is always `.appStorage` and the move engine is a no-op.
 - **Phase 3 picked folder:** the bookmark is stored in the app's own defaults, not shared, along with a display name for the settings UI.
 
 ### Root computations not yet routed through `LibraryLocation` (phase 3 work)
@@ -111,7 +107,6 @@ A shared folder needs a layout every app agrees on:
   - `iCloudDriveSync`
   - `Container.documentsURL`
   - `LegacyFileMover` (compares `documentsPath` with the library root)
-  - `PVGameLibrary+Migration.oldPaths`, which phase 2 retires
   - `GameFileStatusService`
   - `WidgetDataWriter+Realm`
   - `AppGroupFileBrowserView`
@@ -127,6 +122,12 @@ Use one move engine for every pair of locations, including leaving the App Group
 3. **Switch.** Set `libraryLocation` to the destination. Records keep their partial paths, so nothing in the database is rewritten; the library now resolves against the new root.
 4. **Clean up.** Delete the source files only after a successful switch, and only files the journal recorded as copied. An option: "Keep a copy in the old location".
 5. **Conflicts.** If a file of the same name already exists with a different hash, rename the incoming file and put it in `Conflicts/`, as today.
+6. **Cleanup timing (phase 2 decision).** Because the location is fixed per process, cleanup runs on the launch after the switch, once the app is on the new root. A delta sweep first copies anything the old process wrote after its files were journaled: a source with no journal entry is copied normally, and a source whose size or modification time (even at the same size) differs from the journal goes to `Conflicts/` and is never treated as identical. Then the journaled sources are deleted (only if their copy still verifies), emptied folders removed and the journal dropped. The journal lives at `<Application Support>/LibraryMove/move-journal.json` in the app's own container.
+
+Safety rules the engine keeps:
+- **What moves.** Leaving the App Group moves every top-level entry of the group's Documents except hidden files, names containing `.realm` and the journal. It is not a fixed folder list, so folders such as `Azahar` or `DeltaSkins` and loose files move too. The Realm file is never part of a move.
+- **Recovery never deletes a destination file the move didn't write.** Before each batch the engine records in the journal the destination paths it is about to create; on resume only an unjournaled file at one of those claimed paths (a torn copy of ours) is removed. A pre-existing destination file goes through the `Conflicts/` path instead.
+- **Rollback is narrow.** Cancelling before the switch removes the files the move copied and only the directories it created, never a folder that already existed.
 
 Joining an existing shared library (a folder that already has a manifest): copy only files that aren't already there, matched by MD5, then switch. Duplicates get de-duplicated against the shared copy.
 
@@ -172,7 +173,7 @@ Settings › Library › Storage location:
 ## Suggested phasing
 
 1. `LibraryLocation` as the single source of the library root, derived from today's settings; `Paths` routed through it; today's stored partial paths pinned by tests. No UI; behaviour unchanged. **Done.**
-2. The move engine (journal, verify, switch) with tests, starting with App Group → App storage, which retires `oldPaths`.
+2. The move engine (journal, verify, switch) with tests, starting with App Group → App storage, which retires `oldPaths`. **Done** (`docs/superpowers/plans/2026-10-11-storage-move-engine.md`; the only UI is a debug row in `FeatureFlagsDebugView`).
 3. The picked-folder location, folder picker, bookmark lifecycle, failure UI.
 4. The shared-library manifest, joining with de-duplication, and the rescan triggers.
 5. iCloud Drive as a move target and source, through the same engine.
