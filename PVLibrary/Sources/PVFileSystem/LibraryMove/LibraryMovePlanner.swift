@@ -55,9 +55,15 @@ public struct LibraryMovePlanner: Sendable {
     }
 
     /// `volumeAvailableCapacityForImportantUsage`: what iOS would free up for user-initiated work.
+    /// tvOS and watchOS do not have that key; they report the plain available capacity.
     public static func volumeCapacity(_ url: URL) throws -> Int64 {
+        #if os(tvOS) || os(watchOS)
+        let values = try url.resourceValues(forKeys: [.volumeAvailableCapacityKey])
+        return Int64(values.volumeAvailableCapacity ?? 0)
+        #else
         let values = try url.resourceValues(forKeys: [.volumeAvailableCapacityForImportantUsageKey, .volumeAvailableCapacityKey])
         return values.volumeAvailableCapacityForImportantUsage ?? Int64(values.volumeAvailableCapacity ?? 0)
+        #endif
     }
 
     /// Every top-level name under `root` that a move carries: folders and loose files, sorted.
