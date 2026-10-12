@@ -79,6 +79,16 @@ for core in CoreProduct.all {
     }
 }
 
+// 2c. Slice-cache xcframeworks (package binary targets) are build outputs, never checked in, so a clean
+// checkout lacks them. The package manifest drops its binary target when the xcframework is absent
+// (other apps still resolve), so this is a note, not a failure.
+for core in CoreProduct.all {
+    guard let slice = core.slice, !exists(slice.xcframework) else { continue }
+    let use = usedCoreIDs.contains(core.id) ? "used by a focused app" : "unused by any focused app"
+    print("dev manifest: note: '\(core.id)' (\(use)) needs \(slice.xcframework): "
+        + "make dev-generate DEV_PREBUILT_CORES=\(slice.core) DEV_SLICE=<ios|ios-sim|tvos|tvos-sim>")
+}
+
 // 3. No local package declared twice, and each has a Package.swift.
 let locals = DevSettings.localPackagePaths(for: apps)
 if Set(locals).count != locals.count {

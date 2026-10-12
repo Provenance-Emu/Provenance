@@ -44,6 +44,9 @@ public struct FocusedApp {
 
     public var name: String { "Provenance-Dev-\(title)" }
 
+    /// True when a core's library lacks an x86_64 simulator slice (PVlibAzahar).
+    public var isArm64Only: Bool { cores.contains(where: \.arm64Only) }
+
     /// `cores` plus the non-core products every app embeds.
     public var allCores: [CoreProduct] { CoreProduct.nonCore + cores }
 
@@ -163,8 +166,8 @@ public extension FocusedApp {
         flags: [DevSettings.harnessFlag]
     )
 
-    // PVAzahar depends on its BuildPVlibAzahar aggregate inside PVAzahar.xcodeproj, so the
-    // implicit dependency on PVAzahar also builds (or cache-links) the PVlibAzahar slice.
+    // PVAzahar-Dynamic links PVlibAzahar.xcframework, which must be packed before generation:
+    // `make dev-azahar` runs `build_slice.py azahar $(DEV_SLICE) --xcframework` first. arm64 only.
     static let azahar = FocusedApp(slug: "azahar", title: "Azahar", cores: [.azahar], flags: [DevSettings.harnessFlag])
 
     /// Mupen64Plus + its plugin frameworks, all as SwiftPM products (Phase 2 of the core conversion).
