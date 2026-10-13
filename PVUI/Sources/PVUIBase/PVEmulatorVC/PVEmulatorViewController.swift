@@ -3634,14 +3634,23 @@ extension PVEmulatorViewController {
         /// let the resumed retro_run race the auto-save's retro_serialize (no shared
         /// lock → corrupt core state). Await the auto-save Task (lock-free, so no
         /// @synchronized main-thread starvation); the core stays paused meanwhile.
-        let shouldStayPaused = isShowingMenu
         if let pendingAutoSave = pendingAutoSaveTask {
             Task { @MainActor [weak self] in
                 await pendingAutoSave.value
-                self?.core.setPauseEmulation(shouldStayPaused)
+                guard let self, self.core.isOn, !self.isQuitting else { return }
+                // A newer resign/active cycle replaced this task; that cycle owns
+                // the pause state now.
+                guard self.pendingAutoSaveTask == pendingAutoSave else { return }
+                // Read the menu state AFTER the wait, never a value captured before
+                // it. Control Center is a sub-second resign/active cycle, so the user
+                // can dismiss the pause menu (hideMenu → setPauseEmulation(false))
+                // while the autosave is still encoding the screenshot and writing
+                // the state. Applying a stale `true` here re-paused a running game
+                // with no menu on screen: "frozen video after Control Center".
+                self.core.setPauseEmulation(self.isShowingMenu)
             }
         } else {
-            core.setPauseEmulation(shouldStayPaused)
+            core.setPauseEmulation(isShowingMenu)
         }
 
         do {
