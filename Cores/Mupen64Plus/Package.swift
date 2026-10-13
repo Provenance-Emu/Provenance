@@ -696,15 +696,11 @@ let sdlTarget: Target = .target(
 
 // MARK: libz
 
-let czlibProviders: [SystemPackageProvider] = [
-    .brew(["zlib"]),
-    .apt(["libz-dev"])
-]
-
+// No pkgConfig: on a Mac with Homebrew zlib, pkg-config added -L/opt/homebrew/... and the iOS
+// link picked up Homebrew's macOS libz ("building for 'iOS', but linking in dylib built for
+// 'macOS'"). The modulemap's `link "z"` links the SDK's libz on every platform.
 let czlibTarget: Target = .systemLibrary(
-    name: "CZlib",
-    pkgConfig: "zlib",
-    providers: czlibProviders
+    name: "CZlib"
 )
 
 // MARK: libpng
