@@ -70,15 +70,15 @@ let packageProducts: [Product] = [
     // Products define the executables and libraries a package produces, making them visible to other packages.
     .library(
         name: "PVMupenGameCore",
-        targets: ["PVMupen"]),
+        targets: ["PVMupen64Plus"]),
     .library(
         name: "PVMupenGameCore-Dynamic",
         type: .dynamic,
-        targets: ["PVMupen"]),
+        targets: ["PVMupen64Plus"]),
     .library(
         name: "PVMupenGameCore-Static",
         type: .static,
-        targets: ["PVMupen"]),
+        targets: ["PVMupen64Plus"]),
 
     // Plugins the core dlopens at runtime (PVMupenBridge.m `LoadPlugin`). Each is its own
     // dynamic framework, embedded next to the core. They are NOT linked into PVMupen:
@@ -156,9 +156,12 @@ let pvMupenCSettings: [CSetting] = pvMupenExtraCSettings + sharedCSettings
 
 let pvMupenPlugins: [Target.PluginUsage] = [] // CorePlist-Generated.swift is committed; the SwiftGen plugin would try to rewrite it in the source tree
 
+// Module name must be PVMupen64Plus: Core.plist's PVPrincipleClass is "PVMupen64Plus.MupenGameCore"
+// (the shipping xcodeproj's module), and NSClassFromString resolves Swift classes by module name.
 let pvMupenTarget: Target = .target(
-    name: "PVMupen",
+    name: "PVMupen64Plus",
     dependencies: pvMupenDeps,
+    path: "Sources/PVMupen",
     resources: pvMupenResources,
     cSettings: pvMupenCSettings,
     swiftSettings: sharedSwiftSettings,
@@ -794,7 +797,7 @@ let glidenhqTestsTarget: Target = .testTarget(
     dependencies: glidenhqTestsDeps
 )
 
-let pvMupenTestsDeps: [Target.Dependency] = ["PVMupen"]
+let pvMupenTestsDeps: [Target.Dependency] = ["PVMupen64Plus"]
 
 let pvMupenTestsTarget: Target = .testTarget(
     name: "PVMupenTests",

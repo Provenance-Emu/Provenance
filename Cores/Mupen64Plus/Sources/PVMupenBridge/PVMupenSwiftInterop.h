@@ -40,7 +40,7 @@ NS_ASSUME_NONNULL_BEGIN
 /// `MupenGameCoreOptions` is a plain `@objc` Swift class, so its runtime name is
 /// `<module>.MupenGameCoreOptions`; the package module is `PVMupen`.
 static inline Class<PVMupenGameCoreOptionsClass> PVMupenGameCoreOptionsClass(void) {
-    Class cls = NSClassFromString(@"PVMupen.MupenGameCoreOptions") ?: NSClassFromString(@"MupenGameCoreOptions");
+    Class cls = NSClassFromString(@"PVMupen64Plus.MupenGameCoreOptions") ?: NSClassFromString(@"MupenGameCoreOptions");
     NSCAssert(cls != Nil, @"MupenGameCoreOptions (Swift) not loaded");
     return cls;
 }
