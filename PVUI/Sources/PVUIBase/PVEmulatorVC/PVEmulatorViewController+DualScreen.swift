@@ -198,7 +198,11 @@ extension PVEmulatorViewController {
         guard frames.count >= 2,
               let bridge = core.bridge as? EmulatorCoreViewportPositioning,
               bridge.applyDualScreenRenderFramesInTouchView != nil,
-              let touchView = core.touchViewController?.view else { return false }
+              let touchView = core.touchViewController?.view else {
+            // The core's screens are no longer at two known rects; a grid would float over the picture.
+            removeDualScreenLCDOverlay()
+            return false
+        }
         // Effect screens (blurred backdrops) are larger than the game screens: keep the two smallest.
         let screens = Array(frames.sorted { $0.width * $0.height < $1.width * $1.height }.prefix(2))
         // The 3DS top screen is the wider one (5:3 against 4:3); when the aspects tie, the upper one is the top.

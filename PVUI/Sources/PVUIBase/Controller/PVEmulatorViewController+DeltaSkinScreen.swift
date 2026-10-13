@@ -951,6 +951,8 @@ extension PVEmulatorViewController: PVViewportLayoutDelegate {
                 ensureGPUViewVisibilityAndZOrder()
                 return
             }
+            // One area (single-screen skin, skins off): the LCD grid has no screens to sit on.
+            removeDualScreenLCDOverlay()
             // With no skin at all (tvOS, skins off, desktop input mode) the only frame on offer is the
             // scaling-mode fit of the core's stacked 400x480 aspect. The bridge reads any frame smaller
             // than its host as a skin screen area and lays both screens out by that area's shape, so the
