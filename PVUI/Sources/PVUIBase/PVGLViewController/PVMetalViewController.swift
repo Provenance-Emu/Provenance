@@ -317,6 +317,13 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
     /// subsequent frames skip the (expensive) retry and log the error only once.
     var dualScreenPipelineBuildFailed: Bool = false
 
+    /// LCD look for dual-screen layouts (`PVMetalViewController+DualScreenLCD`).
+    let dualScreenLCDComposer = LCDScreenComposer()
+    /// Core Image context for the LCD look; colours pass through unmanaged.
+    var dualScreenLCDContext: CIContext?
+    /// Drawable-sized frame the LCD look is composed into before it is drawn.
+    var dualScreenLCDTexture: MTLTexture?
+
     /// Controls whether VSync is enabled (synchronizes rendering with display refresh rate)
     public var vsyncEnabled: Bool = true
 
@@ -356,17 +363,24 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
         renderSettings.metalFilterMode = Defaults[.metalFilterMode]
         renderSettings.openGLFilterMode = Defaults[.openGLFilterMode]
         renderSettings.smoothingEnabled = Defaults[.imageSmoothing]
+        renderSettings.dualScreenLCDLook = Defaults[.dualScreenLCDLook]
         renderSettings.scalingMode = effectiveScalingMode()
 
         filterObservationTask = Task { [weak self] in
-            for await _ in Defaults.updates([.metalFilterMode, .openGLFilterMode, .imageSmoothing, .scalingMode, .userExplicitlySetScalingMode]) {
+            for await _ in Defaults.updates([.metalFilterMode, .openGLFilterMode, .imageSmoothing, .dualScreenLCDLook,
+                                             .scalingMode, .userExplicitlySetScalingMode]) {
                 await MainActor.run {
                     guard let self else { return }
                     let oldScaling = self.renderSettings.scalingMode
+                    let oldLCDLook = self.renderSettings.dualScreenLCDLook
                     self.renderSettings.metalFilterMode = Defaults[.metalFilterMode]
                     self.renderSettings.openGLFilterMode = Defaults[.openGLFilterMode]
                     self.renderSettings.smoothingEnabled = Defaults[.imageSmoothing]
+                    self.renderSettings.dualScreenLCDLook = Defaults[.dualScreenLCDLook]
                     self.renderSettings.scalingMode = self.effectiveScalingMode()
+                    if oldLCDLook != self.renderSettings.dualScreenLCDLook, self.dualScreenLayout != nil {
+                        self.redrawPausedFrame()
+                    }
                     self.configureFilterRenderer(reason: "defaultsUpdate", force: true)
                     // Scaling mode changes the calculated view frame — kick a
                     // re-layout so the change is visible immediately without
@@ -2921,6 +2935,25 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
             // Still compiling (or failed): draw the plain picture below.
         } else if slangFilterRenderer?.loadedID != nil {
             slangFilterRenderer?.unload()
+        }
+
+        // Dual-screen LCD look: Core Image composes the screens, so this runs before any
+        // render encoder opens. Falls through to the plain dual-screen blit when it can't draw.
+        if drawsDualScreenLCDLook,
+           renderDualScreenLCD(commandBuffer: commandBuffer, drawable: drawable, sourceTexture: inputTexture,
+                               sourceIsBottomUp: emulatorCore.rendersToOpenGL && !emulatorCore.rendersToVulkan) {
+            commandBuffer.present(drawable)
+            commandBuffer.addCompletedHandler { [weak self] buffer in
+                if let error = buffer.error {
+                    ELOG("GPU error during dual-screen LCD rendering: \(error)")
+                    self?.recoverFromGPUError()
+                }
+            }
+            commandBuffer.commit()
+            previousCommandBuffer = commandBuffer
+            frameCount += 1
+            markFramePresented()
+            return
         }
 
         // Reuse render pass descriptor if available, otherwise create new one

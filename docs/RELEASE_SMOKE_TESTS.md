@@ -276,6 +276,19 @@ before it (or seed the files below by hand, then relaunch).
       effect on the next frame; switching to Off restores the plain picture.
 - [ ] DS / 3DS dual-screen skins and Azahar: no Screen Filter / Shader Settings
       tiles (filters do not apply to dual-screen layouts); skin CIFilters still show.
+- [ ] Settings → Display Filters → "LCD look on dual-screen handhelds" (default
+      off). DS skin on melonDS DS (thin) and DeSmuME: both screens get a pixel grid
+      on the DS's own pixels, slight softness and muted colour; screens upright, no
+      seam or colour bleed between them; portrait and landscape; swap screens; the
+      programmatic touch overlay. Toggle mid-game from the pause menu's settings:
+      takes effect on the next frame, also while paused.
+- [ ] Same toggle on an Azahar 3DS skin: grid only (no softness or colour change),
+      aligned with both screens' pixels (400 and 320 wide). Check Azahar fills the
+      skin's screen rects exactly; if it letterboxes inside them the grid is off.
+      Touch on the bottom screen still works; grid follows rotation and skin changes.
+- [ ] A DS / 3DS skin whose screens carry their own CIFilters: no LCD look on those
+      screens with the toggle on.
+- [ ] DS LCD look frame rate on an older device (A12/A13): no dropped frames.
 
 ### Carried over from earlier sessions (see memory notes)
 - [ ] Background/resume: no main-thread deadlock on resume (Metal drawable).

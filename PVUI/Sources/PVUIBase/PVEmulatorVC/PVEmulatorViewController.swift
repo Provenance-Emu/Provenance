@@ -156,6 +156,8 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
     /// Use this instead of `canUseMetalDualScreenRendering` to check whether Metal
     /// dual-screen blitting is *active* (not just *eligible*).
     var isMetalDualScreenActive: Bool = false
+    /// LCD grid over the 3DS screens (`PVEmulatorViewController+DualScreenLCD`).
+    var dualScreenLCDOverlays: [LCDGridOverlayView] = []
 
     /// Game-screen frames last published by the programmatic touch overlay (view
     /// coordinates, top screen first). Empty while no overlay is on screen.

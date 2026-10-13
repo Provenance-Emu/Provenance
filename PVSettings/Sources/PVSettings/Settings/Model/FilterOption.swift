@@ -182,6 +182,9 @@ extension MetalFilterSelectionOption: Equatable {
 public extension Defaults.Keys {
     static let openGLFilterMode = Key<OpenGLFilterModeOption>("openGLFilterMode", default: .none)
     static let metalFilterMode = Key<MetalFilterModeOption>("metalFilterMode", default: .none)
+    /// Handheld-LCD look (pixel grid, ghosting, muted colour) on DS and 3DS skin screens,
+    /// which the Metal filters never reach. 3DS gets the grid only.
+    static let dualScreenLCDLook = Key<Bool>("dualScreenLCDLook", default: false)
 
     /// Legacy Settings
 //    static let crtFilterEnabled = Key<Bool>("crtFilterEnabled", default: false)

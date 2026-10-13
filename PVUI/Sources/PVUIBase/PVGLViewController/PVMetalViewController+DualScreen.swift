@@ -46,6 +46,8 @@ struct DualScreenRenderInfo: Sendable {
     let framebufferSize: CGSize
     /// Destination in the Metal view's UIKit-point coordinate space.
     let viewDestRect: CGRect
+    /// The skin screen has CIFilters of its own; the LCD look leaves it alone.
+    var skinProvidesFilter: Bool = false
 }
 
 /// Result of one `renderDualScreenLayout` call.
@@ -184,14 +186,9 @@ extension PVMetalViewController {
         // Normalise every source rect against the texture actually bound before
         // encoding anything, so a mismatch leaves the encoder untouched.
         let textureSize = CGSize(width: sourceTexture.width, height: sourceTexture.height)
-        var sources: [DualScreenTextureCoordinates] = []
-        for info in layout {
-            guard let normalized = DualScreenSourceMapping.normalizedSourceRect(
-                info.sourceRect, framebufferSize: info.framebufferSize, textureSize: textureSize) else {
-                return .textureMismatch
-            }
-            sources.append(DualScreenSourceMapping.textureCoordinates(for: normalized,
-                                                                     sourceIsBottomUp: sourceIsBottomUp))
+        guard let sources = DualScreenSourceMapping.textureCoordinates(for: layout, textureSize: textureSize,
+                                                                       sourceIsBottomUp: sourceIsBottomUp) else {
+            return .textureMismatch
         }
 
         encoder.setRenderPipelineState(pipeline)

@@ -8,6 +8,7 @@
 
 @testable import PVUIBase
 import PVCoreBridge
+import PVShaders
 import CoreGraphics
 import XCTest
 
@@ -122,5 +123,56 @@ final class DualScreenSourceMappingTests: XCTestCase {
         let coords = DualScreenSourceMapping.textureCoordinates(
             for: CGRect(x: 0, y: 0, width: 1, height: 0.5), sourceIsBottomUp: true)
         XCTAssertEqual(coords, DualScreenTextureCoordinates(u0: 0, u1: 1, vTop: 1, vBottom: 0.5))
+    }
+
+    // MARK: - LCD look placements
+
+    private func info(_ source: CGRect, skinFilter: Bool = false) -> DualScreenRenderInfo {
+        DualScreenRenderInfo(sourceRect: source, framebufferSize: CGSize(width: 256, height: 384),
+                             viewDestRect: CGRect(x: 10, y: 20, width: 300, height: 225),
+                             skinProvidesFilter: skinFilter)
+    }
+
+    func testLCDPlacementUsesTexturePixelsAndDrawablePixels() throws {
+        // A 2x internal resolution texture of the stacked layout.
+        let textureSize = CGSize(width: 512, height: 768)
+        let layout = [info(deltaTop), info(deltaBottom)]
+        let coords = try XCTUnwrap(DualScreenSourceMapping.textureCoordinates(for: layout, textureSize: textureSize,
+                                                                              sourceIsBottomUp: false))
+        let bottom = DualScreenSourceMapping.lcdPlacement(for: layout[1], coordinates: coords[1],
+                                                          textureSize: textureSize, contentScale: 3)
+        XCTAssertEqual(bottom.sourceRect, CGRect(x: 0, y: 384, width: 512, height: 384))
+        XCTAssertFalse(bottom.sourceIsFlipped)
+        XCTAssertEqual(bottom.destinationRect, CGRect(x: 30, y: 60, width: 900, height: 675))
+        // The grid follows the DS's own pixels, not the upscaled texture's.
+        XCTAssertEqual(bottom.nativeSize, CGSize(width: 256, height: 192))
+        XCTAssertTrue(bottom.appliesLCD)
+    }
+
+    func testLCDPlacementOfBottomUpTextureIsFlipped() throws {
+        let textureSize = CGSize(width: 256, height: 384)
+        let layout = [info(deltaTop)]
+        let coords = try XCTUnwrap(DualScreenSourceMapping.textureCoordinates(for: layout, textureSize: textureSize,
+                                                                              sourceIsBottomUp: true))
+        let top = DualScreenSourceMapping.lcdPlacement(for: layout[0], coordinates: coords[0],
+                                                       textureSize: textureSize, contentScale: 1)
+        // The top screen is stored bottom row first in the texture's lower half.
+        XCTAssertEqual(top.sourceRect, CGRect(x: 0, y: 192, width: 256, height: 192))
+        XCTAssertTrue(top.sourceIsFlipped)
+    }
+
+    func testSkinFilterKeepsItsScreenPlain() throws {
+        let textureSize = CGSize(width: 256, height: 384)
+        let layout = [info(deltaTop, skinFilter: true)]
+        let coords = try XCTUnwrap(DualScreenSourceMapping.textureCoordinates(for: layout, textureSize: textureSize,
+                                                                              sourceIsBottomUp: false))
+        XCTAssertFalse(DualScreenSourceMapping.lcdPlacement(for: layout[0], coordinates: coords[0],
+                                                            textureSize: textureSize, contentScale: 2).appliesLCD)
+    }
+
+    func testMismatchedTextureHasNoCoordinates() {
+        XCTAssertNil(DualScreenSourceMapping.textureCoordinates(for: [info(deltaTop)],
+                                                               textureSize: CGSize(width: 256, height: 240),
+                                                               sourceIsBottomUp: false))
     }
 }

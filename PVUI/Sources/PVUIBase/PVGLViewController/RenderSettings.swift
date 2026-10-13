@@ -14,6 +14,8 @@ struct RenderSettings: Sendable {
     var metalFilterMode: MetalFilterModeOption = .none
 
     var smoothingEnabled = false
+    /// `Defaults[.dualScreenLCDLook]`: LCD look on dual-screen (DS skin) layouts.
+    var dualScreenLCDLook = false
     var scalingMode: ScalingMode = .aspectFit
     var videoBufferSize: CGSize = .zero
     var videoBufferPixelFormat: GLenum = GLenum(GL_RGB)

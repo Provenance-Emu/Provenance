@@ -19,6 +19,9 @@ struct FilterSettingsView: View {
                             footer: Text(String(localized: "While a game is paused, previews use its picture."))) {
                 Toggle(String(localized: "Preview on Test Pattern"), isOn: $previewsUseTestPattern)
             }
+            #if !os(tvOS)
+            DualScreenLCDSection()
+            #endif
             OpenGLFilterSection(openGLFilterMode: $openGLFilterMode)
             SwiftUI.Section(footer: Text(String(localized: "Library filters are the libretro slang shader collection, converted to Metal. Provenance filters by Mr. J & Mame4iOS."))) {
                 EmptyView()
@@ -211,6 +214,24 @@ private struct ScopedFilterSections: View {
         }
     }
 }
+
+#if !os(tvOS)
+/// DS and 3DS skins draw each screen on its own, so the filters above never reach them.
+private struct DualScreenLCDSection: View {
+    @Default(.dualScreenLCDLook) private var dualScreenLCDLook
+
+    var body: some View {
+        SwiftUI.Section(header: Text(String(localized: "Dual-Screen Handhelds")),
+                        footer: Text(String(localized: """
+                            DS and 3DS skins don't use the filters above. This gives their screens an LCD pixel grid, \
+                            a little softness and muted colour; 3DS gets the grid only. A skin's own screen filter \
+                            takes priority.
+                            """))) {
+            Toggle(String(localized: "LCD look on dual-screen handhelds"), isOn: $dualScreenLCDLook)
+        }
+    }
+}
+#endif
 
 private struct OpenGLFilterSection: View {
     @Binding var openGLFilterMode: OpenGLFilterModeOption

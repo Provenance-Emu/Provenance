@@ -3,9 +3,9 @@
 //  PVShaders
 //
 //  A handheld-LCD look built from stock Core Image filters, for screens the
-//  Metal filters cannot reach (dual-screen DS / 3DS layouts, which skins draw
-//  per screen through CIFilters). Not wired yet: see the dual-screen LCD note
-//  in docs/RELEASE_SMOKE_TESTS.md.
+//  Metal filters cannot reach (dual-screen DS / 3DS layouts). DS skins run it
+//  per screen through `LCDScreenComposer`; Azahar draws into its own layer, so
+//  3DS gets only the grid, drawn over each screen from `gapRects`.
 //
 
 import CoreGraphics
@@ -17,6 +17,7 @@ import CoreImage.CIFilterBuiltins
 ///
 /// Set `inputPixelPitch` to the size of one emulated pixel in output pixels
 /// (output width / native width); the grid lines fall on those boundaries.
+/// `inputPixelPitchY` covers screens stretched to another aspect (0 = square pixels).
 public final class LCDScreenFilter: CIFilter {
     /// Default values; also the ranges a settings UI should offer.
     public enum Defaults {
@@ -32,6 +33,8 @@ public final class LCDScreenFilter: CIFilter {
     @objc public var inputImage: CIImage?
     /// Output pixels per emulated pixel.
     @objc public var inputPixelPitch: CGFloat = 3
+    /// Output pixels per emulated pixel vertically; 0 uses `inputPixelPitch`.
+    @objc public var inputPixelPitchY: CGFloat = 0
     @objc public var inputGridStrength: CGFloat = Defaults.gridStrength
     @objc public var inputGhosting: CGFloat = Defaults.ghosting
     @objc public var inputSaturation: CGFloat = Defaults.saturation
@@ -53,7 +56,7 @@ public final class LCDScreenFilter: CIFilter {
             kCIInputBrightnessKey: inputBrightness,
             kCIInputContrastKey: 1.0
         ])
-        guard inputGridStrength > 0, inputPixelPitch >= Self.minimumPitchForGrid,
+        guard inputGridStrength > 0, min(inputPixelPitch, pitchY) >= Self.minimumPitchForGrid,
               let grid = gridMask(extent: extent) else {
             return image
         }
@@ -65,10 +68,26 @@ public final class LCDScreenFilter: CIFilter {
     /// so gaps are a quarter of a pixel wide.
     static let tileCells = 4
 
+    private var pitchY: CGFloat { inputPixelPitchY > 0 ? inputPixelPitchY : inputPixelPitch }
+
+    /// The last tile built, keyed by its gap value; `outputImage` runs every frame.
+    private var cachedTile: (gapValue: UInt8, image: CIImage)?
+
     /// White everywhere except darker gaps along every emulated-pixel boundary.
     func gridMask(extent: CGRect) -> CIImage? {
         let cells = Self.tileCells
-        let gapValue = UInt8((1 - min(max(inputGridStrength, 0), 1)) * 255)
+        let tile = gridTile(gapValue: UInt8((1 - min(max(inputGridStrength, 0), 1)) * 255))
+        let placement = CGAffineTransform(translationX: extent.minX, y: extent.minY)
+            .scaledBy(x: inputPixelPitch / CGFloat(cells), y: pitchY / CGFloat(cells))
+        let tiler = CIFilter.affineTile()
+        tiler.inputImage = tile
+        tiler.transform = placement
+        return tiler.outputImage?.cropped(to: extent)
+    }
+
+    private func gridTile(gapValue: UInt8) -> CIImage {
+        if let cachedTile, cachedTile.gapValue == gapValue { return cachedTile.image }
+        let cells = Self.tileCells
         var pixels = [UInt8](repeating: 255, count: cells * cells * 4)
         for y in 0 ..< cells {
             for x in 0 ..< cells where x == cells - 1 || y == cells - 1 {
@@ -82,11 +101,27 @@ public final class LCDScreenFilter: CIFilter {
                            size: CGSize(width: cells, height: cells), format: .RGBA8,
                            colorSpace: CGColorSpaceCreateDeviceRGB())
             .samplingNearest()
-        let scale = inputPixelPitch / CGFloat(cells)
-        let placement = CGAffineTransform(translationX: extent.minX, y: extent.minY).scaledBy(x: scale, y: scale)
-        let tiler = CIFilter.affineTile()
-        tiler.inputImage = tile
-        tiler.transform = placement
-        return tiler.outputImage?.cropped(to: extent)
+        cachedTile = (gapValue, tile)
+        return tile
+    }
+
+    /// The grid's gaps for a screen of `size` showing `nativeSize` emulated pixels: one
+    /// column per pixel on its trailing edge and one row on its far edge, a quarter of a
+    /// pixel wide, like the filter's grid. Fill them all as one path so crossings are not
+    /// darkened twice. Empty when a pixel would cover fewer than `minimumPitchForGrid`
+    /// device pixels at `scale`.
+    public static func gapRects(in size: CGSize, nativeSize: CGSize, scale: CGFloat) -> [CGRect] {
+        guard nativeSize.width >= 1, nativeSize.height >= 1, size.width > 0, size.height > 0 else { return [] }
+        let columns = Int(nativeSize.width), rows = Int(nativeSize.height)
+        let pitchX = size.width / CGFloat(columns), pitchY = size.height / CGFloat(rows)
+        guard min(pitchX, pitchY) * scale >= minimumPitchForGrid else { return [] }
+        let gapX = pitchX / CGFloat(tileCells), gapY = pitchY / CGFloat(tileCells)
+        let columnRects = (1 ... columns).map {
+            CGRect(x: CGFloat($0) * pitchX - gapX, y: 0, width: gapX, height: size.height)
+        }
+        let rowRects = (1 ... rows).map {
+            CGRect(x: 0, y: CGFloat($0) * pitchY - gapY, width: size.width, height: gapY)
+        }
+        return columnRects + rowRects
     }
 }

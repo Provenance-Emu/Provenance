@@ -212,6 +212,7 @@ extension PVEmulatorViewController {
         DLOG("🎮 SKIN: handing both screen frames to the bridge: top=\(top) bottom=\(bottom)")
         if !core.isRunning { DLOG("🎮 SKIN: dual-screen frames handed over before the core started; the bridge queues them") }
         bridge.applyDualScreenRenderFramesInTouchView?(top, bottom: bottom)
+        updateDualScreenLCDOverlay(top: top, bottom: bottom, in: touchView)
         return true
     }
 

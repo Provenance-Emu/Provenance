@@ -122,7 +122,8 @@ extension SettingsSearchIndex {
         entry("video.fps", "FPS Counter", "Show frames per second counter.",
               .emulation, SettingsSectionTitle.video, keywords: ["fps", "frame rate", "performance", "overlay"]),
         entry("video.filters", "Display Filters", "Configure CRT and LCD filter effects.",
-              .emulation, SettingsSectionTitle.video, keywords: ["crt", "lcd", "shader", "filter", "scanlines", "scanline"]),
+              .emulation, SettingsSectionTitle.video, keywords: ["crt", "lcd", "shader", "filter", "scanlines", "scanline",
+                                                                 "ds", "3ds", "dual screen", "pixel grid"]),
         entry("video.externaldisplay", "External Display", "Configure how the game appears on a connected TV or monitor.",
               .emulation, SettingsSectionTitle.video, keywords: ["airplay", "hdmi", "tv", "monitor", "second screen"], tvOS: false),
 

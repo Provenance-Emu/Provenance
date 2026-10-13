@@ -203,6 +203,7 @@ let package = Package(
                 "PVUIBase",
                 "PVCoreBridge",
                 "PVLogging",
+                "PVShaders",
             ],
             resources: [
                 // Kept as a directory so tests can load `DS-Test.deltaskin/info.json`.

@@ -7,6 +7,7 @@
 
 import CoreGraphics
 import PVCoreBridge
+import PVShaders
 
 /// Per-vertex texture coordinates for one dual-screen quad.
 struct DualScreenTextureCoordinates: Equatable, Sendable {
@@ -110,5 +111,39 @@ enum DualScreenSourceMapping {
                                             u1: Float(normalizedRect.maxX),
                                             vTop: Float(top),
                                             vBottom: Float(bottom))
+    }
+
+    /// Texture coordinates for every screen of `layout`, or `nil` when the texture does
+    /// not have the layout's proportions yet (see `normalizedSourceRect`).
+    static func textureCoordinates(for layout: [DualScreenRenderInfo], textureSize: CGSize,
+                                   sourceIsBottomUp: Bool) -> [DualScreenTextureCoordinates]? {
+        var coordinates: [DualScreenTextureCoordinates] = []
+        for info in layout {
+            guard let normalized = normalizedSourceRect(info.sourceRect, framebufferSize: info.framebufferSize,
+                                                        textureSize: textureSize) else { return nil }
+            coordinates.append(textureCoordinates(for: normalized, sourceIsBottomUp: sourceIsBottomUp))
+        }
+        return coordinates
+    }
+
+    /// The LCD composer's view of one screen: its region in texture pixels, its
+    /// destination in drawable pixels and its native size for the grid pitch.
+    /// - Parameter contentScale: drawable pixels per view point.
+    static func lcdPlacement(for info: DualScreenRenderInfo, coordinates: DualScreenTextureCoordinates,
+                             textureSize: CGSize, contentScale: CGFloat) -> LCDScreenPlacement {
+        let vMin = CGFloat(min(coordinates.vTop, coordinates.vBottom))
+        let vMax = CGFloat(max(coordinates.vTop, coordinates.vBottom))
+        let source = CGRect(x: CGFloat(coordinates.u0) * textureSize.width,
+                            y: vMin * textureSize.height,
+                            width: CGFloat(coordinates.u1 - coordinates.u0) * textureSize.width,
+                            height: (vMax - vMin) * textureSize.height)
+        let dest = info.viewDestRect
+        return LCDScreenPlacement(sourceRect: source,
+                                  sourceIsFlipped: coordinates.vTop > coordinates.vBottom,
+                                  destinationRect: CGRect(x: dest.minX * contentScale, y: dest.minY * contentScale,
+                                                          width: dest.width * contentScale,
+                                                          height: dest.height * contentScale),
+                                  nativeSize: info.sourceRect.size,
+                                  appliesLCD: !info.skinProvidesFilter)
     }
 }
