@@ -25,4 +25,5 @@
 3. Move Azahar only (simulator slices exist; binaryTarget is optional), keep Dolphin.
 
 ## Decision
-Pending: awaiting the user's choice (asked 2026-10-12). Recommendation: option 1.
+Option 1, keep both on their xcodeprojs (user, 2026-10-12). Revisit when build_slice.py runs as a
+pre-resolution step at every xcodebuild entry point and Dolphin has simulator slices.
