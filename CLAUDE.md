@@ -79,7 +79,7 @@ The app is split into ~26 `PV*` Swift Package frameworks. Key modules:
 - **PVQuicklookSupport** — iOS and macOS Quicklook api support code
 - **PVRcheevos** — RetroAchievements C client integration
 - **PVSettings** — User preferences
-- **PVShaders** — Metal shader manager support
+- **PVShaders** — video filters: Provenance's hand-written Metal filters, the bundled libretro slang library (runtime in `PVSlangRuntime`), filter catalog/selection store, previews, non-linear stretch
 - **PVSupport** — Shared utilities
 - **PVThemes** — UI Theming Support
 - **PVTouchOverlay** — Programmatic on-screen controller: layout families, live editor, shared touch primitives
@@ -278,6 +278,15 @@ A second, generated workspace for fast iteration. `Provenance.xcodeproj` still s
 - **`@synchronized(self)` in emulation loop vs main thread.** The emu loop holds `@synchronized(self)` around `executeFrame` at 60fps. Any main-thread code that acquires the same lock (e.g., `setPauseEmulation`) will starve. Set atomic flags BEFORE acquiring the lock so the emu loop sees the change and releases.
 - **Thin wrapper reports its geometry/aspect/sample-rate LATE.** `PVThinLibretroFrontend` populates `_rawAVInfo` (geometry, aspect, `timing.sample_rate`, fps) only at the END of `startWithROMPath` — which runs inside `startEmulation`, NOT during `loadFile` (that only dlopens the core). But `createEmulator()` sets up the audio graph (`setupAudioGraph`/`startAudio`) AND the DeltaSkin viewport BEFORE `core.startEmulation()`. So anything that reads the core's geometry/aspect/sample-rate at view/audio-setup time gets the fallback defaults (`?: 640/480/256`, `audioSampleRate → 44100`), not the real values. Native/thick cores populate av_info during `loadFile`, so they don't hit this. This has caused: (1) thin-wrapper audio built at 44100 then never rebuilt → bassy/glitchy (fixed by rebuilding the audio graph after start if the rate changed, #cb40fef061); (2) skin render view stuck full-screen/wrong-size until rotation because the viewport was computed before geometry settled (fixed by recomputing on layout-settle, #a63e1622f1). Pattern for any new feature that reads core geometry/rate: recompute/refresh AFTER `startEmulation`, gated on the value actually having changed.
 
+### Shader / filter system
+
+- **The slang library is fetched at build time, never committed.** `Scripts/shaders/fetch_slang_shaders.py` downloads the release pinned in `Scripts/shaders/slang-shaders.lock.json` (JoeMatt/slang-shaders-metal, `.oecompiledshader` zips compiled from libretro slang by OpenEmu-Shaders' `oeshaders`), unpacks each preset into a `shader.json` directory (no runtime unzip), merges the hand-written presets in `PVShaders/Library/native-metal/`, and writes `manifest.json`. Every app target (shipping xcodeproj and Tuist `FocusedApp`, `slangShaders:`) copies it into the bundle as `SlangShaders/` via `embed_slang_shaders.sh`. To bump the snapshot: change the lock, run `Scripts/shaders/validate_slang_shaders.sh` (renders every preset on the Mac GPU, writes `slang-shaders-excluded.json`), commit both.
+- **Which filter draws is per game.** `ShaderLibraryStore` (PVShaders) holds selections for global / `system:<id>` / `game:<md5>` scopes (game wins), parameter overrides, favorites and recents; selections, parameters and favorites sync through iCloud KVS as timestamped per-key maps (`StampedMap`, merged both ways via `iCloudSettingsSync.register`). Native filters keep their values in their old `Defaults` keys. The legacy `metalFilterMode` key is still bridged into the global selection; its raw values are case names (`Always(vhs)`, not `Always(VHS)`).
+- **`ShaderSelection.off`, not `.none`.** A `.none` case on an enum passed as `ShaderSelection?` silently becomes `Optional.none` and clears the scope.
+- **Renderers:** `PVMetalViewController` resolves the filter every frame (native → `PVMetalFilterRenderer`, library → `SlangFilterRenderer`, which compiles presets off the main thread and draws the plain picture until ready). Cores that present from their own thread (Dolphin Metal backend, native PPSSPP) use `ShaderPostProcessor`, fed a resolved snapshot on `ShaderLibraryStore.didChangeNotification`. Dual-screen layouts and Azahar are never filtered (pause tiles hidden via `filtersApplyToCurrentLayout`); `LCDScreenFilter` (CIFilter) is the intended DS/3DS look.
+- **Filters draw into the picture rect, not the drawable.** Until a skin reports its screen rect the GPU view is full screen; `RenderGeometry.contentRect` letterboxes the picture inside it. Code that draws over the frame must use the same rect (this was the "VHS covers the whole screen" bug).
+- **`swift test` in PVShaders runs real Metal tests on the host GPU**, but the SwiftPM CLI only copies `.metal` files: the slang runtime compiles its bundled source as a fallback, while native-filter pipelines (package metallib) exist only in Xcode builds, so those tests skip.
+
 ### Debugging emulator cores
 
 - **"Black screen" reports: ask for the `[NO-FRAME]` log line.** Five seconds after a successful boot with nothing presented, `PVEmulatorViewController+FirstFrameWatchdog` logs the presenter, render path, pause state, geometry and the GPU view's frame/visibility. Cores that draw to their own view (native Dolphin, PPSSPP, RetroArch `skipLayout`) trip it by design.
@@ -361,7 +370,7 @@ Modules are organized by dependency depth. Agents should scope changes to the lo
 | 1 | PVLogging, PVPlists, PVHashing | Yes |
 | 2 | PVSettings, PVPrimitives | Yes |
 | 3 | PVSupport, PVAudio, PVCoreAudio | Needs Xcode |
-| 4 | PVCoreBridge, PVEmulatorCore, PVShaders | Needs Xcode |
+| 4 | PVCoreBridge, PVEmulatorCore, PVShaders | Needs Xcode (PVShaders: `swift test` works) |
 | 5 | PVCoreBridgeRetro, PVCoreLoader, PVLookup, PVLibrary | Needs Xcode |
 | 6 | PVUI, App targets | Full workspace build |
 
