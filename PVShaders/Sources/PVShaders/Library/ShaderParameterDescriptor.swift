@@ -69,6 +69,11 @@ public struct ShaderParameterGroup: Hashable, Sendable, Identifiable {
 
     public var id: String { title ?? "" }
 
+    public init(title: String?, parameters: [ShaderParameterDescriptor]) {
+        self.title = title
+        self.parameters = parameters
+    }
+
     /// Splits at heading parameters. Headings whose section ends up empty are dropped.
     public static func groups(for parameters: [ShaderParameterDescriptor]) -> [ShaderParameterGroup] {
         var groups: [ShaderParameterGroup] = []

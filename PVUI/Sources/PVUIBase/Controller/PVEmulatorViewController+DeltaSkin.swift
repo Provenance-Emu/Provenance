@@ -1290,6 +1290,26 @@ extension PVEmulatorViewController {
     ///
     /// Must be called on the main thread; dispatches there automatically if invoked from a
     /// background thread.
+    /// The first screen filter the current skin defines for this device and orientation.
+    /// Probes display types in preference order to match the skin that was actually loaded,
+    /// mirroring the pattern used elsewhere (e.g. applyViewportFromCurrentSkin).
+    internal func currentSkinScreenFilterInfo(_ skin: (any DeltaSkinProtocol)? = nil) -> DeltaSkin.FilterInfo? {
+        guard let skin = skin ?? currentSkin else { return nil }
+        #if !os(tvOS)
+        let device: DeltaSkinDevice = UIDevice.current.userInterfaceIdiom == .pad ? .ipad : .iphone
+        #else
+        let device: DeltaSkinDevice = .tv
+        #endif
+        let orientation: DeltaSkinOrientation = view.bounds.width > view.bounds.height ? .landscape : .portrait
+        for displayType in [DeltaSkinDisplayType.standard, .edgeToEdge] {
+            let traits = DeltaSkinTraits(device: device, displayType: displayType, orientation: orientation)
+            if let info = skin.representation(for: traits)?.screens?.first?.filters?.first {
+                return info
+            }
+        }
+        return nil
+    }
+
     internal func applyScreenFiltersFromCurrentSkin() {
         guard Thread.isMainThread else {
             DispatchQueue.main.async { [weak self] in self?.applyScreenFiltersFromCurrentSkin() }
@@ -1302,27 +1322,15 @@ extension PVEmulatorViewController {
             return
         }
 
-        #if !os(tvOS)
-        let device: DeltaSkinDevice = UIDevice.current.userInterfaceIdiom == .pad ? .ipad : .iphone
-        #else
-        let device: DeltaSkinDevice = .tv
-        #endif
-        let orientation: DeltaSkinOrientation = view.bounds.width > view.bounds.height ? .landscape : .portrait
-
-        // Probe display types in preference order to match the skin that was actually loaded,
-        // mirroring the pattern used elsewhere (e.g. applyViewportFromCurrentSkin).
-        let displayTypes: [DeltaSkinDisplayType] = [.standard, .edgeToEdge]
-        var filterInfo: DeltaSkin.FilterInfo?
-        for displayType in displayTypes {
-            let traits = DeltaSkinTraits(device: device, displayType: displayType, orientation: orientation)
-            if let info = skin.representation(for: traits)?.screens?.first?.filters?.first {
-                filterInfo = info
-                break
-            }
+        guard let filterInfo = currentSkinScreenFilterInfo(skin) else {
+            ILOG("skins: Skin '\(skin.name)' has no screen filters — clearing any previous filter")
+            applyScreenFilter(nil)
+            return
         }
 
-        guard let filterInfo else {
-            ILOG("skins: Skin '\(skin.name)' has no screen filters — clearing any previous filter")
+        // An active shader replaces the skin's filter; "Skin's Filter" (or no shader) keeps it.
+        if activeShaderSelection.shader(for: core.screenType) != nil {
+            ILOG("skins: A shader is selected — not stacking the skin's own filter")
             applyScreenFilter(nil)
             return
         }

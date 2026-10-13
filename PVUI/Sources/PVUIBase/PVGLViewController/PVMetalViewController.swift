@@ -205,6 +205,24 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
     private let metalFilterRenderer = PVMetalFilterRenderer()
     private var filterRendererPixelFormat: MTLPixelFormat?
     private var filterRendererFlipY: Bool = false
+    /// Runs library (slang) presets; created with the device.
+    private var slangFilterRenderer: SlangFilterRenderer?
+    /// Reshapes the frame for `ScalingMode.nonLinearStretch`; created on first use.
+    private var nonLinearStretchRenderer: NonLinearStretchRenderer?
+    /// The game's MD5 for per-game filter selections, read once (the game is a Realm object).
+    private lazy var filterGameMD5: String? = {
+        guard let game = (parent as? PVEmulatorViewController)?.game, !game.isInvalidated else { return nil }
+        return game.md5Hash
+    }()
+
+    /// A filter shown in place of the saved selection while the user browses
+    /// filters in the pause menu. Setting it redraws the paused frame.
+    public var previewSelection: ShaderSelection? {
+        didSet {
+            guard previewSelection != oldValue else { return }
+            redrawPausedFrame()
+        }
+    }
 
     var  inputTexture: MTLTexture?
     var  previousCommandBuffer: MTLCommandBuffer? // used for scheduling with OpenGL context
@@ -1007,8 +1025,8 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
 
             /// Calculate dimensions in points first
             switch scalingMode {
-                case .stretch:
-                    // Fill the entire parent view — no aspect ratio preserved
+                case .stretch, .nonLinearStretch:
+                    // Fill the entire parent view (non-linear reshapes it in the renderer)
                     width = parentSize.width
                     height = parentSize.height
 
@@ -1683,7 +1701,7 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
     private func pictureRect(drawableSize: CGSize, emulatorCore: PVEmulatorCore) -> CGRect {
         let full = CGRect(origin: .zero, size: drawableSize)
         switch renderSettings.scalingMode {
-        case .stretch, .aspectFill:
+        case .stretch, .nonLinearStretch, .aspectFill:
             return full
         default:
             break
@@ -1693,14 +1711,78 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
         return RenderGeometry.contentRect(aspect: aspect, viewSize: mtlView.bounds.size, drawableSize: drawableSize)
     }
 
+    /// The filter to draw for this game: the pause-menu preview if one is showing,
+    /// else the saved selection (game, then system, then global).
+    private func activeShaderEntry(for emulatorCore: PVEmulatorCore) -> ShaderCatalogEntry? {
+        let selection = previewSelection ?? ShaderLibraryStore.shared.effectiveSelection(
+            gameMD5: filterGameMD5, systemID: emulatorCore.systemIdentifier)
+        guard let id = selection.shader(for: emulatorCore.screenType) else { return nil }
+        return ShaderCatalog.shared.entry(for: id)
+    }
+
+    /// Encodes a library preset into `target`. Returns `false` while the preset is
+    /// still compiling (or failed), so the caller draws the plain picture instead.
+    private func renderSlangFilter(_ entry: ShaderCatalogEntry,
+                                   commandBuffer: MTLCommandBuffer,
+                                   source: MTLTexture,
+                                   target: MTLTexture,
+                                   drawableSize: CGSize,
+                                   emulatorCore: PVEmulatorCore) -> Bool {
+        if slangFilterRenderer == nil, let device {
+            slangFilterRenderer = SlangFilterRenderer(device: device)
+        }
+        guard let renderer = slangFilterRenderer, renderer.prepare(entry) else { return false }
+        let store = ShaderLibraryStore.shared
+        renderer.applyParameters(revision: store.revision,
+                                 value: { store.value(of: $0, in: entry.id) },
+                                 parameters: entry.parameters)
+        // The chain samples top-down like Metal; only OpenGL frames arrive bottom-up.
+        let sourceIsBottomUp = emulatorCore.rendersToOpenGL && !emulatorCore.rendersToVulkan
+        return renderer.render(source: source,
+                               commandBuffer: commandBuffer,
+                               target: target,
+                               contentRect: pictureRect(drawableSize: drawableSize, emulatorCore: emulatorCore),
+                               flipVertically: sourceIsBottomUp,
+                               linear: renderSettings.smoothingEnabled)
+    }
+
+    /// The intermediate texture for `ScalingMode.nonLinearStretch`, or `nil` when it is off.
+    private func nonLinearStretchTarget(for drawableTexture: MTLTexture) -> MTLTexture? {
+        guard renderSettings.scalingMode == .nonLinearStretch, let device else { return nil }
+        if nonLinearStretchRenderer == nil {
+            nonLinearStretchRenderer = NonLinearStretchRenderer(device: device)
+        }
+        return nonLinearStretchRenderer?.intermediateTexture(matching: drawableTexture)
+    }
+
+    /// Warps the linearly stretched frame so the centre keeps close to its true aspect.
+    private func encodeNonLinearStretch(from source: MTLTexture, to target: MTLTexture,
+                                        commandBuffer: MTLCommandBuffer, emulatorCore: PVEmulatorCore) {
+        let aspectSize = emulatorCore.aspectSize
+        let aspect = aspectSize.width > 0 && aspectSize.height > 0 ? aspectSize : emulatorCore.screenRect.size
+        let bounds = mtlView.bounds.size
+        let stretch = aspect.width > 0 && aspect.height > 0 && bounds.height > 0
+            ? (bounds.width / bounds.height) / (aspect.width / aspect.height)
+            : 1
+        let slope = NonLinearStretchRenderer.centerSlope(stretch: stretch, amount: Defaults[.nonLinearStretchAmount])
+        nonLinearStretchRenderer?.encode(from: source, to: target, commandBuffer: commandBuffer, centerSlope: slope)
+    }
+
+    /// Redraws the last frame while emulation is paused, so filter previews and
+    /// parameter edits show up without unpausing.
+    public func redrawPausedFrame() {
+        guard isPaused, let mtlView, inputTexture != nil else { return }
+        directRender(in: mtlView)
+    }
+
     /// - Parameter outputSize: size of the picture rect the filter draws into
     ///   (the viewport the caller already set).
-    private func applyMetalFilterIfPossible(encoder: MTLRenderCommandEncoder,
+    private func applyMetalFilterIfPossible(_ option: MetalFilterSelectionOption,
+                                            encoder: MTLRenderCommandEncoder,
                                             targetTexture: MTLTexture,
                                             sourceTexture: MTLTexture,
                                             outputSize: CGSize) -> Bool {
-        guard renderSettings.metalFilterMode != .none,
-              let emulatorCore = emulatorCore else {
+        guard let emulatorCore = emulatorCore else {
             return false
         }
 
@@ -1716,7 +1798,8 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
                                           sourceSize: sourceSize,
                                           screenType: emulatorCore.screenType,
                                           smoothingEnabled: renderSettings.smoothingEnabled,
-                                          setViewport: false)
+                                          setViewport: false,
+                                          filter: option)
     }
 
     class func shader(withContents contents: String, type: GLenum) -> GLuint {
@@ -2018,8 +2101,9 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
             ))
 
             var filterApplied = false
-            if self.renderSettings.metalFilterMode != .none {
-                filterApplied = self.applyMetalFilterIfPossible(encoder: renderEncoder,
+            if let option = self.activeShaderEntry(for: emulatorCore)?.id.nativeOption {
+                filterApplied = self.applyMetalFilterIfPossible(option,
+                                                           encoder: renderEncoder,
                                                            targetTexture: outputTexture,
                                                            sourceTexture: finalSourceTexture,
                                                            outputSize: contentRect.size)
@@ -2769,15 +2853,50 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
             return
         }
 
+        let drawableSize = CGSize(width: drawable.texture.width, height: drawable.texture.height)
+        let activeShader = dualScreenLayout == nil ? activeShaderEntry(for: emulatorCore) : nil
+        // Non-linear stretch: draw the frame (filters included) into an intermediate
+        // texture as a plain stretch, then warp it into the drawable.
+        let stretchTarget = dualScreenLayout == nil ? nonLinearStretchTarget(for: drawable.texture) : nil
+        let frameTarget = stretchTarget ?? drawable.texture
+
+        // Library presets run their own offscreen passes and draw the final pass themselves.
+        if let entry = activeShader, entry.id.kind == .slang {
+            if renderSlangFilter(entry, commandBuffer: commandBuffer, source: inputTexture,
+                                 target: frameTarget, drawableSize: drawableSize, emulatorCore: emulatorCore) {
+                if let stretchTarget {
+                    encodeNonLinearStretch(from: stretchTarget, to: drawable.texture,
+                                           commandBuffer: commandBuffer, emulatorCore: emulatorCore)
+                }
+                commandBuffer.present(drawable)
+                commandBuffer.addCompletedHandler { [weak self] buffer in
+                    if let error = buffer.error {
+                        ELOG("GPU error during shader rendering: \(error)")
+                        DispatchQueue.main.async {
+                            self?.handleCompletedCommandBufferError(error)
+                        }
+                    }
+                }
+                commandBuffer.commit()
+                previousCommandBuffer = commandBuffer
+                frameCount += 1
+                markFramePresented()
+                return
+            }
+            // Still compiling (or failed): draw the plain picture below.
+        } else if slangFilterRenderer?.loadedID != nil {
+            slangFilterRenderer?.unload()
+        }
+
         // Reuse render pass descriptor if available, otherwise create new one
         let renderPassDescriptor: MTLRenderPassDescriptor
         if let existing = self.renderPassDescriptor {
             renderPassDescriptor = existing
             // Update texture reference for current drawable
-            renderPassDescriptor.colorAttachments[0].texture = drawable.texture
+            renderPassDescriptor.colorAttachments[0].texture = frameTarget
         } else {
             renderPassDescriptor = MTLRenderPassDescriptor()
-            renderPassDescriptor.colorAttachments[0].texture = drawable.texture
+            renderPassDescriptor.colorAttachments[0].texture = frameTarget
             renderPassDescriptor.colorAttachments[0].loadAction = .clear
             renderPassDescriptor.colorAttachments[0].storeAction = .store
             renderPassDescriptor.colorAttachments[0].clearColor = MTLClearColor(red: 0.0, green: 0.0, blue: 0.0, alpha: 1.0)
@@ -2840,9 +2959,7 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
             // Draw into the picture's rect, not the whole drawable: until a skin reports its
             // screen rect the view is still full screen, and filters (VHS noise, vignette)
             // would otherwise paint over the whole device.
-            let contentRect = pictureRect(drawableSize: CGSize(width: drawable.texture.width,
-                                                               height: drawable.texture.height),
-                                          emulatorCore: emulatorCore)
+            let contentRect = pictureRect(drawableSize: drawableSize, emulatorCore: emulatorCore)
             renderEncoder.setViewport(MTLViewport(
                 originX: Double(contentRect.minX),
                 originY: Double(contentRect.minY),
@@ -2868,8 +2985,9 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
             }
 
             var filterApplied = false
-            if renderSettings.metalFilterMode != .none {
-                filterApplied = applyMetalFilterIfPossible(encoder: renderEncoder,
+            if let option = activeShader?.id.nativeOption {
+                filterApplied = applyMetalFilterIfPossible(option,
+                                                           encoder: renderEncoder,
                                                            targetTexture: drawable.texture,
                                                            sourceTexture: inputTexture,
                                                            outputSize: contentRect.size)
@@ -2896,6 +3014,11 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
                 renderEncoder.setFragmentTexture(inputTexture, index: 0)
                 renderEncoder.drawPrimitives(type: .triangleStrip, vertexStart: 0, vertexCount: 4)
             }
+        }
+
+        if let stretchTarget {
+            encodeNonLinearStretch(from: stretchTarget, to: drawable.texture,
+                                   commandBuffer: commandBuffer, emulatorCore: emulatorCore)
         }
 
         // Present the drawable

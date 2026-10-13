@@ -84,10 +84,11 @@ public enum ShaderScope: Hashable, Sendable {
     var key: String {
         switch self {
         case .global: return "global"
-        case .system(let id): return "system:\(id)"
-        case .game(let md5): return "game:\(md5)"
+        case .system(let id): return Self.systemPrefix + id
+        case .game(let md5): return Self.gamePrefix + md5
         }
     }
 
+    static let systemPrefix = "system:"
     static let gamePrefix = "game:"
 }

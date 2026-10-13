@@ -19,6 +19,7 @@ import PVCoreBridge
 import PVThemes
 import PVSettings
 import PVUIBase
+import PVShaders
 import PVSwiftUI
 import PVLibrary
 import PVLogging
@@ -400,6 +401,8 @@ public final class PVAppDelegate: UIResponder, UIApplicationDelegate, Observable
 
         // Restore critical user preferences from iCloud KVS (survives reinstalls)
         PVLaunchProfiler.measureSync("launch.iCloudSettingsSync") {
+            // Filter selections, parameters and favorites sync as merged blobs.
+            ShaderLibraryStore.shared.register()
             iCloudSettingsSync.setup()
         }
 

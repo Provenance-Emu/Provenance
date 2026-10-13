@@ -101,6 +101,32 @@ public final class ShaderLibraryStore {
         return .global
     }
 
+    /// Per-system selections, keyed by system identifier.
+    public var systemSelections: [String: ShaderSelection] {
+        Self.scoped(selections.values, prefix: ShaderScope.systemPrefix)
+    }
+
+    /// Per-game selections, keyed by game MD5.
+    public var gameSelections: [String: ShaderSelection] {
+        Self.scoped(selections.values, prefix: ShaderScope.gamePrefix)
+    }
+
+    /// Removes every per-game selection.
+    public func clearGameSelections() {
+        for md5 in gameSelections.keys {
+            selections.set(nil, for: ShaderScope.game(md5).key)
+        }
+        didChange(StorageKey.selections, sync: SyncKey.selections)
+    }
+
+    private static func scoped(_ values: [String: ShaderSelection], prefix: String) -> [String: ShaderSelection] {
+        var result: [String: ShaderSelection] = [:]
+        for (key, value) in values where key.hasPrefix(prefix) {
+            result[String(key.dropFirst(prefix.count))] = value
+        }
+        return result
+    }
+
     // MARK: - Parameters
 
     static func parameterKey(_ shader: ShaderID, _ name: String) -> String { "\(shader.rawValue)|\(name)" }
@@ -165,8 +191,29 @@ public final class ShaderLibraryStore {
 
     // MARK: - iCloud
 
-    /// Registers the synced state with `iCloudSettingsSync`. Call before its `setup()`.
+    @ObservationIgnored private var legacyObservation: (any Defaults.Observation)?
+
+    /// Follows writes to the legacy `metalFilterMode` key (older menus still set it)
+    /// into the global selection.
+    private func observeLegacyFilterMode() {
+        guard legacyObservation == nil else { return }
+        legacyObservation = Defaults.observe(.metalFilterMode, options: []) { [weak self] change in
+            DispatchQueue.main.async {
+                MainActor.assumeIsolated {
+                    guard let self else { return }
+                    let current = self.selection(for: .global)
+                    // Ignore our own write-through and values the legacy key cannot express.
+                    guard current?.legacyMode != change.newValue else { return }
+                    self.setSelection(ShaderSelection(legacy: change.newValue), for: .global)
+                }
+            }
+        }
+    }
+
+    /// Registers the synced state with `iCloudSettingsSync` (call before its `setup()`)
+    /// and starts following the legacy filter setting.
     public func register() {
+        observeLegacyFilterMode()
         iCloudSettingsSync.register(.init(key: SyncKey.selections,
                                           localData: { [weak self] in self.flatMap { Self.encode($0.prunedSelections()) } },
                                           merge: { [weak self] data in MainActor.assumeIsolated { self?.mergeSelections(data) } }))
@@ -213,16 +260,39 @@ public final class ShaderLibraryStore {
 
     // MARK: - Persistence
 
+    /// Saves are coalesced: a slider drag changes a parameter every frame.
+    static let saveDelay: Duration = .milliseconds(500)
+    @ObservationIgnored private var pendingSaves: [String: String?] = [:]
+    @ObservationIgnored private var saveTask: Task<Void, Never>?
+
     private func didChange(_ storageKey: String, sync syncKey: String?) {
-        switch storageKey {
-        case StorageKey.selections: defaults.set(Self.encode(selections), forKey: storageKey)
-        case StorageKey.parameters: defaults.set(Self.encode(parameters), forKey: storageKey)
-        case StorageKey.favorites: defaults.set(Self.encode(favorites), forKey: storageKey)
-        default: break
-        }
         revision += 1
-        if let syncKey {
-            iCloudSettingsSync.pushBlob(key: syncKey)
+        // Keep a pending sync request even if a later merge-only change has no sync key.
+        if pendingSaves[storageKey] == nil || syncKey != nil {
+            pendingSaves[storageKey] = syncKey
+        }
+        saveTask?.cancel()
+        saveTask = Task { [weak self] in
+            try? await Task.sleep(for: Self.saveDelay)
+            guard !Task.isCancelled else { return }
+            self?.flushSaves()
+        }
+    }
+
+    /// Writes pending changes now (also called from tests).
+    func flushSaves() {
+        let saves = pendingSaves
+        pendingSaves = [:]
+        for (storageKey, syncKey) in saves {
+            switch storageKey {
+            case StorageKey.selections: defaults.set(Self.encode(selections), forKey: storageKey)
+            case StorageKey.parameters: defaults.set(Self.encode(parameters), forKey: storageKey)
+            case StorageKey.favorites: defaults.set(Self.encode(favorites), forKey: storageKey)
+            default: break
+            }
+            if let syncKey {
+                iCloudSettingsSync.pushBlob(key: syncKey)
+            }
         }
     }
 

@@ -1,18 +1,23 @@
 import SwiftUI
 import PVSettings
+import PVShaders
+import PVSystems
 import Defaults
 import PVThemes
 import PVUIBase
 
 struct FilterSettingsView: View {
     @Environment(\.dismiss) private var dismiss
-    @Default(.metalFilterMode) var metalFilterMode
     @Default(.openGLFilterMode) var openGLFilterMode
 
     var body: some View {
         Form {
-            MetalFilterSection(metalFilterMode: $metalFilterMode)
+            DefaultFilterSection()
+            ScopedFilterSections()
             OpenGLFilterSection(openGLFilterMode: $openGLFilterMode)
+            SwiftUI.Section(footer: Text(String(localized: "Library filters are the libretro slang shader collection, converted to Metal. Provenance filters by Mr. J & Mame4iOS."))) {
+                EmptyView()
+            }
         }
         #if os(tvOS)
         .background(
@@ -26,8 +31,6 @@ struct FilterSettingsView: View {
                 endPoint: .bottom
             )
         )
-        #else
-        // .scrollContentBackground(.hidden)
         #endif
         .navigationTitle("Display Filters")
         #if os(tvOS)
@@ -35,275 +38,172 @@ struct FilterSettingsView: View {
         .onExitCommand { dismiss() }
         #endif
         .settingsSubpageTracking()
-
-        Text("Metal filters provided by Mr. J & Mame4iOS.")
-            .font(.caption)
-            #if os(tvOS)
-            .foregroundColor(.retroBlue)
-            #endif
+        .shaderPreviews()
     }
 }
 
-private struct MetalFilterSection: View {
-    @Binding var metalFilterMode: MetalFilterModeOption
-
-    // State for auto mode settings
-    @State private var selectedCRTFilter: MetalFilterSelectionOption
-    @State private var selectedLCDFilter: MetalFilterSelectionOption
-
-    // State for always mode setting
-    @State private var selectedAlwaysFilter: MetalFilterSelectionOption
-
-    init(metalFilterMode: Binding<MetalFilterModeOption>) {
-        _metalFilterMode = metalFilterMode
-
-        switch metalFilterMode.wrappedValue {
-        case .auto(let crt, let lcd):
-            _selectedCRTFilter = State(initialValue: crt)
-            _selectedLCDFilter = State(initialValue: lcd)
-            _selectedAlwaysFilter = State(initialValue: .defaultValue)
-        case .always(let filter):
-            _selectedAlwaysFilter = State(initialValue: filter)
-            _selectedCRTFilter = State(initialValue: .defaultValue)
-            _selectedLCDFilter = State(initialValue: .defaultValue)
-        case .none:
-            _selectedCRTFilter = State(initialValue: .defaultValue)
-            _selectedLCDFilter = State(initialValue: .defaultValue)
-            _selectedAlwaysFilter = State(initialValue: .defaultValue)
+/// The global filter: off, one filter everywhere, or picked by screen type.
+private struct DefaultFilterSection: View {
+    private enum Mode: String, CaseIterable, Identifiable {
+        case off, automatic, always
+        var id: String { rawValue }
+        var title: String {
+            switch self {
+            case .off: return String(localized: "Off")
+            case .automatic: return String(localized: "Automatic")
+            case .always: return String(localized: "Always")
+            }
         }
     }
 
-    /// Returns the active CRT filter selection, if any.
-    private var activeCRTFilter: MetalFilterSelectionOption? {
-        switch metalFilterMode {
-        case .auto(let crt, _):
-            switch crt {
-            case .simpleCRT, .complexCRT:
-                return crt
-            default:
-                return nil
+    private let store = ShaderLibraryStore.shared
+    private let catalog = ShaderCatalog.shared
+
+    private var selection: ShaderSelection { store.selection(for: .global) ?? .off }
+
+    private var mode: Binding<Mode> {
+        Binding(
+            get: {
+                switch selection {
+                case .off, .skinFilter: return .off
+                case .auto: return .automatic
+                case .always: return .always
+                }
+            },
+            set: { newMode in
+                switch newMode {
+                case .off:
+                    store.setSelection(.off, for: .global)
+                case .automatic:
+                    store.setSelection(.auto(crt: .native(.simpleCRT), lcd: .native(.lcd)), for: .global)
+                case .always:
+                    store.setSelection(.always(store.recents.first ?? .native(.complexCRT)), for: .global)
+                }
             }
-        case .always(let filter):
-            switch filter {
-            case .simpleCRT, .complexCRT:
-                return filter
-            default:
-                return nil
-            }
-        case .none:
-            return nil
-        }
+        )
     }
 
     var body: some View {
-        Section(header:
-            Text("Metal Filters")
-                #if os(tvOS)
-                .foregroundColor(.retroPink)
-                .font(.headline)
-                #endif
-        ) {
-            Picker("Filter Mode", selection: $metalFilterMode) {
-                Text("Off").tag(MetalFilterModeOption.none)
-                Text("Auto").tag(MetalFilterModeOption.auto(crt: selectedCRTFilter, lcd: selectedLCDFilter))
-                Text("Always").tag(MetalFilterModeOption.always(filter: selectedAlwaysFilter))
+        SwiftUI.Section(header: Text(String(localized: "Default Filter")),
+                        footer: Text(String(localized: "Automatic picks a filter by screen type: CRT systems and LCD handhelds. Systems and games can override this from the pause menu."))) {
+            Picker(String(localized: "Mode"), selection: mode) {
+                ForEach(Mode.allCases) { Text($0.title).tag($0) }
             }
-            #if os(tvOS)
-            .pickerStyle(.automatic)
-            .tint(.retroBlue)
-            #endif
-
-            switch metalFilterMode {
-            case .auto:
-                Picker("CRT Filter Type", selection: $selectedCRTFilter) {
-                    ForEach([MetalFilterSelectionOption.simpleCRT, .complexCRT], id: \.self) { filter in
-                        Text(filter.description).tag(filter)
-                    }
+            switch selection {
+            case .always(let id):
+                pickerLink(String(localized: "Filter"), current: id) { picked in
+                    store.setSelection(picked.map(ShaderSelection.always) ?? .off, for: .global)
                 }
-                #if os(tvOS)
-                .tint(.retroPurple)
-                #endif
-                .onChange(of: selectedCRTFilter) { newValue in
-                    metalFilterMode = .auto(crt: newValue, lcd: selectedLCDFilter)
+                editLink(id)
+            case .auto(let crt, let lcd):
+                pickerLink(String(localized: "CRT Systems"), current: crt) {
+                    store.setSelection(.auto(crt: $0, lcd: lcd), for: .global)
                 }
-
-                Picker("LCD Filter Type", selection: $selectedLCDFilter) {
-                    ForEach([MetalFilterSelectionOption.lcd], id: \.self) { filter in
-                        Text(filter.description).tag(filter)
-                    }
+                pickerLink(String(localized: "LCD Handhelds"), current: lcd) {
+                    store.setSelection(.auto(crt: crt, lcd: $0), for: .global)
                 }
-                #if os(tvOS)
-                .tint(.retroPurple)
-                #endif
-                .onChange(of: selectedLCDFilter) { newValue in
-                    metalFilterMode = .auto(crt: selectedCRTFilter, lcd: newValue)
-                }
-
-            case .always:
-                Picker("Filter Type", selection: $selectedAlwaysFilter) {
-                    ForEach(MetalFilterSelectionOption.allCases, id: \.self) { filter in
-                        Text(filter.description).tag(filter)
-                    }
-                }
-                #if os(tvOS)
-                .tint(.retroPink)
-                #endif
-                .onChange(of: selectedAlwaysFilter) { newValue in
-                    metalFilterMode = .always(filter: newValue)
-                }
-
-            case .none:
+                if let crt { editLink(crt) }
+                if let lcd { editLink(lcd) }
+            case .off, .skinFilter:
                 EmptyView()
             }
         }
-
-        // Show CRT parameter controls when a CRT filter is active
-        if let crtFilter = activeCRTFilter {
-            if crtFilter == .simpleCRT {
-                SimpleCRTParametersSection()
-            } else {
-                ComplexCRTParametersSection()
-            }
-        }
-    }
-}
-
-// MARK: - Simple CRT Parameters
-
-private struct SimpleCRTParametersSection: View {
-    @Default(.simpleCRTCurvVert) var curvVert
-    @Default(.simpleCRTCurvHoriz) var curvHoriz
-    @Default(.simpleCRTCurvStrength) var curvStrength
-    @Default(.simpleCRTLightBoost) var lightBoost
-    @Default(.simpleCRTVignStrength) var vignStrength
-    @Default(.simpleCRTZoomOut) var zoomOut
-    @Default(.simpleCRTBrightness) var brightness
-
-    var body: some View {
-        Section(header:
-            Text("Simple CRT Parameters")
-                #if os(tvOS)
-                .foregroundColor(.retroPink)
-                .font(.headline)
-                #endif
-        ) {
-            ShaderSliderRow(label: "Curvature (Vertical)", value: $curvVert, range: 1.0...10.0)
-            ShaderSliderRow(label: "Curvature (Horizontal)", value: $curvHoriz, range: 1.0...10.0)
-            ShaderSliderRow(label: "Curvature Strength", value: $curvStrength, range: 0.0...1.0)
-            ShaderSliderRow(label: "Light Boost", value: $lightBoost, range: 0.1...3.0)
-            ShaderSliderRow(label: "Vignette", value: $vignStrength, range: 0.0...1.0)
-            ShaderSliderRow(label: "Zoom Out", value: $zoomOut, range: 0.5...2.0)
-            ShaderSliderRow(label: "Brightness", value: $brightness, range: 0.5...1.5)
-
-            Button("Reset to Defaults") {
-                Defaults.reset(
-                    .simpleCRTCurvVert, .simpleCRTCurvHoriz, .simpleCRTCurvStrength,
-                    .simpleCRTLightBoost, .simpleCRTVignStrength, .simpleCRTZoomOut,
-                    .simpleCRTBrightness
-                )
-            }
-            .foregroundColor(.red)
-        }
-    }
-}
-
-// MARK: - Complex CRT Parameters
-
-private struct ComplexCRTParametersSection: View {
-    @Default(.complexCRTUseScanlines) var useScanlines
-    @Default(.complexCRTUseShadowMask) var useShadowMask
-    @Default(.complexCRTUseWarp) var useWarp
-    @Default(.complexCRTBloomAmount) var bloomAmount
-    @Default(.complexCRTScanlineHardness) var scanlineHardness
-    @Default(.complexCRTShadowMaskHardness) var shadowMaskHardness
-    @Default(.complexCRTRowsOfResolution) var rowsOfResolution
-    @Default(.complexCRTTVL) var tvl
-    @Default(.complexCRTWarpX) var warpX
-    @Default(.complexCRTWarpY) var warpY
-    @Default(.complexCRTDisplayGamma) var displayGamma
-
-    var body: some View {
-        Section(header:
-            Text("Complex CRT Parameters")
-                #if os(tvOS)
-                .foregroundColor(.retroPink)
-                .font(.headline)
-                #endif
-        ) {
-            Toggle("Scanlines", isOn: $useScanlines)
-            Toggle("Shadow Mask", isOn: $useShadowMask)
-            Toggle("Screen Warp", isOn: $useWarp)
-
-            ShaderSliderRow(label: "Bloom Amount", value: $bloomAmount, range: 0.0...6.0)
-
-            if useScanlines {
-                ShaderSliderRow(label: "Scanline Hardness", value: $scanlineHardness, range: 1.0...12.0)
-                ShaderSliderRow(label: "CRT Resolution (lines)", value: $rowsOfResolution, range: 240.0...1080.0, step: 1.0)
-            }
-
-            if useShadowMask {
-                ShaderSliderRow(label: "Shadow Mask Hardness", value: $shadowMaskHardness, range: 4.0...32.0)
-                ShaderSliderRow(label: "TV Lines (mask density)", value: $tvl, range: 400.0...1200.0, step: 1.0)
-            }
-
-            if useWarp {
-                ShaderSliderRow(label: "Warp Horizontal", value: $warpX, range: 0.0...0.05)
-                ShaderSliderRow(label: "Warp Vertical", value: $warpY, range: 0.0...0.1)
-            }
-
-            ShaderSliderRow(label: "Display Gamma", value: $displayGamma, range: 1.8...2.6)
-
-            Button("Reset to Defaults") {
-                Defaults.reset(
-                    .complexCRTUseScanlines, .complexCRTUseShadowMask, .complexCRTUseWarp,
-                    .complexCRTBloomAmount, .complexCRTScanlineHardness, .complexCRTShadowMaskHardness,
-                    .complexCRTRowsOfResolution, .complexCRTTVL,
-                    .complexCRTWarpX, .complexCRTWarpY, .complexCRTDisplayGamma
-                )
-            }
-            .foregroundColor(.red)
-        }
-    }
-}
-
-// MARK: - Shared Slider Row
-
-/// A reusable row showing a label, a value readout, and a slider.
-private struct ShaderSliderRow: View {
-    let label: String
-    @Binding var value: Float
-    let range: ClosedRange<Float>
-    var step: Float? = nil
-
-    private var formattedValue: String {
-        if let step = step, step >= 1.0 {
-            return String(format: "%.0f", value)
-        } else if range.upperBound - range.lowerBound >= 10 {
-            return String(format: "%.0f", value)
-        } else if range.upperBound - range.lowerBound >= 1 {
-            return String(format: "%.2f", value)
-        } else {
-            return String(format: "%.3f", value)
-        }
     }
 
-    var body: some View {
-        VStack(alignment: .leading, spacing: 4) {
+    /// A row that opens the browser and reports the picked filter (`nil` for Off).
+    private func pickerLink(_ title: String, current: ShaderID?, onPick: @escaping (ShaderID?) -> Void) -> some View {
+        NavigationLink {
+            ShaderPickerScreen(title: title, current: current, onPick: onPick)
+        } label: {
             HStack {
-                Text(label)
-                    .font(.subheadline)
+                Text(title)
                 Spacer()
-                Text(formattedValue)
-                    .font(.subheadline.monospacedDigit())
+                Text(current.flatMap(catalog.entry(for:))?.name.capitalized ?? String(localized: "Off"))
                     .foregroundColor(.secondary)
             }
-            if let step = step {
-                RetroWaveSlider(value: $value, in: range, step: Float.Stride(step))
-            } else {
-                RetroWaveSlider(value: $value, in: range)
+        }
+    }
+
+    @ViewBuilder
+    private func editLink(_ id: ShaderID) -> some View {
+        if let entry = catalog.entry(for: id), !entry.editableParameters.isEmpty {
+            NavigationLink {
+                ShaderParameterEditorView(entry: entry)
+            } label: {
+                Label(String(localized: "Adjust \(entry.name.capitalized)"), systemImage: "slider.horizontal.3")
             }
         }
-        .padding(.vertical, 2)
+    }
+}
+
+/// The browser as a settings screen: picking pops back.
+private struct ShaderPickerScreen: View {
+    let title: String
+    let current: ShaderID?
+    let onPick: (ShaderID?) -> Void
+    @Environment(\.dismiss) private var dismiss
+
+    var body: some View {
+        ShaderBrowserView(current: current.map(ShaderBrowserChoice.shader) ?? .off) { choice in
+            if case .shader(let id) = choice {
+                onPick(id)
+                ShaderLibraryStore.shared.noteUsed(id)
+            } else {
+                onPick(nil)
+            }
+            dismiss()
+        }
+        .navigationTitle(title)
+    }
+}
+
+/// Per-system and per-game choices made from the pause menu.
+private struct ScopedFilterSections: View {
+    private let store = ShaderLibraryStore.shared
+    private let catalog = ShaderCatalog.shared
+
+    var body: some View {
+        let systems = store.systemSelections.sorted { $0.key < $1.key }
+        if !systems.isEmpty {
+            SwiftUI.Section(header: Text(String(localized: "System Filters"))) {
+                ForEach(systems, id: \.key) { systemID, selection in
+                    HStack {
+                        Text(SystemIdentifier(rawValue: systemID)?.fullName ?? systemID)
+                        Spacer()
+                        Text(describe(selection)).foregroundColor(.secondary)
+                    }
+                    .contextMenu {
+                        Button(String(localized: "Use Default Filter"), role: .destructive) {
+                            store.setSelection(nil, for: .system(systemID))
+                        }
+                    }
+                    #if !os(tvOS)
+                    .swipeActions {
+                        Button(String(localized: "Remove"), role: .destructive) {
+                            store.setSelection(nil, for: .system(systemID))
+                        }
+                    }
+                    #endif
+                }
+            }
+        }
+        let games = store.gameSelections.count
+        if games > 0 {
+            SwiftUI.Section(header: Text(String(localized: "Game Filters"))) {
+                Button(String(localized: "Clear \(games) Per-Game Filters"), role: .destructive) {
+                    store.clearGameSelections()
+                }
+            }
+        }
+    }
+
+    private func describe(_ selection: ShaderSelection) -> String {
+        switch selection {
+        case .off: return String(localized: "Off")
+        case .skinFilter: return String(localized: "Skin's Filter")
+        case .auto: return String(localized: "Automatic")
+        case .always(let id): return catalog.entry(for: id)?.name.capitalized ?? id.path
+        }
     }
 }
 

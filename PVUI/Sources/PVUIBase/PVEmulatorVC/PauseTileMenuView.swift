@@ -21,6 +21,7 @@ import PVLogging
 import PVLibrary
 import PVPrimitives
 import PVSettings
+import PVShaders
 import PVThemes
 #if canImport(UIKit)
 import UIKit
@@ -118,6 +119,7 @@ struct PauseTileMenuView: View {
     @State private var triggerAirPlayPicker = false
     #endif
     @State private var showingShaderSettings = false
+    @State private var showingShaderBrowser = false
     @State private var showingPortDevices = false
     #if !os(tvOS)
     @State private var controllerLayoutContext: ControllerLayoutSheetContext?
@@ -163,7 +165,6 @@ struct PauseTileMenuView: View {
     @Environment(\.scenePhase) private var scenePhase
 
     // Metal filter state — read/write directly to react to changes.
-    @Default(.metalFilterMode) private var metalFilterMode
 
     // Haptic feedback toggle
     @Default(.hapticFeedback) private var hapticFeedbackEnabled
@@ -231,7 +232,6 @@ struct PauseTileMenuView: View {
     private func rebuildSections() {
         viewModel.rebuild(
             emulatorVC: emulatorVC,
-            metalFilterMode: metalFilterMode,
             showFPSCount: showFPSCount,
             hapticFeedbackEnabled: hapticFeedbackEnabled,
             featureFlags: featureFlags,
@@ -623,7 +623,7 @@ struct PauseTileMenuView: View {
 
         // MARK: Quick-settings tiles
         case "filterCycle":
-            cycleFilter()
+            showingShaderBrowser = true
         case "mouseInputSource":
             let sources = availableMouseInputSources()
             guard !sources.isEmpty else { return }
@@ -877,13 +877,16 @@ struct PauseTileMenuView: View {
         #endif
 
         if tile.id == "filterCycle" {
-            // Match by stable ID (filter_<rawValue>) to avoid brittle title/description comparisons.
-            let selected = MetalFilterSelectionOption.allCases.first { f in
-                "filter_\(f.rawValue)" == lpOption.id
+            // Quick picks apply to the scope already in effect for this game.
+            let store = ShaderLibraryStore.shared
+            let scope = store.effectiveScope(gameMD5: emulatorVC.shaderGameMD5, systemID: emulatorVC.shaderSystemID)
+            if lpOption.id == PauseTileMenuViewModel.filterOffOptionID {
+                store.setSelection(.off, for: scope)
+            } else if lpOption.id.hasPrefix(PauseTileMenuViewModel.filterOptionPrefix) {
+                let id = ShaderID(rawValue: String(lpOption.id.dropFirst(PauseTileMenuViewModel.filterOptionPrefix.count)))
+                store.setSelection(.always(id), for: scope)
             }
-            if let filter = selected {
-                metalFilterMode = .always(filter: filter)
-            }
+            emulatorVC.shaderSelectionDidChange()
             rebuildSections()
             return
         }
@@ -1079,17 +1082,6 @@ struct PauseTileMenuView: View {
         case .group:
             return false
         }
-    }
-
-    // MARK: - Filter cycling helper
-
-    private func cycleFilter() {
-        let all = MetalFilterSelectionOption.allCases
-        let current = MetalFilterModeOption.parseCurrentFilter(from: metalFilterMode)
-        let idx = all.firstIndex(of: current) ?? 0
-        let next = all[(idx + 1) % all.count]
-        metalFilterMode = next == .none ? .none : .always(filter: next)
-        rebuildSections()
     }
 
     /// Plays a sample click when selecting a button sound style.
@@ -1770,8 +1762,11 @@ struct PauseTileMenuView: View {
             )
         }
         #endif
-        .sheet(isPresented: $showingShaderSettings) {
-            ShaderSettingsPauseSheet()
+        .sheet(isPresented: $showingShaderBrowser, onDismiss: rebuildSections) {
+            ShaderPauseSheet(emulatorVC: emulatorVC)
+        }
+        .sheet(isPresented: $showingShaderSettings, onDismiss: rebuildSections) {
+            ShaderPauseSheet(emulatorVC: emulatorVC, startInEditor: true)
         }
         .sheet(isPresented: $showingPortDevices) {
             PortDevicesPauseSheet(emulatorVC: emulatorVC)

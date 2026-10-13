@@ -12,6 +12,7 @@ import PVEmulatorCore
 import PVFeatureFlags
 import PVPrimitives
 import PVSettings
+import PVShaders
 import PVLibrary
 #if canImport(PVNetplay)
 import PVNetplay
@@ -56,7 +57,6 @@ final class PauseTileMenuViewModel: ObservableObject {
     ///
     /// - Parameters:
     ///   - emulatorVC: The active emulator view controller.
-    ///   - metalFilterMode: Current metal filter preference.
     ///   - hapticFeedbackEnabled: Whether rumble/haptic is on.
     ///   - featureFlags: Feature flag environment value.
     ///   - indicatorRegistry: Shared indicator state registry.
@@ -64,7 +64,6 @@ final class PauseTileMenuViewModel: ObservableObject {
     // swiftlint:disable:next function_body_length
     func rebuild(
         emulatorVC: PVEmulatorViewController,
-        metalFilterMode: MetalFilterModeOption,
         showFPSCount: Bool,
         hapticFeedbackEnabled: Bool,
         featureFlags: PVFeatureFlagsManager,
@@ -397,12 +396,14 @@ final class PauseTileMenuViewModel: ObservableObject {
         ]
         // Screen filter (shader) controls only for cores whose video the Metal filter can reach.
         let supportsFilters = emulatorVC.core.supportsFilters
+        // The filter in effect for this game (game, system, then global choice).
+        let activeShader = emulatorVC.activeShaderSelection.shader(for: emulatorVC.core.screenType)
+            .flatMap(ShaderCatalog.shared.entry(for:))
         if supportsFilters {
-            screenDisplayTiles.append(Self.filterCycleTile(metalFilterMode: metalFilterMode))
+            screenDisplayTiles.append(Self.filterTile(active: activeShader))
         }
         // Shader parameters live under **SETTINGS** with other configuration tiles.
-        let currentFilter = MetalFilterModeOption.parseCurrentFilter(from: metalFilterMode)
-        if supportsFilters, currentFilter.hasEditableParameters {
+        if supportsFilters, !(activeShader?.editableParameters.isEmpty ?? true) {
             settingsTiles.append(PauseMenuTile(
                 id: "shaderSettings",
                 icon: "slider.horizontal.3",
@@ -910,28 +911,32 @@ final class PauseTileMenuViewModel: ObservableObject {
         }
     }
 
-    private static func filterCycleTile(metalFilterMode: MetalFilterModeOption) -> PauseMenuTile {
-        let currentFilter = MetalFilterModeOption.parseCurrentFilter(from: metalFilterMode)
-        let allFilters = MetalFilterSelectionOption.allCases
-        let badge: String = {
-            switch currentFilter {
-            case .none: return "None"
-            default: return currentFilter.description
-            }
-        }()
-        let lpOptions = allFilters.map { f in
-            PauseMenuTileLongPressOption(
-                id: "filter_\(f.rawValue)",
-                title: f == .none ? "None" : f.description,
-                isSelected: f == currentFilter
-            )
+    /// Long-press option id for "no filter"; filters use `filterOptionPrefix` + their id.
+    static let filterOffOptionID = "shader_off"
+    static let filterOptionPrefix = "shader_"
+
+    /// Opens the filter browser; long-press offers Off plus favorites and recents.
+    private static func filterTile(active: ShaderCatalogEntry?) -> PauseMenuTile {
+        let store = ShaderLibraryStore.shared
+        var quickIDs: [ShaderID] = []
+        for id in store.favoriteIDs + store.recents where !quickIDs.contains(id) {
+            quickIDs.append(id)
         }
+        let quick = quickIDs.compactMap(ShaderCatalog.shared.entry(for:))
+        let lpOptions = [PauseMenuTileLongPressOption(id: filterOffOptionID,
+                                                      title: String(localized: "Off"),
+                                                      isSelected: active == nil)]
+            + quick.map { entry in
+                PauseMenuTileLongPressOption(id: filterOptionPrefix + entry.id.rawValue,
+                                             title: entry.name.capitalized,
+                                             isSelected: entry.id == active?.id)
+            }
         return PauseMenuTile(
             id: "filterCycle",
             icon: "camera.filters",
             label: String(localized: "Screen Filter"),
-            badge: badge,
-            description: String(localized: "Tap to cycle screen filters. Long-press to pick one."),
+            badge: active?.name.capitalized ?? String(localized: "None"),
+            description: String(localized: "Tap to browse filters. Long-press for favorites and recents."),
             colorKey: .teal,
             dismissOnTap: false,
             longPressOptions: lpOptions
