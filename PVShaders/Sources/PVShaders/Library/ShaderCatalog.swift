@@ -24,6 +24,12 @@ public struct ShaderCatalogEntry: Identifiable, Hashable, Sendable {
     /// Unpacked preset directory; `nil` for native filters.
     public let directory: URL?
 
+    /// Name for the UI: native filters keep their own spelling ("VHS"); library
+    /// names come from lowercase file names and are title-cased.
+    public var displayName: String {
+        id.kind == .native ? name : name.capitalized
+    }
+
     /// Editable parameters (headings removed).
     public var editableParameters: [ShaderParameterDescriptor] { parameters.filter { !$0.isHeading } }
 

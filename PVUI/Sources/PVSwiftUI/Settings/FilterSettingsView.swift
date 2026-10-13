@@ -9,11 +9,16 @@ import PVUIBase
 struct FilterSettingsView: View {
     @Environment(\.dismiss) private var dismiss
     @Default(.openGLFilterMode) var openGLFilterMode
+    @AppStorage(ShaderPreviewService.usesTestPatternKey) private var previewsUseTestPattern = false
 
     var body: some View {
         Form {
             DefaultFilterSection()
             ScopedFilterSections()
+            SwiftUI.Section(header: Text(String(localized: "Previews")),
+                            footer: Text(String(localized: "While a game is paused, previews use its picture."))) {
+                Toggle(String(localized: "Preview on Test Pattern"), isOn: $previewsUseTestPattern)
+            }
             OpenGLFilterSection(openGLFilterMode: $openGLFilterMode)
             SwiftUI.Section(footer: Text(String(localized: "Library filters are the libretro slang shader collection, converted to Metal. Provenance filters by Mr. J & Mame4iOS."))) {
                 EmptyView()
@@ -118,7 +123,7 @@ private struct DefaultFilterSection: View {
             HStack {
                 Text(title)
                 Spacer()
-                Text(current.flatMap(catalog.entry(for:))?.name.capitalized ?? String(localized: "Off"))
+                Text(current.flatMap(catalog.entry(for:))?.displayName ?? String(localized: "Off"))
                     .foregroundColor(.secondary)
             }
         }
@@ -130,7 +135,7 @@ private struct DefaultFilterSection: View {
             NavigationLink {
                 ShaderParameterEditorView(entry: entry)
             } label: {
-                Label(String(localized: "Adjust \(entry.name.capitalized)"), systemImage: "slider.horizontal.3")
+                Label(String(localized: "Adjust \(entry.displayName)"), systemImage: "slider.horizontal.3")
             }
         }
     }
@@ -202,7 +207,7 @@ private struct ScopedFilterSections: View {
         case .off: return String(localized: "Off")
         case .skinFilter: return String(localized: "Skin's Filter")
         case .auto: return String(localized: "Automatic")
-        case .always(let id): return catalog.entry(for: id)?.name.capitalized ?? id.path
+        case .always(let id): return catalog.entry(for: id)?.displayName ?? id.path
         }
     }
 }

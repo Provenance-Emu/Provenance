@@ -7,6 +7,7 @@
 //
 
 import SwiftUI
+import Metal
 import PVShaders
 
 /// Renders (or fetches from cache) a preview image of `entry` at a pixel size.
@@ -89,8 +90,50 @@ public extension View {
     }
 }
 
-/// Supplies rendered filter previews to the UI.
+/// Supplies rendered filter previews to the UI: the paused game's frame when one is
+/// available, else a placeholder (sample scene or test pattern).
 public enum ShaderPreviewService {
-    /// `nil` until a preview renderer is available: thumbnails show placeholders.
-    public static var loader: ShaderPreviewLoader? { nil }
+    /// `UserDefaults` key: preview over the test pattern instead of the sample scene.
+    public static let usesTestPatternKey = "shaderPreviewUsesTestPattern"
+
+    private static let lock = NSLock()
+    nonisolated(unsafe) private static var gameFrame: ShaderPreviewSource?
+    nonisolated(unsafe) private static var frameIdentity = 0
+
+    private static let cache: ShaderPreviewCache? = {
+        guard let device = MTLCreateSystemDefaultDevice(),
+              let renderer = try? ShaderPreviewRenderer(device: device) else { return nil }
+        let directory = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first?
+            .appendingPathComponent("ShaderPreviews", isDirectory: true)
+        return ShaderPreviewCache(renderer: renderer, diskDirectory: directory)
+    }()
+
+    /// Publishes the paused game's frame (`nil` when the game ends).
+    public static func setGameFrame(_ texture: MTLTexture?) {
+        lock.lock()
+        defer { lock.unlock() }
+        frameIdentity += 1
+        gameFrame = texture.map { .frame(texture: $0, identity: frameIdentity) }
+    }
+
+    /// What previews are drawn over right now.
+    public static var currentSource: ShaderPreviewSource {
+        lock.lock()
+        defer { lock.unlock() }
+        if let gameFrame { return gameFrame }
+        return UserDefaults.standard.bool(forKey: usesTestPatternKey) ? .testPattern : .sampleScene
+    }
+
+    public static var loader: ShaderPreviewLoader? {
+        guard let cache else { return nil }
+        return { entry, size in
+            let values = await MainActor.run {
+                let store = ShaderLibraryStore.shared
+                return Dictionary(entry.parameters.map { ($0.name, store.value(of: $0, in: entry.id)) },
+                                  uniquingKeysWith: { first, _ in first })
+            }
+            return await cache.preview(for: entry, source: currentSource, size: size,
+                                       parameterValue: { values[$0.name] ?? $0.initial })
+        }
+    }
 }

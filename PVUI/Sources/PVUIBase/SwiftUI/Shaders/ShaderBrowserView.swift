@@ -210,7 +210,7 @@ struct ShaderRow: View {
             HStack(spacing: 12) {
                 ShaderThumbnailView(entry: entry, size: Self.thumbnailSize)
                 VStack(alignment: .leading, spacing: 2) {
-                    Text(entry.name.capitalized)
+                    Text(entry.displayName)
                         .lineLimit(1)
                     Text(subtitle)
                         .font(.caption)

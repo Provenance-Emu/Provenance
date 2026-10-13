@@ -394,6 +394,8 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
 
     deinit {
         filterObservationTask?.cancel()
+        // The game is gone: previews go back to the placeholder.
+        ShaderPreviewService.setGameFrame(nil)
         if alternateThreadDepthRenderbuffer > 0 {
             glDeleteRenderbuffers(1, &alternateThreadDepthRenderbuffer)
         }
@@ -1768,6 +1770,31 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
         nonLinearStretchRenderer?.encode(from: source, to: target, commandBuffer: commandBuffer, centerSlope: slope)
     }
 
+    /// Hands a copy of the current frame to the filter previews (pause menu thumbnails).
+    /// OpenGL frames arrive bottom-up, so those cores keep the placeholder.
+    private func publishPreviewFrame() {
+        guard let emulatorCore, let commandQueue, let source = inputTexture,
+              !(emulatorCore.rendersToOpenGL && !emulatorCore.rendersToVulkan) else {
+            ShaderPreviewService.setGameFrame(nil)
+            return
+        }
+        let descriptor = MTLTextureDescriptor.texture2DDescriptor(pixelFormat: source.pixelFormat,
+                                                                  width: source.width,
+                                                                  height: source.height,
+                                                                  mipmapped: false)
+        descriptor.usage = [.shaderRead]
+        descriptor.storageMode = .private
+        guard let copy = device?.makeTexture(descriptor: descriptor),
+              let commandBuffer = commandQueue.makeCommandBuffer(),
+              let blit = commandBuffer.makeBlitCommandEncoder() else { return }
+        blit.copy(from: source, to: copy)
+        blit.endEncoding()
+        commandBuffer.addCompletedHandler { _ in
+            ShaderPreviewService.setGameFrame(copy)
+        }
+        commandBuffer.commit()
+    }
+
     /// Redraws the last frame while emulation is paused, so filter previews and
     /// parameter edits show up without unpausing.
     public func redrawPausedFrame() {
@@ -1936,6 +1963,11 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
 //                 Drawable size: \(view.drawableSize)
 //                """)
 //        }
+
+        // The core has not reported a size yet (still loading): nothing to draw.
+        if effectiveRect.isEmpty && !emulatorCore.rendersToVulkan {
+            return
+        }
 
         // Create the initial input texture from screenRect when needed.
         // Skip for Vulkan cores — their inputTexture is created by
@@ -2462,6 +2494,9 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
     override var isPaused: Bool {
         didSet {
             guard oldValue != isPaused else { return }
+            if isPaused {
+                publishPreviewFrame()
+            }
 
             // Log state change for debugging
             ILOG("[FREEZE] controller isPaused changing from \(oldValue) to \(isPaused)", category: .freeze)

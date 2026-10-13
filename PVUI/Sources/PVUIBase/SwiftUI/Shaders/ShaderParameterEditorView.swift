@@ -74,7 +74,7 @@ public struct ShaderParameterEditorView: View {
                 }
             }
         }
-        .navigationTitle(entry.name.capitalized)
+        .navigationTitle(entry.displayName)
         #if !os(tvOS)
         .navigationBarTitleDisplayMode(.inline)
         #endif

@@ -130,6 +130,29 @@ before it (or seed the files below by hand, then relaunch).
       the game (e.g. Combat tank colours); skin switches select the right
       position; Manic `tvType` single-token skins alternate correctly.
 
+### Shader library and filter browser (2026-10-12)
+- [ ] First build fetches the slang library (Scripts/shaders/fetch_slang_shaders.py);
+      the app bundle has `SlangShaders/` (~870 presets) and Settings → Display
+      Filters lists "Search 874 filters" in the browser.
+- [ ] Pause menu → Screen Filter opens the browser; This Game / This System /
+      Everywhere each stick, and the paused game redraws with the choice.
+- [ ] Heavy multi-pass presets (crt-royale, guest-advanced) run at full speed on
+      an older device; a preset still compiling shows the plain picture briefly.
+- [ ] Shader Settings tile edits parameters live; Reset and Reset All work;
+      search appears for presets with many settings.
+- [ ] Thumbnails use the paused game frame (software cores) or the sample scene.
+- [ ] Favorites and parameter edits sync between two devices on the same iCloud
+      account (key-value store), and removing a favorite on one sticks.
+- [ ] Skin with its own CIFilter: "Skin's Filter" appears; picking a shader
+      replaces it, Off/Skin's Filter brings it back.
+- [ ] VHS/CRT stay inside the picture during the first seconds of launch with a
+      skin, after rotation and after switching skins.
+- [ ] Non-linear stretch (Settings → Scaling Mode) in landscape: picture fills
+      the width, centre keeps its shape; Gentle/Balanced/Full differ.
+- [ ] tvOS: browser and editor are usable with the Siri Remote (focus, steppers).
+- [ ] Dolphin and PPSSPP still use only the Provenance filters (library presets
+      are not wired for their renderers yet).
+
 ### Carried over from earlier sessions (see memory notes)
 - [ ] Background/resume: no main-thread deadlock on resume (Metal drawable).
 - [ ] Dolphin scaling modes (Aspect Fill / Integer / Native) on device.

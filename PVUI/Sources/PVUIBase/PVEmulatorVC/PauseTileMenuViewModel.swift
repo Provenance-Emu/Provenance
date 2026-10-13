@@ -928,14 +928,14 @@ final class PauseTileMenuViewModel: ObservableObject {
                                                       isSelected: active == nil)]
             + quick.map { entry in
                 PauseMenuTileLongPressOption(id: filterOptionPrefix + entry.id.rawValue,
-                                             title: entry.name.capitalized,
+                                             title: entry.displayName,
                                              isSelected: entry.id == active?.id)
             }
         return PauseMenuTile(
             id: "filterCycle",
             icon: "camera.filters",
             label: String(localized: "Screen Filter"),
-            badge: active?.name.capitalized ?? String(localized: "None"),
+            badge: active?.displayName ?? String(localized: "None"),
             description: String(localized: "Tap to browse filters. Long-press for favorites and recents."),
             colorKey: .teal,
             dismissOnTap: false,
