@@ -17,9 +17,6 @@
          location = "group:Cores/Mupen64Plus/PVMupen64Plus.xcodeproj">
       </FileRef>
       <FileRef
-         location = "group:Cores/Genesis-Plus-GX/PVGenesis.xcodeproj">
-      </FileRef>
-      <FileRef
          location = "group:Cores/Dolphin/PVDolphin.xcodeproj">
       </FileRef>
       <FileRef
