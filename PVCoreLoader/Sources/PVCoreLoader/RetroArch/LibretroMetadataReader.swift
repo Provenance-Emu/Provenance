@@ -28,7 +28,7 @@ enum LibretroMetadataReader {
     }
 
     private struct DiskCache: Codable {
-        static let currentVersion = 4   // bumped: tighter name/version heuristic rejects format strings
+        static let currentVersion = LibretroCstringHeuristics.cacheRevision
         var version: Int = DiskCache.currentVersion
         /// keyed by core identifier
         var entries: [String: DiskCacheEntry] = [:]
@@ -221,59 +221,14 @@ enum LibretroMetadataReader {
                 pos += len + 1
             }
 
-            // Find valid_extensions: pipe-separated short tokens like "gb|gbc|dmg"
-            let extRegex = try? NSRegularExpression(pattern: #"^[a-zA-Z0-9]{1,8}(\|[a-zA-Z0-9]{1,8})+$"#)
-            guard let extIdx = strings.firstIndex(where: { s in
-                let r = NSRange(s.startIndex..., in: s)
-                return extRegex?.firstMatch(in: s, range: r) != nil
-            }) else { return nil }
+            // valid_extensions is a pipe-separated token list like "gb|gbc|dmg"; library_name
+            // and library_version are its struct neighbours (see LibretroCstringHeuristics).
+            guard let extIdx = LibretroCstringHeuristics.validExtensionsIndex(in: strings),
+                  let guess = LibretroCstringHeuristics.pickNameAndVersion(strings: strings, extensionsIndex: extIdx)
+            else { return nil }
 
-            let extStr = strings[extIdx]
-            let exts   = extStr.split(separator: "|").map(String.init)
-
-            // Find library_name and library_version near the extensions string
-            let lo     = max(0, extIdx - 6)
-            let hi     = min(strings.count - 1, extIdx + 6)
-            let window = strings[lo...hi].filter { $0 != extStr }
-
-            // Reject strings that look like C format specifiers, file extensions,
-            // file paths, or other non-name metadata that can appear in __cstring.
-            let looksLikeJunk: (String) -> Bool = { s in
-                s.contains("%") ||                       // printf format string ("%d.mcr", "%*lld")
-                s.hasPrefix(".") ||                      // file extension (".mv", ".srm")
-                s.hasPrefix("/") ||                      // file path
-                s.hasPrefix("\\") ||                     // Windows path
-                s.contains("\t") ||                      // tab-separated data
-                s.unicodeScalars.contains(where: { $0.value < 0x20 }) // control chars
-            }
-
-            let libraryName = window.first(where: { s in
-                !s.contains("|") && s.count >= 2 && s.count <= 60 &&
-                !looksLikeJunk(s) &&
-                s.first?.isLetter == true &&
-                s.filter({ $0.isLetter }).count >= 2
-            })
-            guard libraryName != nil else { return nil }
-
-            // Prefer version strings that contain at least one letter (e.g. "2.8-Vulkan bc43bce").
-            // Exclude pure date strings like "2024.10.29" that appear near valid_extensions in
-            // many buildbot cores — these are build dates, not library versions, and cause false
-            // save-state version mismatch warnings.
-            let datePattern = try? NSRegularExpression(pattern: #"^\d{4}[.\-]\d{2}[.\-]\d{2}$"#)
-            let isDate: (String) -> Bool = { s in
-                let r = NSRange(s.startIndex..., in: s)
-                return datePattern?.firstMatch(in: s, range: r) != nil
-            }
-            // First pass: prefer a string with at least one letter (real version tag)
-            let libVersionWithLetter = window.first(where: { s in
-                s != libraryName && !isDate(s) && !looksLikeJunk(s) &&
-                s.count >= 1 && s.count <= 30 &&
-                s.range(of: "[A-Za-z]", options: .regularExpression) != nil
-            })
-            // Second pass: any non-date, non-junk short string
-            let libVersion = libVersionWithLetter
-                ?? window.first(where: { $0 != libraryName && !isDate($0) && !looksLikeJunk($0) && $0.count >= 1 && $0.count <= 30 })
-                ?? ""
+            let exts = strings[extIdx].split(separator: "|").map(String.init)
+            let libVersion = guess.version
 
             return LibretroMetadata(version: libVersion, validExtensions: exts)
         }

@@ -98,7 +98,7 @@ private struct ScanCacheEntry: Codable {
 }
 
 private struct ScanCache: Codable {
-    static let currentVersion = 3   // bumped: tighter name/version heuristic rejects format strings
+    static let currentVersion = LibretroCstringHeuristics.cacheRevision
     var version: Int = ScanCache.currentVersion
     var entries: [String: ScanCacheEntry] = [:]   // keyed by path
 }
@@ -539,60 +539,16 @@ public final class PVDynamicLibretroCoreScanner: Sendable {
                 pos += len + 1
             }
 
-            // ── Identify valid_extensions (pipe-separated short file extensions) ──
-            // Pattern: "gb|gbc|dmg" or "zip|7z|rar" — at least two alternatives
-            let extRegex = try? NSRegularExpression(pattern: #"^[a-zA-Z0-9]{1,8}(\|[a-zA-Z0-9]{1,8})+$"#)
-            guard let extIdx = strings.firstIndex(where: { s in
-                let r = NSRange(s.startIndex..., in: s)
-                return extRegex?.firstMatch(in: s, range: r) != nil
-            }) else { return nil }
+            // ── Identify valid_extensions, then library_name / library_version ────
+            // retro_system_info is {name, version, extensions}, so in __cstring the version
+            // is normally the string right before the extensions (see LibretroCstringHeuristics).
+            guard let extIdx = LibretroCstringHeuristics.validExtensionsIndex(in: strings),
+                  let guess = LibretroCstringHeuristics.pickNameAndVersion(strings: strings, extensionsIndex: extIdx)
+            else { return nil }
 
-            let extStr = strings[extIdx]
-            let exts   = extStr.split(separator: "|").map(String.init)
-
-            // ── Find library_name and library_version near the extensions string ──
-            // In most libretro cores the three strings appear close together
-            // in __cstring because retro_get_system_info is defined near the top.
-            let lo     = max(0, extIdx - 6)
-            let hi     = min(strings.count - 1, extIdx + 6)
-            let window = strings[lo...hi].filter { $0 != extStr }
-
-            // Reject strings that look like C format specifiers, file extensions,
-            // file paths, or other non-name metadata that can appear in __cstring.
-            let looksLikeJunk: (String) -> Bool = { s in
-                s.contains("%") ||                       // printf format string ("%d.mcr", "%*lld")
-                s.hasPrefix(".") ||                      // file extension (".mv", ".srm")
-                s.hasPrefix("/") ||                      // file path
-                s.hasPrefix("\\") ||                     // Windows path
-                s.contains("\t") ||                      // tab-separated data
-                s.unicodeScalars.contains(where: { $0.value < 0x20 }) // control chars
-            }
-
-            // library_name: readable human name (starts with a letter, has >= 2 letters,
-            // no pipe, 2–60 chars, no format specifiers or file-extension patterns)
-            let libraryName = window.first(where: { s in
-                !s.contains("|") && s.count >= 2 && s.count <= 60 &&
-                !looksLikeJunk(s) &&
-                s.first?.isLetter == true &&
-                s.filter({ $0.isLetter }).count >= 2
-            })
-            guard let libName = libraryName else { return nil }
-
-            // library_version: prefer strings with at least one letter; skip pure date strings
-            // (e.g. "2024.10.29" is a build date in many buildbot cores, not the real version tag).
-            let dateRegex = try? NSRegularExpression(pattern: #"^\d{4}[.\-]\d{2}[.\-]\d{2}$"#)
-            let isDate: (String) -> Bool = { s in
-                let r = NSRange(s.startIndex..., in: s)
-                return dateRegex?.firstMatch(in: s, range: r) != nil
-            }
-            let libVersion = window.first(where: { s in
-                s != libName && !isDate(s) && !looksLikeJunk(s) &&
-                s.count >= 1 && s.count <= 30 &&
-                s.range(of: "[A-Za-z]", options: .regularExpression) != nil
-            }) ?? window.first(where: { s in
-                s != libName && !isDate(s) && !looksLikeJunk(s) &&
-                s.count >= 1 && s.count <= 30
-            }) ?? ""
+            let exts       = strings[extIdx].split(separator: "|").map(String.init)
+            let libName    = guess.name
+            let libVersion = guess.version
 
             DLOG("DynamicLibretroScanner: probeMachO '\(executableURL.lastPathComponent)' → '\(libName)' v\(libVersion)")
             return DiscoveredLibretroCore(
