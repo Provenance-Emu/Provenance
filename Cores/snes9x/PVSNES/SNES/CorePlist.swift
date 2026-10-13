@@ -14,7 +14,8 @@ import PVPlists
 #if SWIFT_PACKAGE
 public extension PVBundleFinder {
     static var PVSNES9xEmulatorCoreModule: Bundle { Bundle.module }
-    static var PVSNES9xEmulatorCoreBundle: Bundle { Bundle(for: PVSNES9xEmulatorCore.self) }
+    // Resources (Core.plist) are in the SwiftPM resource bundle, not the framework.
+    static var PVSNES9xEmulatorCoreBundle: Bundle { Bundle.module }
 }
 #else
 public extension PVBundleFinder {

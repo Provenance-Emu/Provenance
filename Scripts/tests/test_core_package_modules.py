@@ -1,7 +1,15 @@
-"""A package core's Swift module must equal its Core.plist PVPrincipleClass prefix,
-or NSClassFromString returns nil and the core never instantiates (Mupen, 2026-10-12)."""
+"""Package cores must resolve their principal class and resources the SwiftPM way.
+
+- The Swift target that owns Core.plist must be named like the PVPrincipleClass module prefix,
+  or NSClassFromString returns nil and the core never instantiates (Mupen, 2026-10-12).
+- In package builds a core's `resourceBundle` must be `Bundle.module`: resources sit in the
+  <Package>_<Target>.bundle, not in the framework that `Bundle(for:)` returns.
+"""
+import json
 import plistlib
 import re
+import shutil
+import subprocess
 import unittest
 from pathlib import Path
 
@@ -17,19 +25,57 @@ CORES = {
     "Dolphin": "PVDolphin/Core.plist",
 }
 
+# cores the shipping app takes from their packages -> their CorePlist.swift
+SHIPPED_AS_PACKAGES = {
+    "snes9x": "PVSNES/SNES/CorePlist.swift",
+    "FCEU": "CorePlist.swift",
+    "Genesis-Plus-GX": "Sources/PVCoreGenesisPlus/CorePlist.swift",
+    "Mupen64Plus": "Sources/PVMupen/CorePlist.swift",
+}
 
-def swift_target_names(manifest: str) -> set[str]:
-    return set(re.findall(r'\.target\(\s*name:\s*"([^"]+)"', manifest))
+
+def dump_package(core: str) -> dict:
+    out = subprocess.run(["swift", "package", "dump-package"], cwd=ROOT / "Cores" / core,
+                         check=True, capture_output=True, text=True).stdout
+    return json.loads(out)
 
 
 class ModuleNameTests(unittest.TestCase):
-    def test_principal_class_module_is_a_package_target(self):
+    @unittest.skipUnless(shutil.which("swift"), "swift toolchain not installed")
+    def test_core_plist_owner_is_the_principal_class_module(self):
         for core, plist_rel in CORES.items():
             with self.subTest(core=core):
                 plist = plistlib.loads((ROOT / "Cores" / core / plist_rel).read_bytes())
                 module = plist["PVPrincipleClass"].split(".")[0]
-                manifest = (ROOT / "Cores" / core / "Package.swift").read_text()
-                self.assertIn(module, swift_target_names(manifest))
+                owners = []
+                for target in dump_package(core)["targets"]:
+                    base = target.get("path") or f"Sources/{target['name']}"
+                    for resource in target.get("resources", []):
+                        if str(Path(base) / resource["path"]) == plist_rel:
+                            owners.append(target["name"])
+                self.assertEqual(owners, [module])
+
+
+def swift_package_branch(source: str) -> str:
+    match = re.search(r"#if SWIFT_PACKAGE\n(.*?)\n#else", source, re.S)
+    return match.group(1) if match else ""
+
+
+class ResourceBundleTests(unittest.TestCase):
+    def test_package_resource_bundle_is_bundle_module(self):
+        for core, rel in SHIPPED_AS_PACKAGES.items():
+            with self.subTest(core=core):
+                source = (ROOT / "Cores" / core / rel).read_text()
+                package_branch = swift_package_branch(source)
+                accessor = re.search(r"override var resourceBundle: Bundle \{ ([^}]+?) \}", source)
+                self.assertIsNotNone(accessor, "no resourceBundle override")
+                expr = accessor.group(1).strip()
+                if expr != "Bundle.module":
+                    name = expr.split(".")[-1]
+                    definition = re.search(rf"static var {name}: Bundle \{{ ([^}}]+?) \}}", package_branch)
+                    self.assertIsNotNone(definition, f"{name} not defined under SWIFT_PACKAGE")
+                    expr = definition.group(1).strip()
+                self.assertEqual(expr, "Bundle.module")
 
 
 if __name__ == "__main__":
