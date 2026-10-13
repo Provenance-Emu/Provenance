@@ -1918,9 +1918,16 @@ open class DeltaSkinInputHandler: ObservableObject {
 
         // Get the button type for this system
         let buttonType = systemId.controllerType
+        let normalizedId = normalizeSkinButtonId(buttonId, for: systemId)
+
+        // The Dreamcast enum presses Up for any string it doesn't know; drop those tokens instead.
+        if ObjectIdentifier(buttonType) == ObjectIdentifier(PVDreamcastButton.self), Self.dreamcastButton(forSkinToken: normalizedId) == nil {
+            WLOG("Dropping skin token '\(buttonId)' (normalized '\(normalizedId)'): no \(systemId) button for it")
+            return
+        }
 
         // Create a button instance from the normalized string
-        let button = buttonType.init(normalizeSkinButtonId(buttonId, for: systemId))
+        let button = buttonType.init(normalizedId)
 
         // Get the raw value (button index)
         let buttonIndex = button.rawValue
@@ -2034,7 +2041,11 @@ open class DeltaSkinInputHandler: ObservableObject {
             }
         case .Dreamcast, .NAOMI, .Atomiswave, .NAOMI2:
             if let r = core as? PVDreamcastSystemResponderClient {
-                let b = PVDreamcastButton(id)
+                // Handled either way: falling through would reach the generic enum init, which presses Up.
+                guard let b = Self.dreamcastButton(forSkinToken: id) else {
+                    WLOG("Dropping skin token '\(buttonId)' (normalized '\(id)'): no \(systemId) button for it")
+                    return true
+                }
                 isPressed ? r.didPush(b, forPlayer: 0) : r.didRelease(b, forPlayer: 0)
                 return true
             }
@@ -2358,6 +2369,30 @@ open class DeltaSkinInputHandler: ObservableObject {
             .replacingOccurrences(of: "Ⅵ", with: "vi") // U+2165 ROMAN NUMERAL SIX
     }
 
+    /// Skin tokens that mean the Dreamcast's left / right analog trigger. Manic EMU skins use
+    /// `l1`/`r1`; other packs use `l2`/`r2` or `lt`/`rt`.
+    static let dreamcastLeftTriggerTokens: Set<String> = ["l", "l1", "l2", "lt", "ltrigger", "triggerleft", "lefttrigger"]
+    static let dreamcastRightTriggerTokens: Set<String> = ["r", "r1", "r2", "rt", "rtrigger", "triggerright", "righttrigger"]
+
+    /// Skin token -> Dreamcast (and NAOMI / NAOMI 2 / Atomiswave) button, or `nil` when the pad has
+    /// no such control. `PVDreamcastButton.init(_:)` defaults unknown strings to `.up`, so callers
+    /// use this instead and drop `nil` tokens rather than pressing Up.
+    static func dreamcastButton(forSkinToken token: String) -> PVDreamcastButton? {
+        let s = token.lowercased().trimmingCharacters(in: .whitespacesAndNewlines)
+        if dreamcastLeftTriggerTokens.contains(s) { return .l }
+        if dreamcastRightTriggerTokens.contains(s) { return .r }
+        switch s {
+        case "up", "down", "left", "right", "a", "b", "x", "y", "start",
+             "analogup", "analog-up", "analogdown", "analog-down",
+             "analogleft", "analog-left", "analogright", "analog-right",
+             "leftanalog", "left-analog",
+             "coin", "insertcoin", "insert_coin", "insert coin", "credit":
+            return PVDreamcastButton(s)
+        default:
+            return nil
+        }
+    }
+
     /// Normalize skin button IDs to canonical names per system
     func normalizeSkinButtonId(_ id: String, for system: SystemIdentifier) -> String {
         let s = id.lowercased().trimmingCharacters(in: .whitespacesAndNewlines)
@@ -2517,11 +2552,12 @@ open class DeltaSkinInputHandler: ObservableObject {
             if ["start"].contains(s) { return s }
             return s
         case .Dreamcast, .NAOMI, .Atomiswave, .NAOMI2:
-            /// Dreamcast (+ Sega arcade) button normalization - supports: up, down, left, right, a, b, x, y, l, r, start
+            /// Dreamcast (+ Sega arcade) button normalization - supports: up, down, left, right, a, b, x, y, l, r, start.
+            /// The pad has one analog trigger per side, so every shoulder/trigger alias folds onto it.
             if ["up", "down", "left", "right"].contains(s) { return s }
             if ["a", "b", "x", "y"].contains(s) { return s }
-            if ["l", "l1"].contains(s) { return "l" }
-            if ["r", "r1"].contains(s) { return "r" }
+            if Self.dreamcastLeftTriggerTokens.contains(s) { return "l" }
+            if Self.dreamcastRightTriggerTokens.contains(s) { return "r" }
             if ["start"].contains(s) { return s }
             return s
         case .PCE, .PCECD, .SGFX:
