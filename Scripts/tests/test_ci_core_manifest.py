@@ -30,7 +30,11 @@ def make_ipa(path: Path) -> None:
         zf.writestr(f"{APP}/Frameworks/PVSNES.framework/PVSNES", b"x" * 100)
         zf.writestr(f"{APP}/Frameworks/PVSNES.framework/Core.plist", core_plist("com.provenance.core.snes9x"))
         # SwiftPM-style core: code in the -Dynamic framework, Core.plist in a root resource bundle
-        zf.writestr(f"{APP}/Frameworks/PVStella-Dynamic.framework/PVStella-Dynamic", b"x" * 100)
+        # resource file listed before Core.plist: zip order must not matter for sizes
+        zf.writestr(f"{APP}/PVCoreStella_PVStella.bundle/Info.plist", b"y" * 5)
+        # the framework binary names its resource bundle (Bundle.module looks it up by name)
+        zf.writestr(f"{APP}/Frameworks/PVStella-Dynamic.framework/PVStella-Dynamic",
+                    b"x" * 100 + b"PVCoreStella_PVStella.bundle" + b"x" * 100)
         zf.writestr(f"{APP}/PVCoreStella_PVStella.bundle/Core.plist", core_plist("com.provenance.core.stella"))
         # nested Core.plist deeper in a bundle must not count
         zf.writestr(f"{APP}/Other.bundle/Sub/Core.plist", core_plist("com.provenance.core.bogus"))
@@ -58,6 +62,13 @@ class ManifestTests(unittest.TestCase):
         report = manifest.read_ipa(str(self.ipa))
         names = {f.name for f in report.frameworks if f.is_native_core}
         self.assertIn("PVCoreStella_PVStella.bundle", names)
+
+    def test_package_core_size_includes_its_framework(self):
+        report = manifest.read_ipa(str(self.ipa))
+        stella = next(f for f in report.frameworks if f.name == "PVCoreStella_PVStella.bundle")
+        plist_size = len(core_plist("com.provenance.core.stella"))
+        self.assertEqual(stella.size, 228 + 5 + plist_size)
+        self.assertNotIn("PVStella-Dynamic", {f.name for f in report.frameworks})
 
     def test_identifiers_cli(self):
         out = subprocess.run(
