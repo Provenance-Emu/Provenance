@@ -20,6 +20,9 @@ on:
       - "Cores/mGBA/**"
       - "Cores/Stella/**"
       - "Cores/snes9x/**"
+      - "Cores/FCEU/**"
+      - "Cores/Genesis-Plus-GX/**"
+      - "Cores/Mupen64Plus/**"
       - ".github/workflows/dev-workspace.yml"
   push:
     branches: [develop]
