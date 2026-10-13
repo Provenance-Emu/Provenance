@@ -179,6 +179,7 @@ end
 if ARGV.include?('--verify')
   problems = verify(ROOT)
   problems.each { |p| warn p }
+  puts "#{core_name}: swapped cleanly" if problems.empty?
   exit(problems.empty? ? 0 : 1)
 elsif ARGV.include?('--apply')
   swap(ROOT)
