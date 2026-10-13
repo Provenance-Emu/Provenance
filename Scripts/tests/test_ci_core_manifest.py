@@ -1,6 +1,5 @@
 """Tests for Scripts/ci/ci-core-manifest.py using synthetic IPAs."""
 import importlib.util
-import io
 import plistlib
 import subprocess
 import sys

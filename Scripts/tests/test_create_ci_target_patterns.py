@@ -3,7 +3,6 @@
 Its CORE_PATTERNS are matched against framework and package product names; a core missing
 from the list would be kept in the coreless CI target when the script is re-run.
 """
-import json
 import subprocess
 import unittest
 from pathlib import Path
