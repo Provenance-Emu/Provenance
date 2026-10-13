@@ -23,6 +23,21 @@ public enum CoreLink: Equatable {
     }
 }
 
+/// A `.binaryTarget` xcframework that `Scripts/cores/build_slice.py <core> <slice> --xcframework` packs
+/// from the slice cache. Xcode resolves binary targets with the package graph, before any build phase,
+/// so it must exist before `tuist generate`: `make dev-generate DEV_PREBUILT_CORES=<core> DEV_SLICE=<slice>`.
+public struct CoreSlice: Equatable {
+    /// build_slice.py core name ("azahar").
+    public let core: String
+    /// Repo-relative xcframework path the package's binary target points at.
+    public let xcframework: String
+
+    public init(core: String, xcframework: String) {
+        self.core = core
+        self.xcframework = xcframework
+    }
+}
+
 /// One audited core (see docs/superpowers/specs/2026-10-10-core-audit.md, KEEP rows) or a
 /// non-core product every app embeds. Only how the app consumes it lives here.
 public struct CoreProduct {
@@ -32,21 +47,37 @@ public struct CoreProduct {
     public let embeds: [CoreLink]
     /// Platforms the shipping target links it on.
     public let platforms: Set<PlatformFilter>
-    /// Aggregate target that builds the core's out-of-tree library ("BuildPVlibAzahar", "Make XCFrameworks").
+    /// Aggregate target that builds the core's out-of-tree library ("BuildPVlibAzahar"). Only
+    /// meaningful for `.project` rows: Xcode schedules the aggregate as an implicit dependency.
     public let needsAggregate: String?
+    /// Build products a `.package` row needs on disk before SwiftPM can load its package (a
+    /// `.binaryTarget` path), repo-relative. A clean checkout lacks them, so the manifest check
+    /// only requires them for apps that are enabled; whoever builds such an app must produce them
+    /// first (`Makefile`: DEV_PREBUILT_CORES, `Scripts/cores/build_slice.py`).
+    public let artefacts: [String]
+    /// Run Scripts that put resources the package cannot carry into every app that embeds the core.
+    public let postScripts: [TargetScript]
+    /// Slice-cache xcframework the core's package links (see `CoreSlice`).
+    public let slice: CoreSlice?
 
     public init(
         id: String,
         link: CoreLink,
         embeds: [CoreLink] = [],
         platforms: Set<PlatformFilter> = [.ios, .tvos],
-        needsAggregate: String? = nil
+        needsAggregate: String? = nil,
+        artefacts: [String] = [],
+        postScripts: [TargetScript] = [],
+        slice: CoreSlice? = nil
     ) {
         self.id = id
         self.link = link
         self.embeds = embeds
         self.platforms = platforms
         self.needsAggregate = needsAggregate
+        self.artefacts = artefacts
+        self.postScripts = postScripts
+        self.slice = slice
     }
 
     /// `link` followed by `embeds`.
@@ -59,47 +90,46 @@ public extension CoreProduct {
     static let mGBA = CoreProduct(id: "mgba", link: .package(path: "Cores/mGBA", product: "PVCoremGBA-Dynamic"))
     static let stella = CoreProduct(id: "stella", link: .package(path: "Cores/Stella", product: "PVStella-Dynamic"))
 
-    // PVSNES9x.xcodeproj: target "PVSNES9x" builds PVSNES.framework, target "snes9x" builds snes9x.framework.
-    static let snes9x = CoreProduct(
-        id: "snes9x",
-        link: .project(path: "Cores/snes9x/PVSNES9x.xcodeproj", target: "PVSNES9x", product: "PVSNES"),
-        embeds: [.project(path: "Cores/snes9x/PVSNES9x.xcodeproj", target: "snes9x", product: "snes9x")]
-    )
-    static let fceu = CoreProduct(
-        id: "fceu",
-        link: .project(path: "Cores/FCEU/PVFCEU.xcodeproj", target: "PVFCEU", product: "PVFCEU")
-    )
+    // The Swift module is PVSNES (Core.plist's principal class); the emulator links in statically.
+    static let snes9x = CoreProduct(id: "snes9x", link: .package(path: "Cores/snes9x", product: "PVSNES9x-Dynamic"))
+    static let fceu = CoreProduct(id: "fceu", link: .package(path: "Cores/FCEU", product: "PVFCEU-Dynamic"))
     static let genesis = CoreProduct(
         id: "genesis",
-        link: .project(path: "Cores/Genesis-Plus-GX/PVGenesis.xcodeproj", target: "PVGenesis", product: "PVGenesis")
+        link: .package(path: "Cores/Genesis-Plus-GX", product: "PVCoreGenesisPlus-Dynamic")
     )
+    // Plugins are dlopen'd by name from PVMupenBridge.m; the SwiftPM bridge/core live inside the main
+    // dynamic product, so only the four plugins are embedded separately.
     static let mupen64Plus = CoreProduct(
         id: "mupen64plus",
-        link: .project(path: "Cores/Mupen64Plus/PVMupen64Plus.xcodeproj", target: "PVMupen64Plus", product: "PVMupen64Plus"),
+        link: .package(path: "Cores/Mupen64Plus", product: "PVMupenGameCore-Dynamic"),
         embeds: [
-            .project(path: "Cores/Mupen64Plus/PVMupen64Plus.xcodeproj", target: "PVMupen64PlusRspHLE", product: "PVMupen64PlusRspHLE"),
-            .project(path: "Cores/Mupen64Plus/PVMupen64Plus.xcodeproj", target: "PVMupen64PlusBridge", product: "PVMupen64PlusBridge"),
-            .project(path: "Cores/Mupen64Plus/PVMupen64Plus.xcodeproj", target: "PVMupen64PlusVideoGlideN64", product: "PVMupen64PlusVideoGlideN64"),
-            .project(path: "Cores/Mupen64Plus/PVMupen64Plus.xcodeproj", target: "PVMupen64PlusVideoRice", product: "PVMupen64PlusVideoRice"),
-            .project(path: "Cores/Mupen64Plus/PVMupen64Plus.xcodeproj", target: "PVRSPCXD4", product: "PVRSPCXD4")
+            .package(path: "Cores/Mupen64Plus", product: "PVMupen64PlusRspHLE-Dynamic"),
+            .package(path: "Cores/Mupen64Plus", product: "PVMupen64PlusVideoGlideN64-Dynamic"),
+            .package(path: "Cores/Mupen64Plus", product: "PVMupen64PlusVideoRice-Dynamic"),
+            .package(path: "Cores/Mupen64Plus", product: "PVRSPCXD4-Dynamic")
         ]
     )
     static let mednafen = CoreProduct(id: "mednafen", link: .package(path: "Cores/Mednafen", product: "PVCoreMednafen-Dynamic"))
     static let proSystem = CoreProduct(id: "prosystem", link: .package(path: "Cores/ProSystem", product: "PVProSystem-Dynamic"))
     static let picoDrive = CoreProduct(id: "picodrive", link: .package(path: "Cores/PicoDrive", product: "PVPicoDrive-Dynamic"))
     static let tgbDual = CoreProduct(id: "tgbdual", link: .package(path: "Cores/TGBDual", product: "PVTGBDual-Dynamic"))
+    // Swift module PVAzahar + ObjC++ PVAzaharBridge over the PVlibAzahar binary target (slice cache).
+    // PVAzahar.xcodeproj and its BuildPVlibAzahar aggregate stay the shipping build.
     static let azahar = CoreProduct(
         id: "azahar",
-        link: .project(path: "Cores/Azahar/PVAzahar.xcodeproj", target: "PVAzahar", product: "PVAzahar"),
-        needsAggregate: "BuildPVlibAzahar"
+        link: .package(path: "Cores/Azahar", product: "PVAzahar-Dynamic"),
+        slice: CoreSlice(core: "azahar", xcframework: "Cores/Azahar/build/xcframework/PVlibAzahar.xcframework")
     )
-    // PVDolphin links PVlibDolphin.xcframework, which `Make XCFrameworks` (build_slice.py) produces.
-    // Build.xcconfig excludes both from simulator SDKs; no focused app uses Dolphin yet.
+    // PVDolphin-Dynamic wraps PVlibDolphin.xcframework as a SwiftPM `.binaryTarget`, so the package
+    // carries the emulator library: nothing to embed separately. The xcframework is a build
+    // artefact of `build_slice.py dolphin <slice>`, and SwiftPM will not load the package without it.
+    // Device only: the xcframework has no slice for a platform nobody built, and the xcodeproj's
+    // simulator stub (PVDebug.c) has no package equivalent.
     static let dolphin = CoreProduct(
         id: "dolphin",
-        link: .project(path: "Cores/Dolphin/PVDolphin.xcodeproj", target: "PVDolphin", product: "PVDolphin"),
-        embeds: [.prebuilt(path: "Cores/Dolphin/dolphin-ios/build/xcframework/PVlibDolphin.xcframework")],
-        needsAggregate: "Make XCFrameworks"
+        link: .package(path: "Cores/Dolphin", product: "PVDolphin-Dynamic"),
+        artefacts: ["Cores/Dolphin/dolphin-ios/build/xcframework/PVlibDolphin.xcframework"],
+        postScripts: [DevSettings.dolphinSysScript]
     )
 
     // MARK: Non-core products every app embeds

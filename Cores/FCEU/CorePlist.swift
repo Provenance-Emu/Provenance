@@ -10,6 +10,9 @@ import PVLogging
 import PVCoreBridge
 import PVEmulatorCore
 import PVPlists
+#if canImport(PVFCEUBridge)
+import PVFCEUBridge   // SwiftPM package: the ObjC bridge target (the Xcode target sees it directly)
+#endif
 
 #if SWIFT_PACKAGE
 public extension PVBundleFinder {
@@ -42,7 +45,7 @@ extension PVFCEUEmulatorCore: EmulatorCoreInfoPlistProvider {
             fatalError("Could not read Core.plist")
         }
 
-        guard let plistObject = try? PropertyListSerialization.propertyList(from: data, options: [], format: nil) as? [String: Any] else {
+        guard let plistObject = try? PropertyListSerialization.propertyList(from: data, options: .init(), format: nil) as? [String: Any] else {
             fatalError("Could not generate parse Core.plist")
         }
 

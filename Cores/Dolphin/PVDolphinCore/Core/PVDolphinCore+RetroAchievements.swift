@@ -18,6 +18,9 @@ import Foundation
 import PVCoreBridge
 import PVRcheevos
 import PVRcheevosBridge
+#if canImport(PVDolphinBridge)
+import PVDolphinBridge
+#endif
 
 /// rcheevos flat-address layout for GameCube/Wii (consoleinfo.c).
 private enum DolphinRcheevosMemoryMap {

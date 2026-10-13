@@ -1,0 +1,16 @@
+// The Objective-C surface Swift imports (the Headers phase of PVDolphin.xcodeproj minus the
+// framework umbrella PVDolphin.h). Listed explicitly because PVDolphinCore/Core also holds
+// C++-only headers (PVDolphinCore+NetplayBoot.h, iOS_ARM64_Optimizations.h,
+// DolphinCxxCompat.h) that an umbrella directory would pull into a module built as Objective-C.
+// Paths are relative to this file.
+module PVDolphinBridge {
+    header "../../../PVDolphinCore/Core/PVDolphinCore.h"
+    header "../../../PVDolphinCore/Core/PVDolphinCore+Audio.h"
+    header "../../../PVDolphinCore/Core/PVDolphinCore+Controls.h"
+    header "../../../PVDolphinCore/Core/PVDolphinCore+Netplay.h"
+    header "../../../PVDolphinCore/Core/PVDolphinCore+RetroAchievements.h"
+    header "../../../PVDolphinCore/Core/PVDolphinCore+Saves.h"
+    header "../../../PVDolphinCore/Core/PVDolphinCore+Video.h"
+    header "../../../PVDolphinCore/Core/FastmemUtil.h"
+    export *
+}

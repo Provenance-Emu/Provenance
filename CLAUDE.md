@@ -192,6 +192,12 @@ A second, generated workspace for fast iteration. `Provenance.xcodeproj` still s
   - `Provenance-Dev-UI`: mGBA, Stella, snes9x.
   - `Provenance-Dev-Thin`: no native cores; 4 libretro dylibs (mednafen_psx_hw, mupen64plus_next, snes9x, ppsspp).
   - `Provenance-Dev-Azahar`: Azahar.
+  - `Provenance-Dev-Dolphin` (opt-in, device only): `Cores/Dolphin/Package.swift` wraps
+    `PVlibDolphin.xcframework` as a `.binaryTarget`. SwiftPM will not load the package until
+    `build_slice.py dolphin <slice>` has produced the xcframework, so `make dev-dolphin` runs it first
+    and sets `TUIST_DEV_DOLPHIN=1`; without that variable the app and package are not in the generated
+    project (CI never sets it). The ObjC++ target reaches the Swift module through the runtime
+    (`#if SWIFT_PACKAGE` in `PVDolphinCore.mm`), because SwiftPM can't build the mixed target as one.
 
   Build with `make dev-ui|dev-azahar|dev-thin` (derived data in `build/dev-dd`; override with
   `DEV_DERIVED=`). Each app is one iOS+tvOS target with bundle id
@@ -199,6 +205,19 @@ A second, generated workspace for fast iteration. `Provenance.xcodeproj` still s
 - **Simulator builds are ad-hoc signed by `Dev/Config/Dev.xcconfig`.** Never pass
   `CODE_SIGNING_ALLOWED=NO` to a dev build: the app then dies in dyld on the unsigned embedded
   MoltenVK.
+- **Dev apps are arm64-only; Intel is unsupported** (decided 2026-10-12: no Intel Mac runs a
+  supported Xcode). `DevSettings` sets `EXCLUDED_ARCHS[sdk=*simulator*] = x86_64` for every focused
+  app, and the Makefile, harness and both CI workflows also pass `EXCLUDED_ARCHS=x86_64` to
+  xcodebuild, because a project setting never reaches package targets (CI kept compiling x86_64
+  for every package without it). Prebuilt cores need no x86_64 slice and SwiftPM core targets need
+  no per-arch source lists. Don't add x86_64 workarounds (stubs, generic-source fallbacks) here.
+- **The dev workspace has no committed Package.resolved, so it resolves the newest remote
+  packages.** Anything that only works because `Provenance.xcworkspace`'s resolved file pins an
+  older version breaks here first. Known case: Hummingbird imports `ServiceContextModule` without
+  declaring it, and swift-service-context 1.4.0 / swift-distributed-tracing 1.6.0 (2026-10-12)
+  dropped it from `Tracing`'s dependency chain, so builds failed at random with "no such module
+  'ServiceContextModule'"; `PVWebServer/Package.swift` caps both packages. Fix such breaks with a
+  version cap in the declaring package, not with xcodebuild flags.
 - **Helpers:** `Tuist/ProjectDescriptionHelpers/` holds `CoreProduct` (the core table),
   `FocusedApp` (the target template plus `FocusedApp.all`), `LibretroCores` and `DevSettings`. Tuist
   only finds helpers at `<root>/Tuist/ProjectDescriptionHelpers`; don't add a `Dev/Tuist/`.
@@ -243,8 +262,8 @@ A second, generated workspace for fast iteration. `Provenance.xcodeproj` still s
 ### Azahar core build gotchas
 
 - **PVlibAzahar is built by the `BuildPVlibAzahar` aggregate target** (`Cores/Azahar/project.yml` and the hand-edited pbxproj; `PVAzahar` depends on it), which runs `Scripts/cores/build_slice.py azahar <slice>` for the slice matching `$PLATFORM_NAME`. A cold slice takes ~30–40 min. The stamp is the content key (`build_slice.py --print-key`: submodule + externals, script, toolchain, Xcode/SDK, MoltenVK slice), not the gitlink; a hit only symlinks the cached slice. Force a rebuild with `build_slice.py azahar <slice> --force`. Needs cmake, ninja and python3 ≥ 3.10. Dolphin's `Make XCFrameworks` aggregate works the same way (`build_slice.py dolphin <slice>`).
-- **`PVAzahar` links the per-slice archive `build/xcframework/PVlibAzahar-<slice>.framework/PVlibAzahar` by path, not the xcframework** (that path is now a symlink into the slice cache). Xcode resolves an xcframework dependency while planning, before any target runs, so a cold checkout failed with "There is no XCFramework found". Don't add the xcframework back as a dependency. `PVlibAzahar.xcframework` is still produced, for distribution only.
-- **PVlibAzahar is arm64-only.** The x86_64 simulator slice of `PVAzahar` is link-only (`-undefined dynamic_lookup`), so the app does not launch on Intel/Rosetta simulators.
+- **`PVAzahar` links the per-slice archive `build/xcframework/PVlibAzahar-<slice>.framework/PVlibAzahar` by path, not the xcframework** (that path is now a symlink into the slice cache). Xcode resolves an xcframework dependency while planning, before any target runs, so a cold checkout failed with "There is no XCFramework found". Don't add the xcframework back as a dependency. `PVlibAzahar.xcframework` is also the `.binaryTarget` of `Cores/Azahar/Package.swift` (the dev workspace's `PVAzahar-Dynamic`), so it must be packed before `tuist generate`: `make dev-azahar` runs `build_slice.py azahar $(DEV_SLICE) --xcframework` first (device: `DEV_SLICE=ios`). Without it the manifest drops the binary target and the bridge stops at an `#error`; SwiftPM caches manifests, so reset package caches after producing it. The package's ObjC++ bridge (`PVAzaharBridge`) must never import the Swift module (`PVAzahar-Swift.h`): that is a target cycle. The Swift core pushes `renderViewClass`, `userDirectoryPath` and `respectsMuteSwitch` into it instead.
+- **PVlibAzahar is arm64-only.** The x86_64 simulator slice of `PVAzahar` is link-only (`-undefined dynamic_lookup`) in the shipping xcodeproj; the dev apps never build x86_64 (see the Dev workspace section), so the package needs no stub.
 - **Never include azahar's `core/hle/service/nwm/nwm_uds.h`.** Azahar headers come in with `-idirafter`, so its `#include "network/network.h"` resolves to the SDK's Network framework header instead. The bridge includes azahar's own copy as `"network.h"` via a narrow `HEADER_SEARCH_PATHS` entry.
 - **Emulator changes go on the fork.** Commit them to `Provenance-Emu/azahar` branch `provenance` and list them in `Cores/Azahar/PATCHES.md`. Never edit `Cores/Azahar/azahar` in place.
 - **The tvOS user root is Caches.** `PVAzaharCore.userRootURL` is `Documents/Azahar` on iOS and `Library/Caches/Azahar` on tvOS, where Documents is not writable.

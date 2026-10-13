@@ -1,7 +1,6 @@
 #import "PVAzaharCoreBridge.h"
 #import "PVAzaharCoreBridge+Private.h"
 #import <AVFoundation/AVFoundation.h>
-#import <PVAzahar/PVAzahar-Swift.h>
 #import <PVLogging/PVLoggingObjC.h>
 #include "common/settings.h"
 
@@ -20,7 +19,7 @@ static const NSUInteger PVAzaharChannelCount = 2;
 - (void)configureAudioSession {
     NSError *error = nil;
     AVAudioSession *session = [AVAudioSession sharedInstance];
-    AVAudioSessionCategory category = PVAzaharCore.respectsMuteSwitch ? AVAudioSessionCategoryAmbient
+    AVAudioSessionCategory category = self.respectsMuteSwitch ? AVAudioSessionCategoryAmbient
                                                                       : AVAudioSessionCategoryPlayback;
     // Only MixWithOthers, like PVCoreAudio: AllowAirPlay/A2DP are rejected (-50) with .ambient/.playback.
     const AVAudioSessionCategoryOptions options = AVAudioSessionCategoryOptionMixWithOthers;

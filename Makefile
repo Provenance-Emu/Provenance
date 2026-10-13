@@ -5,7 +5,7 @@ SHELL := /bin/bash
 # `export` makes the values visible to recipes (release.sh, fastlane, etc.).
 -include .env
 export
-.PHONY: dev dev-generate dev-ui dev-azahar dev-thin dev-harness help ios update tvos lite ci maint maint-status maint-run-stale maint-hooks \
+.PHONY: dev dev-generate dev-ui dev-azahar dev-thin dev-n64 dev-dolphin dev-coreless dev-harness help ios update tvos lite ci maint maint-status maint-run-stale maint-hooks \
 	generate-all generate-cheatdb generate-contributors generate-core-lists \
 	generate-default-skins generate-licenses generate-uti generate-changelog \
 	update-cheatdb update-skin-catalog update-core-versions update-core-licenses \
@@ -257,18 +257,29 @@ DEV_WORKSPACE := Provenance-Dev.xcworkspace
 DEV_DERIVED ?= $(CURDIR)/build/dev-dd
 DEV_DESTINATION ?= generic/platform=iOS Simulator
 
-# Cores linked as .prebuilt xcframeworks must exist before `tuist generate` (Tuist reads them
-# eagerly). None of the initial focused apps use one; add e.g. "dolphin" when one does.
+# Cores whose build_slice.py output must exist before `tuist generate`: Tuist reads .prebuilt
+# xcframeworks eagerly, and SwiftPM refuses to load a package with a missing .binaryTarget (Dolphin).
+# A Run Script phase is too late for either, so this Makefile step is the producer. For Dolphin,
+# build_slice.py repacks PVlibDolphin.xcframework from whichever slices exist; the xcframework only
+# gains a slice when you build it, so `make dev-dolphin` for iOS then tvOS needs DOLPHIN_SLICE per run.
+# Slice-cache xcframeworks (.prebuilt links, package binary targets such as PVlibAzahar) must exist
+# before `tuist generate`: Tuist and Xcode resolve them before any build phase runs. `--xcframework`
+# packs every slice built so far, so run once per slice you need (device: DEV_SLICE=ios).
+# Not on by default: a cold Azahar slice takes 30-40 minutes. `make dev-azahar` sets it.
 DEV_PREBUILT_CORES ?=
 DEV_SLICE ?= ios-sim
+# Extra xcodebuild arguments (build settings) for _dev-build.
+DEV_BUILD_SETTINGS ?=
 dev-generate:
-	@for core in $(DEV_PREBUILT_CORES); do python3 Scripts/cores/build_slice.py $$core $(DEV_SLICE) || exit 1; done
+	@for core in $(DEV_PREBUILT_CORES); do python3 Scripts/cores/build_slice.py $$core $(DEV_SLICE) --xcframework || exit 1; done
 	$(TUIST) generate --no-open
 
 dev: dev-generate
 	open $(DEV_WORKSPACE)
 
 # Build one focused app: make _dev-build DEV_SCHEME=Provenance-Dev-UI
+# EXCLUDED_ARCHS=x86_64: Intel is unsupported; as an xcodebuild argument it also reaches the
+# package targets (DevSettings' copy covers only the app target).
 _dev-build: dev-generate
 	xcodebuild build \
 		-workspace $(DEV_WORKSPACE) \
@@ -276,16 +287,36 @@ _dev-build: dev-generate
 		-destination "$(DEV_DESTINATION)" \
 		-derivedDataPath "$(DEV_DERIVED)" \
 		-skipPackagePluginValidation \
-		-skipMacroValidation
+		-skipMacroValidation \
+		EXCLUDED_ARCHS=x86_64 \
+		$(DEV_BUILD_SETTINGS)
 
 dev-ui:
 	$(MAKE) _dev-build DEV_SCHEME=Provenance-Dev-UI
 
+# Device: make dev-azahar DEV_SLICE=ios DEV_DESTINATION="generic/platform=iOS"
+# (every dev app is arm64-only on simulators via DevSettings, so no ARCHS override is needed).
 dev-azahar:
-	$(MAKE) _dev-build DEV_SCHEME=Provenance-Dev-Azahar
+	$(MAKE) _dev-build DEV_SCHEME=Provenance-Dev-Azahar DEV_PREBUILT_CORES="azahar $(DEV_PREBUILT_CORES)"
 
 dev-thin:
 	$(MAKE) _dev-build DEV_SCHEME=Provenance-Dev-Thin
+
+dev-n64:
+	$(MAKE) _dev-build DEV_SCHEME=Provenance-Dev-N64
+
+dev-coreless:
+	$(MAKE) _dev-build DEV_SCHEME=Provenance-Dev-Coreless
+
+## Dolphin is device only (PVlibDolphin has no usable simulator build). The Dolphin app is opt-in
+## (TUIST_DEV_DOLPHIN) so a clean checkout, and CI, never load a package whose xcframework is missing.
+##   make dev-dolphin                                   # iOS device
+##   make dev-dolphin DOLPHIN_SLICE=tvos DOLPHIN_DESTINATION=generic/platform=tvOS
+DOLPHIN_SLICE ?= ios
+DOLPHIN_DESTINATION ?= generic/platform=iOS
+dev-dolphin:
+	TUIST_DEV_DOLPHIN=1 $(MAKE) _dev-build DEV_SCHEME=Provenance-Dev-Dolphin DEV_PREBUILT_CORES=dolphin \
+		DEV_SLICE=$(DOLPHIN_SLICE) DEV_DESTINATION="$(DOLPHIN_DESTINATION)"
 
 ## Run the dev harness on the booted simulator:
 ##   make dev-harness ROM=path/to/rom [TARGET=ui|azahar] [FRAMES=300] [CORE=com.provenance.core.stella]

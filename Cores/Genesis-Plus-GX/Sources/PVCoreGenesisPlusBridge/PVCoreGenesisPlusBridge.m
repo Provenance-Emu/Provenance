@@ -15,6 +15,8 @@
 @import PVSettings;
 #if SWIFT_MODULE
 @import libgenesisplus;
+#include "zlib.h"
+#import "PVGenesisSwiftInterop.h"   // the Swift module depends on this target; no -Swift.h here
 #else
 #import <PVGenesis/PVGenesis-Swift.h>
 // shared.h pulls in osd.h before the hardware headers (cdd.h needs its cdStream type).
@@ -647,18 +649,18 @@ static bool environment_callback(unsigned cmd, void *data)
       /* sound options */
   //      config.psg_preamp     = 150;
   //      config.fm_preamp      = 100;
-    config.hq_fm              = PVCoreGenesisPlusOptions.hq_fm; /* high-quality FM resampling (slower) */
-    config.hq_psg         = PVCoreGenesisPlusOptions.hq_psg; /* high-quality PSG resampling (slower) */
-    config.filter         = PVCoreGenesisPlusOptions.filter; /* 0=off, 1=low pass, 2=3 band eq */
+    config.hq_fm              = [PVCoreGenesisPlusOptions hq_fm]; /* high-quality FM resampling (slower) */
+    config.hq_psg         = [PVCoreGenesisPlusOptions hq_psg]; /* high-quality PSG resampling (slower) */
+    config.filter         = [PVCoreGenesisPlusOptions filter]; /* 0=off, 1=low pass, 2=3 band eq */
   //      config.lp_range       = 0x8ccd; /* = 55% in 0.16 fixed point to match a Model1 VA2 US Genesis, was 0x7fff */
   //      config.low_freq       = 880;
   //      config.high_freq      = 5000;
   //      config.lg             = 100;
   //      config.mg             = 100;
   //      config.hg             = 100;
-    config.ym2612         = PVCoreGenesisPlusOptions.ym2612; //YM2612_DISCRETE;
-    config.ym2413         = PVCoreGenesisPlusOptions.ym2413; /* 0: Off, 1:On, 2:AUTO */
-    config.mono           = PVCoreGenesisPlusOptions.mono; /* STEREO output */
+    config.ym2612         = [PVCoreGenesisPlusOptions ym2612]; //YM2612_DISCRETE;
+    config.ym2413         = [PVCoreGenesisPlusOptions ym2413]; /* 0: Off, 1:On, 2:AUTO */
+    config.mono           = [PVCoreGenesisPlusOptions mono]; /* STEREO output */
 
     #ifdef HAVE_YM3438_CORE
        OPN2_SetChipType(ym3438_mode_ym2612);
@@ -678,14 +680,14 @@ static bool environment_callback(unsigned cmd, void *data)
   //      config.bios           = 0;
   //      config.lock_on        = 0;
      #ifdef HAVE_OVERCLOCK
-        config.overclock      = PVCoreGenesisPlusOptions.overclock;
+        config.overclock      = [PVCoreGenesisPlusOptions overclock];
      #endif
-        config.no_sprite_limit = PVCoreGenesisPlusOptions.no_sprite_limit;
+        config.no_sprite_limit = [PVCoreGenesisPlusOptions no_sprite_limit];
 
         /* video options */
-        config.overscan = PVCoreGenesisPlusOptions.overscan; /* 0 = no borders , 1 = vertical borders only, 2 = horizontal borders only, 3 = full borders */
+        config.overscan = [PVCoreGenesisPlusOptions overscan]; /* 0 = no borders , 1 = vertical borders only, 2 = horizontal borders only, 3 = full borders */
   //      config.aspect_ratio = 0;
-        config.gg_extra = PVCoreGenesisPlusOptions.gg_extra; /* 1 = show extended Game Gear screen (256x192) */
+        config.gg_extra = [PVCoreGenesisPlusOptions gg_extra]; /* 1 = show extended Game Gear screen (256x192) */
   //      config.ntsc     = 0;
   //      config.lcd        = 0; /* 0.8 fixed point */
   //      config.render   = 0;
@@ -910,7 +912,7 @@ static bool environment_callback(unsigned cmd, void *data)
 }
 
 - (NSUInteger)channelCount {
-    BOOL isMono = PVCoreGenesisPlusOptions.mono;
+    BOOL isMono = [PVCoreGenesisPlusOptions mono];
     NSUInteger channelCount = isMono ? 1 : 2;
     return channelCount;
 }

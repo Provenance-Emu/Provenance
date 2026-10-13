@@ -47,6 +47,15 @@ let package = Package(
             url: "https://github.com/hummingbird-project/hummingbird.git",
             from: "2.0.0"
         ),
+        // Hummingbird imports ServiceContextModule without declaring it (it only declares Tracing).
+        // swift-service-context 1.4.0 + swift-distributed-tracing 1.6.0 (2026-10-12) inverted that
+        // pair: ServiceContextModule now depends on tracing's Instrumentation, and Tracing no longer
+        // pulls ServiceContextModule into Hummingbird's build order, so an unpinned resolution fails
+        // at random with "no such module 'ServiceContextModule'" (every Tuist dev-workspace build;
+        // Provenance.xcworkspace is only spared by its committed Package.resolved). Cap both until
+        // Hummingbird declares the dependency. Pin-only: no target of ours uses them directly.
+        .package(url: "https://github.com/apple/swift-distributed-tracing.git", "1.0.0"..<"1.6.0"),
+        .package(url: "https://github.com/apple/swift-service-context.git", "1.0.0"..<"1.4.0"),
         // Used for HTTPField / HTTPFields in PVModernWebServer (Hummingbird uses HTTPTypes internally
         // but does not re-export it to dependents).
         .package(url: "https://github.com/apple/swift-http-types.git", from: "1.0.0"),

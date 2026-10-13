@@ -1,3 +1,4 @@
+import Foundation
 import ProjectDescription
 
 /// A small app target that embeds only the cores it lists. Add a target by appending
@@ -12,13 +13,33 @@ public struct FocusedApp {
     public let libretro: [String]
     /// SWIFT_ACTIVE_COMPILATION_CONDITIONS additions.
     public let flags: [String]
+    /// Environment variable that must be set (to anything but "" or "0") for `FocusedApp.all` to
+    /// include the app. For apps whose package cannot load on a clean checkout: every focused app
+    /// shares one generated project, so a package that needs a build artefact would otherwise break
+    /// every other app's package resolution.
+    public let optInVariable: String?
 
-    public init(slug: String, title: String, cores: [CoreProduct], libretro: [String] = [], flags: [String] = []) {
+    public init(
+        slug: String,
+        title: String,
+        cores: [CoreProduct],
+        libretro: [String] = [],
+        flags: [String] = [],
+        optInVariable: String? = nil
+    ) {
         self.slug = slug
         self.title = title
         self.cores = cores
         self.libretro = libretro
         self.flags = flags
+        self.optInVariable = optInVariable
+    }
+
+    /// False when the app is opt-in and its variable is unset.
+    public var isEnabled: Bool {
+        guard let variable = optInVariable else { return true }
+        let value = ProcessInfo.processInfo.environment[variable] ?? ""
+        return !value.isEmpty && value != "0"
     }
 
     public var name: String { "Provenance-Dev-\(title)" }
@@ -64,7 +85,8 @@ public struct FocusedApp {
         let products = projectProducts.map(\.product)
         let embed = products.isEmpty ? [] : [DevSettings.embedProjectFrameworksScript(products: products)]
         // Post order: embed vendored frameworks, then wrap libretro dylibs, then validate.
-        return libretroScripts.pre + embed + libretroScripts.post
+        let coreScripts = allCores.flatMap(\.postScripts)
+        return libretroScripts.pre + embed + coreScripts + libretroScripts.post
     }
 
     /// Vendored .xcodeproj files the workspace must contain for these apps.
@@ -131,7 +153,7 @@ public struct FocusedApp {
 }
 
 public extension FocusedApp {
-    static let ui = FocusedApp(slug: "ui", title: "UI", cores: [.mGBA, .stella, .snes9x], flags: [DevSettings.harnessFlag])
+    static let ui = FocusedApp(slug: "ui", title: "UI", cores: [.mGBA, .stella, .snes9x, .fceu, .genesis], flags: [DevSettings.harnessFlag])
 
     static let thin = FocusedApp(
         slug: "thin",
@@ -141,9 +163,26 @@ public extension FocusedApp {
         flags: [DevSettings.harnessFlag]
     )
 
-    // PVAzahar depends on its BuildPVlibAzahar aggregate inside PVAzahar.xcodeproj, so the
-    // implicit dependency on PVAzahar also builds (or cache-links) the PVlibAzahar slice.
+    // PVAzahar-Dynamic links PVlibAzahar.xcframework, which must be packed before generation:
+    // `make dev-azahar` runs `build_slice.py azahar $(DEV_SLICE) --xcframework` first. arm64 only.
     static let azahar = FocusedApp(slug: "azahar", title: "Azahar", cores: [.azahar], flags: [DevSettings.harnessFlag])
 
-    static let all: [FocusedApp] = [.ui, .azahar, .thin]
+    /// Mupen64Plus + its plugin frameworks, all as SwiftPM products (Phase 2 of the core conversion).
+    static let n64 = FocusedApp(slug: "n64", title: "N64", cores: [.mupen64Plus], flags: [DevSettings.harnessFlag])
+
+    /// Dolphin as a SwiftPM binary target over `PVlibDolphin.xcodeproj`'s slice cache xcframework.
+    /// Device only. Opt in with `TUIST_DEV_DOLPHIN=1`; `make dev-dolphin` produces the xcframework first
+    /// and sets it, and CI never does.
+    static let dolphin = FocusedApp(slug: "dolphin", title: "Dolphin", cores: [.dolphin], optInVariable: DevSettings.dolphinOptIn)
+
+    /// Every app that exists, enabled or not (the manifest checks validate all of them).
+    /// No emulator cores at all: the fastest build of the full UI (library, settings, importer,
+    /// skins). Use it for UI/unit-test iteration and as CI's smoke build (Phase 4 of the core
+    /// SwiftPM conversion). Games can't launch in it; everything else works.
+    static let coreless = FocusedApp(slug: "coreless", title: "Coreless", cores: [], flags: [DevSettings.harnessFlag])
+
+    static let catalog: [FocusedApp] = [.ui, .azahar, .thin, .n64, .dolphin, .coreless]
+
+    /// The apps in the generated project.
+    static var all: [FocusedApp] { catalog.filter(\.isEnabled) }
 }

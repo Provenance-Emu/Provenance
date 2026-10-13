@@ -1,4 +1,9 @@
+#if SWIFT_PACKAGE
+// The SwiftPM bridge target has no framework umbrella header; PVDolphinCore.h carries the class.
+#import "PVDolphinCore.h"
+#else
 #import <PVDolphin/PVDolphin.h>
+#endif
 #import <Foundation/Foundation.h>
 #import <PVLogging/PVLoggingObjC.h>
 

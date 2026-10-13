@@ -12,12 +12,55 @@
 #import "PVDolphinCore+Video.h"
 #import "PVDolphinCore+NetplayBoot.h"
 #import <Foundation/Foundation.h>
+#if !SWIFT_PACKAGE
 #import <PVDolphin/PVDolphin-Swift.h>
+#endif
 #import <PVCoreObjCBridge/PVCoreObjCBridge.h>
 #import <PVLogging/PVLoggingObjC.h>
 @import PVEmulatorCore;
 @import PVCoreBridge;
 @import PVSettings;
+
+#if SWIFT_PACKAGE
+// SwiftPM cannot build this file and the Swift sources as one module, and the ObjC++ target
+// cannot import the Swift module that imports it (a dependency cycle). The few Swift symbols
+// this file used to take from PVDolphin-Swift.h are reached through the runtime instead:
+//  - `parseOptions` is a Swift extension method on PVDolphinCoreBridge (PVDolphinCoreOptions.swift);
+//  - DolphinVulkanViewController / DolphinOGLViewController are @objc Swift classes, looked up
+//    by their module-qualified runtime name.
+// Declarations only: nothing here is defined in this target. The Xcode project build keeps
+// importing PVDolphin-Swift.h and never sees this block.
+@interface PVDolphinCoreBridge (PVDolphinSwiftExtensions)
+- (void)parseOptions;
+@end
+
+@interface UIViewController (PVDolphinSwiftRenderViewController)
+- (instancetype)initWithResFactor:(int8_t)resFactor
+                       videoWidth:(CGFloat)videoWidth
+                      videoHeight:(CGFloat)videoHeight
+                             core:(PVDolphinCoreBridge *)core;
+@end
+
+typedef UIViewController DolphinVulkanViewController;
+typedef UIViewController DolphinOGLViewController;
+#define PV_DOLPHIN_SWIFT_CLASS(name) NSClassFromString(@"PVDolphin." #name)
+
+/// Sys/ and Config/ live in the SwiftPM resource bundle (Config) or the app bundle (Sys, which
+/// SwiftPM cannot reference from the dolphin-ios submodule; the dev app copies it in).
+static NSString *PVDolphinResourcePath(NSString *name) {
+    for (NSBundle *bundle in @[SWIFTPM_MODULE_BUNDLE, [NSBundle mainBundle]]) {
+        NSString *path = [bundle pathForResource:name ofType:nil];
+        if (path) { return path; }
+    }
+    return nil;
+}
+#else
+#define PV_DOLPHIN_SWIFT_CLASS(name) name
+
+static NSString *PVDolphinResourcePath(NSString *name) {
+    return [[NSBundle bundleForClass:[PVDolphinCore class]] pathForResource:name ofType:nil];
+}
+#endif
 
 #import <AudioToolbox/AudioToolbox.h>
 #import <AudioUnit/AudioUnit.h>
@@ -798,7 +841,7 @@ static void ResetDolphinStaticState() {
     NSString* saveDirectory = [self.batterySavesPath stringByAppendingPathComponent:@"../DolphinData" ];
 
     // Copy Sys Bundle
-    NSString *sysPath = [[NSBundle bundleForClass:[PVDolphinCore class]] pathForResource:@"Sys" ofType:nil];
+    NSString *sysPath = PVDolphinResourcePath(@"Sys");
     if (![fm fileExistsAtPath: saveDirectory]) {
         if(![fm copyItemAtPath:sysPath toPath:saveDirectory error:&error]) {
             NSLog(@"Error copying the sys files: %@", [error description]);
@@ -806,12 +849,12 @@ static void ResetDolphinStaticState() {
     }
 
     // Copy Wii Files (needed to boot some games)
-    NSString *wiiPath = [[NSBundle bundleForClass:[PVDolphinCore class]] pathForResource:@"Sys/Wii" ofType:nil];
+    NSString *wiiPath = PVDolphinResourcePath(@"Sys/Wii");
     NSString* wiiDestDirectory = [self.batterySavesPath stringByAppendingPathComponent:@"../DolphinData/Wii" ];
     [self syncResources:wiiPath to:wiiDestDirectory overWrite:false];
 
     // Copy gecko code handler from resource bundle
-    NSString *filePath = [[NSBundle bundleForClass:[PVDolphinCore class]] pathForResource:@"Sys/codehandler.bin" ofType:nil];
+    NSString *filePath = PVDolphinResourcePath(@"Sys/codehandler.bin");
     NSString *codeHandler = [saveDirectory stringByAppendingPathComponent:@"codehandler.bin"];
     if (![fm fileExistsAtPath: codeHandler]) {
         if(![fm copyItemAtPath:filePath toPath:codeHandler error:&error]) {
@@ -863,7 +906,7 @@ static void ResetDolphinStaticState() {
     // CRITICAL: Skip GameCube BIOS - must be set early to prevent BIOS loading errors
     Config::SetBase(Config::MAIN_SKIP_IPL, self.skipIPL);
     NSLog(@"GameCube BIOS skip set to: %s", self.skipIPL ? "true" : "false");
-    NSString *configPath = [[NSBundle bundleForClass:[PVDolphinCore class]] pathForResource:@"Config" ofType:nil];
+    NSString *configPath = PVDolphinResourcePath(@"Config");
     NSString *configDirectory = [self.batterySavesPath stringByAppendingPathComponent:@"../DolphinData/Config" ];
     [self syncResources:configPath to:configDirectory overWrite:true];
 }
@@ -1302,7 +1345,7 @@ static void ResetDolphinStaticState() {
         CGRect screenBounds = [[UIScreen mainScreen] bounds];
         if(self.gsPreference == 0)
         {
-            DolphinVulkanViewController *cgsh_view_controller=[[DolphinVulkanViewController alloc]
+            DolphinVulkanViewController *cgsh_view_controller=[[PV_DOLPHIN_SWIFT_CLASS(DolphinVulkanViewController) alloc]
                                                                initWithResFactor:self.resFactor
                                                                videoWidth: self.videoWidth
                                                                videoHeight: self.videoHeight
@@ -1312,7 +1355,7 @@ static void ResetDolphinStaticState() {
             m_view=cgsh_view_controller.view;
             m_view.contentMode = UIViewContentModeScaleToFill;
         } else if(self.gsPreference == 1) {
-            DolphinOGLViewController *cgsh_view_controller=[[DolphinOGLViewController alloc]
+            DolphinOGLViewController *cgsh_view_controller=[[PV_DOLPHIN_SWIFT_CLASS(DolphinOGLViewController) alloc]
                                                             initWithResFactor:self.resFactor
                                                             videoWidth: self.videoWidth
                                                             videoHeight: self.videoHeight
@@ -1323,7 +1366,7 @@ static void ResetDolphinStaticState() {
             m_view.contentMode = UIViewContentModeScaleToFill;
         } else if(self.gsPreference == 2) {
             // Metal backend - reuse Vulkan view controller since both use CAMetalLayer
-            DolphinVulkanViewController *cgsh_view_controller=[[DolphinVulkanViewController alloc]
+            DolphinVulkanViewController *cgsh_view_controller=[[PV_DOLPHIN_SWIFT_CLASS(DolphinVulkanViewController) alloc]
                                                                initWithResFactor:self.resFactor
                                                                videoWidth: self.videoWidth
                                                                videoHeight: self.videoHeight
@@ -1369,7 +1412,7 @@ static void ResetDolphinStaticState() {
     } else {
         if(self.gsPreference == 0)
         {
-            DolphinVulkanViewController *cgsh_view_controller=[[DolphinVulkanViewController alloc]
+            DolphinVulkanViewController *cgsh_view_controller=[[PV_DOLPHIN_SWIFT_CLASS(DolphinVulkanViewController) alloc]
                                                                initWithResFactor:self.resFactor
                                                                videoWidth: self.videoWidth
                                                                videoHeight: self.videoHeight
@@ -1381,7 +1424,7 @@ static void ResetDolphinStaticState() {
             [gl_view_controller addChildViewController:cgsh_view_controller];
             [cgsh_view_controller didMoveToParentViewController:gl_view_controller];
         } else if(self.gsPreference == 1) {
-            DolphinOGLViewController *cgsh_view_controller=[[DolphinOGLViewController alloc]
+            DolphinOGLViewController *cgsh_view_controller=[[PV_DOLPHIN_SWIFT_CLASS(DolphinOGLViewController) alloc]
                                                             initWithResFactor:self.resFactor
                                                             videoWidth: self.videoWidth
                                                             videoHeight: self.videoHeight
@@ -1394,7 +1437,7 @@ static void ResetDolphinStaticState() {
             [cgsh_view_controller didMoveToParentViewController:gl_view_controller];
         } else if(self.gsPreference == 2) {
             // Metal backend - reuse Vulkan view controller since both use CAMetalLayer
-            DolphinVulkanViewController *cgsh_view_controller=[[DolphinVulkanViewController alloc]
+            DolphinVulkanViewController *cgsh_view_controller=[[PV_DOLPHIN_SWIFT_CLASS(DolphinVulkanViewController) alloc]
                                                                initWithResFactor:self.resFactor
                                                                videoWidth: self.videoWidth
                                                                videoHeight: self.videoHeight

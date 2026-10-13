@@ -1,3 +1,4 @@
+import Foundation
 import ProjectDescription
 
 public enum DevSettings {
@@ -26,8 +27,30 @@ public enum DevSettings {
             basedOnDependencyAnalysis: false
         )
     }
+    /// Dolphin's `Sys/` (GameSettings, Wii titles, the Gecko code handler) is shipped as app
+    /// resources, and it lives in the dolphin-ios submodule, which a SwiftPM resource cannot
+    /// reference. PVDolphinCore.mm finds it in the main bundle when the package bundle lacks it.
+    public static let dolphinSysScript: TargetScript = .post(
+        script: """
+        set -euo pipefail
+        src="${SRCROOT}/../Cores/Dolphin/dolphin-ios/Data/Sys"
+        dest="${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/Sys"
+        if [ ! -d "$src" ]; then
+          echo "error: ${src} is missing; initialise the Cores/Dolphin/dolphin-ios submodule"
+          exit 1
+        fi
+        mkdir -p "$dest"
+        /usr/bin/rsync -a --delete "$src/" "$dest/"
+        """,
+        name: "Copy Dolphin Sys resources",
+        basedOnDependencyAnalysis: false
+    )
+
     /// Base xcconfig for the project and every app target (repo-relative).
     public static let xcconfig: Path = .relativeToRoot("Dev/Config/Dev.xcconfig")
+
+    /// Environment variable that adds the Dolphin app (and its package) to the generated project.
+    public static let dolphinOptIn = "TUIST_DEV_DOLPHIN"
 
     /// Compilation condition that pulls PVDevHarness into a focused app.
     public static let harnessFlag = "PV_DEV_HARNESS"
@@ -172,6 +195,12 @@ public enum DevSettings {
             "MTL_FAST_MATH": "YES",
             "DEAD_CODE_STRIPPING": "YES",
         ]
+        // Intel is unsupported (2026-10-12): no Intel Mac can run the Xcode we need, so the dev apps
+        // build arm64 only on simulator SDKs. Device SDKs are arm64 anyway. This also means the
+        // prebuilt cores (PVlibAzahar) need no x86_64 slice and SwiftPM targets need no per-arch
+        // source lists.
+        base["EXCLUDED_ARCHS[sdk=iphonesimulator*]"] = "x86_64"
+        base["EXCLUDED_ARCHS[sdk=appletvsimulator*]"] = "x86_64"
         base.merge(app.linkerSettings) { _, new in new }
         return .settings(
             base: base,

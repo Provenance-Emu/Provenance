@@ -1,25 +1,73 @@
-// swift-tools-version:5.10
+// swift-tools-version:6.0
 // The swift-tools-version declares the minimum version of Swift required to build this package.
 
 import PackageDescription
 
-/* NOTE: this package does not build yet.
- *
- * This manifest was a verbatim copy of Cores/Stella/Package.swift -- package
- * "PVStella" with targets "PVStella", "PVStellaSwift", "PVStellaCPP" and
- * "libstella", and a body full of Stella-specific excludes, defines and
- * `stella/src/...` header paths. Those names belong to Cores/Stella, which IS
- * registered as an XCLocalSwiftPackageReference in Provenance.xcodeproj, and
- * SPM requires target and product names to be unique across the whole package
- * graph -- so the copy was a latent collision.
- *
- * The names below are PVSNES9x's own and the Stella-specific settings are gone,
- * which removes the collision. The targets still have no sources: PVSNES9x has
- * never been migrated to SPM and has no Sources/ layout, so `swift build`
- * fails with "Source files for target ... should be located under". Wiring
- * that up means splitting the mixed ObjC++/Swift core under PVSNES/ and enumerating the core files in snes9x-src/, which is a source
- * migration, not a manifest change. PVSNES9x.xcodeproj remains the build path.
- */
+/// Snes9x core sources: the 51 files PVSNES9x.xcodeproj's `snes9x` target compiles,
+/// relative to `snes9x-src`. Everything else in that directory (GUI ports, desktop
+/// audio/video drivers, filters, netplay, debugger) is never built.
+let snes9xCoreSources: [String] = [
+    "apu/apu.cpp",
+    "apu/bapu/dsp/sdsp.cpp",
+    "apu/bapu/smp/smp.cpp",
+    "apu/bapu/smp/smp_state.cpp",
+    "bml.cpp",
+    "bsx.cpp",
+    "c4.cpp",
+    "c4emu.cpp",
+    "cheats.cpp",
+    "cheats2.cpp",
+    "clip.cpp",
+    "conffile.cpp",
+    "controls.cpp",
+    "cpu.cpp",
+    "cpuexec.cpp",
+    "cpuops.cpp",
+    "crosshairs.cpp",
+    "dma.cpp",
+    "dsp.cpp",
+    "dsp1.cpp",
+    "dsp2.cpp",
+    "dsp3.cpp",
+    "dsp4.cpp",
+    "fscompat.cpp",
+    "fxemu.cpp",
+    "fxinst.cpp",
+    "gfx.cpp",
+    "globals.cpp",
+    "memmap.cpp",
+    "movie.cpp",
+    "msu1.cpp",
+    "obc1.cpp",
+    "ppu.cpp",
+    "sa1.cpp",
+    "sa1cpu.cpp",
+    "sdd1.cpp",
+    "sdd1emu.cpp",
+    "seta.cpp",
+    "seta010.cpp",
+    "seta011.cpp",
+    "seta018.cpp",
+    "sha256.cpp",
+    "snapshot.cpp",
+    "snes9x.cpp",
+    "spc7110.cpp",
+    "srtc.cpp",
+    "stream.cpp",
+    "tile.cpp",
+    "tileimpl-h2x1.cpp",
+    "tileimpl-n1x1.cpp",
+    "tileimpl-n2x1.cpp",
+]
+
+/// The Snes9x headers the bridge includes (`snes9x.h`, `apu.h`, ...), as search paths
+/// relative to the bridge target directory (`PVSNES`).
+let snes9xHeaderSearchPaths: [CXXSetting] = [
+    .headerSearchPath("../snes9x-src"),
+    .headerSearchPath("../snes9x-src/apu"),
+    .headerSearchPath("../snes9x-src/apu/bapu"),
+]
+
 let package = Package(
     name: "PVCoreSNES9x",
     platforms: [
@@ -31,111 +79,154 @@ let package = Package(
         .visionOS(.v1)
     ],
     products: [
-        // Products define the executables and libraries produced by a package, and make them visible to other packages.
+        // The Swift module is named PVSNES because Core.plist's PVPrincipleClass is
+        // "PVSNES.PVSNES9xEmulatorCore"; the products keep the PVSNES9x names.
         .library(
             name: "PVSNES9x",
-            targets: ["PVSNES9x", "PVSNES9xSwift"]),
+            targets: ["PVSNES"]),
         .library(
             name: "PVSNES9x-Dynamic",
             type: .dynamic,
-            targets: ["PVSNES9x", "PVSNES9xSwift"]),
+            targets: ["PVSNES"]),
         .library(
             name: "PVSNES9x-Static",
             type: .static,
-            targets: ["PVSNES9x", "PVSNES9xSwift"]),
+            targets: ["PVSNES"]),
     ],
     dependencies: [
         .package(path: "../../PVCoreBridge"),
         .package(path: "../../PVCoreObjCBridge"),
+        .package(path: "../../PVPlists"),
         .package(path: "../../PVEmulatorCore"),
         .package(path: "../../PVSupport"),
         .package(path: "../../PVAudio"),
         .package(path: "../../PVLogging"),
-        .package(path: "../../PVObjCUtils")
+        .package(path: "../../PVObjCUtils"),
+        .package(name: "PVPrimitives", path: "../../PVPrimitives/"),
+        .package(path: "../../PVRcheevos"),
+        .package(name: "PVRcheevosBridge", path: "../../PVRcheevosBridge"),
     ],
     targets: [
+        // MARK: ------- Core (Swift) ---------
+
+        // Shares the PVSNES directory with PVSNES9xBridge; the two list disjoint files.
         .target(
-            name: "PVSNES9x",
+            name: "PVSNES",
             dependencies: [
                 "PVEmulatorCore",
                 "PVCoreBridge",
                 "PVCoreObjCBridge",
+                "PVLogging",
+                "PVAudio",
                 "PVSupport",
-                "PVObjCUtils",
-                "PVSNES9xSwift",
-                "PVSNES9xCPP",
+                "PVPlists",
+                "PVPrimitives",
+                "PVSNES9xBridge",
                 "libsnes9x",
+                .product(name: "PVRcheevos", package: "PVRcheevos"),
+                .product(name: "PVRcheevosBridge", package: "PVRcheevosBridge"),
+            ],
+            path: "PVSNES",
+            exclude: [
+                "Info.plist",
+                "PVSNES.h",
+                "SNES/PVSNESEmulatorCore.h",
+                "SNES/PVSNESEmulatorCore.mm",
+                "SNES/PVSNESEmulatorCore+LightGun.mm",
+                "SNES/SNESOESupport.mm",
+            ],
+            sources: [
+                "SNES/CoreOptions.swift",
+                "SNES/CorePlist.swift",
+                "SNES/CorePlist-Generated.swift",
+                "SNES/PVSNESEmulatorCore.swift",
+                "SNES/PVSNES9xEmulatorCore+RetroAchievements.swift",
             ],
             resources: [
-                .process("Resources/Core.plist")
+                .process("Core.plist")
             ],
-            publicHeadersPath: "include",
-            cSettings: CommonSettings.c,
-            cxxSettings: CommonSettings.cxx,
             swiftSettings: [
                 .interoperabilityMode(.Cxx)
             ]
         ),
 
+        // MARK: ------- Bridge (ObjC++) ---------
+
         .target(
-            name: "PVSNES9xSwift",
+            name: "PVSNES9xBridge",
             dependencies: [
                 "PVEmulatorCore",
                 "PVCoreBridge",
+                "PVCoreObjCBridge",
                 "PVLogging",
                 "PVAudio",
                 "PVSupport",
+                "PVObjCUtils",
                 "libsnes9x",
-                "PVSNES9xCPP"
             ],
-            cSettings: CommonSettings.c,
-            cxxSettings: CommonSettings.cxx,
-            swiftSettings: [
-                .interoperabilityMode(.Cxx)
+            path: "PVSNES",
+            exclude: [
+                "Core.plist",
+                "Info.plist",
+                "PVSNES.h",
+                "SNES/CoreOptions.swift",
+                "SNES/CorePlist.swift",
+                "SNES/CorePlist-Generated.swift",
+                "SNES/PVSNESEmulatorCore.swift",
+                "SNES/PVSNES9xEmulatorCore+RetroAchievements.swift",
+            ],
+            sources: [
+                "SNES/PVSNESEmulatorCore.mm",
+                "SNES/PVSNESEmulatorCore+LightGun.mm",
+                "SNES/SNESOESupport.mm",
+            ],
+            publicHeadersPath: "SNES",
+            cxxSettings: snes9xHeaderSearchPaths + [
+                .unsafeFlags(["-fmodules", "-fcxx-modules"]),
+            ],
+            linkerSettings: [
+                .linkedLibrary("z"),
             ]
         ),
 
-        .target(
-            name: "PVSNES9xCPP",
-            dependencies: [
-                "PVEmulatorCore",
-                "PVCoreBridge",
-                "PVLogging",
-                "PVAudio",
-                "PVSupport",
-                "libsnes9x",
-            ],
-            publicHeadersPath: "./",
-            cSettings: CommonSettings.c,
-            cxxSettings: CommonSettings.cxx
-        ),
+        // MARK: ------- Emulator ---------
 
+        // Snes9x, compiled from the Provenance-Emu/snes9x submodule. The file list and
+        // include paths mirror the `snes9x` target of PVSNES9x.xcodeproj.
         .target(
             name: "libsnes9x",
-            packageAccess: true,
-            cSettings: CommonSettings.c,
-            cxxSettings: CommonSettings.cxx
-        )
+            // Sources/libsnes9x/snes9x-src is a symlink to the submodule: a target's
+            // public headers directory must live inside its own path.
+            path: "Sources/libsnes9x",
+            // Only `sources` is compiled; these are excluded so SwiftPM does not pick up
+            // the desktop frontends' .lproj directories as localized resources.
+            exclude: [
+                "snes9x-src/common",
+                "snes9x-src/data",
+                "snes9x-src/docs",
+                "snes9x-src/external",
+                "snes9x-src/filter",
+                "snes9x-src/gtk",
+                "snes9x-src/jma",
+                "snes9x-src/libretro",
+                "snes9x-src/macosx",
+                "snes9x-src/qt",
+                "snes9x-src/unix",
+                "snes9x-src/win32",
+            ],
+            sources: snes9xCoreSources.map { "snes9x-src/" + $0 },
+            publicHeadersPath: "include",
+            cxxSettings: [
+                .headerSearchPath("snes9x-src"),
+                .headerSearchPath("snes9x-src/apu"),
+                .headerSearchPath("snes9x-src/apu/bapu"),
+            ],
+            linkerSettings: [
+                .linkedLibrary("z"),
+            ]
+        ),
     ],
-    swiftLanguageVersions: [.v5],
-    cLanguageStandard: .gnu99,
-    cxxLanguageStandard: .gnucxx17
+    swiftLanguageModes: [.v5],
+    cLanguageStandard: .gnu17,
+    cxxLanguageStandard: .gnucxx20
 )
-
-enum CommonSettings {
-    static let c: [CSetting] = [
-        .define("INLINE", to: "inline"),
-        .define("USE_STRUCTS", to: "1"),
-        .define("__LIBRETRO__", to: "1"),
-        .define("HAVE_COCOATOJUCH", to: "1"),
-        .define("__GCCUNIX__", to: "1"),
-    ]
-
-    static let cxx: [CXXSetting] = [
-        .define("INLINE", to: "inline"),
-        .define("USE_STRUCTS", to: "1"),
-        .define("__LIBRETRO__", to: "1"),
-        .define("HAVE_COCOATOJUCH", to: "1"),
-        .define("__GCCUNIX__", to: "1"),
-    ]
-}

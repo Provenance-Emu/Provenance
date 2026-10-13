@@ -1,6 +1,10 @@
 #import "PVMupenBridge.h"
 #import "PVMupenBridge+Controls.h"
+#if SWIFT_PACKAGE
+#import "PVMupenSwiftInterop.h"
+#else
 #import "PVMupen64PlusBridge/PVMupen64PlusBridge-Swift.h"
+#endif
 #import "api/config.h"
 #import "api/m64p_common.h"
 #import "api/m64p_config.h"
@@ -428,7 +432,7 @@ void MupenControllerCommand(int Control, unsigned char *Command) {
 }
 
 - (void)didMoveN64JoystickDirection:(PVN64Button)button withXValue:(CGFloat)xValue withYValue:(CGFloat)yValue forPlayer:(NSUInteger)player {
-    if (MupenGameCoreOptions.dualJoystickOption && player == 0) {
+    if ([MupenGameCoreOptions dualJoystickOption] && player == 0) {
         player = 1;
     }
     yAxis[player] = yValue * N64_ANALOG_MAX;
