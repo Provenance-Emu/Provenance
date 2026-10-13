@@ -181,6 +181,22 @@ before it (or seed the files below by hand, then relaunch).
       the state loads correctly.
 - [ ] Atari 2600 light-gun game (an XG-1 cart) and trackball via the companion
       controller: aim, fire and movement still register.
+- [ ] HW-render thin cores, teardown off main (`fix/thin-quit-teardown-deadlock`):
+      flycast on Vulkan, flycast on GL (`reicast_` renderer option), and one GL
+      core such as mupen64plus_next. For each, after ~1 min of play with timed
+      autosaves on:
+      - quit from the pause menu;
+      - Save & Quit;
+      - swipe the app away from the app switcher while in gameplay.
+
+      Pass: no freeze, no 0x8BADF00D ("Failed to terminate gracefully") in
+      Analytics Data, and the game relaunches. Every quit logs
+      `calling context_destroy before retro_deinit` from the
+      `PVThinLibretro-Teardown` thread. A teardown that hangs logs `core
+      teardown did not finish within …` instead of killing the app; after that,
+      relaunching the same core shows "still shutting down" until it finishes,
+      or until the app restarts. Save & Quit's state loads on the next launch,
+      and SRAM (a DC VMU or N64 save) survives all three paths.
 
 ### Programmatic touch overlay (Phase 1, `PVTouchOverlay`, toggle on by default)
 - [ ] Fresh install, no user skins: overlay appears on all 13 bound systems
