@@ -524,8 +524,17 @@ public final class FilterChain {
         return outRect.integral
     }
 
+    /// Where the output area starts inside the render target (Provenance draws the
+    /// picture into a sub-rect of the drawable while a skin's frame is pending).
+    public var outputOffset: CGPoint = .zero {
+        didSet {
+            if outputOffset != oldValue { resize() }
+        }
+    }
+
     private func resize() {
         let bounds = Self.fitAspectRectIntoRect(aspectSize: aspectSize, size: drawableSize)
+            .offsetBy(dx: outputOffset.x, dy: outputOffset.y)
         if outputBounds == bounds {
             return
         }

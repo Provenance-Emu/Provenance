@@ -49,12 +49,13 @@ public final class PVMetalFilterRenderer: NSObject {
                        sourceSize: CGSize,
                        screenType: ScreenTypeObjC,
                        smoothingEnabled: Bool,
-                       setViewport: Bool = true) -> Bool {
+                       setViewport: Bool = true,
+                       filter: MetalFilterSelectionOption? = nil) -> Bool {
         guard let device = device else {
             return false
         }
 
-        guard configurePipelineIfNeeded(screenType: screenType) else {
+        guard configurePipelineIfNeeded(screenType: screenType, filter: filter) else {
             return false
         }
 
@@ -117,12 +118,15 @@ public final class PVMetalFilterRenderer: NSObject {
         }
     }
 
-    private func configurePipelineIfNeeded(screenType: ScreenTypeObjC) -> Bool {
+    /// - Parameter filter: the filter to draw; `nil` resolves the global `metalFilterMode`.
+    private func configurePipelineIfNeeded(screenType: ScreenTypeObjC, filter: MetalFilterSelectionOption?) -> Bool {
         guard let device = device else {
             return false
         }
 
-        guard let shader = MetalShaderManager.shared.currentFilterShader(for: screenType) else {
+        let resolved = filter.map { MetalShaderManager.shared.filterShader(forName: $0.description) }
+            ?? MetalShaderManager.shared.currentFilterShader(for: screenType)
+        guard let shader = resolved else {
             pipelineState = nil
             activeShader = nil
             cachedScreenType = screenType

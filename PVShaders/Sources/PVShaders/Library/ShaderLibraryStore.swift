@@ -48,12 +48,15 @@ public final class ShaderLibraryStore {
     /// Bumped on every change, so renderers can cheaply notice edits.
     public private(set) var revision = 0
 
-    private let defaults: UserDefaults
-    private let catalog: ShaderCatalog
+    @ObservationIgnored private let defaults: UserDefaults
+    /// Resolved on first use: loading the library manifest is not free, and the
+    /// store is created at launch to register for sync.
+    @ObservationIgnored private let catalogProvider: () -> ShaderCatalog
+    private var catalog: ShaderCatalog { catalogProvider() }
 
-    public init(defaults: UserDefaults = .standard, catalog: ShaderCatalog = .shared) {
+    public init(defaults: UserDefaults = .standard, catalog: @autoclosure @escaping () -> ShaderCatalog = .shared) {
         self.defaults = defaults
-        self.catalog = catalog
+        self.catalogProvider = catalog
         selections = Self.load(StorageKey.selections, from: defaults) ?? StampedMap()
         parameters = Self.load(StorageKey.parameters, from: defaults) ?? StampedMap()
         favorites = Self.load(StorageKey.favorites, from: defaults) ?? StampedMap()
