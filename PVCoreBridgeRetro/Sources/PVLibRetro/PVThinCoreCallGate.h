@@ -40,6 +40,7 @@ NS_ASSUME_NONNULL_BEGIN
 /// for the main thread.
 FOUNDATION_EXPORT const NSTimeInterval PVThinCoreCallGateWaitForever;
 
+NS_SWIFT_SENDABLE
 @interface PVThinCoreCallGate : NSObject
 
 /// YES from `-beginTeardown` (or `-enterForTeardownWithTimeout:`) until `-reopen`.

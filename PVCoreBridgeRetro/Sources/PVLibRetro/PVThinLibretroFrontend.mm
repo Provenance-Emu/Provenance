@@ -963,10 +963,20 @@ static const size_t kThinNetpacketQueueLimitBytes = 32 * 1024 * 1024;
     BOOL _deallocating;
     /// The dylib being torn down, captured on main when the teardown starts.
     NSString *_teardownCorePath;
-    /// YES once the teardown thread has finished. Guarded by
-    /// `s_thinWedgedCoreLock`, so a main-thread timeout and the thread finishing
-    /// agree on whether the dylib is left wedged.
+    /// Handoff state between the teardown thread and the main thread's wait,
+    /// all guarded by `s_thinWedgedCoreLock`:
+    /// - `_teardownThreadFinished`: the thread is done, so a main-thread
+    ///   timeout and the thread agree on whether the dylib is left wedged.
+    /// - `_coreTornDown`: `retro_deinit` has returned; our HW context (Vulkan
+    ///   device/instance/MoltenVK, GL FBO) may be released.
+    /// - `_mainGaveUpWaiting`: main timed out, so the thread releases the HW
+    ///   context itself once the core is down.
+    /// - `_hardwareReleaseClaimed`: whichever side runs that release claims it,
+    ///   so it runs exactly once.
     BOOL _teardownThreadFinished;
+    BOOL _coreTornDown;
+    BOOL _mainGaveUpWaiting;
+    BOOL _hardwareReleaseClaimed;
 
     // ---- Asynchronous boot (see -startEmulation) ----
     /// Retained for its lifetime so the boot thread object isn't collected while
@@ -4244,7 +4254,10 @@ static NSString * const kThinArchiveExtractionDirectory = @"ThinLibretroContent"
 ///   2. take the core-call gate, waiting out an in-flight save/load state;
 ///   3. SRAM flush, rcheevos and netpacket teardown, Vulkan idle, then
 ///      `context_destroy` with the core's GL context current, `retro_unload_game`,
-///      `retro_deinit`, and our own HW-context release.
+///      `retro_deinit`.
+/// Our own HW-context release follows on main after a successful wait, or on
+/// the teardown thread once main has given up (see
+/// -_runCoreTeardownOnCurrentThreadSignalling: for why).
 /// The gate is latched before any of that, on main, so no save/load/reset can
 /// start once the stop has been requested.
 - (void)stopEmulation {
@@ -4272,7 +4285,8 @@ static NSString * const kThinArchiveExtractionDirectory = @"ThinLibretroContent"
         // so it has already exited and the join returns at once.
         [self _beginStopOnCallingThread];
         _teardownCorePath = [_loadedCorePath copy];
-        [self _runCoreTeardownOnCurrentThread];
+        [self _resetTeardownHandoff];
+        [self _runCoreTeardownOnCurrentThreadSignalling:nil];
         if (_teardownCompletedCleanly.load()) {
             [super stopEmulation];
         }
@@ -4295,9 +4309,7 @@ static NSString * const kThinArchiveExtractionDirectory = @"ThinLibretroContent"
     _teardownDone = dispatch_semaphore_create(0);
     _teardownCompletedCleanly.store(false);
     _teardownCorePath = [_loadedCorePath copy];
-    os_unfair_lock_lock(&s_thinWedgedCoreLock);
-    _teardownThreadFinished = NO;
-    os_unfair_lock_unlock(&s_thinWedgedCoreLock);
+    [self _resetTeardownHandoff];
 
     // The thread owns one reference to `self`, released on MAIN after it is
     // done. Not `-initWithTarget:` (whose retain is dropped on the teardown
@@ -4308,8 +4320,7 @@ static NSString * const kThinArchiveExtractionDirectory = @"ThinLibretroContent"
     void *retainedSelf = (__bridge_retained void *)self;
     NSThread *thread = [[NSThread alloc] initWithBlock:^{
         __unsafe_unretained PVThinLibretroFrontend *frontend = (__bridge PVThinLibretroFrontend *)retainedSelf;
-        [frontend _runCoreTeardownOnCurrentThread];
-        dispatch_semaphore_signal(done);
+        [frontend _runCoreTeardownOnCurrentThreadSignalling:done];
         dispatch_async(dispatch_get_main_queue(), ^{
             CFRelease(retainedSelf);
         });
@@ -4370,14 +4381,54 @@ static NSString * const kThinArchiveExtractionDirectory = @"ThinLibretroContent"
     [self.frontBufferCondition signal];
 }
 
-/// Teardown thread body (also run inline from -dealloc). Records the outcome
-/// for `-_awaitCoreTeardown` and the wedged-dylib registry.
-- (void)_runCoreTeardownOnCurrentThread {
+- (void)_resetTeardownHandoff {
+    os_unfair_lock_lock(&s_thinWedgedCoreLock);
+    _teardownThreadFinished = NO;
+    _coreTornDown = NO;
+    _mainGaveUpWaiting = NO;
+    _hardwareReleaseClaimed = NO;
+    os_unfair_lock_unlock(&s_thinWedgedCoreLock);
+}
+
+/// Teardown thread body (also run inline from -dealloc, with `done` nil).
+///
+/// `done` is signalled as soon as the CORE is down, before our own HW context
+/// is released. That release (`-teardownHardwareContext`) destroys the Vulkan
+/// swapchain, device and instance and unloads MoltenVK, and MoltenVK can
+/// `dispatch_sync` to the main queue while doing so — which would stall for
+/// main's whole budget while main sits waiting on `done`. So main runs the
+/// release after its wait succeeds (the thread and order it always ran in);
+/// only when main has already given up does this thread run it, and by then
+/// main is free to service such a dispatch.
+- (void)_runCoreTeardownOnCurrentThreadSignalling:(nullable dispatch_semaphore_t)done {
+    const CFTimeInterval startTime = CACurrentMediaTime();
     BOOL clean = NO;
     @autoreleasepool {
         clean = [self _joinLoopAndTearDownCore];
     }
     _teardownCompletedCleanly.store(clean);
+
+    BOOL releaseHardwareHere = NO;
+    os_unfair_lock_lock(&s_thinWedgedCoreLock);
+    if (clean) {
+        _coreTornDown = YES;
+        if ((done == nil || _mainGaveUpWaiting) && !_hardwareReleaseClaimed) {
+            _hardwareReleaseClaimed = YES;
+            releaseHardwareHere = YES;
+        }
+    }
+    os_unfair_lock_unlock(&s_thinWedgedCoreLock);
+    ILOG(@"ThinFrontend: core teardown took %.2f s (%@)", CACurrentMediaTime() - startTime,
+         clean ? @"clean" : @"loop never exited — core left loaded");
+    if (done) {
+        dispatch_semaphore_signal(done);
+    }
+    if (releaseHardwareHere) {
+        @autoreleasepool {
+            [self _releaseHardwareContextAfterCoreTeardown];
+        }
+    }
+
     os_unfair_lock_lock(&s_thinWedgedCoreLock);
     _teardownThreadFinished = YES;
     // A loop that never exited means the core is still live: keep the dylib
@@ -4502,12 +4553,21 @@ static NSString * const kThinArchiveExtractionDirectory = @"ThinLibretroContent"
         _memoryMapDescriptors = NULL;
         _memoryMapCount = 0;
     }
-    [self teardownHardwareContext];
 #if !TARGET_OS_MACCATALYST && !TARGET_OS_OSX
-    // Never hand a thread back with a context current.
+    // Release `_glContext` from this thread before anyone else (main, in
+    // -teardownHardwareContext) makes it current; never hand a thread back
+    // with a context current either.
     [EAGLContext setCurrentContext:nil];
 #endif
     _thinCurrentTLS = nil;
+    // Our own HW context is released next, by -_releaseHardwareContextAfterCoreTeardown.
+}
+
+/// Release OUR HW-render objects once the core is gone (`context_destroy` is
+/// already NULL, so nothing calls back into the core). Runs exactly once, on
+/// whichever thread claimed it (see -_runCoreTeardownOnCurrentThreadSignalling:).
+- (void)_releaseHardwareContextAfterCoreTeardown {
+    [self teardownHardwareContext];
     // Clear the non-thread-local fallback so a lingering core render thread can't
     // resolve a torn-down instance. Guarded so we never stomp a different frontend
     // that may have become active (defensive — only one runs at a time in practice).
@@ -4527,13 +4587,33 @@ static NSString * const kThinArchiveExtractionDirectory = @"ThinLibretroContent"
         return NO;
     }
     const NSTimeInterval budget = [self _teardownMainThreadWaitBudget];
-    const BOOL finished = dispatch_semaphore_wait(
-        done, dispatch_time(DISPATCH_TIME_NOW, (int64_t)(budget * NSEC_PER_SEC))) == 0;
-    if (finished) {
+    if (dispatch_semaphore_wait(done, dispatch_time(DISPATCH_TIME_NOW, (int64_t)(budget * NSEC_PER_SEC))) == 0) {
         // Leave it signalled for any later waiter (a second stop, a reboot check).
         dispatch_semaphore_signal(done);
     }
-    if (finished && _teardownCompletedCleanly.load()) {
+    // Decide, under the handoff lock, who releases our HW context. The core
+    // may have finished just as the wait expired; then it is still ours.
+    BOOL coreDown = NO;
+    BOOL releaseHardwareHere = NO;
+    os_unfair_lock_lock(&s_thinWedgedCoreLock);
+    coreDown = _coreTornDown;
+    if (coreDown) {
+        if (!_hardwareReleaseClaimed) {
+            _hardwareReleaseClaimed = YES;
+            releaseHardwareHere = YES;
+        }
+    } else {
+        _mainGaveUpWaiting = YES;
+        if (!_teardownThreadFinished) {
+            thin_set_core_path_wedged_locked(_teardownCorePath, YES);
+        }
+    }
+    os_unfair_lock_unlock(&s_thinWedgedCoreLock);
+
+    if (coreDown) {
+        if (releaseHardwareHere) {
+            [self _releaseHardwareContextAfterCoreTeardown];
+        }
         // Freed only now, on main: the software presenter reads this buffer on
         // main, which could not interleave with the wait above.
         if (_videoBufferData) {
@@ -4546,11 +4626,6 @@ static NSString * const kThinArchiveExtractionDirectory = @"ThinLibretroContent"
     // it: the teardown thread keeps `self` and the dylib alive until it
     // finishes, and the path stays marked wedged so it is not dlopen'ed into a
     // new session meanwhile. Nothing here may touch core-visible state.
-    os_unfair_lock_lock(&s_thinWedgedCoreLock);
-    if (!_teardownThreadFinished) {
-        thin_set_core_path_wedged_locked(_teardownCorePath, YES);
-    }
-    os_unfair_lock_unlock(&s_thinWedgedCoreLock);
     ELOG(@"ThinFrontend: core teardown did not finish within %.1f s (%@) — leaving it to finish "
          @"in the background; this core is unavailable until it does",
          budget, _teardownCorePath.lastPathComponent ?: @"?");
@@ -9726,6 +9801,20 @@ static void pvthin_rcheevos_login_callback(int result, const char *error_message
 }
 
 - (void)unloadAchievements {
+    // The teardown thread runs this inside the gate (as its owner). Once the
+    // gate is latched, a call from anywhere else — PVEmulatorViewController's
+    // stopAchievements() right after quit — is refused rather than racing it
+    // on a teardown that outlived main's wait. The teardown destroys the
+    // client itself.
+    const BOOL ran = [_coreCallGate performWithTimeout:thin_core_gate_wait_for_calling_thread() block:^{
+        [self _unloadAchievementsHoldingCoreGate];
+    }];
+    if (!ran) {
+        DLOG(@"[CHEEVOS-DIAG] ThinFrontend.unloadAchievements skipped — core teardown owns it");
+    }
+}
+
+- (void)_unloadAchievementsHoldingCoreGate {
 #if HAVE_RCHEEVOS
     if (_rcClient) {
         ILOG(@"[CHEEVOS-DIAG] ThinFrontend.unloadAchievements destroying rc_client");
