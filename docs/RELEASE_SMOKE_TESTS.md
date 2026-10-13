@@ -192,7 +192,8 @@ before it (or seed the files below by hand, then relaunch).
       Pass: no freeze, no 0x8BADF00D ("Failed to terminate gracefully") in
       Analytics Data, and the game relaunches. Every quit logs
       `calling context_destroy before retro_deinit` from the
-      `PVThinLibretro-Teardown` thread. A teardown that hangs logs `core
+      `PVThinLibretro-Teardown` thread, then `core teardown took X s (clean)`.
+      Note X for each core: anything near 3 s is close to the bound. A teardown that hangs logs `core
       teardown did not finish within …` instead of killing the app; after that,
       relaunching the same core shows "still shutting down" until it finishes,
       or until the app restarts. Save & Quit's state loads on the next launch,
