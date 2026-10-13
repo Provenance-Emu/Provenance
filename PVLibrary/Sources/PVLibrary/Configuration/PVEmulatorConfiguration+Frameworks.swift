@@ -335,6 +335,14 @@ public extension PVEmulatorConfiguration {
             }
         }
 
+        // Battery saves Provenance 3.3.x's RetroArch runtime wrote to RetroArch/saves go
+        // where the thin wrapper reads them. Copies only; retried until every file is handled.
+        if let retroArchBatteryJob = RetroArchBatterySaveMigration.pendingJob(in: database) {
+            Task.detached(priority: .utility) {
+                RetroArchBatterySaveMigration.run(retroArchBatteryJob, batteryRoot: Paths.batterySavesPath)
+            }
+        }
+
         // Reload RomDatabase caches to ensure in-memory state matches the
         // newly-registered cores for non-boot call paths (e.g. reset library).
         // Boot-time initialization may still trigger an additional reload later,

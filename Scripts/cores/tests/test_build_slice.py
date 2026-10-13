@@ -157,6 +157,32 @@ class KeyTests(unittest.TestCase):
         self.assertNotEqual(first, self.key(runner=runner))
 
 
+    def test_untracked_docs_do_not_change_key(self):
+        runner = FakeRunner()
+        sub = self.azahar.submodule
+        runner.dirty[str(sub)] = ("?? docs/superpowers/baselines/shot.png\n?? notes.md", "")
+        write(sub / "docs/superpowers/baselines/shot.png", "png")
+        write(sub / "notes.md", "notes")
+        self.assertEqual(self.key(), self.key(runner=runner))
+
+    def test_edited_markdown_does_not_change_key(self):
+        runner = FakeRunner()
+        runner.dirty[str(self.azahar.submodule)] = (
+            " M README.md\n M docs/plan.txt",
+            "diff --git a/README.md b/README.md\n+x\ndiff --git a/docs/plan.txt b/docs/plan.txt\n+y\n")
+        self.assertEqual(self.key(), self.key(runner=runner))
+
+    def test_docs_ignored_but_source_edits_still_count(self):
+        sub = str(self.azahar.submodule)
+        source_only = FakeRunner()
+        source_only.dirty[sub] = (" M src/a.cpp", "diff --git a/src/a.cpp b/src/a.cpp\n+x\n")
+        mixed = FakeRunner()
+        mixed.dirty[sub] = (" M README.md\n M src/a.cpp",
+                            "diff --git a/README.md b/README.md\n+doc\ndiff --git a/src/a.cpp b/src/a.cpp\n+x\n")
+        self.assertNotEqual(self.key(), self.key(runner=source_only))
+        self.assertEqual(self.key(runner=source_only), self.key(runner=mixed))
+
+
 class XCFrameworkTests(unittest.TestCase):
     def setUp(self):
         self.tmp = tempfile.TemporaryDirectory()

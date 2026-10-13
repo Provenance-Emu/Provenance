@@ -31,6 +31,7 @@ import hashlib
 import json
 import os
 import plistlib
+import re
 import shutil
 import subprocess
 import sys
@@ -141,6 +142,36 @@ def dolphin_pgo(spec: CoreSpec, env: Mapping[str, str]) -> Tuple[str, Optional[P
     return mode, (Path(explicit) if explicit else None)
 
 
+def affects_build(path: str) -> bool:
+    """False for documentation: a repo's top-level docs/ and any Markdown file.
+
+    Uncommitted edits there cannot change a built slice, but they used to bust the key: an
+    untracked docs/superpowers/baselines/ folder in dolphin-ios forced a Dolphin rebuild and
+    relink. Committed changes still count through the submodule commit.
+    """
+    path = path.strip('"')
+    return not (path.startswith("docs/") or path.lower().endswith(".md"))
+
+
+def build_relevant_porcelain(porcelain: str) -> str:
+    kept = []
+    for line in porcelain.splitlines():
+        path = line[3:].split(" -> ")[-1]  # renames list "old -> new"
+        if affects_build(path):
+            kept.append(line)
+    return "\n".join(kept)
+
+
+def build_relevant_diff(diff: str) -> str:
+    blocks = re.split(r"(?m)^(?=diff --git )", diff)
+    kept = []
+    for block in blocks:
+        match = re.match(r"diff --git a/(\S+) b/", block)
+        if match is None or affects_build(match.group(1)):
+            kept.append(block)
+    return "".join(kept)
+
+
 def worktree_state(spec: CoreSpec, runner: Runner) -> str:
     """Hash of uncommitted edits in the core submodule and its nested submodules."""
     status = runner(["git", "-C", str(spec.submodule), "submodule", "status", "--recursive"], None)
@@ -152,9 +183,10 @@ def worktree_state(spec: CoreSpec, runner: Runner) -> str:
             repos.append(spec.submodule / parts[1])
     digest = hashlib.sha256()
     for repo in repos:
-        porcelain = runner(["git", "-C", str(repo), "status", "--porcelain=v1", "--untracked-files=all",
-                            "--ignore-submodules=none"], None)
-        diff = runner(["git", "-C", str(repo), "diff", "HEAD", "--binary"], None)
+        porcelain = build_relevant_porcelain(runner(
+            ["git", "-C", str(repo), "status", "--porcelain=v1", "--untracked-files=all",
+             "--ignore-submodules=none"], None))
+        diff = build_relevant_diff(runner(["git", "-C", str(repo), "diff", "HEAD", "--binary"], None))
         if not porcelain and not diff:
             continue  # clean (or not checked out): contributes nothing, so init state doesn't matter
         rel = repo.relative_to(spec.submodule)

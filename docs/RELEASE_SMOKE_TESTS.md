@@ -83,12 +83,15 @@ v29 migration and Realm compaction run; test once with a large library
       `data/` folders.
 - [ ] mGBA, VBA-M, PicoDrive, Genesis Sega CD: states and in-game saves
       load (core versions bumped; VBA-M upgrades states by exact length).
-- [ ] iOS libretro states from 3.3.1 load. **Known gap:** the thin wrapper
-      passed RetroArch's container/rzip files raw to the core; fix in
-      progress (`fix/thin-retroarch-state-format`).
+- [ ] iOS libretro states from 3.3.1 load: the thin wrapper now decodes
+      RetroArch's rzip and RASTATE files (`142f51545b`); the log names the
+      format. Whether a state loads still depends on the core's version.
+      Achievement data stored in the state is dropped.
 - [ ] iOS libretro in-game saves from `Documents/RetroArch/saves/` appear
-      in the game. **Known gap:** not migrated to `Battery States/`; fix in
-      progress on the same branch.
+      in the game: copied to `Battery States/<rom>/` on first launch
+      (`af5a109f1c`; never overwrites). A game already played on a thin
+      build may have a blank `.srm` that blocks the copy; the original
+      stays in `RetroArch/saves/`.
 - [ ] DS battery saves that 3.3.1 kept in Save States land in Battery
       States and load in melonDS/DeSmuME.
 - Expected, not bugs: Stella 7 → 8 refuses 3.3.1 2600 states (in-game
