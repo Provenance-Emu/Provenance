@@ -9,6 +9,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
 SCRIPT = ROOT / "Scripts/dev/swap_core_to_package.rb"
+PRE_SWAP_REF = "54a58559fd"  # develop before any core was swapped
 TARGETS = ["Provenance", "Provenance (AppStore)", "Provenance-XL", "Provenance-Lite (AppStore)"]
 
 
@@ -19,11 +20,14 @@ def have_gem() -> bool:
 @unittest.skipUnless(have_gem(), "xcodeproj gem not installed")
 class SwapTests(unittest.TestCase):
     def setUp(self):
+        # The live project changes as cores are swapped; test against the last pre-swap state.
         self.tmp = Path(tempfile.mkdtemp())
-        shutil.copytree(ROOT / "Provenance.xcodeproj", self.tmp / "Provenance.xcodeproj")
-        (self.tmp / "Provenance.xcworkspace").mkdir()
-        shutil.copy(ROOT / "Provenance.xcworkspace/contents.xcworkspacedata",
-                    self.tmp / "Provenance.xcworkspace/contents.xcworkspacedata")
+        for rel in ("Provenance.xcodeproj/project.pbxproj", "Provenance.xcworkspace/contents.xcworkspacedata"):
+            shown = subprocess.run(["git", "-C", str(ROOT), "show", f"{PRE_SWAP_REF}:{rel}"], capture_output=True)
+            if shown.returncode != 0:
+                self.skipTest(f"{PRE_SWAP_REF} not in this clone")
+            (self.tmp / rel).parent.mkdir(parents=True, exist_ok=True)
+            (self.tmp / rel).write_bytes(shown.stdout)
 
     def tearDown(self):
         shutil.rmtree(self.tmp)
