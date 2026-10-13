@@ -78,7 +78,6 @@ jobs:
             Cores/FCEU/fceux \
             Cores/Genesis-Plus-GX/Sources/libgenesisplus/Genesis-Plus-GX \
             Cores/Mupen64Plus/Sources/Plugins/Core/Core \
-            Cores/Mupen64Plus/Sources/Plugins/Video/gliden64 \
             Cores/Mupen64Plus/Sources/Plugins/Video/rice/rice \
             Cores/Mupen64Plus/Sources/Plugins/rsp/hle \
             Cores/Mupen64Plus/Sources/Plugins/rsp/cxd4
