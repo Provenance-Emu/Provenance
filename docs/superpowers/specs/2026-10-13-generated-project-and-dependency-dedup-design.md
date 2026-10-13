@@ -119,9 +119,11 @@ Phase 1 is a few hours and prevents the next Oct-8-style crash; phases 2–4 are
 6. Tuist 4.200 pinned; `compatibleXcodeVersions: .upToNextMajor("26.0")`. **Default: stay on 4.200 until phase 6 begins, then bump once.**
 
 ## UNVERIFIED (next session)
-- Which shipping targets link `MoltenVK/glslang.xcframework`, `Dependencies/SDL2.xcframework`, ffmpeg-kit: `Provenance.xcodeproj/project.pbxproj` (grep `in Frameworks */` for those names).
-- snes9x compiles `external/glslang` or `external/fmt`? `Cores/snes9x/Package.swift` source lists.
-- Dolphin iOS cmake enables SDL? `Cores/Dolphin/dolphin-ios/CMakeLists.txt`, `BuildiOSXCFramework.py` flags.
-- `snes9x.libretro` / `mame.libretro` weak exports vs native cores: `nm -m` on a Release archive (local DerivedData app is stale, pre-#3742).
-- `Cores/Dolphin/cmake/Externals/*` purpose (second externals tree beside `dolphin-ios/Externals`).
-- Phase 6 extension targets (TopShelf, Spotlight, widgets, DriverKit) need their own `ShippingApp` rows; not inventoried here (`Provenance.xcodeproj` `productName` list in §1).
+- `snes9x.libretro` / `mame.libretro` weak exports vs native cores: `nm -m` on a Release archive (local DerivedData app is stale, pre-#3742). `Scripts/audits/check_weak_exports.py <app>` does this now; it needs a fresh archive.
+
+## Resolved 2026-10-13 (grep, no build)
+- **Shipping link map:** `Dependencies/SDL2.xcframework` is linked by `Provenance` and `Provenance (AppStore)` and embedded by `Provenance` (phase 4 must drop both link phases and the embed). `MoltenVK-1.2.8` (package product) is linked by `Provenance (AppStore)` only. `MoltenVK/glslang.xcframework` is a dangling `PBXFileReference`: no target links it, delete the reference. The ffmpeg-kit xcframeworks (`FFMpeg/xcframeworks/*.xcframework`, 8 files) reach six targets through `PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet` entries with `CodeSignOnCopy`, i.e. they are embedded by every app variant; which code imports them is still unknown (grep `import ffmpegkit` / `avcodec` in PVUI, PVLibrary, Provenance/ before removing).
+- **snes9x** compiles no `external/glslang` or `external/fmt` (no such directory in the fork; Package.swift lists none).
+- **Dolphin iOS** builds without SDL: `CMakeLists.txt` defaults `ENABLE_SDL` to OFF when `IOS`, and `BuildiOSXCFramework.py` does not override it.
+- **`Cores/Dolphin/cmake/`** is a checked-in, cmake-generated Xcode build tree (178 tracked files: `CMakeCache.txt`, `CMakeFiles/3.25.1/*`, `dolphin-emu.xcodeproj`, `Externals/`) from the pre-xcframework `update.sh` flow; nothing in `Cores/Dolphin/Package.swift`, the PVDolphin xcodeproj or the Python build scripts references it. Delete it in phase 4 (restore from git if the xcodeproj build turns out to use `BuildFlags.xcconfig` from there: grep `cmake/BuildFlags` first).
+- **Extension targets for phase 6** (from `productName` rows): `TopShelf`, `Spotlight`, `SpotlightImportExtension`, `ThumbnailExtension`, `ThumbnailExtensionMacOS`, `QuickLookPreview`, `WidgetExtensionExtension`, `ProvenanceOpticalDriveDriverKit`, `ProvenanceHIDDriverKit`, `ProvenanceCompanion` (+ `ProvenanceCompanionTests`, `ProvenanceUITests`). Each needs a `ShippingApp`-style row or an explicit "not generated" decision.
