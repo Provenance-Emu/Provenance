@@ -888,6 +888,8 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
 
         isLayouting = true
         defer { isLayouting = false }
+        // Every exit (skin frames, custom frames, rotation, scaling changes) resizes the drawable.
+        defer { syncDrawableSizeToView() }
 
         DLOG("viewDidLayoutSubviews called")
 
@@ -1127,50 +1129,24 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
 
         updatePreferredFPS()
 
-        // Metal render only supports native scale on iOS/tvOS
+    }
+
+    /// Sizes the drawable to the view in pixels. It used to be the whole screen's pixel
+    /// size, which CAMetalLayer then squeezed into the (aspect-fit) view: filters saw an
+    /// OutputSize with the screen's proportions instead of the picture's.
+    /// UIScreen.main.scale, not 1.0: a points-sized drawable starved high-resolution
+    /// cores (flycast failed to boot on retina iPad, 73a63bc06b).
+    private func syncDrawableSizeToView() {
         #if !(os(macOS) || targetEnvironment(macCatalyst))
-        let screenBounds = UIScreen.main.bounds
-        let nativeScaleEnabled = Defaults[.scalingMode] == .nativeResolution
-
-        if lastScreenBounds != screenBounds || lastNativeScaleEnabled != nativeScaleEnabled {
-            lastScreenBounds = screenBounds
-            lastNativeScaleEnabled = nativeScaleEnabled
-
-            // BUG (since 73a63bc06b, 2025-09-09): the original code had
-            //     scale = screenBounds.size.width / screenBounds.size.width
-            // which is always 1.0. That forced drawableSize to be set in
-            // POINTS instead of pixels, so on retina iPad (UIScreen.main.scale
-            // == 2.0) the drawable was sized at 1366×1024 instead of
-            // 2732×2048 — and MTKView's autoResizeDrawable goes false the
-            // moment you set drawableSize explicitly, so the drawable
-            // stayed pinned at 1x for the rest of the session. Cores that
-            // render at high internal resolution (flycast in particular)
-            // got a too-small drawable to present into, which on iPad
-            // surfaced as a flycast boot failure (visible since the rest
-            // of the Metal stack got reworked for Vulkan→Metal interop).
-            //
-            // Use UIScreen.main.scale so retina devices actually get
-            // retina drawables.
-            let scale: CGFloat
-            if screenBounds.size.width > 0 && screenBounds.size.height > 0 {
-                scale = UIScreen.main.scale
-            } else {
-                scale = 1.0
-            }
-
-            let scaledW = floor(screenBounds.size.width * scale)
-            let scaledH = floor(screenBounds.size.height * scale)
-            let newSize = CGSize(width: scaledW, height: scaledH)
-
-            if lastBufferSize != newSize {
-                // Ensure no in-flight command buffers are using the old size
-                commandQueue?.insertDebugCaptureBoundary()
-                lastBufferSize = newSize
-                DLOG("Setting drawable size to: \(newSize)")
-                if newSize.width > 0 && newSize.height > 0 {
-                    mtlView.drawableSize = newSize
-                }
-            }
+        guard let emulatorCore, !emulatorCore.skipLayout else { return }
+        let scale = UIScreen.main.scale
+        let newSize = CGSize(width: floor(mtlView.bounds.width * scale),
+                             height: floor(mtlView.bounds.height * scale))
+        if newSize.width > 0, newSize.height > 0, mtlView.drawableSize != newSize {
+            // Ensure no in-flight command buffers are using the old size
+            commandQueue?.insertDebugCaptureBoundary()
+            DLOG("Setting drawable size to: \(newSize)")
+            mtlView.drawableSize = newSize
         }
         #endif
     }
@@ -1701,9 +1677,28 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
         }
     }
 
+    /// The picture's rect inside the drawable, in pixels. Stretch and aspect-fill
+    /// modes always use the whole view; the others letterbox the core's display
+    /// aspect when the view is not yet sized to it (see `RenderGeometry.contentRect`).
+    private func pictureRect(drawableSize: CGSize, emulatorCore: PVEmulatorCore) -> CGRect {
+        let full = CGRect(origin: .zero, size: drawableSize)
+        switch renderSettings.scalingMode {
+        case .stretch, .aspectFill:
+            return full
+        default:
+            break
+        }
+        let aspectSize = emulatorCore.aspectSize
+        let aspect = aspectSize.width > 0 && aspectSize.height > 0 ? aspectSize : emulatorCore.screenRect.size
+        return RenderGeometry.contentRect(aspect: aspect, viewSize: mtlView.bounds.size, drawableSize: drawableSize)
+    }
+
+    /// - Parameter outputSize: size of the picture rect the filter draws into
+    ///   (the viewport the caller already set).
     private func applyMetalFilterIfPossible(encoder: MTLRenderCommandEncoder,
                                             targetTexture: MTLTexture,
-                                            sourceTexture: MTLTexture) -> Bool {
+                                            sourceTexture: MTLTexture,
+                                            outputSize: CGSize) -> Bool {
         guard renderSettings.metalFilterMode != .none,
               let emulatorCore = emulatorCore else {
             return false
@@ -1713,15 +1708,15 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
                                 force: false,
                                 pixelFormat: targetTexture.pixelFormat)
 
-        let drawableSize = CGSize(width: targetTexture.width, height: targetTexture.height)
         let sourceSize = CGSize(width: sourceTexture.width, height: sourceTexture.height)
 
         return metalFilterRenderer.encode(with: encoder,
                                           texture: sourceTexture,
-                                          drawableSize: drawableSize,
+                                          drawableSize: outputSize,
                                           sourceSize: sourceSize,
                                           screenType: emulatorCore.screenType,
-                                          smoothingEnabled: renderSettings.smoothingEnabled)
+                                          smoothingEnabled: renderSettings.smoothingEnabled,
+                                          setViewport: false)
     }
 
     class func shader(withContents contents: String, type: GLenum) -> GLuint {
@@ -2009,22 +2004,25 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
                 return
             }
 
-            // Set the viewport
-            let viewport = MTLViewport(
-                originX: 0,
-                originY: 0,
-                width: Double(outputTexture.width),
-                height: Double(outputTexture.height),
+            // Draw into the picture's rect (see directRender).
+            let contentRect = self.pictureRect(drawableSize: CGSize(width: outputTexture.width,
+                                                                    height: outputTexture.height),
+                                               emulatorCore: emulatorCore)
+            renderEncoder.setViewport(MTLViewport(
+                originX: Double(contentRect.minX),
+                originY: Double(contentRect.minY),
+                width: Double(contentRect.width),
+                height: Double(contentRect.height),
                 znear: 0.0,
                 zfar: 1.0
-            )
-            renderEncoder.setViewport(viewport)
+            ))
 
             var filterApplied = false
             if self.renderSettings.metalFilterMode != .none {
                 filterApplied = self.applyMetalFilterIfPossible(encoder: renderEncoder,
                                                            targetTexture: outputTexture,
-                                                           sourceTexture: finalSourceTexture)
+                                                           sourceTexture: finalSourceTexture,
+                                                           outputSize: contentRect.size)
             }
 
             if !filterApplied {
@@ -2839,17 +2837,20 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
         do {
             defer { renderEncoder.endEncoding() }
 
-            // Set the viewport to match the drawable size
-            // Ensure we're using the proper aspect ratio based on the effective screen rect
-            let viewport = MTLViewport(
-                originX: 0,
-                originY: 0,
-                width: Double(drawable.texture.width),
-                height: Double(drawable.texture.height),
+            // Draw into the picture's rect, not the whole drawable: until a skin reports its
+            // screen rect the view is still full screen, and filters (VHS noise, vignette)
+            // would otherwise paint over the whole device.
+            let contentRect = pictureRect(drawableSize: CGSize(width: drawable.texture.width,
+                                                               height: drawable.texture.height),
+                                          emulatorCore: emulatorCore)
+            renderEncoder.setViewport(MTLViewport(
+                originX: Double(contentRect.minX),
+                originY: Double(contentRect.minY),
+                width: Double(contentRect.width),
+                height: Double(contentRect.height),
                 znear: 0.0,
                 zfar: 1.0
-            )
-            renderEncoder.setViewport(viewport)
+            ))
 
             // Use cached flipY buffer if value hasn't changed, otherwise create new one
             let flipYBuffer: MTLBuffer
@@ -2870,7 +2871,8 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
             if renderSettings.metalFilterMode != .none {
                 filterApplied = applyMetalFilterIfPossible(encoder: renderEncoder,
                                                            targetTexture: drawable.texture,
-                                                           sourceTexture: inputTexture)
+                                                           sourceTexture: inputTexture,
+                                                           outputSize: contentRect.size)
             }
 
             if filterApplied {

@@ -66,9 +66,6 @@ struct EmulatorWithSkinView: View {
     // Active skin-loading task — cancelled when a new load starts or the view disappears
     @State private var activeSkinLoadTask: Task<Void, Never>?
 
-    // Live binding to built-in filter selection
-    @Default(.metalFilterMode) private var metalFilterMode
-
     // User-selected filter from pause menu (takes precedence)
     @State private var selectedFilterName: String?
 
@@ -280,10 +277,6 @@ struct EmulatorWithSkinView: View {
                 // No need to force view recreation - this was causing AG::precondition_failure crashes
                 ILOG("skins: Filter changed to: \(selectedFilterName ?? "none")")
             }
-            .onChange(of: metalFilterMode) { _ in
-                // Same for metalFilterMode - state changes propagate naturally
-                ILOG("skins: metalFilterMode changed to: \(metalFilterMode.rawValue)")
-            }
             // The thin libretro wrapper only knows its real geometry/aspect once the core
             // has booted (`retro_get_system_av_info` runs on the wrapper's boot thread), so
             // `skinContentView`'s `aspectRatio` — which drives `maintainAspectRatio` fitting
@@ -344,7 +337,7 @@ struct EmulatorWithSkinView: View {
         // Create traits reactively - this will be recalculated when currentOrientation changes
         let traits = createSkinTraits()
 
-        // Get overlay effects with proper priority (user filter > skin filter > metalFilterMode)
+        // Get overlay effects with proper priority (user filter > skin filter)
         let effects = overlayEffects(for: skin)
 
         // Calculate aspect ratio from core's aspectSize or bufferSize/screenRect
@@ -609,7 +602,7 @@ struct EmulatorWithSkinView: View {
         return nil
     }
 
-    /// Get overlay effects, prioritizing user-selected filter, then skin filters, then metalFilterMode
+    /// Get overlay effects, prioritizing the user-selected overlay, then skin filters
     private func overlayEffects(for skin: any DeltaSkinProtocol) -> Set<TestPatternEffect> {
         // Check if user has explicitly selected a filter (including "None")
         let userFilter = selectedFilterName ?? getUserSelectedFilter()
@@ -649,26 +642,10 @@ struct EmulatorWithSkinView: View {
             return []
         }
 
-        // 3. No user filter and no skin filters - fall back to metalFilterMode setting
-        ILOG("skins: No user filter and no skin filters, using metalFilterMode setting")
-        switch metalFilterMode {
-        case .none:
-            return []
-        case .auto(crt: let crt, lcd: let lcd):
-            var s: Set<TestPatternEffect> = []
-            if crt != .none { s.insert(.scanlines) }
-            if lcd != .none { s.insert(.lcd); s.insert(.subpixel) }
-            return s
-        case .always(filter: let filter):
-            switch filter {
-            case .lcd:
-                return [.lcd, .subpixel]
-            case .none:
-                return []
-            case .simpleCRT, .complexCRT, .megaTron, .ulTron, .gameBoy, .vhs:
-                return [.scanlines]
-            }
-        }
+        // 3. No user overlay and no skin filters. The Metal filter (metalFilterMode) is
+        // drawn by PVMetalViewController inside the picture; adding a SwiftUI overlay here
+        // doubled it and painted over the skin's whole screen rect, letterbox included.
+        return []
     }
 
     /// Set up notification observer for skin selection changes
