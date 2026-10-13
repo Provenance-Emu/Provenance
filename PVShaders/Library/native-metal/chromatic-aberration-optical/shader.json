@@ -1,0 +1,162 @@
+{
+    "passes": [
+        {
+            "index": 0,
+            "vertexSource": "#include <metal_stdlib>\nusing namespace metal;\n\nstruct Uniforms {\n    float4x4 MVP;\n    float4 OutputSize;\n    float4 SourceSize;\n    float4 OriginalSize;\n    uint   FrameCount;\n    float  amount;        // px scale\n    float  center_x;      // 0..1\n    float  center_y;      // 0..1\n    float  radial_k;      // radial distortion coeff\n    float  tangential_k;  // tangential distortion coeff\n};\n\nstruct VSIn { float4 pos [[attribute(0)]]; float2 uv [[attribute(1)]]; };\nstruct VSOut { float4 pos [[position]]; float2 uv; };\n\nvertex VSOut main0(VSIn in [[stage_in]], constant Uniforms &u [[buffer(0)]]) {\n    VSOut o; o.pos = u.MVP * in.pos; o.uv = in.uv; return o;\n}\n\nstatic inline float2 distort(float2 uv, float2 c, float radial_k, float tang_k){\n    float2 p = uv - c;\n    float r2 = dot(p,p);\n    float2 radial = p * (1.0 + radial_k * r2);\n    float2 tang = float2(\n        2.0 * p.x * p.y,\n        r2 + 2.0 * p.y * p.y\n    ) * tang_k;\n    return c + radial + tang;\n}\n\nfragment float4 fragment_main(\n    VSOut in [[stage_in]],\n    texture2d<float> src [[texture(0)]],\n    constant Uniforms &u [[buffer(0)]]\n){\n    constexpr sampler smp(mag_filter::linear, min_filter::linear, address::clamp_to_edge);\n\n    float2 uv = in.uv;\n    float2 center = float2(u.center_x, u.center_y);\n\n    // Scale amount in pixels to UV\n    float2 px = 1.0 / u.OutputSize.xy;\n    float amt = u.amount;\n\n    // Distort each channel slightly differently for CA\n    float2 uvR = distort(uv + amt*px, center, u.radial_k*1.10, u.tangential_k*1.10);\n    float2 uvG = distort(uv,          center, u.radial_k*0.90, u.tangential_k*0.90);\n    float2 uvB = distort(uv - amt*px, center, u.radial_k*1.00, u.tangential_k*1.00);\n\n    float r = src.sample(smp, uvR).r;\n    float g = src.sample(smp, uvG).g;\n    float b = src.sample(smp, uvB).b;\n\n    float3 col = float3(r,g,b);\n    return float4(saturate(col), 1.0);\n}\n",
+            "fragmentSource": "#include <metal_stdlib>\nusing namespace metal;\n\nstruct Uniforms {\n    float4x4 MVP;\n    float4 OutputSize;\n    float4 SourceSize;\n    float4 OriginalSize;\n    uint   FrameCount;\n    float  amount;        // px scale\n    float  center_x;      // 0..1\n    float  center_y;      // 0..1\n    float  radial_k;      // radial distortion coeff\n    float  tangential_k;  // tangential distortion coeff\n};\n\nstruct VSIn { float4 pos [[attribute(0)]]; float2 uv [[attribute(1)]]; };\nstruct VSOut { float4 pos [[position]]; float2 uv; };\n\nvertex VSOut vertex_main(VSIn in [[stage_in]], constant Uniforms &u [[buffer(0)]]) {\n    VSOut o; o.pos = u.MVP * in.pos; o.uv = in.uv; return o;\n}\n\nstatic inline float2 distort(float2 uv, float2 c, float radial_k, float tang_k){\n    float2 p = uv - c;\n    float r2 = dot(p,p);\n    float2 radial = p * (1.0 + radial_k * r2);\n    float2 tang = float2(\n        2.0 * p.x * p.y,\n        r2 + 2.0 * p.y * p.y\n    ) * tang_k;\n    return c + radial + tang;\n}\n\nfragment float4 main0(\n    VSOut in [[stage_in]],\n    texture2d<float> src [[texture(0)]],\n    constant Uniforms &u [[buffer(0)]]\n){\n    constexpr sampler smp(mag_filter::linear, min_filter::linear, address::clamp_to_edge);\n\n    float2 uv = in.uv;\n    float2 center = float2(u.center_x, u.center_y);\n\n    // Scale amount in pixels to UV\n    float2 px = 1.0 / u.OutputSize.xy;\n    float amt = u.amount;\n\n    // Distort each channel slightly differently for CA\n    float2 uvR = distort(uv + amt*px, center, u.radial_k*1.10, u.tangential_k*1.10);\n    float2 uvG = distort(uv,          center, u.radial_k*0.90, u.tangential_k*0.90);\n    float2 uvB = distort(uv - amt*px, center, u.radial_k*1.00, u.tangential_k*1.00);\n\n    float r = src.sample(smp, uvR).r;\n    float g = src.sample(smp, uvG).g;\n    float b = src.sample(smp, uvB).b;\n\n    float3 col = float3(r,g,b);\n    return float4(saturate(col), 1.0);\n}\n",
+            "frameCountMod": 0,
+            "scaleX": null,
+            "scaleY": null,
+            "filter": "linear",
+            "wrapMode": "edge",
+            "format": "rgba8Unorm",
+            "isFeedback": false,
+            "buffers": [
+                {
+                    "bindingVert": 0,
+                    "bindingFrag": 0,
+                    "size": 256,
+                    "uniforms": [
+                        {
+                            "semantic": "mvp",
+                            "index": null,
+                            "name": "MVP",
+                            "size": 64,
+                            "offset": 0
+                        },
+                        {
+                            "semantic": "outputSize",
+                            "index": null,
+                            "name": "OutputSize",
+                            "size": 16,
+                            "offset": 64
+                        },
+                        {
+                            "semantic": "sourceSize",
+                            "index": null,
+                            "name": "SourceSize",
+                            "size": 16,
+                            "offset": 80
+                        },
+                        {
+                            "semantic": "originalSize",
+                            "index": null,
+                            "name": "OriginalSize",
+                            "size": 16,
+                            "offset": 96
+                        },
+                        {
+                            "semantic": "frameCount",
+                            "index": null,
+                            "name": "FrameCount",
+                            "size": 4,
+                            "offset": 112
+                        },
+                        {
+                            "semantic": "floatParameter",
+                            "index": 0,
+                            "name": "amount",
+                            "size": 4,
+                            "offset": 116
+                        },
+                        {
+                            "semantic": "floatParameter",
+                            "index": 1,
+                            "name": "center_x",
+                            "size": 4,
+                            "offset": 120
+                        },
+                        {
+                            "semantic": "floatParameter",
+                            "index": 2,
+                            "name": "center_y",
+                            "size": 4,
+                            "offset": 124
+                        },
+                        {
+                            "semantic": "floatParameter",
+                            "index": 3,
+                            "name": "radial_k",
+                            "size": 4,
+                            "offset": 128
+                        },
+                        {
+                            "semantic": "floatParameter",
+                            "index": 4,
+                            "name": "tangential_k",
+                            "size": 4,
+                            "offset": 132
+                        }
+                    ]
+                },
+                {
+                    "bindingVert": null,
+                    "bindingFrag": null,
+                    "size": 0,
+                    "uniforms": []
+                }
+            ],
+            "textures": [
+                {
+                    "name": "Source",
+                    "semantic": "source",
+                    "binding": 0,
+                    "wrap": "edge",
+                    "filter": "linear",
+                    "index": 0
+                }
+            ],
+            "alias": null
+        }
+    ],
+    "parameters": [
+        {
+            "index": 0,
+            "name": "amount",
+            "desc": "Amount (px)",
+            "initial": 1.5,
+            "minimum": 0.0,
+            "maximum": 8.0,
+            "step": 0.1
+        },
+        {
+            "index": 1,
+            "name": "center_x",
+            "desc": "Center X",
+            "initial": 0.5,
+            "minimum": 0.0,
+            "maximum": 1.0,
+            "step": 0.01
+        },
+        {
+            "index": 2,
+            "name": "center_y",
+            "desc": "Center Y",
+            "initial": 0.5,
+            "minimum": 0.0,
+            "maximum": 1.0,
+            "step": 0.01
+        },
+        {
+            "index": 3,
+            "name": "radial_k",
+            "desc": "Radial Coeff",
+            "initial": 0.05,
+            "minimum": -0.2,
+            "maximum": 0.3,
+            "step": 0.01
+        },
+        {
+            "index": 4,
+            "name": "tangential_k",
+            "desc": "Tangential Coeff",
+            "initial": 0.02,
+            "minimum": -0.2,
+            "maximum": 0.3,
+            "step": 0.01
+        }
+    ],
+    "luts": [],
+    "historyCount": 0,
+    "languageVersion": "version2_4"
+}

@@ -1,0 +1,146 @@
+{
+    "passes": [
+        {
+            "index": 0,
+            "vertexSource": "//\n//  Ray Marching / Volumetric Effects\n//  Native Metal Shader - 3D Effects\n//\n\n#include <metal_stdlib>\nusing namespace metal;\n\nstruct Uniforms {\n    float4x4 MVP;\n    float4 OutputSize;\n    float4 SourceSize;\n    float4 OriginalSize;\n    uint FrameCount;\n    float effect_intensity;\n    float ray_steps;\n    float depth;\n    float rotation_speed;\n};\n\nstruct VertexIn {\n    float4 position [[attribute(0)]];\n    float2 texCoord [[attribute(1)]];\n};\n\nstruct VertexOut {\n    float4 position [[position]];\n    float2 texCoord;\n};\n\nvertex VertexOut main0(\n    VertexIn in [[stage_in]],\n    constant Uniforms &uniforms [[buffer(0)]]\n)\n{\n    VertexOut out;\n    out.position = uniforms.MVP * in.position;\n    out.texCoord = in.texCoord;\n    return out;\n}\n\n// MARK: - SDF Functions\n\nfloat sdSphere(float3 p, float r) {\n    return length(p) - r;\n}\n\nfloat sdBox(float3 p, float3 b) {\n    float3 q = abs(p) - b;\n    return length(max(q, 0.0)) + min(max(q.x, max(q.y, q.z)), 0.0);\n}\n\nfloat sdTorus(float3 p, float2 t) {\n    float2 q = float2(length(p.xz) - t.x, p.y);\n    return length(q) - t.y;\n}\n\n// Smooth minimum for blending shapes\nfloat smin(float a, float b, float k) {\n    float h = clamp(0.5 + 0.5 * (b - a) / k, 0.0, 1.0);\n    return mix(b, a, h) - k * h * (1.0 - h);\n}\n\n// Scene SDF\nfloat sceneSDF(float3 p, float time) {\n    // Rotating torus\n    float angle = time * 0.5;\n    float3 rotated = float3(\n        p.x * cos(angle) - p.z * sin(angle),\n        p.y,\n        p.x * sin(angle) + p.z * cos(angle)\n    );\n    \n    float torus = sdTorus(rotated, float2(0.5, 0.2));\n    \n    // Pulsing sphere\n    float sphere = sdSphere(p, 0.3 + sin(time * 2.0) * 0.1);\n    \n    // Combine shapes\n    return smin(torus, sphere, 0.3);\n}\n\n// Calculate normal using gradient\nfloat3 calcNormal(float3 p, float time) {\n    const float eps = 0.001;\n    float2 h = float2(eps, 0.0);\n    return normalize(float3(\n        sceneSDF(p + h.xyy, time) - sceneSDF(p - h.xyy, time),\n        sceneSDF(p + h.yxy, time) - sceneSDF(p - h.yxy, time),\n        sceneSDF(p + h.yyx, time) - sceneSDF(p - h.yyx, time)\n    ));\n}\n\nfragment float4 fragment_main(\n    VertexOut in [[stage_in]],\n    texture2d<float> sourceTexture [[texture(0)]],\n    constant Uniforms &uniforms [[buffer(0)]]\n)\n{\n    constexpr sampler textureSampler(\n        mag_filter::linear,\n        min_filter::linear,\n        address::clamp_to_edge\n    );\n    \n    // Sample original image\n    float4 color = sourceTexture.sample(textureSampler, in.texCoord);\n    \n    float time = float(uniforms.FrameCount) * uniforms.rotation_speed * 0.01;\n    \n    // Ray setup\n    float2 uv = (in.texCoord * 2.0 - 1.0);\n    uv.x *= uniforms.OutputSize.x / uniforms.OutputSize.y;\n    \n    float3 ro = float3(0.0, 0.0, -2.0); // Ray origin\n    float3 rd = normalize(float3(uv, 1.0)); // Ray direction\n    \n    // Ray marching\n    float t = 0.0;\n    int steps = int(uniforms.ray_steps);\n    bool hit = false;\n    \n    for (int i = 0; i < steps; i++) {\n        float3 p = ro + rd * t;\n        float d = sceneSDF(p, time);\n        \n        if (d < 0.001) {\n            hit = true;\n            break;\n        }\n        \n        t += d;\n        \n        if (t > uniforms.depth) break;\n    }\n    \n    // Shading\n    if (hit) {\n        float3 p = ro + rd * t;\n        float3 normal = calcNormal(p, time);\n        \n        // Lighting\n        float3 lightDir = normalize(float3(1.0, 1.0, -1.0));\n        float diff = max(dot(normal, lightDir), 0.0);\n        float spec = pow(max(dot(reflect(-lightDir, normal), -rd), 0.0), 32.0);\n        \n        // Color based on position\n        float3 objColor = float3(\n            0.5 + 0.5 * sin(p.x * 3.0 + time),\n            0.5 + 0.5 * sin(p.y * 3.0 + time * 1.3),\n            0.5 + 0.5 * sin(p.z * 3.0 + time * 1.7)\n        );\n        \n        float3 shaded = objColor * (0.3 + 0.7 * diff) + float3(spec);\n        \n        // Mix with original image\n        color.rgb = mix(color.rgb, shaded, uniforms.effect_intensity);\n    }\n    \n    return color;\n}\n",
+            "fragmentSource": "//\n//  Ray Marching / Volumetric Effects\n//  Native Metal Shader - 3D Effects\n//\n\n#include <metal_stdlib>\nusing namespace metal;\n\nstruct Uniforms {\n    float4x4 MVP;\n    float4 OutputSize;\n    float4 SourceSize;\n    float4 OriginalSize;\n    uint FrameCount;\n    float effect_intensity;\n    float ray_steps;\n    float depth;\n    float rotation_speed;\n};\n\nstruct VertexIn {\n    float4 position [[attribute(0)]];\n    float2 texCoord [[attribute(1)]];\n};\n\nstruct VertexOut {\n    float4 position [[position]];\n    float2 texCoord;\n};\n\nvertex VertexOut vertex_main(\n    VertexIn in [[stage_in]],\n    constant Uniforms &uniforms [[buffer(0)]]\n)\n{\n    VertexOut out;\n    out.position = uniforms.MVP * in.position;\n    out.texCoord = in.texCoord;\n    return out;\n}\n\n// MARK: - SDF Functions\n\nfloat sdSphere(float3 p, float r) {\n    return length(p) - r;\n}\n\nfloat sdBox(float3 p, float3 b) {\n    float3 q = abs(p) - b;\n    return length(max(q, 0.0)) + min(max(q.x, max(q.y, q.z)), 0.0);\n}\n\nfloat sdTorus(float3 p, float2 t) {\n    float2 q = float2(length(p.xz) - t.x, p.y);\n    return length(q) - t.y;\n}\n\n// Smooth minimum for blending shapes\nfloat smin(float a, float b, float k) {\n    float h = clamp(0.5 + 0.5 * (b - a) / k, 0.0, 1.0);\n    return mix(b, a, h) - k * h * (1.0 - h);\n}\n\n// Scene SDF\nfloat sceneSDF(float3 p, float time) {\n    // Rotating torus\n    float angle = time * 0.5;\n    float3 rotated = float3(\n        p.x * cos(angle) - p.z * sin(angle),\n        p.y,\n        p.x * sin(angle) + p.z * cos(angle)\n    );\n    \n    float torus = sdTorus(rotated, float2(0.5, 0.2));\n    \n    // Pulsing sphere\n    float sphere = sdSphere(p, 0.3 + sin(time * 2.0) * 0.1);\n    \n    // Combine shapes\n    return smin(torus, sphere, 0.3);\n}\n\n// Calculate normal using gradient\nfloat3 calcNormal(float3 p, float time) {\n    const float eps = 0.001;\n    float2 h = float2(eps, 0.0);\n    return normalize(float3(\n        sceneSDF(p + h.xyy, time) - sceneSDF(p - h.xyy, time),\n        sceneSDF(p + h.yxy, time) - sceneSDF(p - h.yxy, time),\n        sceneSDF(p + h.yyx, time) - sceneSDF(p - h.yyx, time)\n    ));\n}\n\nfragment float4 main0(\n    VertexOut in [[stage_in]],\n    texture2d<float> sourceTexture [[texture(0)]],\n    constant Uniforms &uniforms [[buffer(0)]]\n)\n{\n    constexpr sampler textureSampler(\n        mag_filter::linear,\n        min_filter::linear,\n        address::clamp_to_edge\n    );\n    \n    // Sample original image\n    float4 color = sourceTexture.sample(textureSampler, in.texCoord);\n    \n    float time = float(uniforms.FrameCount) * uniforms.rotation_speed * 0.01;\n    \n    // Ray setup\n    float2 uv = (in.texCoord * 2.0 - 1.0);\n    uv.x *= uniforms.OutputSize.x / uniforms.OutputSize.y;\n    \n    float3 ro = float3(0.0, 0.0, -2.0); // Ray origin\n    float3 rd = normalize(float3(uv, 1.0)); // Ray direction\n    \n    // Ray marching\n    float t = 0.0;\n    int steps = int(uniforms.ray_steps);\n    bool hit = false;\n    \n    for (int i = 0; i < steps; i++) {\n        float3 p = ro + rd * t;\n        float d = sceneSDF(p, time);\n        \n        if (d < 0.001) {\n            hit = true;\n            break;\n        }\n        \n        t += d;\n        \n        if (t > uniforms.depth) break;\n    }\n    \n    // Shading\n    if (hit) {\n        float3 p = ro + rd * t;\n        float3 normal = calcNormal(p, time);\n        \n        // Lighting\n        float3 lightDir = normalize(float3(1.0, 1.0, -1.0));\n        float diff = max(dot(normal, lightDir), 0.0);\n        float spec = pow(max(dot(reflect(-lightDir, normal), -rd), 0.0), 32.0);\n        \n        // Color based on position\n        float3 objColor = float3(\n            0.5 + 0.5 * sin(p.x * 3.0 + time),\n            0.5 + 0.5 * sin(p.y * 3.0 + time * 1.3),\n            0.5 + 0.5 * sin(p.z * 3.0 + time * 1.7)\n        );\n        \n        float3 shaded = objColor * (0.3 + 0.7 * diff) + float3(spec);\n        \n        // Mix with original image\n        color.rgb = mix(color.rgb, shaded, uniforms.effect_intensity);\n    }\n    \n    return color;\n}\n",
+            "frameCountMod": 0,
+            "scaleX": null,
+            "scaleY": null,
+            "filter": "linear",
+            "wrapMode": "edge",
+            "format": "rgba8Unorm",
+            "isFeedback": false,
+            "buffers": [
+                {
+                    "bindingVert": 0,
+                    "bindingFrag": 0,
+                    "size": 256,
+                    "uniforms": [
+                        {
+                            "semantic": "mvp",
+                            "index": null,
+                            "name": "MVP",
+                            "size": 64,
+                            "offset": 0
+                        },
+                        {
+                            "semantic": "outputSize",
+                            "index": null,
+                            "name": "OutputSize",
+                            "size": 16,
+                            "offset": 64
+                        },
+                        {
+                            "semantic": "sourceSize",
+                            "index": null,
+                            "name": "SourceSize",
+                            "size": 16,
+                            "offset": 80
+                        },
+                        {
+                            "semantic": "originalSize",
+                            "index": null,
+                            "name": "OriginalSize",
+                            "size": 16,
+                            "offset": 96
+                        },
+                        {
+                            "semantic": "frameCount",
+                            "index": null,
+                            "name": "FrameCount",
+                            "size": 4,
+                            "offset": 112
+                        },
+                        {
+                            "semantic": "floatParameter",
+                            "index": 0,
+                            "name": "effect_intensity",
+                            "size": 4,
+                            "offset": 116
+                        },
+                        {
+                            "semantic": "floatParameter",
+                            "index": 1,
+                            "name": "ray_steps",
+                            "size": 4,
+                            "offset": 120
+                        },
+                        {
+                            "semantic": "floatParameter",
+                            "index": 2,
+                            "name": "depth",
+                            "size": 4,
+                            "offset": 124
+                        },
+                        {
+                            "semantic": "floatParameter",
+                            "index": 3,
+                            "name": "rotation_speed",
+                            "size": 4,
+                            "offset": 128
+                        }
+                    ]
+                },
+                {
+                    "bindingVert": null,
+                    "bindingFrag": null,
+                    "size": 0,
+                    "uniforms": []
+                }
+            ],
+            "textures": [
+                {
+                    "name": "Source",
+                    "semantic": "source",
+                    "binding": 0,
+                    "wrap": "edge",
+                    "filter": "linear",
+                    "index": 0
+                }
+            ],
+            "alias": null
+        }
+    ],
+    "parameters": [
+        {
+            "index": 0,
+            "name": "effect_intensity",
+            "desc": "Effect Intensity",
+            "initial": 0.8,
+            "minimum": 0.0,
+            "maximum": 1.0,
+            "step": 0.05
+        },
+        {
+            "index": 1,
+            "name": "ray_steps",
+            "desc": "Ray Steps (Quality)",
+            "initial": 64.0,
+            "minimum": 16.0,
+            "maximum": 128.0,
+            "step": 8.0
+        },
+        {
+            "index": 2,
+            "name": "depth",
+            "desc": "Ray Depth",
+            "initial": 5.0,
+            "minimum": 1.0,
+            "maximum": 10.0,
+            "step": 0.5
+        },
+        {
+            "index": 3,
+            "name": "rotation_speed",
+            "desc": "Rotation Speed",
+            "initial": 1.0,
+            "minimum": 0.0,
+            "maximum": 5.0,
+            "step": 0.1
+        }
+    ],
+    "luts": [],
+    "historyCount": 0,
+    "languageVersion": "version2_4"
+}

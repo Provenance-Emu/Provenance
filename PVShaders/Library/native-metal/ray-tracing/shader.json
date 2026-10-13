@@ -1,0 +1,226 @@
+{
+  "historyCount": 0,
+  "languageVersion": "version2_4",
+  "luts": [],
+  "parameters": [
+    {
+      "desc": "Reflection Strength",
+      "index": 0,
+      "initial": 0.8,
+      "maximum": 1.0,
+      "minimum": 0.0,
+      "name": "reflection_strength",
+      "step": 0.05
+    },
+    {
+      "desc": "Refraction Index (IOR)",
+      "index": 1,
+      "initial": 1.5,
+      "maximum": 2.5,
+      "minimum": 1.0,
+      "name": "refraction_index",
+      "step": 0.1
+    },
+    {
+      "desc": "Caustics Strength",
+      "index": 2,
+      "initial": 0.5,
+      "maximum": 2.0,
+      "minimum": 0.0,
+      "name": "caustics_strength",
+      "step": 0.1
+    },
+    {
+      "desc": "Samples",
+      "index": 3,
+      "initial": 8.0,
+      "maximum": 64.0,
+      "minimum": 1.0,
+      "name": "samples",
+      "step": 1.0
+    },
+    {
+      "desc": "Sphere Count",
+      "index": 4,
+      "initial": 6.0,
+      "maximum": 16.0,
+      "minimum": 1.0,
+      "name": "sphere_count",
+      "step": 1.0
+    },
+    {
+      "desc": "Min Radius",
+      "index": 5,
+      "initial": 0.15,
+      "maximum": 0.6,
+      "minimum": 0.05,
+      "name": "radius_min",
+      "step": 0.01
+    },
+    {
+      "desc": "Max Radius",
+      "index": 6,
+      "initial": 0.35,
+      "maximum": 0.8,
+      "minimum": 0.05,
+      "name": "radius_max",
+      "step": 0.01
+    },
+    {
+      "desc": "Anim Speed",
+      "index": 7,
+      "initial": 1.0,
+      "maximum": 2.0,
+      "minimum": 0.0,
+      "name": "anim_speed",
+      "step": 0.05
+    },
+    {
+      "desc": "Anim Scale",
+      "index": 8,
+      "initial": 0.8,
+      "maximum": 1.0,
+      "minimum": 0.0,
+      "name": "anim_scale",
+      "step": 0.05
+    }
+  ],
+  "passes": [
+    {
+      "alias": null,
+      "buffers": [
+        {
+          "bindingFrag": 0,
+          "bindingVert": 0,
+          "size": 256,
+          "uniforms": [
+            {
+              "index": null,
+              "name": "MVP",
+              "offset": 0,
+              "semantic": "mvp",
+              "size": 64
+            },
+            {
+              "index": null,
+              "name": "OutputSize",
+              "offset": 64,
+              "semantic": "outputSize",
+              "size": 16
+            },
+            {
+              "index": null,
+              "name": "SourceSize",
+              "offset": 80,
+              "semantic": "sourceSize",
+              "size": 16
+            },
+            {
+              "index": null,
+              "name": "OriginalSize",
+              "offset": 96,
+              "semantic": "originalSize",
+              "size": 16
+            },
+            {
+              "index": null,
+              "name": "FrameCount",
+              "offset": 112,
+              "semantic": "frameCount",
+              "size": 4
+            },
+            {
+              "index": 0,
+              "name": "reflection_strength",
+              "offset": 116,
+              "semantic": "floatParameter",
+              "size": 4
+            },
+            {
+              "index": 1,
+              "name": "refraction_index",
+              "offset": 120,
+              "semantic": "floatParameter",
+              "size": 4
+            },
+            {
+              "index": 2,
+              "name": "caustics_strength",
+              "offset": 124,
+              "semantic": "floatParameter",
+              "size": 4
+            },
+            {
+              "index": 3,
+              "name": "samples",
+              "offset": 128,
+              "semantic": "floatParameter",
+              "size": 4
+            },
+            {
+              "index": 4,
+              "name": "sphere_count",
+              "offset": 132,
+              "semantic": "floatParameter",
+              "size": 4
+            },
+            {
+              "index": 5,
+              "name": "radius_min",
+              "offset": 136,
+              "semantic": "floatParameter",
+              "size": 4
+            },
+            {
+              "index": 6,
+              "name": "radius_max",
+              "offset": 140,
+              "semantic": "floatParameter",
+              "size": 4
+            },
+            {
+              "index": 7,
+              "name": "anim_speed",
+              "offset": 144,
+              "semantic": "floatParameter",
+              "size": 4
+            },
+            {
+              "index": 8,
+              "name": "anim_scale",
+              "offset": 148,
+              "semantic": "floatParameter",
+              "size": 4
+            }
+          ]
+        },
+        {
+          "bindingFrag": null,
+          "bindingVert": null,
+          "size": 0,
+          "uniforms": []
+        }
+      ],
+      "filter": "linear",
+      "format": "rgba8Unorm",
+      "fragmentSource": "//\n//  Ray Tracing (Reflections, Refractions, Caustics)\n//  Native Metal Shader - Path Tracing\n//\n\n#include <metal_stdlib>\nusing namespace metal;\n\nstruct Uniforms {\n    float4x4 MVP;\n    float4 OutputSize;\n    float4 SourceSize;\n    float4 OriginalSize;\n    uint FrameCount;\n    float reflection_strength;\n    float refraction_index;\n    float caustics_strength;\n    float samples;\n    float sphere_count;     // 1..16\n    float radius_min;       // 0.05..0.6\n    float radius_max;       // 0.05..0.8\n    float anim_speed;       // 0..2\n    float anim_scale;       // 0..1\n};\n\nstruct VertexIn {\n    float4 position [[attribute(0)]];\n    float2 texCoord [[attribute(1)]];\n};\n\nstruct VertexOut {\n    float4 position [[position]];\n    float2 texCoord;\n};\n\nvertex VertexOut vertex_main(\n    VertexIn in [[stage_in]],\n    constant Uniforms &uniforms [[buffer(0)]]\n)\n{\n    VertexOut out;\n    out.position = uniforms.MVP * in.position;\n    out.texCoord = in.texCoord;\n    return out;\n}\n\n// Sphere SDF\nfloat sdSphere(float3 p, float3 center, float radius) {\n    return length(p - center) - radius;\n}\n\n// Pseudo-random\nfloat hash11(float x){ return fract(sin(x*12.9898)*43758.5453); }\nfloat2 hash21(float x){ float n = sin(x*78.233); return fract(float2(262144.0*n, 32768.0*n)); }\n\n// Scene SDF with animated spheres\nfloat sceneSDF(float3 p, constant Uniforms &u, float time) {\n    int N = int(clamp(round(u.sphere_count), 1.0, 16.0));\n    float dmin = 1e9;\n    for (int i=0;i<N;++i){\n        float fi = float(i);\n        float2 h = hash21(fi+13.0);\n        float ang = h.x * 6.28318 + time * u.anim_speed * (0.5 + h.y);\n        float rad = mix(u.radius_min, u.radius_max, hash11(fi+7.0));\n        float r  = 0.6 + 0.3 * u.anim_scale * sin(time*0.7 + fi);\n        float3 c = float3(r*cos(ang), 0.3*sin(ang*0.7 + fi*0.37), r*sin(ang));\n        float d = sdSphere(p, c, rad);\n        dmin = min(dmin, d);\n    }\n    return dmin;\n}\n\n// Calculate normal\nfloat3 calcNormal(float3 p, constant Uniforms &u, float time) {\n    const float eps = 0.001;\n    float2 h = float2(eps, 0.0);\n    return normalize(float3(\n        sceneSDF(p + h.xyy, u, time) - sceneSDF(p - h.xyy, u, time),\n        sceneSDF(p + h.yxy, u, time) - sceneSDF(p - h.yxy, u, time),\n        sceneSDF(p + h.yyx, u, time) - sceneSDF(p - h.yyx, u, time)\n    ));\n}\n\n// Fresnel effect\nfloat fresnel(float3 I, float3 N, float ior) {\n    float cosi = clamp(dot(I, N), -1.0, 1.0);\n    float etai = 1.0;\n    float etat = ior;\n    \n    if (cosi > 0.0) {\n        float temp = etai;\n        etai = etat;\n        etat = temp;\n    }\n    \n    float sint = etai / etat * sqrt(max(0.0, 1.0 - cosi * cosi));\n    \n    if (sint >= 1.0) {\n        return 1.0; // Total internal reflection\n    }\n    \n    float cost = sqrt(max(0.0, 1.0 - sint * sint));\n    cosi = abs(cosi);\n    \n    float Rs = ((etat * cosi) - (etai * cost)) / ((etat * cosi) + (etai * cost));\n    float Rp = ((etai * cosi) - (etat * cost)) / ((etai * cosi) + (etat * cost));\n    \n    return (Rs * Rs + Rp * Rp) / 2.0;\n}\n\nfragment float4 main0(\n    VertexOut in [[stage_in]],\n    texture2d<float> sourceTexture [[texture(0)]],\n    constant Uniforms &uniforms [[buffer(0)]]\n)\n{\n    constexpr sampler textureSampler(\n        mag_filter::linear,\n        min_filter::linear,\n        address::clamp_to_edge\n    );\n    \n    float4 color = sourceTexture.sample(textureSampler, in.texCoord);\n    \n    float time = float(uniforms.FrameCount) * 0.01;\n    \n    // Ray setup\n    float2 uv = (in.texCoord * 2.0 - 1.0);\n    uv.x *= uniforms.OutputSize.x / uniforms.OutputSize.y;\n    \n    float3 ro = float3(0.0, 0.0, -2.0); // Ray origin\n    float3 rd = normalize(float3(uv, 1.0)); // Ray direction\n    \n    // Ray marching\n    float t = 0.0;\n    bool hit = false;\n    float3 hitPos;\n    \n    for (int i = 0; i < 16; i++) {\n        float3 p = ro + rd * t;\n        float d = sceneSDF(p, uniforms, time);\n        \n        if (d < 0.001) {\n            hit = true;\n            hitPos = p;\n            break;\n        }\n        \n        t += d;\n        if (t > 10.0) break;\n    }\n    \n    if (hit) {\n        float3 normal = calcNormal(hitPos, uniforms, time);\n        \n        // Reflection\n        float3 reflectDir = reflect(rd, normal);\n        float2 reflectUV = reflectDir.xy * 0.5 + 0.5;\n        float3 reflectColor = sourceTexture.sample(textureSampler, reflectUV).rgb;\n        \n        // Refraction\n        float3 refractDir = refract(rd, normal, 1.0 / uniforms.refraction_index);\n        float2 refractUV = refractDir.xy * 0.5 + 0.5;\n        float3 refractColor = sourceTexture.sample(textureSampler, refractUV).rgb;\n        \n        // Fresnel blend\n        float F = fresnel(rd, normal, uniforms.refraction_index);\n        float3 finalColor = mix(refractColor, reflectColor, F);\n        \n        // Caustics (simplified)\n        float caustics = sin(hitPos.x * 10.0 + time) * sin(hitPos.y * 10.0 + time * 1.3);\n        caustics = pow(max(caustics, 0.0), 3.0);\n        finalColor += float3(0.5, 0.8, 1.0) * caustics * uniforms.caustics_strength;\n        \n        // Mix with original\n        color.rgb = mix(color.rgb, finalColor, uniforms.reflection_strength);\n    }\n    \n    return color;\n}\n",
+      "frameCountMod": 0,
+      "index": 0,
+      "isFeedback": false,
+      "scaleX": null,
+      "scaleY": null,
+      "textures": [
+        {
+          "binding": 0,
+          "filter": "linear",
+          "index": 0,
+          "name": "Source",
+          "semantic": "source",
+          "wrap": "edge"
+        }
+      ],
+      "vertexSource": "//\n//  Ray Tracing (Reflections, Refractions, Caustics)\n//  Native Metal Shader - Path Tracing\n//\n\n#include <metal_stdlib>\nusing namespace metal;\n\nstruct Uniforms {\n    float4x4 MVP;\n    float4 OutputSize;\n    float4 SourceSize;\n    float4 OriginalSize;\n    uint FrameCount;\n    float reflection_strength;\n    float refraction_index;\n    float caustics_strength;\n    float samples;\n    float sphere_count;     // 1..16\n    float radius_min;       // 0.05..0.6\n    float radius_max;       // 0.05..0.8\n    float anim_speed;       // 0..2\n    float anim_scale;       // 0..1\n};\n\nstruct VertexIn {\n    float4 position [[attribute(0)]];\n    float2 texCoord [[attribute(1)]];\n};\n\nstruct VertexOut {\n    float4 position [[position]];\n    float2 texCoord;\n};\n\nvertex VertexOut main0(\n    VertexIn in [[stage_in]],\n    constant Uniforms &uniforms [[buffer(0)]]\n)\n{\n    VertexOut out;\n    out.position = uniforms.MVP * in.position;\n    out.texCoord = in.texCoord;\n    return out;\n}\n\n// Sphere SDF\nfloat sdSphere(float3 p, float3 center, float radius) {\n    return length(p - center) - radius;\n}\n\n// Pseudo-random\nfloat hash11(float x){ return fract(sin(x*12.9898)*43758.5453); }\nfloat2 hash21(float x){ float n = sin(x*78.233); return fract(float2(262144.0*n, 32768.0*n)); }\n\n// Scene SDF with animated spheres\nfloat sceneSDF(float3 p, constant Uniforms &u, float time) {\n    int N = int(clamp(round(u.sphere_count), 1.0, 16.0));\n    float dmin = 1e9;\n    for (int i=0;i<N;++i){\n        float fi = float(i);\n        float2 h = hash21(fi+13.0);\n        float ang = h.x * 6.28318 + time * u.anim_speed * (0.5 + h.y);\n        float rad = mix(u.radius_min, u.radius_max, hash11(fi+7.0));\n        float r  = 0.6 + 0.3 * u.anim_scale * sin(time*0.7 + fi);\n        float3 c = float3(r*cos(ang), 0.3*sin(ang*0.7 + fi*0.37), r*sin(ang));\n        float d = sdSphere(p, c, rad);\n        dmin = min(dmin, d);\n    }\n    return dmin;\n}\n\n// Calculate normal\nfloat3 calcNormal(float3 p, constant Uniforms &u, float time) {\n    const float eps = 0.001;\n    float2 h = float2(eps, 0.0);\n    return normalize(float3(\n        sceneSDF(p + h.xyy, u, time) - sceneSDF(p - h.xyy, u, time),\n        sceneSDF(p + h.yxy, u, time) - sceneSDF(p - h.yxy, u, time),\n        sceneSDF(p + h.yyx, u, time) - sceneSDF(p - h.yyx, u, time)\n    ));\n}\n\n// Fresnel effect\nfloat fresnel(float3 I, float3 N, float ior) {\n    float cosi = clamp(dot(I, N), -1.0, 1.0);\n    float etai = 1.0;\n    float etat = ior;\n    \n    if (cosi > 0.0) {\n        float temp = etai;\n        etai = etat;\n        etat = temp;\n    }\n    \n    float sint = etai / etat * sqrt(max(0.0, 1.0 - cosi * cosi));\n    \n    if (sint >= 1.0) {\n        return 1.0; // Total internal reflection\n    }\n    \n    float cost = sqrt(max(0.0, 1.0 - sint * sint));\n    cosi = abs(cosi);\n    \n    float Rs = ((etat * cosi) - (etai * cost)) / ((etat * cosi) + (etai * cost));\n    float Rp = ((etai * cosi) - (etat * cost)) / ((etai * cosi) + (etat * cost));\n    \n    return (Rs * Rs + Rp * Rp) / 2.0;\n}\n\nfragment float4 fragment_main(\n    VertexOut in [[stage_in]],\n    texture2d<float> sourceTexture [[texture(0)]],\n    constant Uniforms &uniforms [[buffer(0)]]\n)\n{\n    constexpr sampler textureSampler(\n        mag_filter::linear,\n        min_filter::linear,\n        address::clamp_to_edge\n    );\n    \n    float4 color = sourceTexture.sample(textureSampler, in.texCoord);\n    \n    float time = float(uniforms.FrameCount) * 0.01;\n    \n    // Ray setup\n    float2 uv = (in.texCoord * 2.0 - 1.0);\n    uv.x *= uniforms.OutputSize.x / uniforms.OutputSize.y;\n    \n    float3 ro = float3(0.0, 0.0, -2.0); // Ray origin\n    float3 rd = normalize(float3(uv, 1.0)); // Ray direction\n    \n    // Ray marching\n    float t = 0.0;\n    bool hit = false;\n    float3 hitPos;\n    \n    for (int i = 0; i < 16; i++) {\n        float3 p = ro + rd * t;\n        float d = sceneSDF(p, uniforms, time);\n        \n        if (d < 0.001) {\n            hit = true;\n            hitPos = p;\n            break;\n        }\n        \n        t += d;\n        if (t > 10.0) break;\n    }\n    \n    if (hit) {\n        float3 normal = calcNormal(hitPos, uniforms, time);\n        \n        // Reflection\n        float3 reflectDir = reflect(rd, normal);\n        float2 reflectUV = reflectDir.xy * 0.5 + 0.5;\n        float3 reflectColor = sourceTexture.sample(textureSampler, reflectUV).rgb;\n        \n        // Refraction\n        float3 refractDir = refract(rd, normal, 1.0 / uniforms.refraction_index);\n        float2 refractUV = refractDir.xy * 0.5 + 0.5;\n        float3 refractColor = sourceTexture.sample(textureSampler, refractUV).rgb;\n        \n        // Fresnel blend\n        float F = fresnel(rd, normal, uniforms.refraction_index);\n        float3 finalColor = mix(refractColor, reflectColor, F);\n        \n        // Caustics (simplified)\n        float caustics = sin(hitPos.x * 10.0 + time) * sin(hitPos.y * 10.0 + time * 1.3);\n        caustics = pow(max(caustics, 0.0), 3.0);\n        finalColor += float3(0.5, 0.8, 1.0) * caustics * uniforms.caustics_strength;\n        \n        // Mix with original\n        color.rgb = mix(color.rgb, finalColor, uniforms.reflection_strength);\n    }\n    \n    return color;\n}\n",
+      "wrapMode": "edge"
+    }
+  ]
+}

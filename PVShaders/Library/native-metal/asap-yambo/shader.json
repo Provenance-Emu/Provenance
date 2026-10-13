@@ -1,0 +1,226 @@
+{
+    "passes": [
+        {
+            "index": 0,
+            "vertexSource": "#include <metal_stdlib>\nusing namespace metal;\n\nstruct Uniforms {\n    float4x4 MVP;\n    float4 OutputSize;\n    float4 SourceSize;\n    float4 OriginalSize;\n    uint   FrameCount;\n    // Effect params\n    float  posterize_levels;   // 2..32\n    float  hue_rate;           // cycles/sec scaled by time\n    float  solarize_amount;    // 0..1\n    float  strobe_intensity;   // 0..1\n    float  line_quantize;      // lines per band (>=1)\n    float  echo_strength;      // 0..1\n    float  chroma_spread;      // px shift\n    float  saturation;         // 0..2\n    float  contrast;           // 0..2\n};\n\nstruct VSIn { float4 pos [[attribute(0)]]; float2 uv [[attribute(1)]]; };\nstruct VSOut { float4 pos [[position]]; float2 uv; };\n\nvertex VSOut main0(VSIn in [[stage_in]], constant Uniforms &u [[buffer(0)]]) {\n    VSOut o; o.pos = u.MVP * in.pos; o.uv = in.uv; return o;\n}\n\nstatic inline float3 rgb2hsv(float3 c){\n    float4 K = float4(0.0, -1.0/3.0, 2.0/3.0, -1.0);\n    float4 p = mix(float4(c.bg, K.wz), float4(c.gb, K.xy), step(c.b, c.g));\n    float4 q = mix(float4(p.xyw, c.r), float4(c.r, p.yzx), step(p.x, c.r));\n    float d = q.x - min(q.w, q.y);\n    float e = 1.0e-10;\n    float3 hsv;\n    hsv.x = abs(q.z + (q.w - q.y) / (6.0 * d + e));\n    hsv.y = d / (q.x + e);\n    hsv.z = q.x;\n    return hsv;\n}\n\nstatic inline float3 hsv2rgb(float3 c){\n    float4 K = float4(1.0, 2.0/3.0, 1.0/3.0, 3.0);\n    float3 p = abs(fract(c.xxx + K.xyz) * 6.0 - K.www);\n    return c.z * mix(K.xxx, clamp(p - K.xxx, 0.0, 1.0), c.y);\n}\n\nfragment float4 fragment_main(\n    VSOut in [[stage_in]],\n    texture2d<float> src [[texture(0)]],\n    constant Uniforms &u [[buffer(0)]]\n){\n    constexpr sampler smp(mag_filter::linear, min_filter::linear, address::clamp_to_edge);\n    float2 uv = in.uv;\n\n    // Line quantization (horizontal bands)\n    float lines = max(1.0, u.line_quantize);\n    float ypix = uv.y * u.OutputSize.y;\n    float band = floor(ypix / lines);\n    // Slight horizontal jitter per band for vibe\n    float j = (fract(sin((band+1.23)*37.2) * 43758.5453) - 0.5) * 0.003;\n    float2 uvq = float2(clamp(uv.x + j, 0.0, 1.0), (band * lines + 0.5*lines)/u.OutputSize.y);\n\n    // Base sample\n    float3 col0 = src.sample(smp, uvq).rgb;\n\n    // Hue cycle\n    float t = (float(u.FrameCount) / 60.0) * u.hue_rate; // assuming ~60fps scale\n    float3 hsv = rgb2hsv(col0);\n    hsv.x = fract(hsv.x + t);\n    float3 col = hsv2rgb(hsv);\n\n    // Solarize curve\n    float3 solar = 0.5 - 0.5 * cos(3.14159265 * col);\n    col = mix(col, solar, clamp(u.solarize_amount, 0.0, 1.0));\n\n    // Channel strobe (cycle channels with time)\n    float st = 0.5 + 0.5 * sin(t * 6.28318 * 0.5); // 0..1 slow\n    float sel = floor(fract(t * 0.5) * 3.0);       // 0,1,2 over time\n    float3 boost = float3(sel == 0 ? 1.0 : 0.0, sel == 1 ? 1.0 : 0.0, sel == 2 ? 1.0 : 0.0);\n    col += boost * (u.strobe_intensity * st) * 0.2;\n\n    // Chroma spread (RGB sample offsets)\n    float2 px = 1.0 / u.OutputSize.xy;\n    float spread = u.chroma_spread;\n    float r = src.sample(smp, uvq + float2( spread, 0.0) * px).r;\n    float g = src.sample(smp, uvq).g;\n    float b = src.sample(smp, uvq + float2(-spread, 0.0) * px).b;\n    float3 chroma = float3(r, g, b);\n    col = mix(col, chroma, 0.6);\n\n    // Echo smear (sample slight horizontal offset)\n    float offs = 0.003 * (0.5 + 0.5*sin(t*3.1));\n    float3 echo = src.sample(smp, float2(clamp(uvq.x - offs,0.0,1.0), uvq.y)).rgb;\n    col = mix(col, echo, clamp(u.echo_strength, 0.0, 1.0));\n\n    // Posterize\n    float levels = max(2.0, u.posterize_levels);\n    col = floor(col * levels) / levels;\n\n    // Saturation/contrast\n    float luma = dot(col, float3(0.299,0.587,0.114));\n    col = mix(float3(luma), col, u.saturation);\n    col = (col - 0.5) * max(0.0, u.contrast) + 0.5;\n\n    return float4(saturate(col), 1.0);\n}\n",
+            "fragmentSource": "#include <metal_stdlib>\nusing namespace metal;\n\nstruct Uniforms {\n    float4x4 MVP;\n    float4 OutputSize;\n    float4 SourceSize;\n    float4 OriginalSize;\n    uint   FrameCount;\n    // Effect params\n    float  posterize_levels;   // 2..32\n    float  hue_rate;           // cycles/sec scaled by time\n    float  solarize_amount;    // 0..1\n    float  strobe_intensity;   // 0..1\n    float  line_quantize;      // lines per band (>=1)\n    float  echo_strength;      // 0..1\n    float  chroma_spread;      // px shift\n    float  saturation;         // 0..2\n    float  contrast;           // 0..2\n};\n\nstruct VSIn { float4 pos [[attribute(0)]]; float2 uv [[attribute(1)]]; };\nstruct VSOut { float4 pos [[position]]; float2 uv; };\n\nvertex VSOut vertex_main(VSIn in [[stage_in]], constant Uniforms &u [[buffer(0)]]) {\n    VSOut o; o.pos = u.MVP * in.pos; o.uv = in.uv; return o;\n}\n\nstatic inline float3 rgb2hsv(float3 c){\n    float4 K = float4(0.0, -1.0/3.0, 2.0/3.0, -1.0);\n    float4 p = mix(float4(c.bg, K.wz), float4(c.gb, K.xy), step(c.b, c.g));\n    float4 q = mix(float4(p.xyw, c.r), float4(c.r, p.yzx), step(p.x, c.r));\n    float d = q.x - min(q.w, q.y);\n    float e = 1.0e-10;\n    float3 hsv;\n    hsv.x = abs(q.z + (q.w - q.y) / (6.0 * d + e));\n    hsv.y = d / (q.x + e);\n    hsv.z = q.x;\n    return hsv;\n}\n\nstatic inline float3 hsv2rgb(float3 c){\n    float4 K = float4(1.0, 2.0/3.0, 1.0/3.0, 3.0);\n    float3 p = abs(fract(c.xxx + K.xyz) * 6.0 - K.www);\n    return c.z * mix(K.xxx, clamp(p - K.xxx, 0.0, 1.0), c.y);\n}\n\nfragment float4 main0(\n    VSOut in [[stage_in]],\n    texture2d<float> src [[texture(0)]],\n    constant Uniforms &u [[buffer(0)]]\n){\n    constexpr sampler smp(mag_filter::linear, min_filter::linear, address::clamp_to_edge);\n    float2 uv = in.uv;\n\n    // Line quantization (horizontal bands)\n    float lines = max(1.0, u.line_quantize);\n    float ypix = uv.y * u.OutputSize.y;\n    float band = floor(ypix / lines);\n    // Slight horizontal jitter per band for vibe\n    float j = (fract(sin((band+1.23)*37.2) * 43758.5453) - 0.5) * 0.003;\n    float2 uvq = float2(clamp(uv.x + j, 0.0, 1.0), (band * lines + 0.5*lines)/u.OutputSize.y);\n\n    // Base sample\n    float3 col0 = src.sample(smp, uvq).rgb;\n\n    // Hue cycle\n    float t = (float(u.FrameCount) / 60.0) * u.hue_rate; // assuming ~60fps scale\n    float3 hsv = rgb2hsv(col0);\n    hsv.x = fract(hsv.x + t);\n    float3 col = hsv2rgb(hsv);\n\n    // Solarize curve\n    float3 solar = 0.5 - 0.5 * cos(3.14159265 * col);\n    col = mix(col, solar, clamp(u.solarize_amount, 0.0, 1.0));\n\n    // Channel strobe (cycle channels with time)\n    float st = 0.5 + 0.5 * sin(t * 6.28318 * 0.5); // 0..1 slow\n    float sel = floor(fract(t * 0.5) * 3.0);       // 0,1,2 over time\n    float3 boost = float3(sel == 0 ? 1.0 : 0.0, sel == 1 ? 1.0 : 0.0, sel == 2 ? 1.0 : 0.0);\n    col += boost * (u.strobe_intensity * st) * 0.2;\n\n    // Chroma spread (RGB sample offsets)\n    float2 px = 1.0 / u.OutputSize.xy;\n    float spread = u.chroma_spread;\n    float r = src.sample(smp, uvq + float2( spread, 0.0) * px).r;\n    float g = src.sample(smp, uvq).g;\n    float b = src.sample(smp, uvq + float2(-spread, 0.0) * px).b;\n    float3 chroma = float3(r, g, b);\n    col = mix(col, chroma, 0.6);\n\n    // Echo smear (sample slight horizontal offset)\n    float offs = 0.003 * (0.5 + 0.5*sin(t*3.1));\n    float3 echo = src.sample(smp, float2(clamp(uvq.x - offs,0.0,1.0), uvq.y)).rgb;\n    col = mix(col, echo, clamp(u.echo_strength, 0.0, 1.0));\n\n    // Posterize\n    float levels = max(2.0, u.posterize_levels);\n    col = floor(col * levels) / levels;\n\n    // Saturation/contrast\n    float luma = dot(col, float3(0.299,0.587,0.114));\n    col = mix(float3(luma), col, u.saturation);\n    col = (col - 0.5) * max(0.0, u.contrast) + 0.5;\n\n    return float4(saturate(col), 1.0);\n}\n",
+            "frameCountMod": 0,
+            "scaleX": null,
+            "scaleY": null,
+            "filter": "linear",
+            "wrapMode": "edge",
+            "format": "rgba8Unorm",
+            "isFeedback": false,
+            "buffers": [
+                {
+                    "bindingVert": 0,
+                    "bindingFrag": 0,
+                    "size": 256,
+                    "uniforms": [
+                        {
+                            "semantic": "mvp",
+                            "index": null,
+                            "name": "MVP",
+                            "size": 64,
+                            "offset": 0
+                        },
+                        {
+                            "semantic": "outputSize",
+                            "index": null,
+                            "name": "OutputSize",
+                            "size": 16,
+                            "offset": 64
+                        },
+                        {
+                            "semantic": "sourceSize",
+                            "index": null,
+                            "name": "SourceSize",
+                            "size": 16,
+                            "offset": 80
+                        },
+                        {
+                            "semantic": "originalSize",
+                            "index": null,
+                            "name": "OriginalSize",
+                            "size": 16,
+                            "offset": 96
+                        },
+                        {
+                            "semantic": "frameCount",
+                            "index": null,
+                            "name": "FrameCount",
+                            "size": 4,
+                            "offset": 112
+                        },
+                        {
+                            "semantic": "floatParameter",
+                            "index": 0,
+                            "name": "posterize_levels",
+                            "size": 4,
+                            "offset": 116
+                        },
+                        {
+                            "semantic": "floatParameter",
+                            "index": 1,
+                            "name": "hue_rate",
+                            "size": 4,
+                            "offset": 120
+                        },
+                        {
+                            "semantic": "floatParameter",
+                            "index": 2,
+                            "name": "solarize_amount",
+                            "size": 4,
+                            "offset": 124
+                        },
+                        {
+                            "semantic": "floatParameter",
+                            "index": 3,
+                            "name": "strobe_intensity",
+                            "size": 4,
+                            "offset": 128
+                        },
+                        {
+                            "semantic": "floatParameter",
+                            "index": 4,
+                            "name": "line_quantize",
+                            "size": 4,
+                            "offset": 132
+                        },
+                        {
+                            "semantic": "floatParameter",
+                            "index": 5,
+                            "name": "echo_strength",
+                            "size": 4,
+                            "offset": 136
+                        },
+                        {
+                            "semantic": "floatParameter",
+                            "index": 6,
+                            "name": "chroma_spread",
+                            "size": 4,
+                            "offset": 140
+                        },
+                        {
+                            "semantic": "floatParameter",
+                            "index": 7,
+                            "name": "saturation",
+                            "size": 4,
+                            "offset": 144
+                        },
+                        {
+                            "semantic": "floatParameter",
+                            "index": 8,
+                            "name": "contrast",
+                            "size": 4,
+                            "offset": 148
+                        }
+                    ]
+                },
+                {
+                    "bindingVert": null,
+                    "bindingFrag": null,
+                    "size": 0,
+                    "uniforms": []
+                }
+            ],
+            "textures": [
+                {
+                    "name": "Source",
+                    "semantic": "source",
+                    "binding": 0,
+                    "wrap": "edge",
+                    "filter": "linear",
+                    "index": 0
+                }
+            ],
+            "alias": null
+        }
+    ],
+    "parameters": [
+        {
+            "index": 0,
+            "name": "posterize_levels",
+            "desc": "Posterize Levels",
+            "initial": 8.0,
+            "minimum": 2.0,
+            "maximum": 32.0,
+            "step": 1.0
+        },
+        {
+            "index": 1,
+            "name": "hue_rate",
+            "desc": "Hue Cycle Rate",
+            "initial": 0.2,
+            "minimum": 0.0,
+            "maximum": 4.0,
+            "step": 0.01
+        },
+        {
+            "index": 2,
+            "name": "solarize_amount",
+            "desc": "Solarize Amount",
+            "initial": 0.35,
+            "minimum": 0.0,
+            "maximum": 1.0,
+            "step": 0.01
+        },
+        {
+            "index": 3,
+            "name": "strobe_intensity",
+            "desc": "Channel Strobe",
+            "initial": 0.3,
+            "minimum": 0.0,
+            "maximum": 1.0,
+            "step": 0.01
+        },
+        {
+            "index": 4,
+            "name": "line_quantize",
+            "desc": "Line Quantization",
+            "initial": 4.0,
+            "minimum": 1.0,
+            "maximum": 32.0,
+            "step": 1.0
+        },
+        {
+            "index": 5,
+            "name": "echo_strength",
+            "desc": "Echo Strength",
+            "initial": 0.25,
+            "minimum": 0.0,
+            "maximum": 1.0,
+            "step": 0.01
+        },
+        {
+            "index": 6,
+            "name": "chroma_spread",
+            "desc": "Chroma Spread(px)",
+            "initial": 2.0,
+            "minimum": 0.0,
+            "maximum": 8.0,
+            "step": 0.1
+        },
+        {
+            "index": 7,
+            "name": "saturation",
+            "desc": "Saturation",
+            "initial": 1.3,
+            "minimum": 0.0,
+            "maximum": 2.0,
+            "step": 0.01
+        },
+        {
+            "index": 8,
+            "name": "contrast",
+            "desc": "Contrast",
+            "initial": 1.15,
+            "minimum": 0.0,
+            "maximum": 2.0,
+            "step": 0.01
+        }
+    ],
+    "luts": [],
+    "historyCount": 0,
+    "languageVersion": "version2_4"
+}

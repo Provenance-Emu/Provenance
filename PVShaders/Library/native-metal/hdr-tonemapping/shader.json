@@ -1,0 +1,146 @@
+{
+    "passes": [
+        {
+            "index": 0,
+            "vertexSource": "//\n//  HDR Tone Mapping\n//  Native Metal Shader - Cinematic Color Grading\n//\n\n#include <metal_stdlib>\nusing namespace metal;\n\nstruct Uniforms {\n    float4x4 MVP;\n    float4 OutputSize;\n    float4 SourceSize;\n    float4 OriginalSize;\n    uint FrameCount;\n    float exposure;\n    float contrast;\n    float saturation;\n    float tonemap_mode;\n};\n\nstruct VertexIn {\n    float4 position [[attribute(0)]];\n    float2 texCoord [[attribute(1)]];\n};\n\nstruct VertexOut {\n    float4 position [[position]];\n    float2 texCoord;\n};\n\nvertex VertexOut main0(\n    VertexIn in [[stage_in]],\n    constant Uniforms &uniforms [[buffer(0)]]\n)\n{\n    VertexOut out;\n    out.position = uniforms.MVP * in.position;\n    out.texCoord = in.texCoord;\n    return out;\n}\n\n// Reinhard tone mapping\nfloat3 reinhardTonemap(float3 color) {\n    return color / (1.0 + color);\n}\n\n// Filmic tone mapping (Uncharted 2)\nfloat3 filmicTonemap(float3 x) {\n    float A = 0.15;\n    float B = 0.50;\n    float C = 0.10;\n    float D = 0.20;\n    float E = 0.02;\n    float F = 0.30;\n    return ((x * (A * x + C * B) + D * E) / (x * (A * x + B) + D * F)) - E / F;\n}\n\n// ACES tone mapping\nfloat3 acesTonemap(float3 x) {\n    float a = 2.51;\n    float b = 0.03;\n    float c = 2.43;\n    float d = 0.59;\n    float e = 0.14;\n    return clamp((x * (a * x + b)) / (x * (c * x + d) + e), 0.0, 1.0);\n}\n\n// Hable tone mapping (Uncharted 2)\nfloat3 hableTonemap(float3 color) {\n    float exposureBias = 2.0;\n    float3 curr = filmicTonemap(color * exposureBias);\n    float3 whiteScale = 1.0 / filmicTonemap(float3(11.2));\n    return curr * whiteScale;\n}\n\nfragment float4 fragment_main(\n    VertexOut in [[stage_in]],\n    texture2d<float> sourceTexture [[texture(0)]],\n    constant Uniforms &uniforms [[buffer(0)]]\n)\n{\n    constexpr sampler textureSampler(\n        mag_filter::linear,\n        min_filter::linear,\n        address::clamp_to_edge\n    );\n    \n    float3 color = sourceTexture.sample(textureSampler, in.texCoord).rgb;\n    \n    // Apply exposure\n    color *= pow(2.0, uniforms.exposure);\n    \n    // Select tone mapping operator\n    int mode = int(uniforms.tonemap_mode);\n    if (mode == 0) {\n        // Reinhard\n        color = reinhardTonemap(color);\n    } else if (mode == 1) {\n        // Filmic (Uncharted 2)\n        color = hableTonemap(color);\n    } else if (mode == 2) {\n        // ACES\n        color = acesTonemap(color);\n    } else {\n        // Linear (clamp)\n        color = clamp(color, 0.0, 1.0);\n    }\n    \n    // Contrast\n    color = (color - 0.5) * uniforms.contrast + 0.5;\n    color = clamp(color, 0.0, 1.0);\n    \n    // Saturation\n    float luminance = dot(color, float3(0.299, 0.587, 0.114));\n    color = mix(float3(luminance), color, uniforms.saturation);\n    \n    return float4(color, 1.0);\n}\n",
+            "fragmentSource": "//\n//  HDR Tone Mapping\n//  Native Metal Shader - Cinematic Color Grading\n//\n\n#include <metal_stdlib>\nusing namespace metal;\n\nstruct Uniforms {\n    float4x4 MVP;\n    float4 OutputSize;\n    float4 SourceSize;\n    float4 OriginalSize;\n    uint FrameCount;\n    float exposure;\n    float contrast;\n    float saturation;\n    float tonemap_mode;\n};\n\nstruct VertexIn {\n    float4 position [[attribute(0)]];\n    float2 texCoord [[attribute(1)]];\n};\n\nstruct VertexOut {\n    float4 position [[position]];\n    float2 texCoord;\n};\n\nvertex VertexOut vertex_main(\n    VertexIn in [[stage_in]],\n    constant Uniforms &uniforms [[buffer(0)]]\n)\n{\n    VertexOut out;\n    out.position = uniforms.MVP * in.position;\n    out.texCoord = in.texCoord;\n    return out;\n}\n\n// Reinhard tone mapping\nfloat3 reinhardTonemap(float3 color) {\n    return color / (1.0 + color);\n}\n\n// Filmic tone mapping (Uncharted 2)\nfloat3 filmicTonemap(float3 x) {\n    float A = 0.15;\n    float B = 0.50;\n    float C = 0.10;\n    float D = 0.20;\n    float E = 0.02;\n    float F = 0.30;\n    return ((x * (A * x + C * B) + D * E) / (x * (A * x + B) + D * F)) - E / F;\n}\n\n// ACES tone mapping\nfloat3 acesTonemap(float3 x) {\n    float a = 2.51;\n    float b = 0.03;\n    float c = 2.43;\n    float d = 0.59;\n    float e = 0.14;\n    return clamp((x * (a * x + b)) / (x * (c * x + d) + e), 0.0, 1.0);\n}\n\n// Hable tone mapping (Uncharted 2)\nfloat3 hableTonemap(float3 color) {\n    float exposureBias = 2.0;\n    float3 curr = filmicTonemap(color * exposureBias);\n    float3 whiteScale = 1.0 / filmicTonemap(float3(11.2));\n    return curr * whiteScale;\n}\n\nfragment float4 main0(\n    VertexOut in [[stage_in]],\n    texture2d<float> sourceTexture [[texture(0)]],\n    constant Uniforms &uniforms [[buffer(0)]]\n)\n{\n    constexpr sampler textureSampler(\n        mag_filter::linear,\n        min_filter::linear,\n        address::clamp_to_edge\n    );\n    \n    float3 color = sourceTexture.sample(textureSampler, in.texCoord).rgb;\n    \n    // Apply exposure\n    color *= pow(2.0, uniforms.exposure);\n    \n    // Select tone mapping operator\n    int mode = int(uniforms.tonemap_mode);\n    if (mode == 0) {\n        // Reinhard\n        color = reinhardTonemap(color);\n    } else if (mode == 1) {\n        // Filmic (Uncharted 2)\n        color = hableTonemap(color);\n    } else if (mode == 2) {\n        // ACES\n        color = acesTonemap(color);\n    } else {\n        // Linear (clamp)\n        color = clamp(color, 0.0, 1.0);\n    }\n    \n    // Contrast\n    color = (color - 0.5) * uniforms.contrast + 0.5;\n    color = clamp(color, 0.0, 1.0);\n    \n    // Saturation\n    float luminance = dot(color, float3(0.299, 0.587, 0.114));\n    color = mix(float3(luminance), color, uniforms.saturation);\n    \n    return float4(color, 1.0);\n}\n",
+            "frameCountMod": 0,
+            "scaleX": null,
+            "scaleY": null,
+            "filter": "linear",
+            "wrapMode": "edge",
+            "format": "rgba8Unorm",
+            "isFeedback": false,
+            "buffers": [
+                {
+                    "bindingVert": 0,
+                    "bindingFrag": 0,
+                    "size": 256,
+                    "uniforms": [
+                        {
+                            "semantic": "mvp",
+                            "index": null,
+                            "name": "MVP",
+                            "size": 64,
+                            "offset": 0
+                        },
+                        {
+                            "semantic": "outputSize",
+                            "index": null,
+                            "name": "OutputSize",
+                            "size": 16,
+                            "offset": 64
+                        },
+                        {
+                            "semantic": "sourceSize",
+                            "index": null,
+                            "name": "SourceSize",
+                            "size": 16,
+                            "offset": 80
+                        },
+                        {
+                            "semantic": "originalSize",
+                            "index": null,
+                            "name": "OriginalSize",
+                            "size": 16,
+                            "offset": 96
+                        },
+                        {
+                            "semantic": "frameCount",
+                            "index": null,
+                            "name": "FrameCount",
+                            "size": 4,
+                            "offset": 112
+                        },
+                        {
+                            "semantic": "floatParameter",
+                            "index": 0,
+                            "name": "exposure",
+                            "size": 4,
+                            "offset": 116
+                        },
+                        {
+                            "semantic": "floatParameter",
+                            "index": 1,
+                            "name": "contrast",
+                            "size": 4,
+                            "offset": 120
+                        },
+                        {
+                            "semantic": "floatParameter",
+                            "index": 2,
+                            "name": "saturation",
+                            "size": 4,
+                            "offset": 124
+                        },
+                        {
+                            "semantic": "floatParameter",
+                            "index": 3,
+                            "name": "tonemap_mode",
+                            "size": 4,
+                            "offset": 128
+                        }
+                    ]
+                },
+                {
+                    "bindingVert": null,
+                    "bindingFrag": null,
+                    "size": 0,
+                    "uniforms": []
+                }
+            ],
+            "textures": [
+                {
+                    "name": "Source",
+                    "semantic": "source",
+                    "binding": 0,
+                    "wrap": "edge",
+                    "filter": "linear",
+                    "index": 0
+                }
+            ],
+            "alias": null
+        }
+    ],
+    "parameters": [
+        {
+            "index": 0,
+            "name": "exposure",
+            "desc": "Exposure",
+            "initial": 0.0,
+            "minimum": -3.0,
+            "maximum": 3.0,
+            "step": 0.1
+        },
+        {
+            "index": 1,
+            "name": "contrast",
+            "desc": "Contrast",
+            "initial": 1.0,
+            "minimum": 0.5,
+            "maximum": 2.0,
+            "step": 0.05
+        },
+        {
+            "index": 2,
+            "name": "saturation",
+            "desc": "Saturation",
+            "initial": 1.0,
+            "minimum": 0.0,
+            "maximum": 2.0,
+            "step": 0.05
+        },
+        {
+            "index": 3,
+            "name": "tonemap_mode",
+            "desc": "Mode (0=Reinhard,1=Filmic,2=ACES)",
+            "initial": 2.0,
+            "minimum": 0.0,
+            "maximum": 3.0,
+            "step": 1.0
+        }
+    ],
+    "luts": [],
+    "historyCount": 0,
+    "languageVersion": "version2_4"
+}

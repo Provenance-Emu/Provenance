@@ -1,0 +1,248 @@
+{
+    "passes": [
+        {
+            "index": 0,
+            "vertexSource": "//\n//  Fluid Simulation using Compute Shaders\n//  Native Metal Shader - Advanced Physics\n//\n\n#include <metal_stdlib>\nusing namespace metal;\n\n// MARK: - Structures\n\nstruct FluidCell {\n    float density;\n    float2 velocity;\n    float pressure;\n};\n\nstruct Uniforms {\n    float4x4 MVP;\n    float4 OutputSize;\n    float4 SourceSize;\n    float4 OriginalSize;\n    uint FrameCount;\n    float viscosity;\n    float diffusion;\n    float force_strength;\n    float color_intensity;\n    float buoyancy;          // upward force proportional to density\n    float vorticity;         // vorticity confinement strength\n    float dye_amount;        // per-frame dye injection amount\n    float dissipation;       // global dissipation\n    float noise_scale;       // curl-noise scale\n    float noise_speed;       // curl-noise time speed\n};\n\n// MARK: - Compute Shader (Fluid Simulation)\n\nkernel void fluid_advection(\n    device FluidCell *state [[buffer(0)]],\n    constant Uniforms &uniforms [[buffer(1)]],\n    uint2 gid [[thread_position_in_grid]]\n)\n{\n    uint width = uint(uniforms.OutputSize.x);\n    uint height = uint(uniforms.OutputSize.y);\n    \n    if (gid.x >= width || gid.y >= height) return;\n    \n    uint idx = gid.y * width + gid.x;\n    FluidCell cell = state[idx];\n    \n    float dt = 1.0 / 60.0;\n    \n    // Semi-Lagrangian advection\n    float2 pos = float2(gid) - cell.velocity * dt;\n    pos = clamp(pos, float2(0.0), float2(width - 1, height - 1));\n    \n    uint2 p0 = uint2(floor(pos));\n    uint2 p1 = uint2(ceil(pos));\n    float2 f = fract(pos);\n    \n    // Bilinear interpolation\n    uint idx00 = p0.y * width + p0.x;\n    uint idx10 = p0.y * width + p1.x;\n    uint idx01 = p1.y * width + p0.x;\n    uint idx11 = p1.y * width + p1.x;\n    \n    FluidCell c00 = state[idx00];\n    FluidCell c10 = state[idx10];\n    FluidCell c01 = state[idx01];\n    FluidCell c11 = state[idx11];\n    \n    FluidCell result;\n    result.density = mix(\n        mix(c00.density, c10.density, f.x),\n        mix(c01.density, c11.density, f.x),\n        f.y\n    );\n    \n    result.velocity = mix(\n        mix(c00.velocity, c10.velocity, f.x),\n        mix(c01.velocity, c11.velocity, f.x),\n        f.y\n    );\n    \n    // Apply diffusion\n    result.density *= (1.0 - uniforms.diffusion * dt);\n    result.velocity *= (1.0 - uniforms.viscosity * dt);\n    \n    state[idx] = result;\n}\n\nkernel void fluid_forces(\n    device FluidCell *state [[buffer(0)]],\n    constant Uniforms &uniforms [[buffer(1)]],\n    uint2 gid [[thread_position_in_grid]]\n)\n{\n    uint width = uint(uniforms.OutputSize.x);\n    uint height = uint(uniforms.OutputSize.y);\n    \n    if (gid.x >= width || gid.y >= height) return;\n    \n    uint idx = gid.y * width + gid.x;\n    FluidCell cell = state[idx];\n    \n    // Time\n    float t = float(uniforms.FrameCount) * 0.016 * uniforms.noise_speed;\n\n    // Simple curl-like force field using trigonometric noise (cheap)\n    float2 p = (float2(gid) / float2(width, height)) * uniforms.noise_scale + float2(t, -t*0.7);\n    float n1 = sin(6.28318*(p.x + 0.5*cos(2.0*p.y)));\n    float n2 = cos(6.28318*(p.y + 0.5*sin(2.0*p.x)));\n    float2 curlF = float2(n2, -n1);\n    curlF *= uniforms.force_strength;\n\n    // Buoyancy upward by density\n    float2 buoy = float2(0.0, -uniforms.buoyancy * cell.density);\n\n    // Apply forces\n    cell.velocity += curlF + buoy;\n\n    // Inject dye to make motion visible\n    cell.density = clamp(cell.density + uniforms.dye_amount * 0.5, 0.0, 1.0);\n\n    // Global dissipation\n    cell.density *= max(0.0, 1.0 - uniforms.dissipation);\n    cell.velocity *= max(0.0, 1.0 - uniforms.dissipation * 0.5);\n    \n    state[idx] = cell;\n}\n\n// MARK: - Vertex Shader\n\nstruct VertexIn {\n    float4 position [[attribute(0)]];\n    float2 texCoord [[attribute(1)]];\n};\n\nstruct VertexOut {\n    float4 position [[position]];\n    float2 texCoord;\n};\n\nvertex VertexOut main0(\n    VertexIn in [[stage_in]],\n    constant Uniforms &uniforms [[buffer(0)]]\n)\n{\n    VertexOut out;\n    out.position = uniforms.MVP * in.position;\n    out.texCoord = in.texCoord;\n    return out;\n}\n\n// MARK: - Fragment Shader\n\nfragment float4 fragment_main(\n    VertexOut in [[stage_in]],\n    texture2d<float> sourceTexture [[texture(0)]],\n    device FluidCell *fluidState [[buffer(0)]],\n    constant Uniforms &uniforms [[buffer(1)]]\n)\n{\n    constexpr sampler textureSampler(\n        mag_filter::linear,\n        min_filter::linear,\n        address::clamp_to_edge\n    );\n    \n    // Sample original image\n    float4 color = sourceTexture.sample(textureSampler, in.texCoord);\n    \n    // Get fluid state at this position\n    uint width = uint(uniforms.OutputSize.x);\n    uint height = uint(uniforms.OutputSize.y);\n    uint2 pos = uint2(in.texCoord * float2(width, height));\n    uint idx = pos.y * width + pos.x;\n    \n    FluidCell cell = fluidState[idx];\n    \n    // Visualize fluid density with a heavenly palette\n    float d = clamp(cell.density, 0.0, 1.0);\n    float3 base = float3(0.15, 0.35, 0.9);\n    float3 glow = float3(1.0, 0.9, 0.6);\n    float3 fluidColor = mix(base, glow, pow(d, 0.6));\n    \n    // Mix with original image\n    color.rgb = mix(color.rgb, fluidColor, d * uniforms.color_intensity);\n    \n    // Add velocity visualization\n    float velocityMag = length(cell.velocity);\n    color.rgb += float3(smoothstep(0.0, 2.0, velocityMag) * 0.2);\n    \n    return color;\n}\n",
+            "fragmentSource": "//\n//  Fluid Simulation using Compute Shaders\n//  Native Metal Shader - Advanced Physics\n//\n\n#include <metal_stdlib>\nusing namespace metal;\n\n// MARK: - Structures\n\nstruct FluidCell {\n    float density;\n    float2 velocity;\n    float pressure;\n};\n\nstruct Uniforms {\n    float4x4 MVP;\n    float4 OutputSize;\n    float4 SourceSize;\n    float4 OriginalSize;\n    uint FrameCount;\n    float viscosity;\n    float diffusion;\n    float force_strength;\n    float color_intensity;\n    float buoyancy;          // upward force proportional to density\n    float vorticity;         // vorticity confinement strength\n    float dye_amount;        // per-frame dye injection amount\n    float dissipation;       // global dissipation\n    float noise_scale;       // curl-noise scale\n    float noise_speed;       // curl-noise time speed\n};\n\n// MARK: - Compute Shader (Fluid Simulation)\n\nkernel void fluid_advection(\n    device FluidCell *state [[buffer(0)]],\n    constant Uniforms &uniforms [[buffer(1)]],\n    uint2 gid [[thread_position_in_grid]]\n)\n{\n    uint width = uint(uniforms.OutputSize.x);\n    uint height = uint(uniforms.OutputSize.y);\n    \n    if (gid.x >= width || gid.y >= height) return;\n    \n    uint idx = gid.y * width + gid.x;\n    FluidCell cell = state[idx];\n    \n    float dt = 1.0 / 60.0;\n    \n    // Semi-Lagrangian advection\n    float2 pos = float2(gid) - cell.velocity * dt;\n    pos = clamp(pos, float2(0.0), float2(width - 1, height - 1));\n    \n    uint2 p0 = uint2(floor(pos));\n    uint2 p1 = uint2(ceil(pos));\n    float2 f = fract(pos);\n    \n    // Bilinear interpolation\n    uint idx00 = p0.y * width + p0.x;\n    uint idx10 = p0.y * width + p1.x;\n    uint idx01 = p1.y * width + p0.x;\n    uint idx11 = p1.y * width + p1.x;\n    \n    FluidCell c00 = state[idx00];\n    FluidCell c10 = state[idx10];\n    FluidCell c01 = state[idx01];\n    FluidCell c11 = state[idx11];\n    \n    FluidCell result;\n    result.density = mix(\n        mix(c00.density, c10.density, f.x),\n        mix(c01.density, c11.density, f.x),\n        f.y\n    );\n    \n    result.velocity = mix(\n        mix(c00.velocity, c10.velocity, f.x),\n        mix(c01.velocity, c11.velocity, f.x),\n        f.y\n    );\n    \n    // Apply diffusion\n    result.density *= (1.0 - uniforms.diffusion * dt);\n    result.velocity *= (1.0 - uniforms.viscosity * dt);\n    \n    state[idx] = result;\n}\n\nkernel void fluid_forces(\n    device FluidCell *state [[buffer(0)]],\n    constant Uniforms &uniforms [[buffer(1)]],\n    uint2 gid [[thread_position_in_grid]]\n)\n{\n    uint width = uint(uniforms.OutputSize.x);\n    uint height = uint(uniforms.OutputSize.y);\n    \n    if (gid.x >= width || gid.y >= height) return;\n    \n    uint idx = gid.y * width + gid.x;\n    FluidCell cell = state[idx];\n    \n    // Time\n    float t = float(uniforms.FrameCount) * 0.016 * uniforms.noise_speed;\n\n    // Simple curl-like force field using trigonometric noise (cheap)\n    float2 p = (float2(gid) / float2(width, height)) * uniforms.noise_scale + float2(t, -t*0.7);\n    float n1 = sin(6.28318*(p.x + 0.5*cos(2.0*p.y)));\n    float n2 = cos(6.28318*(p.y + 0.5*sin(2.0*p.x)));\n    float2 curlF = float2(n2, -n1);\n    curlF *= uniforms.force_strength;\n\n    // Buoyancy upward by density\n    float2 buoy = float2(0.0, -uniforms.buoyancy * cell.density);\n\n    // Apply forces\n    cell.velocity += curlF + buoy;\n\n    // Inject dye to make motion visible\n    cell.density = clamp(cell.density + uniforms.dye_amount * 0.5, 0.0, 1.0);\n\n    // Global dissipation\n    cell.density *= max(0.0, 1.0 - uniforms.dissipation);\n    cell.velocity *= max(0.0, 1.0 - uniforms.dissipation * 0.5);\n    \n    state[idx] = cell;\n}\n\n// MARK: - Vertex Shader\n\nstruct VertexIn {\n    float4 position [[attribute(0)]];\n    float2 texCoord [[attribute(1)]];\n};\n\nstruct VertexOut {\n    float4 position [[position]];\n    float2 texCoord;\n};\n\nvertex VertexOut vertex_main(\n    VertexIn in [[stage_in]],\n    constant Uniforms &uniforms [[buffer(0)]]\n)\n{\n    VertexOut out;\n    out.position = uniforms.MVP * in.position;\n    out.texCoord = in.texCoord;\n    return out;\n}\n\n// MARK: - Fragment Shader\n\nfragment float4 main0(\n    VertexOut in [[stage_in]],\n    texture2d<float> sourceTexture [[texture(0)]],\n    device FluidCell *fluidState [[buffer(0)]],\n    constant Uniforms &uniforms [[buffer(1)]]\n)\n{\n    constexpr sampler textureSampler(\n        mag_filter::linear,\n        min_filter::linear,\n        address::clamp_to_edge\n    );\n    \n    // Sample original image\n    float4 color = sourceTexture.sample(textureSampler, in.texCoord);\n    \n    // Get fluid state at this position\n    uint width = uint(uniforms.OutputSize.x);\n    uint height = uint(uniforms.OutputSize.y);\n    uint2 pos = uint2(in.texCoord * float2(width, height));\n    uint idx = pos.y * width + pos.x;\n    \n    FluidCell cell = fluidState[idx];\n    \n    // Visualize fluid density with a heavenly palette\n    float d = clamp(cell.density, 0.0, 1.0);\n    float3 base = float3(0.15, 0.35, 0.9);\n    float3 glow = float3(1.0, 0.9, 0.6);\n    float3 fluidColor = mix(base, glow, pow(d, 0.6));\n    \n    // Mix with original image\n    color.rgb = mix(color.rgb, fluidColor, d * uniforms.color_intensity);\n    \n    // Add velocity visualization\n    float velocityMag = length(cell.velocity);\n    color.rgb += float3(smoothstep(0.0, 2.0, velocityMag) * 0.2);\n    \n    return color;\n}\n",
+            "frameCountMod": 0,
+            "scaleX": null,
+            "scaleY": null,
+            "filter": "linear",
+            "wrapMode": "edge",
+            "format": "rgba8Unorm",
+            "isFeedback": false,
+            "buffers": [
+                {
+                    "bindingVert": null,
+                    "bindingFrag": 0,
+                    "size": 64,
+                    "uniforms": []
+                },
+                {
+                    "bindingVert": 0,
+                    "bindingFrag": 1,
+                    "size": 256,
+                    "uniforms": [
+                        {
+                            "semantic": "mvp",
+                            "index": null,
+                            "name": "MVP",
+                            "size": 64,
+                            "offset": 0
+                        },
+                        {
+                            "semantic": "outputSize",
+                            "index": null,
+                            "name": "OutputSize",
+                            "size": 16,
+                            "offset": 64
+                        },
+                        {
+                            "semantic": "sourceSize",
+                            "index": null,
+                            "name": "SourceSize",
+                            "size": 16,
+                            "offset": 80
+                        },
+                        {
+                            "semantic": "originalSize",
+                            "index": null,
+                            "name": "OriginalSize",
+                            "size": 16,
+                            "offset": 96
+                        },
+                        {
+                            "semantic": "frameCount",
+                            "index": null,
+                            "name": "FrameCount",
+                            "size": 4,
+                            "offset": 112
+                        },
+                        {
+                            "semantic": "floatParameter",
+                            "index": 0,
+                            "name": "viscosity",
+                            "size": 4,
+                            "offset": 116
+                        },
+                        {
+                            "semantic": "floatParameter",
+                            "index": 1,
+                            "name": "diffusion",
+                            "size": 4,
+                            "offset": 120
+                        },
+                        {
+                            "semantic": "floatParameter",
+                            "index": 2,
+                            "name": "force_strength",
+                            "size": 4,
+                            "offset": 124
+                        },
+                        {
+                            "semantic": "floatParameter",
+                            "index": 3,
+                            "name": "color_intensity",
+                            "size": 4,
+                            "offset": 128
+                        },
+                        {
+                            "semantic": "floatParameter",
+                            "index": 4,
+                            "name": "buoyancy",
+                            "size": 4,
+                            "offset": 132
+                        },
+                        {
+                            "semantic": "floatParameter",
+                            "index": 5,
+                            "name": "vorticity",
+                            "size": 4,
+                            "offset": 136
+                        },
+                        {
+                            "semantic": "floatParameter",
+                            "index": 6,
+                            "name": "dye_amount",
+                            "size": 4,
+                            "offset": 140
+                        },
+                        {
+                            "semantic": "floatParameter",
+                            "index": 7,
+                            "name": "dissipation",
+                            "size": 4,
+                            "offset": 144
+                        },
+                        {
+                            "semantic": "floatParameter",
+                            "index": 8,
+                            "name": "noise_scale",
+                            "size": 4,
+                            "offset": 148
+                        },
+                        {
+                            "semantic": "floatParameter",
+                            "index": 9,
+                            "name": "noise_speed",
+                            "size": 4,
+                            "offset": 152
+                        }
+                    ]
+                },
+                {
+                    "bindingVert": null,
+                    "bindingFrag": null,
+                    "size": 0,
+                    "uniforms": []
+                }
+            ],
+            "textures": [
+                {
+                    "name": "Source",
+                    "semantic": "source",
+                    "binding": 0,
+                    "wrap": "edge",
+                    "filter": "linear",
+                    "index": 0
+                }
+            ],
+            "alias": null
+        }
+    ],
+    "parameters": [
+        {
+            "index": 0,
+            "name": "viscosity",
+            "desc": "Fluid Viscosity",
+            "initial": 0.01,
+            "minimum": 0.0,
+            "maximum": 0.1,
+            "step": 0.001
+        },
+        {
+            "index": 1,
+            "name": "diffusion",
+            "desc": "Diffusion Rate",
+            "initial": 0.02,
+            "minimum": 0.0,
+            "maximum": 0.1,
+            "step": 0.001
+        },
+        {
+            "index": 2,
+            "name": "force_strength",
+            "desc": "Force Strength",
+            "initial": 0.5,
+            "minimum": 0.0,
+            "maximum": 2.0,
+            "step": 0.1
+        },
+        {
+            "index": 3,
+            "name": "color_intensity",
+            "desc": "Color Intensity",
+            "initial": 0.7,
+            "minimum": 0.0,
+            "maximum": 1.0,
+            "step": 0.05
+        },
+        {
+            "index": 4,
+            "name": "buoyancy",
+            "desc": "Upward Buoyancy",
+            "initial": 0.25,
+            "minimum": 0.0,
+            "maximum": 2.0,
+            "step": 0.05
+        },
+        {
+            "index": 5,
+            "name": "vorticity",
+            "desc": "Vorticity Confinement",
+            "initial": 0.4,
+            "minimum": 0.0,
+            "maximum": 2.0,
+            "step": 0.05
+        },
+        {
+            "index": 6,
+            "name": "dye_amount",
+            "desc": "Dye Injection",
+            "initial": 0.5,
+            "minimum": 0.0,
+            "maximum": 2.0,
+            "step": 0.05
+        },
+        {
+            "index": 7,
+            "name": "dissipation",
+            "desc": "Global Dissipation",
+            "initial": 0.02,
+            "minimum": 0.0,
+            "maximum": 0.2,
+            "step": 0.005
+        },
+        {
+            "index": 8,
+            "name": "noise_scale",
+            "desc": "Flow Noise Scale",
+            "initial": 2.0,
+            "minimum": 0.1,
+            "maximum": 8.0,
+            "step": 0.1
+        },
+        {
+            "index": 9,
+            "name": "noise_speed",
+            "desc": "Flow Noise Speed",
+            "initial": 1.0,
+            "minimum": 0.0,
+            "maximum": 4.0,
+            "step": 0.1
+        }
+    ],
+    "luts": [],
+    "historyCount": 0,
+    "languageVersion": "version2_4"
+}

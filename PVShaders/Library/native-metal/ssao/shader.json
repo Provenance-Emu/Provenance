@@ -1,0 +1,146 @@
+{
+    "passes": [
+        {
+            "index": 0,
+            "vertexSource": "//\n//  Screen-Space Ambient Occlusion (SSAO)\n//  Native Metal Shader - Contact Shadows\n//\n\n#include <metal_stdlib>\nusing namespace metal;\n\nstruct Uniforms {\n    float4x4 MVP;\n    float4 OutputSize;\n    float4 SourceSize;\n    float4 OriginalSize;\n    uint FrameCount;\n    float occlusion_strength;\n    float sample_radius;\n    float bias;\n    float samples;\n};\n\nstruct VertexIn {\n    float4 position [[attribute(0)]];\n    float2 texCoord [[attribute(1)]];\n};\n\nstruct VertexOut {\n    float4 position [[position]];\n    float2 texCoord;\n};\n\nvertex VertexOut main0(\n    VertexIn in [[stage_in]],\n    constant Uniforms &uniforms [[buffer(0)]]\n)\n{\n    VertexOut out;\n    out.position = uniforms.MVP * in.position;\n    out.texCoord = in.texCoord;\n    return out;\n}\n\n// Pseudo-depth from luminance\nfloat getDepth(float3 color) {\n    return dot(color, float3(0.299, 0.587, 0.114));\n}\n\n// Random rotation for sample kernel\nfloat2 randomRotation(float2 uv, uint frameCount) {\n    float angle = fract(sin(dot(uv, float2(12.9898, 78.233))) * 43758.5453 + float(frameCount) * 0.1) * 6.28318;\n    return float2(cos(angle), sin(angle));\n}\n\nfragment float4 fragment_main(\n    VertexOut in [[stage_in]],\n    texture2d<float> sourceTexture [[texture(0)]],\n    constant Uniforms &uniforms [[buffer(0)]]\n)\n{\n    constexpr sampler textureSampler(\n        mag_filter::linear,\n        min_filter::linear,\n        address::clamp_to_edge\n    );\n    \n    float4 color = sourceTexture.sample(textureSampler, in.texCoord);\n    float centerDepth = getDepth(color.rgb);\n    \n    // Calculate normal from depth gradient\n    float2 texelSize = 1.0 / uniforms.SourceSize.xy;\n    float depthRight = getDepth(sourceTexture.sample(textureSampler, in.texCoord + float2(texelSize.x, 0.0)).rgb);\n    float depthUp = getDepth(sourceTexture.sample(textureSampler, in.texCoord + float2(0.0, texelSize.y)).rgb);\n    \n    float3 normal = normalize(float3(\n        centerDepth - depthRight,\n        centerDepth - depthUp,\n        1.0\n    ));\n    \n    // Random rotation for temporal variation\n    float2 randomVec = randomRotation(in.texCoord, uniforms.FrameCount);\n    \n    // Sample hemisphere around point\n    float occlusion = 0.0;\n    int sampleCount = int(uniforms.samples);\n    \n    for (int i = 0; i < sampleCount; i++) {\n        // Generate sample position\n        float angle = (float(i) / float(sampleCount)) * 6.28318;\n        float radius = (float(i) / float(sampleCount)) * uniforms.sample_radius;\n        \n        // Rotate sample\n        float2 offset = float2(cos(angle), sin(angle)) * radius;\n        float2 rotatedOffset = float2(\n            offset.x * randomVec.x - offset.y * randomVec.y,\n            offset.x * randomVec.y + offset.y * randomVec.x\n        );\n        \n        float2 sampleUV = in.texCoord + rotatedOffset * texelSize;\n        \n        // Sample depth\n        float3 sampleColor = sourceTexture.sample(textureSampler, sampleUV).rgb;\n        float sampleDepth = getDepth(sampleColor);\n        \n        // Range check\n        float rangeCheck = smoothstep(0.0, 1.0, uniforms.sample_radius / abs(centerDepth - sampleDepth));\n        \n        // Accumulate occlusion\n        occlusion += (sampleDepth >= centerDepth + uniforms.bias ? 1.0 : 0.0) * rangeCheck;\n    }\n    \n    occlusion = 1.0 - (occlusion / float(sampleCount));\n    \n    // Apply occlusion\n    float ao = pow(occlusion, uniforms.occlusion_strength);\n    color.rgb *= ao;\n    \n    return color;\n}\n",
+            "fragmentSource": "//\n//  Screen-Space Ambient Occlusion (SSAO)\n//  Native Metal Shader - Contact Shadows\n//\n\n#include <metal_stdlib>\nusing namespace metal;\n\nstruct Uniforms {\n    float4x4 MVP;\n    float4 OutputSize;\n    float4 SourceSize;\n    float4 OriginalSize;\n    uint FrameCount;\n    float occlusion_strength;\n    float sample_radius;\n    float bias;\n    float samples;\n};\n\nstruct VertexIn {\n    float4 position [[attribute(0)]];\n    float2 texCoord [[attribute(1)]];\n};\n\nstruct VertexOut {\n    float4 position [[position]];\n    float2 texCoord;\n};\n\nvertex VertexOut vertex_main(\n    VertexIn in [[stage_in]],\n    constant Uniforms &uniforms [[buffer(0)]]\n)\n{\n    VertexOut out;\n    out.position = uniforms.MVP * in.position;\n    out.texCoord = in.texCoord;\n    return out;\n}\n\n// Pseudo-depth from luminance\nfloat getDepth(float3 color) {\n    return dot(color, float3(0.299, 0.587, 0.114));\n}\n\n// Random rotation for sample kernel\nfloat2 randomRotation(float2 uv, uint frameCount) {\n    float angle = fract(sin(dot(uv, float2(12.9898, 78.233))) * 43758.5453 + float(frameCount) * 0.1) * 6.28318;\n    return float2(cos(angle), sin(angle));\n}\n\nfragment float4 main0(\n    VertexOut in [[stage_in]],\n    texture2d<float> sourceTexture [[texture(0)]],\n    constant Uniforms &uniforms [[buffer(0)]]\n)\n{\n    constexpr sampler textureSampler(\n        mag_filter::linear,\n        min_filter::linear,\n        address::clamp_to_edge\n    );\n    \n    float4 color = sourceTexture.sample(textureSampler, in.texCoord);\n    float centerDepth = getDepth(color.rgb);\n    \n    // Calculate normal from depth gradient\n    float2 texelSize = 1.0 / uniforms.SourceSize.xy;\n    float depthRight = getDepth(sourceTexture.sample(textureSampler, in.texCoord + float2(texelSize.x, 0.0)).rgb);\n    float depthUp = getDepth(sourceTexture.sample(textureSampler, in.texCoord + float2(0.0, texelSize.y)).rgb);\n    \n    float3 normal = normalize(float3(\n        centerDepth - depthRight,\n        centerDepth - depthUp,\n        1.0\n    ));\n    \n    // Random rotation for temporal variation\n    float2 randomVec = randomRotation(in.texCoord, uniforms.FrameCount);\n    \n    // Sample hemisphere around point\n    float occlusion = 0.0;\n    int sampleCount = int(uniforms.samples);\n    \n    for (int i = 0; i < sampleCount; i++) {\n        // Generate sample position\n        float angle = (float(i) / float(sampleCount)) * 6.28318;\n        float radius = (float(i) / float(sampleCount)) * uniforms.sample_radius;\n        \n        // Rotate sample\n        float2 offset = float2(cos(angle), sin(angle)) * radius;\n        float2 rotatedOffset = float2(\n            offset.x * randomVec.x - offset.y * randomVec.y,\n            offset.x * randomVec.y + offset.y * randomVec.x\n        );\n        \n        float2 sampleUV = in.texCoord + rotatedOffset * texelSize;\n        \n        // Sample depth\n        float3 sampleColor = sourceTexture.sample(textureSampler, sampleUV).rgb;\n        float sampleDepth = getDepth(sampleColor);\n        \n        // Range check\n        float rangeCheck = smoothstep(0.0, 1.0, uniforms.sample_radius / abs(centerDepth - sampleDepth));\n        \n        // Accumulate occlusion\n        occlusion += (sampleDepth >= centerDepth + uniforms.bias ? 1.0 : 0.0) * rangeCheck;\n    }\n    \n    occlusion = 1.0 - (occlusion / float(sampleCount));\n    \n    // Apply occlusion\n    float ao = pow(occlusion, uniforms.occlusion_strength);\n    color.rgb *= ao;\n    \n    return color;\n}\n",
+            "frameCountMod": 0,
+            "scaleX": null,
+            "scaleY": null,
+            "filter": "linear",
+            "wrapMode": "edge",
+            "format": "rgba8Unorm",
+            "isFeedback": false,
+            "buffers": [
+                {
+                    "bindingVert": 0,
+                    "bindingFrag": 0,
+                    "size": 256,
+                    "uniforms": [
+                        {
+                            "semantic": "mvp",
+                            "index": null,
+                            "name": "MVP",
+                            "size": 64,
+                            "offset": 0
+                        },
+                        {
+                            "semantic": "outputSize",
+                            "index": null,
+                            "name": "OutputSize",
+                            "size": 16,
+                            "offset": 64
+                        },
+                        {
+                            "semantic": "sourceSize",
+                            "index": null,
+                            "name": "SourceSize",
+                            "size": 16,
+                            "offset": 80
+                        },
+                        {
+                            "semantic": "originalSize",
+                            "index": null,
+                            "name": "OriginalSize",
+                            "size": 16,
+                            "offset": 96
+                        },
+                        {
+                            "semantic": "frameCount",
+                            "index": null,
+                            "name": "FrameCount",
+                            "size": 4,
+                            "offset": 112
+                        },
+                        {
+                            "semantic": "floatParameter",
+                            "index": 0,
+                            "name": "occlusion_strength",
+                            "size": 4,
+                            "offset": 116
+                        },
+                        {
+                            "semantic": "floatParameter",
+                            "index": 1,
+                            "name": "sample_radius",
+                            "size": 4,
+                            "offset": 120
+                        },
+                        {
+                            "semantic": "floatParameter",
+                            "index": 2,
+                            "name": "bias",
+                            "size": 4,
+                            "offset": 124
+                        },
+                        {
+                            "semantic": "floatParameter",
+                            "index": 3,
+                            "name": "samples",
+                            "size": 4,
+                            "offset": 128
+                        }
+                    ]
+                },
+                {
+                    "bindingVert": null,
+                    "bindingFrag": null,
+                    "size": 0,
+                    "uniforms": []
+                }
+            ],
+            "textures": [
+                {
+                    "name": "Source",
+                    "semantic": "source",
+                    "binding": 0,
+                    "wrap": "edge",
+                    "filter": "linear",
+                    "index": 0
+                }
+            ],
+            "alias": null
+        }
+    ],
+    "parameters": [
+        {
+            "index": 0,
+            "name": "occlusion_strength",
+            "desc": "Occlusion Strength",
+            "initial": 1.5,
+            "minimum": 0.0,
+            "maximum": 3.0,
+            "step": 0.1
+        },
+        {
+            "index": 1,
+            "name": "sample_radius",
+            "desc": "Sample Radius",
+            "initial": 0.02,
+            "minimum": 0.005,
+            "maximum": 0.1,
+            "step": 0.005
+        },
+        {
+            "index": 2,
+            "name": "bias",
+            "desc": "Bias",
+            "initial": 0.025,
+            "minimum": 0.0,
+            "maximum": 0.1,
+            "step": 0.005
+        },
+        {
+            "index": 3,
+            "name": "samples",
+            "desc": "Samples (Quality)",
+            "initial": 16.0,
+            "minimum": 8.0,
+            "maximum": 32.0,
+            "step": 4.0
+        }
+    ],
+    "luts": [],
+    "historyCount": 0,
+    "languageVersion": "version2_4"
+}

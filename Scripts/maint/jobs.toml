@@ -52,6 +52,10 @@ paths = [
   "Scripts/dev/ralph-loop.sh",
   # Runs per pull request in auto-translate.yml, from the PR's string diff.
   "Scripts/generators/auto_translate.py",
+  # Slang shader library fetch/unpack, run by the app targets' "Embed slang shaders" build phase.
+  "Scripts/shaders/embed_slang_shaders.sh",
+  "Scripts/shaders/fetch_slang_shaders.py",
+  "Scripts/shaders/tests/test_fetch_slang_shaders.py",
   # RetroArch core download and packaging, run by the Xcode build.
   "CoresRetro/RetroArch/scripts/get-modules.sh",
   "CoresRetro/RetroArch/scripts/make_frameworks.sh",
@@ -61,6 +65,16 @@ paths = [
 ]
 
 # ─────────────────────────────────────────────────────────── generated files
+
+[jobs.slang-shader-validation]
+title = "Slang shader validation"
+category = "Generated files"
+description = "Loads and renders every bundled slang preset on this Mac's GPU; failures are excluded from the app's shader browser."
+run = ["bash", "Scripts/shaders/validate_slang_shaders.sh"]
+mode = "manual"
+inputs = ["Scripts/shaders/slang-shaders.lock.json", "PVShaders/Library/**", "PVShaders/Sources/PVSlangRuntime/**"]
+outputs = ["Scripts/shaders/slang-shaders-excluded.json"]
+needs = ["network", "macos", "swift"]
 
 [jobs.contributors]
 title = "Contributors list"

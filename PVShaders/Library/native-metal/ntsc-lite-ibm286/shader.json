@@ -1,0 +1,162 @@
+{
+    "passes": [
+        {
+            "index": 0,
+            "vertexSource": "// NTSC Lite - simplified composite simulation, stack-safe\n#include <metal_stdlib>\nusing namespace metal;\n\nstruct Uniforms {\n    float4x4 MVP;\n    float4 OutputSize;\n    float4 SourceSize;\n    float4 OriginalSize;\n    uint   FrameCount;\n    float  sharpness;     // 0..1\n    float  bleed;         // 0..1 horizontal color bleed\n    float  hue_shift;     // -1..1\n    float  saturation;    // 0..2\n    float  gamma;         // 0.5..3\n};\n\nstruct VSIn { float4 pos [[attribute(0)]]; float2 uv [[attribute(1)]]; };\nstruct VSOut { float4 pos [[position]]; float2 uv; };\n\nvertex VSOut main0(VSIn in [[stage_in]], constant Uniforms &u [[buffer(0)]]) {\n    VSOut o; o.pos = u.MVP * in.pos; o.uv = in.uv; return o;\n}\n\nstatic inline float3 rgb2yiq(float3 c){\n    float Y = dot(c, float3(0.299, 0.587, 0.114));\n    float I = dot(c, float3(0.596, -0.274, -0.322));\n    float Q = dot(c, float3(0.211, -0.523, 0.312));\n    return float3(Y,I,Q);\n}\nstatic inline float3 yiq2rgb(float3 y){\n    float3 r = float3(1.0, 0.956, 0.621);\n    float3 g = float3(1.0, -0.272, -0.647);\n    float3 b = float3(1.0, -1.106, 1.703);\n    return float3(\n        y.x*r.x + y.y*r.y + y.z*r.z,\n        y.x*g.x + y.y*g.y + y.z*g.z,\n        y.x*b.x + y.y*b.y + y.z*b.z\n    );\n}\n\nfragment float4 fragment_main(\n    VSOut in [[stage_in]],\n    texture2d<float> src [[texture(0)]],\n    constant Uniforms &u [[buffer(0)]]\n){\n    constexpr sampler smp(mag_filter::linear, min_filter::linear, address::clamp_to_edge);\n    float2 uv = in.uv;\n\n    // Horizontal pre-blur for color bleed\n    float px = 1.0 / u.OutputSize.x;\n    float3 c0 = src.sample(smp, uv - float2(2.0*px,0)).rgb;\n    float3 c1 = src.sample(smp, uv - float2(1.0*px,0)).rgb;\n    float3 c2 = src.sample(smp, uv).rgb;\n    float3 c3 = src.sample(smp, uv + float2(1.0*px,0)).rgb;\n    float3 c4 = src.sample(smp, uv + float2(2.0*px,0)).rgb;\n\n    float3 blur = (c0 + 4.0*c1 + 6.0*c2 + 4.0*c3 + c4) / 16.0;\n    float3 pre = mix(c2, blur, u.bleed);\n\n    // Convert to YIQ and modulate chroma for sharpness/hue\n    float3 yiq = rgb2yiq(pre);\n\n    // Phase ripple to emulate subcarrier (cheap)\n    float line = floor(uv.y * u.OutputSize.y);\n    float phase = (line * 0.5 + float(u.FrameCount)*0.25);\n    float cs = cos(phase * 0.25 + u.hue_shift*3.14159);\n    float sn = sin(phase * 0.25 + u.hue_shift*3.14159);\n\n    float I = yiq.y * cs - yiq.z * sn;\n    float Q = yiq.y * sn + yiq.z * cs;\n\n    I *= mix(0.6, 1.1, u.sharpness);\n    Q *= mix(0.6, 1.1, u.sharpness);\n\n    float3 outRGB = yiq2rgb(float3(yiq.x, I, Q));\n\n    // Saturation and gamma\n    float l = dot(outRGB, float3(0.299,0.587,0.114));\n    outRGB = mix(float3(l), outRGB, u.saturation);\n    outRGB = pow(max(outRGB, 0.0), float3(1.0/max(u.gamma,0.001)));\n\n    return float4(saturate(outRGB), 1.0);\n}\n",
+            "fragmentSource": "// NTSC Lite - simplified composite simulation, stack-safe\n#include <metal_stdlib>\nusing namespace metal;\n\nstruct Uniforms {\n    float4x4 MVP;\n    float4 OutputSize;\n    float4 SourceSize;\n    float4 OriginalSize;\n    uint   FrameCount;\n    float  sharpness;     // 0..1\n    float  bleed;         // 0..1 horizontal color bleed\n    float  hue_shift;     // -1..1\n    float  saturation;    // 0..2\n    float  gamma;         // 0.5..3\n};\n\nstruct VSIn { float4 pos [[attribute(0)]]; float2 uv [[attribute(1)]]; };\nstruct VSOut { float4 pos [[position]]; float2 uv; };\n\nvertex VSOut vertex_main(VSIn in [[stage_in]], constant Uniforms &u [[buffer(0)]]) {\n    VSOut o; o.pos = u.MVP * in.pos; o.uv = in.uv; return o;\n}\n\nstatic inline float3 rgb2yiq(float3 c){\n    float Y = dot(c, float3(0.299, 0.587, 0.114));\n    float I = dot(c, float3(0.596, -0.274, -0.322));\n    float Q = dot(c, float3(0.211, -0.523, 0.312));\n    return float3(Y,I,Q);\n}\nstatic inline float3 yiq2rgb(float3 y){\n    float3 r = float3(1.0, 0.956, 0.621);\n    float3 g = float3(1.0, -0.272, -0.647);\n    float3 b = float3(1.0, -1.106, 1.703);\n    return float3(\n        y.x*r.x + y.y*r.y + y.z*r.z,\n        y.x*g.x + y.y*g.y + y.z*g.z,\n        y.x*b.x + y.y*b.y + y.z*b.z\n    );\n}\n\nfragment float4 main0(\n    VSOut in [[stage_in]],\n    texture2d<float> src [[texture(0)]],\n    constant Uniforms &u [[buffer(0)]]\n){\n    constexpr sampler smp(mag_filter::linear, min_filter::linear, address::clamp_to_edge);\n    float2 uv = in.uv;\n\n    // Horizontal pre-blur for color bleed\n    float px = 1.0 / u.OutputSize.x;\n    float3 c0 = src.sample(smp, uv - float2(2.0*px,0)).rgb;\n    float3 c1 = src.sample(smp, uv - float2(1.0*px,0)).rgb;\n    float3 c2 = src.sample(smp, uv).rgb;\n    float3 c3 = src.sample(smp, uv + float2(1.0*px,0)).rgb;\n    float3 c4 = src.sample(smp, uv + float2(2.0*px,0)).rgb;\n\n    float3 blur = (c0 + 4.0*c1 + 6.0*c2 + 4.0*c3 + c4) / 16.0;\n    float3 pre = mix(c2, blur, u.bleed);\n\n    // Convert to YIQ and modulate chroma for sharpness/hue\n    float3 yiq = rgb2yiq(pre);\n\n    // Phase ripple to emulate subcarrier (cheap)\n    float line = floor(uv.y * u.OutputSize.y);\n    float phase = (line * 0.5 + float(u.FrameCount)*0.25);\n    float cs = cos(phase * 0.25 + u.hue_shift*3.14159);\n    float sn = sin(phase * 0.25 + u.hue_shift*3.14159);\n\n    float I = yiq.y * cs - yiq.z * sn;\n    float Q = yiq.y * sn + yiq.z * cs;\n\n    I *= mix(0.6, 1.1, u.sharpness);\n    Q *= mix(0.6, 1.1, u.sharpness);\n\n    float3 outRGB = yiq2rgb(float3(yiq.x, I, Q));\n\n    // Saturation and gamma\n    float l = dot(outRGB, float3(0.299,0.587,0.114));\n    outRGB = mix(float3(l), outRGB, u.saturation);\n    outRGB = pow(max(outRGB, 0.0), float3(1.0/max(u.gamma,0.001)));\n\n    return float4(saturate(outRGB), 1.0);\n}\n",
+            "frameCountMod": 0,
+            "scaleX": null,
+            "scaleY": null,
+            "filter": "linear",
+            "wrapMode": "edge",
+            "format": "rgba8Unorm",
+            "isFeedback": false,
+            "buffers": [
+                {
+                    "bindingVert": 0,
+                    "bindingFrag": 0,
+                    "size": 256,
+                    "uniforms": [
+                        {
+                            "semantic": "mvp",
+                            "index": null,
+                            "name": "MVP",
+                            "size": 64,
+                            "offset": 0
+                        },
+                        {
+                            "semantic": "outputSize",
+                            "index": null,
+                            "name": "OutputSize",
+                            "size": 16,
+                            "offset": 64
+                        },
+                        {
+                            "semantic": "sourceSize",
+                            "index": null,
+                            "name": "SourceSize",
+                            "size": 16,
+                            "offset": 80
+                        },
+                        {
+                            "semantic": "originalSize",
+                            "index": null,
+                            "name": "OriginalSize",
+                            "size": 16,
+                            "offset": 96
+                        },
+                        {
+                            "semantic": "frameCount",
+                            "index": null,
+                            "name": "FrameCount",
+                            "size": 4,
+                            "offset": 112
+                        },
+                        {
+                            "semantic": "floatParameter",
+                            "index": 0,
+                            "name": "sharpness",
+                            "size": 4,
+                            "offset": 116
+                        },
+                        {
+                            "semantic": "floatParameter",
+                            "index": 1,
+                            "name": "bleed",
+                            "size": 4,
+                            "offset": 120
+                        },
+                        {
+                            "semantic": "floatParameter",
+                            "index": 2,
+                            "name": "hue_shift",
+                            "size": 4,
+                            "offset": 124
+                        },
+                        {
+                            "semantic": "floatParameter",
+                            "index": 3,
+                            "name": "saturation",
+                            "size": 4,
+                            "offset": 128
+                        },
+                        {
+                            "semantic": "floatParameter",
+                            "index": 4,
+                            "name": "gamma",
+                            "size": 4,
+                            "offset": 132
+                        }
+                    ]
+                },
+                {
+                    "bindingVert": null,
+                    "bindingFrag": null,
+                    "size": 0,
+                    "uniforms": []
+                }
+            ],
+            "textures": [
+                {
+                    "name": "Source",
+                    "semantic": "source",
+                    "binding": 0,
+                    "wrap": "edge",
+                    "filter": "linear",
+                    "index": 0
+                }
+            ],
+            "alias": null
+        }
+    ],
+    "parameters": [
+        {
+            "index": 0,
+            "name": "sharpness",
+            "desc": "Luma Sharpness",
+            "initial": 0.8,
+            "minimum": 0.0,
+            "maximum": 1.0,
+            "step": 0.01
+        },
+        {
+            "index": 1,
+            "name": "bleed",
+            "desc": "Chroma Bleed",
+            "initial": 0.25,
+            "minimum": 0.0,
+            "maximum": 1.0,
+            "step": 0.01
+        },
+        {
+            "index": 2,
+            "name": "hue_shift",
+            "desc": "Hue Shift",
+            "initial": -0.05,
+            "minimum": -1.0,
+            "maximum": 1.0,
+            "step": 0.01
+        },
+        {
+            "index": 3,
+            "name": "saturation",
+            "desc": "Saturation",
+            "initial": 0.9,
+            "minimum": 0.0,
+            "maximum": 2.0,
+            "step": 0.01
+        },
+        {
+            "index": 4,
+            "name": "gamma",
+            "desc": "Gamma",
+            "initial": 1.0,
+            "minimum": 0.5,
+            "maximum": 3.0,
+            "step": 0.01
+        }
+    ],
+    "luts": [],
+    "historyCount": 0,
+    "languageVersion": "version2_4"
+}

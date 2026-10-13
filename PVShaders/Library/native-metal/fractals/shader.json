@@ -1,0 +1,258 @@
+{
+    "passes": [
+        {
+            "index": 0,
+            "vertexSource": "//\n//  Fractals (Mandelbrot, Julia)\n//  Native Metal Shader - Mathematical Art\n//\n\n#include <metal_stdlib>\nusing namespace metal;\n\nstruct Uniforms {\n    float4x4 MVP;\n    float4 OutputSize;\n    float4 SourceSize;\n    float4 OriginalSize;\n    uint FrameCount;\n    float zoom;\n    float iterations;\n    float julia_c_x;\n    float julia_c_y;\n    float center_x;       // pan center X\n    float center_y;       // pan center Y\n    float rotation;       // radians\n    float color_freq;     // palette frequency\n    float glow_strength;  // emission\n    float julia_mix;      // 0..1 mix Mandelbrot/Julia\n    float time_speed;     // time animation speed\n};\n\nstruct VertexIn {\n    float4 position [[attribute(0)]];\n    float2 texCoord [[attribute(1)]];\n};\n\nstruct VertexOut {\n    float4 position [[position]];\n    float2 texCoord;\n};\n\nvertex VertexOut main0(\n    VertexIn in [[stage_in]],\n    constant Uniforms &uniforms [[buffer(0)]]\n)\n{\n    VertexOut out;\n    out.position = uniforms.MVP * in.position;\n    out.texCoord = in.texCoord;\n    return out;\n}\n\n// Mandelbrot set\nfloat mandelbrot(float2 c, int maxIter) {\n    float2 z = float2(0.0);\n    int iter = 0;\n    \n    for (int i = 0; i < maxIter; i++) {\n        if (dot(z, z) > 4.0) break;\n        \n        // z = z^2 + c\n        float xtemp = z.x * z.x - z.y * z.y + c.x;\n        z.y = 2.0 * z.x * z.y + c.y;\n        z.x = xtemp;\n        \n        iter++;\n    }\n    \n    return float(iter) / float(maxIter);\n}\n\n// Julia set\nfloat julia(float2 z, float2 c, int maxIter) {\n    int iter = 0;\n    \n    for (int i = 0; i < maxIter; i++) {\n        if (dot(z, z) > 4.0) break;\n        \n        // z = z^2 + c\n        float xtemp = z.x * z.x - z.y * z.y + c.x;\n        z.y = 2.0 * z.x * z.y + c.y;\n        z.x = xtemp;\n        \n        iter++;\n    }\n    \n    return float(iter) / float(maxIter);\n}\n\n// Color palette (adjustable frequency)\nfloat3 palette(float t, float freq) {\n    float3 a = float3(0.5, 0.5, 0.5);\n    float3 b = float3(0.5, 0.5, 0.5);\n    float3 c = float3(1.0, 1.0, 1.0);\n    float3 d = float3(0.0, 0.33, 0.67);\n    \n    return a + b * cos(6.28318 * freq * (c * t + d));\n}\n\nfragment float4 fragment_main(\n    VertexOut in [[stage_in]],\n    texture2d<float> sourceTexture [[texture(0)]],\n    constant Uniforms &uniforms [[buffer(0)]]\n)\n{\n    constexpr sampler textureSampler(\n        mag_filter::linear,\n        min_filter::linear,\n        address::clamp_to_edge\n    );\n    \n    float4 originalColor = sourceTexture.sample(textureSampler, in.texCoord);\n    \n    // Map to complex plane\n    float2 uv = (in.texCoord - 0.5) * 2.0;\n    uv.x *= uniforms.OutputSize.x / uniforms.OutputSize.y;\n    \n    float time = float(uniforms.FrameCount) * 0.01 * uniforms.time_speed;\n    \n    // Zoom and pan\n    uv /= uniforms.zoom;\n    // Apply rotation\n    float s = sin(uniforms.rotation), rotC = cos(uniforms.rotation);\n    uv = float2(rotC*uv.x - s*uv.y, s*uv.x + rotC*uv.y);\n    // Pan\n    uv += float2(uniforms.center_x, uniforms.center_y);\n    \n    int maxIter = int(uniforms.iterations);\n    \n    // Julia set with animated c\n    float2 jc = float2(uniforms.julia_c_x, uniforms.julia_c_y);\n    jc += float2(cos(time * 0.3), sin(time * 0.5)) * 0.3;\n    \n    float juliaValue = julia(uv, jc, maxIter);\n    \n    // Mandelbrot set\n    float mandelbrotValue = mandelbrot(uv, maxIter);\n    \n    // Mix both fractals\n    float fractalValue = mix(mandelbrotValue, juliaValue, clamp(uniforms.julia_mix, 0.0, 1.0));\n    \n    // Apply color palette\n    float3 fractalColor = palette(fractalValue, max(0.1, uniforms.color_freq));\n    // Glow/emission accent near boundary\n    float edge = smoothstep(0.0, 0.02, abs(fractalValue - 0.5));\n    fractalColor += uniforms.glow_strength * (1.0 - edge);\n    \n    // Blend with original image\n    float3 result = mix(originalColor.rgb, fractalColor, 0.7);\n    \n    return float4(result, 1.0);\n}\n",
+            "fragmentSource": "//\n//  Fractals (Mandelbrot, Julia)\n//  Native Metal Shader - Mathematical Art\n//\n\n#include <metal_stdlib>\nusing namespace metal;\n\nstruct Uniforms {\n    float4x4 MVP;\n    float4 OutputSize;\n    float4 SourceSize;\n    float4 OriginalSize;\n    uint FrameCount;\n    float zoom;\n    float iterations;\n    float julia_c_x;\n    float julia_c_y;\n    float center_x;       // pan center X\n    float center_y;       // pan center Y\n    float rotation;       // radians\n    float color_freq;     // palette frequency\n    float glow_strength;  // emission\n    float julia_mix;      // 0..1 mix Mandelbrot/Julia\n    float time_speed;     // time animation speed\n};\n\nstruct VertexIn {\n    float4 position [[attribute(0)]];\n    float2 texCoord [[attribute(1)]];\n};\n\nstruct VertexOut {\n    float4 position [[position]];\n    float2 texCoord;\n};\n\nvertex VertexOut vertex_main(\n    VertexIn in [[stage_in]],\n    constant Uniforms &uniforms [[buffer(0)]]\n)\n{\n    VertexOut out;\n    out.position = uniforms.MVP * in.position;\n    out.texCoord = in.texCoord;\n    return out;\n}\n\n// Mandelbrot set\nfloat mandelbrot(float2 c, int maxIter) {\n    float2 z = float2(0.0);\n    int iter = 0;\n    \n    for (int i = 0; i < maxIter; i++) {\n        if (dot(z, z) > 4.0) break;\n        \n        // z = z^2 + c\n        float xtemp = z.x * z.x - z.y * z.y + c.x;\n        z.y = 2.0 * z.x * z.y + c.y;\n        z.x = xtemp;\n        \n        iter++;\n    }\n    \n    return float(iter) / float(maxIter);\n}\n\n// Julia set\nfloat julia(float2 z, float2 c, int maxIter) {\n    int iter = 0;\n    \n    for (int i = 0; i < maxIter; i++) {\n        if (dot(z, z) > 4.0) break;\n        \n        // z = z^2 + c\n        float xtemp = z.x * z.x - z.y * z.y + c.x;\n        z.y = 2.0 * z.x * z.y + c.y;\n        z.x = xtemp;\n        \n        iter++;\n    }\n    \n    return float(iter) / float(maxIter);\n}\n\n// Color palette (adjustable frequency)\nfloat3 palette(float t, float freq) {\n    float3 a = float3(0.5, 0.5, 0.5);\n    float3 b = float3(0.5, 0.5, 0.5);\n    float3 c = float3(1.0, 1.0, 1.0);\n    float3 d = float3(0.0, 0.33, 0.67);\n    \n    return a + b * cos(6.28318 * freq * (c * t + d));\n}\n\nfragment float4 main0(\n    VertexOut in [[stage_in]],\n    texture2d<float> sourceTexture [[texture(0)]],\n    constant Uniforms &uniforms [[buffer(0)]]\n)\n{\n    constexpr sampler textureSampler(\n        mag_filter::linear,\n        min_filter::linear,\n        address::clamp_to_edge\n    );\n    \n    float4 originalColor = sourceTexture.sample(textureSampler, in.texCoord);\n    \n    // Map to complex plane\n    float2 uv = (in.texCoord - 0.5) * 2.0;\n    uv.x *= uniforms.OutputSize.x / uniforms.OutputSize.y;\n    \n    float time = float(uniforms.FrameCount) * 0.01 * uniforms.time_speed;\n    \n    // Zoom and pan\n    uv /= uniforms.zoom;\n    // Apply rotation\n    float s = sin(uniforms.rotation), rotC = cos(uniforms.rotation);\n    uv = float2(rotC*uv.x - s*uv.y, s*uv.x + rotC*uv.y);\n    // Pan\n    uv += float2(uniforms.center_x, uniforms.center_y);\n    \n    int maxIter = int(uniforms.iterations);\n    \n    // Julia set with animated c\n    float2 jc = float2(uniforms.julia_c_x, uniforms.julia_c_y);\n    jc += float2(cos(time * 0.3), sin(time * 0.5)) * 0.3;\n    \n    float juliaValue = julia(uv, jc, maxIter);\n    \n    // Mandelbrot set\n    float mandelbrotValue = mandelbrot(uv, maxIter);\n    \n    // Mix both fractals\n    float fractalValue = mix(mandelbrotValue, juliaValue, clamp(uniforms.julia_mix, 0.0, 1.0));\n    \n    // Apply color palette\n    float3 fractalColor = palette(fractalValue, max(0.1, uniforms.color_freq));\n    // Glow/emission accent near boundary\n    float edge = smoothstep(0.0, 0.02, abs(fractalValue - 0.5));\n    fractalColor += uniforms.glow_strength * (1.0 - edge);\n    \n    // Blend with original image\n    float3 result = mix(originalColor.rgb, fractalColor, 0.7);\n    \n    return float4(result, 1.0);\n}\n",
+            "frameCountMod": 0,
+            "scaleX": null,
+            "scaleY": null,
+            "filter": "linear",
+            "wrapMode": "edge",
+            "format": "rgba8Unorm",
+            "isFeedback": false,
+            "buffers": [
+                {
+                    "bindingVert": 0,
+                    "bindingFrag": 0,
+                    "size": 256,
+                    "uniforms": [
+                        {
+                            "semantic": "mvp",
+                            "index": null,
+                            "name": "MVP",
+                            "size": 64,
+                            "offset": 0
+                        },
+                        {
+                            "semantic": "outputSize",
+                            "index": null,
+                            "name": "OutputSize",
+                            "size": 16,
+                            "offset": 64
+                        },
+                        {
+                            "semantic": "sourceSize",
+                            "index": null,
+                            "name": "SourceSize",
+                            "size": 16,
+                            "offset": 80
+                        },
+                        {
+                            "semantic": "originalSize",
+                            "index": null,
+                            "name": "OriginalSize",
+                            "size": 16,
+                            "offset": 96
+                        },
+                        {
+                            "semantic": "frameCount",
+                            "index": null,
+                            "name": "FrameCount",
+                            "size": 4,
+                            "offset": 112
+                        },
+                        {
+                            "semantic": "floatParameter",
+                            "index": 0,
+                            "name": "zoom",
+                            "size": 4,
+                            "offset": 116
+                        },
+                        {
+                            "semantic": "floatParameter",
+                            "index": 1,
+                            "name": "iterations",
+                            "size": 4,
+                            "offset": 120
+                        },
+                        {
+                            "semantic": "floatParameter",
+                            "index": 2,
+                            "name": "julia_c_x",
+                            "size": 4,
+                            "offset": 124
+                        },
+                        {
+                            "semantic": "floatParameter",
+                            "index": 3,
+                            "name": "julia_c_y",
+                            "size": 4,
+                            "offset": 128
+                        },
+                        {
+                            "semantic": "floatParameter",
+                            "index": 4,
+                            "name": "center_x",
+                            "size": 4,
+                            "offset": 132
+                        },
+                        {
+                            "semantic": "floatParameter",
+                            "index": 5,
+                            "name": "center_y",
+                            "size": 4,
+                            "offset": 136
+                        },
+                        {
+                            "semantic": "floatParameter",
+                            "index": 6,
+                            "name": "rotation",
+                            "size": 4,
+                            "offset": 140
+                        },
+                        {
+                            "semantic": "floatParameter",
+                            "index": 7,
+                            "name": "color_freq",
+                            "size": 4,
+                            "offset": 144
+                        },
+                        {
+                            "semantic": "floatParameter",
+                            "index": 8,
+                            "name": "glow_strength",
+                            "size": 4,
+                            "offset": 148
+                        },
+                        {
+                            "semantic": "floatParameter",
+                            "index": 9,
+                            "name": "julia_mix",
+                            "size": 4,
+                            "offset": 152
+                        },
+                        {
+                            "semantic": "floatParameter",
+                            "index": 10,
+                            "name": "time_speed",
+                            "size": 4,
+                            "offset": 156
+                        }
+                    ]
+                },
+                {
+                    "bindingVert": null,
+                    "bindingFrag": null,
+                    "size": 0,
+                    "uniforms": []
+                }
+            ],
+            "textures": [
+                {
+                    "name": "Source",
+                    "semantic": "source",
+                    "binding": 0,
+                    "wrap": "edge",
+                    "filter": "linear",
+                    "index": 0
+                }
+            ],
+            "alias": null
+        }
+    ],
+    "parameters": [
+        {
+            "index": 0,
+            "name": "zoom",
+            "desc": "Zoom",
+            "initial": 1.0,
+            "minimum": 0.1,
+            "maximum": 10.0,
+            "step": 0.1
+        },
+        {
+            "index": 1,
+            "name": "iterations",
+            "desc": "Iterations (Quality)",
+            "initial": 64.0,
+            "minimum": 16.0,
+            "maximum": 256.0,
+            "step": 16.0
+        },
+        {
+            "index": 2,
+            "name": "julia_c_x",
+            "desc": "Julia C (Real)",
+            "initial": -0.7,
+            "minimum": -2.0,
+            "maximum": 2.0,
+            "step": 0.05
+        },
+        {
+            "index": 3,
+            "name": "julia_c_y",
+            "desc": "Julia C (Imaginary)",
+            "initial": 0.27,
+            "minimum": -2.0,
+            "maximum": 2.0,
+            "step": 0.05
+        },
+        {
+            "index": 4,
+            "name": "center_x",
+            "desc": "Pan X",
+            "initial": 0.0,
+            "minimum": -2.0,
+            "maximum": 2.0,
+            "step": 0.01
+        },
+        {
+            "index": 5,
+            "name": "center_y",
+            "desc": "Pan Y",
+            "initial": 0.0,
+            "minimum": -2.0,
+            "maximum": 2.0,
+            "step": 0.01
+        },
+        {
+            "index": 6,
+            "name": "rotation",
+            "desc": "Rotation (rad)",
+            "initial": 0.0,
+            "minimum": -3.1416,
+            "maximum": 3.1416,
+            "step": 0.01
+        },
+        {
+            "index": 7,
+            "name": "color_freq",
+            "desc": "Color Frequency",
+            "initial": 1.0,
+            "minimum": 0.1,
+            "maximum": 5.0,
+            "step": 0.05
+        },
+        {
+            "index": 8,
+            "name": "glow_strength",
+            "desc": "Glow Strength",
+            "initial": 0.2,
+            "minimum": 0.0,
+            "maximum": 1.0,
+            "step": 0.01
+        },
+        {
+            "index": 9,
+            "name": "julia_mix",
+            "desc": "Julia Mix (0..1)",
+            "initial": 0.5,
+            "minimum": 0.0,
+            "maximum": 1.0,
+            "step": 0.01
+        },
+        {
+            "index": 10,
+            "name": "time_speed",
+            "desc": "Animation Speed",
+            "initial": 1.0,
+            "minimum": 0.0,
+            "maximum": 5.0,
+            "step": 0.05
+        }
+    ],
+    "luts": [],
+    "historyCount": 0,
+    "languageVersion": "version2_4"
+}

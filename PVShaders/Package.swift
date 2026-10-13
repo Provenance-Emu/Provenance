@@ -49,6 +49,12 @@ let package = Package(
                 .process("Resources/Metal")
             ]
         ),
+        // Host tool: loads and renders every preset in an unpacked library.
+        // Run by Scripts/shaders/validate_slang_shaders.sh.
+        .executableTarget(
+            name: "pvshader-validate",
+            dependencies: ["PVSlangRuntime"]
+        ),
         .testTarget(
             name: "PVShadersTests",
             dependencies: ["PVShaders", "PVSlangRuntime"],

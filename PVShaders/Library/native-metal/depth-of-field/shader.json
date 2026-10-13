@@ -1,0 +1,146 @@
+{
+    "passes": [
+        {
+            "index": 0,
+            "vertexSource": "//\n//  Depth of Field (Bokeh)\n//  Native Metal Shader - Camera-like Focus\n//\n\n#include <metal_stdlib>\nusing namespace metal;\n\nstruct Uniforms {\n    float4x4 MVP;\n    float4 OutputSize;\n    float4 SourceSize;\n    float4 OriginalSize;\n    uint FrameCount;\n    float focus_distance;\n    float aperture;\n    float focal_length;\n    float bokeh_shape;\n};\n\nstruct VertexIn {\n    float4 position [[attribute(0)]];\n    float2 texCoord [[attribute(1)]];\n};\n\nstruct VertexOut {\n    float4 position [[position]];\n    float2 texCoord;\n};\n\nvertex VertexOut main0(\n    VertexIn in [[stage_in]],\n    constant Uniforms &uniforms [[buffer(0)]]\n)\n{\n    VertexOut out;\n    out.position = uniforms.MVP * in.position;\n    out.texCoord = in.texCoord;\n    return out;\n}\n\n// Pseudo-depth from luminance and position\nfloat getDepth(float2 uv, float3 color) {\n    float luminanceDepth = dot(color, float3(0.299, 0.587, 0.114));\n    \n    // Add radial depth component\n    float2 center = float2(0.5, 0.5);\n    float radialDepth = length(uv - center) * 0.5;\n    \n    return luminanceDepth * 0.7 + radialDepth * 0.3;\n}\n\n// Hexagonal bokeh shape\nfloat hexagon(float2 p, float r) {\n    const float3 k = float3(-0.866025404, 0.5, 0.577350269);\n    p = abs(p);\n    p -= 2.0 * min(dot(k.xy, p), 0.0) * k.xy;\n    p -= float2(clamp(p.x, -k.z * r, k.z * r), r);\n    return length(p) * sign(p.y);\n}\n\nfragment float4 fragment_main(\n    VertexOut in [[stage_in]],\n    texture2d<float> sourceTexture [[texture(0)]],\n    constant Uniforms &uniforms [[buffer(0)]]\n)\n{\n    constexpr sampler textureSampler(\n        mag_filter::linear,\n        min_filter::linear,\n        address::clamp_to_edge\n    );\n    \n    float4 centerColor = sourceTexture.sample(textureSampler, in.texCoord);\n    float centerDepth = getDepth(in.texCoord, centerColor.rgb);\n    \n    // Calculate circle of confusion\n    float depthDiff = abs(centerDepth - uniforms.focus_distance);\n    float coc = depthDiff * uniforms.aperture * uniforms.focal_length;\n    coc = clamp(coc, 0.0, 0.05);\n    \n    // If in focus, return original\n    if (coc < 0.001) {\n        return centerColor;\n    }\n    \n    // Bokeh blur\n    float3 result = float3(0.0);\n    float totalWeight = 0.0;\n    \n    int samples = 16;\n    float goldenAngle = 2.399963229728653; // Golden angle in radians\n    \n    for (int i = 0; i < samples; i++) {\n        float angle = float(i) * goldenAngle;\n        float radius = sqrt(float(i) / float(samples));\n        \n        float2 offset = float2(cos(angle), sin(angle)) * radius * coc;\n        \n        // Hexagonal bokeh shape\n        float2 bokehCoord = offset / coc;\n        float bokehMask = smoothstep(1.0, 0.9, hexagon(bokehCoord, 1.0));\n        bokehMask = mix(1.0, bokehMask, uniforms.bokeh_shape);\n        \n        float3 sample = sourceTexture.sample(textureSampler, in.texCoord + offset).rgb;\n        float sampleDepth = getDepth(in.texCoord + offset, sample);\n        \n        // Weight by depth similarity\n        float depthWeight = exp(-abs(sampleDepth - centerDepth) * 10.0);\n        float weight = bokehMask * depthWeight;\n        \n        result += sample * weight;\n        totalWeight += weight;\n    }\n    \n    result /= totalWeight;\n    \n    // Blend based on CoC\n    float blendFactor = smoothstep(0.0, 0.01, coc);\n    result = mix(centerColor.rgb, result, blendFactor);\n    \n    return float4(result, 1.0);\n}\n",
+            "fragmentSource": "//\n//  Depth of Field (Bokeh)\n//  Native Metal Shader - Camera-like Focus\n//\n\n#include <metal_stdlib>\nusing namespace metal;\n\nstruct Uniforms {\n    float4x4 MVP;\n    float4 OutputSize;\n    float4 SourceSize;\n    float4 OriginalSize;\n    uint FrameCount;\n    float focus_distance;\n    float aperture;\n    float focal_length;\n    float bokeh_shape;\n};\n\nstruct VertexIn {\n    float4 position [[attribute(0)]];\n    float2 texCoord [[attribute(1)]];\n};\n\nstruct VertexOut {\n    float4 position [[position]];\n    float2 texCoord;\n};\n\nvertex VertexOut vertex_main(\n    VertexIn in [[stage_in]],\n    constant Uniforms &uniforms [[buffer(0)]]\n)\n{\n    VertexOut out;\n    out.position = uniforms.MVP * in.position;\n    out.texCoord = in.texCoord;\n    return out;\n}\n\n// Pseudo-depth from luminance and position\nfloat getDepth(float2 uv, float3 color) {\n    float luminanceDepth = dot(color, float3(0.299, 0.587, 0.114));\n    \n    // Add radial depth component\n    float2 center = float2(0.5, 0.5);\n    float radialDepth = length(uv - center) * 0.5;\n    \n    return luminanceDepth * 0.7 + radialDepth * 0.3;\n}\n\n// Hexagonal bokeh shape\nfloat hexagon(float2 p, float r) {\n    const float3 k = float3(-0.866025404, 0.5, 0.577350269);\n    p = abs(p);\n    p -= 2.0 * min(dot(k.xy, p), 0.0) * k.xy;\n    p -= float2(clamp(p.x, -k.z * r, k.z * r), r);\n    return length(p) * sign(p.y);\n}\n\nfragment float4 main0(\n    VertexOut in [[stage_in]],\n    texture2d<float> sourceTexture [[texture(0)]],\n    constant Uniforms &uniforms [[buffer(0)]]\n)\n{\n    constexpr sampler textureSampler(\n        mag_filter::linear,\n        min_filter::linear,\n        address::clamp_to_edge\n    );\n    \n    float4 centerColor = sourceTexture.sample(textureSampler, in.texCoord);\n    float centerDepth = getDepth(in.texCoord, centerColor.rgb);\n    \n    // Calculate circle of confusion\n    float depthDiff = abs(centerDepth - uniforms.focus_distance);\n    float coc = depthDiff * uniforms.aperture * uniforms.focal_length;\n    coc = clamp(coc, 0.0, 0.05);\n    \n    // If in focus, return original\n    if (coc < 0.001) {\n        return centerColor;\n    }\n    \n    // Bokeh blur\n    float3 result = float3(0.0);\n    float totalWeight = 0.0;\n    \n    int samples = 16;\n    float goldenAngle = 2.399963229728653; // Golden angle in radians\n    \n    for (int i = 0; i < samples; i++) {\n        float angle = float(i) * goldenAngle;\n        float radius = sqrt(float(i) / float(samples));\n        \n        float2 offset = float2(cos(angle), sin(angle)) * radius * coc;\n        \n        // Hexagonal bokeh shape\n        float2 bokehCoord = offset / coc;\n        float bokehMask = smoothstep(1.0, 0.9, hexagon(bokehCoord, 1.0));\n        bokehMask = mix(1.0, bokehMask, uniforms.bokeh_shape);\n        \n        float3 sample = sourceTexture.sample(textureSampler, in.texCoord + offset).rgb;\n        float sampleDepth = getDepth(in.texCoord + offset, sample);\n        \n        // Weight by depth similarity\n        float depthWeight = exp(-abs(sampleDepth - centerDepth) * 10.0);\n        float weight = bokehMask * depthWeight;\n        \n        result += sample * weight;\n        totalWeight += weight;\n    }\n    \n    result /= totalWeight;\n    \n    // Blend based on CoC\n    float blendFactor = smoothstep(0.0, 0.01, coc);\n    result = mix(centerColor.rgb, result, blendFactor);\n    \n    return float4(result, 1.0);\n}\n",
+            "frameCountMod": 0,
+            "scaleX": null,
+            "scaleY": null,
+            "filter": "linear",
+            "wrapMode": "edge",
+            "format": "rgba8Unorm",
+            "isFeedback": false,
+            "buffers": [
+                {
+                    "bindingVert": 0,
+                    "bindingFrag": 0,
+                    "size": 256,
+                    "uniforms": [
+                        {
+                            "semantic": "mvp",
+                            "index": null,
+                            "name": "MVP",
+                            "size": 64,
+                            "offset": 0
+                        },
+                        {
+                            "semantic": "outputSize",
+                            "index": null,
+                            "name": "OutputSize",
+                            "size": 16,
+                            "offset": 64
+                        },
+                        {
+                            "semantic": "sourceSize",
+                            "index": null,
+                            "name": "SourceSize",
+                            "size": 16,
+                            "offset": 80
+                        },
+                        {
+                            "semantic": "originalSize",
+                            "index": null,
+                            "name": "OriginalSize",
+                            "size": 16,
+                            "offset": 96
+                        },
+                        {
+                            "semantic": "frameCount",
+                            "index": null,
+                            "name": "FrameCount",
+                            "size": 4,
+                            "offset": 112
+                        },
+                        {
+                            "semantic": "floatParameter",
+                            "index": 0,
+                            "name": "focus_distance",
+                            "size": 4,
+                            "offset": 116
+                        },
+                        {
+                            "semantic": "floatParameter",
+                            "index": 1,
+                            "name": "aperture",
+                            "size": 4,
+                            "offset": 120
+                        },
+                        {
+                            "semantic": "floatParameter",
+                            "index": 2,
+                            "name": "focal_length",
+                            "size": 4,
+                            "offset": 124
+                        },
+                        {
+                            "semantic": "floatParameter",
+                            "index": 3,
+                            "name": "bokeh_shape",
+                            "size": 4,
+                            "offset": 128
+                        }
+                    ]
+                },
+                {
+                    "bindingVert": null,
+                    "bindingFrag": null,
+                    "size": 0,
+                    "uniforms": []
+                }
+            ],
+            "textures": [
+                {
+                    "name": "Source",
+                    "semantic": "source",
+                    "binding": 0,
+                    "wrap": "edge",
+                    "filter": "linear",
+                    "index": 0
+                }
+            ],
+            "alias": null
+        }
+    ],
+    "parameters": [
+        {
+            "index": 0,
+            "name": "focus_distance",
+            "desc": "Focus Distance",
+            "initial": 0.5,
+            "minimum": 0.0,
+            "maximum": 1.0,
+            "step": 0.05
+        },
+        {
+            "index": 1,
+            "name": "aperture",
+            "desc": "Aperture (f-stop)",
+            "initial": 0.5,
+            "minimum": 0.1,
+            "maximum": 2.0,
+            "step": 0.1
+        },
+        {
+            "index": 2,
+            "name": "focal_length",
+            "desc": "Focal Length",
+            "initial": 1.0,
+            "minimum": 0.5,
+            "maximum": 3.0,
+            "step": 0.1
+        },
+        {
+            "index": 3,
+            "name": "bokeh_shape",
+            "desc": "Bokeh Shape",
+            "initial": 0.7,
+            "minimum": 0.0,
+            "maximum": 1.0,
+            "step": 0.05
+        }
+    ],
+    "luts": [],
+    "historyCount": 0,
+    "languageVersion": "version2_4"
+}

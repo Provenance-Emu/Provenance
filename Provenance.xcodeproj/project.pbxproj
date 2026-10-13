@@ -6468,6 +6468,7 @@
 				B3A60E872CB770C8001D99C2 /* Script: Generate Frameworks */,
 				C0C0CAFE0001000000000001 /* Script: Validate Frameworks */,
 				1A3D409217B2DCE4004DFFFC /* Resources */,
+				C0C0CAFE5A4C000000000010 /* Script: Embed Slang Shaders */,
 				1A44C0AD1D0A1DE80018751A /* Script: Set Build Number */,
 			);
 			buildRules = (
@@ -6590,6 +6591,7 @@
 				930499A52A93073800BF257F /* Frameworks */,
 				930499C72A93073800BF257F /* Code Sign libretro.h Cores */,
 				930499C82A93073800BF257F /* Resources */,
+				C0C0CAFE5A4C000000000060 /* Script: Embed Slang Shaders */,
 				930499EA2A93073800BF257F /* Script: Set Build Number */,
 			);
 			buildRules = (
@@ -6774,6 +6776,7 @@
 				B35EEFA02C6C6D1A00EBD1A8 /* Embed Frameworks */,
 				B35EEFB02C6C6D1A00EBD1A8 /* Frameworks */,
 				B35EEFE22C6C6D1A00EBD1A8 /* Resources */,
+				C0C0CAFE5A4C000000000040 /* Script: Embed Slang Shaders */,
 				B35EEFFF2C6C6D1A00EBD1A8 /* Script: Set Build Number */,
 				B3DD08002F20031900000000 /* Embed Foundation Extensions */,
 			);
@@ -6843,6 +6846,7 @@
 				B3CC2E0D2CBC0D4F00D90EB1 /* Script: Generate Frameworks */,
 				C0C0CAFE0001000000000002 /* Script: Validate Frameworks */,
 				B394CDB62BDEE53A006B63E8 /* Resources */,
+				C0C0CAFE5A4C000000000020 /* Script: Embed Slang Shaders */,
 				B394CDDA2BDEE53A006B63E8 /* Script: Set Build Number */,
 				C0C0CA0100000010 /* Upload Debug Symbols to Sentry */,
 			);
@@ -7051,6 +7055,7 @@
 				B3F7E2A5297736BE00362B92 /* Sources */,
 				B3F7E373297736BE00362B92 /* Frameworks */,
 				B3F7E3C3297736BE00362B92 /* Resources */,
+				C0C0CAFE5A4C000000000050 /* Script: Embed Slang Shaders */,
 				B3F7E3E6297736BE00362B92 /* Script: Set Build Number */,
 				B3FD98902D615CF000397643 /* Embed Frameworks */,
 			);
@@ -7097,6 +7102,7 @@
 				B3A60E802CB76E39001D99C2 /* Script: Generate Frameworks */,
 				C0C0CAFE0001000000000003 /* Script: Validate Frameworks */,
 				B3F7E550297736C200362B92 /* Resources */,
+				C0C0CAFE5A4C000000000030 /* Script: Embed Slang Shaders */,
 				B3F7E573297736C200362B92 /* Script: Set Build Number */,
 			);
 			buildRules = (
@@ -9158,6 +9164,126 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
+		C0C0CAFE5A4C000000000010 /* Script: Embed Slang Shaders */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"$(SRCROOT)/Scripts/shaders/slang-shaders.lock.json",
+			);
+			name = "Script: Embed Slang Shaders";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "set -e\n/bin/bash \"${SRCROOT}/Scripts/shaders/embed_slang_shaders.sh\"\n";
+		};
+		C0C0CAFE5A4C000000000020 /* Script: Embed Slang Shaders */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"$(SRCROOT)/Scripts/shaders/slang-shaders.lock.json",
+			);
+			name = "Script: Embed Slang Shaders";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "set -e\n/bin/bash \"${SRCROOT}/Scripts/shaders/embed_slang_shaders.sh\"\n";
+		};
+		C0C0CAFE5A4C000000000030 /* Script: Embed Slang Shaders */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"$(SRCROOT)/Scripts/shaders/slang-shaders.lock.json",
+			);
+			name = "Script: Embed Slang Shaders";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "set -e\n/bin/bash \"${SRCROOT}/Scripts/shaders/embed_slang_shaders.sh\"\n";
+		};
+		C0C0CAFE5A4C000000000040 /* Script: Embed Slang Shaders */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"$(SRCROOT)/Scripts/shaders/slang-shaders.lock.json",
+			);
+			name = "Script: Embed Slang Shaders";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "set -e\n/bin/bash \"${SRCROOT}/Scripts/shaders/embed_slang_shaders.sh\"\n";
+		};
+		C0C0CAFE5A4C000000000050 /* Script: Embed Slang Shaders */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"$(SRCROOT)/Scripts/shaders/slang-shaders.lock.json",
+			);
+			name = "Script: Embed Slang Shaders";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "set -e\n/bin/bash \"${SRCROOT}/Scripts/shaders/embed_slang_shaders.sh\"\n";
+		};
+		C0C0CAFE5A4C000000000060 /* Script: Embed Slang Shaders */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"$(SRCROOT)/Scripts/shaders/slang-shaders.lock.json",
+			);
+			name = "Script: Embed Slang Shaders";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "set -e\n/bin/bash \"${SRCROOT}/Scripts/shaders/embed_slang_shaders.sh\"\n";
+		};
 		1A44C0AD1D0A1DE80018751A /* Script: Set Build Number */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;

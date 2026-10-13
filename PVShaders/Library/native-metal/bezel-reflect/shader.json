@@ -1,0 +1,194 @@
+{
+    "passes": [
+        {
+            "index": 0,
+            "vertexSource": "// Bezel Reflect - Native Metal overlay with procedural reflections and tint\n#include <metal_stdlib>\nusing namespace metal;\n\nstruct Uniforms {\n    float4x4 MVP;\n    float4 OutputSize;\n    float4 SourceSize;\n    float4 OriginalSize;\n    uint   FrameCount;\n    float  reflect_strength; // 0..1\n    float  gloss;            // 0..1 controls sharpness of reflection streaks\n    float  tint_r;           // 0..1\n    float  tint_g;           // 0..1\n    float  tint_b;           // 0..1\n    float  vignette;         // 0..2\n    float  gamma;            // 0.4..3.0\n};\n\nstruct VertexIn { float4 position [[attribute(0)]]; float2 texCoord [[attribute(1)]]; };\nstruct VertexOut { float4 position [[position]]; float2 texCoord; };\n\nvertex VertexOut main0(VertexIn in [[stage_in]], constant Uniforms &u [[buffer(0)]]) {\n    VertexOut out; out.position = u.MVP * in.position; out.texCoord = in.texCoord; return out;\n}\n\nstatic inline float hash21(float2 p){ return fract(sin(dot(p, float2(12.9898,78.233))) * 43758.5453); }\nstatic inline float2 noise2(float2 p){ float a = hash21(p); float b = hash21(p+37.0); return float2(a,b)*2.0-1.0; }\n\nfragment float4 fragment_main(\n    VertexOut in [[stage_in]],\n    texture2d<float> sourceTexture [[texture(0)]],\n    constant Uniforms &u [[buffer(0)]]\n) {\n    constexpr sampler smp(mag_filter::linear, min_filter::linear, address::clamp_to_edge);\n    float2 uv = in.texCoord;\n\n    // Base color (screen)\n    float3 base = sourceTexture.sample(smp, uv).rgb;\n\n    // Procedural bezel mask: soften edges to simulate glass edge falloff\n    float2 p = uv * 2.0 - 1.0;\n    float edge = smoothstep(1.0, 0.7, max(abs(p.x), abs(p.y)));\n\n    // Simple normal from radial gradient + noise, scaled by gloss\n    float r = length(p);\n    float3 n = normalize(float3(p.x, p.y, 1.0 - r));\n    float2 nJit = noise2(p * 24.0 + float(u.FrameCount)*0.01) * (0.15 + 0.35 * (1.0 - u.gloss));\n    n = normalize(n + float3(nJit, 0.0));\n\n    // View direction assumed camera at z=-1 looking along +z\n    float3 v = normalize(float3(0.0,0.0,1.0));\n    float3 rdir = reflect(-v, n);\n\n    // Procedural reflection sample: warp into screen UV space for fake env\n    float2 ruv = rdir.xy * 0.5 + 0.5;\n    // Add a thin streak that shifts with time and gloss\n    float t = float(u.FrameCount) * (0.004 + 0.01 * u.gloss);\n    ruv += float2(0.15 * sin(t + r*4.0), 0.08 * cos(t*1.3 + p.x*6.0)) * (0.4 + 0.6*u.gloss);\n    float3 refl = sourceTexture.sample(smp, clamp(ruv, 0.0, 1.0)).rgb;\n\n    // Tint\n    float3 tint = float3(u.tint_r, u.tint_g, u.tint_b);\n    refl = mix(refl, refl * tint, 0.5);\n\n    // Blend reflection over base using edge falloff and reflect_strength\n    float reflMask = edge * (0.6 + 0.4 * smoothstep(0.5, 1.0, r));\n    float3 col = mix(base, mix(base, refl, 0.6), u.reflect_strength * reflMask);\n\n    // Vignette\n    float vig = pow(clamp(1.0 - r, 0.0, 1.0), 1.0 + u.vignette);\n    col *= mix(1.0, vig, 0.6);\n\n    // Gamma\n    col = pow(max(col, 0.0), float3(1.0/max(u.gamma, 0.001)));\n\n    return float4(saturate(col), 1.0);\n}\n",
+            "fragmentSource": "// Bezel Reflect - Native Metal overlay with procedural reflections and tint\n#include <metal_stdlib>\nusing namespace metal;\n\nstruct Uniforms {\n    float4x4 MVP;\n    float4 OutputSize;\n    float4 SourceSize;\n    float4 OriginalSize;\n    uint   FrameCount;\n    float  reflect_strength; // 0..1\n    float  gloss;            // 0..1 controls sharpness of reflection streaks\n    float  tint_r;           // 0..1\n    float  tint_g;           // 0..1\n    float  tint_b;           // 0..1\n    float  vignette;         // 0..2\n    float  gamma;            // 0.4..3.0\n};\n\nstruct VertexIn { float4 position [[attribute(0)]]; float2 texCoord [[attribute(1)]]; };\nstruct VertexOut { float4 position [[position]]; float2 texCoord; };\n\nvertex VertexOut vertex_main(VertexIn in [[stage_in]], constant Uniforms &u [[buffer(0)]]) {\n    VertexOut out; out.position = u.MVP * in.position; out.texCoord = in.texCoord; return out;\n}\n\nstatic inline float hash21(float2 p){ return fract(sin(dot(p, float2(12.9898,78.233))) * 43758.5453); }\nstatic inline float2 noise2(float2 p){ float a = hash21(p); float b = hash21(p+37.0); return float2(a,b)*2.0-1.0; }\n\nfragment float4 main0(\n    VertexOut in [[stage_in]],\n    texture2d<float> sourceTexture [[texture(0)]],\n    constant Uniforms &u [[buffer(0)]]\n) {\n    constexpr sampler smp(mag_filter::linear, min_filter::linear, address::clamp_to_edge);\n    float2 uv = in.texCoord;\n\n    // Base color (screen)\n    float3 base = sourceTexture.sample(smp, uv).rgb;\n\n    // Procedural bezel mask: soften edges to simulate glass edge falloff\n    float2 p = uv * 2.0 - 1.0;\n    float edge = smoothstep(1.0, 0.7, max(abs(p.x), abs(p.y)));\n\n    // Simple normal from radial gradient + noise, scaled by gloss\n    float r = length(p);\n    float3 n = normalize(float3(p.x, p.y, 1.0 - r));\n    float2 nJit = noise2(p * 24.0 + float(u.FrameCount)*0.01) * (0.15 + 0.35 * (1.0 - u.gloss));\n    n = normalize(n + float3(nJit, 0.0));\n\n    // View direction assumed camera at z=-1 looking along +z\n    float3 v = normalize(float3(0.0,0.0,1.0));\n    float3 rdir = reflect(-v, n);\n\n    // Procedural reflection sample: warp into screen UV space for fake env\n    float2 ruv = rdir.xy * 0.5 + 0.5;\n    // Add a thin streak that shifts with time and gloss\n    float t = float(u.FrameCount) * (0.004 + 0.01 * u.gloss);\n    ruv += float2(0.15 * sin(t + r*4.0), 0.08 * cos(t*1.3 + p.x*6.0)) * (0.4 + 0.6*u.gloss);\n    float3 refl = sourceTexture.sample(smp, clamp(ruv, 0.0, 1.0)).rgb;\n\n    // Tint\n    float3 tint = float3(u.tint_r, u.tint_g, u.tint_b);\n    refl = mix(refl, refl * tint, 0.5);\n\n    // Blend reflection over base using edge falloff and reflect_strength\n    float reflMask = edge * (0.6 + 0.4 * smoothstep(0.5, 1.0, r));\n    float3 col = mix(base, mix(base, refl, 0.6), u.reflect_strength * reflMask);\n\n    // Vignette\n    float vig = pow(clamp(1.0 - r, 0.0, 1.0), 1.0 + u.vignette);\n    col *= mix(1.0, vig, 0.6);\n\n    // Gamma\n    col = pow(max(col, 0.0), float3(1.0/max(u.gamma, 0.001)));\n\n    return float4(saturate(col), 1.0);\n}\n",
+            "frameCountMod": 0,
+            "scaleX": null,
+            "scaleY": null,
+            "filter": "linear",
+            "wrapMode": "edge",
+            "format": "rgba8Unorm",
+            "isFeedback": false,
+            "buffers": [
+                {
+                    "bindingVert": 0,
+                    "bindingFrag": 0,
+                    "size": 256,
+                    "uniforms": [
+                        {
+                            "semantic": "mvp",
+                            "index": null,
+                            "name": "MVP",
+                            "size": 64,
+                            "offset": 0
+                        },
+                        {
+                            "semantic": "outputSize",
+                            "index": null,
+                            "name": "OutputSize",
+                            "size": 16,
+                            "offset": 64
+                        },
+                        {
+                            "semantic": "sourceSize",
+                            "index": null,
+                            "name": "SourceSize",
+                            "size": 16,
+                            "offset": 80
+                        },
+                        {
+                            "semantic": "originalSize",
+                            "index": null,
+                            "name": "OriginalSize",
+                            "size": 16,
+                            "offset": 96
+                        },
+                        {
+                            "semantic": "frameCount",
+                            "index": null,
+                            "name": "FrameCount",
+                            "size": 4,
+                            "offset": 112
+                        },
+                        {
+                            "semantic": "floatParameter",
+                            "index": 0,
+                            "name": "reflect_strength",
+                            "size": 4,
+                            "offset": 116
+                        },
+                        {
+                            "semantic": "floatParameter",
+                            "index": 1,
+                            "name": "gloss",
+                            "size": 4,
+                            "offset": 120
+                        },
+                        {
+                            "semantic": "floatParameter",
+                            "index": 2,
+                            "name": "tint_r",
+                            "size": 4,
+                            "offset": 124
+                        },
+                        {
+                            "semantic": "floatParameter",
+                            "index": 3,
+                            "name": "tint_g",
+                            "size": 4,
+                            "offset": 128
+                        },
+                        {
+                            "semantic": "floatParameter",
+                            "index": 4,
+                            "name": "tint_b",
+                            "size": 4,
+                            "offset": 132
+                        },
+                        {
+                            "semantic": "floatParameter",
+                            "index": 5,
+                            "name": "vignette",
+                            "size": 4,
+                            "offset": 136
+                        },
+                        {
+                            "semantic": "floatParameter",
+                            "index": 6,
+                            "name": "gamma",
+                            "size": 4,
+                            "offset": 140
+                        }
+                    ]
+                },
+                {
+                    "bindingVert": null,
+                    "bindingFrag": null,
+                    "size": 0,
+                    "uniforms": []
+                }
+            ],
+            "textures": [
+                {
+                    "name": "Source",
+                    "semantic": "source",
+                    "binding": 0,
+                    "wrap": "edge",
+                    "filter": "linear",
+                    "index": 0
+                }
+            ],
+            "alias": null
+        }
+    ],
+    "parameters": [
+        {
+            "index": 0,
+            "name": "reflect_strength",
+            "desc": "Reflection Strength",
+            "initial": 0.45,
+            "minimum": 0.0,
+            "maximum": 1.0,
+            "step": 0.01
+        },
+        {
+            "index": 1,
+            "name": "gloss",
+            "desc": "Gloss (Sharpness)",
+            "initial": 0.7,
+            "minimum": 0.0,
+            "maximum": 1.0,
+            "step": 0.01
+        },
+        {
+            "index": 2,
+            "name": "tint_r",
+            "desc": "Tint R",
+            "initial": 1.0,
+            "minimum": 0.0,
+            "maximum": 1.0,
+            "step": 0.01
+        },
+        {
+            "index": 3,
+            "name": "tint_g",
+            "desc": "Tint G",
+            "initial": 1.0,
+            "minimum": 0.0,
+            "maximum": 1.0,
+            "step": 0.01
+        },
+        {
+            "index": 4,
+            "name": "tint_b",
+            "desc": "Tint B",
+            "initial": 1.0,
+            "minimum": 0.0,
+            "maximum": 1.0,
+            "step": 0.01
+        },
+        {
+            "index": 5,
+            "name": "vignette",
+            "desc": "Vignette",
+            "initial": 0.6,
+            "minimum": 0.0,
+            "maximum": 2.0,
+            "step": 0.01
+        },
+        {
+            "index": 6,
+            "name": "gamma",
+            "desc": "Gamma",
+            "initial": 1.0,
+            "minimum": 0.4,
+            "maximum": 3.0,
+            "step": 0.01
+        }
+    ],
+    "luts": [],
+    "historyCount": 0,
+    "languageVersion": "version2_4"
+}

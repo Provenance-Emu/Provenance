@@ -1,0 +1,162 @@
+{
+    "passes": [
+        {
+            "index": 0,
+            "vertexSource": "#include <metal_stdlib>\nusing namespace metal;\n\nstruct Uniforms {\n    float4x4 MVP;\n    float4 OutputSize;\n    float4 SourceSize;\n    float4 OriginalSize;\n    uint FrameCount;\n    float dot_scale;       // 2..16\n    float posterize;       // 2..16 levels\n    float outline;         // 0..2\n    float palette;         // 0=Roy,1=Warhol,2=Custom\n    float customHue;       // 0..1\n};\n\nstruct VIn { float4 pos [[attribute(0)]]; float2 uv [[attribute(1)]]; };\nstruct VOut { float4 pos [[position]]; float2 uv; };\n\nvertex VOut main0(VIn in [[stage_in]], constant Uniforms &u [[buffer(0)]]) {\n    VOut o; o.pos = u.MVP * in.pos; o.uv = in.uv; return o;\n}\n\nstatic inline float luma(float3 c){ return dot(c, float3(0.2126,0.7152,0.0722)); }\nstatic inline float3 hsv2rgb(float3 c){ float4 K=float4(1.,2./3.,1./3.,3.); float3 p=abs(fract(c.xxx+K.xyz)*6.-K.www); return c.z*mix(K.xxx, clamp(p-K.xxx,0.,1.), c.y);} \n\nfragment float4 fragment_main(VOut in [[stage_in]], texture2d<float> src [[texture(0)]], constant Uniforms &u [[buffer(0)]]) {\n    constexpr sampler s(address::clamp_to_edge, filter::linear);\n    float2 pix = in.uv * u.OutputSize.xy;\n    float3 c = src.sample(s, in.uv).rgb;\n\n    // Posterize\n    float levels = clamp(round(u.posterize), 2.0, 16.0);\n    float3 pz = floor(c * levels) / (levels-1.0);\n\n    // Palette remap\n    float3 pal0 = float3(0.95,0.1,0.15);   // Roy red\n    float3 pal1 = float3(0.05,0.15,0.85);  // Roy blue\n    float3 pal2 = float3(0.98,0.98,0.1);   // Roy yellow\n    float3 pal3 = float3(0.05,0.85,0.25);  // Roy green\n\n    float3 mapped = pz;\n    if (u.palette < 0.5) {\n        // Roy: map luminance bands\n        float L = luma(pz);\n        mapped = (L < 0.25) ? pal1 : (L < 0.5) ? pal2 : (L < 0.75) ? pal0 : pal3;\n    } else if (u.palette < 1.5) {\n        // Warhol: hue shift blocks\n        float2 block = floor(pix / (u.dot_scale*8.0));\n        float hue = fract(dot(block, float2(0.319,0.173)));\n        mapped = hsv2rgb(float3(hue, 0.8, max(pz.r, max(pz.g, pz.b))));\n    } else {\n        // Custom: hue slider\n        mapped = hsv2rgb(float3(fract(u.customHue), 0.8, max(pz.r, max(pz.g, pz.b))));\n    }\n\n    // Halftone dots\n    float scale = clamp(u.dot_scale, 2.0, 16.0);\n    float2 cell = fract(pix/scale) - 0.5;\n    float L = luma(pz);\n    float rad = mix(0.05, 0.45, 1.0 - L);\n    float d = length(cell) * 1.4142;\n    float dotMask = 1.0 - smoothstep(rad-0.02, rad+0.02, d);\n\n    // Outline via Sobel on luma\n    float2 texel = 1.0 / u.OutputSize.xy;\n    float gx=0.0, gy=0.0; int idx=0;\n    float kx[9] = {-1,0,1,-2,0,2,-1,0,1}; float ky[9] = {-1,-2,-1,0,0,0,1,2,1};\n    for(int j=-1;j<=1;++j){ for(int i=-1;i<=1;++i){\n        float3 s3 = src.sample(s, in.uv + float2(i,j)*texel).rgb; float Ll = luma(s3);\n        gx += Ll * kx[idx]; gy += Ll * ky[idx]; idx++; }}\n    float edge = smoothstep(0.3, 0.9, length(float2(gx,gy)));\n\n    float3 outc = mapped * dotMask;\n    outc = mix(outc, float3(0.0), edge * u.outline);\n\n    return float4(saturate(outc), 1.0);\n}\n",
+            "fragmentSource": "#include <metal_stdlib>\nusing namespace metal;\n\nstruct Uniforms {\n    float4x4 MVP;\n    float4 OutputSize;\n    float4 SourceSize;\n    float4 OriginalSize;\n    uint FrameCount;\n    float dot_scale;       // 2..16\n    float posterize;       // 2..16 levels\n    float outline;         // 0..2\n    float palette;         // 0=Roy,1=Warhol,2=Custom\n    float customHue;       // 0..1\n};\n\nstruct VIn { float4 pos [[attribute(0)]]; float2 uv [[attribute(1)]]; };\nstruct VOut { float4 pos [[position]]; float2 uv; };\n\nvertex VOut vertex_main(VIn in [[stage_in]], constant Uniforms &u [[buffer(0)]]) {\n    VOut o; o.pos = u.MVP * in.pos; o.uv = in.uv; return o;\n}\n\nstatic inline float luma(float3 c){ return dot(c, float3(0.2126,0.7152,0.0722)); }\nstatic inline float3 hsv2rgb(float3 c){ float4 K=float4(1.,2./3.,1./3.,3.); float3 p=abs(fract(c.xxx+K.xyz)*6.-K.www); return c.z*mix(K.xxx, clamp(p-K.xxx,0.,1.), c.y);} \n\nfragment float4 main0(VOut in [[stage_in]], texture2d<float> src [[texture(0)]], constant Uniforms &u [[buffer(0)]]) {\n    constexpr sampler s(address::clamp_to_edge, filter::linear);\n    float2 pix = in.uv * u.OutputSize.xy;\n    float3 c = src.sample(s, in.uv).rgb;\n\n    // Posterize\n    float levels = clamp(round(u.posterize), 2.0, 16.0);\n    float3 pz = floor(c * levels) / (levels-1.0);\n\n    // Palette remap\n    float3 pal0 = float3(0.95,0.1,0.15);   // Roy red\n    float3 pal1 = float3(0.05,0.15,0.85);  // Roy blue\n    float3 pal2 = float3(0.98,0.98,0.1);   // Roy yellow\n    float3 pal3 = float3(0.05,0.85,0.25);  // Roy green\n\n    float3 mapped = pz;\n    if (u.palette < 0.5) {\n        // Roy: map luminance bands\n        float L = luma(pz);\n        mapped = (L < 0.25) ? pal1 : (L < 0.5) ? pal2 : (L < 0.75) ? pal0 : pal3;\n    } else if (u.palette < 1.5) {\n        // Warhol: hue shift blocks\n        float2 block = floor(pix / (u.dot_scale*8.0));\n        float hue = fract(dot(block, float2(0.319,0.173)));\n        mapped = hsv2rgb(float3(hue, 0.8, max(pz.r, max(pz.g, pz.b))));\n    } else {\n        // Custom: hue slider\n        mapped = hsv2rgb(float3(fract(u.customHue), 0.8, max(pz.r, max(pz.g, pz.b))));\n    }\n\n    // Halftone dots\n    float scale = clamp(u.dot_scale, 2.0, 16.0);\n    float2 cell = fract(pix/scale) - 0.5;\n    float L = luma(pz);\n    float rad = mix(0.05, 0.45, 1.0 - L);\n    float d = length(cell) * 1.4142;\n    float dotMask = 1.0 - smoothstep(rad-0.02, rad+0.02, d);\n\n    // Outline via Sobel on luma\n    float2 texel = 1.0 / u.OutputSize.xy;\n    float gx=0.0, gy=0.0; int idx=0;\n    float kx[9] = {-1,0,1,-2,0,2,-1,0,1}; float ky[9] = {-1,-2,-1,0,0,0,1,2,1};\n    for(int j=-1;j<=1;++j){ for(int i=-1;i<=1;++i){\n        float3 s3 = src.sample(s, in.uv + float2(i,j)*texel).rgb; float Ll = luma(s3);\n        gx += Ll * kx[idx]; gy += Ll * ky[idx]; idx++; }}\n    float edge = smoothstep(0.3, 0.9, length(float2(gx,gy)));\n\n    float3 outc = mapped * dotMask;\n    outc = mix(outc, float3(0.0), edge * u.outline);\n\n    return float4(saturate(outc), 1.0);\n}\n",
+            "frameCountMod": 0,
+            "scaleX": null,
+            "scaleY": null,
+            "filter": "linear",
+            "wrapMode": "edge",
+            "format": "rgba8Unorm",
+            "isFeedback": false,
+            "buffers": [
+                {
+                    "bindingVert": 0,
+                    "bindingFrag": 0,
+                    "size": 256,
+                    "uniforms": [
+                        {
+                            "semantic": "mvp",
+                            "index": null,
+                            "name": "MVP",
+                            "size": 64,
+                            "offset": 0
+                        },
+                        {
+                            "semantic": "outputSize",
+                            "index": null,
+                            "name": "OutputSize",
+                            "size": 16,
+                            "offset": 64
+                        },
+                        {
+                            "semantic": "sourceSize",
+                            "index": null,
+                            "name": "SourceSize",
+                            "size": 16,
+                            "offset": 80
+                        },
+                        {
+                            "semantic": "originalSize",
+                            "index": null,
+                            "name": "OriginalSize",
+                            "size": 16,
+                            "offset": 96
+                        },
+                        {
+                            "semantic": "frameCount",
+                            "index": null,
+                            "name": "FrameCount",
+                            "size": 4,
+                            "offset": 112
+                        },
+                        {
+                            "semantic": "floatParameter",
+                            "index": 0,
+                            "name": "dot_scale",
+                            "size": 4,
+                            "offset": 116
+                        },
+                        {
+                            "semantic": "floatParameter",
+                            "index": 1,
+                            "name": "posterize",
+                            "size": 4,
+                            "offset": 120
+                        },
+                        {
+                            "semantic": "floatParameter",
+                            "index": 2,
+                            "name": "outline",
+                            "size": 4,
+                            "offset": 124
+                        },
+                        {
+                            "semantic": "floatParameter",
+                            "index": 3,
+                            "name": "palette",
+                            "size": 4,
+                            "offset": 128
+                        },
+                        {
+                            "semantic": "floatParameter",
+                            "index": 4,
+                            "name": "customHue",
+                            "size": 4,
+                            "offset": 132
+                        }
+                    ]
+                },
+                {
+                    "bindingVert": null,
+                    "bindingFrag": null,
+                    "size": 0,
+                    "uniforms": []
+                }
+            ],
+            "textures": [
+                {
+                    "name": "Source",
+                    "semantic": "source",
+                    "binding": 0,
+                    "wrap": "edge",
+                    "filter": "linear",
+                    "index": 0
+                }
+            ],
+            "alias": null
+        }
+    ],
+    "parameters": [
+        {
+            "index": 0,
+            "name": "dot_scale",
+            "desc": "Dot Scale (px)",
+            "initial": 8.0,
+            "minimum": 2.0,
+            "maximum": 16.0,
+            "step": 0.5
+        },
+        {
+            "index": 1,
+            "name": "posterize",
+            "desc": "Posterize Levels",
+            "initial": 6.0,
+            "minimum": 2.0,
+            "maximum": 16.0,
+            "step": 1.0
+        },
+        {
+            "index": 2,
+            "name": "outline",
+            "desc": "Outline Strength",
+            "initial": 0.8,
+            "minimum": 0.0,
+            "maximum": 2.0,
+            "step": 0.05
+        },
+        {
+            "index": 3,
+            "name": "palette",
+            "desc": "Palette (0/1/2)",
+            "initial": 0.0,
+            "minimum": 0.0,
+            "maximum": 2.0,
+            "step": 1.0
+        },
+        {
+            "index": 4,
+            "name": "customHue",
+            "desc": "Custom Hue (0..1)",
+            "initial": 0.1,
+            "minimum": 0.0,
+            "maximum": 1.0,
+            "step": 0.01
+        }
+    ],
+    "luts": [],
+    "historyCount": 0,
+    "languageVersion": "version2_4"
+}

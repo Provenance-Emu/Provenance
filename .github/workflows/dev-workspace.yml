@@ -93,6 +93,13 @@ jobs:
       - name: Generate libretro cheat database if missing
         run: ./PVLookup/Scripts/generate_cheatdb_if_needed.sh
 
+      - name: Cache slang shader download
+        # Scripts/shaders/fetch_slang_shaders.py downloads the pinned library here; unpacking is fast.
+        uses: actions/cache@v4
+        with:
+          path: ~/Library/Caches/Provenance/slang-shaders/downloads
+          key: slang-shaders-${{ hashFiles('Scripts/shaders/slang-shaders.lock.json') }}
+
       - name: Install Tuist (mise)
         env:
           GITHUB_TOKEN: ${{ github.token }}

@@ -1,0 +1,274 @@
+{
+    "passes": [
+        {
+            "index": 0,
+            "vertexSource": "#include <metal_stdlib>\nusing namespace metal;\n\nstruct Uniforms {\n    float4x4 MVP;\n    float4 OutputSize;\n    float4 SourceSize;\n    float4 OriginalSize;\n    uint FrameCount;\n    // grading\n    float two_strip_mix;     // 0..1\n    float three_strip_mix;   // 0..1\n    float toe;               // 0..1\n    float shoulder;          // 0..1\n    float saturation;        // 0..2\n    float contrast;          // 0..2\n    float exposure;          // EV in stops\n    float skin_preserve;     // 0..1\n    // halation\n    float halation_strength; // 0..2\n    float halation_radius;   // px radius scale\n    float halation_threshold;// 0..1\n    // grain\n    float grain_amount;      // 0..1\n};\n\nstruct VertexIn {\n    float4 position [[attribute(0)]];\n    float2 texCoord [[attribute(1)]];\n};\n\nstruct Varyings {\n    float4 position [[position]];\n    float2 uv;\n};\n\nvertex Varyings main0(VertexIn in [[stage_in]], constant Uniforms &u [[buffer(0)]]) {\n    Varyings o; o.position = u.MVP * in.position; o.uv = in.texCoord; return o;\n}\n\nstatic inline float3 aces_tonemap(float3 x) {\n    const float a = 2.51, b = 0.03, c = 2.43, d = 0.59, e = 0.14;\n    return saturate((x*(a*x + b)) / (x*(c*x + d) + e));\n}\n\nstatic inline float3 toe_shoulder(float3 c, float toe, float shoulder) {\n    // simple filmic: apply toe then shoulder\n    float3 t = pow(c, float3(max(0.001, 1.0 + toe*0.8)));\n    float3 s = 1.0 - pow(1.0 - t, float3(max(0.001, 1.0 + shoulder)));\n    return s;\n}\n\nstatic inline float luma(float3 c) { return dot(c, float3(0.2126,0.7152,0.0722)); }\n\nstatic inline float3 two_strip(float3 c) {\n    // emphasize R/G, reduce B\n    float3 m = float3(1.15, 1.05, 0.6);\n    return saturate(c * m);\n}\n\nstatic inline float3 three_strip(float3 c) {\n    // gentle cross-channel remap\n    float3x3 M = float3x3(float3(1.05, 0.05, -0.02),\n                          float3(0.02, 1.02,  0.02),\n                          float3(-0.02, 0.03, 1.03));\n    return saturate(M * c);\n}\n\nfragment float4 fragment_main(Varyings in [[stage_in]],\n                              texture2d<float> source [[texture(0)]],\n                              constant Uniforms &u [[buffer(0)]]) {\n    constexpr sampler s(address::clamp_to_edge, filter::linear);\n    float2 texel = 1.0 / u.OutputSize.xy;\n    float4 src = source.sample(s, in.uv);\n    float3 col = src.rgb;\n\n    // exposure + contrast + saturation\n    col = col * pow(2.0, u.exposure);\n    float3 mean = float3(luma(col));\n    col = mix(mean, col, u.saturation);\n    col = saturate( (col - 0.5) * max(0.0, u.contrast) + 0.5 );\n\n    // technicolor mixes\n    float3 c2 = two_strip(col);\n    float3 c3 = three_strip(col);\n    col = mix(col, c2, clamp(u.two_strip_mix,0.0,1.0));\n    col = mix(col, c3, clamp(u.three_strip_mix,0.0,1.0));\n\n    // skin preserve: desaturate adjustment based on skin hue range\n    if (u.skin_preserve > 0.0) {\n        float3 ycbcr = float3(luma(col), dot(col, float3(-0.1687,-0.3313,0.5))+0.5, dot(col, float3(0.5,-0.4187,-0.0813))+0.5);\n        float mask = smoothstep(0.05, 0.015, abs(ycbcr.z-0.5)) * smoothstep(0.02, 0.15, abs(ycbcr.y-0.5));\n        col = mix(col, src.rgb, clamp(u.skin_preserve*mask, 0.0, 1.0));\n    }\n\n    // toe/shoulder filmic\n    col = toe_shoulder(col, u.toe, u.shoulder);\n\n    // simple halation: thresholded blur in a small neighborhood\n    float thr = u.halation_threshold;\n    float bright = max(0.0, luma(col) - thr);\n    if (u.halation_strength > 0.0) {\n        int r = int(clamp(u.halation_radius, 1.0, 8.0));\n        float3 acc = float3(0.0);\n        float wsum = 0.0;\n        for (int y=-r; y<=r; ++y) {\n            for (int x=-r; x<=r; ++x) {\n                float2 offset = float2(x,y) * texel;\n                float w = exp(-dot(offset,offset) * 40.0);\n                float3 cnb = source.sample(s, in.uv + offset).rgb;\n                if (luma(cnb) > thr) { acc += cnb * w; wsum += w; }\n            }\n        }\n        if (wsum > 0.0) {\n            float3 halo = acc / wsum;\n            // red-leaning halation\n            halo *= float3(1.05, 0.98, 0.94);\n            col = saturate(col + halo * u.halation_strength * bright);\n        }\n    }\n\n    // subtle ACES to unify\n    col = aces_tonemap(col);\n\n    // grain\n    if (u.grain_amount > 0.0) {\n        float2 p = in.uv * u.OutputSize.xy;\n        float n = fract(sin(dot(p, float2(12.9898,78.233))) * 43758.5453 + float(u.FrameCount)*0.07);\n        col = saturate(col + (n-0.5) * (u.grain_amount * 0.06));\n    }\n\n    return float4(col, src.a);\n}\n",
+            "fragmentSource": "#include <metal_stdlib>\nusing namespace metal;\n\nstruct Uniforms {\n    float4x4 MVP;\n    float4 OutputSize;\n    float4 SourceSize;\n    float4 OriginalSize;\n    uint FrameCount;\n    // grading\n    float two_strip_mix;     // 0..1\n    float three_strip_mix;   // 0..1\n    float toe;               // 0..1\n    float shoulder;          // 0..1\n    float saturation;        // 0..2\n    float contrast;          // 0..2\n    float exposure;          // EV in stops\n    float skin_preserve;     // 0..1\n    // halation\n    float halation_strength; // 0..2\n    float halation_radius;   // px radius scale\n    float halation_threshold;// 0..1\n    // grain\n    float grain_amount;      // 0..1\n};\n\nstruct VertexIn {\n    float4 position [[attribute(0)]];\n    float2 texCoord [[attribute(1)]];\n};\n\nstruct Varyings {\n    float4 position [[position]];\n    float2 uv;\n};\n\nvertex Varyings vertex_main(VertexIn in [[stage_in]], constant Uniforms &u [[buffer(0)]]) {\n    Varyings o; o.position = u.MVP * in.position; o.uv = in.texCoord; return o;\n}\n\nstatic inline float3 aces_tonemap(float3 x) {\n    const float a = 2.51, b = 0.03, c = 2.43, d = 0.59, e = 0.14;\n    return saturate((x*(a*x + b)) / (x*(c*x + d) + e));\n}\n\nstatic inline float3 toe_shoulder(float3 c, float toe, float shoulder) {\n    // simple filmic: apply toe then shoulder\n    float3 t = pow(c, float3(max(0.001, 1.0 + toe*0.8)));\n    float3 s = 1.0 - pow(1.0 - t, float3(max(0.001, 1.0 + shoulder)));\n    return s;\n}\n\nstatic inline float luma(float3 c) { return dot(c, float3(0.2126,0.7152,0.0722)); }\n\nstatic inline float3 two_strip(float3 c) {\n    // emphasize R/G, reduce B\n    float3 m = float3(1.15, 1.05, 0.6);\n    return saturate(c * m);\n}\n\nstatic inline float3 three_strip(float3 c) {\n    // gentle cross-channel remap\n    float3x3 M = float3x3(float3(1.05, 0.05, -0.02),\n                          float3(0.02, 1.02,  0.02),\n                          float3(-0.02, 0.03, 1.03));\n    return saturate(M * c);\n}\n\nfragment float4 main0(Varyings in [[stage_in]],\n                              texture2d<float> source [[texture(0)]],\n                              constant Uniforms &u [[buffer(0)]]) {\n    constexpr sampler s(address::clamp_to_edge, filter::linear);\n    float2 texel = 1.0 / u.OutputSize.xy;\n    float4 src = source.sample(s, in.uv);\n    float3 col = src.rgb;\n\n    // exposure + contrast + saturation\n    col = col * pow(2.0, u.exposure);\n    float3 mean = float3(luma(col));\n    col = mix(mean, col, u.saturation);\n    col = saturate( (col - 0.5) * max(0.0, u.contrast) + 0.5 );\n\n    // technicolor mixes\n    float3 c2 = two_strip(col);\n    float3 c3 = three_strip(col);\n    col = mix(col, c2, clamp(u.two_strip_mix,0.0,1.0));\n    col = mix(col, c3, clamp(u.three_strip_mix,0.0,1.0));\n\n    // skin preserve: desaturate adjustment based on skin hue range\n    if (u.skin_preserve > 0.0) {\n        float3 ycbcr = float3(luma(col), dot(col, float3(-0.1687,-0.3313,0.5))+0.5, dot(col, float3(0.5,-0.4187,-0.0813))+0.5);\n        float mask = smoothstep(0.05, 0.015, abs(ycbcr.z-0.5)) * smoothstep(0.02, 0.15, abs(ycbcr.y-0.5));\n        col = mix(col, src.rgb, clamp(u.skin_preserve*mask, 0.0, 1.0));\n    }\n\n    // toe/shoulder filmic\n    col = toe_shoulder(col, u.toe, u.shoulder);\n\n    // simple halation: thresholded blur in a small neighborhood\n    float thr = u.halation_threshold;\n    float bright = max(0.0, luma(col) - thr);\n    if (u.halation_strength > 0.0) {\n        int r = int(clamp(u.halation_radius, 1.0, 8.0));\n        float3 acc = float3(0.0);\n        float wsum = 0.0;\n        for (int y=-r; y<=r; ++y) {\n            for (int x=-r; x<=r; ++x) {\n                float2 offset = float2(x,y) * texel;\n                float w = exp(-dot(offset,offset) * 40.0);\n                float3 cnb = source.sample(s, in.uv + offset).rgb;\n                if (luma(cnb) > thr) { acc += cnb * w; wsum += w; }\n            }\n        }\n        if (wsum > 0.0) {\n            float3 halo = acc / wsum;\n            // red-leaning halation\n            halo *= float3(1.05, 0.98, 0.94);\n            col = saturate(col + halo * u.halation_strength * bright);\n        }\n    }\n\n    // subtle ACES to unify\n    col = aces_tonemap(col);\n\n    // grain\n    if (u.grain_amount > 0.0) {\n        float2 p = in.uv * u.OutputSize.xy;\n        float n = fract(sin(dot(p, float2(12.9898,78.233))) * 43758.5453 + float(u.FrameCount)*0.07);\n        col = saturate(col + (n-0.5) * (u.grain_amount * 0.06));\n    }\n\n    return float4(col, src.a);\n}\n",
+            "frameCountMod": 0,
+            "scaleX": null,
+            "scaleY": null,
+            "filter": "linear",
+            "wrapMode": "edge",
+            "format": "rgba8Unorm",
+            "isFeedback": false,
+            "buffers": [
+                {
+                    "bindingVert": 0,
+                    "bindingFrag": 0,
+                    "size": 256,
+                    "uniforms": [
+                        {
+                            "semantic": "mvp",
+                            "index": null,
+                            "name": "MVP",
+                            "size": 64,
+                            "offset": 0
+                        },
+                        {
+                            "semantic": "outputSize",
+                            "index": null,
+                            "name": "OutputSize",
+                            "size": 16,
+                            "offset": 64
+                        },
+                        {
+                            "semantic": "sourceSize",
+                            "index": null,
+                            "name": "SourceSize",
+                            "size": 16,
+                            "offset": 80
+                        },
+                        {
+                            "semantic": "originalSize",
+                            "index": null,
+                            "name": "OriginalSize",
+                            "size": 16,
+                            "offset": 96
+                        },
+                        {
+                            "semantic": "frameCount",
+                            "index": null,
+                            "name": "FrameCount",
+                            "size": 4,
+                            "offset": 112
+                        },
+                        {
+                            "semantic": "floatParameter",
+                            "index": 0,
+                            "name": "two_strip_mix",
+                            "size": 4,
+                            "offset": 116
+                        },
+                        {
+                            "semantic": "floatParameter",
+                            "index": 1,
+                            "name": "three_strip_mix",
+                            "size": 4,
+                            "offset": 120
+                        },
+                        {
+                            "semantic": "floatParameter",
+                            "index": 2,
+                            "name": "toe",
+                            "size": 4,
+                            "offset": 124
+                        },
+                        {
+                            "semantic": "floatParameter",
+                            "index": 3,
+                            "name": "shoulder",
+                            "size": 4,
+                            "offset": 128
+                        },
+                        {
+                            "semantic": "floatParameter",
+                            "index": 4,
+                            "name": "saturation",
+                            "size": 4,
+                            "offset": 132
+                        },
+                        {
+                            "semantic": "floatParameter",
+                            "index": 5,
+                            "name": "contrast",
+                            "size": 4,
+                            "offset": 136
+                        },
+                        {
+                            "semantic": "floatParameter",
+                            "index": 6,
+                            "name": "exposure",
+                            "size": 4,
+                            "offset": 140
+                        },
+                        {
+                            "semantic": "floatParameter",
+                            "index": 7,
+                            "name": "skin_preserve",
+                            "size": 4,
+                            "offset": 144
+                        },
+                        {
+                            "semantic": "floatParameter",
+                            "index": 8,
+                            "name": "halation_strength",
+                            "size": 4,
+                            "offset": 148
+                        },
+                        {
+                            "semantic": "floatParameter",
+                            "index": 9,
+                            "name": "halation_radius",
+                            "size": 4,
+                            "offset": 152
+                        },
+                        {
+                            "semantic": "floatParameter",
+                            "index": 10,
+                            "name": "halation_threshold",
+                            "size": 4,
+                            "offset": 156
+                        },
+                        {
+                            "semantic": "floatParameter",
+                            "index": 11,
+                            "name": "grain_amount",
+                            "size": 4,
+                            "offset": 160
+                        }
+                    ]
+                },
+                {
+                    "bindingVert": null,
+                    "bindingFrag": null,
+                    "size": 0,
+                    "uniforms": []
+                }
+            ],
+            "textures": [
+                {
+                    "name": "Source",
+                    "semantic": "source",
+                    "binding": 0,
+                    "wrap": "edge",
+                    "filter": "linear",
+                    "index": 0
+                }
+            ],
+            "alias": null
+        }
+    ],
+    "parameters": [
+        {
+            "index": 0,
+            "name": "two_strip_mix",
+            "desc": "Two-Strip Mix",
+            "initial": 0.35,
+            "minimum": 0.0,
+            "maximum": 1.0,
+            "step": 0.01
+        },
+        {
+            "index": 1,
+            "name": "three_strip_mix",
+            "desc": "Three-Strip Mix",
+            "initial": 0.4,
+            "minimum": 0.0,
+            "maximum": 1.0,
+            "step": 0.01
+        },
+        {
+            "index": 2,
+            "name": "toe",
+            "desc": "Toe",
+            "initial": 0.15,
+            "minimum": 0.0,
+            "maximum": 1.0,
+            "step": 0.01
+        },
+        {
+            "index": 3,
+            "name": "shoulder",
+            "desc": "Shoulder",
+            "initial": 0.2,
+            "minimum": 0.0,
+            "maximum": 1.0,
+            "step": 0.01
+        },
+        {
+            "index": 4,
+            "name": "saturation",
+            "desc": "Saturation",
+            "initial": 1.1,
+            "minimum": 0.0,
+            "maximum": 2.0,
+            "step": 0.01
+        },
+        {
+            "index": 5,
+            "name": "contrast",
+            "desc": "Contrast",
+            "initial": 1.05,
+            "minimum": 0.0,
+            "maximum": 2.0,
+            "step": 0.01
+        },
+        {
+            "index": 6,
+            "name": "exposure",
+            "desc": "Exposure (stops)",
+            "initial": 0.0,
+            "minimum": -2.0,
+            "maximum": 2.0,
+            "step": 0.05
+        },
+        {
+            "index": 7,
+            "name": "skin_preserve",
+            "desc": "Skin Preserve",
+            "initial": 0.35,
+            "minimum": 0.0,
+            "maximum": 1.0,
+            "step": 0.01
+        },
+        {
+            "index": 8,
+            "name": "halation_strength",
+            "desc": "Halation Strength",
+            "initial": 0.35,
+            "minimum": 0.0,
+            "maximum": 2.0,
+            "step": 0.01
+        },
+        {
+            "index": 9,
+            "name": "halation_radius",
+            "desc": "Halation Radius (px)",
+            "initial": 4.0,
+            "minimum": 1.0,
+            "maximum": 12.0,
+            "step": 0.5
+        },
+        {
+            "index": 10,
+            "name": "halation_threshold",
+            "desc": "Halation Threshold",
+            "initial": 0.65,
+            "minimum": 0.0,
+            "maximum": 1.0,
+            "step": 0.01
+        },
+        {
+            "index": 11,
+            "name": "grain_amount",
+            "desc": "Grain Amount",
+            "initial": 0.1,
+            "minimum": 0.0,
+            "maximum": 1.0,
+            "step": 0.01
+        }
+    ],
+    "luts": [],
+    "historyCount": 0,
+    "languageVersion": "version2_4"
+}

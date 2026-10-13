@@ -1,0 +1,162 @@
+{
+    "passes": [
+        {
+            "index": 0,
+            "vertexSource": "// CRT Geom Lite - stack-safe minimal CRT look\n#include <metal_stdlib>\nusing namespace metal;\n\nstruct Uniforms {\n    float4x4 MVP;\n    float4 OutputSize;   // xy = size\n    float4 SourceSize;   // xy = size\n    float4 OriginalSize;\n    uint   FrameCount;\n    float  curvature;    // 0..1\n    float  scanline;     // 0..1\n    float  mask_strength;// 0..1\n    float  vignette;     // 0..1\n    float  gamma;        // 0.5..3\n};\n\nstruct VSIn { float4 pos [[attribute(0)]]; float2 uv [[attribute(1)]]; };\nstruct VSOut { float4 pos [[position]]; float2 uv; };\n\nvertex VSOut main0(VSIn in [[stage_in]], constant Uniforms &u [[buffer(0)]]) {\n    VSOut o; o.pos = u.MVP * in.pos; o.uv = in.uv; return o;\n}\n\nstatic inline float2 barrel(float2 uv, float amt){\n    float2 p = uv*2.0-1.0;\n    float r2 = dot(p,p);\n    float k = 0.25*amt;\n    p *= 1.0 + k*r2;\n    return clamp(p*0.5+0.5, 0.0, 1.0);\n}\n\nfragment float4 fragment_main(\n    VSOut in [[stage_in]],\n    texture2d<float> src [[texture(0)]],\n    constant Uniforms &u [[buffer(0)]]\n){\n    constexpr sampler smp(mag_filter::linear, min_filter::linear, address::clamp_to_edge);\n\n    // Curvature\n    float2 uv = barrel(in.uv, clamp(u.curvature,0.0,1.0));\n\n    // Sample\n    float3 c = src.sample(smp, uv).rgb;\n\n    // Scanlines (simple sine, resolution aware)\n    float row = uv.y * u.OutputSize.y;\n    float scan = 0.5 + 0.5*cos(6.28318*row);\n    c *= mix(1.0, 0.8 + 0.2*scan, u.scanline);\n\n    // Aperture mask (RGB triad)\n    float colIdx = fract(uv.x * u.OutputSize.x / 1.0);\n    float3 mask = float3(0.9,0.9,0.9);\n    if (colIdx < 1.0/3.0) mask = float3(1.0,0.8,0.8);\n    else if (colIdx < 2.0/3.0) mask = float3(0.8,1.0,0.8);\n    else mask = float3(0.8,0.8,1.0);\n    c = mix(c, c*mask, u.mask_strength*0.6);\n\n    // Vignette\n    float2 p = uv*2.0-1.0; float r = dot(p,p);\n    c *= mix(1.0, smoothstep(1.0, 0.2, 1.0-r), u.vignette);\n\n    // Gamma\n    c = pow(max(c,0.0), float3(1.0/max(u.gamma,0.001)));\n\n    return float4(saturate(c), 1.0);\n}\n",
+            "fragmentSource": "// CRT Geom Lite - stack-safe minimal CRT look\n#include <metal_stdlib>\nusing namespace metal;\n\nstruct Uniforms {\n    float4x4 MVP;\n    float4 OutputSize;   // xy = size\n    float4 SourceSize;   // xy = size\n    float4 OriginalSize;\n    uint   FrameCount;\n    float  curvature;    // 0..1\n    float  scanline;     // 0..1\n    float  mask_strength;// 0..1\n    float  vignette;     // 0..1\n    float  gamma;        // 0.5..3\n};\n\nstruct VSIn { float4 pos [[attribute(0)]]; float2 uv [[attribute(1)]]; };\nstruct VSOut { float4 pos [[position]]; float2 uv; };\n\nvertex VSOut vertex_main(VSIn in [[stage_in]], constant Uniforms &u [[buffer(0)]]) {\n    VSOut o; o.pos = u.MVP * in.pos; o.uv = in.uv; return o;\n}\n\nstatic inline float2 barrel(float2 uv, float amt){\n    float2 p = uv*2.0-1.0;\n    float r2 = dot(p,p);\n    float k = 0.25*amt;\n    p *= 1.0 + k*r2;\n    return clamp(p*0.5+0.5, 0.0, 1.0);\n}\n\nfragment float4 main0(\n    VSOut in [[stage_in]],\n    texture2d<float> src [[texture(0)]],\n    constant Uniforms &u [[buffer(0)]]\n){\n    constexpr sampler smp(mag_filter::linear, min_filter::linear, address::clamp_to_edge);\n\n    // Curvature\n    float2 uv = barrel(in.uv, clamp(u.curvature,0.0,1.0));\n\n    // Sample\n    float3 c = src.sample(smp, uv).rgb;\n\n    // Scanlines (simple sine, resolution aware)\n    float row = uv.y * u.OutputSize.y;\n    float scan = 0.5 + 0.5*cos(6.28318*row);\n    c *= mix(1.0, 0.8 + 0.2*scan, u.scanline);\n\n    // Aperture mask (RGB triad)\n    float colIdx = fract(uv.x * u.OutputSize.x / 1.0);\n    float3 mask = float3(0.9,0.9,0.9);\n    if (colIdx < 1.0/3.0) mask = float3(1.0,0.8,0.8);\n    else if (colIdx < 2.0/3.0) mask = float3(0.8,1.0,0.8);\n    else mask = float3(0.8,0.8,1.0);\n    c = mix(c, c*mask, u.mask_strength*0.6);\n\n    // Vignette\n    float2 p = uv*2.0-1.0; float r = dot(p,p);\n    c *= mix(1.0, smoothstep(1.0, 0.2, 1.0-r), u.vignette);\n\n    // Gamma\n    c = pow(max(c,0.0), float3(1.0/max(u.gamma,0.001)));\n\n    return float4(saturate(c), 1.0);\n}\n",
+            "frameCountMod": 0,
+            "scaleX": null,
+            "scaleY": null,
+            "filter": "linear",
+            "wrapMode": "edge",
+            "format": "rgba8Unorm",
+            "isFeedback": false,
+            "buffers": [
+                {
+                    "bindingVert": 0,
+                    "bindingFrag": 0,
+                    "size": 256,
+                    "uniforms": [
+                        {
+                            "semantic": "mvp",
+                            "index": null,
+                            "name": "MVP",
+                            "size": 64,
+                            "offset": 0
+                        },
+                        {
+                            "semantic": "outputSize",
+                            "index": null,
+                            "name": "OutputSize",
+                            "size": 16,
+                            "offset": 64
+                        },
+                        {
+                            "semantic": "sourceSize",
+                            "index": null,
+                            "name": "SourceSize",
+                            "size": 16,
+                            "offset": 80
+                        },
+                        {
+                            "semantic": "originalSize",
+                            "index": null,
+                            "name": "OriginalSize",
+                            "size": 16,
+                            "offset": 96
+                        },
+                        {
+                            "semantic": "frameCount",
+                            "index": null,
+                            "name": "FrameCount",
+                            "size": 4,
+                            "offset": 112
+                        },
+                        {
+                            "semantic": "floatParameter",
+                            "index": 0,
+                            "name": "curvature",
+                            "size": 4,
+                            "offset": 116
+                        },
+                        {
+                            "semantic": "floatParameter",
+                            "index": 1,
+                            "name": "scanline",
+                            "size": 4,
+                            "offset": 120
+                        },
+                        {
+                            "semantic": "floatParameter",
+                            "index": 2,
+                            "name": "mask_strength",
+                            "size": 4,
+                            "offset": 124
+                        },
+                        {
+                            "semantic": "floatParameter",
+                            "index": 3,
+                            "name": "vignette",
+                            "size": 4,
+                            "offset": 128
+                        },
+                        {
+                            "semantic": "floatParameter",
+                            "index": 4,
+                            "name": "gamma",
+                            "size": 4,
+                            "offset": 132
+                        }
+                    ]
+                },
+                {
+                    "bindingVert": null,
+                    "bindingFrag": null,
+                    "size": 0,
+                    "uniforms": []
+                }
+            ],
+            "textures": [
+                {
+                    "name": "Source",
+                    "semantic": "source",
+                    "binding": 0,
+                    "wrap": "edge",
+                    "filter": "linear",
+                    "index": 0
+                }
+            ],
+            "alias": null
+        }
+    ],
+    "parameters": [
+        {
+            "index": 0,
+            "name": "curvature",
+            "desc": "Curvature",
+            "initial": 0.32,
+            "minimum": 0.0,
+            "maximum": 1.0,
+            "step": 0.01
+        },
+        {
+            "index": 1,
+            "name": "scanline",
+            "desc": "Scanline",
+            "initial": 0.58,
+            "minimum": 0.0,
+            "maximum": 1.0,
+            "step": 0.01
+        },
+        {
+            "index": 2,
+            "name": "mask_strength",
+            "desc": "Mask Strength",
+            "initial": 0.7,
+            "minimum": 0.0,
+            "maximum": 1.0,
+            "step": 0.01
+        },
+        {
+            "index": 3,
+            "name": "vignette",
+            "desc": "Vignette",
+            "initial": 0.35,
+            "minimum": 0.0,
+            "maximum": 1.0,
+            "step": 0.01
+        },
+        {
+            "index": 4,
+            "name": "gamma",
+            "desc": "Gamma",
+            "initial": 1.08,
+            "minimum": 0.5,
+            "maximum": 3.0,
+            "step": 0.01
+        }
+    ],
+    "luts": [],
+    "historyCount": 0,
+    "languageVersion": "version2_4"
+}

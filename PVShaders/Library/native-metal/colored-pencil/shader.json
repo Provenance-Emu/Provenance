@@ -1,0 +1,162 @@
+{
+    "passes": [
+        {
+            "index": 0,
+            "vertexSource": "#include <metal_stdlib>\nusing namespace metal;\n\nstruct Uniforms {\n    float4x4 MVP;\n    float4 OutputSize;\n    float4 SourceSize;\n    float4 OriginalSize;\n    uint FrameCount;\n    float stroke_length;     // 2..24 px along direction\n    float stroke_density;    // 0.5..3.0 (more strokes)\n    float grain_amount;      // 0..1\n    float saturation_comp;   // 0..1 (compress saturation)\n    float edge_tightness;    // 0..2 (sharper edges)\n};\n\nstruct VIn { float4 pos [[attribute(0)]]; float2 uv [[attribute(1)]]; };\nstruct VOut { float4 pos [[position]]; float2 uv; };\n\nvertex VOut main0(VIn in [[stage_in]], constant Uniforms &u [[buffer(0)]]) {\n    VOut o; o.pos = u.MVP * in.pos; o.uv = in.uv; return o;\n}\n\nstatic inline float luma(float3 c){ return dot(c, float3(0.2126,0.7152,0.0722)); }\n\nfragment float4 fragment_main(VOut in [[stage_in]], texture2d<float> src [[texture(0)]], constant Uniforms &u [[buffer(0)]]) {\n    constexpr sampler s(address::clamp_to_edge, filter::linear);\n    float2 texel = 1.0 / u.OutputSize.xy;\n    float2 pix = in.uv * u.OutputSize.xy;\n\n    float3 c0 = src.sample(s, in.uv).rgb;\n\n    // Gradient-based direction (Sobel)\n    float3 s00 = src.sample(s, in.uv + float2(-1,-1)*texel).rgb;\n    float3 s10 = src.sample(s, in.uv + float2( 0,-1)*texel).rgb;\n    float3 s20 = src.sample(s, in.uv + float2( 1,-1)*texel).rgb;\n    float3 s01 = src.sample(s, in.uv + float2(-1, 0)*texel).rgb;\n    float3 s21 = src.sample(s, in.uv + float2( 1, 0)*texel).rgb;\n    float3 s02 = src.sample(s, in.uv + float2(-1, 1)*texel).rgb;\n    float3 s12 = src.sample(s, in.uv + float2( 0, 1)*texel).rgb;\n    float3 s22 = src.sample(s, in.uv + float2( 1, 1)*texel).rgb;\n\n    float3 gX = (s20 + 2.0*s21 + s22) - (s00 + 2.0*s01 + s02);\n    float3 gY = (s02 + 2.0*s12 + s22) - (s00 + 2.0*s10 + s20);\n    float2 grad = float2(luma(gX), luma(gY));\n    float mag = max(1e-4, length(grad));\n\n    // Stroke direction aligned to gradient (pencil often follows edges)\n    float2 dir = normalize(grad);\n    // Per-pixel jitter to avoid banding\n    float jitter = fract(sin(dot(pix, float2(12.9898,78.233))) * 43758.5453 + float(u.FrameCount)*0.013) - 0.5;\n\n    // Accumulate samples along +/- dir to simulate strokes\n    int taps = int(clamp(round(u.stroke_length/2.0), 2.0, 12.0));\n    float3 accum = float3(0.0);\n    float wsum = 0.0;\n    for (int k=-taps; k<=taps; ++k) {\n        float t = float(k);\n        float2 off = (t + jitter) * dir * texel * (u.stroke_density);\n        float w = exp(-abs(t) * (0.45 + 0.25*u.edge_tightness));\n        float3 cs = src.sample(s, in.uv + off).rgb;\n        accum += cs * w;\n        wsum += w;\n    }\n    float3 stroke = (wsum>0.0) ? (accum/wsum) : c0;\n\n    // Edge sharpening (tightness)\n    float edge = smoothstep(0.2, 0.9, mag);\n    stroke = mix(stroke, c0, 1.0 - clamp(u.edge_tightness*0.5*edge, 0.0, 1.0));\n\n    // Saturation compression: pencil tends to compress saturation\n    float L0 = luma(stroke);\n    float3 satComp = mix(float3(L0), stroke, 1.0 - clamp(u.saturation_comp, 0.0, 1.0));\n\n    // Fine grain (paper + graphite)\n    float n1 = fract(sin(dot(pix, float2(127.1,311.7))) * 43758.5453);\n    float n2 = fract(sin(dot(pix + float2(5.2,1.3), float2(269.5,183.3))) * 95732.5453);\n    float grain = (n1*0.6 + n2*0.4) - 0.5;\n    float3 pencil = saturate(satComp + grain * (u.grain_amount * 0.08));\n\n    return float4(pencil, 1.0);\n}\n",
+            "fragmentSource": "#include <metal_stdlib>\nusing namespace metal;\n\nstruct Uniforms {\n    float4x4 MVP;\n    float4 OutputSize;\n    float4 SourceSize;\n    float4 OriginalSize;\n    uint FrameCount;\n    float stroke_length;     // 2..24 px along direction\n    float stroke_density;    // 0.5..3.0 (more strokes)\n    float grain_amount;      // 0..1\n    float saturation_comp;   // 0..1 (compress saturation)\n    float edge_tightness;    // 0..2 (sharper edges)\n};\n\nstruct VIn { float4 pos [[attribute(0)]]; float2 uv [[attribute(1)]]; };\nstruct VOut { float4 pos [[position]]; float2 uv; };\n\nvertex VOut vertex_main(VIn in [[stage_in]], constant Uniforms &u [[buffer(0)]]) {\n    VOut o; o.pos = u.MVP * in.pos; o.uv = in.uv; return o;\n}\n\nstatic inline float luma(float3 c){ return dot(c, float3(0.2126,0.7152,0.0722)); }\n\nfragment float4 main0(VOut in [[stage_in]], texture2d<float> src [[texture(0)]], constant Uniforms &u [[buffer(0)]]) {\n    constexpr sampler s(address::clamp_to_edge, filter::linear);\n    float2 texel = 1.0 / u.OutputSize.xy;\n    float2 pix = in.uv * u.OutputSize.xy;\n\n    float3 c0 = src.sample(s, in.uv).rgb;\n\n    // Gradient-based direction (Sobel)\n    float3 s00 = src.sample(s, in.uv + float2(-1,-1)*texel).rgb;\n    float3 s10 = src.sample(s, in.uv + float2( 0,-1)*texel).rgb;\n    float3 s20 = src.sample(s, in.uv + float2( 1,-1)*texel).rgb;\n    float3 s01 = src.sample(s, in.uv + float2(-1, 0)*texel).rgb;\n    float3 s21 = src.sample(s, in.uv + float2( 1, 0)*texel).rgb;\n    float3 s02 = src.sample(s, in.uv + float2(-1, 1)*texel).rgb;\n    float3 s12 = src.sample(s, in.uv + float2( 0, 1)*texel).rgb;\n    float3 s22 = src.sample(s, in.uv + float2( 1, 1)*texel).rgb;\n\n    float3 gX = (s20 + 2.0*s21 + s22) - (s00 + 2.0*s01 + s02);\n    float3 gY = (s02 + 2.0*s12 + s22) - (s00 + 2.0*s10 + s20);\n    float2 grad = float2(luma(gX), luma(gY));\n    float mag = max(1e-4, length(grad));\n\n    // Stroke direction aligned to gradient (pencil often follows edges)\n    float2 dir = normalize(grad);\n    // Per-pixel jitter to avoid banding\n    float jitter = fract(sin(dot(pix, float2(12.9898,78.233))) * 43758.5453 + float(u.FrameCount)*0.013) - 0.5;\n\n    // Accumulate samples along +/- dir to simulate strokes\n    int taps = int(clamp(round(u.stroke_length/2.0), 2.0, 12.0));\n    float3 accum = float3(0.0);\n    float wsum = 0.0;\n    for (int k=-taps; k<=taps; ++k) {\n        float t = float(k);\n        float2 off = (t + jitter) * dir * texel * (u.stroke_density);\n        float w = exp(-abs(t) * (0.45 + 0.25*u.edge_tightness));\n        float3 cs = src.sample(s, in.uv + off).rgb;\n        accum += cs * w;\n        wsum += w;\n    }\n    float3 stroke = (wsum>0.0) ? (accum/wsum) : c0;\n\n    // Edge sharpening (tightness)\n    float edge = smoothstep(0.2, 0.9, mag);\n    stroke = mix(stroke, c0, 1.0 - clamp(u.edge_tightness*0.5*edge, 0.0, 1.0));\n\n    // Saturation compression: pencil tends to compress saturation\n    float L0 = luma(stroke);\n    float3 satComp = mix(float3(L0), stroke, 1.0 - clamp(u.saturation_comp, 0.0, 1.0));\n\n    // Fine grain (paper + graphite)\n    float n1 = fract(sin(dot(pix, float2(127.1,311.7))) * 43758.5453);\n    float n2 = fract(sin(dot(pix + float2(5.2,1.3), float2(269.5,183.3))) * 95732.5453);\n    float grain = (n1*0.6 + n2*0.4) - 0.5;\n    float3 pencil = saturate(satComp + grain * (u.grain_amount * 0.08));\n\n    return float4(pencil, 1.0);\n}\n",
+            "frameCountMod": 0,
+            "scaleX": null,
+            "scaleY": null,
+            "filter": "linear",
+            "wrapMode": "edge",
+            "format": "rgba8Unorm",
+            "isFeedback": false,
+            "buffers": [
+                {
+                    "bindingVert": 0,
+                    "bindingFrag": 0,
+                    "size": 256,
+                    "uniforms": [
+                        {
+                            "semantic": "mvp",
+                            "index": null,
+                            "name": "MVP",
+                            "size": 64,
+                            "offset": 0
+                        },
+                        {
+                            "semantic": "outputSize",
+                            "index": null,
+                            "name": "OutputSize",
+                            "size": 16,
+                            "offset": 64
+                        },
+                        {
+                            "semantic": "sourceSize",
+                            "index": null,
+                            "name": "SourceSize",
+                            "size": 16,
+                            "offset": 80
+                        },
+                        {
+                            "semantic": "originalSize",
+                            "index": null,
+                            "name": "OriginalSize",
+                            "size": 16,
+                            "offset": 96
+                        },
+                        {
+                            "semantic": "frameCount",
+                            "index": null,
+                            "name": "FrameCount",
+                            "size": 4,
+                            "offset": 112
+                        },
+                        {
+                            "semantic": "floatParameter",
+                            "index": 0,
+                            "name": "stroke_length",
+                            "size": 4,
+                            "offset": 116
+                        },
+                        {
+                            "semantic": "floatParameter",
+                            "index": 1,
+                            "name": "stroke_density",
+                            "size": 4,
+                            "offset": 120
+                        },
+                        {
+                            "semantic": "floatParameter",
+                            "index": 2,
+                            "name": "grain_amount",
+                            "size": 4,
+                            "offset": 124
+                        },
+                        {
+                            "semantic": "floatParameter",
+                            "index": 3,
+                            "name": "saturation_comp",
+                            "size": 4,
+                            "offset": 128
+                        },
+                        {
+                            "semantic": "floatParameter",
+                            "index": 4,
+                            "name": "edge_tightness",
+                            "size": 4,
+                            "offset": 132
+                        }
+                    ]
+                },
+                {
+                    "bindingVert": null,
+                    "bindingFrag": null,
+                    "size": 0,
+                    "uniforms": []
+                }
+            ],
+            "textures": [
+                {
+                    "name": "Source",
+                    "semantic": "source",
+                    "binding": 0,
+                    "wrap": "edge",
+                    "filter": "linear",
+                    "index": 0
+                }
+            ],
+            "alias": null
+        }
+    ],
+    "parameters": [
+        {
+            "index": 0,
+            "name": "stroke_length",
+            "desc": "Stroke Length (px)",
+            "initial": 12.0,
+            "minimum": 2.0,
+            "maximum": 24.0,
+            "step": 1.0
+        },
+        {
+            "index": 1,
+            "name": "stroke_density",
+            "desc": "Stroke Density",
+            "initial": 1.0,
+            "minimum": 0.5,
+            "maximum": 3.0,
+            "step": 0.05
+        },
+        {
+            "index": 2,
+            "name": "grain_amount",
+            "desc": "Grain Amount",
+            "initial": 0.3,
+            "minimum": 0.0,
+            "maximum": 1.0,
+            "step": 0.01
+        },
+        {
+            "index": 3,
+            "name": "saturation_comp",
+            "desc": "Saturation Compress",
+            "initial": 0.5,
+            "minimum": 0.0,
+            "maximum": 1.0,
+            "step": 0.01
+        },
+        {
+            "index": 4,
+            "name": "edge_tightness",
+            "desc": "Edge Tightness",
+            "initial": 1.0,
+            "minimum": 0.0,
+            "maximum": 2.0,
+            "step": 0.05
+        }
+    ],
+    "luts": [],
+    "historyCount": 0,
+    "languageVersion": "version2_4"
+}

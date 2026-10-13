@@ -1,0 +1,146 @@
+{
+    "passes": [
+        {
+            "index": 0,
+            "vertexSource": "//\n//  Advanced Bloom with Compute Shaders\n//  Native Metal Shader - Multi-pass HDR Bloom\n//\n\n#include <metal_stdlib>\nusing namespace metal;\n\nstruct Uniforms {\n    float4x4 MVP;\n    float4 OutputSize;\n    float4 SourceSize;\n    float4 OriginalSize;\n    uint FrameCount;\n    float threshold;\n    float intensity;\n    float radius;\n    float soft_knee;\n};\n\n// MARK: - Compute Shader (Bright Pass)\n\nkernel void bright_pass(\n    texture2d<float, access::read> inputTexture [[texture(0)]],\n    texture2d<float, access::write> outputTexture [[texture(1)]],\n    constant Uniforms &uniforms [[buffer(0)]],\n    uint2 gid [[thread_position_in_grid]]\n)\n{\n    if (gid.x >= uint(uniforms.SourceSize.x) || gid.y >= uint(uniforms.SourceSize.y)) return;\n    \n    float4 color = inputTexture.read(gid);\n    float luminance = dot(color.rgb, float3(0.2126, 0.7152, 0.0722));\n    \n    // Soft threshold\n    float knee = uniforms.threshold * uniforms.soft_knee;\n    float soft = luminance - uniforms.threshold + knee;\n    soft = clamp(soft, 0.0, 2.0 * knee);\n    soft = soft * soft / (4.0 * knee + 0.00001);\n    \n    float contribution = max(soft, luminance - uniforms.threshold);\n    contribution /= max(luminance, 0.00001);\n    \n    outputTexture.write(color * contribution, gid);\n}\n\n// MARK: - Compute Shader (Gaussian Blur Horizontal)\n\nkernel void blur_horizontal(\n    texture2d<float, access::read> inputTexture [[texture(0)]],\n    texture2d<float, access::write> outputTexture [[texture(1)]],\n    constant Uniforms &uniforms [[buffer(0)]],\n    uint2 gid [[thread_position_in_grid]]\n)\n{\n    if (gid.x >= uint(uniforms.SourceSize.x) || gid.y >= uint(uniforms.SourceSize.y)) return;\n    \n    // Gaussian weights\n    const int kernelSize = 5;\n    const float weights[9] = {\n        0.0162, 0.0540, 0.1216, 0.1945, 0.2270,\n        0.1945, 0.1216, 0.0540, 0.0162\n    };\n    \n    float4 result = float4(0.0);\n    int offset = kernelSize / 2;\n    \n    for (int i = 0; i < kernelSize; i++) {\n        int x = int(gid.x) + (i - offset);\n        x = clamp(x, 0, int(uniforms.SourceSize.x) - 1);\n        \n        float4 sample = inputTexture.read(uint2(x, gid.y));\n        result += sample * weights[i];\n    }\n    \n    outputTexture.write(result, gid);\n}\n\n// MARK: - Compute Shader (Gaussian Blur Vertical)\n\nkernel void blur_vertical(\n    texture2d<float, access::read> inputTexture [[texture(0)]],\n    texture2d<float, access::write> outputTexture [[texture(1)]],\n    constant Uniforms &uniforms [[buffer(0)]],\n    uint2 gid [[thread_position_in_grid]]\n)\n{\n    if (gid.x >= uint(uniforms.SourceSize.x) || gid.y >= uint(uniforms.SourceSize.y)) return;\n    \n    const int kernelSize = 5;\n    const float weights[9] = {\n        0.0162, 0.0540, 0.1216, 0.1945, 0.2270,\n        0.1945, 0.1216, 0.0540, 0.0162\n    };\n    \n    float4 result = float4(0.0);\n    int offset = kernelSize / 2;\n    \n    for (int i = 0; i < kernelSize; i++) {\n        int y = int(gid.y) + (i - offset);\n        y = clamp(y, 0, int(uniforms.SourceSize.y) - 1);\n        \n        float4 sample = inputTexture.read(uint2(gid.x, y));\n        result += sample * weights[i];\n    }\n    \n    outputTexture.write(result, gid);\n}\n\n// MARK: - Vertex Shader\n\nstruct VertexIn {\n    float4 position [[attribute(0)]];\n    float2 texCoord [[attribute(1)]];\n};\n\nstruct VertexOut {\n    float4 position [[position]];\n    float2 texCoord;\n};\n\nvertex VertexOut main0(\n    VertexIn in [[stage_in]],\n    constant Uniforms &uniforms [[buffer(0)]]\n)\n{\n    VertexOut out;\n    out.position = uniforms.MVP * in.position;\n    out.texCoord = in.texCoord;\n    return out;\n}\n\n// MARK: - Fragment Shader (Composite)\n\nfragment float4 fragment_main(\n    VertexOut in [[stage_in]],\n    texture2d<float> sourceTexture [[texture(0)]],\n    texture2d<float> bloomTexture [[texture(1)]],\n    constant Uniforms &uniforms [[buffer(0)]]\n)\n{\n    constexpr sampler textureSampler(\n        mag_filter::linear,\n        min_filter::linear,\n        address::clamp_to_edge\n    );\n    \n    float4 original = sourceTexture.sample(textureSampler, in.texCoord);\n    float4 bloom = bloomTexture.sample(textureSampler, in.texCoord);\n    \n    // Additive blending with intensity\n    float4 result = original + bloom * uniforms.intensity;\n    \n    return result;\n}\n",
+            "fragmentSource": "//\n//  Advanced Bloom with Compute Shaders\n//  Native Metal Shader - Multi-pass HDR Bloom\n//\n\n#include <metal_stdlib>\nusing namespace metal;\n\nstruct Uniforms {\n    float4x4 MVP;\n    float4 OutputSize;\n    float4 SourceSize;\n    float4 OriginalSize;\n    uint FrameCount;\n    float threshold;\n    float intensity;\n    float radius;\n    float soft_knee;\n};\n\n// MARK: - Compute Shader (Bright Pass)\n\nkernel void bright_pass(\n    texture2d<float, access::read> inputTexture [[texture(0)]],\n    texture2d<float, access::write> outputTexture [[texture(1)]],\n    constant Uniforms &uniforms [[buffer(0)]],\n    uint2 gid [[thread_position_in_grid]]\n)\n{\n    if (gid.x >= uint(uniforms.SourceSize.x) || gid.y >= uint(uniforms.SourceSize.y)) return;\n    \n    float4 color = inputTexture.read(gid);\n    float luminance = dot(color.rgb, float3(0.2126, 0.7152, 0.0722));\n    \n    // Soft threshold\n    float knee = uniforms.threshold * uniforms.soft_knee;\n    float soft = luminance - uniforms.threshold + knee;\n    soft = clamp(soft, 0.0, 2.0 * knee);\n    soft = soft * soft / (4.0 * knee + 0.00001);\n    \n    float contribution = max(soft, luminance - uniforms.threshold);\n    contribution /= max(luminance, 0.00001);\n    \n    outputTexture.write(color * contribution, gid);\n}\n\n// MARK: - Compute Shader (Gaussian Blur Horizontal)\n\nkernel void blur_horizontal(\n    texture2d<float, access::read> inputTexture [[texture(0)]],\n    texture2d<float, access::write> outputTexture [[texture(1)]],\n    constant Uniforms &uniforms [[buffer(0)]],\n    uint2 gid [[thread_position_in_grid]]\n)\n{\n    if (gid.x >= uint(uniforms.SourceSize.x) || gid.y >= uint(uniforms.SourceSize.y)) return;\n    \n    // Gaussian weights\n    const int kernelSize = 5;\n    const float weights[9] = {\n        0.0162, 0.0540, 0.1216, 0.1945, 0.2270,\n        0.1945, 0.1216, 0.0540, 0.0162\n    };\n    \n    float4 result = float4(0.0);\n    int offset = kernelSize / 2;\n    \n    for (int i = 0; i < kernelSize; i++) {\n        int x = int(gid.x) + (i - offset);\n        x = clamp(x, 0, int(uniforms.SourceSize.x) - 1);\n        \n        float4 sample = inputTexture.read(uint2(x, gid.y));\n        result += sample * weights[i];\n    }\n    \n    outputTexture.write(result, gid);\n}\n\n// MARK: - Compute Shader (Gaussian Blur Vertical)\n\nkernel void blur_vertical(\n    texture2d<float, access::read> inputTexture [[texture(0)]],\n    texture2d<float, access::write> outputTexture [[texture(1)]],\n    constant Uniforms &uniforms [[buffer(0)]],\n    uint2 gid [[thread_position_in_grid]]\n)\n{\n    if (gid.x >= uint(uniforms.SourceSize.x) || gid.y >= uint(uniforms.SourceSize.y)) return;\n    \n    const int kernelSize = 5;\n    const float weights[9] = {\n        0.0162, 0.0540, 0.1216, 0.1945, 0.2270,\n        0.1945, 0.1216, 0.0540, 0.0162\n    };\n    \n    float4 result = float4(0.0);\n    int offset = kernelSize / 2;\n    \n    for (int i = 0; i < kernelSize; i++) {\n        int y = int(gid.y) + (i - offset);\n        y = clamp(y, 0, int(uniforms.SourceSize.y) - 1);\n        \n        float4 sample = inputTexture.read(uint2(gid.x, y));\n        result += sample * weights[i];\n    }\n    \n    outputTexture.write(result, gid);\n}\n\n// MARK: - Vertex Shader\n\nstruct VertexIn {\n    float4 position [[attribute(0)]];\n    float2 texCoord [[attribute(1)]];\n};\n\nstruct VertexOut {\n    float4 position [[position]];\n    float2 texCoord;\n};\n\nvertex VertexOut vertex_main(\n    VertexIn in [[stage_in]],\n    constant Uniforms &uniforms [[buffer(0)]]\n)\n{\n    VertexOut out;\n    out.position = uniforms.MVP * in.position;\n    out.texCoord = in.texCoord;\n    return out;\n}\n\n// MARK: - Fragment Shader (Composite)\n\nfragment float4 main0(\n    VertexOut in [[stage_in]],\n    texture2d<float> sourceTexture [[texture(0)]],\n    texture2d<float> bloomTexture [[texture(1)]],\n    constant Uniforms &uniforms [[buffer(0)]]\n)\n{\n    constexpr sampler textureSampler(\n        mag_filter::linear,\n        min_filter::linear,\n        address::clamp_to_edge\n    );\n    \n    float4 original = sourceTexture.sample(textureSampler, in.texCoord);\n    float4 bloom = bloomTexture.sample(textureSampler, in.texCoord);\n    \n    // Additive blending with intensity\n    float4 result = original + bloom * uniforms.intensity;\n    \n    return result;\n}\n",
+            "frameCountMod": 0,
+            "scaleX": null,
+            "scaleY": null,
+            "filter": "linear",
+            "wrapMode": "edge",
+            "format": "rgba8Unorm",
+            "isFeedback": false,
+            "buffers": [
+                {
+                    "bindingVert": 0,
+                    "bindingFrag": 0,
+                    "size": 256,
+                    "uniforms": [
+                        {
+                            "semantic": "mvp",
+                            "index": null,
+                            "name": "MVP",
+                            "size": 64,
+                            "offset": 0
+                        },
+                        {
+                            "semantic": "outputSize",
+                            "index": null,
+                            "name": "OutputSize",
+                            "size": 16,
+                            "offset": 64
+                        },
+                        {
+                            "semantic": "sourceSize",
+                            "index": null,
+                            "name": "SourceSize",
+                            "size": 16,
+                            "offset": 80
+                        },
+                        {
+                            "semantic": "originalSize",
+                            "index": null,
+                            "name": "OriginalSize",
+                            "size": 16,
+                            "offset": 96
+                        },
+                        {
+                            "semantic": "frameCount",
+                            "index": null,
+                            "name": "FrameCount",
+                            "size": 4,
+                            "offset": 112
+                        },
+                        {
+                            "semantic": "floatParameter",
+                            "index": 0,
+                            "name": "threshold",
+                            "size": 4,
+                            "offset": 116
+                        },
+                        {
+                            "semantic": "floatParameter",
+                            "index": 1,
+                            "name": "intensity",
+                            "size": 4,
+                            "offset": 120
+                        },
+                        {
+                            "semantic": "floatParameter",
+                            "index": 2,
+                            "name": "radius",
+                            "size": 4,
+                            "offset": 124
+                        },
+                        {
+                            "semantic": "floatParameter",
+                            "index": 3,
+                            "name": "soft_knee",
+                            "size": 4,
+                            "offset": 128
+                        }
+                    ]
+                },
+                {
+                    "bindingVert": null,
+                    "bindingFrag": null,
+                    "size": 0,
+                    "uniforms": []
+                }
+            ],
+            "textures": [
+                {
+                    "name": "Source",
+                    "semantic": "source",
+                    "binding": 0,
+                    "wrap": "edge",
+                    "filter": "linear",
+                    "index": 0
+                }
+            ],
+            "alias": null
+        }
+    ],
+    "parameters": [
+        {
+            "index": 0,
+            "name": "threshold",
+            "desc": "Bloom Threshold",
+            "initial": 0.8,
+            "minimum": 0.0,
+            "maximum": 2.0,
+            "step": 0.05
+        },
+        {
+            "index": 1,
+            "name": "intensity",
+            "desc": "Bloom Intensity",
+            "initial": 1.0,
+            "minimum": 0.0,
+            "maximum": 3.0,
+            "step": 0.1
+        },
+        {
+            "index": 2,
+            "name": "radius",
+            "desc": "Bloom Radius",
+            "initial": 2.0,
+            "minimum": 0.5,
+            "maximum": 5.0,
+            "step": 0.1
+        },
+        {
+            "index": 3,
+            "name": "soft_knee",
+            "desc": "Soft Knee",
+            "initial": 0.5,
+            "minimum": 0.0,
+            "maximum": 1.0,
+            "step": 0.05
+        }
+    ],
+    "luts": [],
+    "historyCount": 0,
+    "languageVersion": "version2_4"
+}

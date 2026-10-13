@@ -1,0 +1,146 @@
+{
+    "passes": [
+        {
+            "index": 0,
+            "vertexSource": "//\n//  Metal Performance Shaders - AI Upscaling\n//  Native Metal Shader - ML-powered Enhancement\n//  NOTE: This is a simplified version. Full MPS integration requires Swift/Obj-C\n//\n\n#include <metal_stdlib>\nusing namespace metal;\n\nstruct Uniforms {\n    float4x4 MVP;\n    float4 OutputSize;\n    float4 SourceSize;\n    float4 OriginalSize;\n    uint FrameCount;\n    float sharpness;\n    float denoise_strength;\n    float edge_enhancement;\n    float upscale_quality;\n};\n\nstruct VertexIn {\n    float4 position [[attribute(0)]];\n    float2 texCoord [[attribute(1)]];\n};\n\nstruct VertexOut {\n    float4 position [[position]];\n    float2 texCoord;\n};\n\nvertex VertexOut main0(\n    VertexIn in [[stage_in]],\n    constant Uniforms &uniforms [[buffer(0)]]\n)\n{\n    VertexOut out;\n    out.position = uniforms.MVP * in.position;\n    out.texCoord = in.texCoord;\n    return out;\n}\n\n// Lanczos kernel for high-quality upscaling\nfloat lanczos(float x, float a) {\n    if (x == 0.0) return 1.0;\n    if (abs(x) >= a) return 0.0;\n    \n    float pi_x = 3.14159265359 * x;\n    return (a * sin(pi_x) * sin(pi_x / a)) / (pi_x * pi_x);\n}\n\n// Edge detection for adaptive sharpening\nfloat detectEdge(texture2d<float> tex, float2 uv, sampler s) {\n    float2 texelSize = 1.0 / float2(tex.get_width(), tex.get_height());\n    \n    // Sobel operator\n    float3 gx = float3(0.0);\n    float3 gy = float3(0.0);\n    \n    for (int y = -1; y <= 1; y++) {\n        for (int x = -1; x <= 1; x++) {\n            float2 offset = float2(x, y) * texelSize;\n            float3 sample = tex.sample(s, uv + offset).rgb;\n            \n            // Sobel kernels\n            float kx = float(x);\n            float ky = float(y);\n            \n            gx += sample * kx;\n            gy += sample * ky;\n        }\n    }\n    \n    return length(float2(length(gx), length(gy)));\n}\n\n// Bilateral filter for denoising\nfloat3 bilateralFilter(texture2d<float> tex, float2 uv, sampler s, float strength) {\n    float2 texelSize = 1.0 / float2(tex.get_width(), tex.get_height());\n    float3 center = tex.sample(s, uv).rgb;\n    \n    float3 result = float3(0.0);\n    float totalWeight = 0.0;\n    \n    int radius = 1;\n    for (int y = -radius; y <= radius; y++) {\n        for (int x = -radius; x <= radius; x++) {\n            float2 offset = float2(x, y) * texelSize;\n            float3 sample = tex.sample(s, uv + offset).rgb;\n            \n            // Spatial weight\n            float spatialWeight = exp(-dot(offset, offset) / (2.0 * strength));\n            \n            // Range weight (color similarity)\n            float3 colorDiff = sample - center;\n            float rangeWeight = exp(-dot(colorDiff, colorDiff) / (2.0 * strength));\n            \n            float weight = spatialWeight * rangeWeight;\n            result += sample * weight;\n            totalWeight += weight;\n        }\n    }\n    \n    return result / totalWeight;\n}\n\n// Unsharp mask\nfloat3 unsharpMask(texture2d<float> tex, float2 uv, sampler s, float amount) {\n    float2 texelSize = 1.0 / float2(tex.get_width(), tex.get_height());\n    float3 original = tex.sample(s, uv).rgb;\n    \n    // Gaussian blur\n    float3 blurred = float3(0.0);\n    float totalWeight = 0.0;\n    \n    for (int y = -1; y <= 1; y++) {\n        for (int x = -1; x <= 1; x++) {\n            float2 offset = float2(x, y) * texelSize;\n            float weight = exp(-dot(offset, offset) * 2.0);\n            blurred += tex.sample(s, uv + offset).rgb * weight;\n            totalWeight += weight;\n        }\n    }\n    blurred /= totalWeight;\n    \n    // Sharpen\n    return original + (original - blurred) * amount;\n}\n\nfragment float4 fragment_main(\n    VertexOut in [[stage_in]],\n    texture2d<float> sourceTexture [[texture(0)]],\n    constant Uniforms &uniforms [[buffer(0)]]\n)\n{\n    constexpr sampler textureSampler(\n        mag_filter::linear,\n        min_filter::linear,\n        address::clamp_to_edge\n    );\n    \n    // Lanczos upsampling\n    float2 srcSize = float2(sourceTexture.get_width(), sourceTexture.get_height());\n    float2 dstSize = uniforms.OutputSize.xy;\n    float2 scale = dstSize / srcSize;\n    \n    float2 srcUV = in.texCoord * srcSize / dstSize;\n    float2 srcPixel = srcUV * srcSize;\n    float2 srcBase = floor(srcPixel - 0.5) + 0.5;\n    \n    float3 color = float3(0.0);\n    float totalWeight = 0.0;\n    \n    int kernelSize = int(uniforms.upscale_quality * 3.0);\n    \n    for (int y = -kernelSize; y <= kernelSize; y++) {\n        for (int x = -kernelSize; x <= kernelSize; x++) {\n            float2 samplePos = (srcBase + float2(x, y)) / srcSize;\n            float2 diff = srcPixel - (srcBase + float2(x, y));\n            \n            float wx = lanczos(diff.x, 3.0);\n            float wy = lanczos(diff.y, 3.0);\n            float weight = wx * wy;\n            \n            color += sourceTexture.sample(textureSampler, samplePos).rgb * weight;\n            totalWeight += weight;\n        }\n    }\n    \n    color /= totalWeight;\n    \n    // Denoise\n    if (uniforms.denoise_strength > 0.0) {\n        color = bilateralFilter(sourceTexture, in.texCoord, textureSampler, uniforms.denoise_strength);\n    }\n    \n    // Edge-aware sharpening\n    float edge = detectEdge(sourceTexture, in.texCoord, textureSampler);\n    float adaptiveSharpness = uniforms.sharpness * (1.0 + edge * uniforms.edge_enhancement);\n    color = unsharpMask(sourceTexture, in.texCoord, textureSampler, adaptiveSharpness);\n    \n    return float4(clamp(color, 0.0, 1.0), 1.0);\n}\n",
+            "fragmentSource": "//\n//  Metal Performance Shaders - AI Upscaling\n//  Native Metal Shader - ML-powered Enhancement\n//  NOTE: This is a simplified version. Full MPS integration requires Swift/Obj-C\n//\n\n#include <metal_stdlib>\nusing namespace metal;\n\nstruct Uniforms {\n    float4x4 MVP;\n    float4 OutputSize;\n    float4 SourceSize;\n    float4 OriginalSize;\n    uint FrameCount;\n    float sharpness;\n    float denoise_strength;\n    float edge_enhancement;\n    float upscale_quality;\n};\n\nstruct VertexIn {\n    float4 position [[attribute(0)]];\n    float2 texCoord [[attribute(1)]];\n};\n\nstruct VertexOut {\n    float4 position [[position]];\n    float2 texCoord;\n};\n\nvertex VertexOut vertex_main(\n    VertexIn in [[stage_in]],\n    constant Uniforms &uniforms [[buffer(0)]]\n)\n{\n    VertexOut out;\n    out.position = uniforms.MVP * in.position;\n    out.texCoord = in.texCoord;\n    return out;\n}\n\n// Lanczos kernel for high-quality upscaling\nfloat lanczos(float x, float a) {\n    if (x == 0.0) return 1.0;\n    if (abs(x) >= a) return 0.0;\n    \n    float pi_x = 3.14159265359 * x;\n    return (a * sin(pi_x) * sin(pi_x / a)) / (pi_x * pi_x);\n}\n\n// Edge detection for adaptive sharpening\nfloat detectEdge(texture2d<float> tex, float2 uv, sampler s) {\n    float2 texelSize = 1.0 / float2(tex.get_width(), tex.get_height());\n    \n    // Sobel operator\n    float3 gx = float3(0.0);\n    float3 gy = float3(0.0);\n    \n    for (int y = -1; y <= 1; y++) {\n        for (int x = -1; x <= 1; x++) {\n            float2 offset = float2(x, y) * texelSize;\n            float3 sample = tex.sample(s, uv + offset).rgb;\n            \n            // Sobel kernels\n            float kx = float(x);\n            float ky = float(y);\n            \n            gx += sample * kx;\n            gy += sample * ky;\n        }\n    }\n    \n    return length(float2(length(gx), length(gy)));\n}\n\n// Bilateral filter for denoising\nfloat3 bilateralFilter(texture2d<float> tex, float2 uv, sampler s, float strength) {\n    float2 texelSize = 1.0 / float2(tex.get_width(), tex.get_height());\n    float3 center = tex.sample(s, uv).rgb;\n    \n    float3 result = float3(0.0);\n    float totalWeight = 0.0;\n    \n    int radius = 1;\n    for (int y = -radius; y <= radius; y++) {\n        for (int x = -radius; x <= radius; x++) {\n            float2 offset = float2(x, y) * texelSize;\n            float3 sample = tex.sample(s, uv + offset).rgb;\n            \n            // Spatial weight\n            float spatialWeight = exp(-dot(offset, offset) / (2.0 * strength));\n            \n            // Range weight (color similarity)\n            float3 colorDiff = sample - center;\n            float rangeWeight = exp(-dot(colorDiff, colorDiff) / (2.0 * strength));\n            \n            float weight = spatialWeight * rangeWeight;\n            result += sample * weight;\n            totalWeight += weight;\n        }\n    }\n    \n    return result / totalWeight;\n}\n\n// Unsharp mask\nfloat3 unsharpMask(texture2d<float> tex, float2 uv, sampler s, float amount) {\n    float2 texelSize = 1.0 / float2(tex.get_width(), tex.get_height());\n    float3 original = tex.sample(s, uv).rgb;\n    \n    // Gaussian blur\n    float3 blurred = float3(0.0);\n    float totalWeight = 0.0;\n    \n    for (int y = -1; y <= 1; y++) {\n        for (int x = -1; x <= 1; x++) {\n            float2 offset = float2(x, y) * texelSize;\n            float weight = exp(-dot(offset, offset) * 2.0);\n            blurred += tex.sample(s, uv + offset).rgb * weight;\n            totalWeight += weight;\n        }\n    }\n    blurred /= totalWeight;\n    \n    // Sharpen\n    return original + (original - blurred) * amount;\n}\n\nfragment float4 main0(\n    VertexOut in [[stage_in]],\n    texture2d<float> sourceTexture [[texture(0)]],\n    constant Uniforms &uniforms [[buffer(0)]]\n)\n{\n    constexpr sampler textureSampler(\n        mag_filter::linear,\n        min_filter::linear,\n        address::clamp_to_edge\n    );\n    \n    // Lanczos upsampling\n    float2 srcSize = float2(sourceTexture.get_width(), sourceTexture.get_height());\n    float2 dstSize = uniforms.OutputSize.xy;\n    float2 scale = dstSize / srcSize;\n    \n    float2 srcUV = in.texCoord * srcSize / dstSize;\n    float2 srcPixel = srcUV * srcSize;\n    float2 srcBase = floor(srcPixel - 0.5) + 0.5;\n    \n    float3 color = float3(0.0);\n    float totalWeight = 0.0;\n    \n    int kernelSize = int(uniforms.upscale_quality * 3.0);\n    \n    for (int y = -kernelSize; y <= kernelSize; y++) {\n        for (int x = -kernelSize; x <= kernelSize; x++) {\n            float2 samplePos = (srcBase + float2(x, y)) / srcSize;\n            float2 diff = srcPixel - (srcBase + float2(x, y));\n            \n            float wx = lanczos(diff.x, 3.0);\n            float wy = lanczos(diff.y, 3.0);\n            float weight = wx * wy;\n            \n            color += sourceTexture.sample(textureSampler, samplePos).rgb * weight;\n            totalWeight += weight;\n        }\n    }\n    \n    color /= totalWeight;\n    \n    // Denoise\n    if (uniforms.denoise_strength > 0.0) {\n        color = bilateralFilter(sourceTexture, in.texCoord, textureSampler, uniforms.denoise_strength);\n    }\n    \n    // Edge-aware sharpening\n    float edge = detectEdge(sourceTexture, in.texCoord, textureSampler);\n    float adaptiveSharpness = uniforms.sharpness * (1.0 + edge * uniforms.edge_enhancement);\n    color = unsharpMask(sourceTexture, in.texCoord, textureSampler, adaptiveSharpness);\n    \n    return float4(clamp(color, 0.0, 1.0), 1.0);\n}\n",
+            "frameCountMod": 0,
+            "scaleX": null,
+            "scaleY": null,
+            "filter": "linear",
+            "wrapMode": "edge",
+            "format": "rgba8Unorm",
+            "isFeedback": false,
+            "buffers": [
+                {
+                    "bindingVert": 0,
+                    "bindingFrag": 0,
+                    "size": 256,
+                    "uniforms": [
+                        {
+                            "semantic": "mvp",
+                            "index": null,
+                            "name": "MVP",
+                            "size": 64,
+                            "offset": 0
+                        },
+                        {
+                            "semantic": "outputSize",
+                            "index": null,
+                            "name": "OutputSize",
+                            "size": 16,
+                            "offset": 64
+                        },
+                        {
+                            "semantic": "sourceSize",
+                            "index": null,
+                            "name": "SourceSize",
+                            "size": 16,
+                            "offset": 80
+                        },
+                        {
+                            "semantic": "originalSize",
+                            "index": null,
+                            "name": "OriginalSize",
+                            "size": 16,
+                            "offset": 96
+                        },
+                        {
+                            "semantic": "frameCount",
+                            "index": null,
+                            "name": "FrameCount",
+                            "size": 4,
+                            "offset": 112
+                        },
+                        {
+                            "semantic": "floatParameter",
+                            "index": 0,
+                            "name": "sharpness",
+                            "size": 4,
+                            "offset": 116
+                        },
+                        {
+                            "semantic": "floatParameter",
+                            "index": 1,
+                            "name": "denoise_strength",
+                            "size": 4,
+                            "offset": 120
+                        },
+                        {
+                            "semantic": "floatParameter",
+                            "index": 2,
+                            "name": "edge_enhancement",
+                            "size": 4,
+                            "offset": 124
+                        },
+                        {
+                            "semantic": "floatParameter",
+                            "index": 3,
+                            "name": "upscale_quality",
+                            "size": 4,
+                            "offset": 128
+                        }
+                    ]
+                },
+                {
+                    "bindingVert": null,
+                    "bindingFrag": null,
+                    "size": 0,
+                    "uniforms": []
+                }
+            ],
+            "textures": [
+                {
+                    "name": "Source",
+                    "semantic": "source",
+                    "binding": 0,
+                    "wrap": "edge",
+                    "filter": "linear",
+                    "index": 0
+                }
+            ],
+            "alias": null
+        }
+    ],
+    "parameters": [
+        {
+            "index": 0,
+            "name": "sharpness",
+            "desc": "Sharpness",
+            "initial": 0.5,
+            "minimum": 0.0,
+            "maximum": 2.0,
+            "step": 0.1
+        },
+        {
+            "index": 1,
+            "name": "denoise_strength",
+            "desc": "Denoise Strength",
+            "initial": 0.3,
+            "minimum": 0.0,
+            "maximum": 1.0,
+            "step": 0.05
+        },
+        {
+            "index": 2,
+            "name": "edge_enhancement",
+            "desc": "Edge Enhancement",
+            "initial": 0.5,
+            "minimum": 0.0,
+            "maximum": 2.0,
+            "step": 0.1
+        },
+        {
+            "index": 3,
+            "name": "upscale_quality",
+            "desc": "Upscale Quality",
+            "initial": 1.0,
+            "minimum": 0.5,
+            "maximum": 2.0,
+            "step": 0.1
+        }
+    ],
+    "luts": [],
+    "historyCount": 0,
+    "languageVersion": "version2_4"
+}

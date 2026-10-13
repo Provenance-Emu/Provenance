@@ -1,0 +1,162 @@
+{
+    "passes": [
+        {
+            "index": 0,
+            "vertexSource": "#include <metal_stdlib>\nusing namespace metal;\n\nstruct Uniforms {\n    float4x4 MVP;\n    float4 OutputSize;\n    float4 SourceSize;\n    float4 OriginalSize;\n    uint FrameCount;\n    float stroke_scale;     // 2..16\n    float wax_mix;          // 0..1\n    float paper_mix;        // 0..1\n    float color_bleed;      // 0..1\n    float direction_var;    // 0..1\n};\n\nstruct VIn { float4 pos [[attribute(0)]]; float2 uv [[attribute(1)]]; };\nstruct VOut { float4 pos [[position]]; float2 uv; };\n\nvertex VOut main0(VIn in [[stage_in]], constant Uniforms &u [[buffer(0)]]) {\n    VOut o; o.pos = u.MVP * in.pos; o.uv = in.uv; return o;\n}\n\nstatic inline float luma(float3 c){ return dot(c, float3(0.2126,0.7152,0.0722)); }\n\nfragment float4 fragment_main(VOut in [[stage_in]], texture2d<float> src [[texture(0)]], constant Uniforms &u [[buffer(0)]]) {\n    constexpr sampler s(address::clamp_to_edge, filter::linear);\n    float2 pix = in.uv * u.OutputSize.xy;\n    float2 texel = 1.0 / u.OutputSize.xy;\n    float3 c0 = src.sample(s, in.uv).rgb;\n\n    // Image gradients\n    float3 s00 = src.sample(s, in.uv + float2(-1,-1)*texel).rgb;\n    float3 s10 = src.sample(s, in.uv + float2( 0,-1)*texel).rgb;\n    float3 s20 = src.sample(s, in.uv + float2( 1,-1)*texel).rgb;\n    float3 s01 = src.sample(s, in.uv + float2(-1, 0)*texel).rgb;\n    float3 s21 = src.sample(s, in.uv + float2( 1, 0)*texel).rgb;\n    float3 s02 = src.sample(s, in.uv + float2(-1, 1)*texel).rgb;\n    float3 s12 = src.sample(s, in.uv + float2( 0, 1)*texel).rgb;\n    float3 s22 = src.sample(s, in.uv + float2( 1, 1)*texel).rgb;\n\n    float3 gX = (s20 + 2.0*s21 + s22) - (s00 + 2.0*s01 + s02);\n    float3 gY = (s02 + 2.0*s12 + s22) - (s00 + 2.0*s10 + s20);\n    float2 grad = float2(luma(gX), luma(gY));\n    float gradMag = length(grad);\n\n    // Stroke direction: perpendicular to gradient, with noise-based variance\n    float t = float(u.FrameCount) * 0.011;\n    float n = fract(sin(dot(pix, float2(12.9898,78.233))) * 43758.5453 + t);\n    float angle = atan2(grad.y, grad.x) + (1.5708) + (n - 0.5)*u.direction_var*3.14159;\n    float2 dir = float2(cos(angle), sin(angle));\n\n    // Stroke pattern: repeated lines along dir\n    float scale = clamp(u.stroke_scale, 2.0, 16.0);\n    float v = fract(dot(pix, dir)/scale);\n    float line = smoothstep(0.45, 0.5, v) * (1.0 - smoothstep(0.5, 0.55, v));\n    // Modulate by gradient magnitude to emphasize edges less (crayon fills flatter areas)\n    line *= smoothstep(0.8, 0.2, gradMag);\n\n    // Wax mix: blend towards a waxy flat fill using neighborhood average\n    float3 acc = float3(0.0); float wsum = 0.0;\n    int r = 2;\n    for(int y=-r;y<=r;++y){ for(int x=-r;x<=r;++x){\n        float2 o = float2(x,y); float w = exp(-dot(o,o)*0.2);\n        float3 s3 = src.sample(s, in.uv + o*texel).rgb; acc += s3*w; wsum += w; }}\n    float3 wax = (wsum>0.0)? acc/wsum : c0;\n\n    // Color bleed: mix towards local chroma average\n    float L0 = luma(c0);\n    float3 chroma = normalize(max(float3(1e-3), c0));\n    float3 bleed = normalize(max(float3(1e-3), wax));\n    float3 crayon = mix(c0, wax, u.wax_mix);\n    crayon = mix(crayon, float3(L0)*bleed, u.color_bleed*0.5);\n\n    // Paper texture\n    float noise = fract(sin(dot(pix, float2(91.345,47.123))) * 12534.123 + t*0.73);\n    float3 paper = mix(float3(1.0), float3(0.97,0.95,0.92), 0.25 + 0.25*noise);\n\n    // Composite: stroke darkens the wax/crayon base\n    float3 outc = crayon;\n    outc = mix(outc, outc*0.5, clamp(line*1.5, 0.0, 1.0));\n    outc = mix(outc, paper, clamp(u.paper_mix, 0.0, 1.0));\n\n    return float4(saturate(outc), 1.0);\n}\n",
+            "fragmentSource": "#include <metal_stdlib>\nusing namespace metal;\n\nstruct Uniforms {\n    float4x4 MVP;\n    float4 OutputSize;\n    float4 SourceSize;\n    float4 OriginalSize;\n    uint FrameCount;\n    float stroke_scale;     // 2..16\n    float wax_mix;          // 0..1\n    float paper_mix;        // 0..1\n    float color_bleed;      // 0..1\n    float direction_var;    // 0..1\n};\n\nstruct VIn { float4 pos [[attribute(0)]]; float2 uv [[attribute(1)]]; };\nstruct VOut { float4 pos [[position]]; float2 uv; };\n\nvertex VOut vertex_main(VIn in [[stage_in]], constant Uniforms &u [[buffer(0)]]) {\n    VOut o; o.pos = u.MVP * in.pos; o.uv = in.uv; return o;\n}\n\nstatic inline float luma(float3 c){ return dot(c, float3(0.2126,0.7152,0.0722)); }\n\nfragment float4 main0(VOut in [[stage_in]], texture2d<float> src [[texture(0)]], constant Uniforms &u [[buffer(0)]]) {\n    constexpr sampler s(address::clamp_to_edge, filter::linear);\n    float2 pix = in.uv * u.OutputSize.xy;\n    float2 texel = 1.0 / u.OutputSize.xy;\n    float3 c0 = src.sample(s, in.uv).rgb;\n\n    // Image gradients\n    float3 s00 = src.sample(s, in.uv + float2(-1,-1)*texel).rgb;\n    float3 s10 = src.sample(s, in.uv + float2( 0,-1)*texel).rgb;\n    float3 s20 = src.sample(s, in.uv + float2( 1,-1)*texel).rgb;\n    float3 s01 = src.sample(s, in.uv + float2(-1, 0)*texel).rgb;\n    float3 s21 = src.sample(s, in.uv + float2( 1, 0)*texel).rgb;\n    float3 s02 = src.sample(s, in.uv + float2(-1, 1)*texel).rgb;\n    float3 s12 = src.sample(s, in.uv + float2( 0, 1)*texel).rgb;\n    float3 s22 = src.sample(s, in.uv + float2( 1, 1)*texel).rgb;\n\n    float3 gX = (s20 + 2.0*s21 + s22) - (s00 + 2.0*s01 + s02);\n    float3 gY = (s02 + 2.0*s12 + s22) - (s00 + 2.0*s10 + s20);\n    float2 grad = float2(luma(gX), luma(gY));\n    float gradMag = length(grad);\n\n    // Stroke direction: perpendicular to gradient, with noise-based variance\n    float t = float(u.FrameCount) * 0.011;\n    float n = fract(sin(dot(pix, float2(12.9898,78.233))) * 43758.5453 + t);\n    float angle = atan2(grad.y, grad.x) + (1.5708) + (n - 0.5)*u.direction_var*3.14159;\n    float2 dir = float2(cos(angle), sin(angle));\n\n    // Stroke pattern: repeated lines along dir\n    float scale = clamp(u.stroke_scale, 2.0, 16.0);\n    float v = fract(dot(pix, dir)/scale);\n    float line = smoothstep(0.45, 0.5, v) * (1.0 - smoothstep(0.5, 0.55, v));\n    // Modulate by gradient magnitude to emphasize edges less (crayon fills flatter areas)\n    line *= smoothstep(0.8, 0.2, gradMag);\n\n    // Wax mix: blend towards a waxy flat fill using neighborhood average\n    float3 acc = float3(0.0); float wsum = 0.0;\n    int r = 2;\n    for(int y=-r;y<=r;++y){ for(int x=-r;x<=r;++x){\n        float2 o = float2(x,y); float w = exp(-dot(o,o)*0.2);\n        float3 s3 = src.sample(s, in.uv + o*texel).rgb; acc += s3*w; wsum += w; }}\n    float3 wax = (wsum>0.0)? acc/wsum : c0;\n\n    // Color bleed: mix towards local chroma average\n    float L0 = luma(c0);\n    float3 chroma = normalize(max(float3(1e-3), c0));\n    float3 bleed = normalize(max(float3(1e-3), wax));\n    float3 crayon = mix(c0, wax, u.wax_mix);\n    crayon = mix(crayon, float3(L0)*bleed, u.color_bleed*0.5);\n\n    // Paper texture\n    float noise = fract(sin(dot(pix, float2(91.345,47.123))) * 12534.123 + t*0.73);\n    float3 paper = mix(float3(1.0), float3(0.97,0.95,0.92), 0.25 + 0.25*noise);\n\n    // Composite: stroke darkens the wax/crayon base\n    float3 outc = crayon;\n    outc = mix(outc, outc*0.5, clamp(line*1.5, 0.0, 1.0));\n    outc = mix(outc, paper, clamp(u.paper_mix, 0.0, 1.0));\n\n    return float4(saturate(outc), 1.0);\n}\n",
+            "frameCountMod": 0,
+            "scaleX": null,
+            "scaleY": null,
+            "filter": "linear",
+            "wrapMode": "edge",
+            "format": "rgba8Unorm",
+            "isFeedback": false,
+            "buffers": [
+                {
+                    "bindingVert": 0,
+                    "bindingFrag": 0,
+                    "size": 256,
+                    "uniforms": [
+                        {
+                            "semantic": "mvp",
+                            "index": null,
+                            "name": "MVP",
+                            "size": 64,
+                            "offset": 0
+                        },
+                        {
+                            "semantic": "outputSize",
+                            "index": null,
+                            "name": "OutputSize",
+                            "size": 16,
+                            "offset": 64
+                        },
+                        {
+                            "semantic": "sourceSize",
+                            "index": null,
+                            "name": "SourceSize",
+                            "size": 16,
+                            "offset": 80
+                        },
+                        {
+                            "semantic": "originalSize",
+                            "index": null,
+                            "name": "OriginalSize",
+                            "size": 16,
+                            "offset": 96
+                        },
+                        {
+                            "semantic": "frameCount",
+                            "index": null,
+                            "name": "FrameCount",
+                            "size": 4,
+                            "offset": 112
+                        },
+                        {
+                            "semantic": "floatParameter",
+                            "index": 0,
+                            "name": "stroke_scale",
+                            "size": 4,
+                            "offset": 116
+                        },
+                        {
+                            "semantic": "floatParameter",
+                            "index": 1,
+                            "name": "wax_mix",
+                            "size": 4,
+                            "offset": 120
+                        },
+                        {
+                            "semantic": "floatParameter",
+                            "index": 2,
+                            "name": "paper_mix",
+                            "size": 4,
+                            "offset": 124
+                        },
+                        {
+                            "semantic": "floatParameter",
+                            "index": 3,
+                            "name": "color_bleed",
+                            "size": 4,
+                            "offset": 128
+                        },
+                        {
+                            "semantic": "floatParameter",
+                            "index": 4,
+                            "name": "direction_var",
+                            "size": 4,
+                            "offset": 132
+                        }
+                    ]
+                },
+                {
+                    "bindingVert": null,
+                    "bindingFrag": null,
+                    "size": 0,
+                    "uniforms": []
+                }
+            ],
+            "textures": [
+                {
+                    "name": "Source",
+                    "semantic": "source",
+                    "binding": 0,
+                    "wrap": "edge",
+                    "filter": "linear",
+                    "index": 0
+                }
+            ],
+            "alias": null
+        }
+    ],
+    "parameters": [
+        {
+            "index": 0,
+            "name": "stroke_scale",
+            "desc": "Stroke Scale (px)",
+            "initial": 8.0,
+            "minimum": 2.0,
+            "maximum": 16.0,
+            "step": 0.5
+        },
+        {
+            "index": 1,
+            "name": "wax_mix",
+            "desc": "Wax Mix",
+            "initial": 0.5,
+            "minimum": 0.0,
+            "maximum": 1.0,
+            "step": 0.01
+        },
+        {
+            "index": 2,
+            "name": "paper_mix",
+            "desc": "Paper Mix",
+            "initial": 0.25,
+            "minimum": 0.0,
+            "maximum": 1.0,
+            "step": 0.01
+        },
+        {
+            "index": 3,
+            "name": "color_bleed",
+            "desc": "Color Bleed",
+            "initial": 0.3,
+            "minimum": 0.0,
+            "maximum": 1.0,
+            "step": 0.01
+        },
+        {
+            "index": 4,
+            "name": "direction_var",
+            "desc": "Direction Variance",
+            "initial": 0.4,
+            "minimum": 0.0,
+            "maximum": 1.0,
+            "step": 0.01
+        }
+    ],
+    "luts": [],
+    "historyCount": 0,
+    "languageVersion": "version2_4"
+}

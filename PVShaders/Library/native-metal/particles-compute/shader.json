@@ -1,0 +1,152 @@
+{
+    "passes": [
+        {
+            "index": 0,
+            "vertexSource": "//\n//  True Particle System with Compute Shader\n//  Native Metal Shader - Advanced Effects\n//\n\n#include <metal_stdlib>\nusing namespace metal;\n\n// MARK: - Structures\n\nstruct Particle {\n    float2 position;\n    float2 velocity;\n    float life;\n    float size;\n    float4 color;\n};\n\nstruct Uniforms {\n    float4x4 MVP;\n    float4 OutputSize;\n    float4 SourceSize;\n    float4 OriginalSize;\n    uint FrameCount;\n    float particle_count;\n    float particle_speed;\n    float particle_size;\n    float gravity;\n};\n\n// MARK: - Compute Shader (Particle Simulation)\n\nkernel void particle_simulation(\n    device Particle *particles [[buffer(0)]],\n    constant Uniforms &uniforms [[buffer(1)]],\n    uint id [[thread_position_in_grid]]\n)\n{\n    uint particle_count = uint(uniforms.particle_count * 1000.0);\n    \n    if (id >= particle_count) return;\n    \n    Particle particle = particles[id];\n    \n    // Update particle\n    float dt = 1.0 / 60.0; // Assume 60 FPS\n    \n    // Apply velocity\n    particle.position += particle.velocity * dt * uniforms.particle_speed;\n    \n    // Apply gravity\n    particle.velocity.y += uniforms.gravity * dt;\n    \n    // Decrease life\n    particle.life -= dt;\n    \n    // Reset particle if dead\n    if (particle.life <= 0.0) {\n        // Pseudo-random based on particle ID and frame count\n        float seed = float(id) + float(uniforms.FrameCount) * 0.1;\n        float rand_x = fract(sin(seed * 12.9898) * 43758.5453);\n        float rand_y = fract(sin(seed * 78.233) * 43758.5453);\n        float rand_vx = fract(sin(seed * 45.164) * 43758.5453);\n        float rand_vy = fract(sin(seed * 94.673) * 43758.5453);\n        \n        particle.position = float2(rand_x, 0.1); // Start at bottom\n        particle.velocity = float2((rand_vx - 0.5) * 2.0, rand_vy * 2.0 + 1.0);\n        particle.life = 3.0 + rand_y * 2.0;\n        particle.size = uniforms.particle_size * (0.5 + rand_x * 0.5);\n        \n        // Random color\n        particle.color = float4(\n            0.5 + rand_x * 0.5,\n            0.5 + rand_y * 0.5,\n            0.5 + rand_vx * 0.5,\n            1.0\n        );\n    }\n    \n    // Wrap around screen\n    if (particle.position.x < 0.0) particle.position.x += 1.0;\n    if (particle.position.x > 1.0) particle.position.x -= 1.0;\n    if (particle.position.y > 1.0) particle.position.y = 0.0;\n    \n    particles[id] = particle;\n}\n\n// MARK: - Vertex Shader\n\nstruct VertexIn {\n    float4 position [[attribute(0)]];\n    float2 texCoord [[attribute(1)]];\n};\n\nstruct VertexOut {\n    float4 position [[position]];\n    float2 texCoord;\n};\n\nvertex VertexOut main0(\n    VertexIn in [[stage_in]],\n    constant Uniforms &uniforms [[buffer(0)]]\n)\n{\n    VertexOut out;\n    out.position = uniforms.MVP * in.position;\n    out.texCoord = in.texCoord;\n    return out;\n}\n\n// MARK: - Fragment Shader\n\nfragment float4 fragment_main(\n    VertexOut in [[stage_in]],\n    texture2d<float> sourceTexture [[texture(0)]],\n    device Particle *particles [[buffer(0)]],\n    constant Uniforms &uniforms [[buffer(1)]]\n)\n{\n    constexpr sampler textureSampler(\n        mag_filter::linear,\n        min_filter::linear,\n        address::clamp_to_edge\n    );\n    \n    // Sample original image\n    float4 color = sourceTexture.sample(textureSampler, in.texCoord);\n    \n    // Render particles\n    uint particle_count = uint(uniforms.particle_count * 1000.0);\n    \n    for (uint i = 0; i < particle_count; i++) {\n        Particle particle = particles[i];\n        \n        // Distance to particle\n        float2 toParticle = in.texCoord - particle.position;\n        toParticle.x *= uniforms.OutputSize.x / uniforms.OutputSize.y; // Aspect ratio correction\n        float dist = length(toParticle);\n        \n        // Particle rendering\n        float particleRadius = particle.size * 0.01;\n        float alpha = smoothstep(particleRadius, particleRadius * 0.5, dist);\n        alpha *= particle.life / 5.0; // Fade based on life\n        \n        // Blend particle color\n        color = mix(color, particle.color, alpha * particle.color.a);\n    }\n    \n    return color;\n}\n",
+            "fragmentSource": "//\n//  True Particle System with Compute Shader\n//  Native Metal Shader - Advanced Effects\n//\n\n#include <metal_stdlib>\nusing namespace metal;\n\n// MARK: - Structures\n\nstruct Particle {\n    float2 position;\n    float2 velocity;\n    float life;\n    float size;\n    float4 color;\n};\n\nstruct Uniforms {\n    float4x4 MVP;\n    float4 OutputSize;\n    float4 SourceSize;\n    float4 OriginalSize;\n    uint FrameCount;\n    float particle_count;\n    float particle_speed;\n    float particle_size;\n    float gravity;\n};\n\n// MARK: - Compute Shader (Particle Simulation)\n\nkernel void particle_simulation(\n    device Particle *particles [[buffer(0)]],\n    constant Uniforms &uniforms [[buffer(1)]],\n    uint id [[thread_position_in_grid]]\n)\n{\n    uint particle_count = uint(uniforms.particle_count * 1000.0);\n    \n    if (id >= particle_count) return;\n    \n    Particle particle = particles[id];\n    \n    // Update particle\n    float dt = 1.0 / 60.0; // Assume 60 FPS\n    \n    // Apply velocity\n    particle.position += particle.velocity * dt * uniforms.particle_speed;\n    \n    // Apply gravity\n    particle.velocity.y += uniforms.gravity * dt;\n    \n    // Decrease life\n    particle.life -= dt;\n    \n    // Reset particle if dead\n    if (particle.life <= 0.0) {\n        // Pseudo-random based on particle ID and frame count\n        float seed = float(id) + float(uniforms.FrameCount) * 0.1;\n        float rand_x = fract(sin(seed * 12.9898) * 43758.5453);\n        float rand_y = fract(sin(seed * 78.233) * 43758.5453);\n        float rand_vx = fract(sin(seed * 45.164) * 43758.5453);\n        float rand_vy = fract(sin(seed * 94.673) * 43758.5453);\n        \n        particle.position = float2(rand_x, 0.1); // Start at bottom\n        particle.velocity = float2((rand_vx - 0.5) * 2.0, rand_vy * 2.0 + 1.0);\n        particle.life = 3.0 + rand_y * 2.0;\n        particle.size = uniforms.particle_size * (0.5 + rand_x * 0.5);\n        \n        // Random color\n        particle.color = float4(\n            0.5 + rand_x * 0.5,\n            0.5 + rand_y * 0.5,\n            0.5 + rand_vx * 0.5,\n            1.0\n        );\n    }\n    \n    // Wrap around screen\n    if (particle.position.x < 0.0) particle.position.x += 1.0;\n    if (particle.position.x > 1.0) particle.position.x -= 1.0;\n    if (particle.position.y > 1.0) particle.position.y = 0.0;\n    \n    particles[id] = particle;\n}\n\n// MARK: - Vertex Shader\n\nstruct VertexIn {\n    float4 position [[attribute(0)]];\n    float2 texCoord [[attribute(1)]];\n};\n\nstruct VertexOut {\n    float4 position [[position]];\n    float2 texCoord;\n};\n\nvertex VertexOut vertex_main(\n    VertexIn in [[stage_in]],\n    constant Uniforms &uniforms [[buffer(0)]]\n)\n{\n    VertexOut out;\n    out.position = uniforms.MVP * in.position;\n    out.texCoord = in.texCoord;\n    return out;\n}\n\n// MARK: - Fragment Shader\n\nfragment float4 main0(\n    VertexOut in [[stage_in]],\n    texture2d<float> sourceTexture [[texture(0)]],\n    device Particle *particles [[buffer(0)]],\n    constant Uniforms &uniforms [[buffer(1)]]\n)\n{\n    constexpr sampler textureSampler(\n        mag_filter::linear,\n        min_filter::linear,\n        address::clamp_to_edge\n    );\n    \n    // Sample original image\n    float4 color = sourceTexture.sample(textureSampler, in.texCoord);\n    \n    // Render particles\n    uint particle_count = uint(uniforms.particle_count * 1000.0);\n    \n    for (uint i = 0; i < particle_count; i++) {\n        Particle particle = particles[i];\n        \n        // Distance to particle\n        float2 toParticle = in.texCoord - particle.position;\n        toParticle.x *= uniforms.OutputSize.x / uniforms.OutputSize.y; // Aspect ratio correction\n        float dist = length(toParticle);\n        \n        // Particle rendering\n        float particleRadius = particle.size * 0.01;\n        float alpha = smoothstep(particleRadius, particleRadius * 0.5, dist);\n        alpha *= particle.life / 5.0; // Fade based on life\n        \n        // Blend particle color\n        color = mix(color, particle.color, alpha * particle.color.a);\n    }\n    \n    return color;\n}\n",
+            "frameCountMod": 0,
+            "scaleX": null,
+            "scaleY": null,
+            "filter": "linear",
+            "wrapMode": "edge",
+            "format": "rgba8Unorm",
+            "isFeedback": false,
+            "buffers": [
+                {
+                    "bindingVert": null,
+                    "bindingFrag": 0,
+                    "size": 64,
+                    "uniforms": []
+                },
+                {
+                    "bindingVert": 0,
+                    "bindingFrag": 1,
+                    "size": 256,
+                    "uniforms": [
+                        {
+                            "semantic": "mvp",
+                            "index": null,
+                            "name": "MVP",
+                            "size": 64,
+                            "offset": 0
+                        },
+                        {
+                            "semantic": "outputSize",
+                            "index": null,
+                            "name": "OutputSize",
+                            "size": 16,
+                            "offset": 64
+                        },
+                        {
+                            "semantic": "sourceSize",
+                            "index": null,
+                            "name": "SourceSize",
+                            "size": 16,
+                            "offset": 80
+                        },
+                        {
+                            "semantic": "originalSize",
+                            "index": null,
+                            "name": "OriginalSize",
+                            "size": 16,
+                            "offset": 96
+                        },
+                        {
+                            "semantic": "frameCount",
+                            "index": null,
+                            "name": "FrameCount",
+                            "size": 4,
+                            "offset": 112
+                        },
+                        {
+                            "semantic": "floatParameter",
+                            "index": 0,
+                            "name": "particle_count",
+                            "size": 4,
+                            "offset": 116
+                        },
+                        {
+                            "semantic": "floatParameter",
+                            "index": 1,
+                            "name": "particle_speed",
+                            "size": 4,
+                            "offset": 120
+                        },
+                        {
+                            "semantic": "floatParameter",
+                            "index": 2,
+                            "name": "particle_size",
+                            "size": 4,
+                            "offset": 124
+                        },
+                        {
+                            "semantic": "floatParameter",
+                            "index": 3,
+                            "name": "gravity",
+                            "size": 4,
+                            "offset": 128
+                        }
+                    ]
+                },
+                {
+                    "bindingVert": null,
+                    "bindingFrag": null,
+                    "size": 0,
+                    "uniforms": []
+                }
+            ],
+            "textures": [
+                {
+                    "name": "Source",
+                    "semantic": "source",
+                    "binding": 0,
+                    "wrap": "edge",
+                    "filter": "linear",
+                    "index": 0
+                }
+            ],
+            "alias": null
+        }
+    ],
+    "parameters": [
+        {
+            "index": 0,
+            "name": "particle_count",
+            "desc": "Particle Count (x1000)",
+            "initial": 1.0,
+            "minimum": 0.1,
+            "maximum": 5.0,
+            "step": 0.1
+        },
+        {
+            "index": 1,
+            "name": "particle_speed",
+            "desc": "Particle Speed",
+            "initial": 1.0,
+            "minimum": 0.0,
+            "maximum": 3.0,
+            "step": 0.1
+        },
+        {
+            "index": 2,
+            "name": "particle_size",
+            "desc": "Particle Size",
+            "initial": 1.0,
+            "minimum": 0.1,
+            "maximum": 3.0,
+            "step": 0.1
+        },
+        {
+            "index": 3,
+            "name": "gravity",
+            "desc": "Gravity",
+            "initial": 0.5,
+            "minimum": -2.0,
+            "maximum": 2.0,
+            "step": 0.1
+        }
+    ],
+    "luts": [],
+    "historyCount": 0,
+    "languageVersion": "version2_4"
+}

@@ -1,0 +1,146 @@
+{
+    "passes": [
+        {
+            "index": 0,
+            "vertexSource": "//\n//  Motion Blur with Velocity Buffer\n//  Native Metal Shader - Realistic Motion\n//\n\n#include <metal_stdlib>\nusing namespace metal;\n\nstruct Uniforms {\n    float4x4 MVP;\n    float4 OutputSize;\n    float4 SourceSize;\n    float4 OriginalSize;\n    uint FrameCount;\n    float blur_strength;\n    float blur_samples;\n    float velocity_scale;\n    float center_bias;\n};\n\nstruct VertexIn {\n    float4 position [[attribute(0)]];\n    float2 texCoord [[attribute(1)]];\n};\n\nstruct VertexOut {\n    float4 position [[position]];\n    float2 texCoord;\n};\n\nvertex VertexOut main0(\n    VertexIn in [[stage_in]],\n    constant Uniforms &uniforms [[buffer(0)]]\n)\n{\n    VertexOut out;\n    out.position = uniforms.MVP * in.position;\n    out.texCoord = in.texCoord;\n    return out;\n}\n\n// Calculate optical flow (motion vectors)\nfloat2 calculateVelocity(\n    texture2d<float> current,\n    texture2d<float> previous,\n    float2 uv,\n    sampler s\n) {\n    float3 currentColor = current.sample(s, uv).rgb;\n    \n    // Search for best match in previous frame\n    float2 bestOffset = float2(0.0);\n    float bestDiff = 1e10;\n    \n    float searchRadius = 0.02;\n    int searchSteps = 5;\n    \n    for (int x = -searchSteps; x <= searchSteps; x++) {\n        for (int y = -searchSteps; y <= searchSteps; y++) {\n            float2 offset = float2(x, y) * searchRadius / float(searchSteps);\n            float3 prevColor = previous.sample(s, uv + offset).rgb;\n            \n            float diff = length(currentColor - prevColor);\n            if (diff < bestDiff) {\n                bestDiff = diff;\n                bestOffset = offset;\n            }\n        }\n    }\n    \n    return -bestOffset; // Negative for motion direction\n}\n\nfragment float4 fragment_main(\n    VertexOut in [[stage_in]],\n    texture2d<float> sourceTexture [[texture(0)]],\n    constant Uniforms &uniforms [[buffer(0)]]\n)\n{\n    constexpr sampler textureSampler(\n        mag_filter::linear,\n        min_filter::linear,\n        address::clamp_to_edge\n    );\n    \n    // Radial motion blur from center\n    float2 center = float2(0.5, 0.5);\n    float2 toCenter = center - in.texCoord;\n    float dist = length(toCenter);\n    \n    // Motion vector (radial + some rotation)\n    float angle = atan2(toCenter.y, toCenter.x);\n    float2 velocity = float2(\n        cos(angle) * dist,\n        sin(angle) * dist\n    ) * uniforms.velocity_scale;\n    \n    // Add rotational component\n    float2 perpendicular = float2(-toCenter.y, toCenter.x);\n    velocity += perpendicular * uniforms.velocity_scale * 0.3;\n    \n    // Bias towards center (less blur in center)\n    float centerBias = smoothstep(0.0, 0.3, dist);\n    velocity *= centerBias * (1.0 - uniforms.center_bias) + uniforms.center_bias;\n    \n    // Motion blur sampling\n    int samples = int(uniforms.blur_samples);\n    float3 result = float3(0.0);\n    float totalWeight = 0.0;\n    \n    for (int i = 0; i < samples; i++) {\n        float t = float(i) / float(samples - 1) - 0.5;\n        float2 offset = velocity * t * uniforms.blur_strength * 0.1;\n        \n        float weight = 1.0 - abs(t);\n        float3 sample = sourceTexture.sample(textureSampler, in.texCoord + offset).rgb;\n        \n        result += sample * weight;\n        totalWeight += weight;\n    }\n    \n    result /= totalWeight;\n    \n    return float4(result, 1.0);\n}\n",
+            "fragmentSource": "//\n//  Motion Blur with Velocity Buffer\n//  Native Metal Shader - Realistic Motion\n//\n\n#include <metal_stdlib>\nusing namespace metal;\n\nstruct Uniforms {\n    float4x4 MVP;\n    float4 OutputSize;\n    float4 SourceSize;\n    float4 OriginalSize;\n    uint FrameCount;\n    float blur_strength;\n    float blur_samples;\n    float velocity_scale;\n    float center_bias;\n};\n\nstruct VertexIn {\n    float4 position [[attribute(0)]];\n    float2 texCoord [[attribute(1)]];\n};\n\nstruct VertexOut {\n    float4 position [[position]];\n    float2 texCoord;\n};\n\nvertex VertexOut vertex_main(\n    VertexIn in [[stage_in]],\n    constant Uniforms &uniforms [[buffer(0)]]\n)\n{\n    VertexOut out;\n    out.position = uniforms.MVP * in.position;\n    out.texCoord = in.texCoord;\n    return out;\n}\n\n// Calculate optical flow (motion vectors)\nfloat2 calculateVelocity(\n    texture2d<float> current,\n    texture2d<float> previous,\n    float2 uv,\n    sampler s\n) {\n    float3 currentColor = current.sample(s, uv).rgb;\n    \n    // Search for best match in previous frame\n    float2 bestOffset = float2(0.0);\n    float bestDiff = 1e10;\n    \n    float searchRadius = 0.02;\n    int searchSteps = 5;\n    \n    for (int x = -searchSteps; x <= searchSteps; x++) {\n        for (int y = -searchSteps; y <= searchSteps; y++) {\n            float2 offset = float2(x, y) * searchRadius / float(searchSteps);\n            float3 prevColor = previous.sample(s, uv + offset).rgb;\n            \n            float diff = length(currentColor - prevColor);\n            if (diff < bestDiff) {\n                bestDiff = diff;\n                bestOffset = offset;\n            }\n        }\n    }\n    \n    return -bestOffset; // Negative for motion direction\n}\n\nfragment float4 main0(\n    VertexOut in [[stage_in]],\n    texture2d<float> sourceTexture [[texture(0)]],\n    constant Uniforms &uniforms [[buffer(0)]]\n)\n{\n    constexpr sampler textureSampler(\n        mag_filter::linear,\n        min_filter::linear,\n        address::clamp_to_edge\n    );\n    \n    // Radial motion blur from center\n    float2 center = float2(0.5, 0.5);\n    float2 toCenter = center - in.texCoord;\n    float dist = length(toCenter);\n    \n    // Motion vector (radial + some rotation)\n    float angle = atan2(toCenter.y, toCenter.x);\n    float2 velocity = float2(\n        cos(angle) * dist,\n        sin(angle) * dist\n    ) * uniforms.velocity_scale;\n    \n    // Add rotational component\n    float2 perpendicular = float2(-toCenter.y, toCenter.x);\n    velocity += perpendicular * uniforms.velocity_scale * 0.3;\n    \n    // Bias towards center (less blur in center)\n    float centerBias = smoothstep(0.0, 0.3, dist);\n    velocity *= centerBias * (1.0 - uniforms.center_bias) + uniforms.center_bias;\n    \n    // Motion blur sampling\n    int samples = int(uniforms.blur_samples);\n    float3 result = float3(0.0);\n    float totalWeight = 0.0;\n    \n    for (int i = 0; i < samples; i++) {\n        float t = float(i) / float(samples - 1) - 0.5;\n        float2 offset = velocity * t * uniforms.blur_strength * 0.1;\n        \n        float weight = 1.0 - abs(t);\n        float3 sample = sourceTexture.sample(textureSampler, in.texCoord + offset).rgb;\n        \n        result += sample * weight;\n        totalWeight += weight;\n    }\n    \n    result /= totalWeight;\n    \n    return float4(result, 1.0);\n}\n",
+            "frameCountMod": 0,
+            "scaleX": null,
+            "scaleY": null,
+            "filter": "linear",
+            "wrapMode": "edge",
+            "format": "rgba8Unorm",
+            "isFeedback": false,
+            "buffers": [
+                {
+                    "bindingVert": 0,
+                    "bindingFrag": 0,
+                    "size": 256,
+                    "uniforms": [
+                        {
+                            "semantic": "mvp",
+                            "index": null,
+                            "name": "MVP",
+                            "size": 64,
+                            "offset": 0
+                        },
+                        {
+                            "semantic": "outputSize",
+                            "index": null,
+                            "name": "OutputSize",
+                            "size": 16,
+                            "offset": 64
+                        },
+                        {
+                            "semantic": "sourceSize",
+                            "index": null,
+                            "name": "SourceSize",
+                            "size": 16,
+                            "offset": 80
+                        },
+                        {
+                            "semantic": "originalSize",
+                            "index": null,
+                            "name": "OriginalSize",
+                            "size": 16,
+                            "offset": 96
+                        },
+                        {
+                            "semantic": "frameCount",
+                            "index": null,
+                            "name": "FrameCount",
+                            "size": 4,
+                            "offset": 112
+                        },
+                        {
+                            "semantic": "floatParameter",
+                            "index": 0,
+                            "name": "blur_strength",
+                            "size": 4,
+                            "offset": 116
+                        },
+                        {
+                            "semantic": "floatParameter",
+                            "index": 1,
+                            "name": "blur_samples",
+                            "size": 4,
+                            "offset": 120
+                        },
+                        {
+                            "semantic": "floatParameter",
+                            "index": 2,
+                            "name": "velocity_scale",
+                            "size": 4,
+                            "offset": 124
+                        },
+                        {
+                            "semantic": "floatParameter",
+                            "index": 3,
+                            "name": "center_bias",
+                            "size": 4,
+                            "offset": 128
+                        }
+                    ]
+                },
+                {
+                    "bindingVert": null,
+                    "bindingFrag": null,
+                    "size": 0,
+                    "uniforms": []
+                }
+            ],
+            "textures": [
+                {
+                    "name": "Source",
+                    "semantic": "source",
+                    "binding": 0,
+                    "wrap": "edge",
+                    "filter": "linear",
+                    "index": 0
+                }
+            ],
+            "alias": null
+        }
+    ],
+    "parameters": [
+        {
+            "index": 0,
+            "name": "blur_strength",
+            "desc": "Blur Strength",
+            "initial": 0.5,
+            "minimum": 0.0,
+            "maximum": 2.0,
+            "step": 0.1
+        },
+        {
+            "index": 1,
+            "name": "blur_samples",
+            "desc": "Blur Samples (Quality)",
+            "initial": 16.0,
+            "minimum": 4.0,
+            "maximum": 32.0,
+            "step": 2.0
+        },
+        {
+            "index": 2,
+            "name": "velocity_scale",
+            "desc": "Velocity Scale",
+            "initial": 1.0,
+            "minimum": 0.0,
+            "maximum": 3.0,
+            "step": 0.1
+        },
+        {
+            "index": 3,
+            "name": "center_bias",
+            "desc": "Center Bias",
+            "initial": 0.3,
+            "minimum": 0.0,
+            "maximum": 1.0,
+            "step": 0.05
+        }
+    ],
+    "luts": [],
+    "historyCount": 0,
+    "languageVersion": "version2_4"
+}

@@ -1,0 +1,146 @@
+{
+    "passes": [
+        {
+            "index": 0,
+            "vertexSource": "//\n//  Procedural Noise & Textures\n//  Native Metal Shader - Perlin, Simplex, Fractals\n//\n\n#include <metal_stdlib>\nusing namespace metal;\n\nstruct Uniforms {\n    float4x4 MVP;\n    float4 OutputSize;\n    float4 SourceSize;\n    float4 OriginalSize;\n    uint FrameCount;\n    float noise_scale;\n    float octaves;\n    float persistence;\n    float blend_amount;\n};\n\nstruct VertexIn {\n    float4 position [[attribute(0)]];\n    float2 texCoord [[attribute(1)]];\n};\n\nstruct VertexOut {\n    float4 position [[position]];\n    float2 texCoord;\n};\n\nvertex VertexOut main0(\n    VertexIn in [[stage_in]],\n    constant Uniforms &uniforms [[buffer(0)]]\n)\n{\n    VertexOut out;\n    out.position = uniforms.MVP * in.position;\n    out.texCoord = in.texCoord;\n    return out;\n}\n\n// Hash function for pseudo-random values\nfloat hash(float2 p) {\n    return fract(sin(dot(p, float2(12.9898, 78.233))) * 43758.5453);\n}\n\n// 2D Value noise\nfloat valueNoise(float2 p) {\n    float2 i = floor(p);\n    float2 f = fract(p);\n    \n    // Smooth interpolation\n    f = f * f * (3.0 - 2.0 * f);\n    \n    // Four corners\n    float a = hash(i);\n    float b = hash(i + float2(1.0, 0.0));\n    float c = hash(i + float2(0.0, 1.0));\n    float d = hash(i + float2(1.0, 1.0));\n    \n    // Bilinear interpolation\n    return mix(mix(a, b, f.x), mix(c, d, f.x), f.y);\n}\n\n// Perlin-like noise\nfloat perlinNoise(float2 p) {\n    float2 i = floor(p);\n    float2 f = fract(p);\n    \n    // Quintic interpolation\n    float2 u = f * f * f * (f * (f * 6.0 - 15.0) + 10.0);\n    \n    float a = hash(i);\n    float b = hash(i + float2(1.0, 0.0));\n    float c = hash(i + float2(0.0, 1.0));\n    float d = hash(i + float2(1.0, 1.0));\n    \n    return mix(mix(a, b, u.x), mix(c, d, u.x), u.y);\n}\n\n// Fractal Brownian Motion (fBm)\nfloat fbm(float2 p, int octaves, float persistence) {\n    float value = 0.0;\n    float amplitude = 1.0;\n    float frequency = 1.0;\n    float maxValue = 0.0;\n    \n    for (int i = 0; i < octaves; i++) {\n        value += perlinNoise(p * frequency) * amplitude;\n        maxValue += amplitude;\n        amplitude *= persistence;\n        frequency *= 2.0;\n    }\n    \n    return value / maxValue;\n}\n\n// Voronoi / Cellular noise\nfloat voronoi(float2 p) {\n    float2 i = floor(p);\n    float2 f = fract(p);\n    \n    float minDist = 1.0;\n    \n    for (int y = -1; y <= 1; y++) {\n        for (int x = -1; x <= 1; x++) {\n            float2 neighbor = float2(x, y);\n            float2 point = hash(i + neighbor) * float2(1.0) + neighbor;\n            float dist = length(point - f);\n            minDist = min(minDist, dist);\n        }\n    }\n    \n    return minDist;\n}\n\n// Turbulence\nfloat turbulence(float2 p, int octaves) {\n    float value = 0.0;\n    float amplitude = 1.0;\n    float frequency = 1.0;\n    \n    for (int i = 0; i < octaves; i++) {\n        value += abs(perlinNoise(p * frequency)) * amplitude;\n        amplitude *= 0.5;\n        frequency *= 2.0;\n    }\n    \n    return value;\n}\n\nfragment float4 fragment_main(\n    VertexOut in [[stage_in]],\n    texture2d<float> sourceTexture [[texture(0)]],\n    constant Uniforms &uniforms [[buffer(0)]]\n)\n{\n    constexpr sampler textureSampler(\n        mag_filter::linear,\n        min_filter::linear,\n        address::clamp_to_edge\n    );\n    \n    float4 color = sourceTexture.sample(textureSampler, in.texCoord);\n    \n    float time = float(uniforms.FrameCount) * 0.01;\n    float2 p = in.texCoord * uniforms.noise_scale;\n    \n    // Generate multiple noise patterns\n    int octaves = int(uniforms.octaves);\n    \n    // Fractal Brownian Motion\n    float noise1 = fbm(p + time * 0.1, octaves, uniforms.persistence);\n    \n    // Turbulence\n    float noise2 = turbulence(p + time * 0.05, octaves);\n    \n    // Voronoi\n    float noise3 = voronoi(p * 2.0);\n    \n    // Combine noises\n    float3 noiseColor = float3(\n        noise1,\n        noise2 * 0.5 + 0.5,\n        noise3\n    );\n    \n    // Blend with original\n    color.rgb = mix(color.rgb, noiseColor, uniforms.blend_amount);\n    \n    return color;\n}\n",
+            "fragmentSource": "//\n//  Procedural Noise & Textures\n//  Native Metal Shader - Perlin, Simplex, Fractals\n//\n\n#include <metal_stdlib>\nusing namespace metal;\n\nstruct Uniforms {\n    float4x4 MVP;\n    float4 OutputSize;\n    float4 SourceSize;\n    float4 OriginalSize;\n    uint FrameCount;\n    float noise_scale;\n    float octaves;\n    float persistence;\n    float blend_amount;\n};\n\nstruct VertexIn {\n    float4 position [[attribute(0)]];\n    float2 texCoord [[attribute(1)]];\n};\n\nstruct VertexOut {\n    float4 position [[position]];\n    float2 texCoord;\n};\n\nvertex VertexOut vertex_main(\n    VertexIn in [[stage_in]],\n    constant Uniforms &uniforms [[buffer(0)]]\n)\n{\n    VertexOut out;\n    out.position = uniforms.MVP * in.position;\n    out.texCoord = in.texCoord;\n    return out;\n}\n\n// Hash function for pseudo-random values\nfloat hash(float2 p) {\n    return fract(sin(dot(p, float2(12.9898, 78.233))) * 43758.5453);\n}\n\n// 2D Value noise\nfloat valueNoise(float2 p) {\n    float2 i = floor(p);\n    float2 f = fract(p);\n    \n    // Smooth interpolation\n    f = f * f * (3.0 - 2.0 * f);\n    \n    // Four corners\n    float a = hash(i);\n    float b = hash(i + float2(1.0, 0.0));\n    float c = hash(i + float2(0.0, 1.0));\n    float d = hash(i + float2(1.0, 1.0));\n    \n    // Bilinear interpolation\n    return mix(mix(a, b, f.x), mix(c, d, f.x), f.y);\n}\n\n// Perlin-like noise\nfloat perlinNoise(float2 p) {\n    float2 i = floor(p);\n    float2 f = fract(p);\n    \n    // Quintic interpolation\n    float2 u = f * f * f * (f * (f * 6.0 - 15.0) + 10.0);\n    \n    float a = hash(i);\n    float b = hash(i + float2(1.0, 0.0));\n    float c = hash(i + float2(0.0, 1.0));\n    float d = hash(i + float2(1.0, 1.0));\n    \n    return mix(mix(a, b, u.x), mix(c, d, u.x), u.y);\n}\n\n// Fractal Brownian Motion (fBm)\nfloat fbm(float2 p, int octaves, float persistence) {\n    float value = 0.0;\n    float amplitude = 1.0;\n    float frequency = 1.0;\n    float maxValue = 0.0;\n    \n    for (int i = 0; i < octaves; i++) {\n        value += perlinNoise(p * frequency) * amplitude;\n        maxValue += amplitude;\n        amplitude *= persistence;\n        frequency *= 2.0;\n    }\n    \n    return value / maxValue;\n}\n\n// Voronoi / Cellular noise\nfloat voronoi(float2 p) {\n    float2 i = floor(p);\n    float2 f = fract(p);\n    \n    float minDist = 1.0;\n    \n    for (int y = -1; y <= 1; y++) {\n        for (int x = -1; x <= 1; x++) {\n            float2 neighbor = float2(x, y);\n            float2 point = hash(i + neighbor) * float2(1.0) + neighbor;\n            float dist = length(point - f);\n            minDist = min(minDist, dist);\n        }\n    }\n    \n    return minDist;\n}\n\n// Turbulence\nfloat turbulence(float2 p, int octaves) {\n    float value = 0.0;\n    float amplitude = 1.0;\n    float frequency = 1.0;\n    \n    for (int i = 0; i < octaves; i++) {\n        value += abs(perlinNoise(p * frequency)) * amplitude;\n        amplitude *= 0.5;\n        frequency *= 2.0;\n    }\n    \n    return value;\n}\n\nfragment float4 main0(\n    VertexOut in [[stage_in]],\n    texture2d<float> sourceTexture [[texture(0)]],\n    constant Uniforms &uniforms [[buffer(0)]]\n)\n{\n    constexpr sampler textureSampler(\n        mag_filter::linear,\n        min_filter::linear,\n        address::clamp_to_edge\n    );\n    \n    float4 color = sourceTexture.sample(textureSampler, in.texCoord);\n    \n    float time = float(uniforms.FrameCount) * 0.01;\n    float2 p = in.texCoord * uniforms.noise_scale;\n    \n    // Generate multiple noise patterns\n    int octaves = int(uniforms.octaves);\n    \n    // Fractal Brownian Motion\n    float noise1 = fbm(p + time * 0.1, octaves, uniforms.persistence);\n    \n    // Turbulence\n    float noise2 = turbulence(p + time * 0.05, octaves);\n    \n    // Voronoi\n    float noise3 = voronoi(p * 2.0);\n    \n    // Combine noises\n    float3 noiseColor = float3(\n        noise1,\n        noise2 * 0.5 + 0.5,\n        noise3\n    );\n    \n    // Blend with original\n    color.rgb = mix(color.rgb, noiseColor, uniforms.blend_amount);\n    \n    return color;\n}\n",
+            "frameCountMod": 0,
+            "scaleX": null,
+            "scaleY": null,
+            "filter": "linear",
+            "wrapMode": "edge",
+            "format": "rgba8Unorm",
+            "isFeedback": false,
+            "buffers": [
+                {
+                    "bindingVert": 0,
+                    "bindingFrag": 0,
+                    "size": 256,
+                    "uniforms": [
+                        {
+                            "semantic": "mvp",
+                            "index": null,
+                            "name": "MVP",
+                            "size": 64,
+                            "offset": 0
+                        },
+                        {
+                            "semantic": "outputSize",
+                            "index": null,
+                            "name": "OutputSize",
+                            "size": 16,
+                            "offset": 64
+                        },
+                        {
+                            "semantic": "sourceSize",
+                            "index": null,
+                            "name": "SourceSize",
+                            "size": 16,
+                            "offset": 80
+                        },
+                        {
+                            "semantic": "originalSize",
+                            "index": null,
+                            "name": "OriginalSize",
+                            "size": 16,
+                            "offset": 96
+                        },
+                        {
+                            "semantic": "frameCount",
+                            "index": null,
+                            "name": "FrameCount",
+                            "size": 4,
+                            "offset": 112
+                        },
+                        {
+                            "semantic": "floatParameter",
+                            "index": 0,
+                            "name": "noise_scale",
+                            "size": 4,
+                            "offset": 116
+                        },
+                        {
+                            "semantic": "floatParameter",
+                            "index": 1,
+                            "name": "octaves",
+                            "size": 4,
+                            "offset": 120
+                        },
+                        {
+                            "semantic": "floatParameter",
+                            "index": 2,
+                            "name": "persistence",
+                            "size": 4,
+                            "offset": 124
+                        },
+                        {
+                            "semantic": "floatParameter",
+                            "index": 3,
+                            "name": "blend_amount",
+                            "size": 4,
+                            "offset": 128
+                        }
+                    ]
+                },
+                {
+                    "bindingVert": null,
+                    "bindingFrag": null,
+                    "size": 0,
+                    "uniforms": []
+                }
+            ],
+            "textures": [
+                {
+                    "name": "Source",
+                    "semantic": "source",
+                    "binding": 0,
+                    "wrap": "edge",
+                    "filter": "linear",
+                    "index": 0
+                }
+            ],
+            "alias": null
+        }
+    ],
+    "parameters": [
+        {
+            "index": 0,
+            "name": "noise_scale",
+            "desc": "Noise Scale",
+            "initial": 5.0,
+            "minimum": 1.0,
+            "maximum": 20.0,
+            "step": 0.5
+        },
+        {
+            "index": 1,
+            "name": "octaves",
+            "desc": "Octaves (Detail)",
+            "initial": 4.0,
+            "minimum": 1.0,
+            "maximum": 8.0,
+            "step": 1.0
+        },
+        {
+            "index": 2,
+            "name": "persistence",
+            "desc": "Persistence",
+            "initial": 0.5,
+            "minimum": 0.0,
+            "maximum": 1.0,
+            "step": 0.05
+        },
+        {
+            "index": 3,
+            "name": "blend_amount",
+            "desc": "Blend Amount",
+            "initial": 0.5,
+            "minimum": 0.0,
+            "maximum": 1.0,
+            "step": 0.05
+        }
+    ],
+    "luts": [],
+    "historyCount": 0,
+    "languageVersion": "version2_4"
+}

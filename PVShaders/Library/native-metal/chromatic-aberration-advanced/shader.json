@@ -1,0 +1,146 @@
+{
+    "passes": [
+        {
+            "index": 0,
+            "vertexSource": "//\n//  Advanced Chromatic Aberration\n//  Native Metal Shader - Lens Distortion\n//\n\n#include <metal_stdlib>\nusing namespace metal;\n\nstruct Uniforms {\n    float4x4 MVP;\n    float4 OutputSize;\n    float4 SourceSize;\n    float4 OriginalSize;\n    uint FrameCount;\n    float aberration_strength;\n    float radial_distortion;\n    float color_fringing;\n    float vignette_strength;\n};\n\nstruct VertexIn {\n    float4 position [[attribute(0)]];\n    float2 texCoord [[attribute(1)]];\n};\n\nstruct VertexOut {\n    float4 position [[position]];\n    float2 texCoord;\n};\n\nvertex VertexOut main0(\n    VertexIn in [[stage_in]],\n    constant Uniforms &uniforms [[buffer(0)]]\n)\n{\n    VertexOut out;\n    out.position = uniforms.MVP * in.position;\n    out.texCoord = in.texCoord;\n    return out;\n}\n\n// Barrel distortion\nfloat2 barrelDistortion(float2 uv, float strength) {\n    float2 center = uv - 0.5;\n    float r2 = dot(center, center);\n    float distortion = 1.0 + strength * r2;\n    return center * distortion + 0.5;\n}\n\nfragment float4 fragment_main(\n    VertexOut in [[stage_in]],\n    texture2d<float> sourceTexture [[texture(0)]],\n    constant Uniforms &uniforms [[buffer(0)]]\n)\n{\n    constexpr sampler textureSampler(\n        mag_filter::linear,\n        min_filter::linear,\n        address::clamp_to_edge\n    );\n    \n    float2 uv = in.texCoord;\n    float2 center = uv - 0.5;\n    float dist = length(center);\n    \n    // Radial chromatic aberration\n    float aberration = uniforms.aberration_strength * dist;\n    \n    // Different distortion for each channel\n    float2 uvR = barrelDistortion(uv, uniforms.radial_distortion * (1.0 + aberration * 0.02));\n    float2 uvG = barrelDistortion(uv, uniforms.radial_distortion);\n    float2 uvB = barrelDistortion(uv, uniforms.radial_distortion * (1.0 - aberration * 0.02));\n    \n    // Sample each channel separately\n    float r = sourceTexture.sample(textureSampler, uvR).r;\n    float g = sourceTexture.sample(textureSampler, uvG).g;\n    float b = sourceTexture.sample(textureSampler, uvB).b;\n    \n    float3 color = float3(r, g, b);\n    \n    // Color fringing (purple/green edges)\n    float2 offset = normalize(center) * uniforms.color_fringing * 0.01;\n    float3 fringe1 = sourceTexture.sample(textureSampler, uv + offset).rgb;\n    float3 fringe2 = sourceTexture.sample(textureSampler, uv - offset).rgb;\n    \n    // Purple fringing on one side, green on the other\n    float3 purpleFringe = float3(0.8, 0.2, 0.8);\n    float3 greenFringe = float3(0.2, 0.8, 0.2);\n    \n    float edgeMask = smoothstep(0.3, 0.7, dist);\n    color = mix(color, \n                mix(fringe1 * purpleFringe, fringe2 * greenFringe, 0.5),\n                edgeMask * uniforms.color_fringing * 0.3);\n    \n    // Vignette\n    float vignette = 1.0 - dist * dist * uniforms.vignette_strength;\n    color *= vignette;\n    \n    // Edge darkening (lens falloff)\n    float edgeDarken = 1.0 - smoothstep(0.5, 1.0, dist) * 0.5;\n    color *= edgeDarken;\n    \n    return float4(color, 1.0);\n}\n",
+            "fragmentSource": "//\n//  Advanced Chromatic Aberration\n//  Native Metal Shader - Lens Distortion\n//\n\n#include <metal_stdlib>\nusing namespace metal;\n\nstruct Uniforms {\n    float4x4 MVP;\n    float4 OutputSize;\n    float4 SourceSize;\n    float4 OriginalSize;\n    uint FrameCount;\n    float aberration_strength;\n    float radial_distortion;\n    float color_fringing;\n    float vignette_strength;\n};\n\nstruct VertexIn {\n    float4 position [[attribute(0)]];\n    float2 texCoord [[attribute(1)]];\n};\n\nstruct VertexOut {\n    float4 position [[position]];\n    float2 texCoord;\n};\n\nvertex VertexOut vertex_main(\n    VertexIn in [[stage_in]],\n    constant Uniforms &uniforms [[buffer(0)]]\n)\n{\n    VertexOut out;\n    out.position = uniforms.MVP * in.position;\n    out.texCoord = in.texCoord;\n    return out;\n}\n\n// Barrel distortion\nfloat2 barrelDistortion(float2 uv, float strength) {\n    float2 center = uv - 0.5;\n    float r2 = dot(center, center);\n    float distortion = 1.0 + strength * r2;\n    return center * distortion + 0.5;\n}\n\nfragment float4 main0(\n    VertexOut in [[stage_in]],\n    texture2d<float> sourceTexture [[texture(0)]],\n    constant Uniforms &uniforms [[buffer(0)]]\n)\n{\n    constexpr sampler textureSampler(\n        mag_filter::linear,\n        min_filter::linear,\n        address::clamp_to_edge\n    );\n    \n    float2 uv = in.texCoord;\n    float2 center = uv - 0.5;\n    float dist = length(center);\n    \n    // Radial chromatic aberration\n    float aberration = uniforms.aberration_strength * dist;\n    \n    // Different distortion for each channel\n    float2 uvR = barrelDistortion(uv, uniforms.radial_distortion * (1.0 + aberration * 0.02));\n    float2 uvG = barrelDistortion(uv, uniforms.radial_distortion);\n    float2 uvB = barrelDistortion(uv, uniforms.radial_distortion * (1.0 - aberration * 0.02));\n    \n    // Sample each channel separately\n    float r = sourceTexture.sample(textureSampler, uvR).r;\n    float g = sourceTexture.sample(textureSampler, uvG).g;\n    float b = sourceTexture.sample(textureSampler, uvB).b;\n    \n    float3 color = float3(r, g, b);\n    \n    // Color fringing (purple/green edges)\n    float2 offset = normalize(center) * uniforms.color_fringing * 0.01;\n    float3 fringe1 = sourceTexture.sample(textureSampler, uv + offset).rgb;\n    float3 fringe2 = sourceTexture.sample(textureSampler, uv - offset).rgb;\n    \n    // Purple fringing on one side, green on the other\n    float3 purpleFringe = float3(0.8, 0.2, 0.8);\n    float3 greenFringe = float3(0.2, 0.8, 0.2);\n    \n    float edgeMask = smoothstep(0.3, 0.7, dist);\n    color = mix(color, \n                mix(fringe1 * purpleFringe, fringe2 * greenFringe, 0.5),\n                edgeMask * uniforms.color_fringing * 0.3);\n    \n    // Vignette\n    float vignette = 1.0 - dist * dist * uniforms.vignette_strength;\n    color *= vignette;\n    \n    // Edge darkening (lens falloff)\n    float edgeDarken = 1.0 - smoothstep(0.5, 1.0, dist) * 0.5;\n    color *= edgeDarken;\n    \n    return float4(color, 1.0);\n}\n",
+            "frameCountMod": 0,
+            "scaleX": null,
+            "scaleY": null,
+            "filter": "linear",
+            "wrapMode": "edge",
+            "format": "rgba8Unorm",
+            "isFeedback": false,
+            "buffers": [
+                {
+                    "bindingVert": 0,
+                    "bindingFrag": 0,
+                    "size": 256,
+                    "uniforms": [
+                        {
+                            "semantic": "mvp",
+                            "index": null,
+                            "name": "MVP",
+                            "size": 64,
+                            "offset": 0
+                        },
+                        {
+                            "semantic": "outputSize",
+                            "index": null,
+                            "name": "OutputSize",
+                            "size": 16,
+                            "offset": 64
+                        },
+                        {
+                            "semantic": "sourceSize",
+                            "index": null,
+                            "name": "SourceSize",
+                            "size": 16,
+                            "offset": 80
+                        },
+                        {
+                            "semantic": "originalSize",
+                            "index": null,
+                            "name": "OriginalSize",
+                            "size": 16,
+                            "offset": 96
+                        },
+                        {
+                            "semantic": "frameCount",
+                            "index": null,
+                            "name": "FrameCount",
+                            "size": 4,
+                            "offset": 112
+                        },
+                        {
+                            "semantic": "floatParameter",
+                            "index": 0,
+                            "name": "aberration_strength",
+                            "size": 4,
+                            "offset": 116
+                        },
+                        {
+                            "semantic": "floatParameter",
+                            "index": 1,
+                            "name": "radial_distortion",
+                            "size": 4,
+                            "offset": 120
+                        },
+                        {
+                            "semantic": "floatParameter",
+                            "index": 2,
+                            "name": "color_fringing",
+                            "size": 4,
+                            "offset": 124
+                        },
+                        {
+                            "semantic": "floatParameter",
+                            "index": 3,
+                            "name": "vignette_strength",
+                            "size": 4,
+                            "offset": 128
+                        }
+                    ]
+                },
+                {
+                    "bindingVert": null,
+                    "bindingFrag": null,
+                    "size": 0,
+                    "uniforms": []
+                }
+            ],
+            "textures": [
+                {
+                    "name": "Source",
+                    "semantic": "source",
+                    "binding": 0,
+                    "wrap": "edge",
+                    "filter": "linear",
+                    "index": 0
+                }
+            ],
+            "alias": null
+        }
+    ],
+    "parameters": [
+        {
+            "index": 0,
+            "name": "aberration_strength",
+            "desc": "Aberration Strength",
+            "initial": 0.5,
+            "minimum": 0.0,
+            "maximum": 2.0,
+            "step": 0.1
+        },
+        {
+            "index": 1,
+            "name": "radial_distortion",
+            "desc": "Radial Distortion",
+            "initial": 0.2,
+            "minimum": -0.5,
+            "maximum": 0.5,
+            "step": 0.05
+        },
+        {
+            "index": 2,
+            "name": "color_fringing",
+            "desc": "Color Fringing",
+            "initial": 0.6,
+            "minimum": 0.0,
+            "maximum": 1.0,
+            "step": 0.05
+        },
+        {
+            "index": 3,
+            "name": "vignette_strength",
+            "desc": "Vignette Strength",
+            "initial": 0.5,
+            "minimum": 0.0,
+            "maximum": 1.0,
+            "step": 0.05
+        }
+    ],
+    "luts": [],
+    "historyCount": 0,
+    "languageVersion": "version2_4"
+}

@@ -1,0 +1,162 @@
+{
+    "passes": [
+        {
+            "index": 0,
+            "vertexSource": "#include <metal_stdlib>\nusing namespace metal;\n\nstruct Uniforms {\n    float4x4 MVP;\n    float4 OutputSize;\n    float4 SourceSize;\n    float4 OriginalSize;\n    uint FrameCount;\n    float cell_size;   // 4..32 px\n    float contrast;    // 0..2\n    float gamma;       // 0.1..3.0\n    float invert;      // 0/1\n    float charset;     // 0=blocks,1=dots,2=lines\n};\n\nstruct VIn { float4 pos [[attribute(0)]]; float2 uv [[attribute(1)]]; };\nstruct VOut { float4 pos [[position]]; float2 uv; };\n\nvertex VOut main0(VIn in [[stage_in]], constant Uniforms &u [[buffer(0)]]) {\n    VOut o; o.pos = u.MVP * in.pos; o.uv = in.uv; return o;\n}\n\nstatic inline float luma(float3 c){ return dot(c, float3(0.2126,0.7152,0.0722)); }\n\nfragment float4 fragment_main(VOut in [[stage_in]], texture2d<float> src [[texture(0)]], constant Uniforms &u [[buffer(0)]]) {\n    constexpr sampler s(address::clamp_to_edge, filter::linear);\n    float2 pix = in.uv * u.OutputSize.xy;\n    float cs = clamp(u.cell_size, 4.0, 32.0);\n    float2 cell = floor(pix / cs);\n    float2 cellUV = (cell + 0.5) * cs / u.OutputSize.xy; // sample at cell center\n\n    float3 c = src.sample(s, cellUV).rgb;\n    float L = pow(clamp(luma(c), 0.0, 1.0), max(0.1, u.gamma));\n    L = saturate((L - 0.5) * max(0.0, u.contrast) + 0.5);\n    if (u.invert > 0.5) L = 1.0 - L;\n\n    // Draw a procedural glyph within the cell based on L and mode\n    float2 f = fract(pix / cs); // local coords within cell [0,1)\n    float v = 0.0;\n    if (u.charset < 0.5) {\n        // blocks: map to coarse block density 0..1\n        // 0 (space), 0.25, 0.5, 0.75, 1.0\n        float d = floor(L * 4.0 + 0.5) / 4.0;\n        v = step(f.x, d) * step(f.y, 1.0); // vertical fill\n        // Use both axes for richer blocks\n        v = max(v, step(f.y, d));\n    } else if (u.charset < 1.5) {\n        // dots: halftone circle size\n        float2 uv = (f - 0.5);\n        float r = length(uv) * 1.4142;\n        float rad = mix(0.05, 0.5, 1.0 - L);\n        v = 1.0 - smoothstep(rad-0.01, rad+0.01, r);\n    } else {\n        // lines: number of lines increases as L decreases\n        float lines = mix(2.0, 10.0, 1.0 - L);\n        float stripe = fract(f.y * lines);\n        v = step(stripe, 0.5);\n    }\n\n    // Composite glyph over a desaturated base\n    float3 base = mix(float3(L), c, 0.2);\n    float3 outc = mix(base * 0.1, float3(1.0), v);\n\n    return float4(saturate(outc), 1.0);\n}\n",
+            "fragmentSource": "#include <metal_stdlib>\nusing namespace metal;\n\nstruct Uniforms {\n    float4x4 MVP;\n    float4 OutputSize;\n    float4 SourceSize;\n    float4 OriginalSize;\n    uint FrameCount;\n    float cell_size;   // 4..32 px\n    float contrast;    // 0..2\n    float gamma;       // 0.1..3.0\n    float invert;      // 0/1\n    float charset;     // 0=blocks,1=dots,2=lines\n};\n\nstruct VIn { float4 pos [[attribute(0)]]; float2 uv [[attribute(1)]]; };\nstruct VOut { float4 pos [[position]]; float2 uv; };\n\nvertex VOut vertex_main(VIn in [[stage_in]], constant Uniforms &u [[buffer(0)]]) {\n    VOut o; o.pos = u.MVP * in.pos; o.uv = in.uv; return o;\n}\n\nstatic inline float luma(float3 c){ return dot(c, float3(0.2126,0.7152,0.0722)); }\n\nfragment float4 main0(VOut in [[stage_in]], texture2d<float> src [[texture(0)]], constant Uniforms &u [[buffer(0)]]) {\n    constexpr sampler s(address::clamp_to_edge, filter::linear);\n    float2 pix = in.uv * u.OutputSize.xy;\n    float cs = clamp(u.cell_size, 4.0, 32.0);\n    float2 cell = floor(pix / cs);\n    float2 cellUV = (cell + 0.5) * cs / u.OutputSize.xy; // sample at cell center\n\n    float3 c = src.sample(s, cellUV).rgb;\n    float L = pow(clamp(luma(c), 0.0, 1.0), max(0.1, u.gamma));\n    L = saturate((L - 0.5) * max(0.0, u.contrast) + 0.5);\n    if (u.invert > 0.5) L = 1.0 - L;\n\n    // Draw a procedural glyph within the cell based on L and mode\n    float2 f = fract(pix / cs); // local coords within cell [0,1)\n    float v = 0.0;\n    if (u.charset < 0.5) {\n        // blocks: map to coarse block density 0..1\n        // 0 (space), 0.25, 0.5, 0.75, 1.0\n        float d = floor(L * 4.0 + 0.5) / 4.0;\n        v = step(f.x, d) * step(f.y, 1.0); // vertical fill\n        // Use both axes for richer blocks\n        v = max(v, step(f.y, d));\n    } else if (u.charset < 1.5) {\n        // dots: halftone circle size\n        float2 uv = (f - 0.5);\n        float r = length(uv) * 1.4142;\n        float rad = mix(0.05, 0.5, 1.0 - L);\n        v = 1.0 - smoothstep(rad-0.01, rad+0.01, r);\n    } else {\n        // lines: number of lines increases as L decreases\n        float lines = mix(2.0, 10.0, 1.0 - L);\n        float stripe = fract(f.y * lines);\n        v = step(stripe, 0.5);\n    }\n\n    // Composite glyph over a desaturated base\n    float3 base = mix(float3(L), c, 0.2);\n    float3 outc = mix(base * 0.1, float3(1.0), v);\n\n    return float4(saturate(outc), 1.0);\n}\n",
+            "frameCountMod": 0,
+            "scaleX": null,
+            "scaleY": null,
+            "filter": "linear",
+            "wrapMode": "edge",
+            "format": "rgba8Unorm",
+            "isFeedback": false,
+            "buffers": [
+                {
+                    "bindingVert": 0,
+                    "bindingFrag": 0,
+                    "size": 256,
+                    "uniforms": [
+                        {
+                            "semantic": "mvp",
+                            "index": null,
+                            "name": "MVP",
+                            "size": 64,
+                            "offset": 0
+                        },
+                        {
+                            "semantic": "outputSize",
+                            "index": null,
+                            "name": "OutputSize",
+                            "size": 16,
+                            "offset": 64
+                        },
+                        {
+                            "semantic": "sourceSize",
+                            "index": null,
+                            "name": "SourceSize",
+                            "size": 16,
+                            "offset": 80
+                        },
+                        {
+                            "semantic": "originalSize",
+                            "index": null,
+                            "name": "OriginalSize",
+                            "size": 16,
+                            "offset": 96
+                        },
+                        {
+                            "semantic": "frameCount",
+                            "index": null,
+                            "name": "FrameCount",
+                            "size": 4,
+                            "offset": 112
+                        },
+                        {
+                            "semantic": "floatParameter",
+                            "index": 0,
+                            "name": "cell_size",
+                            "size": 4,
+                            "offset": 116
+                        },
+                        {
+                            "semantic": "floatParameter",
+                            "index": 1,
+                            "name": "contrast",
+                            "size": 4,
+                            "offset": 120
+                        },
+                        {
+                            "semantic": "floatParameter",
+                            "index": 2,
+                            "name": "gamma",
+                            "size": 4,
+                            "offset": 124
+                        },
+                        {
+                            "semantic": "floatParameter",
+                            "index": 3,
+                            "name": "invert",
+                            "size": 4,
+                            "offset": 128
+                        },
+                        {
+                            "semantic": "floatParameter",
+                            "index": 4,
+                            "name": "charset",
+                            "size": 4,
+                            "offset": 132
+                        }
+                    ]
+                },
+                {
+                    "bindingVert": null,
+                    "bindingFrag": null,
+                    "size": 0,
+                    "uniforms": []
+                }
+            ],
+            "textures": [
+                {
+                    "name": "Source",
+                    "semantic": "source",
+                    "binding": 0,
+                    "wrap": "edge",
+                    "filter": "linear",
+                    "index": 0
+                }
+            ],
+            "alias": null
+        }
+    ],
+    "parameters": [
+        {
+            "index": 0,
+            "name": "cell_size",
+            "desc": "Cell Size (px)",
+            "initial": 12.0,
+            "minimum": 4.0,
+            "maximum": 32.0,
+            "step": 1.0
+        },
+        {
+            "index": 1,
+            "name": "contrast",
+            "desc": "Contrast",
+            "initial": 1.1,
+            "minimum": 0.0,
+            "maximum": 2.0,
+            "step": 0.05
+        },
+        {
+            "index": 2,
+            "name": "gamma",
+            "desc": "Gamma",
+            "initial": 1.2,
+            "minimum": 0.1,
+            "maximum": 3.0,
+            "step": 0.05
+        },
+        {
+            "index": 3,
+            "name": "invert",
+            "desc": "Invert",
+            "initial": 0.0,
+            "minimum": 0.0,
+            "maximum": 1.0,
+            "step": 1.0
+        },
+        {
+            "index": 4,
+            "name": "charset",
+            "desc": "Charset (0/1/2)",
+            "initial": 1.0,
+            "minimum": 0.0,
+            "maximum": 2.0,
+            "step": 1.0
+        }
+    ],
+    "luts": [],
+    "historyCount": 0,
+    "languageVersion": "version2_4"
+}

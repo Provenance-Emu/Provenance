@@ -46,6 +46,17 @@ public enum DevSettings {
         basedOnDependencyAnalysis: false
     )
 
+    /// Copies the unpacked slang shader library into the app as `SlangShaders/`
+    /// (Scripts/shaders/fetch_slang_shaders.py; cached, so only the first build downloads).
+    public static let embedSlangShadersScript: TargetScript = .post(
+        script: """
+        set -euo pipefail
+        /bin/bash "${SRCROOT}/../Scripts/shaders/embed_slang_shaders.sh"
+        """,
+        name: "Embed slang shaders",
+        basedOnDependencyAnalysis: false
+    )
+
     /// Base xcconfig for the project and every app target (repo-relative).
     public static let xcconfig: Path = .relativeToRoot("Dev/Config/Dev.xcconfig")
 

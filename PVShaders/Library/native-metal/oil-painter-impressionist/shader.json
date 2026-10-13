@@ -1,0 +1,162 @@
+{
+    "passes": [
+        {
+            "index": 0,
+            "vertexSource": "#include <metal_stdlib>\nusing namespace metal;\n\nstruct Uniforms {\n    float4x4 MVP;\n    float4 OutputSize;\n    float4 SourceSize;\n    float4 OriginalSize;\n    uint FrameCount;\n    float brush_radius;     // px radius (1..8)\n    float detail;           // 0..1 preserves detail\n    float edge_strength;    // 0..2 edge emphasis\n    float quantization;     // 1..16 color levels\n    float canvas_mix;       // 0..1 paper/canvas blend\n};\n\nstruct VIn { float4 pos [[attribute(0)]]; float2 uv [[attribute(1)]]; };\nstruct VOut { float4 pos [[position]]; float2 uv; };\n\nvertex VOut main0(VIn in [[stage_in]], constant Uniforms &u [[buffer(0)]]) {\n    VOut o; o.pos = u.MVP * in.pos; o.uv = in.uv; return o;\n}\n\nstatic inline float luma(float3 c){ return dot(c, float3(0.2126,0.7152,0.0722)); }\n\nfragment float4 fragment_main(VOut in [[stage_in]], texture2d<float> src [[texture(0)]], constant Uniforms &u [[buffer(0)]]) {\n    constexpr sampler s(address::clamp_to_edge, filter::linear);\n    float2 texel = 1.0 / u.OutputSize.xy;\n\n    // Adaptive kernel radius\n    int r = int(clamp(u.brush_radius, 1.0, 8.0));\n\n    // Compute local mean and bilateral-ish weighted average using simple range weight\n    float3 mean = float3(0.0);\n    float3 acc = float3(0.0);\n    float wsum = 0.0;\n    float3 center = src.sample(s, in.uv).rgb;\n\n    float sigma_s = max(1.0, float(r)) * 0.5;\n    float sigma_r = mix(0.2, 0.05, clamp(u.detail,0.0,1.0));\n    float two_sigma_s2 = 2.0*sigma_s*sigma_s;\n    float two_sigma_r2 = 2.0*sigma_r*sigma_r;\n\n    for (int y=-r; y<=r; ++y) {\n        for (int x=-r; x<=r; ++x) {\n            float2 o = float2(x,y);\n            float w_s = exp(-dot(o,o)/two_sigma_s2);\n            float3 c = src.sample(s, in.uv + o*texel).rgb;\n            float w_r = exp(-dot(c-center, c-center)/two_sigma_r2);\n            float w = w_s * w_r;\n            acc += c * w;\n            mean += c;\n            wsum += w;\n        }\n    }\n    float3 smooth = (wsum>0.0) ? (acc/wsum) : center;\n\n    // Edge emphasis using simple Sobel on luma\n    float3 gx = float3(0.0); float3 gy = float3(0.0);\n    float kx[9] = {-1,0,1,-2,0,2,-1,0,1};\n    float ky[9] = {-1,-2,-1,0,0,0,1,2,1};\n    int idx=0;\n    for (int j=-1;j<=1;++j){\n        for (int i=-1;i<=1;++i){\n            float3 c = src.sample(s, in.uv + float2(i,j)*texel).rgb;\n            float L = luma(c);\n            gx += float3(L) * kx[idx];\n            gy += float3(L) * ky[idx];\n            idx++;\n        }\n    }\n    float edge = clamp(length(float2(gx.r, gy.r)), 0.0, 1.0);\n\n    // Color quantization to form paint bands\n    float q = max(1.0, round(u.quantization));\n    float3 quant = floor(smooth * q) / q;\n\n    // Canvas/paper texture procedural\n    float2 p = in.uv * u.OutputSize.xy;\n    float noise = fract(sin(dot(p, float2(12.9898,78.233))) * 43758.5453 + float(u.FrameCount)*0.013);\n    float paper = mix(0.96, 1.02, noise*noise);\n\n    float3 color = quant;\n    // Blend in edge emphasis\n    color -= u.edge_strength * 0.2 * edge;\n    // Canvas blend\n    color *= mix(1.0, paper, clamp(u.canvas_mix,0.0,1.0));\n\n    return float4(saturate(color), 1.0);\n}\n",
+            "fragmentSource": "#include <metal_stdlib>\nusing namespace metal;\n\nstruct Uniforms {\n    float4x4 MVP;\n    float4 OutputSize;\n    float4 SourceSize;\n    float4 OriginalSize;\n    uint FrameCount;\n    float brush_radius;     // px radius (1..8)\n    float detail;           // 0..1 preserves detail\n    float edge_strength;    // 0..2 edge emphasis\n    float quantization;     // 1..16 color levels\n    float canvas_mix;       // 0..1 paper/canvas blend\n};\n\nstruct VIn { float4 pos [[attribute(0)]]; float2 uv [[attribute(1)]]; };\nstruct VOut { float4 pos [[position]]; float2 uv; };\n\nvertex VOut vertex_main(VIn in [[stage_in]], constant Uniforms &u [[buffer(0)]]) {\n    VOut o; o.pos = u.MVP * in.pos; o.uv = in.uv; return o;\n}\n\nstatic inline float luma(float3 c){ return dot(c, float3(0.2126,0.7152,0.0722)); }\n\nfragment float4 main0(VOut in [[stage_in]], texture2d<float> src [[texture(0)]], constant Uniforms &u [[buffer(0)]]) {\n    constexpr sampler s(address::clamp_to_edge, filter::linear);\n    float2 texel = 1.0 / u.OutputSize.xy;\n\n    // Adaptive kernel radius\n    int r = int(clamp(u.brush_radius, 1.0, 8.0));\n\n    // Compute local mean and bilateral-ish weighted average using simple range weight\n    float3 mean = float3(0.0);\n    float3 acc = float3(0.0);\n    float wsum = 0.0;\n    float3 center = src.sample(s, in.uv).rgb;\n\n    float sigma_s = max(1.0, float(r)) * 0.5;\n    float sigma_r = mix(0.2, 0.05, clamp(u.detail,0.0,1.0));\n    float two_sigma_s2 = 2.0*sigma_s*sigma_s;\n    float two_sigma_r2 = 2.0*sigma_r*sigma_r;\n\n    for (int y=-r; y<=r; ++y) {\n        for (int x=-r; x<=r; ++x) {\n            float2 o = float2(x,y);\n            float w_s = exp(-dot(o,o)/two_sigma_s2);\n            float3 c = src.sample(s, in.uv + o*texel).rgb;\n            float w_r = exp(-dot(c-center, c-center)/two_sigma_r2);\n            float w = w_s * w_r;\n            acc += c * w;\n            mean += c;\n            wsum += w;\n        }\n    }\n    float3 smooth = (wsum>0.0) ? (acc/wsum) : center;\n\n    // Edge emphasis using simple Sobel on luma\n    float3 gx = float3(0.0); float3 gy = float3(0.0);\n    float kx[9] = {-1,0,1,-2,0,2,-1,0,1};\n    float ky[9] = {-1,-2,-1,0,0,0,1,2,1};\n    int idx=0;\n    for (int j=-1;j<=1;++j){\n        for (int i=-1;i<=1;++i){\n            float3 c = src.sample(s, in.uv + float2(i,j)*texel).rgb;\n            float L = luma(c);\n            gx += float3(L) * kx[idx];\n            gy += float3(L) * ky[idx];\n            idx++;\n        }\n    }\n    float edge = clamp(length(float2(gx.r, gy.r)), 0.0, 1.0);\n\n    // Color quantization to form paint bands\n    float q = max(1.0, round(u.quantization));\n    float3 quant = floor(smooth * q) / q;\n\n    // Canvas/paper texture procedural\n    float2 p = in.uv * u.OutputSize.xy;\n    float noise = fract(sin(dot(p, float2(12.9898,78.233))) * 43758.5453 + float(u.FrameCount)*0.013);\n    float paper = mix(0.96, 1.02, noise*noise);\n\n    float3 color = quant;\n    // Blend in edge emphasis\n    color -= u.edge_strength * 0.2 * edge;\n    // Canvas blend\n    color *= mix(1.0, paper, clamp(u.canvas_mix,0.0,1.0));\n\n    return float4(saturate(color), 1.0);\n}\n",
+            "frameCountMod": 0,
+            "scaleX": null,
+            "scaleY": null,
+            "filter": "linear",
+            "wrapMode": "edge",
+            "format": "rgba8Unorm",
+            "isFeedback": false,
+            "buffers": [
+                {
+                    "bindingVert": 0,
+                    "bindingFrag": 0,
+                    "size": 256,
+                    "uniforms": [
+                        {
+                            "semantic": "mvp",
+                            "index": null,
+                            "name": "MVP",
+                            "size": 64,
+                            "offset": 0
+                        },
+                        {
+                            "semantic": "outputSize",
+                            "index": null,
+                            "name": "OutputSize",
+                            "size": 16,
+                            "offset": 64
+                        },
+                        {
+                            "semantic": "sourceSize",
+                            "index": null,
+                            "name": "SourceSize",
+                            "size": 16,
+                            "offset": 80
+                        },
+                        {
+                            "semantic": "originalSize",
+                            "index": null,
+                            "name": "OriginalSize",
+                            "size": 16,
+                            "offset": 96
+                        },
+                        {
+                            "semantic": "frameCount",
+                            "index": null,
+                            "name": "FrameCount",
+                            "size": 4,
+                            "offset": 112
+                        },
+                        {
+                            "semantic": "floatParameter",
+                            "index": 0,
+                            "name": "brush_radius",
+                            "size": 4,
+                            "offset": 116
+                        },
+                        {
+                            "semantic": "floatParameter",
+                            "index": 1,
+                            "name": "detail",
+                            "size": 4,
+                            "offset": 120
+                        },
+                        {
+                            "semantic": "floatParameter",
+                            "index": 2,
+                            "name": "edge_strength",
+                            "size": 4,
+                            "offset": 124
+                        },
+                        {
+                            "semantic": "floatParameter",
+                            "index": 3,
+                            "name": "quantization",
+                            "size": 4,
+                            "offset": 128
+                        },
+                        {
+                            "semantic": "floatParameter",
+                            "index": 4,
+                            "name": "canvas_mix",
+                            "size": 4,
+                            "offset": 132
+                        }
+                    ]
+                },
+                {
+                    "bindingVert": null,
+                    "bindingFrag": null,
+                    "size": 0,
+                    "uniforms": []
+                }
+            ],
+            "textures": [
+                {
+                    "name": "Source",
+                    "semantic": "source",
+                    "binding": 0,
+                    "wrap": "edge",
+                    "filter": "linear",
+                    "index": 0
+                }
+            ],
+            "alias": null
+        }
+    ],
+    "parameters": [
+        {
+            "index": 0,
+            "name": "brush_radius",
+            "desc": "Brush Radius (px)",
+            "initial": 8.0,
+            "minimum": 1.0,
+            "maximum": 8.0,
+            "step": 1.0
+        },
+        {
+            "index": 1,
+            "name": "detail",
+            "desc": "Detail Preserve",
+            "initial": 0.35,
+            "minimum": 0.0,
+            "maximum": 1.0,
+            "step": 0.01
+        },
+        {
+            "index": 2,
+            "name": "edge_strength",
+            "desc": "Edge Emphasis",
+            "initial": 0.6,
+            "minimum": 0.0,
+            "maximum": 2.0,
+            "step": 0.05
+        },
+        {
+            "index": 3,
+            "name": "quantization",
+            "desc": "Color Levels",
+            "initial": 6.0,
+            "minimum": 2.0,
+            "maximum": 16.0,
+            "step": 1.0
+        },
+        {
+            "index": 4,
+            "name": "canvas_mix",
+            "desc": "Canvas Texture Mix",
+            "initial": 0.3,
+            "minimum": 0.0,
+            "maximum": 1.0,
+            "step": 0.01
+        }
+    ],
+    "luts": [],
+    "historyCount": 0,
+    "languageVersion": "version2_4"
+}

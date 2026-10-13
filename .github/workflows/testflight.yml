@@ -179,6 +179,13 @@ jobs:
           restore-keys: |
             cores-${{ runner.os }}-${{ matrix.platform }}-
 
+      - name: Cache slang shader download
+        # Scripts/shaders/fetch_slang_shaders.py downloads the pinned library here; unpacking is fast.
+        uses: actions/cache@v4
+        with:
+          path: ~/Library/Caches/Provenance/slang-shaders/downloads
+          key: slang-shaders-${{ hashFiles('Scripts/shaders/slang-shaders.lock.json') }}
+
       # sentry-cli uploads the archive's dSYMs (release.sh, "Debug symbols" step).
       # Cosmetic/best-effort like xcbeautify: without it release.sh only warns and
       # the dSYMs stay on the runner, so TestFlight crashes are unsymbolicated.

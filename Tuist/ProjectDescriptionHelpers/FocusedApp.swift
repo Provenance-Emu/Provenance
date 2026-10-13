@@ -13,6 +13,8 @@ public struct FocusedApp {
     public let libretro: [String]
     /// SWIFT_ACTIVE_COMPILATION_CONDITIONS additions.
     public let flags: [String]
+    /// Embed the slang shader library (~100 MB unpacked). Off for apps that never show filters.
+    public let slangShaders: Bool
     /// Environment variable that must be set (to anything but "" or "0") for `FocusedApp.all` to
     /// include the app. For apps whose package cannot load on a clean checkout: every focused app
     /// shares one generated project, so a package that needs a build artefact would otherwise break
@@ -25,6 +27,7 @@ public struct FocusedApp {
         cores: [CoreProduct],
         libretro: [String] = [],
         flags: [String] = [],
+        slangShaders: Bool = true,
         optInVariable: String? = nil
     ) {
         self.slug = slug
@@ -32,6 +35,7 @@ public struct FocusedApp {
         self.cores = cores
         self.libretro = libretro
         self.flags = flags
+        self.slangShaders = slangShaders
         self.optInVariable = optInVariable
     }
 
@@ -86,7 +90,8 @@ public struct FocusedApp {
         let embed = products.isEmpty ? [] : [DevSettings.embedProjectFrameworksScript(products: products)]
         // Post order: embed vendored frameworks, then wrap libretro dylibs, then validate.
         let coreScripts = allCores.flatMap(\.postScripts)
-        return libretroScripts.pre + embed + coreScripts + libretroScripts.post
+        let shaders = slangShaders ? [DevSettings.embedSlangShadersScript] : []
+        return libretroScripts.pre + embed + coreScripts + libretroScripts.post + shaders
     }
 
     /// Vendored .xcodeproj files the workspace must contain for these apps.

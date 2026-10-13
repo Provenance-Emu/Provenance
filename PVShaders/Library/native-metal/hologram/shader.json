@@ -1,0 +1,258 @@
+{
+    "passes": [
+        {
+            "index": 0,
+            "vertexSource": "#include <metal_stdlib>\nusing namespace metal;\n\nstruct Uniforms {\n    float4x4 MVP;\n    float4 OutputSize;\n    float4 SourceSize;\n    float4 OriginalSize;\n    uint   FrameCount;\n    // Effect controls\n    float  tint_r;         // hologram tint\n    float  tint_g;\n    float  tint_b;\n    float  scan_amp;       // scanline amplitude\n    float  scan_freq;      // scanline frequency\n    float  jitter;         // horizontal jitter\n    float  chroma;         // RGB split in px\n    float  grid_amp;       // grid modulation amount\n    float  grid_scale;     // grid scale (cells)\n    float  vignette;       // edge darken\n    float  glow;           // additive glow\n};\n\nstruct VSIn { float4 pos [[attribute(0)]]; float2 uv [[attribute(1)]]; };\nstruct VSOut { float4 pos [[position]]; float2 uv; };\n\nvertex VSOut main0(VSIn in [[stage_in]], constant Uniforms &u [[buffer(0)]]) {\n    VSOut o; o.pos = u.MVP * in.pos; o.uv = in.uv; return o;\n}\n\nstatic inline float rand(float2 x){ return fract(sin(dot(x,float2(12.9898,78.233)))*43758.5453); }\n\nfragment float4 fragment_main(\n    VSOut in [[stage_in]],\n    texture2d<float> src [[texture(0)]],\n    constant Uniforms &u [[buffer(0)]]\n){\n    constexpr sampler smp(mag_filter::linear, min_filter::linear, address::clamp_to_edge);\n    float2 uv = in.uv;\n    float2 px = 1.0 / u.OutputSize.xy;\n    float t = float(u.FrameCount) / 60.0;\n\n    // Horizontal jitter with subtle per-line noise\n    float line = floor(uv.y * u.OutputSize.y);\n    float jn = (rand(float2(line, floor(t*17.0))) - 0.5) * 2.0;\n    float j = u.jitter * jn * 0.003; // scale to UV\n    uv.x = clamp(uv.x + j, 0.0, 1.0);\n\n    // Scanline modulation (intensity waves)\n    float scan = 0.5 + 0.5 * sin(uv.y * u.OutputSize.y * u.scan_freq + t*6.28318);\n    float scanMix = mix(1.0, scan, clamp(u.scan_amp, 0.0, 1.0));\n\n    // Grid modulation (diagonal interference)\n    float2 g = uv * u.grid_scale;\n    float grid = 0.5 + 0.5 * (sin(g.x*6.28318) * sin(g.y*6.28318));\n    float gridMix = mix(1.0, mix(0.9, 1.1, grid), clamp(u.grid_amp, 0.0, 1.0));\n\n    // Chroma RGB split\n    float cpx = u.chroma;\n    float r = src.sample(smp, uv + float2( cpx, 0.0) * px).r;\n    float gch= src.sample(smp, uv).g;\n    float b = src.sample(smp, uv + float2(-cpx, 0.0) * px).b;\n    float3 col = float3(r, gch, b);\n\n    // Apply scanline and grid\n    col *= scanMix * gridMix;\n\n    // Tint and glow\n    float3 tint = float3(u.tint_r, u.tint_g, u.tint_b);\n    float3 tinted = col * tint;\n    float3 glowCol = tinted + u.glow * pow(tinted, float3(2.0));\n\n    // Vignette\n    float2 d = uv - 0.5;\n    float vig = smoothstep(0.9, 0.2, dot(d,d)*2.0);\n    glowCol *= mix(1.0, vig, clamp(u.vignette, 0.0, 1.0));\n\n    return float4(saturate(glowCol), 1.0);\n}\n",
+            "fragmentSource": "#include <metal_stdlib>\nusing namespace metal;\n\nstruct Uniforms {\n    float4x4 MVP;\n    float4 OutputSize;\n    float4 SourceSize;\n    float4 OriginalSize;\n    uint   FrameCount;\n    // Effect controls\n    float  tint_r;         // hologram tint\n    float  tint_g;\n    float  tint_b;\n    float  scan_amp;       // scanline amplitude\n    float  scan_freq;      // scanline frequency\n    float  jitter;         // horizontal jitter\n    float  chroma;         // RGB split in px\n    float  grid_amp;       // grid modulation amount\n    float  grid_scale;     // grid scale (cells)\n    float  vignette;       // edge darken\n    float  glow;           // additive glow\n};\n\nstruct VSIn { float4 pos [[attribute(0)]]; float2 uv [[attribute(1)]]; };\nstruct VSOut { float4 pos [[position]]; float2 uv; };\n\nvertex VSOut vertex_main(VSIn in [[stage_in]], constant Uniforms &u [[buffer(0)]]) {\n    VSOut o; o.pos = u.MVP * in.pos; o.uv = in.uv; return o;\n}\n\nstatic inline float rand(float2 x){ return fract(sin(dot(x,float2(12.9898,78.233)))*43758.5453); }\n\nfragment float4 main0(\n    VSOut in [[stage_in]],\n    texture2d<float> src [[texture(0)]],\n    constant Uniforms &u [[buffer(0)]]\n){\n    constexpr sampler smp(mag_filter::linear, min_filter::linear, address::clamp_to_edge);\n    float2 uv = in.uv;\n    float2 px = 1.0 / u.OutputSize.xy;\n    float t = float(u.FrameCount) / 60.0;\n\n    // Horizontal jitter with subtle per-line noise\n    float line = floor(uv.y * u.OutputSize.y);\n    float jn = (rand(float2(line, floor(t*17.0))) - 0.5) * 2.0;\n    float j = u.jitter * jn * 0.003; // scale to UV\n    uv.x = clamp(uv.x + j, 0.0, 1.0);\n\n    // Scanline modulation (intensity waves)\n    float scan = 0.5 + 0.5 * sin(uv.y * u.OutputSize.y * u.scan_freq + t*6.28318);\n    float scanMix = mix(1.0, scan, clamp(u.scan_amp, 0.0, 1.0));\n\n    // Grid modulation (diagonal interference)\n    float2 g = uv * u.grid_scale;\n    float grid = 0.5 + 0.5 * (sin(g.x*6.28318) * sin(g.y*6.28318));\n    float gridMix = mix(1.0, mix(0.9, 1.1, grid), clamp(u.grid_amp, 0.0, 1.0));\n\n    // Chroma RGB split\n    float cpx = u.chroma;\n    float r = src.sample(smp, uv + float2( cpx, 0.0) * px).r;\n    float gch= src.sample(smp, uv).g;\n    float b = src.sample(smp, uv + float2(-cpx, 0.0) * px).b;\n    float3 col = float3(r, gch, b);\n\n    // Apply scanline and grid\n    col *= scanMix * gridMix;\n\n    // Tint and glow\n    float3 tint = float3(u.tint_r, u.tint_g, u.tint_b);\n    float3 tinted = col * tint;\n    float3 glowCol = tinted + u.glow * pow(tinted, float3(2.0));\n\n    // Vignette\n    float2 d = uv - 0.5;\n    float vig = smoothstep(0.9, 0.2, dot(d,d)*2.0);\n    glowCol *= mix(1.0, vig, clamp(u.vignette, 0.0, 1.0));\n\n    return float4(saturate(glowCol), 1.0);\n}\n",
+            "frameCountMod": 0,
+            "scaleX": null,
+            "scaleY": null,
+            "filter": "linear",
+            "wrapMode": "edge",
+            "format": "rgba8Unorm",
+            "isFeedback": false,
+            "buffers": [
+                {
+                    "bindingVert": 0,
+                    "bindingFrag": 0,
+                    "size": 256,
+                    "uniforms": [
+                        {
+                            "semantic": "mvp",
+                            "index": null,
+                            "name": "MVP",
+                            "size": 64,
+                            "offset": 0
+                        },
+                        {
+                            "semantic": "outputSize",
+                            "index": null,
+                            "name": "OutputSize",
+                            "size": 16,
+                            "offset": 64
+                        },
+                        {
+                            "semantic": "sourceSize",
+                            "index": null,
+                            "name": "SourceSize",
+                            "size": 16,
+                            "offset": 80
+                        },
+                        {
+                            "semantic": "originalSize",
+                            "index": null,
+                            "name": "OriginalSize",
+                            "size": 16,
+                            "offset": 96
+                        },
+                        {
+                            "semantic": "frameCount",
+                            "index": null,
+                            "name": "FrameCount",
+                            "size": 4,
+                            "offset": 112
+                        },
+                        {
+                            "semantic": "floatParameter",
+                            "index": 0,
+                            "name": "tint_r",
+                            "size": 4,
+                            "offset": 116
+                        },
+                        {
+                            "semantic": "floatParameter",
+                            "index": 1,
+                            "name": "tint_g",
+                            "size": 4,
+                            "offset": 120
+                        },
+                        {
+                            "semantic": "floatParameter",
+                            "index": 2,
+                            "name": "tint_b",
+                            "size": 4,
+                            "offset": 124
+                        },
+                        {
+                            "semantic": "floatParameter",
+                            "index": 3,
+                            "name": "scan_amp",
+                            "size": 4,
+                            "offset": 128
+                        },
+                        {
+                            "semantic": "floatParameter",
+                            "index": 4,
+                            "name": "scan_freq",
+                            "size": 4,
+                            "offset": 132
+                        },
+                        {
+                            "semantic": "floatParameter",
+                            "index": 5,
+                            "name": "jitter",
+                            "size": 4,
+                            "offset": 136
+                        },
+                        {
+                            "semantic": "floatParameter",
+                            "index": 6,
+                            "name": "chroma",
+                            "size": 4,
+                            "offset": 140
+                        },
+                        {
+                            "semantic": "floatParameter",
+                            "index": 7,
+                            "name": "grid_amp",
+                            "size": 4,
+                            "offset": 144
+                        },
+                        {
+                            "semantic": "floatParameter",
+                            "index": 8,
+                            "name": "grid_scale",
+                            "size": 4,
+                            "offset": 148
+                        },
+                        {
+                            "semantic": "floatParameter",
+                            "index": 9,
+                            "name": "vignette",
+                            "size": 4,
+                            "offset": 152
+                        },
+                        {
+                            "semantic": "floatParameter",
+                            "index": 10,
+                            "name": "glow",
+                            "size": 4,
+                            "offset": 156
+                        }
+                    ]
+                },
+                {
+                    "bindingVert": null,
+                    "bindingFrag": null,
+                    "size": 0,
+                    "uniforms": []
+                }
+            ],
+            "textures": [
+                {
+                    "name": "Source",
+                    "semantic": "source",
+                    "binding": 0,
+                    "wrap": "edge",
+                    "filter": "linear",
+                    "index": 0
+                }
+            ],
+            "alias": null
+        }
+    ],
+    "parameters": [
+        {
+            "index": 0,
+            "name": "tint_r",
+            "desc": "Tint R",
+            "initial": 0.5,
+            "minimum": 0.0,
+            "maximum": 2.0,
+            "step": 0.01
+        },
+        {
+            "index": 1,
+            "name": "tint_g",
+            "desc": "Tint G",
+            "initial": 1.0,
+            "minimum": 0.0,
+            "maximum": 2.0,
+            "step": 0.01
+        },
+        {
+            "index": 2,
+            "name": "tint_b",
+            "desc": "Tint B",
+            "initial": 1.5,
+            "minimum": 0.0,
+            "maximum": 2.0,
+            "step": 0.01
+        },
+        {
+            "index": 3,
+            "name": "scan_amp",
+            "desc": "Scan Amplitude",
+            "initial": 0.45,
+            "minimum": 0.0,
+            "maximum": 1.0,
+            "step": 0.01
+        },
+        {
+            "index": 4,
+            "name": "scan_freq",
+            "desc": "Scan Frequency",
+            "initial": 1.5,
+            "minimum": 0.1,
+            "maximum": 8.0,
+            "step": 0.1
+        },
+        {
+            "index": 5,
+            "name": "jitter",
+            "desc": "Horizontal Jitter",
+            "initial": 0.6,
+            "minimum": 0.0,
+            "maximum": 2.0,
+            "step": 0.01
+        },
+        {
+            "index": 6,
+            "name": "chroma",
+            "desc": "Chroma Split(px)",
+            "initial": 2.0,
+            "minimum": 0.0,
+            "maximum": 8.0,
+            "step": 0.1
+        },
+        {
+            "index": 7,
+            "name": "grid_amp",
+            "desc": "Grid Amount",
+            "initial": 0.35,
+            "minimum": 0.0,
+            "maximum": 1.0,
+            "step": 0.01
+        },
+        {
+            "index": 8,
+            "name": "grid_scale",
+            "desc": "Grid Scale",
+            "initial": 80.0,
+            "minimum": 8.0,
+            "maximum": 256.0,
+            "step": 1.0
+        },
+        {
+            "index": 9,
+            "name": "vignette",
+            "desc": "Vignette",
+            "initial": 0.25,
+            "minimum": 0.0,
+            "maximum": 1.0,
+            "step": 0.01
+        },
+        {
+            "index": 10,
+            "name": "glow",
+            "desc": "Glow",
+            "initial": 0.35,
+            "minimum": 0.0,
+            "maximum": 2.0,
+            "step": 0.01
+        }
+    ],
+    "luts": [],
+    "historyCount": 0,
+    "languageVersion": "version2_4"
+}
