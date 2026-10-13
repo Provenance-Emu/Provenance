@@ -635,31 +635,15 @@ git diff Provenance.xcworkspace/xcshareddata/swiftpm/Package.resolved | grep -E 
 
 Expected: both counts print `1`. The diff shows only pins snes9x's `Package.swift` adds (if any), no version changes to existing pins. Any other bump: `git checkout` the file and pin the offending dependency in the core's `Package.swift` instead.
 
-- [ ] **Step 4: Commit and get a CI archive**
+- [ ] **Step 4: Commit on a branch (do not push yet)**
 
 ```bash
 git switch -c feature/ship-core-packages
 git add Provenance.xcodeproj/project.pbxproj Provenance.xcworkspace/contents.xcworkspacedata Provenance.xcworkspace/xcshareddata/swiftpm/Package.resolved
 git commit -m "build: ship snes9x from its SwiftPM package"
-git push -u origin feature/ship-core-packages
-gh pr create --repo Provenance-Emu/Provenance --base develop --title "build: ship native cores from their SwiftPM packages" --body "Plan: docs/superpowers/plans/2026-10-12-shipping-core-package-swap.md"
 ```
 
-Wait for `build.yml` (`Build and Upload Provenance`) on the PR: the `Provenance (AppStore) (Release)` archives for `iphoneos` and `appletvos` must be green. A failure log is in artifact `xcodebuild-log-<IPA_NAME>` (`gh run download <run-id> -n xcodebuild-log-Provenance-iOS`), because xcbeautify hides script output.
-
-- [ ] **Step 5: Core-identifier gate**
-
-```bash
-mkdir -p build/core-after && cd build/core-after && rm -f *.ipa
-gh run download <run-id> --repo Provenance-Emu/Provenance --pattern '*ipa*'
-find . -name '*.ipa' -exec python3 ../../Scripts/ci/ci-core-manifest.py --identifiers {} + | sort > after.txt
-cut -f2 ../core-baseline/baseline.txt | sort | uniq -c > /tmp/base-ids
-cut -f2 after.txt | sort | uniq -c > /tmp/after-ids
-diff /tmp/base-ids /tmp/after-ids && echo "identifiers unchanged"
-unzip -l "$(find . -name '*iOS*.ipa' | head -1)" | grep -E 'PVSNES9x-Dynamic.framework/PVSNES9x-Dynamic$|_PVSNES.bundle/Core.plist$|PVSNES.framework|snes9x.framework'
-```
-
-Expected: `identifiers unchanged` (`com.provenance.core.snes9x` once per IPA). The `unzip` lists the new framework binary and the resource bundle's `Core.plist`, and no `PVSNES.framework`/`snes9x.framework` paths. Name the IPA artifacts from `gh run view <run-id>` if the pattern matches nothing.
+The four swaps are four local commits and one CI run (Task 6 Step 5): a `build.yml` archive takes hours, so one push per core would cost four of them. If the batched gate fails, bisect by commit.
 
 ---
 
@@ -670,16 +654,12 @@ Expected: `identifiers unchanged` (`com.provenance.core.snes9x` once per IPA). T
 - [ ] **Step 1:** `ruby Scripts/dev/swap_core_to_package.rb fceu --verify` → expect exit 1 with `old file refs: PVFCEU.framework`.
 - [ ] **Step 2:** `ruby Scripts/dev/swap_core_to_package.rb fceu --apply && ruby Scripts/dev/swap_core_to_package.rb fceu --verify && python3 Scripts/audits/check_pbxproj_sources.py` → `--verify` exits 0.
 - [ ] **Step 3:** Run Task 3 Step 3's resolve and pin checks verbatim; expected the same (`1`, `1`, no bumps of existing pins).
-- [ ] **Step 4:** Commit and push to the same branch:
+- [ ] **Step 4:** Commit locally (no push):
 
 ```bash
 git add Provenance.xcodeproj/project.pbxproj Provenance.xcworkspace/contents.xcworkspacedata Provenance.xcworkspace/xcshareddata/swiftpm/Package.resolved
 git commit -m "build: ship FCEU from its SwiftPM package"
-git push
 ```
-
-Wait for the PR's `build.yml` archives (iOS + tvOS) to go green.
-- [ ] **Step 5:** Run Task 3 Step 5's identifier gate with the new run id; expect `identifiers unchanged`, and `unzip -l ... | grep -E 'PVFCEU-Dynamic.framework/PVFCEU-Dynamic$|_PVFCEU.bundle/Core.plist$|/PVFCEU.framework/'` lists the first two only.
 
 ---
 
@@ -690,8 +670,7 @@ Wait for the PR's `build.yml` archives (iOS + tvOS) to go green.
 - [ ] **Step 1:** `ruby Scripts/dev/swap_core_to_package.rb genesis --verify` → exit 1 with `old file refs: PVGenesis.framework`.
 - [ ] **Step 2:** `ruby Scripts/dev/swap_core_to_package.rb genesis --apply && ruby Scripts/dev/swap_core_to_package.rb genesis --verify && python3 Scripts/audits/check_pbxproj_sources.py` → exit 0.
 - [ ] **Step 3:** Task 3 Step 3's resolve and pin checks. Genesis declares `SwiftGenPlugin` (`from: "1.1.3"`) without applying it to any target; it is already pinned in the workspace, so expect no new pin. If the plugin's presence makes resolution fail validation, delete that unused dependency line from `Cores/Genesis-Plus-GX/Package.swift` in this commit.
-- [ ] **Step 4:** Commit `build: ship Genesis-Plus-GX from its SwiftPM package` with the same three files (plus `Cores/Genesis-Plus-GX/Package.swift` if Step 3 touched it); push; wait for green archives.
-- [ ] **Step 5:** Identifier gate; `unzip -l ... | grep -E 'PVCoreGenesisPlus-Dynamic.framework/PVCoreGenesisPlus-Dynamic$|_PVGenesis.bundle/Core.plist$|/PVGenesis.framework/'` lists the first two only.
+- [ ] **Step 4:** Commit `build: ship Genesis-Plus-GX from its SwiftPM package` with the same three files (plus `Cores/Genesis-Plus-GX/Package.swift` if Step 3 touched it), locally, no push.
 
 ---
 
@@ -705,19 +684,60 @@ Wait for the PR's `build.yml` archives (iOS + tvOS) to go green.
 - [ ] **Step 1:** `ruby Scripts/dev/swap_core_to_package.rb mupen64plus --verify` → exit 1 listing all six old frameworks.
 - [ ] **Step 2:** `ruby Scripts/dev/swap_core_to_package.rb mupen64plus --apply && ruby Scripts/dev/swap_core_to_package.rb mupen64plus --verify && python3 Scripts/audits/check_pbxproj_sources.py` → exit 0 (the verify checks all five products are linked and embedded in all four targets).
 - [ ] **Step 3:** Task 3 Step 3's resolve and pin checks. Mupen depends on `Defaults` directly (`Package.swift`, "imported directly"); it is already pinned, so expect no bump.
-- [ ] **Step 4:** Commit `build: ship Mupen64Plus and its plugins from SwiftPM packages`; push; wait for green archives.
-- [ ] **Step 5:** Identifier gate, then the helper files and plugins:
+- [ ] **Step 4:** Commit `build: ship Mupen64Plus and its plugins from SwiftPM packages` (same three files), locally.
+- [ ] **Step 5: Push once, open the PR, run every gate**
+
+```bash
+git pull --rebase origin develop
+git push -u origin feature/ship-core-packages
+gh pr create --repo Provenance-Emu/Provenance --base develop --title "build: ship native cores from their SwiftPM packages" --body "Plan: docs/superpowers/plans/2026-10-12-shipping-core-package-swap.md"
+```
+
+The auto-rebase bot rewrites this branch whenever develop moves, and a bot rebase does not re-run `build.yml`. Before every later push, `git pull --rebase` first. Before downloading IPAs, confirm the run built the commit you think it did:
+
+```bash
+gh run list --repo Provenance-Emu/Provenance --workflow "Build and Upload Provenance" --branch feature/ship-core-packages --limit 3 --json databaseId,status,conclusion,headSha
+git log --oneline -5 origin/feature/ship-core-packages
+```
+
+Wait for the `Provenance (AppStore) (Release)` archives (`iphoneos`, `appletvos`) to be green on a head that contains all four swap commits. A failure log is in artifact `xcodebuild-log-<IPA_NAME>` (`gh run download <run-id> -n xcodebuild-log-Provenance-iOS`); xcbeautify hides script output in the console.
+
+Identifier gate (all four cores at once):
+
+```bash
+mkdir -p build/core-after && cd build/core-after && rm -rf ./*
+gh run download <run-id> --repo Provenance-Emu/Provenance --pattern '*ipa*'
+find . -name '*.ipa' -exec python3 ../../Scripts/ci/ci-core-manifest.py --identifiers {} + | sort > after.txt
+cut -f2 ../core-baseline/baseline.txt | sort | uniq -c > /tmp/base-ids
+cut -f2 after.txt | sort | uniq -c > /tmp/after-ids
+diff /tmp/base-ids /tmp/after-ids && echo "identifiers unchanged"
+cd ../..
+```
+
+Expected: `identifiers unchanged`. Name the IPA artifacts from `gh run view <run-id>` if the pattern matches nothing.
+
+Per-core contents of the iOS IPA (repeat with the tvOS IPA):
 
 ```bash
 IPA="$(find build/core-after -name '*iOS*.ipa' | head -1)"
-unzip -l "$IPA" | grep -E 'PVMupenGameCore_PVMupen64Plus.bundle/(GLideN64.ini|GLideN64.custom.ini|RiceVideoLinux.ini|mupen64plus.ini|mupencheat.txt|Core.plist)$' | wc -l
-for p in PVMupenGameCore PVMupen64PlusRspHLE PVRSPCXD4 PVMupen64PlusVideoRice PVMupen64PlusVideoGlideN64; do
+for p in PVSNES9x PVFCEU PVCoreGenesisPlus PVMupenGameCore PVMupen64PlusRspHLE PVRSPCXD4 PVMupen64PlusVideoRice PVMupen64PlusVideoGlideN64; do
   unzip -l "$IPA" | grep -qE "Frameworks/$p-Dynamic.framework/$p-Dynamic\$" && echo "ok $p" || echo "MISSING $p"
 done
-unzip -l "$IPA" | grep -E 'Frameworks/PVMupen64Plus(Bridge)?\.framework/' | wc -l
+unzip -l "$IPA" | grep -cE '_(PVSNES|PVFCEU|PVGenesis|PVMupen64Plus)\.bundle/Core\.plist$'
+unzip -l "$IPA" | grep -cE 'Frameworks/(PVSNES|snes9x|PVFCEU|PVGenesis|PVMupen64Plus|PVMupen64PlusBridge|PVMupen64PlusRspHLE|PVMupen64PlusVideoRice|PVMupen64PlusVideoGlideN64|PVRSPCXD4)\.framework/'
 ```
 
-Expected: `6`, five `ok` lines, `0`. A missing ini means the symlinks under `Cores/Mupen64Plus/Sources/PVMupen/Resources/` dangled in CI (the plugin submodules were not initialized); check `Scripts/ci/ci-init-submodules.sh` covers `Cores/Mupen64Plus`'s nested submodules.
+Expected: eight `ok` lines, `4`, `0`.
+
+Mupen helper files must be real files, not copied symlinks (a dangling link still lists in `unzip -l` and the build still passes):
+
+```bash
+zipinfo "$IPA" | grep 'PVMupenGameCore_PVMupen64Plus.bundle/' | grep -E '(GLideN64|GLideN64\.custom|RiceVideoLinux|mupen64plus)\.ini$|mupencheat\.txt$'
+```
+
+Expected: five lines, each starting with `-` (regular file), none with `l`. A missing or `l` entry means the symlinks under `Cores/Mupen64Plus/Sources/PVMupen/Resources/` were not resolved: check `Scripts/ci/ci-init-submodules.sh` initializes Mupen's plugin submodules, and replace the symlinks with a Run Script copy if Xcode copied links verbatim.
+
+What this gate does not cover: `build.yml` archives only `Provenance (AppStore)`. For `Provenance`, `Provenance-XL` and `Provenance-Lite (AppStore)` the evidence is the script's `--verify` (product linked + embedded, no old references). Ask the user for one local build of the `Provenance` scheme (device or Apple Silicon simulator) before merging.
 
 ---
 
@@ -728,22 +748,12 @@ These are a decision for the user, not a task list, because their binary targets
 **Files:**
 - Create: `docs/superpowers/specs/2026-10-12-azahar-dolphin-package-decision.md`
 
-- [ ] **Step 1: Measure the resolution failure mode (no build)**
+No probe: a scratch worktree has no submodules, so package resolution would fail on missing target paths before it reached the xcframework question, and Dolphin's missing simulator slice already decides option 1 for now.
 
-Work in a throwaway worktree so nothing in the main tree changes:
+- [ ] **Step 1: Write the decision doc**
 
-```bash
-git worktree add "$TMPDIR/dolphin-probe" HEAD
-cd "$TMPDIR/dolphin-probe"
-# Hide the artefact (the worktree has none unless the slice cache symlinked one; check first)
-ls Cores/Dolphin/dolphin-ios/build/xcframework/ 2>/dev/null
-```
+Use this content:
 
-In that worktree, add a `Cores/Dolphin` entry to the `CORES` hash of a copy of `Scripts/dev/swap_core_to_package.rb` (`frameworks: %w[PVDolphin.framework]`, `package: 'Cores/Dolphin'`, `products: %w[PVDolphin-Dynamic]`, `xcodeproj: 'Cores/Dolphin/PVDolphin.xcodeproj'`) and run it with `--apply`. Then run `xcodebuild -resolvePackageDependencies -workspace Provenance.xcworkspace -scheme Provenance-CI -skipPackagePluginValidation -skipMacroValidation` and record whether resolution fails for a scheme (`Provenance-CI`) that never links Dolphin. Repeat with an Azahar entry (`PVAzahar.framework`, `Cores/Azahar`, `PVAzahar-Dynamic`, `Cores/Azahar/PVAzahar.xcodeproj`); its manifest drops the binaryTarget when `PVlibAzahar.xcframework` is missing, so expect resolution to succeed and the bridge to `#error` only at compile time. Finish with `cd - && git worktree remove --force "$TMPDIR/dolphin-probe"`. Do not commit anything from the probe.
-
-- [ ] **Step 2: Write the decision doc**
-
-Use this content, filling the two "Measured" lines with Step 1's results:
 
 ```markdown
 # Azahar and Dolphin: ship from packages or keep the xcodeprojs (2026-10-12)
@@ -758,8 +768,6 @@ Use this content, filling the two "Measured" lines with Step 1's results:
   device, so local simulator runs of Provenance/AppStore/XL would stop linking.
 - Today's xcodeprojs link the per-slice archive by path and build it in an aggregate target, which
   works on a cold checkout; that was the fix for "There is no XCFramework found".
-- Measured: missing PVlibDolphin.xcframework + package reference → resolution of Provenance-CI <fails|succeeds>.
-- Measured: missing PVlibAzahar.xcframework + package reference → <result>.
 
 ## Options
 1. Keep both on their xcodeprojs (recommended for now). Nothing changes for release.sh, build.yml,
@@ -768,14 +776,17 @@ Use this content, filling the two "Measured" lines with Step 1's results:
    slices for Azahar) before every xcodebuild entry point: release.sh, build.yml, testflight.yml,
    `make lite`, and document it for local Xcode use; add Dolphin simulator slices or accept no
    simulator runs; add the `nm -m <fw> | grep 'weak external'` audit (CLAUDE.md, Azahar gotchas) to
-   the gate because the unexported-symbols lists move into Package.swift.
+   the gate because the unexported-symbols lists move into Package.swift; and add a Run Script to
+   every Dolphin-linking app target that copies `Cores/Dolphin/dolphin-ios/Data/Sys` into the app
+   bundle (the xcodeproj bundles it today; a package cannot reference it; the dev app's
+   `DevSettings.dolphinSysScript` is the model). Dolphin's `Config/` is already a package resource.
 3. Move Azahar only (simulator slices exist; binaryTarget is optional), keep Dolphin.
 
 ## Decision
 <user's choice and date>
 ```
 
-- [ ] **Step 3: Ask the user to choose; record it in the doc; commit**
+- [ ] **Step 2: Ask the user to choose; record it in the doc; commit**
 
 ```bash
 git add docs/superpowers/specs/2026-10-12-azahar-dolphin-package-decision.md

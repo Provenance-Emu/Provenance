@@ -23,6 +23,12 @@ device before `Provenance.xcodeproj` consumes them. Build with `make dev-ui` /
       with Rice (Core options → video plugin). Each loads its framework by name
       (`<name>-Dynamic`); a plugin that fails to load logs the dlopen error.
 - [ ] `Provenance-Dev-N64`: repeat one boot with each RSP plugin (HLE, CXD4).
+- [ ] `Provenance-Dev-N64` helper files (`38cebb9af3`): in the built app,
+      `find <App>.app/PVMupenGameCore_PVMupen64Plus.bundle -type l` prints
+      nothing, and the bundle holds `GLideN64.ini`, `GLideN64.custom.ini`,
+      `RiceVideoLinux.ini`, `mupen64plus.ini`, `mupencheat.txt`. After a
+      boot, the ROM's `config/` and `data/` folders contain the ini files
+      (the log has no "No resource path found for file").
 - [ ] `Provenance-Dev-N64`, GlideN64 NEON path (`47fcf88138`): geometry,
       lighting and textures look right in a 3D game (e.g. Mario 64, Zelda);
       no missing polygons or garbled matrices compared with the shipping app.
