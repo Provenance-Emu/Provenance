@@ -78,6 +78,9 @@
 		C0C0CAFE3000000000000042 /* PVRetroArchStateDecoder.h in Headers */ = {isa = PBXBuildFile; fileRef = C0C0CAFE3000000000000040 /* PVRetroArchStateDecoder.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		C0C0CAFE3000000000000043 /* PVRetroArchStateDecoder.m in Sources */ = {isa = PBXBuildFile; fileRef = C0C0CAFE3000000000000041 /* PVRetroArchStateDecoder.m */; };
 		C0C0CAFE3000000000000045 /* RetroArchStateDecoderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0C0CAFE3000000000000044 /* RetroArchStateDecoderTests.swift */; };
+		C0C0CAFE3000000000000048 /* PVThinCoreCallGate.h in Headers */ = {isa = PBXBuildFile; fileRef = C0C0CAFE3000000000000046 /* PVThinCoreCallGate.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		C0C0CAFE3000000000000049 /* PVThinCoreCallGate.m in Sources */ = {isa = PBXBuildFile; fileRef = C0C0CAFE3000000000000047 /* PVThinCoreCallGate.m */; };
+		C0C0CAFE300000000000004B /* ThinCoreCallGateTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0C0CAFE300000000000004A /* ThinCoreCallGateTests.swift */; };
 		C0C0CAFE3000000000000025 /* JaguarInputMapTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0C0CAFE3000000000000024 /* JaguarInputMapTests.swift */; };
 		C0C0CAFE3000000000000015 /* Test.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0C0CAFE3000000000000014 /* Test.swift */; };
 		C0C0CAFE3000000000000017 /* ThinCoreOptionDefinitionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0C0CAFE3000000000000016 /* ThinCoreOptionDefinitionTests.swift */; };
@@ -955,6 +958,9 @@
 		C0C0CAFE3000000000000040 /* PVRetroArchStateDecoder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PVRetroArchStateDecoder.h; sourceTree = "<group>"; };
 		C0C0CAFE3000000000000041 /* PVRetroArchStateDecoder.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PVRetroArchStateDecoder.m; sourceTree = "<group>"; };
 		C0C0CAFE3000000000000044 /* RetroArchStateDecoderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RetroArchStateDecoderTests.swift; sourceTree = "<group>"; };
+		C0C0CAFE3000000000000046 /* PVThinCoreCallGate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PVThinCoreCallGate.h; sourceTree = "<group>"; };
+		C0C0CAFE3000000000000047 /* PVThinCoreCallGate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PVThinCoreCallGate.m; sourceTree = "<group>"; };
+		C0C0CAFE300000000000004A /* ThinCoreCallGateTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThinCoreCallGateTests.swift; sourceTree = "<group>"; };
 		C0C0CAFE3000000000000024 /* JaguarInputMapTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JaguarInputMapTests.swift; sourceTree = "<group>"; };
 		C0C0CAFE3000000000000014 /* Test.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Test.swift; sourceTree = "<group>"; };
 		C0C0CAFE3000000000000016 /* ThinCoreOptionDefinitionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThinCoreOptionDefinitionTests.swift; sourceTree = "<group>"; };
@@ -2916,6 +2922,8 @@
 				B4F1A2B3C4D5E60011223342 /* PVThinLibretroFrontend.mm */,
 				C0C0CAFE3000000000000040 /* PVRetroArchStateDecoder.h */,
 				C0C0CAFE3000000000000041 /* PVRetroArchStateDecoder.m */,
+				C0C0CAFE3000000000000046 /* PVThinCoreCallGate.h */,
+				C0C0CAFE3000000000000047 /* PVThinCoreCallGate.m */,
 				B3D991CA2F788B6B002F1DCB /* SystemIdentifier+ObjCBridge.swift */,
 			);
 			path = PVLibRetro;
@@ -2959,6 +2967,7 @@
 				C0C0CAFE3000000000000022 /* ThinContentArchiveResolverTests.swift */,
 				C0C0CAFE3000000000000030 /* ThinVFSDiskImagePolicyTests.swift */,
 				C0C0CAFE3000000000000044 /* RetroArchStateDecoderTests.swift */,
+				C0C0CAFE300000000000004A /* ThinCoreCallGateTests.swift */,
 				C0C0CAFE3000000000000024 /* JaguarInputMapTests.swift */,
 				C0C0CAFE3000000000000014 /* Test.swift */,
 				C0C0CAFE3000000000000016 /* ThinCoreOptionDefinitionTests.swift */,
@@ -2985,6 +2994,7 @@
 				B4C5318E2F8A100100A1B2C3 /* libretro_vulkan.h in Headers */,
 				B4F1A2B3C4D5E60011223344 /* PVThinLibretroFrontend.h in Headers */,
 				C0C0CAFE3000000000000042 /* PVRetroArchStateDecoder.h in Headers */,
+				C0C0CAFE3000000000000048 /* PVThinCoreCallGate.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3182,6 +3192,7 @@
 				B392849A286703CD003BAC21 /* PVLibRetroCore.m in Sources */,
 				B4F1A2B3C4D5E60011223345 /* PVThinLibretroFrontend.mm in Sources */,
 				C0C0CAFE3000000000000043 /* PVRetroArchStateDecoder.m in Sources */,
+				C0C0CAFE3000000000000049 /* PVThinCoreCallGate.m in Sources */,
 				B3D991C72F788AD4002F1DCB /* PVThinLibretroCore+Palette.swift in Sources */,
 				C0C0CAFE300000000000002D /* PVThinLibretroCore+LayoutVariant.swift in Sources */,
 				B4F1A2B3C4D5E60011223346 /* PVThinLibretroCore.swift in Sources */,
@@ -3209,6 +3220,7 @@
 				C0C0CAFE3000000000000023 /* ThinContentArchiveResolverTests.swift in Sources */,
 				C0C0CAFE3000000000000031 /* ThinVFSDiskImagePolicyTests.swift in Sources */,
 				C0C0CAFE3000000000000045 /* RetroArchStateDecoderTests.swift in Sources */,
+				C0C0CAFE300000000000004B /* ThinCoreCallGateTests.swift in Sources */,
 				C0C0CAFE3000000000000025 /* JaguarInputMapTests.swift in Sources */,
 				C0C0CAFE3000000000000015 /* Test.swift in Sources */,
 				C0C0CAFE3000000000000017 /* ThinCoreOptionDefinitionTests.swift in Sources */,
