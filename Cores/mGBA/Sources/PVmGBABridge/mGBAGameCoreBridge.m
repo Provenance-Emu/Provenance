@@ -266,13 +266,19 @@ static struct mLogger logger = { .log = _log };
     return CGSizeMake(3, 2);
 }
 
+// The display link can ask for these before the game has loaded (`core` is NULL
+// until then): report the last known size instead of dereferencing it.
 - (CGRect)screenRect {
-    core->currentVideoSize(core, &width, &height);
+    if (core) {
+        core->currentVideoSize(core, &width, &height);
+    }
     return CGRectMake(0, 0, width, height);
 }
 
 - (CGSize)bufferSize {
-    core->currentVideoSize(core, &width, &height);
+    if (core) {
+        core->currentVideoSize(core, &width, &height);
+    }
     return CGSizeMake(width, height);
 }
 
