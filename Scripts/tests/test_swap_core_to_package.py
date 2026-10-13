@@ -67,6 +67,8 @@ class SwapTests(unittest.TestCase):
 
     def test_mupen_embeds_all_plugins(self):
         self.assertEqual(self.run_script("mupen64plus", "--apply").returncode, 0)
+        verify = self.run_script("mupen64plus", "--verify")  # checks link + embed per target
+        self.assertEqual(verify.returncode, 0, verify.stderr)
         objs = self.objects()
         targets = {o["name"]: o for o in objs.values() if o.get("isa") == "PBXNativeTarget"}
         for t in TARGETS:
