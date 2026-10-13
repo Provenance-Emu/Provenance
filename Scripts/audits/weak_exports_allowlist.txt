@@ -1,0 +1,14 @@
+# Allowlist for Scripts/audits/check_weak_exports.py.
+#
+#   pair: <imageA> <imageB>   tolerate this pair (give a reason in a comment)
+#   symbol: <regex>           ignore mangled symbols matching the regex
+#   image: <name>             skip an image entirely
+#
+# Keep this short. A pair belongs here only when both copies are the same
+# library version (coalescing is then harmless) or when hiding is impossible.
+
+# libc++ template instantiations (std::__1::...) come from the same toolchain
+# headers in every image, so coalescing them is harmless. Ignore them so the
+# report shows library code (nlohmann, fmt, glslang, emulator classes) only.
+symbol: ^__ZN?St3__1
+symbol: ^__ZGVZN?St3__1

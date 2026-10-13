@@ -295,6 +295,14 @@ run = ["Scripts/audits/check-pr-reviews.sh"]
 args_hint = "[PR number…]"
 needs = ["gh"]
 
+[jobs.weak-exports]
+title = "Weak C++ exports shared between images"
+category = "Audits"
+description = "Pairs of frameworks/dylibs in a built .app that export the same weak C++ symbols (dyld coalesces them; see the azahar/Dolphin glslang crash). Advisory on build.yml iOS."
+run = ["python3", "Scripts/audits/check_weak_exports.py"]
+args_hint = "<Foo.app | Frameworks dir> [--advisory]"
+needs = ["macos"]
+
 [jobs.binary-scan]
 title = "Inspect built frameworks and dylibs"
 category = "Audits"

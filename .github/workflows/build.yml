@@ -489,6 +489,15 @@ jobs:
           ls -la "archive.xcarchive/Products/Applications/${{ matrix.APP_NAME }}.app/"
           ldid -S"Provenance/Provenance-AppStore.entitlements" "archive.xcarchive/Products/Applications/${{ matrix.APP_NAME }}.app/${{ matrix.APP_NAME }}" || echo "::warning::Fakesign failed but continuing build"
 
+      - name: Weak export audit (advisory)
+        # Phase 1 of docs/superpowers/specs/2026-10-13-generated-project-and-dependency-dedup-design.md.
+        # Advisory for now: it reports pairs of images that export the same weak
+        # C++ symbols. Drop --advisory once the allowlist covers the known pairs.
+        continue-on-error: true
+        run: |
+          python3 Scripts/audits/check_weak_exports.py \
+            "archive.xcarchive/Products/Applications/${{ matrix.APP_NAME }}.app" --advisory
+
       - name: Convert to IPA
         run: |
           APP_DIR="archive.xcarchive/Products/Applications"

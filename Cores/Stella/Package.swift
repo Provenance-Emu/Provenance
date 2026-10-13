@@ -371,6 +371,14 @@ let package = Package(
                     // `Logger::Level::DEBUG` enumerator in common/Logger.hxx.
                     "-UDEBUG",
                     "-fno-rtti",
+                    // Keep the C++ surface (nlohmann::json, sqlite wrappers,
+                    // template instantiations) out of the dylib's export table.
+                    // dyld coalesces exported weak symbols across images, and
+                    // RealmSwift exports its own nlohmann::json instantiations
+                    // (Scripts/audits/check_weak_exports.py). The bridge links
+                    // this target into the same image, so hidden is enough.
+                    "-fvisibility=hidden",
+                    "-fvisibility-inlines-hidden",
                 ])
             ]
         ),
