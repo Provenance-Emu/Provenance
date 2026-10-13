@@ -229,7 +229,8 @@ public struct DeltaSkin: DeltaSkinProtocol {
         return orientationRepresentations(for: traits)?.backgroundAnimation
     }
 
-    /// Cached last representation lookup to avoid repeated work/log spam
+    /// Cached last representation lookup to avoid repeated work/log spam.
+    /// Shared by every skin, so the key must name the skin as well as the traits.
     private static var lastRepCacheKey: String?
     private static var lastRepCacheValue: DeltaSkin.RepresentationInfo?
 
@@ -293,9 +294,11 @@ public struct DeltaSkin: DeltaSkinProtocol {
     }
 
     public func representation(for traits: DeltaSkinTraits) -> DeltaSkin.RepresentationInfo? {
-        // Fast-path cache: same traits + game → return cached value without logging
+        // Fast-path cache: same skin + traits + game → return cached value without logging.
+        // The skin's identity is part of the key: without it, a lookup on one skin returned the
+        // representation another skin had just resolved for the same traits (its items and mappingSize).
         let gameKey = traits.gameIdentifier ?? ""
-        let cacheKey = "\(traits.device.rawValue)-\(traits.displayType.rawValue)-\(traits.orientation.rawValue)-\(gameKey)"
+        let cacheKey = "\(identifier)|\(fileURL.path)|\(traits.device.rawValue)-\(traits.displayType.rawValue)-\(traits.orientation.rawValue)-\(gameKey)"
         if Self.lastRepCacheKey == cacheKey, let cached = Self.lastRepCacheValue {
             return cached
         }

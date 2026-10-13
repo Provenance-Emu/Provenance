@@ -18,23 +18,27 @@ import PVSystems
 @Suite("Dreamcast skin tokens") @MainActor
 struct DeltaSkinDreamcastTokenTests {
 
-    private static let arcadeSystems: [SystemIdentifier] = [.Dreamcast, .NAOMI, .NAOMI2, .Atomiswave]
-
-    @Test("Face buttons, Start and the d-pad keep their own button", arguments: [
-        ("a", PVDreamcastButton.a), ("b", .b), ("x", .x), ("y", .y), ("start", .start),
-        ("up", .up), ("down", .down), ("left", .left), ("right", .right),
-        ("A", .a), ("Start", .start)
-    ])
-    func faceButtons(token: String, expected: PVDreamcastButton) {
-        #expect(DeltaSkinInputHandler.dreamcastButton(forSkinToken: token) == expected)
+    @Test("Face buttons, Start and the d-pad keep their own button")
+    func faceButtons() {
+        let expected: [String: PVDreamcastButton] = [
+            "a": .a, "b": .b, "x": .x, "y": .y, "start": .start,
+            "up": .up, "down": .down, "left": .left, "right": .right,
+            "A": .a, "Start": .start
+        ]
+        for (token, button) in expected {
+            #expect(DeltaSkinInputHandler.dreamcastButton(forSkinToken: token) == button, "\(token)")
+        }
     }
 
-    @Test("Every shoulder and trigger alias is a Dreamcast trigger", arguments: [
-        ("l", PVDreamcastButton.l), ("l1", .l), ("l2", .l), ("lt", .l), ("ltrigger", .l),
-        ("r", .r), ("r1", .r), ("r2", .r), ("rt", .r), ("rtrigger", .r)
-    ])
-    func triggers(token: String, expected: PVDreamcastButton) {
-        #expect(DeltaSkinInputHandler.dreamcastButton(forSkinToken: token) == expected)
+    @Test("Every shoulder and trigger alias is a Dreamcast trigger")
+    func triggers() {
+        let expected: [String: PVDreamcastButton] = [
+            "l": .l, "l1": .l, "l2": .l, "lt": .l, "ltrigger": .l,
+            "r": .r, "r1": .r, "r2": .r, "rt": .r, "rtrigger": .r
+        ]
+        for (token, button) in expected {
+            #expect(DeltaSkinInputHandler.dreamcastButton(forSkinToken: token) == button, "\(token)")
+        }
     }
 
     @Test("Arcade coin aliases still insert a coin")
@@ -51,7 +55,8 @@ struct DeltaSkinDreamcastTokenTests {
         #expect(DeltaSkinInputHandler.dreamcastButton(forSkinToken: token) == nil)
     }
 
-    @Test("The normaliser folds l2/r2/lt/rt onto L/R for the Dreamcast family", arguments: arcadeSystems)
+    @Test("The normaliser folds l2/r2/lt/rt onto L/R for the Dreamcast family",
+          arguments: [SystemIdentifier.Dreamcast, .NAOMI, .NAOMI2, .Atomiswave])
     func normaliserFoldsTriggers(system: SystemIdentifier) {
         let handler = DeltaSkinInputHandler()
         #expect(["l1", "l2", "lt", "r1", "r2", "rt"].map { handler.normalizeSkinButtonId($0, for: system) }
@@ -111,12 +116,56 @@ struct DeltaSkinDreamcastTokenTests {
     }
     """#
 
-    private static func loadManicDreamcastSkin() throws -> DeltaSkin {
+    private static func loadSkin(infoJSON: String) throws -> DeltaSkin {
         let dir = FileManager.default.temporaryDirectory
-            .appendingPathComponent("ManicDreamcast-\(UUID().uuidString).manicskin", isDirectory: true)
+            .appendingPathComponent("SkinFixture-\(UUID().uuidString).manicskin", isDirectory: true)
         try FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true)
-        try Data(manicDreamcastInfoJSON.utf8).write(to: dir.appendingPathComponent("info.json"))
+        try Data(infoJSON.utf8).write(to: dir.appendingPathComponent("info.json"))
         return try DeltaSkin(fileURL: dir)
+    }
+
+    private static func loadManicDreamcastSkin() throws -> DeltaSkin {
+        try loadSkin(infoJSON: manicDreamcastInfoJSON)
+    }
+
+    /// A second Dreamcast skin with the same traits but a different layout: one `start` item.
+    private static let otherDreamcastInfoJSON = #"""
+    {
+      "name": "Other Dreamcast",
+      "identifier": "com.example.dc.other",
+      "gameTypeIdentifier": "com.rileytestut.delta.game.dc",
+      "representations": {
+        "iphone": {
+          "edgeToEdge": {
+            "portrait": {
+              "assets": { "large": "other.png" },
+              "mappingSize": { "width": 430, "height": 932 },
+              "items": [
+                { "inputs": ["start"], "frame": { "x": 187, "y": 826, "width": 51, "height": 27 } }
+              ]
+            }
+          }
+        }
+      }
+    }
+    """#
+
+    @Test("A skin's buttons never come from another skin's cached representation")
+    func representationCacheIsPerSkin() throws {
+        let manic = try Self.loadManicDreamcastSkin()
+        let other = try Self.loadSkin(infoJSON: Self.otherDreamcastInfoJSON)
+        // The emulator's skin view and the view controller both pass the game title.
+        let traits = DeltaSkinTraits(device: .iphone, displayType: .edgeToEdge, orientation: .portrait,
+                                     gameIdentifier: "Crazy Taxi")
+
+        _ = other.buttons(for: traits)
+        let manicButtons = try #require(manic.buttons(for: traits))
+        #expect(manicButtons.count == 11)
+        #expect(manic.mappingSize(for: traits) == CGSize(width: 375, height: 812))
+
+        let otherButtons = try #require(other.buttons(for: traits))
+        #expect(otherButtons.count == 1)
+        #expect(other.mappingSize(for: traits) == CGSize(width: 430, height: 932))
     }
 
     @Test("Each Manic Dreamcast item yields the token it names, and that token reaches its button")
