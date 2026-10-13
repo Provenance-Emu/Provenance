@@ -29,7 +29,8 @@ public extension PVEmulatorViewController {
         let interval = Defaults[.timedAutoSaveInterval]
         autosaveTimer = Timer.scheduledTimer(withTimeInterval: interval, repeats: true, block: { _ in
             Task { @MainActor in
-                if AppState.shared.emulationUIState.isInBackground {
+                // A tick already queued when quit() invalidated the timer.
+                if self.isQuitting || AppState.shared.emulationUIState.isInBackground {
                     return
                 }
                 let image = self.captureScreenshot()

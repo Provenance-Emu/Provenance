@@ -355,8 +355,9 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
     }
 
     /// Set to true when quit is in progress to prevent pause/unpause calls
-    /// that can crash RetroArch's runloop during teardown.
-    private var isQuitting: Bool = false
+    /// that can crash RetroArch's runloop during teardown. Readable by the
+    /// autosave timer (in +Saves), which must not start a save mid-quit.
+    private(set) var isQuitting: Bool = false
 
     /// Dedup guard for the core-crashed alert. A runaway core that throws
     /// every frame would otherwise spam alerts.
@@ -1491,7 +1492,9 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
         setNeedsUpdateOfScreenEdgesDeferringSystemGestures()
         #endif
 
-        if Defaults[.timedAutoSaves] {
+        // Not while quitting: dismissing the pause menu to quit re-runs
+        // viewDidAppear after quit() has already stopped the timer.
+        if Defaults[.timedAutoSaves], !isQuitting {
             createAutosaveTimer()
         }
 
@@ -1995,6 +1998,10 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
     @MainActor
     public func quit(optionallySave canSave: Bool = true, completion: QuitCompletion? = nil) async {
         isQuitting = true
+        // Before the first await below: the timer fires on main, which those
+        // awaits leave free, and its save would run on a GCD worker while the
+        // core is being torn down (flycast deadlocked on that, 0x8BADF00D).
+        destroyAutosaveTimer()
         NotificationCenter.default.removeObserver(self)
         NSSetUncaughtExceptionHandler(nil)
         enableControllerInput(false)
@@ -2068,7 +2075,6 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
         }
         #endif
 
-        destroyAutosaveTimer()
         #if !os(tvOS)
         if let menuGestureRecognizer = menuGestureRecognizer {
             view.removeGestureRecognizer(menuGestureRecognizer)
