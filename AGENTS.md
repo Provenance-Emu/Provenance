@@ -42,7 +42,7 @@
 - For Tier 0-2 modules, validate locally with `swift build` or `swift test` inside the module when the change is testable.
 - Run `swiftlint lint --path <changed-swift-file>` for changed Swift files when `swiftlint` is available.
 - For higher-tier modules and app targets, validate from `Provenance.xcworkspace`.
-- Start with the `Provenance-Lite` scheme for the fastest Xcode validation.
+- Start with the `Provenance-Lite` scheme for the fastest Xcode validation. Lite is an internal test build (never published, no users): never release-gate on it or build Lite-only migrations.
 - If an initial Xcode build fails because generated sources are missing, retry once before investigating further.
 - Do not run full iOS/tvOS command-line builds unless the user explicitly asks for them.
 
