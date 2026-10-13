@@ -17,6 +17,56 @@ public enum iCloudSettingsSync {
     /// Key used to detect a fresh install (set after first successful sync).
     private static let sentinelKey = "org.provenance.settings.iCloudKVS.initialized"
 
+    // MARK: - Synced blobs
+
+    /// A JSON value another module keeps in sync through the key-value store.
+    /// Unlike the plain settings above, a blob is merged both ways on every
+    /// change, so edits made on two devices are combined rather than replaced.
+    public struct SyncedBlob {
+        /// KVS key; keep it short and stable.
+        public let key: String
+        /// The current local value.
+        public let localData: () -> Data?
+        /// Merges a value from iCloud into local state. Called on the main queue.
+        public let merge: (Data) -> Void
+
+        public init(key: String, localData: @escaping () -> Data?, merge: @escaping (Data) -> Void) {
+            self.key = key
+            self.localData = localData
+            self.merge = merge
+        }
+    }
+
+    nonisolated(unsafe) private static var blobs: [String: SyncedBlob] = [:]
+    nonisolated(unsafe) private static var isSetUp = false
+
+    /// Registers a blob. Safe before or after `setup()`; after it, the blob is merged
+    /// with iCloud immediately.
+    public static func register(_ blob: SyncedBlob) {
+        blobs[blob.key] = blob
+        if isSetUp {
+            syncBlob(blob, kvs: NSUbiquitousKeyValueStore.default)
+        }
+    }
+
+    /// Pushes a blob's local value after a local change.
+    public static func pushBlob(key: String) {
+        guard isSetUp, let blob = blobs[key], let data = blob.localData() else { return }
+        let kvs = NSUbiquitousKeyValueStore.default
+        kvs.set(data, forKey: key)
+        kvs.synchronize()
+    }
+
+    /// Merge iCloud's copy into local state, then push the merged result.
+    private static func syncBlob(_ blob: SyncedBlob, kvs: NSUbiquitousKeyValueStore) {
+        if let remote = kvs.data(forKey: blob.key) {
+            blob.merge(remote)
+        }
+        if let local = blob.localData() {
+            kvs.set(local, forKey: blob.key)
+        }
+    }
+
     // MARK: - Public API
 
     /// Call once at app launch (e.g. in AppDelegate or App.init).
@@ -38,6 +88,12 @@ public enum iCloudSettingsSync {
 
         // Push current values to KVS (in case this is an upgrade or first install)
         pushToKVS(kvs)
+
+        isSetUp = true
+        for blob in blobs.values {
+            syncBlob(blob, kvs: kvs)
+        }
+        kvs.synchronize()
 
         // Observe external changes from other devices
         NotificationCenter.default.addObserver(
@@ -100,7 +156,9 @@ public enum iCloudSettingsSync {
                     Defaults[.iCloudSyncMode] = mode
                 }
             default:
-                break
+                if let blob = blobs[key], let data = kvs.data(forKey: key) {
+                    blob.merge(data)
+                }
             }
         }
     }
