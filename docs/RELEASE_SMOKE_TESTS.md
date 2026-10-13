@@ -5,6 +5,29 @@ Device checks that code review and simulator tests cannot cover. Run the
 TestFlight; move items to "Verified" with the build number once they pass,
 delete them a release later. Add new items at the top of "Next release".
 
+## Dev workspace (not release-gated)
+
+Dev apps never ship to TestFlight, so these do not block a release. They gate
+the shipping-project swap: the cores below must work as SwiftPM packages on a
+device before `Provenance.xcodeproj` consumes them. Build with `make dev-ui` /
+`make dev-n64` and install on a real iPhone (and Apple TV where noted).
+
+### Core packages (PR #3739, `1de61a6cc9`)
+
+- [ ] `Provenance-Dev-UI`, snes9x (`PVSNES9x-Dynamic`): a SNES game boots,
+      takes input, has sound; save a state, quit, load it.
+- [ ] `Provenance-Dev-UI`, FCEU (`PVFCEU-Dynamic`): same for an NES game.
+- [ ] `Provenance-Dev-UI`, Genesis-Plus-GX (`PVCoreGenesisPlus-Dynamic`): same
+      for a Genesis game; core options open (settings view pushed from Swift).
+- [ ] `Provenance-Dev-N64`, Mupen64Plus: an N64 game boots with GlideN64, then
+      with Rice (Core options → video plugin). Each loads its framework by name
+      (`<name>-Dynamic`); a plugin that fails to load logs the dlopen error.
+- [ ] `Provenance-Dev-N64`: repeat one boot with each RSP plugin (HLE, CXD4).
+- [ ] `Provenance-Dev-N64`, GlideN64 NEON path (`47fcf88138`): geometry,
+      lighting and textures look right in a 3D game (e.g. Mario 64, Zelda);
+      no missing polygons or garbled matrices compared with the shipping app.
+- [ ] Repeat the snes9x and N64 boots on Apple TV.
+
 ## Next release
 
 ### Retired native cores (pruning PR, `feature/prune-dead-cores`)
