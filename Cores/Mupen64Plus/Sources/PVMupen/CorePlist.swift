@@ -14,7 +14,8 @@ import PVPlists
 #if SWIFT_PACKAGE
 public extension PVBundleFinder {
     static var PVMupenEmulatorCoreModule: Bundle { Bundle.module }
-    static var PVMupenEmulatorCoreBundle: Bundle { Bundle(for: MupenGameCore.self) }
+    // Resources (Core.plist, the ini files) are in the SwiftPM resource bundle, not the framework.
+    static var PVMupenEmulatorCoreBundle: Bundle { Bundle.module }
 }
 #else
 public extension PVBundleFinder {

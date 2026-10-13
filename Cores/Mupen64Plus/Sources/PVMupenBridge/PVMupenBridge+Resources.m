@@ -5,8 +5,19 @@
 
 @implementation PVMupenBridge (Resources)
 
+// The bundle holding the ini files. MupenGameCore.resourceBundle is the framework in the xcodeproj
+// build and the SwiftPM resource bundle in the package build; bundleForClass only covers the former.
+static NSBundle *PVMupenResourceBundle(Class fallbackClass) {
+    Class coreClass = NSClassFromString(@"PVMupen64Plus.MupenGameCore");
+    if ([coreClass respondsToSelector:@selector(resourceBundle)]) {
+        NSBundle *bundle = [coreClass valueForKey:@"resourceBundle"];
+        if (bundle != nil) { return bundle; }
+    }
+    return [NSBundle bundleForClass:fallbackClass];
+}
+
 - (void)copyIniFiles:(NSString*)romFolder {
-    NSBundle *coreBundle = [NSBundle bundleForClass:[self class]];
+    NSBundle *coreBundle = PVMupenResourceBundle([self class]);
     
     // Copy default config files if they don't exist
     NSArray<NSString*>* iniFiles = @[@"GLideN64.ini", @"GLideN64.custom.ini", @"RiceVideoLinux.ini", @"mupen64plus.ini"];

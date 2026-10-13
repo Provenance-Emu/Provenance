@@ -145,8 +145,16 @@ let pvMupenDeps: [Target.Dependency] = [
              condition: .when(platforms: [.iOS, .tvOS, .macOS, .macCatalyst, .visionOS])),
 ]
 
+// The helper files the xcodeproj bundles: copyIniFiles (PVMupenBridge+Resources.m) copies the
+// ini files into the ROM's config/data folders at boot, where GLideN64, Rice and the core read
+// them. They live in the plugin submodules, outside this target, so Resources/ holds symlinks.
 let pvMupenResources: [Resource] = [
-    .process("Resources/Core.plist")
+    .process("Resources/Core.plist"),
+    .copy("Resources/GLideN64.ini"),
+    .copy("Resources/GLideN64.custom.ini"),
+    .copy("Resources/RiceVideoLinux.ini"),
+    .copy("Resources/mupen64plus.ini"),
+    .copy("Resources/mupencheat.txt"),
 ]
 
 let pvMupenExtraCSettings: [CSetting] = [
