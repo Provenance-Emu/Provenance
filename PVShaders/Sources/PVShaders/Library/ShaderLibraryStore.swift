@@ -12,6 +12,7 @@ import Observation
 import Defaults
 import PVLogging
 import PVSettings
+import PVPrimitives
 
 @MainActor
 @Observable
@@ -125,6 +126,19 @@ public final class ShaderLibraryStore {
             result[String(key.dropFirst(prefix.count))] = value
         }
         return result
+    }
+
+    /// Posted on the main thread after any change to selections, parameters or favorites.
+    public static let didChangeNotification = Notification.Name("org.provenance-emu.shaders.libraryDidChange")
+
+    /// The filter in effect for a game, with its current parameter values, as a
+    /// value that render threads can hold (see `ShaderPostProcessor`).
+    public func resolvedShader(gameMD5: String?, systemID: String?, screenType: ScreenTypeObjC) -> ResolvedShader? {
+        guard let id = effectiveSelection(gameMD5: gameMD5, systemID: systemID).shader(for: screenType),
+              let entry = catalog.entry(for: id) else { return nil }
+        let values = Dictionary(entry.parameters.map { ($0.name, value(of: $0, in: id)) },
+                                uniquingKeysWith: { first, _ in first })
+        return ResolvedShader(entry: entry, values: values, revision: revision)
     }
 
     // MARK: - Parameters
@@ -267,6 +281,7 @@ public final class ShaderLibraryStore {
 
     private func didChange(_ storageKey: String, sync syncKey: String?) {
         revision += 1
+        NotificationCenter.default.post(name: Self.didChangeNotification, object: self)
         // Keep a pending sync request even if a later merge-only change has no sync key.
         if pendingSaves[storageKey] == nil || syncKey != nil {
             pendingSaves[storageKey] = syncKey
@@ -316,5 +331,20 @@ public final class ShaderLibraryStore {
         selections.set(ShaderSelection(legacy: legacy), for: ShaderScope.global.key, at: .distantPast)
         defaults.set(Self.encode(selections), forKey: StorageKey.selections)
         ILOG("Shader library: migrated legacy filter mode \(legacy.rawValue)")
+    }
+}
+
+/// A filter with the parameter values to draw it with.
+public struct ResolvedShader: Sendable {
+    public let entry: ShaderCatalogEntry
+    /// Parameter values by name.
+    public let values: [String: Float]
+    /// The store revision these values were read at.
+    public let revision: Int
+
+    public init(entry: ShaderCatalogEntry, values: [String: Float], revision: Int) {
+        self.entry = entry
+        self.values = values
+        self.revision = revision
     }
 }

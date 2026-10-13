@@ -395,7 +395,7 @@ final class PauseTileMenuViewModel: ObservableObject {
             Self.fpsCounterToggleTile(showFPSCount: showFPSCount)
         ]
         // Screen filter (shader) controls only for cores whose video the Metal filter can reach.
-        let supportsFilters = emulatorVC.core.supportsFilters
+        let supportsFilters = emulatorVC.filtersApplyToCurrentLayout
         // The filter in effect for this game (game, system, then global choice).
         let activeShader = emulatorVC.activeShaderSelection.shader(for: emulatorVC.core.screenType)
             .flatMap(ShaderCatalog.shared.entry(for:))

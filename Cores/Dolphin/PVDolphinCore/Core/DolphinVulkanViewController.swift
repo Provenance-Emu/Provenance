@@ -28,6 +28,7 @@ import PVDolphinBridge
     private var renderLayer: CAMetalLayer!
     private var dev: MTLDevice!
     private var filterObservationTask: Task<Void, Never>?
+    private var shaderLibraryObserver: NSObjectProtocol?
     private var isResuming: Bool = false
     /// Tracks whether the VM has been started - delays VM start until after first layout
     private var hasStartedVM: Bool = false
@@ -100,6 +101,9 @@ import PVDolphinBridge
 
         filterObservationTask?.cancel()
         filterObservationTask = nil
+        if let shaderLibraryObserver {
+            NotificationCenter.default.removeObserver(shaderLibraryObserver)
+        }
 		NotificationCenter.default.removeObserver(self)
 
         /// Clean up render layer
@@ -371,19 +375,29 @@ import PVDolphinBridge
 
     private func startFilterPreferenceObservation() {
         filterObservationTask = Task { [weak self] in
-            for await _ in Defaults.updates([.metalFilterMode]) {
+            for await _ in Defaults.updates([.metalFilterMode, .imageSmoothing]) {
                 await MainActor.run {
                     self?.syncShaderPostProcessing()
                 }
             }
         }
+        // Filter picks and parameter edits (pause menu, Settings, iCloud) land in the library store.
+        shaderLibraryObserver = NotificationCenter.default.addObserver(
+            forName: ShaderLibraryStore.didChangeNotification, object: nil, queue: .main
+        ) { [weak self] _ in
+            MainActor.assumeIsolated { self?.syncShaderPostProcessing() }
+        }
     }
 
-    /// Tells Dolphin's Metal backend whether to hand each frame to `DolphinShaderPostProcessor`.
-    /// Off unless a shader actually resolves for GameCube/Wii (`none`, or an `auto` mode whose CRT
-    /// slot is empty), so the default path keeps rendering straight into the drawable.
+    /// Publishes the filter in effect for this game to `DolphinShaderPostProcessor`, and tells
+    /// Dolphin's Metal backend whether to hand it each frame. Off unless a filter resolves for
+    /// GameCube/Wii, so the default path keeps rendering straight into the drawable.
     @MainActor
     private func syncShaderPostProcessing() {
+        let resolved = ShaderLibraryStore.shared.resolvedShader(gameMD5: core.romMD5,
+                                                                systemID: core.systemIdentifier,
+                                                                screenType: DolphinShaderPostProcessor.screenType)
+        DolphinShaderPostProcessor.shared.update(resolved, smoothing: Defaults[.imageSmoothing])
         let enabled = isMetalBackend && DolphinShaderPostProcessor.hasShaderToApply
         UserDefaults.standard.set(enabled, forKey: DolphinShaderPostProcessor.enabledDefaultsKey)
         ILOG("Dolphin shader post-processing \(enabled ? "enabled" : "disabled")")
@@ -544,7 +558,7 @@ import PVDolphinBridge
 	}
 }
 
-/// Applies the user's Provenance Metal screen filter to Dolphin's output.
+/// Applies the selected filter (Provenance or library preset) to Dolphin's output.
 ///
 /// Dolphin presents to its own `CAMetalLayer`, bypassing `PVMetalViewController`. iCube's Metal
 /// backend (`Metal::Gfx::BindBackbuffer` / `PresentBackbuffer` in
@@ -552,37 +566,40 @@ import PVDolphinBridge
 /// target while `enabledDefaultsKey` is set in `UserDefaults.standard`, then looks this class up
 /// by its Objective-C name and calls `shared`, `configureWithDevice:` and
 /// `renderSource:commandBuffer:drawable:` on Dolphin's GPU thread before presenting the drawable.
-/// All state here is touched only on that thread.
+/// The main thread publishes the filter with `update(_:smoothing:)`; `ShaderPostProcessor`
+/// hands it to the GPU thread.
 @objc(DOLShaderPostProcessor)
 final class DolphinShaderPostProcessor: NSObject {
     /// `standardUserDefaults` key iCube's Metal backend reads to route frames through this class.
     static let enabledDefaultsKey = "shader_enabled"
     /// GameCube/Wii output CRT-era video, so an `auto` filter mode resolves to its CRT shader.
-    private static let screenType: ScreenTypeObjC = .crt
+    static let screenType: ScreenTypeObjC = .crt
 
     @objc static let shared = DolphinShaderPostProcessor()
 
-    private let filterRenderer = PVMetalFilterRenderer()
-    private var device: MTLDevice?
+    /// The system GPU, which Dolphin's Metal backend also renders with.
+    private let processor: ShaderPostProcessor?
     private var blitter: MetalBlitter?
-    private var configuredPixelFormat: MTLPixelFormat?
 
     override private init() {
+        processor = MTLCreateSystemDefaultDevice().map(ShaderPostProcessor.init(device:))
         super.init()
     }
 
     @objc(configureWithDevice:)
     func configure(with device: MTLDevice) {
-        guard self.device?.registryID != device.registryID else { return }
-        self.device = device
+        guard blitter == nil else { return }
         blitter = MetalBlitter(device: device)
-        configuredPixelFormat = nil
     }
 
-    /// Whether the user's filter setting resolves to a shader for GameCube/Wii output.
-    /// Read from Dolphin's GPU thread as well as the main thread; it only reads `Defaults`.
+    /// Publishes the filter to draw (`nil` for none). Main thread.
+    func update(_ resolved: ResolvedShader?, smoothing: Bool) {
+        processor?.update(resolved, smoothing: smoothing)
+    }
+
+    /// Whether a filter is selected for GameCube/Wii.
     static var hasShaderToApply: Bool {
-        MetalShaderManager.shared.currentFilterShader(for: screenType) != nil
+        shared.processor?.hasFilter ?? false
     }
 
     /// Encodes `source` into `drawable`'s texture on `commandBuffer`. Dolphin presents the drawable
@@ -590,20 +607,20 @@ final class DolphinShaderPostProcessor: NSObject {
     @objc(renderSource:commandBuffer:drawable:)
     func render(source: MTLTexture, commandBuffer: MTLCommandBuffer, drawable: CAMetalDrawable) {
         let target = drawable.texture
-        let smoothing = Defaults[.imageSmoothing]
-        if Self.hasShaderToApply,
-           encodeFilter(source: source, target: target, commandBuffer: commandBuffer, smoothing: smoothing) {
+        /// Dolphin's Metal textures are top-left origin, like the drawable: no Y flip.
+        if processor?.render(source: source, target: target, commandBuffer: commandBuffer,
+                             screenType: Self.screenType) == true {
             return
         }
-        /// No shader resolved (e.g. the filter was switched off mid-frame) or pipeline creation
-        /// failed: copy the frame through untouched so the drawable is never presented blank.
+        /// No filter (switched off mid-frame), a library preset still compiling, or a pipeline
+        /// failure: copy the frame through untouched so the drawable is never presented blank.
         if copyThrough(source: source, target: target, commandBuffer: commandBuffer) {
             return
         }
         let drawn = blitter?.encode(commandBuffer: commandBuffer,
                                     destinationTexture: target,
                                     sourceTexture: source,
-                                    smoothing: smoothing,
+                                    smoothing: Defaults[.imageSmoothing],
                                     flipY: false) ?? false
         if !drawn {
             ELOG("Dolphin shader post-process: failed to copy frame into drawable")
@@ -632,35 +649,6 @@ final class DolphinShaderPostProcessor: NSObject {
                   destinationOrigin: MTLOrigin(x: 0, y: 0, z: 0))
         blit.endEncoding()
         return true
-    }
-
-    private func encodeFilter(source: MTLTexture,
-                              target: MTLTexture,
-                              commandBuffer: MTLCommandBuffer,
-                              smoothing: Bool) -> Bool {
-        guard let device else { return false }
-        if configuredPixelFormat != target.pixelFormat {
-            /// Dolphin's Metal textures are top-left origin, like the drawable: no Y flip.
-            filterRenderer.configure(device: device, pixelFormat: target.pixelFormat, flipYAxis: false)
-            configuredPixelFormat = target.pixelFormat
-        }
-
-        let descriptor = MTLRenderPassDescriptor()
-        descriptor.colorAttachments[0].texture = target
-        descriptor.colorAttachments[0].loadAction = .clear
-        descriptor.colorAttachments[0].storeAction = .store
-        descriptor.colorAttachments[0].clearColor = MTLClearColor(red: 0, green: 0, blue: 0, alpha: 1)
-        guard let encoder = commandBuffer.makeRenderCommandEncoder(descriptor: descriptor) else {
-            return false
-        }
-        let applied = filterRenderer.encode(with: encoder,
-                                            texture: source,
-                                            drawableSize: CGSize(width: target.width, height: target.height),
-                                            sourceSize: CGSize(width: source.width, height: source.height),
-                                            screenType: Self.screenType,
-                                            smoothingEnabled: smoothing)
-        encoder.endEncoding()
-        return applied
     }
 }
 

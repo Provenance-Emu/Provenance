@@ -1110,7 +1110,7 @@ struct RetroMenuView: View {
 
 
             // Screen filter selection — only when the core's video reaches the Metal filter
-            if emulatorVC.core.supportsFilters {
+            if emulatorVC.filtersApplyToCurrentLayout {
                 VStack(alignment: .leading, spacing: 4) {
                     Text(String(localized: "SCREEN FILTER"))
                         .font(.system(size: 12, weight: .bold))

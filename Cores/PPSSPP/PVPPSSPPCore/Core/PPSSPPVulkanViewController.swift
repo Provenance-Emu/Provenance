@@ -22,12 +22,18 @@ import PVPrimitives
 	private var dev: MTLDevice!
     private var filteredView: MTKView!
     private var commandQueue: MTLCommandQueue?
-    private let metalFilterRenderer = PVMetalFilterRenderer()
+    /// Draws the selected filter on PPSSPP's present thread.
+    private var shaderProcessor: ShaderPostProcessor?
     private var blitter: PPSSPPMetalBlitter?
     private var filterObservationTask: Task<Void, Never>?
-    private var filterMode: MetalFilterModeOption = Defaults[.metalFilterMode]
-    private var smoothingEnabled: Bool = Defaults[.imageSmoothing]
-    private var currentFilterPixelFormat: MTLPixelFormat?
+    private var shaderLibraryObserver: NSObjectProtocol?
+    /// Read on PPSSPP's present thread; written on the main thread.
+    private let smoothingLock = NSLock()
+    private var _smoothingEnabled: Bool = Defaults[.imageSmoothing]
+    private var smoothingEnabled: Bool {
+        get { smoothingLock.withLock { _smoothingEnabled } }
+        set { smoothingLock.withLock { _smoothingEnabled = newValue } }
+    }
 
     @objc public init(resFactor: Int8, videoWidth: CGFloat, videoHeight: CGFloat, core: PVPPSSPPCoreBridge) {
 		super.init(nibName: nil, bundle: nil)
@@ -35,6 +41,7 @@ import PVPrimitives
 		self.dev = MTLCreateSystemDefaultDevice()!
         commandQueue = dev.makeCommandQueue()
         blitter = PPSSPPMetalBlitter(device: dev)
+        shaderProcessor = ShaderPostProcessor(device: dev)
 
 		metalView = PPSSPPFilterHostingView(frame: UIScreen.main.bounds, device: dev)
         metalView.filterDelegate = self
@@ -76,6 +83,9 @@ import PVPrimitives
     deinit {
         filterObservationTask?.cancel()
         filterObservationTask = nil
+        if let shaderLibraryObserver {
+            NotificationCenter.default.removeObserver(shaderLibraryObserver)
+        }
         commandQueue = nil
         blitter = nil
 	}
@@ -86,7 +96,7 @@ import PVPrimitives
         super.viewDidLoad()
 
         installFilteredView()
-        configureFilterRendererIfNeeded(reason: "viewDidLoad")
+        reloadFilterPreferences()
         startFilterPreferenceObservation()
 
 		NSLog("Starting VM\n")
@@ -133,26 +143,26 @@ import PVPrimitives
                 }
             }
         }
+        // Filter picks and parameter edits (pause menu, Settings, iCloud) land in the library store.
+        shaderLibraryObserver = NotificationCenter.default.addObserver(
+            forName: ShaderLibraryStore.didChangeNotification, object: nil, queue: .main
+        ) { [weak self] _ in
+            MainActor.assumeIsolated { self?.reloadFilterPreferences() }
+        }
     }
 
+    /// Publishes the filter in effect for this game to the present thread.
     @MainActor
     private func reloadFilterPreferences() {
-        filterMode = Defaults[.metalFilterMode]
         smoothingEnabled = Defaults[.imageSmoothing]
+        let resolved = ShaderLibraryStore.shared.resolvedShader(gameMD5: core?.romMD5,
+                                                                systemID: core?.systemIdentifier,
+                                                                screenType: Self.screenType)
+        shaderProcessor?.update(resolved, smoothing: smoothingEnabled)
     }
 
-    private func configureFilterRendererIfNeeded(reason: String) {
-        configureFilterRendererIfNeeded(pixelFormat: filteredView.colorPixelFormat, reason: reason)
-    }
-
-    private func configureFilterRendererIfNeeded(pixelFormat: MTLPixelFormat, reason: String) {
-        guard currentFilterPixelFormat != pixelFormat else { return }
-        metalFilterRenderer.configure(device: dev,
-                                      pixelFormat: pixelFormat,
-                                      flipYAxis: false)
-        currentFilterPixelFormat = pixelFormat
-        NSLog("Configured PPSSPP Metal filter renderer (\(reason))")
-    }
+    /// PSP output is an LCD.
+    private static let screenType: ScreenTypeObjC = .colorLCD
 
     private func presentFilteredDrawable(baseDrawable: CAMetalDrawable,
                                          timing: PPSSPPFilterPresentationTiming) {
@@ -169,26 +179,10 @@ import PVPrimitives
         let displayTexture = displayDrawable.texture
         let sourceTexture = baseDrawable.texture
 
-        var filterApplied = false
-        if filterMode != .none {
-            configureFilterRendererIfNeeded(pixelFormat: displayTexture.pixelFormat, reason: "frame")
-            let descriptor = makeRenderPassDescriptor(for: displayTexture)
-            if let encoder = commandBuffer.makeRenderCommandEncoder(descriptor: descriptor) {
-                let drawableSize = CGSize(width: displayTexture.width, height: displayTexture.height)
-                let textureSourceSize = CGSize(width: max(sourceTexture.width, 1),
-                                               height: max(sourceTexture.height, 1))
-                let fallbackSize = core?.preferredDrawableSize ?? textureSourceSize
-                let sourceSize = (sourceTexture.width > 0 && sourceTexture.height > 0) ? textureSourceSize : fallbackSize
-                let screenType: ScreenTypeObjC = .crt
-                filterApplied = metalFilterRenderer.encode(with: encoder,
-                                                           texture: sourceTexture,
-                                                           drawableSize: drawableSize,
-                                                           sourceSize: sourceSize,
-                                                           screenType: screenType,
-                                                           smoothingEnabled: smoothingEnabled)
-                encoder.endEncoding()
-            }
-        }
+        // PPSSPP's frames are top-left origin, like the drawable: no flip.
+        let filterApplied = sourceTexture.width > 0 && sourceTexture.height > 0
+            && shaderProcessor?.render(source: sourceTexture, target: displayTexture,
+                                       commandBuffer: commandBuffer, screenType: Self.screenType) == true
 
         if !filterApplied {
             guard blitter?.encode(commandBuffer: commandBuffer,
@@ -205,15 +199,6 @@ import PVPrimitives
         schedulePresent(on: commandBuffer, drawable: displayDrawable, timing: timing)
         commandBuffer.commit()
         presentBaseDrawable(baseDrawable, timing: timing)
-    }
-
-    private func makeRenderPassDescriptor(for texture: MTLTexture) -> MTLRenderPassDescriptor {
-        let descriptor = MTLRenderPassDescriptor()
-        descriptor.colorAttachments[0].texture = texture
-        descriptor.colorAttachments[0].loadAction = .clear
-        descriptor.colorAttachments[0].storeAction = .store
-        descriptor.colorAttachments[0].clearColor = MTLClearColor(red: 0, green: 0, blue: 0, alpha: 1)
-        return descriptor
     }
 
     private func schedulePresent(on commandBuffer: MTLCommandBuffer,

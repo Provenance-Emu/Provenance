@@ -15,17 +15,19 @@ import PVSlangRuntime
 ///
 /// Compiling a preset builds two Metal libraries per pass from source, which can
 /// take a noticeable fraction of a second, so `prepare` compiles on a background
-/// queue and the chain is swapped in on the main thread once ready. Until then
-/// callers draw without the filter.
-@MainActor
-public final class SlangFilterRenderer {
+/// queue and the chain is swapped in once ready. Until then callers draw without
+/// the filter.
+///
+/// Thread-safe: state is guarded by a lock, so it can be driven from the main
+/// thread (`PVMetalViewController`) or from a core's own render thread
+/// (`ShaderPostProcessor`). Calls are expected from one thread at a time.
+public final class SlangFilterRenderer: @unchecked Sendable {
     private let device: MTLDevice
+    private let lock = NSLock()
     private var chain: FilterChain?
-    /// The preset the current chain runs.
-    public private(set) var loadedID: ShaderID?
+    private var _loadedID: ShaderID?
     private var loadingID: ShaderID?
-    /// Presets that failed to compile on this device; not retried this session.
-    public private(set) var failedIDs: Set<ShaderID> = []
+    private var _failedIDs: Set<ShaderID> = []
     private var generation = 0
     private var appliedParameterRevision: Int?
     private let loadQueue = DispatchQueue(label: "org.provenance-emu.shaders.load", qos: .userInitiated)
@@ -34,7 +36,13 @@ public final class SlangFilterRenderer {
         self.device = device
     }
 
-    /// Unchecked box so a chain built on the load queue can be handed to the main thread.
+    /// The preset the current chain runs.
+    public var loadedID: ShaderID? { lock.withLock { _loadedID } }
+
+    /// Presets that failed to compile on this device; not retried this session.
+    public var failedIDs: Set<ShaderID> { lock.withLock { _failedIDs } }
+
+    /// Unchecked box so a chain built on the load queue can be handed over.
     private struct ChainBox: @unchecked Sendable {
         let chain: FilterChain
     }
@@ -44,11 +52,13 @@ public final class SlangFilterRenderer {
     }
 
     /// Returns `true` when `entry`'s chain is ready to render; otherwise starts loading it
-    /// (once) and returns `false`. Call on the main thread.
+    /// (once) and returns `false`.
     @discardableResult
     public func prepare(_ entry: ShaderCatalogEntry) -> Bool {
-        if loadedID == entry.id { return true }
-        guard loadingID != entry.id, !failedIDs.contains(entry.id), let directory = entry.directory else {
+        lock.lock()
+        defer { lock.unlock() }
+        if _loadedID == entry.id { return true }
+        guard loadingID != entry.id, !_failedIDs.contains(entry.id), let directory = entry.directory else {
             return false
         }
         loadingID = entry.id
@@ -63,29 +73,35 @@ public final class SlangFilterRenderer {
                 guard chain.hasShader else { throw LoadError.noPasses }
                 return ChainBox(chain: chain)
             }
-            DispatchQueue.main.async { MainActor.assumeIsolated {
-                guard let self, token == self.generation else { return }
-                self.loadingID = nil
-                switch result {
-                case .success(let box):
-                    self.chain = box.chain
-                    self.loadedID = id
-                    self.appliedParameterRevision = nil
-                    ILOG("Shader library: loaded \(id)")
-                case .failure(let error):
-                    self.failedIDs.insert(id)
-                    ELOG("Shader library: \(id) failed to load: \(error)")
-                }
-            } }
+            self?.finishLoad(result, id: id, token: token)
         }
         return false
     }
 
+    private func finishLoad(_ result: Result<ChainBox, Error>, id: ShaderID, token: Int) {
+        lock.lock()
+        defer { lock.unlock() }
+        guard token == generation else { return }
+        loadingID = nil
+        switch result {
+        case .success(let box):
+            chain = box.chain
+            _loadedID = id
+            appliedParameterRevision = nil
+            ILOG("Shader library: loaded \(id)")
+        case .failure(let error):
+            _failedIDs.insert(id)
+            ELOG("Shader library: \(id) failed to load: \(error)")
+        }
+    }
+
     /// Drops the loaded chain (for example when no library filter is selected).
     public func unload() {
+        lock.lock()
+        defer { lock.unlock() }
         generation += 1
         chain = nil
-        loadedID = nil
+        _loadedID = nil
         loadingID = nil
         appliedParameterRevision = nil
     }
@@ -93,6 +109,8 @@ public final class SlangFilterRenderer {
     /// Pushes parameter values into the chain when `revision` changed since the last call.
     public func applyParameters(revision: Int, value: (ShaderParameterDescriptor) -> Float,
                                 parameters: [ShaderParameterDescriptor]) {
+        lock.lock()
+        defer { lock.unlock() }
         guard let chain, appliedParameterRevision != revision else { return }
         appliedParameterRevision = revision
         for parameter in parameters where !parameter.isHeading {
@@ -112,6 +130,8 @@ public final class SlangFilterRenderer {
                        contentRect: CGRect,
                        flipVertically: Bool,
                        linear: Bool) -> Bool {
+        lock.lock()
+        defer { lock.unlock() }
         guard let chain else { return false }
         chain.finalBlitLinear = linear
         chain.drawableSize = contentRect.size

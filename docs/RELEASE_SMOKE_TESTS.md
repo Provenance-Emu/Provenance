@@ -251,8 +251,11 @@ before it (or seed the files below by hand, then relaunch).
 - [ ] Non-linear stretch (Settings → Scaling Mode) in landscape: picture fills
       the width, centre keeps its shape; Gentle/Balanced/Full differ.
 - [ ] tvOS: browser and editor are usable with the Siri Remote (focus, steppers).
-- [ ] Dolphin and PPSSPP still use only the Provenance filters (library presets
-      are not wired for their renderers yet).
+- [ ] Dolphin (Metal backend) and native PPSSPP: a library preset (e.g. crt-geom)
+      and a Provenance filter both render; picking one in the pause menu takes
+      effect on the next frame; switching to Off restores the plain picture.
+- [ ] DS / 3DS dual-screen skins and Azahar: no Screen Filter / Shader Settings
+      tiles (filters do not apply to dual-screen layouts); skin CIFilters still show.
 
 ### Carried over from earlier sessions (see memory notes)
 - [ ] Background/resume: no main-thread deadlock on resume (Metal drawable).

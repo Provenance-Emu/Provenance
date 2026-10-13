@@ -31,10 +31,9 @@ final class PVPPSSPPCore: PVEmulatorCore, @unchecked Sendable {
     public override var jitRequirement: PVJITRequirement { .optional(fallback: "Interpreter") }
 
     /// This core draws into its own render surface and hands Provenance no frame
-    /// buffer (`videoBuffer` returns NULL), so the Metal screen-filter pass never
-    /// sees its output. Report no filter support so the pause menu hides shader
-    /// options that would otherwise do nothing.
-    public override var supportsFilters: Bool { false }
+    /// buffer, but `PPSSPPVulkanViewController` intercepts each drawable and runs the
+    /// selected filter (Provenance or library preset) over it before presenting.
+    public override var supportsFilters: Bool { true }
 
     // PVEmulatorCoreBridged
     public lazy var _bridge: PVPPSSPPCoreBridge = .init()

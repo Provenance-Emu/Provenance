@@ -23,6 +23,12 @@ extension PVEmulatorViewController {
         ShaderLibraryStore.shared.effectiveSelection(gameMD5: shaderGameMD5, systemID: shaderSystemID)
     }
 
+    /// Whether a filter would show for the current layout. Dual-screen layouts (DS, 3DS
+    /// skins) blit each screen separately and are never filtered.
+    var filtersApplyToCurrentLayout: Bool {
+        core.supportsFilters && (gpuViewController as? PVMetalViewController)?.dualScreenLayout == nil
+    }
+
     /// Whether the current skin ships its own screen filter (offers "Skin's Filter").
     var currentSkinProvidesScreenFilter: Bool { currentSkinScreenFilterInfo() != nil }
 
