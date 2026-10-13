@@ -31,9 +31,6 @@ let sharedCSettings: [CSetting] = [
     .define("GLESX", to: "1", .when(platforms: [.iOS, .tvOS])),
     .define("OS_IOS", to: "1", .when(platforms: [.iOS, .tvOS])),
     .define("__VEC4_OPT", .when(platforms: [.iOS, .tvOS])),
-    // No __NEON_OPT: SwiftPM can't exclude the Neon/*.cpp sources per architecture, and the
-    // x86_64 simulator slice can't compile them. The package uses GlideN64's generic C++ paths
-    // (the shipping xcodeproj keeps NEON).
     .define("SDL_VIDEO_OPENGL_ES2", to: "1", .when(platforms: [.iOS, .tvOS])),
     .define("USE_GLES", to: "1", .when(platforms: [.iOS, .tvOS])),
     .define("USE_GLES2", to: "1", .when(platforms: [.iOS, .tvOS])),
@@ -45,9 +42,7 @@ let sharedCSettings: [CSetting] = [
     
     .define("OS_MAC_OS_X", to: "1", .when(platforms: [.macOS, .macCatalyst])),
     .define("SDL_VIDEO_OPENGL", to: "", .when(platforms: [.macOS, .macCatalyst])),
-    
-    // (EXCLUDED_SOURCE_FILE_NAMES is an Xcode build setting, not a preprocessor define; the Neon
-    // sources are simply not listed below.)
+
 ]
 
 let sharedSwiftSettings: [SwiftSetting] = [
@@ -537,11 +532,14 @@ let glideN64Sources: [String] = [
     "Log_ios.mm",
     "MupenPlusPluginAPI.cpp",
     "N64.cpp",
-    // TODO: Conditionally include one or the other of these
-    // may need to use a new .cpp with a #include pattern?
-    "CRC_OPT.cpp",
-    "3DMath.cpp",
-    "RSP_LoadMatrix.cpp",
+    // NEON variants, as upstream's CMake does with NEON_OPT: they replace
+    // CRC_OPT.cpp, 3DMath.cpp and RSP_LoadMatrix.cpp, and gSP.cpp calls into
+    // gSPNeon.cpp under __NEON_OPT (set in glideN64ExtraCSettings). Every slice is
+    // arm64 now that x86_64 is unsupported, so no per-architecture split is needed.
+    "Neon/CRC_OPT_NEON.cpp",
+    "Neon/3DMathNeon.cpp",
+    "Neon/RSP_LoadMatrixNeon.cpp",
+    "Neon/gSPNeon.cpp",
     "gSP.cpp",
     "NoiseTexture.cpp",
     "PaletteTexture.cpp",
@@ -591,6 +589,9 @@ let glideN64Sources: [String] = [
 ]
 
 let glideN64ExtraCSettings: [CSetting] = [
+    // Pairs with the Neon/*.cpp sources above; GlideN64 only, so the other targets
+    // sharing sharedCSettings are unaffected.
+    .define("__NEON_OPT"),
     .headerSearchPath("./"),
     .headerSearchPath("./osal"),
     .headerSearchPath("./inc")
