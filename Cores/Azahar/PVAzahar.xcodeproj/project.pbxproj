@@ -508,7 +508,6 @@
 				PRODUCT_MODULE_NAME = PVAzahar;
 				PRODUCT_NAME = PVAzahar;
 				PVAZAHAR_ARCHIVE = "$(SRCROOT)/build/xcframework/PVlibAzahar-$(PVAZAHAR_SLICE).framework/PVlibAzahar";
-				"PVAZAHAR_ARCHIVE[sdk=*simulator*][arch=x86_64]" = "";
 				SDKROOT = auto;
 				SKIP_INSTALL = YES;
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator appletvos appletvsimulator";
@@ -543,7 +542,6 @@
 				PRODUCT_MODULE_NAME = PVAzahar;
 				PRODUCT_NAME = PVAzahar;
 				PVAZAHAR_ARCHIVE = "$(SRCROOT)/build/xcframework/PVlibAzahar-$(PVAZAHAR_SLICE).framework/PVlibAzahar";
-				"PVAZAHAR_ARCHIVE[sdk=*simulator*][arch=x86_64]" = "";
 				SDKROOT = auto;
 				SKIP_INSTALL = YES;
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator appletvos appletvsimulator";
@@ -691,12 +689,7 @@
 					"-ObjC",
 					"-Wl,-unexported_symbols_list,$(SRCROOT)/unexported_symbols.txt",
 				);
-				"OTHER_LDFLAGS[sdk=*simulator*][arch=x86_64]" = (
-					"$(inherited)",
-					"-ObjC",
-					"-Wl,-unexported_symbols_list,$(SRCROOT)/unexported_symbols.txt",
-					"-Wl,-undefined,dynamic_lookup",
-				);
+				"EXCLUDED_ARCHS[sdk=*simulator*]" = x86_64;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PVAZAHAR_SLICE = ios;
 				"PVAZAHAR_SLICE[sdk=appletvos*]" = tvos;
@@ -802,12 +795,7 @@
 					"-ObjC",
 					"-Wl,-unexported_symbols_list,$(SRCROOT)/unexported_symbols.txt",
 				);
-				"OTHER_LDFLAGS[sdk=*simulator*][arch=x86_64]" = (
-					"$(inherited)",
-					"-ObjC",
-					"-Wl,-unexported_symbols_list,$(SRCROOT)/unexported_symbols.txt",
-					"-Wl,-undefined,dynamic_lookup",
-				);
+				"EXCLUDED_ARCHS[sdk=*simulator*]" = x86_64;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PVAZAHAR_SLICE = ios;
 				"PVAZAHAR_SLICE[sdk=appletvos*]" = tvos;

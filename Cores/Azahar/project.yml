@@ -44,12 +44,10 @@ settings:
     "PVAZAHAR_SLICE[sdk=iphonesimulator*]": ios-sim
     "PVAZAHAR_SLICE[sdk=appletvos*]": tvos
     "PVAZAHAR_SLICE[sdk=appletvsimulator*]": tvos-sim
-    # PVlibAzahar is arm64-only: no x86_64 simulator slice exists. EXCLUDED_ARCHS would hide this target
-    # from the app's implicit dependency on generic (arm64+x86_64) simulator builds, so the x86_64 simulator
-    # slice is link-only: it compiles and links with PVlibAzahar's symbols left unresolved. Because this
-    # framework is linked by the app, the whole app fails to launch on an Intel (or Rosetta) simulator;
-    # only Apple Silicon simulators are supported.
-    "OTHER_LDFLAGS[sdk=*simulator*][arch=x86_64]": "$(inherited) -ObjC -Wl,-undefined,dynamic_lookup -Wl,-unexported_symbols_list,$(SRCROOT)/unexported_symbols.txt"
+    # PVlibAzahar is arm64-only and Intel is unsupported: the app (Build.xcconfig) and the dev workspace
+    # exclude x86_64 simulator slices too, so excluding it here no longer hides this target from a generic
+    # simulator build. (It used to be a link-only x86_64 slice with -undefined dynamic_lookup.)
+    "EXCLUDED_ARCHS[sdk=*simulator*]": x86_64
     OTHER_CFLAGS: "$(inherited) -idirafter $(SRCROOT)/build/xcframework/PVlibAzahar-$(PVAZAHAR_SLICE).framework/Headers"
     # unexported_symbols.txt keeps C++ weak symbols private: see the file for why.
     OTHER_LDFLAGS: "$(inherited) -ObjC -Wl,-unexported_symbols_list,$(SRCROOT)/unexported_symbols.txt"
@@ -163,7 +161,6 @@ targets:
         # The slice's static archive is linked by path, not as an xcframework dependency: Xcode resolves an
         # xcframework while planning the build, before BuildPVlibAzahar can create it on a cold checkout.
         PVAZAHAR_ARCHIVE: "$(SRCROOT)/build/xcframework/PVlibAzahar-$(PVAZAHAR_SLICE).framework/PVlibAzahar"
-        "PVAZAHAR_ARCHIVE[sdk=*simulator*][arch=x86_64]": ""   # no x86_64 archive; that slice is link-only
         OTHER_LDFLAGS: "$(inherited) $(PVAZAHAR_ARCHIVE)"
         SDKROOT: auto
         INFOPLIST_FILE: PVAzahar/Info.plist

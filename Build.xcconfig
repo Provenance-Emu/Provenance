@@ -24,10 +24,15 @@ GCC_PREPROCESSOR_DEFINITIONS = $(inherited) HAVE_SDL2=1
 GCC_PREPROCESSOR_DEFINITIONS = $(inherited) HAVE_COREAUDIO=1
 GCC_PREPROCESSOR_DEFINITIONS = $(inherited) ENABLE_VULKAN=1
 
-// ARM-only optimisation flags — these are rejected by clang on x86_64
-// (e.g. tvOS Simulator on Intel Macs, fat iOS sim builds). Gate them with
-// the [arch=arm64] specifier so they only apply to the ARM slice and the
-// x86_64 simulator slice can still build for development.
+// Intel is unsupported (no Intel Mac runs a supported Xcode), so simulator
+// builds are arm64-only. Device builds were always arm64. Core projects under
+// Cores/ do not inherit this file; the ones that needed x86_64 workarounds
+// (Azahar, snes9x) set the same exclusion themselves.
+EXCLUDED_ARCHS[sdk=*simulator*] = $(inherited) x86_64
+
+// ARM-only optimisation flags — clang rejects them on x86_64. The [arch=arm64]
+// gate is now redundant for this project but keeps the file safe to include
+// from a target that still builds x86_64.
 OTHER_CFLAGS[arch=arm64] = $(inherited) -mcpu=apple-a10
 OTHER_CFLAGS[arch=arm64] = $(inherited) -mtune=apple-a12
 OTHER_CFLAGS[arch=arm64] = $(inherited) -march=armv8-a+simd+crc+crypto

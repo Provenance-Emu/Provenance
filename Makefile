@@ -209,7 +209,8 @@ test:
 
 ## -- Building --
 
-## Fast CI simulator build (no cores, no code signing)
+## Fast CI simulator build (no cores, no code signing). EXCLUDED_ARCHS as an
+## argument also reaches package targets, which Build.xcconfig cannot.
 lite:
 	$(info Building Provenance-CI for iOS Simulator…)
 
@@ -219,6 +220,7 @@ lite:
 		-destination "generic/platform=iOS Simulator" \
 		-skipPackagePluginValidation \
 		-skipMacroValidation \
+		EXCLUDED_ARCHS=x86_64 \
 		CODE_SIGNING_ALLOWED=NO \
 		| xcbeautify || xcodebuild build \
 		-workspace Provenance.xcworkspace \
@@ -226,6 +228,7 @@ lite:
 		-destination "generic/platform=iOS Simulator" \
 		-skipPackagePluginValidation \
 		-skipMacroValidation \
+		EXCLUDED_ARCHS=x86_64 \
 		CODE_SIGNING_ALLOWED=NO
 
 ## Alias for lite (CI build)

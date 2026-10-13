@@ -1,3 +1,4 @@
-VALID_ARCHS[sdk=iphonesimulator*] = x86_64 arm64
+// Intel is unsupported: simulator builds are arm64-only (matches Build.xcconfig).
+EXCLUDED_ARCHS[sdk=*simulator*] = $(inherited) x86_64
 
 //OTHER_CFLAGS = $(inherited) -fmodules -fcxx-modules
