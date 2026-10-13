@@ -30,7 +30,7 @@ extension PVEmulatorViewController {
     }
 
     /// Whether the current skin ships its own screen filter (offers "Skin's Filter").
-    var currentSkinProvidesScreenFilter: Bool { currentSkinScreenFilterInfo() != nil }
+    var currentSkinProvidesScreenFilter: Bool { !currentSkinScreenFilterInfos().isEmpty }
 
     /// Applies a changed selection: swaps the skin's own filter in or out and redraws
     /// the paused frame so the pause menu shows the new look behind it.

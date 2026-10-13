@@ -10,6 +10,7 @@
 import PVCoreBridge
 import PVShaders
 import CoreGraphics
+import CoreImage
 import XCTest
 
 final class DualScreenSourceMappingTests: XCTestCase {
@@ -130,7 +131,7 @@ final class DualScreenSourceMappingTests: XCTestCase {
     private func info(_ source: CGRect, skinFilter: Bool = false) -> DualScreenRenderInfo {
         DualScreenRenderInfo(sourceRect: source, framebufferSize: CGSize(width: 256, height: 384),
                              viewDestRect: CGRect(x: 10, y: 20, width: 300, height: 225),
-                             skinProvidesFilter: skinFilter)
+                             skinFilterInfos: skinFilter ? [DeltaSkin.FilterInfo(name: "CIColorInvert")] : [])
     }
 
     func testLCDPlacementUsesTexturePixelsAndDrawablePixels() throws {
@@ -140,7 +141,7 @@ final class DualScreenSourceMappingTests: XCTestCase {
         let coords = try XCTUnwrap(DualScreenSourceMapping.textureCoordinates(for: layout, textureSize: textureSize,
                                                                               sourceIsBottomUp: false))
         let bottom = DualScreenSourceMapping.lcdPlacement(for: layout[1], coordinates: coords[1],
-                                                          textureSize: textureSize, contentScale: 3)
+                                                          textureSize: textureSize, contentScale: 3, lcdLook: true)
         XCTAssertEqual(bottom.sourceRect, CGRect(x: 0, y: 384, width: 512, height: 384))
         XCTAssertFalse(bottom.sourceIsFlipped)
         XCTAssertEqual(bottom.destinationRect, CGRect(x: 30, y: 60, width: 900, height: 675))
@@ -155,7 +156,7 @@ final class DualScreenSourceMappingTests: XCTestCase {
         let coords = try XCTUnwrap(DualScreenSourceMapping.textureCoordinates(for: layout, textureSize: textureSize,
                                                                               sourceIsBottomUp: true))
         let top = DualScreenSourceMapping.lcdPlacement(for: layout[0], coordinates: coords[0],
-                                                       textureSize: textureSize, contentScale: 1)
+                                                       textureSize: textureSize, contentScale: 1, lcdLook: true)
         // The top screen is stored bottom row first in the texture's lower half.
         XCTAssertEqual(top.sourceRect, CGRect(x: 0, y: 192, width: 256, height: 192))
         XCTAssertTrue(top.sourceIsFlipped)
@@ -167,7 +168,42 @@ final class DualScreenSourceMappingTests: XCTestCase {
         let coords = try XCTUnwrap(DualScreenSourceMapping.textureCoordinates(for: layout, textureSize: textureSize,
                                                                               sourceIsBottomUp: false))
         XCTAssertFalse(DualScreenSourceMapping.lcdPlacement(for: layout[0], coordinates: coords[0],
-                                                            textureSize: textureSize, contentScale: 2).appliesLCD)
+                                                            textureSize: textureSize, contentScale: 2,
+                                                            lcdLook: true).appliesLCD)
+    }
+
+    func testLCDLookOffKeepsScreensPlain() throws {
+        let textureSize = CGSize(width: 256, height: 384)
+        let layout = [info(deltaTop)]
+        let coords = try XCTUnwrap(DualScreenSourceMapping.textureCoordinates(for: layout, textureSize: textureSize,
+                                                                              sourceIsBottomUp: false))
+        XCTAssertFalse(DualScreenSourceMapping.lcdPlacement(for: layout[0], coordinates: coords[0],
+                                                            textureSize: textureSize, contentScale: 2,
+                                                            lcdLook: false).appliesLCD)
+    }
+
+    // MARK: - Skin filter chains
+
+    func testChainsFollowEachScreensFilters() {
+        let chains = DeltaSkinScreenFilter.chains(for: [info(deltaTop, skinFilter: true), info(deltaBottom)])
+        XCTAssertEqual(chains.map { $0.map(\.filter.name) }, [["CIColorInvert"], []])
+    }
+
+    func testRunAppliesFiltersInOrderAndReleasesInputs() throws {
+        let brighten = try XCTUnwrap(DeltaSkinScreenFilter(filterInfo: DeltaSkin.FilterInfo(
+            name: "CIColorControls", parameters: ["inputBrightness": .number(0.5)])))
+        let invert = try XCTUnwrap(DeltaSkinScreenFilter(filterInfo: DeltaSkin.FilterInfo(name: "CIColorInvert")))
+        let red = CIImage(color: .red).cropped(to: CGRect(x: 0, y: 0, width: 4, height: 4))
+        let output = DeltaSkinScreenFilter.run([brighten, invert], on: red)
+        var pixel = [UInt8](repeating: 0, count: 4)
+        CIContext(options: [.workingColorSpace: NSNull()])
+            .render(output, toBitmap: &pixel, rowBytes: 4, bounds: CGRect(x: 1, y: 1, width: 1, height: 1),
+                    format: .RGBA8, colorSpace: nil)
+        // Brightened red (1, .5, .5) inverts to (0, .5, .5); the other order gives (.5, 1, 1).
+        XCTAssertLessThan(pixel[0], 20)
+        XCTAssertTrue((100...160).contains(pixel[1]), "green \(pixel[1])")
+        XCTAssertNil(brighten.filter.value(forKey: kCIInputImageKey))
+        XCTAssertNil(invert.filter.value(forKey: kCIInputImageKey))
     }
 
     func testMismatchedTextureHasNoCoordinates() {

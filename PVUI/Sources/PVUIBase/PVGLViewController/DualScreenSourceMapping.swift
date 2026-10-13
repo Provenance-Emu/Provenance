@@ -128,9 +128,11 @@ enum DualScreenSourceMapping {
 
     /// The LCD composer's view of one screen: its region in texture pixels, its
     /// destination in drawable pixels and its native size for the grid pitch.
-    /// - Parameter contentScale: drawable pixels per view point.
+    /// - Parameters:
+    ///   - contentScale: drawable pixels per view point.
+    ///   - lcdLook: the LCD look is on; a screen with skin filters still stays without it.
     static func lcdPlacement(for info: DualScreenRenderInfo, coordinates: DualScreenTextureCoordinates,
-                             textureSize: CGSize, contentScale: CGFloat) -> LCDScreenPlacement {
+                             textureSize: CGSize, contentScale: CGFloat, lcdLook: Bool) -> LCDScreenPlacement {
         let vMin = CGFloat(min(coordinates.vTop, coordinates.vBottom))
         let vMax = CGFloat(max(coordinates.vTop, coordinates.vBottom))
         let source = CGRect(x: CGFloat(coordinates.u0) * textureSize.width,
@@ -144,6 +146,6 @@ enum DualScreenSourceMapping {
                                                           width: dest.width * contentScale,
                                                           height: dest.height * contentScale),
                                   nativeSize: info.sourceRect.size,
-                                  appliesLCD: !info.skinProvidesFilter)
+                                  appliesLCD: lcdLook && !info.skinProvidesFilter)
     }
 }

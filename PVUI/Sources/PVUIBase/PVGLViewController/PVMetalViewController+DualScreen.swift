@@ -46,8 +46,11 @@ struct DualScreenRenderInfo: Sendable {
     let framebufferSize: CGSize
     /// Destination in the Metal view's UIKit-point coordinate space.
     let viewDestRect: CGRect
-    /// The skin screen has CIFilters of its own; the LCD look leaves it alone.
-    var skinProvidesFilter: Bool = false
+    /// The skin screen's own CIFilters, run on it in order; the LCD look leaves such
+    /// a screen alone.
+    var skinFilterInfos: [DeltaSkin.FilterInfo] = []
+
+    var skinProvidesFilter: Bool { !skinFilterInfos.isEmpty }
 }
 
 /// Result of one `renderDualScreenLayout` call.

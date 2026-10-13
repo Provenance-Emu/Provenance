@@ -170,7 +170,7 @@ extension PVEmulatorViewController {
             renderInfos.append(DualScreenRenderInfo(sourceRect: srcRect,
                                                     framebufferSize: framebufferSize,
                                                     viewDestRect: destRect,
-                                                    skinProvidesFilter: !(screen.filters ?? []).isEmpty))
+                                                    skinFilterInfos: screen.filterInfos ?? []))
         }
 
         guard renderInfos.count >= 2 else {

@@ -1,10 +1,14 @@
-// PVMetalViewController+DualScreenLCD.swift
+// PVMetalViewController+DualScreenFilters.swift
 // PVUI
 //
-// Handheld-LCD look for dual-screen layouts (DS skins). The Metal filters never
-// run there, so Core Image composes every screen with `LCDScreenFilter` into a
-// drawable-sized texture, and one quad copies it into the drawable (which is
-// framebuffer-only, so Core Image cannot write it directly).
+// Filters for dual-screen layouts (DS skins): each screen's skin filters and the
+// handheld-LCD look. The Metal filters never run there, so Core Image composes
+// every screen into a drawable-sized texture, and one quad copies it into the
+// drawable (which is framebuffer-only, so Core Image cannot write it directly).
+//
+// A screen's skin filters always run here. Shaders cannot draw on dual-screen
+// layouts, so a shader selection must not silence them as it does for the
+// single-screen picture.
 
 import CoreImage
 import Metal
@@ -14,19 +18,19 @@ import PVShaders
 
 extension PVMetalViewController {
 
-    /// The next dual-screen frame takes the LCD path: the setting is on and at least
-    /// one screen has no skin filter of its own.
-    var drawsDualScreenLCDLook: Bool {
-        renderSettings.dualScreenLCDLook && (dualScreenLayout?.contains { !$0.skinProvidesFilter } ?? false)
+    /// The next dual-screen frame goes through Core Image: a screen has skin filters, or
+    /// the LCD look is on for a screen without them.
+    var drawsDualScreenWithFilters: Bool {
+        dualScreenLayout?.contains { $0.skinProvidesFilter || renderSettings.dualScreenLCDLook } ?? false
     }
 
-    /// Encodes the dual-screen layout with the LCD look. Must run before any render
-    /// encoder is open on `commandBuffer`, because Core Image encodes its own passes.
+    /// Encodes the dual-screen layout with skin filters and the LCD look. Must run before
+    /// any render encoder is open on `commandBuffer`, because Core Image encodes its own passes.
     /// - Returns: `false` when nothing reached the drawable (no layout yet, the texture
     ///   lacks the layout's proportions, Core Image cannot read it); draw the plain
     ///   dual-screen path instead.
-    func renderDualScreenLCD(commandBuffer: MTLCommandBuffer, drawable: CAMetalDrawable,
-                             sourceTexture: MTLTexture, sourceIsBottomUp: Bool) -> Bool {
+    func renderDualScreenWithFilters(commandBuffer: MTLCommandBuffer, drawable: CAMetalDrawable,
+                                     sourceTexture: MTLTexture, sourceIsBottomUp: Bool) -> Bool {
         guard let layout = dualScreenLayout, !layout.isEmpty, let device else { return false }
         buildDualScreenBlitPipelineIfNeeded()
         let textureSize = CGSize(width: sourceTexture.width, height: sourceTexture.height)
@@ -36,14 +40,20 @@ extension PVMetalViewController {
               let target = dualScreenLCDTarget(matching: drawable.texture, device: device) else { return false }
 
         let scale = mtlView.contentScaleFactor
+        let lcdLook = renderSettings.dualScreenLCDLook
         let placements = zip(layout, coordinates).map { info, coordinates in
             DualScreenSourceMapping.lcdPlacement(for: info, coordinates: coordinates, textureSize: textureSize,
-                                                 contentScale: scale)
+                                                 contentScale: scale, lcdLook: lcdLook)
         }
-        let context = dualScreenLCDContext ?? LCDScreenComposer.makeContext(device: device)
-        dualScreenLCDContext = context
+        let screenFilters: [ScreenImageFilter?] = layout.indices.map { index in
+            guard index < dualScreenSkinFilters.count, !dualScreenSkinFilters[index].isEmpty else { return nil }
+            let filters = dualScreenSkinFilters[index]
+            return { DeltaSkinScreenFilter.run(filters, on: $0) }
+        }
         guard dualScreenLCDComposer.render(source: sourceTexture, placements: placements, into: target,
-                                           context: context, commandBuffer: commandBuffer) else { return false }
+                                           context: sharedFrameFilterContext(device: device),
+                                           commandBuffer: commandBuffer,
+                                           screenFilters: screenFilters) else { return false }
 
         let pass = MTLRenderPassDescriptor()
         pass.colorAttachments[0].texture = drawable.texture

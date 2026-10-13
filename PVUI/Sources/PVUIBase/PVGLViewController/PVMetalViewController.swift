@@ -142,9 +142,6 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
 
     weak var emulatorCore: PVEmulatorCore?
 
-    // Custom filter properties
-    private var ciContext: CIContext?
-
 #if !os(visionOS)
     var mtlView: MTKView!
 #endif
@@ -307,7 +304,12 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
     /// When non-nil `directRender` routes through the dual-screen sub-rectangle
     /// blit pipeline instead of the standard fullscreen blit.
     /// Set by `PVEmulatorViewController` via the skin system.
-    var dualScreenLayout: [DualScreenRenderInfo]? = nil
+    var dualScreenLayout: [DualScreenRenderInfo]? = nil {
+        didSet { dualScreenSkinFilters = DeltaSkinScreenFilter.chains(for: dualScreenLayout ?? []) }
+    }
+
+    /// Per `dualScreenLayout` screen, its skin's own filters, built once per layout.
+    var dualScreenSkinFilters: [[DeltaSkinScreenFilter]] = []
 
     /// Compiled render pipeline for the dual-screen sub-rectangle blitter.
     /// Built lazily the first time it is needed.
@@ -317,12 +319,18 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
     /// subsequent frames skip the (expensive) retry and log the error only once.
     var dualScreenPipelineBuildFailed: Bool = false
 
-    /// LCD look for dual-screen layouts (`PVMetalViewController+DualScreenLCD`).
+    /// Dual-screen frames with skin filters or the LCD look (`PVMetalViewController+DualScreenLCD`).
     let dualScreenLCDComposer = LCDScreenComposer()
-    /// Core Image context for the LCD look; colours pass through unmanaged.
-    var dualScreenLCDContext: CIContext?
-    /// Drawable-sized frame the LCD look is composed into before it is drawn.
+    /// Drawable-sized frame the dual-screen screens are composed into before it is drawn.
     var dualScreenLCDTexture: MTLTexture?
+    /// Core Image context for skin filters and the LCD look; colours pass through unmanaged.
+    var frameFilterContext: CIContext?
+
+    /// The skin's own screen filters, run in order over the single-screen picture
+    /// (`PVMetalViewController+SkinFilter`). Empty when a shader or user filter replaces them.
+    var skinScreenFilters: [DeltaSkinScreenFilter] = []
+    /// Native-size frame the skin filters render into.
+    var skinFilterTexture: MTLTexture?
 
     /// Controls whether VSync is enabled (synchronizes rendering with display refresh rate)
     public var vsyncEnabled: Bool = true
@@ -504,12 +512,6 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
             ELOG("Failed to create command queue")
             // No recovery here since we're in initialization
             return
-        }
-
-        // Initialize CIContext for filters
-        if let device = device {
-            ciContext = CIContext(mtlDevice: device)
-            DLOG("Created CIContext for filters")
         }
 
         // Set up the Metal view
@@ -2060,158 +2062,6 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
         }
     }
 
-    @inlinable
-    @inline(__always)
-    func _render(_ emulatorCore: PVEmulatorCore, in view: MTKView) {
-        guard let currentDrawable = view.currentDrawable else {
-            return
-        }
-        let outputTexture = currentDrawable.texture
-
-        // The inner work is extracted so it can be wrapped in frontBufferLock.withLock
-        // when the core uses OpenGL HW-render.  Using withLock guarantees the unlock
-        // runs on every exit path — including the early `return` paths below — which
-        // the original conditional lock/unlock pattern did NOT guarantee.
-        let doRenderWork = { [self] in
-            // Reuse command buffers efficiently
-            let commandBuffer: MTLCommandBuffer
-            if let queue = self.commandQueue {
-                commandBuffer = queue.makeCommandBuffer()!
-            } else {
-                DLOG("Error: Command queue is nil")
-                return
-            }
-
-            guard let inputTexture = self.inputTexture else {
-                DLOG("Error: Input texture is nil")
-                return
-            }
-
-            // Apply CIFilter if present - MUST happen BEFORE creating the render encoder
-            // CIContext.render() adds commands to the command buffer that conflict with an active render encoder
-            let finalSourceTexture: MTLTexture
-            if let filter = self.filter,
-               let ciContext = self.ciContext,
-               let ciImage = CIImage(mtlTexture: inputTexture, options: nil),
-               let filteredImage = filter.apply(to: ciImage,
-                                                in: CGRect(x: 0, y: 0,
-                                                           width: inputTexture.width,
-                                                           height: inputTexture.height)) {
-                let descriptor = MTLTextureDescriptor.texture2DDescriptor(
-                    pixelFormat: inputTexture.pixelFormat,
-                    width: inputTexture.width,
-                    height: inputTexture.height,
-                    mipmapped: false
-                )
-                descriptor.usage = [.shaderRead, .renderTarget]
-
-                if let filteredTexture = self.device?.makeTexture(descriptor: descriptor) {
-                    // Use the same command buffer to ensure proper synchronization
-                    ciContext.render(filteredImage,
-                                     to: filteredTexture,
-                                     commandBuffer: commandBuffer,
-                                     bounds: CGRect(x: 0, y: 0, width: inputTexture.width, height: inputTexture.height),
-                                     colorSpace: CGColorSpaceCreateDeviceRGB())
-                    finalSourceTexture = filteredTexture
-                } else {
-                    finalSourceTexture = inputTexture
-                }
-            } else {
-                finalSourceTexture = inputTexture
-            }
-
-            // Create a render pass descriptor
-            let renderPassDescriptor = MTLRenderPassDescriptor()
-            renderPassDescriptor.colorAttachments[0].texture = outputTexture
-            renderPassDescriptor.colorAttachments[0].loadAction = .clear
-            renderPassDescriptor.colorAttachments[0].storeAction = .store
-            renderPassDescriptor.colorAttachments[0].clearColor = MTLClearColor(red: 0.0, green: 0.0, blue: 0.0, alpha: 1.0)
-
-            // Create a render command encoder AFTER CIFilter has been applied
-            guard let renderEncoder = commandBuffer.makeRenderCommandEncoder(descriptor: renderPassDescriptor) else {
-                DLOG("Error: Could not create render encoder")
-                return
-            }
-
-            // Draw into the picture's rect (see directRender).
-            let contentRect = self.pictureRect(drawableSize: CGSize(width: outputTexture.width,
-                                                                    height: outputTexture.height),
-                                               emulatorCore: emulatorCore)
-            renderEncoder.setViewport(MTLViewport(
-                originX: Double(contentRect.minX),
-                originY: Double(contentRect.minY),
-                width: Double(contentRect.width),
-                height: Double(contentRect.height),
-                znear: 0.0,
-                zfar: 1.0
-            ))
-
-            var filterApplied = false
-            if let option = self.activeShaderEntry(for: emulatorCore)?.id.nativeOption {
-                filterApplied = self.applyMetalFilterIfPossible(option,
-                                                           encoder: renderEncoder,
-                                                           targetTexture: outputTexture,
-                                                           sourceTexture: finalSourceTexture,
-                                                           outputSize: contentRect.size)
-            }
-
-            if !filterApplied {
-                guard let blitPipeline = self.blitPipeline else {
-                    ELOG("Error: Blit pipeline is nil")
-                    renderEncoder.endEncoding()
-                    return
-                }
-
-                renderEncoder.setRenderPipelineState(blitPipeline)
-                DLOG("🔬 Drawing primitives with blit pipeline")
-
-                let vertices: [Float] = [
-                    -1.0, -1.0, 0.0, 0.0, 0.0,
-                     1.0, -1.0, 0.0, 1.0, 0.0,
-                    -1.0, 1.0, 0.0, 0.0, 1.0,
-                     1.0, 1.0, 0.0, 1.0, 1.0
-                ]
-
-                if let vertexBuffer = self.device?.makeBuffer(bytes: vertices,
-                                                         length: vertices.count * MemoryLayout<Float>.size,
-                                                         options: .storageModeShared) {
-                    renderEncoder.setVertexBuffer(vertexBuffer, offset: 0, index: 0)
-                }
-
-                renderEncoder.setFragmentTexture(finalSourceTexture, index: 0)
-
-                let sampler = self.renderSettings.smoothingEnabled ? self.linearSampler : self.pointSampler
-                if let sampler = sampler {
-                    renderEncoder.setFragmentSamplerState(sampler, index: 0)
-                } else {
-                    DLOG("Error: No sampler state available")
-                    renderEncoder.endEncoding()
-                    return
-                }
-
-                renderEncoder.drawPrimitives(type: .triangleStrip, vertexStart: 0, vertexCount: 4)
-            }
-
-            // End encoding
-            renderEncoder.endEncoding()
-
-            // Present the drawable
-            commandBuffer.present(currentDrawable)
-
-            // Commit the command buffer; only then update previousCommandBuffer so
-            // that waitUntilScheduled() in didRenderFrameOnAlternateThread never
-            // blocks on an uncommitted buffer from a failed/early-return render pass.
-            commandBuffer.commit()
-            self.previousCommandBuffer = commandBuffer
-        }
-
-        if emulatorCore.rendersToOpenGL {
-            emulatorCore.frontBufferLock.withLock { doRenderWork() }
-        } else {
-            doRenderWork()
-        }
-    }
-
     // MARK: - PVRenderDelegate
     func startRenderingOnAlternateThread() {
         emulatorCore?.glesVersion = glesVersion
@@ -2937,15 +2787,18 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
             slangFilterRenderer?.unload()
         }
 
-        // Dual-screen LCD look: Core Image composes the screens, so this runs before any
-        // render encoder opens. Falls through to the plain dual-screen blit when it can't draw.
-        if drawsDualScreenLCDLook,
-           renderDualScreenLCD(commandBuffer: commandBuffer, drawable: drawable, sourceTexture: inputTexture,
-                               sourceIsBottomUp: emulatorCore.rendersToOpenGL && !emulatorCore.rendersToVulkan) {
+        // OpenGL frames store the picture's bottom row first; software and Vulkan frames its top row.
+        let sourceIsBottomUp = emulatorCore.rendersToOpenGL && !emulatorCore.rendersToVulkan
+
+        // Dual-screen skin filters and LCD look: Core Image composes the screens, so this runs
+        // before any render encoder opens. Falls through to the plain dual-screen blit when it can't draw.
+        if drawsDualScreenWithFilters,
+           renderDualScreenWithFilters(commandBuffer: commandBuffer, drawable: drawable, sourceTexture: inputTexture,
+                                       sourceIsBottomUp: sourceIsBottomUp) {
             commandBuffer.present(drawable)
             commandBuffer.addCompletedHandler { [weak self] buffer in
                 if let error = buffer.error {
-                    ELOG("GPU error during dual-screen LCD rendering: \(error)")
+                    ELOG("GPU error during filtered dual-screen rendering: \(error)")
                     self?.recoverFromGPUError()
                 }
             }
@@ -2955,6 +2808,13 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
             markFramePresented()
             return
         }
+
+        // The skin's own screen filters, unless a shader replaces them (the selection clears
+        // `skinScreenFilters` then too). Core Image runs before any render encoder opens.
+        let pictureTexture = dualScreenLayout == nil && activeShader == nil
+            ? skinFilteredFrame(from: inputTexture, storedTopRowFirst: !sourceIsBottomUp,
+                                commandBuffer: commandBuffer) ?? inputTexture
+            : inputTexture
 
         // Reuse render pass descriptor if available, otherwise create new one
         let renderPassDescriptor: MTLRenderPassDescriptor
@@ -3079,7 +2939,7 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
             }
 
             if !filterApplied {
-                renderEncoder.setFragmentTexture(inputTexture, index: 0)
+                renderEncoder.setFragmentTexture(pictureTexture, index: 0)
                 renderEncoder.drawPrimitives(type: .triangleStrip, vertexStart: 0, vertexCount: 4)
             }
         }

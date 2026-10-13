@@ -250,7 +250,7 @@ public struct DeltaSkinFilter: Codable, Hashable, Equatable {
 }
 
 /// Parameter types for CoreImage filters
-public enum FilterParameter: Codable, Hashable, Equatable {
+public enum FilterParameter: Codable, Hashable, Equatable, Sendable {
     case number(Float)
     case vector(x: Float, y: Float)
     case color(r: Float, g: Float, b: Float)

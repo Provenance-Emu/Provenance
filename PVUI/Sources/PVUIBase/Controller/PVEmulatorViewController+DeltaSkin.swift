@@ -1284,32 +1284,28 @@ extension PVEmulatorViewController {
 
     // MARK: - Screen Filter Wiring
 
-    /// Reads the current skin's first-screen filter info and applies it to the Metal rendering
-    /// pipeline.  When the skin defines no filters the existing filter (if any) is cleared so we
-    /// don't bleed a previous skin's effect into the new one.
+    /// The current skin's game screen for the representation being drawn: the smallest
+    /// screen, as the viewport picks it (larger screens are effect backdrops such as a
+    /// blurred copy of the game).
+    internal func currentSkinGameScreen(_ skin: (any DeltaSkinProtocol)? = nil) -> DeltaSkinScreen? {
+        guard let skin = skin ?? currentSkin, let screens = skin.screens(for: skinRenderTraits()) else { return nil }
+        return screens
+            .compactMap { screen in screen.outputFrame.map { (screen, $0.width * $0.height) } }
+            .min { $0.1 < $1.1 }?.0
+    }
+
+    /// The filters the current skin runs over its game screen, in order. A skin whose only
+    /// filtered screen is a backdrop has none: backdrops are not drawn.
+    internal func currentSkinScreenFilterInfos(_ skin: (any DeltaSkinProtocol)? = nil) -> [DeltaSkin.FilterInfo] {
+        currentSkinGameScreen(skin)?.filterInfos ?? []
+    }
+
+    /// Applies the current skin's game-screen filters to the single-screen picture, unless
+    /// a shader or a user filter replaces them. Clears them when the skin has none, so a
+    /// previous skin's effect does not bleed into the new one.
     ///
     /// Must be called on the main thread; dispatches there automatically if invoked from a
     /// background thread.
-    /// The first screen filter the current skin defines for this device and orientation.
-    /// Probes display types in preference order to match the skin that was actually loaded,
-    /// mirroring the pattern used elsewhere (e.g. applyViewportFromCurrentSkin).
-    internal func currentSkinScreenFilterInfo(_ skin: (any DeltaSkinProtocol)? = nil) -> DeltaSkin.FilterInfo? {
-        guard let skin = skin ?? currentSkin else { return nil }
-        #if !os(tvOS)
-        let device: DeltaSkinDevice = UIDevice.current.userInterfaceIdiom == .pad ? .ipad : .iphone
-        #else
-        let device: DeltaSkinDevice = .tv
-        #endif
-        let orientation: DeltaSkinOrientation = view.bounds.width > view.bounds.height ? .landscape : .portrait
-        for displayType in [DeltaSkinDisplayType.standard, .edgeToEdge] {
-            let traits = DeltaSkinTraits(device: device, displayType: displayType, orientation: orientation)
-            if let info = skin.representation(for: traits)?.screens?.first?.filters?.first {
-                return info
-            }
-        }
-        return nil
-    }
-
     internal func applyScreenFiltersFromCurrentSkin() {
         guard Thread.isMainThread else {
             DispatchQueue.main.async { [weak self] in self?.applyScreenFiltersFromCurrentSkin() }
@@ -1318,20 +1314,21 @@ extension PVEmulatorViewController {
 
         guard let skin = currentSkin else {
             // No skin active — clear any lingering filter
-            applyScreenFilter(nil)
+            applyScreenFilters([])
             return
         }
 
-        guard let filterInfo = currentSkinScreenFilterInfo(skin) else {
-            ILOG("skins: Skin '\(skin.name)' has no screen filters — clearing any previous filter")
-            applyScreenFilter(nil)
+        let filterInfos = currentSkinScreenFilterInfos(skin)
+        guard !filterInfos.isEmpty else {
+            ILOG("skins: Skin '\(skin.name)' has no game-screen filters — clearing any previous filter")
+            applyScreenFilters([])
             return
         }
 
         // An active shader replaces the skin's filter; "Skin's Filter" (or no shader) keeps it.
         if activeShaderSelection.shader(for: core.screenType) != nil {
             ILOG("skins: A shader is selected — not stacking the skin's own filter")
-            applyScreenFilter(nil)
+            applyScreenFilters([])
             return
         }
 
@@ -1362,18 +1359,20 @@ extension PVEmulatorViewController {
         if let name = userFilterName, name != "None" {
             ILOG("skins: User filter '\(name)' is active — clearing skin filter to prevent stacking")
             // Clear any previously applied skin filter so the user filter is the only effect.
-            applyScreenFilter(nil)
+            applyScreenFilters([])
             return
         }
 
         // Construct DeltaSkinScreenFilter directly from FilterInfo so that filter-specific
         // configuration (e.g. CIGaussianBlur radius stored on the wrapper) is preserved.
-        if let screenFilter = DeltaSkinScreenFilter(filterInfo: filterInfo) {
-            ILOG("skins: Applying skin screen filter '\(filterInfo.name)' from skin '\(skin.name)'")
-            applyScreenFilter(screenFilter)
-        } else {
-            ELOG("skins: Failed to create DeltaSkinScreenFilter for '\(filterInfo.name)'")
-            applyScreenFilter(nil)
+        let filters = filterInfos.compactMap { info -> DeltaSkinScreenFilter? in
+            guard let filter = DeltaSkinScreenFilter(filterInfo: info) else {
+                ELOG("skins: Failed to create DeltaSkinScreenFilter for '\(info.name)'")
+                return nil
+            }
+            return filter
         }
+        ILOG("skins: Applying \(filters.count) screen filter(s) from skin '\(skin.name)'")
+        applyScreenFilters(filters)
     }
 }

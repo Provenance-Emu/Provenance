@@ -1252,7 +1252,7 @@ public struct DeltaSkin: DeltaSkinProtocol {
     }
 
     /// CoreImage filter configuration
-    public struct FilterInfo: Codable {
+    public struct FilterInfo: Codable, Sendable {
         public let name: String
         public let parameters: [String: FilterParameter]
 

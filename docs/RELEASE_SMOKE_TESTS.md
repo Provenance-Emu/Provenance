@@ -275,8 +275,19 @@ before it (or seed the files below by hand, then relaunch).
       and a Provenance filter both render; picking one in the pause menu takes
       effect on the next frame; switching to Off restores the plain picture.
 - [ ] DS / 3DS dual-screen skins and Azahar: no Screen Filter / Shader Settings
-      tiles (filters do not apply to dual-screen layouts). Known bug: skin CIFilters
-      never render on the Metal path (`_render` is dead code); tracked as its own task.
+      tiles (shaders do not apply to dual-screen layouts).
+- [ ] Skin CIFilters render (they never did before Oct 13 2026): a skin whose game
+      screen has filters (e.g. UITesting GBA-Test on iPad portrait: blur + colour
+      controls) shows them, upright (a vignette or centred blur sits where the skin
+      puts it); Skin's Filter / Off / a shader in the pause menu switch them live,
+      also while paused. The picture's edges stay opaque (no skin showing through).
+- [ ] A skin whose only filtered screen is a full-size backdrop (blurred background
+      behind the game, Delta edge-to-edge style): the game stays sharp, no
+      "Skin's Filter" option. Backdrops themselves are not drawn.
+- [ ] DS skin with per-screen filters: each screen gets its own, with a shader
+      selected too (shaders can't draw there, so they don't silence skin filters);
+      with the LCD look on, filtered screens stay without the grid.
+- [ ] Frame rate with a skin filter on an older device (A12/A13), single screen and DS.
 - [ ] Settings → Display Filters → "LCD look on dual-screen handhelds" (default
       off). DS skin on melonDS DS (thin) and DeSmuME: both screens get a pixel grid
       on the DS's own pixels, slight softness and muted colour; screens upright, no
@@ -290,8 +301,6 @@ before it (or seed the files below by hand, then relaunch).
       Azahar's swap-screens option: the grid follows the screen actually in each rect.
       Switch from a 3DS dual-screen skin to a single-screen skin, then to skins off:
       no grid left over the picture.
-- [ ] A DS / 3DS skin whose screens carry their own CIFilters: no LCD look on those
-      screens with the toggle on.
 - [ ] DS LCD look frame rate on an older device (A12/A13): no dropped frames.
 
 ### Carried over from earlier sessions (see memory notes)

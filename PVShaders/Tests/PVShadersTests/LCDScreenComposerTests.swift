@@ -87,7 +87,7 @@ struct LCDScreenComposerTests {
         let grey = CIImage(color: CIColor(red: 0.5, green: 0.5, blue: 0.5))
             .cropped(to: CGRect(origin: .zero, size: Self.screen))
         let frame = LCDScreenComposer().compose(source: grey, placements: [Self.placement(0)], canvas: Self.canvas)
-        let value = Self.pixel(frame, 80, 60, context: LCDScreenComposer.makeContext(device: device))[0]
+        let value = Self.pixel(frame, 80, 60, context: FrameImageFilter.makeContext(device: device))[0]
         #expect(abs(Int(value) - 128) <= 1)
     }
 
@@ -104,6 +104,24 @@ struct LCDScreenComposerTests {
         let row = stride(from: 0, to: bytes.count, by: 4).map { bytes[$0] }
         let darkest = row.min() ?? 0, brightest = row.max() ?? 0
         #expect(Int(brightest) - Int(darkest) > 30)
+    }
+
+    @Test("skin filters run on the upright screen before it is placed")
+    func runsScreenFiltersUpright() {
+        // Paints the screen's upper half (Core Image's y grows upwards) white.
+        let paintUpperHalf: ScreenImageFilter = { image in
+            let box = image.extent
+            return CIImage(color: .white)
+                .cropped(to: CGRect(x: 0, y: box.midY, width: box.width, height: box.height / 2))
+                .composited(over: image)
+        }
+        for flipped in [false, true] {
+            let frame = LCDScreenComposer().compose(source: Self.source,
+                                                     placements: [Self.placement(0, flipped: flipped)],
+                                                     canvas: Self.canvas, screenFilters: [paintUpperHalf])
+            #expect(Self.pixel(frame, 80, 30) == [255, 255, 255, 255])  // top of the destination
+            #expect(Self.pixel(frame, 80, 100)[2] < 20)                    // lower half untouched
+        }
     }
 
     @Test("renders through Metal into a target texture")
@@ -130,7 +148,7 @@ struct LCDScreenComposerTests {
         let target = try texture(Int(Self.canvas.width), Int(Self.canvas.height))
         let commandBuffer = try #require(queue.makeCommandBuffer())
         let encoded = LCDScreenComposer().render(source: source, placements: [Self.placement(0), Self.placement(1)],
-                                                 into: target, context: LCDScreenComposer.makeContext(device: device),
+                                                 into: target, context: FrameImageFilter.makeContext(device: device),
                                                  commandBuffer: commandBuffer)
         #expect(encoded)
         commandBuffer.commit()
