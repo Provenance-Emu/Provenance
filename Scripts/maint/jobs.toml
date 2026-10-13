@@ -35,6 +35,10 @@ paths = [
   # Called by the PVAzahar / PVDolphin Xcode build phases; its tests run directly.
   "Scripts/cores/build_slice.py",
   "Scripts/cores/tests/test_build_slice.py",
+  "Scripts/tests/test_ci_core_manifest.py",
+  "Scripts/tests/test_core_package_modules.py",
+  "Scripts/tests/test_create_ci_target_patterns.py",
+  "Scripts/tests/test_swap_core_to_package.py",
   # Wrapped by Scripts/cores/build_slice.py (outside the scan roots; listed for discoverability).
   "Cores/Azahar/build_azahar_core.py",
   "Cores/Dolphin/dolphin-ios/BuildiOSXCFramework.py",
@@ -49,6 +53,7 @@ paths = [
   "Scripts/dev/create_ci_target.rb",
   "Scripts/dev/dylibsToFramework.sh",
   "Scripts/dev/prune_cores.rb",
+  "Scripts/dev/swap_core_to_package.rb",
   "Scripts/dev/ralph-loop.sh",
   # Runs per pull request in auto-translate.yml, from the PR's string diff.
   "Scripts/generators/auto_translate.py",

@@ -28,9 +28,12 @@ on:
     branches: [develop]
   workflow_dispatch:
 
+# PRs: a new push supersedes the old head, so cancel. develop: never cancel a running build, or
+# a busy day leaves every commit unbuilt (all eight pushes after #3739 were cancelled, 2026-10-12);
+# GitHub still replaces a waiting run with the newest one, so at most one runs and one waits.
 concurrency:
   group: dev-workspace-${{ github.ref }}
-  cancel-in-progress: true
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 env:
   TUIST_VERSION: "4.200.0"

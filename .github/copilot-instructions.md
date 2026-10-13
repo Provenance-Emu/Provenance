@@ -25,7 +25,7 @@ Build from Xcode: open `Provenance.xcworkspace` and select a scheme. Start with 
 **Note:** Initial builds may fail because some source files are generated lazily at compile time. Retry if Xcode gets the build order wrong on first build.
 
 ### Schemes
-- **Provenance-Lite (AppStore)** — lightweight, fewer cores
+- **Provenance-Lite (AppStore)** — internal test build only: never published to the App Store and has no users. Not release-gated; don't spend effort on Lite-only upgrade or migration paths (it has its own `lite.realm` since 766c3605ac, with no seed from `default.realm`, by design). Keep it compiling because it's a fast build to validate against.
 - **Provenance (AppStore)** — standard release
 - **Provenance-XL (Release)** — includes more RetroArch and native cores
 - Each has iOS and tvOS variants

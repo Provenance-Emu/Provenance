@@ -14,8 +14,30 @@ import Defaults
 /// iCloud KVS back into UserDefaults (Defaults library).
 public enum iCloudSettingsSync {
 
-    /// Key used to detect a fresh install (set after first successful sync).
-    private static let sentinelKey = "org.provenance.settings.iCloudKVS.initialized"
+    /// What to do with one synced setting at launch.
+    enum StartupAction: Equatable {
+        /// This device already has its own value (e.g. upgrading from 3.3.x): keep it.
+        case keepLocal
+        /// Reinstall or new device: nothing local yet, so restore what iCloud has.
+        case adoptRemote
+        /// iCloud has nothing yet: seed it with this device's value.
+        case seedRemote
+        /// Nothing chosen anywhere.
+        case none
+    }
+
+    /// Decides one key at launch. A value stored on this device always wins, and an existing
+    /// iCloud value is never overwritten at launch: pushing on every launch let whichever device
+    /// launched last flip sync on or off, or between CloudKit and iCloud Drive, on every other
+    /// device. Later changes still sync through the observers below.
+    static func startupAction(hasLocalValue: Bool, hasRemoteValue: Bool) -> StartupAction {
+        switch (hasLocalValue, hasRemoteValue) {
+        case (true, true): return .keepLocal
+        case (false, true): return .adoptRemote
+        case (true, false): return .seedRemote
+        case (false, false): return .none
+        }
+    }
 
     // MARK: - Synced blobs
 
@@ -70,24 +92,15 @@ public enum iCloudSettingsSync {
     // MARK: - Public API
 
     /// Call once at app launch (e.g. in AppDelegate or App.init).
-    /// Restores settings from iCloud KVS if this is a fresh install,
-    /// then starts observing local changes to push them to KVS.
+    /// Reconciles each synced setting with iCloud KVS (see `startupAction`), then starts
+    /// observing local and remote changes.
     public static func setup() {
         let kvs = NSUbiquitousKeyValueStore.default
 
         // Pull latest from iCloud
         kvs.synchronize()
 
-        // Detect fresh install: sentinel key missing from UserDefaults
-        let isFirstLaunch = !UserDefaults.standard.bool(forKey: sentinelKey)
-
-        if isFirstLaunch {
-            restoreFromKVS(kvs)
-            UserDefaults.standard.set(true, forKey: sentinelKey)
-        }
-
-        // Push current values to KVS (in case this is an upgrade or first install)
-        pushToKVS(kvs)
+        reconcileAtStartup(kvs)
 
         isSetUp = true
         for blob in blobs.values {
@@ -108,26 +121,28 @@ public enum iCloudSettingsSync {
         startObservingDefaults()
     }
 
-    // MARK: - Restore
+    // MARK: - Startup reconciliation
 
-    private static func restoreFromKVS(_ kvs: NSUbiquitousKeyValueStore) {
-        // iCloudSync
-        if let syncValue = kvs.object(forKey: "iCloudSync") as? Bool {
-            Defaults[.iCloudSync] = syncValue
-        }
-
-        // iCloudSyncMode (stored as String raw value)
-        if let modeRaw = kvs.object(forKey: "iCloudSyncMode") as? String,
-           let mode = iCloudSyncMode(rawValue: modeRaw) {
-            Defaults[.iCloudSyncMode] = mode
-        }
+    /// True when this device has stored its own value for `key` (not just the default).
+    private static func hasLocalValue<Value>(_ key: Defaults.Key<Value>) -> Bool {
+        key.suite.object(forKey: key.name) != nil
     }
 
-    // MARK: - Push
+    private static func reconcileAtStartup(_ kvs: NSUbiquitousKeyValueStore) {
+        let remoteSync = kvs.object(forKey: "iCloudSync") as? Bool
+        switch startupAction(hasLocalValue: hasLocalValue(.iCloudSync), hasRemoteValue: remoteSync != nil) {
+        case .adoptRemote: if let remoteSync { Defaults[.iCloudSync] = remoteSync }
+        case .seedRemote: kvs.set(Defaults[.iCloudSync], forKey: "iCloudSync")
+        case .keepLocal, .none: break
+        }
 
-    private static func pushToKVS(_ kvs: NSUbiquitousKeyValueStore) {
-        kvs.set(Defaults[.iCloudSync], forKey: "iCloudSync")
-        kvs.set(Defaults[.iCloudSyncMode].rawValue, forKey: "iCloudSyncMode")
+        let remoteMode = (kvs.object(forKey: "iCloudSyncMode") as? String).flatMap(iCloudSyncMode.init(rawValue:))
+        switch startupAction(hasLocalValue: hasLocalValue(.iCloudSyncMode), hasRemoteValue: remoteMode != nil) {
+        case .adoptRemote: if let remoteMode { Defaults[.iCloudSyncMode] = remoteMode }
+        case .seedRemote: kvs.set(Defaults[.iCloudSyncMode].rawValue, forKey: "iCloudSyncMode")
+        case .keepLocal, .none: break
+        }
+
         kvs.synchronize()
     }
 

@@ -16,48 +16,10 @@ import PVMupenBridge         // SwiftPM package: the ObjC bridge target
 #endif
 
 fileprivate let highResDirs: [String] = ["/hires_texture/", "/cache/", "/texture_dump/"]
-fileprivate let iniFiles: [String] = ["GLideN64.ini", "GLideN64.custom.ini", "RiceVideoLinux.ini", "mupen64plus.ini"]
-
-enum MupenGameCoreError: Error {
-    case resourceNotFound
-}
 
 @objc
 public extension MupenGameCore {
-    @objc func copyIniFiles(_ romFolder: String) throws {
-        let iniBundle = Bundle(for: type(of: self))
-        let fm = FileManager.default
-        
-        // Copy default config files if they don't exist
-
-        // Create destination folder if missing
-        if !fm.fileExists(atPath: romFolder, isDirectory: nil) {
-            do {
-                try fm.createDirectory(atPath: romFolder, withIntermediateDirectories: true)
-            } catch {
-                throw error
-            }
-        }
-        
-        try iniFiles.forEach { iniFile in
-            let destinationPath = (romFolder as NSString).appendingPathComponent(iniFile) as String
-            guard !fm.fileExists(atPath: destinationPath) else {
-                VLOG("File exists at path <\(destinationPath)>")
-                return
-            }
-            
-            let nsIniFile = iniFile as NSString
-            let fileName = nsIniFile.deletingPathExtension
-            let fileExtension = nsIniFile.pathExtension
-            
-            guard let sourcePath = iniBundle.path(forResource: fileName, ofType: fileExtension) else {
-                throw MupenGameCoreError.resourceNotFound
-            }
-
-            try fm.copyItem(atPath: sourcePath, toPath: destinationPath)
-        }
-    }
-    
+    // The ini helper files are copied by PVMupenBridge's copyIniFiles: (PVMupenBridge+Resources.m).
     @objc func createHiResFolder(_ romFolder: String) throws {
         let subPaths: [String] = highResDirs.map { (romFolder as NSString).appendingPathComponent($0) as String}
         let fm = FileManager.default

@@ -23,12 +23,113 @@ device before `Provenance.xcodeproj` consumes them. Build with `make dev-ui` /
       with Rice (Core options → video plugin). Each loads its framework by name
       (`<name>-Dynamic`); a plugin that fails to load logs the dlopen error.
 - [ ] `Provenance-Dev-N64`: repeat one boot with each RSP plugin (HLE, CXD4).
+- [ ] `Provenance-Dev-N64` helper files (`38cebb9af3`): in the built app,
+      `find <App>.app/PVMupenGameCore_PVMupen64Plus.bundle -type l` prints
+      nothing, and the bundle holds `GLideN64.ini`, `GLideN64.custom.ini`,
+      `RiceVideoLinux.ini`, `mupen64plus.ini`, `mupencheat.txt`. After a
+      boot, the ROM's `config/` and `data/` folders contain the ini files
+      (the log has no "No resource path found for file").
 - [ ] `Provenance-Dev-N64`, GlideN64 NEON path (`47fcf88138`): geometry,
       lighting and textures look right in a 3D game (e.g. Mario 64, Zelda);
       no missing polygons or garbled matrices compared with the shipping app.
 - [ ] Repeat the snes9x and N64 boots on Apple TV.
 
 ## Next release
+
+### Upgrade from 3.3.1 (full app; first App Store update in ~9 months)
+
+Every existing user takes this path, so it gates the release. Audit of
+3.3.1 → develop (2026-10-12): schema 28 → 29, thick RetroArch → thin
+wrapper, 27 cores retired, new iCloud settings sync, #3742 (four cores now
+built from SwiftPM packages). Lite is out of scope (never published).
+
+**Setup on 3.3.1** (App Store build; iPhone, iPad and Apple TV, iCloud sync
+on with CloudKit on at least one device):
+
+1. Import ROMs for SNES, NES, Genesis/Sega CD, N64, GBA, 2600, PSX, NDS,
+   Dreamcast, 3DS, and a patch (`.ips`/`.bps`) linked to a game.
+2. On each of snes9x, FCEU, Genesis-Plus-GX, Mupen64Plus (GlideN64 and
+   Rice), mGBA, Stella, VBA-M and PicoDrive: one save state and one in-game
+   (battery) save.
+3. On iOS, libretro cores (they ran on the full RetroArch runtime in
+   3.3.1): a save state and an in-game save on NDS and on Dreamcast or PSX;
+   change one core option (e.g. NDS screen layout, PSX renderer).
+4. Set a preferred core per game and per system; mark favourites; pick a
+   skin; change a few settings (autosave, library zoom); leave others at
+   defaults.
+5. Note the library size and the settings screen (screenshots).
+
+**Upgrade** to the TestFlight build without deleting the app. Launch time
+on the oldest supported device: no watchdog kill (0x8BADF00D) while the
+v29 migration and Realm compaction run; test once with a large library
+(5k+ games).
+
+**Library and database**
+
+- [ ] Same games, favourites, recents, artwork; no duplicates, no empty
+      library, ROMs launch.
+- [ ] The linked patch is still linked to its game (not "pending").
+- [ ] Per-game and per-system preferred cores kept; a preference pointing
+      at a removed core falls back to an available one without a crash.
+- [ ] Files that sat in the Documents vs App Group location 3.3.1 used
+      still resolve (the automatic folder mover is gone).
+
+**Save states and in-game saves**
+
+- [ ] snes9x, FCEU, Genesis-Plus-GX, Mupen64Plus: 3.3.1 states load and
+      in-game saves are present (these cores now build from SwiftPM
+      packages, `cd5fa516c9`; first device run of that build). N64 with
+      both GlideN64 and Rice; ini files land in the ROM's `config/` and
+      `data/` folders.
+- [ ] mGBA, VBA-M, PicoDrive, Genesis Sega CD: states and in-game saves
+      load (core versions bumped; VBA-M upgrades states by exact length).
+- [ ] iOS libretro states from 3.3.1 load. **Known gap:** the thin wrapper
+      passed RetroArch's container/rzip files raw to the core; fix in
+      progress (`fix/thin-retroarch-state-format`).
+- [ ] iOS libretro in-game saves from `Documents/RetroArch/saves/` appear
+      in the game. **Known gap:** not migrated to `Battery States/`; fix in
+      progress on the same branch.
+- [ ] DS battery saves that 3.3.1 kept in Save States land in Battery
+      States and load in melonDS/DeSmuME.
+- Expected, not bugs: Stella 7 → 8 refuses 3.3.1 2600 states (in-game
+  saves unaffected); FCEU 2.6.6 no longer loads mapper 101/151 ROMs;
+  retired cores' states stay listed but can't load ("core is gone")
+  except Jaguar, which migrates; libretro core options reset to defaults
+  (stored under new keys).
+
+**Settings and iCloud**
+
+- [ ] Two devices with different sync on/off and CloudKit/iCloud Drive
+      choices: upgrade one, launch, then upgrade the other. Each keeps its
+      own choice (fixed `8c8785d28c`).
+- [ ] CloudKit: first launch uploads battery saves, screenshots, cheats and
+      skins once (new); no duplicate `File` records in the CloudKit
+      dashboard; record counts stable on second launch.
+- [ ] tvOS with default settings: sync content type now defaults to
+      metadata-only. Confirm whether tvOS battery saves still reach iCloud
+      and ROMs added on iOS appear; decide if that default is intended.
+- [ ] Defaults that changed for users who never touched them: timed
+      autosaves now off, title normalization now on, library zoom reset,
+      tvOS web server (`webDavAlwaysOn` removed). Confirm each is intended.
+- [ ] Plus/subscriber: upgrade offline, cold-launch twice; Plus stays
+      unlocked and iCloud sync is not turned off.
+
+**Cores and platforms**
+
+- [ ] 3DS game with no preferred core: note which core launches (emuThree
+      or Azahar) and whether its save is found.
+- [ ] Jaguar boots (virtualjaguar is a local dylib: check
+      `virtualjaguar.libretro.framework` is in the IPA).
+- [ ] 3DO with `panafz10-patched.bin` in BIOS (renamed entry, same MD5).
+- [ ] TopShelf is empty until the app is opened once after the update
+      (expected), then shows recents.
+
+**App Store packaging**
+
+- [ ] Archive validates: provisioning profiles include the new entitlements
+      (extended virtual addressing, keychain group
+      `com.joemattiello.shared`) and the new `ROM File ProviderUI` App ID.
+- [ ] Files app: the Provenance location still opens and imports.
 
 ### Retired native cores (pruning PR, `feature/prune-dead-cores`)
 

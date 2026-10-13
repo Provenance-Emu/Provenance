@@ -5,10 +5,12 @@ Attached to the alpha release so a missing or suspiciously small core is visible
 without unzipping anything: a core that failed to build usually still ships a
 framework directory, so size is the tell.
 
-Two kinds of cores end up in `<App>.app/Frameworks`:
+Two kinds of cores end up in the app:
 
-* native cores — a `PV<Name>.framework` carrying a `Core.plist`, which is exactly
-  what `PVCoreLoader` scans at runtime to discover cores.
+* native cores — a `Core.plist` in either a `PV<Name>.framework` (cores built by a
+  core xcodeproj) or a `<Package>_<Target>.bundle` at the app root (cores shipped as
+  SwiftPM packages, whose code is in a `<Product>-Dynamic.framework`). Those are the
+  two places `PVCoreLoader` scans at runtime to discover cores.
 * libretro cores — `<name>.libretro.framework`, wrapping a buildbot dylib. These
   are registered in PVRetroArch's own Core.plist rather than carrying their own,
   so they are matched by name against `CoresRetro/RetroArch/Scripts/cores.yml`
@@ -78,6 +80,7 @@ def read_ipa(path: str) -> IPAReport:
 
     with zf:
         frameworks: dict[str, Framework] = {}
+        bundle_sizes: dict[str, int] = {}
         app_prefix = ""
         for info in zf.infolist():
             name = info.filename
@@ -87,6 +90,21 @@ def read_ipa(path: str) -> IPAReport:
                     app_prefix = match.group(1)
                     report.app = posixpath.basename(app_prefix)
             report.total_size += info.file_size
+
+            # SwiftPM cores keep Core.plist in a resource bundle at the app root
+            # (<Package>_<Target>.bundle), not in their -Dynamic framework.
+            bundle = re.match(r"Payload/[^/]+\.app/([^/]+\.bundle)/(.*)$", name)
+            if bundle:
+                b_name, rest = bundle.group(1), bundle.group(2)
+                bundle_sizes[b_name] = bundle_sizes.get(b_name, 0) + info.file_size
+                if rest == "Core.plist":
+                    fw = frameworks.setdefault(b_name, Framework(name=b_name))
+                    try:
+                        fw.core_plist = plistlib.loads(zf.read(name))
+                    except Exception as exc:  # malformed plist shouldn't kill the run
+                        print(f"::warning::{report.ipa}: unreadable Core.plist in "
+                              f"{b_name}: {exc}", file=sys.stderr)
+                continue
 
             match = re.search(r"/Frameworks/([^/]+)\.framework/(.*)$", name)
             if not match:
@@ -103,10 +121,47 @@ def read_ipa(path: str) -> IPAReport:
                     print(f"::warning::{report.ipa}: unreadable Core.plist in "
                           f"{fw_name}.framework: {exc}", file=sys.stderr)
 
+        attribute_package_cores(zf, app_prefix, frameworks, bundle_sizes)
         report.frameworks = sorted(frameworks.values(), key=lambda f: -f.size)
     if not report.frameworks and not report.error:
         report.error = "no frameworks found — is this a valid IPA?"
     return report
+
+
+def attribute_package_cores(zf: zipfile.ZipFile, app_prefix: str,
+                            frameworks: dict[str, Framework],
+                            bundle_sizes: dict[str, int]) -> None:
+    """Give each SwiftPM core the size of its code, not just its resource bundle.
+
+    The core's code is in a `<Product>-Dynamic.framework`, which the IPA does not link
+    to the bundle by name. The framework binary does name it, though: `Bundle.module`
+    looks the bundle up as "<Package>_<Target>.bundle". Only `-Dynamic` frameworks are
+    read (that is how this project names dynamic package products), so the scan stays
+    cheap. A matched framework moves into the core's row instead of "support".
+    """
+    for b_name, size in bundle_sizes.items():
+        if b_name in frameworks:
+            frameworks[b_name].size = size
+    cores = [n for n, f in frameworks.items() if n.endswith(".bundle") and f.is_native_core]
+    if not cores:
+        return
+    for fw_name in [n for n in frameworks if n.endswith("-Dynamic")]:
+        try:
+            binary = zf.read(f"{app_prefix}/Frameworks/{fw_name}.framework/{fw_name}")
+        except KeyError:
+            continue
+        for b_name in cores:
+            if b_name.encode() in binary:
+                frameworks[b_name].size += frameworks.pop(fw_name).size
+                break
+
+
+def core_identifiers(report: IPAReport) -> list[str]:
+    """Sorted PVCoreIdentifiers of the native cores, for before/after diffs."""
+    return sorted(
+        (f.core_plist or {}).get("PVCoreIdentifier", f.name)
+        for f in report.frameworks if f.is_native_core
+    )
 
 
 def expected_libretro_cores(cores_yml: str, platform: str) -> set[str]:
@@ -235,10 +290,21 @@ def render(reports: list[IPAReport], cores_yml: str) -> str:
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("ipas", nargs="+")
-    parser.add_argument("--out", required=True)
+    parser.add_argument("--out")
     parser.add_argument("--cores-yml",
                         default="CoresRetro/RetroArch/Scripts/cores.yml")
+    parser.add_argument("--identifiers", action="store_true",
+                        help="print '<ipa>\\t<PVCoreIdentifier>' lines and exit")
     args = parser.parse_args()
+
+    if args.identifiers:
+        for path in args.ipas:
+            report = read_ipa(path)
+            for ident in core_identifiers(report):
+                print(f"{report.ipa}\t{ident}")
+        return 0
+    if not args.out:
+        parser.error("--out is required unless --identifiers is given")
 
     reports = [read_ipa(p) for p in args.ipas]
     with open(args.out, "w") as handle:
