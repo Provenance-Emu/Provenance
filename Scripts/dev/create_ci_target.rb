@@ -18,6 +18,8 @@ CORE_PATTERNS = [
   /^PVCoreMednafen/, /^PVEmuThree/, /^PVPPSSPP/, /^PVMupen64Plus/,
   /^PVSNES/, /^PVFCEU/,
   /^PVGenesis/, /^PVRSPCXD4/,
+  # SwiftPM product names that don't share the framework's prefix
+  /^PVCoremGBA/, /^PVCoreGenesisPlus/, /^PVMupenGameCore/, /^PVAzahar/, /^PVDolphin/,
   /^PVCoreBridgeRetro/,
   /^libMoltenVK/, /^MoltenVK/,
   /^snes9x/,  # SNES emulator core framework

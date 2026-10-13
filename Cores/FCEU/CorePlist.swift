@@ -17,7 +17,8 @@ import PVFCEUBridge   // SwiftPM package: the ObjC bridge target (the Xcode targ
 #if SWIFT_PACKAGE
 public extension PVBundleFinder {
     static var PVFCEUEmulatorCoreModule: Bundle { Bundle.module }
-    static var PVFCEUEmulatorCoreBundle: Bundle { Bundle(for: PVFCEUEmulatorCore.self) }
+    // Resources (Core.plist) are in the SwiftPM resource bundle, not the framework.
+    static var PVFCEUEmulatorCoreBundle: Bundle { Bundle.module }
 }
 #else
 public extension PVBundleFinder {
