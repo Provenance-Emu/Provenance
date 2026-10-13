@@ -77,7 +77,7 @@ category = "Generated files"
 description = "Loads and renders every bundled slang preset on this Mac's GPU; failures are excluded from the app's shader browser."
 run = ["bash", "Scripts/shaders/validate_slang_shaders.sh"]
 mode = "manual"
-inputs = ["Scripts/shaders/slang-shaders.lock.json", "PVShaders/Library/**", "PVShaders/Sources/PVSlangRuntime/**"]
+inputs = ["Scripts/shaders/slang-shaders.lock.json", "PVShaders/Library/**", "PVShaders/Sources/PVSlangRuntime/**", "PVShaders/Sources/pvshader-validate/**"]
 outputs = ["Scripts/shaders/slang-shaders-excluded.json"]
 needs = ["network", "macos", "swift"]
 
