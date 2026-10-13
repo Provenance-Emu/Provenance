@@ -317,6 +317,14 @@ description = "Code-signing and architecture report for a built .app or framewor
 run = ["python3", "Scripts/audits/scan_ios_binaries.py"]
 args_hint = "<path>"
 
+[jobs.prune-dead-project-refs]
+title = "Prune dead sub-project references"
+category = "Dev workspace"
+description = "Removes projectReferences whose .xcodeproj is gone from disk and unused (Xcode's merge-duplicated MoltenVK refs). Dry run by default."
+run = ["python3", "Scripts/dev/prune_dead_project_refs.py"]
+args_hint = "[PBXPROJ] [--apply]"
+mode = "manual"
+
 [jobs.core-slices]
 title = "Build or link a cached core slice"
 category = "Dev workspace"
