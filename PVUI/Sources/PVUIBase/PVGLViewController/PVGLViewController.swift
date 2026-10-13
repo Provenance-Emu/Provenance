@@ -504,7 +504,7 @@ final class PVGLViewController: PVGPUViewController, PVRenderDelegate {
             let scalingMode = renderSettings.scalingMode
 
             switch scalingMode {
-                case .stretch:
+                case .stretch, .nonLinearStretch:
                     width = parentSize.width
                     height = parentSize.height
 

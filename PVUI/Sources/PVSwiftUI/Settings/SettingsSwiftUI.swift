@@ -1916,6 +1916,7 @@ private struct VideoSection: View {
     @Default(.imageSmoothing) var imageSmoothing
     @Default(.showFPSCount) var showFPSCount
     @Default(.scalingMode) var scalingMode
+    @Default(.nonLinearStretchAmount) var nonLinearStretchAmount
     @Default(.vsyncEnabled) var vsyncEnabled
     @Default(.systemRegion) var systemRegion
 
@@ -1967,6 +1968,23 @@ private struct VideoSection: View {
             #else
             .pickerStyle(.navigationLink)
             #endif
+            if scalingMode == .nonLinearStretch {
+                Picker(selection: $nonLinearStretchAmount) {
+                    ForEach(NonLinearStretchStrength.allCases) { strength in
+                        Text(strength.title).tag(strength.amount)
+                    }
+                } label: {
+                    SettingsRow(title: "Stretch Shape",
+                                subtitle: "How much the centre keeps its true shape",
+                                icon: .sfSymbol("arrow.left.and.right"),
+                                showChevron: false)
+                }
+                #if os(tvOS)
+                .pickerStyle(.automatic)
+                #else
+                .pickerStyle(.menu)
+                #endif
+            }
             Picker(selection: $systemRegion) {
                 ForEach(SystemRegionPreference.allCases, id: \.self) { region in
                     Label(region.displayName, systemImage: region.symbolName)
@@ -3326,3 +3344,26 @@ struct PlusStatusBanner: View {
     }
 }
 #endif
+
+/// Presets for `Defaults[.nonLinearStretchAmount]`.
+private enum NonLinearStretchStrength: CaseIterable, Identifiable {
+    case gentle, balanced, full
+
+    var id: Float { amount }
+
+    var amount: Float {
+        switch self {
+        case .gentle: return 0.4
+        case .balanced: return 0.7
+        case .full: return 1.0
+        }
+    }
+
+    var title: String {
+        switch self {
+        case .gentle: return "Gentle"
+        case .balanced: return "Balanced"
+        case .full: return "Full"
+        }
+    }
+}

@@ -67,6 +67,16 @@ public enum ScalingMode: String, Codable, Equatable, Hashable,
     /// Equivalent to the legacy `nativeScaleEnabled` setting.
     case nativeResolution = "nativeResolution"
 
+    /// Fill the screen width like `stretch`, but stretch the sides more than the centre,
+    /// so the middle of the picture keeps close to its true shape (issue #639).
+    /// Strength: `Defaults[.nonLinearStretchAmount]`.
+    case nonLinearStretch = "nonLinearStretch"
+
+    /// Fills the whole container (the picture is then reshaped by the renderer, if at all).
+    public var fillsContainer: Bool {
+        self == .stretch || self == .nonLinearStretch
+    }
+
     // MARK: - Display Metadata
 
     public var displayName: String {
@@ -76,6 +86,7 @@ public enum ScalingMode: String, Codable, Equatable, Hashable,
         case .stretch:         return "Stretch"
         case .integerScale:    return "Integer Scale"
         case .nativeResolution: return "Native Resolution"
+        case .nonLinearStretch: return "Non-Linear Stretch"
         }
     }
 
@@ -91,6 +102,8 @@ public enum ScalingMode: String, Codable, Equatable, Hashable,
             return "Pixel-perfect integer multiple of native resolution"
         case .nativeResolution:
             return "1:1 pixel mapping — sharpest but may appear small"
+        case .nonLinearStretch:
+            return "Fill screen — stretches the sides more than the centre"
         }
     }
 
@@ -101,6 +114,7 @@ public enum ScalingMode: String, Codable, Equatable, Hashable,
         case .stretch:         return "arrow.left.and.right.righttriangle.left.righttriangle.right"
         case .integerScale:    return "square.grid.2x2"
         case .nativeResolution: return "1.circle"
+        case .nonLinearStretch: return "arrow.left.and.right"
         }
     }
 
@@ -163,7 +177,7 @@ public enum ScalingModeLayout {
 
         let size: CGSize
         switch mode {
-        case .stretch:
+        case .stretch, .nonLinearStretch:
             return whole
         case .aspectFit:
             size = fitted(aspect: contentAspect, in: container)
@@ -214,4 +228,10 @@ public enum ScalingModeLayout {
         let height = pixelHeight / scale
         return CGSize(width: height * aspect, height: height)
     }
+}
+
+public extension Defaults.Keys {
+    /// Strength of `ScalingMode.nonLinearStretch`: 0 is a plain stretch, 1 keeps the
+    /// centre as close to the true aspect as the curve allows.
+    static let nonLinearStretchAmount = Key<Float>("nonLinearStretchAmount", default: 1.0)
 }

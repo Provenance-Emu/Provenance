@@ -735,7 +735,7 @@ extension PVEmulatorViewController: PVViewportLayoutDelegate {
         let scalingMode = Defaults[.scalingMode]
 
         // Stretch: use the container as-is (game fills entire skin screen area)
-        guard scalingMode != .stretch else { return container }
+        guard !scalingMode.fillsContainer else { return container }
 
         // Compute game aspect ratio from the core
         let screenRect = core.screenRect
@@ -772,7 +772,7 @@ extension PVEmulatorViewController: PVViewportLayoutDelegate {
         var height: CGFloat = 0
 
         switch scalingMode {
-        case .stretch:
+        case .stretch, .nonLinearStretch:
             // Already handled above, but keep for completeness
             return container
 
