@@ -15,6 +15,10 @@ let package = Package(
         .library(
             name: "PVShaders",
             targets: ["PVShaders"]
+        ),
+        .library(
+            name: "PVSlangRuntime",
+            targets: ["PVSlangRuntime"]
         )
     ],
     dependencies: [
@@ -24,9 +28,18 @@ let package = Package(
         .package(url: "https://github.com/sindresorhus/Defaults.git", from: "9.0.2")
     ],
     targets: [
+        // OpenEmu-Shaders runtime (BSD-3, see file headers): runs libretro slang
+        // presets compiled to MSL by the oeshaders tool.
+        .target(
+            name: "PVSlangRuntime",
+            resources: [
+                .process("Resources")
+            ]
+        ),
         .target(
             name: "PVShaders",
             dependencies: [
+                "PVSlangRuntime",
                 "PVPrimitives",
                 "PVLogging",
                 "PVSettings",
@@ -34,6 +47,13 @@ let package = Package(
             ],
             resources: [
                 .process("Resources/Metal")
+            ]
+        ),
+        .testTarget(
+            name: "PVShadersTests",
+            dependencies: ["PVShaders", "PVSlangRuntime"],
+            resources: [
+                .copy("Fixtures")
             ]
         )
     ],

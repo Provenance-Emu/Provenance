@@ -1,0 +1,208 @@
+{
+  "historyCount" : 0,
+  "languageVersion" : "version2_4",
+  "luts" : [
+
+  ],
+  "parameters" : [
+    {
+      "desc" : "CRT-Geom Curvature",
+      "index" : 0,
+      "initial" : 1,
+      "maximum" : 1,
+      "minimum" : 0,
+      "name" : "CURV",
+      "step" : 1
+    },
+    {
+      "desc" : "CRT-Geom Scanline Weight",
+      "index" : 1,
+      "initial" : 0.5,
+      "maximum" : 0.5,
+      "minimum" : 0,
+      "name" : "scanlines",
+      "step" : 0.05
+    },
+    {
+      "desc" : "CRT-Geom Dotmask Strength",
+      "index" : 2,
+      "initial" : 0.2,
+      "maximum" : 0.5,
+      "minimum" : 0,
+      "name" : "MASK",
+      "step" : 0.05
+    },
+    {
+      "desc" : "CRT-Geom Interlacing Simulation",
+      "index" : 3,
+      "initial" : 1,
+      "maximum" : 1,
+      "minimum" : 0,
+      "name" : "INTERL",
+      "step" : 1
+    },
+    {
+      "desc" : "CRT-Geom Saturation",
+      "index" : 4,
+      "initial" : 1,
+      "maximum" : 2,
+      "minimum" : 0,
+      "name" : "SAT",
+      "step" : 0.05
+    }
+  ],
+  "passes" : [
+    {
+      "buffers" : [
+        {
+          "bindingVert" : 0,
+          "size" : 64,
+          "uniforms" : [
+            {
+              "name" : "MVP",
+              "offset" : 0,
+              "semantic" : "mvp",
+              "size" : 64
+            }
+          ]
+        },
+        {
+          "size" : 0,
+          "uniforms" : [
+
+          ]
+        }
+      ],
+      "filter" : "unspecified",
+      "format" : "bgra8Unorm",
+      "fragmentSource" : "#include <metal_stdlib>\n#include <simd\/simd.h>\n\nusing namespace metal;\n\nstruct main0_out\n{\n    float4 FragColor [[color(0)]];\n};\n\nstruct main0_in\n{\n    float2 vTexCoord [[user(locn0)]];\n};\n\nfragment main0_out main0(main0_in in [[stage_in]], texture2d<float> Source [[texture(0)]], sampler SourceSmplr [[sampler(0)]])\n{\n    main0_out out = {};\n    out.FragColor = pow(float4(Source.sample(SourceSmplr, in.vTexCoord).xyz, 1.0), float4(2.2000000476837158203125));\n    return out;\n}\n\n",
+      "frameCountMod" : 0,
+      "index" : 0,
+      "isFeedback" : false,
+      "textures" : [
+        {
+          "binding" : 0,
+          "filter" : "unspecified",
+          "index" : 0,
+          "name" : "Source",
+          "semantic" : "source",
+          "wrap" : "border"
+        }
+      ],
+      "vertexSource" : "#include <metal_stdlib>\n#include <simd\/simd.h>\n\nusing namespace metal;\n\nstruct UBO\n{\n    float4x4 MVP;\n};\n\nstruct main0_out\n{\n    float2 vTexCoord [[user(locn0)]];\n    float4 gl_Position [[position]];\n};\n\nstruct main0_in\n{\n    float4 Position [[attribute(0)]];\n    float2 TexCoord [[attribute(1)]];\n};\n\nvertex main0_out main0(main0_in in [[stage_in]], constant UBO& global [[buffer(0)]])\n{\n    main0_out out = {};\n    out.gl_Position = global.MVP * in.Position;\n    out.vTexCoord = in.TexCoord;\n    return out;\n}\n\n",
+      "wrapMode" : "border"
+    },
+    {
+      "buffers" : [
+        {
+          "bindingVert" : 0,
+          "size" : 64,
+          "uniforms" : [
+            {
+              "name" : "MVP",
+              "offset" : 0,
+              "semantic" : "mvp",
+              "size" : 64
+            }
+          ]
+        },
+        {
+          "bindingFrag" : 0,
+          "bindingVert" : 1,
+          "size" : 72,
+          "uniforms" : [
+            {
+              "name" : "OutputSize",
+              "offset" : 32,
+              "semantic" : "outputSize",
+              "size" : 16
+            },
+            {
+              "name" : "FrameCount",
+              "offset" : 48,
+              "semantic" : "frameCount",
+              "size" : 4
+            },
+            {
+              "index" : 3,
+              "name" : "INTERL",
+              "offset" : 64,
+              "semantic" : "floatParameter",
+              "size" : 4
+            },
+            {
+              "index" : 4,
+              "name" : "SAT",
+              "offset" : 68,
+              "semantic" : "floatParameter",
+              "size" : 4
+            },
+            {
+              "index" : 1,
+              "name" : "scanlines",
+              "offset" : 56,
+              "semantic" : "floatParameter",
+              "size" : 4
+            },
+            {
+              "index" : 0,
+              "name" : "CURV",
+              "offset" : 52,
+              "semantic" : "floatParameter",
+              "size" : 4
+            },
+            {
+              "index" : 2,
+              "name" : "MASK",
+              "offset" : 60,
+              "semantic" : "floatParameter",
+              "size" : 4
+            },
+            {
+              "index" : 0,
+              "name" : "SourceSize",
+              "offset" : 0,
+              "semantic" : "sourceSize",
+              "size" : 16
+            },
+            {
+              "index" : 0,
+              "name" : "OriginalSize",
+              "offset" : 16,
+              "semantic" : "originalSize",
+              "size" : 16
+            }
+          ]
+        }
+      ],
+      "filter" : "linear",
+      "format" : "bgra8Unorm",
+      "fragmentSource" : "#pragma clang diagnostic ignored \"-Wmissing-prototypes\"\n\n#include <metal_stdlib>\n#include <simd\/simd.h>\n\nusing namespace metal;\n\n\/\/ Implementation of the GLSL mod() function, which is slightly different than Metal fmod()\ntemplate<typename Tx, typename Ty>\ninline Tx mod(Tx x, Ty y)\n{\n    return x - y * floor(x \/ y);\n}\n\nstruct Push\n{\n    float4 SourceSize;\n    float4 OriginalSize;\n    float4 OutputSize;\n    uint FrameCount;\n    float CURV;\n    float scanlines;\n    float MASK;\n    float INTERL;\n    float SAT;\n};\n\nstruct main0_out\n{\n    float4 FragColor [[color(0)]];\n};\n\nstruct main0_in\n{\n    float2 vTexCoord [[user(locn0)]];\n    float maskpos [[user(locn1)]];\n};\n\nstatic inline __attribute__((always_inline))\nfloat2 Warp(thread float2& coord)\n{\n    coord -= float2(0.5);\n    coord += (coord * (float2(0.119999997317790985107421875, 0.25) * ((coord.x * coord.x) + (coord.y * coord.y))));\n    coord *= float2(0.9700000286102294921875, 0.944999992847442626953125);\n    bool _55 = abs(coord.x) >= 0.5;\n    bool _63;\n    if (!_55)\n    {\n        _63 = abs(coord.y) >= 0.5;\n    }\n    else\n    {\n        _63 = _55;\n    }\n    if (_63)\n    {\n        coord = float2(-1.0);\n    }\n    else\n    {\n        coord += float2(0.5);\n    }\n    return coord;\n}\n\nfragment main0_out main0(main0_in in [[stage_in]], constant Push& params [[buffer(0)]], texture2d<float> Source [[texture(0)]], sampler SourceSmplr [[sampler(0)]])\n{\n    main0_out out = {};\n    float2 _91 = float2(params.SourceSize.z * 0.5, 0.0);\n    float2 pos;\n    float2 corn;\n    if (params.CURV == 1.0)\n    {\n        float2 param = in.vTexCoord;\n        float2 _104 = Warp(param);\n        pos = _104;\n        corn = fast::min(pos, float2(1.0) - pos);\n        corn.x = 9.9999997473787516355514526367188e-05 \/ corn.x;\n    }\n    else\n    {\n        pos = in.vTexCoord;\n    }\n    float2 xy = pos;\n    xy -= (_91 * 2.0);\n    float2 near = floor(pos * params.SourceSize.xy) + float2(0.5);\n    float2 f = (pos * params.SourceSize.xy) - near;\n    xy.y = (near.y + (((((16.0 * f.y) * f.y) * f.y) * f.y) * f.y)) * params.SourceSize.w;\n    float4 _173 = Source.sample(SourceSmplr, xy);\n    float4 _184 = Source.sample(SourceSmplr, (xy + (_91 * 2.0)));\n    float4 _196 = Source.sample(SourceSmplr, (xy + (_91 * 3.0)));\n    float4 _208 = Source.sample(SourceSmplr, (xy + (_91 * 4.0)));\n    float3 _217 = ((((float3(0.0) + (_173.xyz * (-1.60000002384185791015625))) + (_184.xyz * 3.2999999523162841796875)) + (_196.xyz * 5.599999904632568359375)) + (_208.xyz * (-1.5))) \/ float3(5.80000019073486328125);\n    float _221 = dot(float3(0.25), _217);\n    float _231 = mix(params.scanlines, params.scanlines * 0.60000002384185791015625, _221);\n    float _383;\n    if (params.OriginalSize.y > 400.0)\n    {\n        _383 = 0.5;\n    }\n    else\n    {\n        _383 = 1.0;\n    }\n    bool _244 = params.INTERL == 1.0;\n    bool _250;\n    if (_244)\n    {\n        _250 = params.OriginalSize.y > 400.0;\n    }\n    else\n    {\n        _250 = _244;\n    }\n    float _385;\n    if (_250)\n    {\n        float _376;\n        if (mod(float(params.FrameCount), 2.0) < 1.0)\n        {\n            _376 = 0.5 + 0.25;\n        }\n        else\n        {\n            _376 = 0.25;\n        }\n        _385 = _376;\n    }\n    else\n    {\n        _385 = 0.25;\n    }\n    float3 _309 = (_217 * ((((_231 * sin((((pos.y * params.SourceSize.y) * _383) - _385) * 6.28318500518798828125)) + 1.0) - _231) * (((params.MASK * sin(in.maskpos)) + 1.0) - params.MASK))) * mix(1.4500000476837158203125, 1.0499999523162841796875, _221);\n    bool _332 = corn.y <= corn.x;\n    bool _338;\n    if (_332)\n    {\n        _338 = params.CURV == 1.0;\n    }\n    else\n    {\n        _338 = _332;\n    }\n    bool _351;\n    if (!_338)\n    {\n        bool _344 = corn.x < 9.9999997473787516355514526367188e-05;\n        bool _350;\n        if (_344)\n        {\n            _350 = params.CURV == 1.0;\n        }\n        else\n        {\n            _350 = _344;\n        }\n        _351 = _350;\n    }\n    else\n    {\n        _351 = _338;\n    }\n    float3 _394;\n    if (_351)\n    {\n        _394 = float3(0.0);\n    }\n    else\n    {\n        _394 = fast::clamp(mix(float3(dot(float3(0.2899999916553497314453125, 0.60000002384185791015625, 0.10999999940395355224609375), _309)), _309, float3(params.SAT)), float3(0.0), float3(1.0));\n    }\n    float3 _357 = sqrt(_394);\n    out.FragColor.x = _357.x;\n    out.FragColor.y = _357.y;\n    out.FragColor.z = _357.z;\n    return out;\n}\n\n",
+      "frameCountMod" : 0,
+      "index" : 1,
+      "isFeedback" : false,
+      "scaleX" : {
+        "viewport" : {
+          "scale" : 1
+        }
+      },
+      "scaleY" : {
+        "viewport" : {
+          "scale" : 1
+        }
+      },
+      "textures" : [
+        {
+          "binding" : 0,
+          "filter" : "linear",
+          "index" : 0,
+          "name" : "Source",
+          "semantic" : "source",
+          "wrap" : "border"
+        }
+      ],
+      "vertexSource" : "#include <metal_stdlib>\n#include <simd\/simd.h>\n\nusing namespace metal;\n\nstruct UBO\n{\n    float4x4 MVP;\n};\n\nstruct Push\n{\n    float4 SourceSize;\n    float4 OriginalSize;\n    float4 OutputSize;\n    uint FrameCount;\n    float CURV;\n    float scanlines;\n    float MASK;\n    float INTERL;\n    float SAT;\n};\n\nstruct main0_out\n{\n    float2 vTexCoord [[user(locn0)]];\n    float maskpos [[user(locn1)]];\n    float4 gl_Position [[position]];\n};\n\nstruct main0_in\n{\n    float4 Position [[attribute(0)]];\n    float2 TexCoord [[attribute(1)]];\n};\n\nvertex main0_out main0(main0_in in [[stage_in]], constant UBO& global [[buffer(0)]], constant Push& params [[buffer(1)]])\n{\n    main0_out out = {};\n    out.gl_Position = global.MVP * in.Position;\n    out.vTexCoord = in.TexCoord * 1.00010001659393310546875;\n    out.maskpos = (out.vTexCoord.x * params.OutputSize.x) * 3.1415927410125732421875;\n    return out;\n}\n\n",
+      "wrapMode" : "border"
+    }
+  ]
+}

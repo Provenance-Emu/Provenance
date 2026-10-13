@@ -1,0 +1,102 @@
+{
+  "historyCount" : 0,
+  "languageVersion" : "version2_4",
+  "luts" : [
+
+  ],
+  "parameters" : [
+
+  ],
+  "passes" : [
+    {
+      "buffers" : [
+        {
+          "bindingVert" : 0,
+          "size" : 64,
+          "uniforms" : [
+            {
+              "name" : "MVP",
+              "offset" : 0,
+              "semantic" : "mvp",
+              "size" : 64
+            }
+          ]
+        },
+        {
+          "size" : 0,
+          "uniforms" : [
+
+          ]
+        }
+      ],
+      "filter" : "nearest",
+      "format" : "bgra8Unorm_srgb",
+      "fragmentSource" : "#pragma clang diagnostic ignored \"-Wmissing-prototypes\"\n\n#include <metal_stdlib>\n#include <simd\/simd.h>\n\nusing namespace metal;\n\nstruct main0_out\n{\n    float4 FragColor [[color(0)]];\n};\n\nstruct main0_in\n{\n    float2 vTexCoord [[user(locn0)]];\n};\n\nstatic inline __attribute__((always_inline))\nfloat3 gamma(thread const float3& v)\n{\n    return v * v;\n}\n\nfragment main0_out main0(main0_in in [[stage_in]], texture2d<float> Source [[texture(0)]], sampler SourceSmplr [[sampler(0)]])\n{\n    main0_out out = {};\n    float3 param = Source.sample(SourceSmplr, in.vTexCoord).xyz;\n    out.FragColor = float4(gamma(param), 1.0);\n    return out;\n}\n\n",
+      "frameCountMod" : 0,
+      "index" : 0,
+      "isFeedback" : false,
+      "scaleX" : {
+        "source" : {
+          "scale" : 1
+        }
+      },
+      "scaleY" : {
+        "source" : {
+          "scale" : 1
+        }
+      },
+      "textures" : [
+        {
+          "binding" : 0,
+          "filter" : "nearest",
+          "index" : 0,
+          "name" : "Source",
+          "semantic" : "source",
+          "wrap" : "border"
+        }
+      ],
+      "vertexSource" : "#include <metal_stdlib>\n#include <simd\/simd.h>\n\nusing namespace metal;\n\nstruct UBO\n{\n    float4x4 MVP;\n};\n\nstruct main0_out\n{\n    float2 vTexCoord [[user(locn0)]];\n    float4 gl_Position [[position]];\n};\n\nstruct main0_in\n{\n    float4 Position [[attribute(0)]];\n    float2 TexCoord [[attribute(1)]];\n};\n\nvertex main0_out main0(main0_in in [[stage_in]], constant UBO& global [[buffer(0)]])\n{\n    main0_out out = {};\n    out.gl_Position = global.MVP * in.Position;\n    out.vTexCoord = in.TexCoord;\n    return out;\n}\n\n",
+      "wrapMode" : "border"
+    },
+    {
+      "buffers" : [
+        {
+          "bindingVert" : 0,
+          "size" : 112,
+          "uniforms" : [
+            {
+              "name" : "MVP",
+              "offset" : 0,
+              "semantic" : "mvp",
+              "size" : 64
+            }
+          ]
+        },
+        {
+          "size" : 0,
+          "uniforms" : [
+
+          ]
+        }
+      ],
+      "filter" : "linear",
+      "format" : "bgra8Unorm",
+      "fragmentSource" : "#include <metal_stdlib>\n#include <simd\/simd.h>\n\nusing namespace metal;\n\nstruct main0_out\n{\n    float4 FragColor [[color(0)]];\n};\n\nstruct main0_in\n{\n    float2 vTexCoord [[user(locn0)]];\n};\n\nfragment main0_out main0(main0_in in [[stage_in]], texture2d<float> Source [[texture(0)]], sampler SourceSmplr [[sampler(0)]])\n{\n    main0_out out = {};\n    out.FragColor = float4(sqrt(Source.sample(SourceSmplr, in.vTexCoord).xyz), 1.0);\n    return out;\n}\n\n",
+      "frameCountMod" : 0,
+      "index" : 1,
+      "isFeedback" : false,
+      "textures" : [
+        {
+          "binding" : 0,
+          "filter" : "linear",
+          "index" : 0,
+          "name" : "Source",
+          "semantic" : "source",
+          "wrap" : "border"
+        }
+      ],
+      "vertexSource" : "#include <metal_stdlib>\n#include <simd\/simd.h>\n\nusing namespace metal;\n\nstruct UBO\n{\n    float4x4 MVP;\n    float4 OutputSize;\n    float4 OriginalSize;\n    float4 SourceSize;\n};\n\nstruct main0_out\n{\n    float2 vTexCoord [[user(locn0)]];\n    float4 gl_Position [[position]];\n};\n\nstruct main0_in\n{\n    float4 Position [[attribute(0)]];\n    float2 TexCoord [[attribute(1)]];\n};\n\nvertex main0_out main0(main0_in in [[stage_in]], constant UBO& global [[buffer(0)]])\n{\n    main0_out out = {};\n    out.gl_Position = global.MVP * in.Position;\n    out.vTexCoord = in.TexCoord;\n    return out;\n}\n\n",
+      "wrapMode" : "border"
+    }
+  ]
+}
