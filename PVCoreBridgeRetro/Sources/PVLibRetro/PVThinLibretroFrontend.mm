@@ -19,6 +19,7 @@
 
 #import "PVThinLibretroFrontend.h"
 #import "PVRetroArchStateDecoder.h"
+#import "PVThinCoreCallGate.h"
 #import <PVCoreBridgeRetro/PVCoreBridgeRetro-Swift.h>
 
 @import Foundation;
@@ -26,6 +27,8 @@
 @import CoreVideo;    // kCVPixelFormatType_32BGRA
 #if TARGET_OS_IOS || TARGET_OS_MACCATALYST
 @import UIKit;        // UIDevice battery API
+#elif TARGET_OS_TV
+@import UIKit;        // UIApplication state (teardown wait budget)
 #endif
 @import PVLoggingObjC;
 @import PVCoreBridge;
@@ -940,6 +943,31 @@ static const size_t kThinNetpacketQueueLimitBytes = 32 * 1024 * 1024;
     // Guard against double retro_deinit (dealloc can re-enter stopEmulation)
     BOOL _coreDeinited;
 
+    // ---- Core-call serialization and off-main teardown (see -stopEmulation) ----
+    /// Every call into the core (frame, save/load state, reset, SRAM flush,
+    /// teardown) runs inside this gate, so no two run at once and none starts
+    /// after teardown has begun.
+    PVThinCoreCallGate *_coreCallGate;
+    /// Signalled once by the teardown thread when it is done (cleanly or not).
+    /// Created on the MAIN THREAD by -stopEmulation; nil until then.
+    dispatch_semaphore_t _teardownDone;
+    /// YES once -stopEmulation has handed the teardown to its thread. Main
+    /// thread only (-stopEmulation and -startEmulation are @MainActor in Swift).
+    BOOL _teardownStarted;
+    /// Written by the teardown thread before it signals `_teardownDone`, read
+    /// after the wait: YES when the core really was deinitialised. NO when the
+    /// emulation loop never exited, in which case nothing was torn down.
+    std::atomic<bool> _teardownCompletedCleanly;
+    /// Set first thing in -dealloc: `self` can no longer be handed to another
+    /// thread, so -stopEmulation tears down inline.
+    BOOL _deallocating;
+    /// The dylib being torn down, captured on main when the teardown starts.
+    NSString *_teardownCorePath;
+    /// YES once the teardown thread has finished. Guarded by
+    /// `s_thinWedgedCoreLock`, so a main-thread timeout and the thread finishing
+    /// agree on whether the dylib is left wedged.
+    BOOL _teardownThreadFinished;
+
     // ---- Asynchronous boot (see -startEmulation) ----
     /// Retained for its lifetime so the boot thread object isn't collected while
     /// `startWithROMPath:` is still executing on it.
@@ -1031,6 +1059,76 @@ static const size_t kThinNetpacketQueueLimitBytes = 32 * 1024 * 1024;
                                   hardcore:(BOOL)hardcore;
 
 @end
+
+// ---------------------------------------------------------------------------
+// MARK: - Core-call gate and teardown budgets
+// ---------------------------------------------------------------------------
+
+/// How long the emulation thread waits for the core-call gate before skipping
+/// the frame. The gate is only contended while a save/load state or a reset
+/// runs on another thread; skipping keeps the loop from parking inside
+/// `@synchronized(self)` (which the main thread can need) for that whole call.
+static const NSTimeInterval kThinCoreGateFrameWait = 0.008;
+/// Gate budget for a save/load state or reset issued from the MAIN thread. The
+/// emulation thread holds the gate for one frame, and a frame can wait on main,
+/// so this must be short; the call fails rather than wedging main.
+static const NSTimeInterval kThinCoreGateMainThreadWait = 0.5;
+/// Gate budget for the same calls from any other thread (the save-state
+/// completion handlers run on a global queue).
+static const NSTimeInterval kThinCoreGateOffMainThreadWait = 5.0;
+
+/// Longest the MAIN thread waits in `-stopEmulation` for the teardown thread
+/// while the app is active (plain quit / Save & Quit from the pause menu).
+/// Past this, the core is leaked rather than letting a core that hangs in
+/// `retro_deinit` (flycast, waiting on its own mutex) get the app killed.
+static const NSTimeInterval kThinTeardownMainWaitForeground = 3.0;
+/// The same wait when the app is not active — chiefly `willTerminate`, where
+/// FrontBoard allows 5 s for EVERYTHING before 0x8BADF00D ("Failed to
+/// terminate gracefully after 5.0s").
+static const NSTimeInterval kThinTeardownMainWaitBackground = 1.5;
+/// How long the teardown thread waits for the emulation loop to finish its
+/// last frame. Off main, so generous. If the loop never exits the core is
+/// left alone: tearing it down under a live `retro_run` would crash.
+static const NSTimeInterval kThinTeardownLoopJoinWait = 10.0;
+/// Same as the emulation thread's: `retro_deinit` and friends can recurse deep.
+static const NSUInteger kThinTeardownThreadStackSize = 2 * 1024 * 1024;
+
+/// `NSError` code for a core dylib whose previous session is still tearing down.
+static const NSInteger kThinErrorCodeCoreStillTearingDown = 20;
+
+/// Gate budget for the calling thread (see the two constants above).
+static inline NSTimeInterval thin_core_gate_wait_for_calling_thread(void) {
+    return NSThread.isMainThread ? kThinCoreGateMainThreadWait : kThinCoreGateOffMainThreadWait;
+}
+
+/// Core dylib paths whose teardown did not finish: the main thread gave up
+/// waiting, or the emulation loop never exited. `dlopen` returns the same image
+/// for the same path, so loading one of these again would re-enter a core that
+/// is still (or forever) inside its own teardown. Guarded by
+/// `s_thinWedgedCoreLock`; a path leaves the set when its teardown finishes.
+static os_unfair_lock s_thinWedgedCoreLock = OS_UNFAIR_LOCK_INIT;
+static NSMutableSet<NSString *> *s_thinWedgedCorePaths;
+
+static BOOL thin_core_path_is_wedged(NSString *path) {
+    if (path.length == 0) return NO;
+    os_unfair_lock_lock(&s_thinWedgedCoreLock);
+    const BOOL wedged = [s_thinWedgedCorePaths containsObject:path];
+    os_unfair_lock_unlock(&s_thinWedgedCoreLock);
+    return wedged;
+}
+
+/// Must be called with `s_thinWedgedCoreLock` held.
+static void thin_set_core_path_wedged_locked(NSString *path, BOOL wedged) {
+    if (path.length == 0) return;
+    if (wedged) {
+        if (!s_thinWedgedCorePaths) {
+            s_thinWedgedCorePaths = [NSMutableSet set];
+        }
+        [s_thinWedgedCorePaths addObject:path];
+    } else {
+        [s_thinWedgedCorePaths removeObject:path];
+    }
+}
 
 // ---------------------------------------------------------------------------
 // MARK: - Thread-local current-instance pointer (for static C callbacks)
@@ -3214,6 +3312,8 @@ static bool thin_environment(unsigned cmd, void *data) {
 
 - (instancetype)init {
     if ((self = [super init])) {
+        _coreCallGate = [PVThinCoreCallGate new];
+        _teardownCompletedCleanly.store(false);
         // The app's generic pre-extraction (`handleArchives`) stays off: it runs
         // before the dylib is loaded, so it can't tell an arcade core that reads
         // its romset zip directly (MAME, FBNeo) from one that needs the ROM
@@ -3333,6 +3433,7 @@ static bool thin_environment(unsigned cmd, void *data) {
 }
 
 - (void)dealloc {
+    _deallocating = YES;
     [self stopEmulation];
     [self unloadCore];
 #if HAVE_RCHEEVOS
@@ -3369,6 +3470,24 @@ static bool thin_environment(unsigned cmd, void *data) {
 - (BOOL)loadCoreAtPath:(NSString *)corePath error:(NSError **)error {
     if (_dylibHandle) {
         [self unloadCore];
+    }
+
+    // `dlopen` of a path that is already loaded hands back the SAME image, so a
+    // core whose previous session never finished tearing down (see
+    // -stopEmulation) would be re-initialised over globals that are still in
+    // use — or, for a core wedged on its own mutex, hang the new boot. Refuse
+    // until that teardown finishes.
+    if (thin_core_path_is_wedged(corePath)) {
+        ELOG(@"ThinFrontend: refusing to load %@ — its previous session is still tearing down",
+             corePath.lastPathComponent);
+        if (error) {
+            *error = [NSError errorWithDomain:@"PVThinLibretroFrontend"
+                                         code:kThinErrorCodeCoreStillTearingDown
+                                     userInfo:@{NSLocalizedDescriptionKey:
+                                         @"The previous game on this core is still shutting down. "
+                                         @"Try again in a moment, or restart the app."}];
+        }
+        return NO;
     }
 
     ILOG(@"ThinFrontend: loading core at %@", corePath);
@@ -3578,6 +3697,11 @@ static NSString * const kThinArchiveExtractionDirectory = @"ThinLibretroContent"
 
     ILOG(@"ThinFrontend: startWithROMPath[%@] begin path=%@",
          self.coreIdentifier ?: @"?", romPath.lastPathComponent);
+
+    // A new session may call into the core again. Nothing can be inside the
+    // gate here: the emulation loop is not running yet, and -startEmulation
+    // refuses to boot while a previous teardown of this instance is in flight.
+    [_coreCallGate reopen];
 
     // Clear any hint / error captured from a previous load attempt so a fresh
     // failure surfaces only the current attempt's diagnostics (if any).
@@ -4088,12 +4212,41 @@ static NSString * const kThinArchiveExtractionDirectory = @"ThinLibretroContent"
 }
 
 - (void)resetEmulation {
-    if (_sym.retro_reset) {
+    if (!_sym.retro_reset) {
+        return;
+    }
+    // Re-entrant from the frame (pending reset after a core-option change runs
+    // here on the emulation thread, which already holds the gate).
+    const BOOL ran = [_coreCallGate performWithTimeout:thin_core_gate_wait_for_calling_thread() block:^{
         ILOG(@"ThinFrontend: retro_reset");
-        _sym.retro_reset();
+        self->_sym.retro_reset();
+    }];
+    if (!ran) {
+        WLOG(@"ThinFrontend: retro_reset skipped — core is tearing down or busy");
     }
 }
 
+/// Stop the core: the emulation loop, then the libretro teardown
+/// (`context_destroy`, `retro_unload_game`, `retro_deinit`, Vulkan/GL release).
+///
+/// The teardown runs on a dedicated thread, and the caller (the MAIN thread:
+/// quit, Save & Quit, `willTerminate`) waits for it only up to
+/// `kThinTeardownMainWait*`. It used to run entirely on main: flycast's
+/// `retro_deinit` blocked on an internal mutex — held by its texture-loader
+/// thread, which a save state on a GCD worker was queued behind as well — and
+/// FrontBoard killed the app (0x8BADF00D, "Failed to terminate gracefully").
+/// A core that hangs in teardown is now leaked instead: main moves on, the
+/// dylib path is marked wedged so it is not re-entered, and the teardown
+/// thread keeps `self` (and so the dylib, which only -dealloc closes) alive.
+///
+/// Ordering on the teardown thread:
+///   1. join the emulation loop (bounded; if it never exits, touch nothing);
+///   2. take the core-call gate, waiting out an in-flight save/load state;
+///   3. SRAM flush, rcheevos and netpacket teardown, Vulkan idle, then
+///      `context_destroy` with the core's GL context current, `retro_unload_game`,
+///      `retro_deinit`, and our own HW-context release.
+/// The gate is latched before any of that, on main, so no save/load/reset can
+/// start once the stop has been requested.
 - (void)stopEmulation {
     // Guard: the boot thread may still be inside retro_load_game. Calling
     // retro_deinit / retro_unload_game against a core that is mid-load crashes
@@ -4113,6 +4266,72 @@ static NSString * const kThinArchiveExtractionDirectory = @"ThinLibretroContent"
     if (_coreDeinited) {
         return;
     }
+    if (_deallocating) {
+        // `self` cannot be retained by another thread from inside -dealloc.
+        // The emulation loop's thread holds a strong reference while it runs,
+        // so it has already exited and the join returns at once.
+        [self _beginStopOnCallingThread];
+        _teardownCorePath = [_loadedCorePath copy];
+        [self _runCoreTeardownOnCurrentThread];
+        if (_teardownCompletedCleanly.load()) {
+            [super stopEmulation];
+        }
+        return;
+    }
+    if (_teardownStarted) {
+        // A second stop (Save & Quit then willTerminate, or a stop that already
+        // timed out once): never a second teardown, just the same bounded wait.
+        // `_coreDeinited` (checked above) is already YES if that teardown
+        // finished; the base class's run state was reset then.
+        if ([self _awaitCoreTeardown]) {
+            [super stopEmulation];
+        }
+        return;
+    }
+
+    _teardownStarted = YES;
+    [self _beginStopOnCallingThread];
+
+    _teardownDone = dispatch_semaphore_create(0);
+    _teardownCompletedCleanly.store(false);
+    _teardownCorePath = [_loadedCorePath copy];
+    os_unfair_lock_lock(&s_thinWedgedCoreLock);
+    _teardownThreadFinished = NO;
+    os_unfair_lock_unlock(&s_thinWedgedCoreLock);
+
+    // The thread owns one reference to `self`, released on MAIN after it is
+    // done. Not `-initWithTarget:` (whose retain is dropped on the teardown
+    // thread itself): if main already gave up and released everything, that
+    // drop would be the last one and -dealloc — UIKit-owning base class
+    // included — would run on the teardown thread.
+    dispatch_semaphore_t done = _teardownDone;
+    void *retainedSelf = (__bridge_retained void *)self;
+    NSThread *thread = [[NSThread alloc] initWithBlock:^{
+        __unsafe_unretained PVThinLibretroFrontend *frontend = (__bridge PVThinLibretroFrontend *)retainedSelf;
+        [frontend _runCoreTeardownOnCurrentThread];
+        dispatch_semaphore_signal(done);
+        dispatch_async(dispatch_get_main_queue(), ^{
+            CFRelease(retainedSelf);
+        });
+    }];
+    thread.name = @"PVThinLibretro-Teardown";
+    thread.qualityOfService = NSQualityOfServiceUserInitiated;
+    thread.stackSize = kThinTeardownThreadStackSize;
+    [thread start];
+
+    if ([self _awaitCoreTeardown]) {
+        // The loop is joined, so the base class's join returns at once; it
+        // still resets its own run state (isRunning / isOn) as before.
+        [super stopEmulation];
+    }
+}
+
+/// Everything about a stop that belongs on the calling (main) thread: latch the
+/// gate, stop the main-affine peripherals, and tell the emulation loop to exit
+/// after its current iteration. Deliberately NOT `[super stopEmulation]` — its
+/// join on `emulationLoopThreadLock` is unbounded, on this thread.
+- (void)_beginStopOnCallingThread {
+    [_coreCallGate beginTeardown];
     _audioPaused = YES;
     // Stop peripheral interfaces
 #if PV_HAS_COREMOTION
@@ -4143,7 +4362,65 @@ static NSString * const kThinArchiveExtractionDirectory = @"ThinLibretroContent"
 #if PV_HAS_COREMIDI
     thin_midi_shutdown();
 #endif
-    // Flush battery save (SRAM) before tearing down the core
+    // The non-blocking half of -[PVCoreObjCBridge stopEmulationWithMessage:]
+    // (haptics are already stopped by PVEmulatorCore.stopEmulation()). With the
+    // gate latched, the loop's last iteration skips its frame.
+    self.shouldStop = YES;
+    self.isFrontBufferReady = NO;
+    [self.frontBufferCondition signal];
+}
+
+/// Teardown thread body (also run inline from -dealloc). Records the outcome
+/// for `-_awaitCoreTeardown` and the wedged-dylib registry.
+- (void)_runCoreTeardownOnCurrentThread {
+    BOOL clean = NO;
+    @autoreleasepool {
+        clean = [self _joinLoopAndTearDownCore];
+    }
+    _teardownCompletedCleanly.store(clean);
+    os_unfair_lock_lock(&s_thinWedgedCoreLock);
+    _teardownThreadFinished = YES;
+    // A loop that never exited means the core is still live: keep the dylib
+    // marked so nothing re-enters it. Otherwise it is free again, even if main
+    // stopped waiting long ago.
+    thin_set_core_path_wedged_locked(_teardownCorePath, !clean);
+    os_unfair_lock_unlock(&s_thinWedgedCoreLock);
+}
+
+/// Returns NO, having torn down nothing, if the emulation loop did not exit.
+- (BOOL)_joinLoopAndTearDownCore {
+    // Join the loop here, off main. NSLock must be unlocked by the thread that
+    // locked it, so lock and unlock on this one thread.
+    NSLock *loopLock = self.emulationLoopThreadLock;
+    if (![loopLock lockBeforeDate:[NSDate dateWithTimeIntervalSinceNow:kThinTeardownLoopJoinWait]]) {
+        ELOG(@"ThinFrontend: emulation loop still running %.0f s after stop — leaving the core loaded "
+             @"(tearing it down under a live frame would crash)", kThinTeardownLoopJoinWait);
+        return NO;
+    }
+    [loopLock unlock];
+
+    // Wait out a save/load state in flight on another thread. Unbounded: this
+    // thread is the one place allowed to park, and nobody waits on it unbounded.
+    if (![_coreCallGate enterForTeardownWithTimeout:PVThinCoreCallGateWaitForever]) {
+        return NO;
+    }
+    @try {
+        [self _tearDownCoreHoldingCoreGate];
+    } @finally {
+        [_coreCallGate leaveTeardown];
+    }
+    return YES;
+}
+
+/// The libretro teardown proper. Runs with the emulation loop gone and the
+/// core-call gate held, on the teardown thread (or inline from -dealloc).
+- (void)_tearDownCoreHoldingCoreGate {
+    // Core callbacks fired during unload/deinit resolve the frontend through
+    // this TLS pointer, and a fresh thread has none.
+    _thinCurrentTLS = self;
+
+    // Flush battery save (SRAM) first, so it is on disk even if the core then
+    // hangs in its teardown.
     [self saveBatterySaveData];
     // Unblock a blocking core thread so it doesn't deadlock waiting on _blockingCoreTick.
     if (_isBlockingCore && _blockingCoreTick) {
@@ -4162,11 +4439,11 @@ static NSString * const kThinArchiveExtractionDirectory = @"ThinLibretroContent"
         }
         _blockingCoreThread = nil;
     }
-    // Tear down the rcheevos runtime so the per-frame tick stops and the
-    // server session is unloaded before retro_unload_game.
+    // Tear down the rcheevos runtime before retro_unload_game. The per-frame
+    // tick ran inside the gate on the (now exited) emulation loop, so it can
+    // no longer race rc_client_destroy.
     [self unloadAchievements];
 
-    [super stopEmulation]; // stops emulation loop thread before retro teardown
     [self clearAllInput];
     // The loop is gone, so nothing else can call into the netpacket callbacks.
     [self _thinNetpacketTeardown];
@@ -4178,6 +4455,10 @@ static NSString * const kThinArchiveExtractionDirectory = @"ThinLibretroContent"
     // pipelines, command pools, etc. Calling it after retro_deinit
     // invokes a callback into partially-torn-down core state → crash
     // on second game boot (dangling Vulkan handles in core globals).
+    //
+    // Lock order is gate → `_vulkanQueueLock`, never the reverse: nothing takes
+    // the gate while holding the queue lock (a core's own threads take only the
+    // queue lock, through the Vulkan interface callbacks).
 #if HAVE_VULKAN
     if (_hwRenderCallback.context_type == RETRO_HW_CONTEXT_VULKAN) {
         os_unfair_lock_lock(&_vulkanQueueLock);
@@ -4187,15 +4468,20 @@ static NSString * const kThinArchiveExtractionDirectory = @"ThinLibretroContent"
         os_unfair_lock_unlock(&_vulkanQueueLock);
     }
 #endif
+#if !TARGET_OS_MACCATALYST && !TARGET_OS_OSX
+    // A GL core releases its textures/FBOs in context_destroy and needs its
+    // context current to do so. EAGL current-context is per thread; the
+    // emulation thread that had `_glContext` current has exited (joined above),
+    // so it is current nowhere else. (A core render thread, if any, uses its
+    // own sharegroup context, never this one.)
+    if (_glContext) {
+        [EAGLContext setCurrentContext:_glContext];
+    }
+#endif
     if (_hwRenderCallback.context_destroy) {
         ILOG(@"ThinFrontend: calling context_destroy before retro_deinit");
         _hwRenderCallback.context_destroy();
         _hwRenderCallback.context_destroy = NULL;
-    }
-
-    if (_videoBufferData) {
-        free(_videoBufferData);
-        _videoBufferData = NULL;
     }
 
     if (_sym.retro_unload_game) {
@@ -4217,6 +4503,10 @@ static NSString * const kThinArchiveExtractionDirectory = @"ThinLibretroContent"
         _memoryMapCount = 0;
     }
     [self teardownHardwareContext];
+#if !TARGET_OS_MACCATALYST && !TARGET_OS_OSX
+    // Never hand a thread back with a context current.
+    [EAGLContext setCurrentContext:nil];
+#endif
     _thinCurrentTLS = nil;
     // Clear the non-thread-local fallback so a lingering core render thread can't
     // resolve a torn-down instance. Guarded so we never stomp a different frontend
@@ -4224,6 +4514,60 @@ static NSString * const kThinArchiveExtractionDirectory = @"ThinLibretroContent"
     if (s_thinHWActive == self) {
         s_thinHWActive = nil;
     }
+}
+
+/// MAIN-thread side of the stop: wait, bounded, for the teardown thread.
+/// Returns YES when the core was torn down cleanly, in which case the caller
+/// finishes with `[super stopEmulation]` (whose loop join is then instant).
+/// On NO the core is leaked and the caller must not call super: its join is
+/// unbounded and the loop may still be running.
+- (BOOL)_awaitCoreTeardown {
+    dispatch_semaphore_t done = _teardownDone;
+    if (!done) {
+        return NO;
+    }
+    const NSTimeInterval budget = [self _teardownMainThreadWaitBudget];
+    const BOOL finished = dispatch_semaphore_wait(
+        done, dispatch_time(DISPATCH_TIME_NOW, (int64_t)(budget * NSEC_PER_SEC))) == 0;
+    if (finished) {
+        // Leave it signalled for any later waiter (a second stop, a reboot check).
+        dispatch_semaphore_signal(done);
+    }
+    if (finished && _teardownCompletedCleanly.load()) {
+        // Freed only now, on main: the software presenter reads this buffer on
+        // main, which could not interleave with the wait above.
+        if (_videoBufferData) {
+            free(_videoBufferData);
+            _videoBufferData = NULL;
+        }
+        return YES;
+    }
+    // The core is stuck in its teardown (or its last frame never ended). Leak
+    // it: the teardown thread keeps `self` and the dylib alive until it
+    // finishes, and the path stays marked wedged so it is not dlopen'ed into a
+    // new session meanwhile. Nothing here may touch core-visible state.
+    os_unfair_lock_lock(&s_thinWedgedCoreLock);
+    if (!_teardownThreadFinished) {
+        thin_set_core_path_wedged_locked(_teardownCorePath, YES);
+    }
+    os_unfair_lock_unlock(&s_thinWedgedCoreLock);
+    ELOG(@"ThinFrontend: core teardown did not finish within %.1f s (%@) — leaving it to finish "
+         @"in the background; this core is unavailable until it does",
+         budget, _teardownCorePath.lastPathComponent ?: @"?");
+    self.isOn = NO;
+    return NO;
+}
+
+/// How long main may wait for the teardown. Shorter when the app is not active,
+/// which covers `willTerminate` and its 5 s budget for everything.
+- (NSTimeInterval)_teardownMainThreadWaitBudget {
+#if TARGET_OS_IOS || TARGET_OS_TV
+    if (NSThread.isMainThread &&
+        UIApplication.sharedApplication.applicationState != UIApplicationStateActive) {
+        return kThinTeardownMainWaitBackground;
+    }
+#endif
+    return kThinTeardownMainWaitForeground;
 }
 
 - (void)setPauseEmulation:(BOOL)flag {
@@ -4463,6 +4807,23 @@ NSNotificationName const PVEmulatorCoreDidFailToStartNotification =
 // ---------------------------------------------------------------------------
 
 - (nullable NSData *)saveState {
+    // Called from a global queue by the completion-handler variant below, i.e.
+    // concurrently with the emulation thread and with -stopEmulation. The gate
+    // makes `retro_serialize_size` / `retro_serialize` wait out the frame in
+    // flight, and refuses them once teardown has begun: flycast takes the same
+    // internal mutex in serialize and in `retro_deinit`, and a save racing the
+    // quit teardown was a watchdog kill.
+    __block NSData *data = nil;
+    const BOOL ran = [_coreCallGate performWithTimeout:thin_core_gate_wait_for_calling_thread() block:^{
+        data = [self _saveStateHoldingCoreGate];
+    }];
+    if (!ran) {
+        ELOG(@"[SAVE-DIAG] ThinFrontend: save state refused — core is tearing down or busy");
+    }
+    return data;
+}
+
+- (nullable NSData *)_saveStateHoldingCoreGate {
     if (!_sym.retro_serialize_size || !_sym.retro_serialize) {
         ELOG(@"[SAVE-DIAG] ThinFrontend: core lacks retro_serialize_size or retro_serialize symbol — core does not support save states");
         return nil;
@@ -4486,6 +4847,19 @@ NSNotificationName const PVEmulatorCoreDidFailToStartNotification =
 }
 
 - (BOOL)loadState:(NSData *)stateData {
+    // Same gate as -saveState: retro_unserialize must not overlap retro_run or
+    // the teardown, and must not start after it.
+    __block BOOL loaded = NO;
+    const BOOL ran = [_coreCallGate performWithTimeout:thin_core_gate_wait_for_calling_thread() block:^{
+        loaded = [self _loadStateHoldingCoreGate:stateData];
+    }];
+    if (!ran) {
+        ELOG(@"[SAVE-DIAG] ThinFrontend: load state refused — core is tearing down or busy");
+    }
+    return loaded;
+}
+
+- (BOOL)_loadStateHoldingCoreGate:(NSData *)stateData {
     ILOG(@"[SAVE-DIAG] ThinFrontend: loadState ENTER size=%zu", (size_t)(stateData ? stateData.length : 0));
     if (!_sym.retro_unserialize) {
         ELOG(@"[SAVE-DIAG] ThinFrontend: loadState FAIL — core lacks retro_unserialize symbol");
@@ -4648,6 +5022,19 @@ NSNotificationName const PVEmulatorCoreDidFailToStartNotification =
 // MARK: - Battery saves (SRAM)
 
 - (BOOL)saveBatterySaveData {
+    // Reads core memory, so it takes the gate too. The teardown thread calls
+    // this while it owns the gate, which the gate allows.
+    __block BOOL saved = NO;
+    const BOOL ran = [_coreCallGate performWithTimeout:thin_core_gate_wait_for_calling_thread() block:^{
+        saved = [self _saveBatterySaveDataHoldingCoreGate];
+    }];
+    if (!ran) {
+        WLOG(@"ThinFrontend: SRAM flush refused — core is tearing down or busy");
+    }
+    return saved;
+}
+
+- (BOOL)_saveBatterySaveDataHoldingCoreGate {
     if (!_sym.retro_get_memory_data || !_sym.retro_get_memory_size) return NO;
     void *data = _sym.retro_get_memory_data(RETRO_MEMORY_SAVE_RAM);
     size_t size = _sym.retro_get_memory_size(RETRO_MEMORY_SAVE_RAM);
@@ -5089,8 +5476,20 @@ NSNotificationName const PVEmulatorCoreDidFailToStartNotification =
 - (NSUInteger)channelCount { return 2; }
 
 - (void)executeFrame {
-    [self runFrame];
-    [self tickAchievements];
+    // The frame (retro_run plus every per-frame callback into the core, and the
+    // rcheevos tick that reads core memory) runs inside the core-call gate, so a
+    // save/load state on another thread can never overlap it. Bounded: when a
+    // save holds the gate, skip this frame instead of parking the emulation
+    // thread inside `@synchronized(self)`. Refused outright once teardown began.
+    if (![_coreCallGate enterWithTimeout:kThinCoreGateFrameWait]) {
+        return;
+    }
+    @try {
+        [self runFrame];
+        [self tickAchievements];
+    } @finally {
+        [_coreCallGate leave];
+    }
 }
 
 // ---------------------------------------------------------------------------
@@ -5148,6 +5547,31 @@ NSNotificationName const PVEmulatorCoreDidFailToStartNotification =
     if (_bootInFlight) {
         WLOG(@"ThinFrontend: startEmulation ignored — a boot is already in flight");
         return;
+    }
+    if (_teardownStarted) {
+        // This instance was stopped before. Booting again is only safe once
+        // that teardown has really finished: the core may still be inside
+        // `retro_deinit` on the teardown thread.
+        const BOOL finished = _teardownDone
+            && dispatch_semaphore_wait(_teardownDone, DISPATCH_TIME_NOW) == 0;
+        if (finished) {
+            dispatch_semaphore_signal(_teardownDone);
+        }
+        if (!finished || !_teardownCompletedCleanly.load()) {
+            ELOG(@"ThinFrontend: startEmulation refused — the previous session's teardown has not finished");
+            NSError *error = [NSError errorWithDomain:@"PVThinLibretroFrontend"
+                                                 code:kThinErrorCodeCoreStillTearingDown
+                                             userInfo:@{NSLocalizedDescriptionKey:
+                                                 @"The previous game on this core is still shutting down."}];
+            _bootInFlight = YES;
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [self _finishBootWithSuccess:NO error:error];
+            });
+            return;
+        }
+        _teardownStarted = NO;
+        _teardownDone = nil;
+        _teardownCorePath = nil;
     }
     _bootInFlight = YES;
     _startAborted = NO;
