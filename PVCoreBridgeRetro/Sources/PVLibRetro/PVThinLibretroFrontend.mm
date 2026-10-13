@@ -18,6 +18,7 @@
 //
 
 #import "PVThinLibretroFrontend.h"
+#import "PVRetroArchStateDecoder.h"
 #import <PVCoreBridgeRetro/PVCoreBridgeRetro-Swift.h>
 
 @import Foundation;
@@ -4494,6 +4495,29 @@ NSNotificationName const PVEmulatorCoreDidFailToStartNotification =
         ELOG(@"[SAVE-DIAG] ThinFrontend: loadState FAIL — nil or empty stateData");
         return NO;
     }
+
+    // States written by the full RetroArch runtime (Provenance 3.3.x) may be
+    // rzip-compressed and/or wrapped in a RASTATE container. Unwrap to the
+    // core's own bytes. A recognised file that fails to decode must not reach
+    // the core: its container bytes would only fail or corrupt the load.
+    PVRetroArchStateFormat stateFormat = PVRetroArchStateFormatRaw;
+    NSError *decodeError = nil;
+    NSData *coreData = [PVRetroArchStateDecoder coreDataFromStateData:stateData
+                                                               format:&stateFormat
+                                                                error:&decodeError];
+    if (!coreData) {
+        ELOG(@"[SAVE-DIAG] ThinFrontend: loadState FAIL — %@ save state could not be decoded: %@",
+             [PVRetroArchStateDecoder nameForFormat:stateFormat],
+             decodeError.localizedFailureReason ?: decodeError.localizedDescription);
+        return NO;
+    }
+    if (stateFormat != PVRetroArchStateFormatRaw) {
+        ILOG(@"[SAVE-DIAG] ThinFrontend: decoded legacy RetroArch %@ save state: %zu file bytes -> %zu core bytes",
+             [PVRetroArchStateDecoder nameForFormat:stateFormat], (size_t)stateData.length, (size_t)coreData.length);
+    } else {
+        ILOG(@"[SAVE-DIAG] ThinFrontend: save state format: raw core data");
+    }
+    stateData = coreData;
 
     // Validate size against what the core expects. A size mismatch usually means
     // the save state came from a different core version or a different build of the

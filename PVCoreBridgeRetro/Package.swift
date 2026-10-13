@@ -118,7 +118,9 @@ let package = Package(
                 .linkedFramework("AudioToolbox"),
                 .linkedFramework("Accelerate"),
                 .linkedFramework("CoreMIDI", .when(platforms: [.iOS, .macOS, .macCatalyst, .visionOS])),
-                .linkedFramework("Network")
+                .linkedFramework("Network"),
+                // PVRetroArchStateDecoder inflates rzip save states.
+                .linkedLibrary("z")
             ]
         ),
         // ------------------- libretro -------------------
