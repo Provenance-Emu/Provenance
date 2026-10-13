@@ -24,6 +24,8 @@ on:
       - 'Scripts/dev/*.rb'
       - '**/Core.plist'
       - 'Scripts/audits/pbxproj_sources_allowlist.txt'
+      - 'Scripts/audits/check_shipping_vs_dev.py'
+      - 'Tuist/ProjectDescriptionHelpers/CoreProduct.swift'
       - '.github/workflows/xcode-project-sources.yml'
   pull_request:
     branches: [develop, master]
@@ -43,6 +45,8 @@ on:
       - 'Scripts/dev/*.rb'
       - '**/Core.plist'
       - 'Scripts/audits/pbxproj_sources_allowlist.txt'
+      - 'Scripts/audits/check_shipping_vs_dev.py'
+      - 'Tuist/ProjectDescriptionHelpers/CoreProduct.swift'
       - '.github/workflows/xcode-project-sources.yml'
   workflow_dispatch:
 
@@ -61,6 +65,13 @@ jobs:
 
       - name: Check Xcode projects reference their sources
         run: python3 Scripts/audits/check_pbxproj_sources.py
+
+      # The shipping pbxproj and the Tuist dev workspace must link the same core
+      # packages until the shipping project is generated too (dedup design, phase 2).
+      - name: Shipping project vs dev core rows
+        run: |
+          python3 Scripts/tests/test_check_shipping_vs_dev.py
+          python3 Scripts/audits/check_shipping_vs_dev.py
 
       # Core packaging guards: manifest parsing, package module/resource-bundle naming, the
       # CI-target core patterns, and the swap script (skips without the xcodeproj gem + plutil).

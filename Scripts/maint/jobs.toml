@@ -295,6 +295,13 @@ run = ["Scripts/audits/check-pr-reviews.sh"]
 args_hint = "[PR number…]"
 needs = ["gh"]
 
+[jobs.shipping-vs-dev]
+title = "Shipping project vs Tuist core rows"
+category = "Audits"
+description = "Core packages linked by Provenance.xcodeproj must match the dev workspace's CoreProduct rows until Tuist generates the shipping project (also checked per PR)."
+check = ["python3", "Scripts/audits/check_shipping_vs_dev.py"]
+mode = "manual"
+
 [jobs.weak-exports]
 title = "Weak C++ exports shared between images"
 category = "Audits"
