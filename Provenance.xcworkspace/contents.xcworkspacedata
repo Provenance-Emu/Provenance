@@ -17,9 +17,6 @@
          location = "group:Cores/FCEU/PVFCEU.xcodeproj">
       </FileRef>
       <FileRef
-         location = "group:Cores/snes9x/PVSNES9x.xcodeproj">
-      </FileRef>
-      <FileRef
          location = "group:Cores/Mupen64Plus/PVMupen64Plus.xcodeproj">
       </FileRef>
       <FileRef
