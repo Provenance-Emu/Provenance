@@ -45,6 +45,19 @@ public final class PViCadeGamepadDirectionPad: GCControllerDirectionPad {
         handler?(self, x, y)
     }
 
+    /// Sets the pad from axis values in -1...1 (y up), updating the four direction
+    /// buttons (digital at 0.5) and firing the pad handler.
+    func update(x: Float, y: Float) {
+        _xAxis.value = x
+        _yAxis.value = y
+        for (button, pressed, value) in [(_up, y > 0.5, max(0, y)), (_down, y < -0.5, max(0, -y)),
+                                         (_left, x < -0.5, max(0, -x)), (_right, x > 0.5, max(0, x))] {
+            if button.isPressed != pressed { button.isPressed = pressed }
+            button.value = value
+        }
+        handler?(self, x, y)
+    }
+
     public override var xAxis: GCControllerAxisInput {
         return _xAxis
     }

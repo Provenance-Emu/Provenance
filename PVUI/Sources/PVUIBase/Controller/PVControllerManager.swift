@@ -134,6 +134,23 @@ public final class PVControllerManager: NSObject, ObservableObject {
 
 #if canImport(UIKit) && canImport(GameController)
     public private(set) var iCadeController: PViCadeController?
+
+    /// Wrappers for pads the system exposes with no extended or micro profile (the
+    /// Nintendo Switch Online N64 controller on tvOS). Keyed by the real controller;
+    /// everything downstream (slots, cores, pause binding) sees only the wrapper.
+    private var physicalProfileWrappers: [ObjectIdentifier: PVPhysicalProfileController] = [:]
+
+    /// The wrapper standing in for `controller`, creating one when the pad needs it.
+    private func physicalProfileWrapper(for controller: GCController) -> GCController {
+        if controller is PVPhysicalProfileController || controller is PViCadeController { return controller }
+        let id = ObjectIdentifier(controller)
+        if let existing = physicalProfileWrappers[id] { return existing }
+        guard PVPhysicalProfileController.isNeeded(for: controller) else { return controller }
+        let wrapper = PVPhysicalProfileController(wrapping: controller)
+        physicalProfileWrappers[id] = wrapper
+        ILOG("[INPUT-DIAG] synthesized extended gamepad for \(controller.vendorName ?? "?") (no extended/micro profile)")
+        return wrapper
+    }
 #endif
     public private(set) var keyboardController: GCController?
     public var hasControllers: Bool {
@@ -335,6 +352,8 @@ public final class PVControllerManager: NSObject, ObservableObject {
             return
         }
 
+        let controller = physicalProfileWrapper(for: controller)
+
         objectWillChange.send()
         let wrapper = getRemappableController(for: controller)
         /// Mappings are loaded in PVRemappableController.init(), no need to load again
@@ -397,6 +416,7 @@ public final class PVControllerManager: NSObject, ObservableObject {
 
     @MainActor
     @objc func disconnectController(_ controller: GCController) {
+        let controller = physicalProfileWrappers.removeValue(forKey: ObjectIdentifier(controller)) ?? controller
         ILOG("Controller disconnected: \(controller.vendorName ?? "No Vendor")")
         guard !PVControllerManager.shared.skipControllerBinding else {
             return
@@ -610,7 +630,7 @@ public final class PVControllerManager: NSObject, ObservableObject {
     }
 
     public var controllers: [GCController] {
-        var controllers = GCController.controllers()
+        var controllers = GCController.controllers().map { physicalProfileWrappers[ObjectIdentifier($0)] ?? $0 }
         if let aController = iCadeController {
             controllers.append(aController)
         } else if let aController = keyboardController {
