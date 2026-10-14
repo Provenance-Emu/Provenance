@@ -18,7 +18,7 @@ public enum CorePlist {
   public static let pvCoreIdentifier: String = "com.provenance.core.emuThree"
   public static let pvPrincipleClass: String = "PVEmuThree.PVEmuThreeCore"
   public static let pvProjectName: String = "EmuThreeDS"
-  public static let pvProjectURL: String = "https://github.com/emuPlace/emuThreeDS"
+  public static let pvProjectURL: String = "https://github.com/Provenance-Emu/emuThreeDS"
   public static let pvProjectVersion: String = "1.0.6"
   public static let pvSupportedSystems: [String] = ["com.provenance.3ds"]
 
