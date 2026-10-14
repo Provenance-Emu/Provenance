@@ -18,7 +18,7 @@ struct InGameControllerRemapView: View {
 
     var body: some View {
         NavigationStack {
-            ButtonRemappingView(controller: controller)
+            ButtonRemappingView(controller: controller, startInPressMode: true)
                 .toolbar {
                     ToolbarItem(placement: .confirmationAction) {
                         Button("Done") { dismissAction?() }

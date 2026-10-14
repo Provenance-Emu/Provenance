@@ -767,6 +767,13 @@ struct ButtonRemappingView: View {
     @State private var tapToRemapMode = false
     @State private var showingTapToRemap = false
 
+    /// - Parameter startInPressMode: open in tap-to-remap "press" mode (the in-game
+    ///   Remap Controller sheet does this); Settings opens in list mode.
+    init(controller: GCController, startInPressMode: Bool = false) {
+        self.controller = controller
+        _tapToRemapMode = State(initialValue: startInPressMode)
+    }
+
     private var remappableController: PVRemappableController {
         getRemappableControllerWrapper(for: controller)
     }
