@@ -219,7 +219,7 @@ final class PauseTileMenuViewModel: ObservableObject {
             ))
         }
         // Save Clip — feature-flagged, only visible when clip buffering is active
-        if (featureFlags.clipBuffering || featureFlags.clipBuffering) && emulatorVC.isClipBufferingActive {
+        if Defaults[.clipBufferingEnabled] && emulatorVC.isClipBufferingActive {
             recordingTiles.append(PauseMenuTile(
                 id: "saveClip",
                 icon: "scissors.badge.ellipsis",

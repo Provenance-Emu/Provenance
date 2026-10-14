@@ -13,7 +13,6 @@ import Photos
 #endif
 import PVLogging
 import PVSettings
-import PVFeatureFlags
 import Defaults
 
 // MARK: - Live Broadcast (iOS + tvOS)
@@ -280,7 +279,6 @@ extension PVEmulatorViewController {
     /// - If the user previously declined, does nothing.
     public func startClipBufferingIfAvailable() {
         guard #available(iOS 15.0, tvOS 15.0, *) else { return }
-        guard PVFeatureFlagsManager.shared.clipBuffering else { return }
         guard PVRecordingManager.shared.isAvailable else { return }
 
         if Defaults[.clipBufferingEnabled] {

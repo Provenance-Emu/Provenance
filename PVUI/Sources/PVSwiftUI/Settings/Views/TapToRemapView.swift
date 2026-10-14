@@ -3,12 +3,12 @@
 //  PVUI
 //
 //  Created by Claude on 3/17/26.
-//  Part of #705 — tap-to-remap UX (feature-flagged, default OFF)
+//  Part of #705 — tap-to-remap UX
 //
 //  This view listens for a physical controller button press and uses
 //  the pressed button as the destination in a button remapping.
-//  Gated behind the `tapToRemapUI` feature flag so it can be developed
-//  independently without affecting default remapping behaviour.
+//  Always available from the controller settings Button Mappings header
+//  (Press Mode / List Mode toggle).
 //
 
 import SwiftUI

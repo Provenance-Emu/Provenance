@@ -971,10 +971,6 @@ public extension Defaults.Keys {
     // first-class user toggles so they're discoverable in Advanced Settings
     // and don't depend on the FeatureFlags JSON / remote-config plumbing.
 
-    /// Explicit SRAM/battery save import/export buttons in the game context menu.
-    /// Defaults to true (matches the previous FeatureFlag default).
-    static let sramImportExport = Key<Bool>("sramImportExport", default: true)
-
     /// Auto-loads phone-case companion DeltaSkins when a known case
     /// controller (Backbone, Kishi, PocketTaco, etc.) is connected. Defaults
     /// false; user must opt in via Advanced Settings.
@@ -985,9 +981,9 @@ public extension Defaults.Keys {
     static let liveBroadcast = Key<Bool>("liveBroadcast", default: false)
 
     /// Native SwiftUI netplay lobby, host/join UI, and per-core netplay
-    /// callbacks. Works fully against RetroArch cores + mGBA link-cable;
-    /// native cores other than mGBA have stub conformances.
-    static let netplayEnabled = Key<Bool>("netplayEnabled", default: false)
+    /// callbacks. Works with mGBA link cable and libretro cores that register
+    /// netpacket (gpSP, melonDS DS).
+    static let netplayEnabled = Key<Bool>("netplayEnabled", default: true)
 
     /// Opt-in online patch catalog search (RomHacking.net via privacy-preserving
     /// discovery). Off by default — no network calls until the user enables it.
@@ -996,7 +992,7 @@ public extension Defaults.Keys {
     /// Mupen64Plus Transfer Pak slot UI — assign a Game Boy ROM to a
     /// controller port for Pokémon Stadium / Mario Golf integration.
     /// Works on native PVMupen + thin libretro wrapper; ~20-game registry.
-    static let mupenTransferPak = Key<Bool>("mupenTransferPak", default: false)
+    static let mupenTransferPak = Key<Bool>("mupenTransferPak", default: true)
 
     // MARK: - Promoted from FeatureFlags (2026-05-31)
     // Second wave of promotions. Each was an internal PVFeature enum case with
@@ -1005,19 +1001,17 @@ public extension Defaults.Keys {
     // enum cases remain for the Feature Flags debug/remote-config path; the
     // consumers now read these Defaults keys instead.
 
-    /// Tap-to-remap controller UI (in-development button remap flow).
-    static let tapToRemapUI = Key<Bool>("tapToRemapUI", default: false)
-
     /// Companion-controller overlay (trackball / numpad / DSU peripherals) in
     /// the pause menu. DSU integration still incomplete.
     static let companionController = Key<Bool>("companionController", default: false)
 
     /// Light-gun crosshair overlay for lightgun-capable cores. Style is
     /// configured separately via `lightGunCrosshairStyle`.
-    static let lightGunCrosshair = Key<Bool>("lightGunCrosshair", default: false)
+    static let lightGunCrosshair = Key<Bool>("lightGunCrosshair", default: true)
 
     /// Drag-to-reposition on-screen skin buttons (layout editor). iOS only.
-    static let skinButtonReposition = Key<Bool>("skinButtonReposition", default: false)
+    /// On by default; no Advanced toggle (EmulatorWithSkinView reads it).
+    static let skinButtonReposition = Key<Bool>("skinButtonReposition", default: true)
 
     /// Programmatic touch overlay (PVTouchOverlay) replaces the generated default skin
     /// and the classic on-screen pad when no packaged skin is selected. iOS only.

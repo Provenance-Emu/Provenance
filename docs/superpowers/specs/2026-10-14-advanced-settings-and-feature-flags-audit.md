@@ -15,37 +15,38 @@ The thin libretro wrapper is the only wrapper since 2026-10-03, which retires so
 | OpenGL Renderer toggle (`useMetal`) | `PVThinLibretroFrontend` forces `alwaysUseMetal`, so the toggle only affects native cores that do not force Metal. Still real for those. | Subtitle now says native cores only. |
 | Overlay Style picker | A plain preference for the programmatic overlay; nothing experimental about it. | Moved to the Skins section. |
 
-## Beta labels: owner decision needed
+## Beta labels: owner decision
 
-All of these are wired and read somewhere; whether they are "done" is a product call. Recommendation in the last column.
+All of these are wired and read somewhere. The owner decided the promotions below on 2026-10-14 (Apple rejects "Beta" wording, so it is gone from every promoted string). The Recommendation column is the original; the Decision column is what shipped.
 
-| Toggle (default) | Read by | State in code | Recommendation |
-|---|---|---|---|
-| Light Gun Crosshair (off) | `EmulatorWithSkinView` | Renders; style configured under Mouse / Light Gun. No beta label already. | Done. Consider default ON, or move the toggle next to the style picker. |
-| Tap to Remap (Beta, off) | `ControllerSettingsView` (mode button) | Press-mode remap UI exists; subtitle says "still rough". | Needs a device check. If press mode works for a full remap, drop "(Beta)". |
-| Companion Controller (Beta, off) | pause menu (tile + retro) | Overlay works; subtitle says DSU integration incomplete. | Keep beta until `PVControllerDSU` pairing is verified on device. |
-| Reposition Skin Buttons (Beta, off, iOS) | `EmulatorWithSkinView` | Drag editor for DeltaSkins. The programmatic overlay now has its own live editor (`PVTouchOverlay`), so two editors exist. | Decide: finish for DeltaSkins, or retire in favour of the overlay editor. |
-| AirPlay Audio Menu (off) | pause menu | Audio route picker only. | Keep; "finish" = video AirPlay, a separate project. |
-| Netplay (off) | lobby, settings, pause menu | Works for mGBA link cable and netpacket libretro cores; other native cores are stubs. Untested on devices since the Oct rebuild. | Keep off by default; label stays honest. |
-| Live Broadcast (off) | pause menu | ReplayKit Go Live; subtitle says early. | Keep. |
-| N64 Transfer Pak (off) | context menu, scene coordinator, pause menu, emulator VC | Full path exists on native and thin. | Candidate to default ON once device-verified. |
-| SRAM Import / Export (on, iOS) | `GameContextMenu` | Simple menu actions. | Done. Could stop being a toggle. |
-| Case Companion Skins (off, iOS) | `CaseControllerSkinCoordinator`, skin selection | Wired (the May audit note asking "wire or remove" is resolved). | Keep as preference. |
-| Use Modern Web Server (off) | `PVWebServerManager` | Hummingbird server; parity with GCDWebServer not documented. | Keep until parity is listed. |
-| Auto JIT (off, non-App Store) | app delegate | Fine. | Keep. |
-| Disable Auto Lock (off) | app delegate | Fine. | Keep. |
-| iCloud Sync (non-App Store) | — | Fine. | Keep. |
-| UI Mode picker | root view | `.uikit` keeps the legacy `PVSettingsViewController` alive; it still lists `useMetal`, `autoJIT`, `iCloudSync` rows that must mirror Advanced. | Decide whether UIKit mode survives 3.4.0; if not, the legacy settings VC can go. |
+| Toggle (default) | Read by | State in code | Recommendation | Decision |
+|---|---|---|---|---|
+| Light Gun Crosshair (off) | `EmulatorWithSkinView` | Renders; style configured under Mouse / Light Gun. No beta label already. | Done. Consider default ON, or move the toggle next to the style picker. | Done 2026-10-14: default ON, toggle kept, subtitle without beta wording. |
+| Tap to Remap (Beta, off) | `ControllerSettingsView` (mode button) | Press-mode remap UI exists; subtitle says "still rough". | Needs a device check. If press mode works for a full remap, drop "(Beta)". | Done 2026-10-14: always on; toggle and `Defaults[.tapToRemapUI]` removed (the `PVFeature.tapToRemapUI` case stays as a remote-config mirror). |
+| Companion Controller (Beta, off) | pause menu (tile + retro) | Overlay works; subtitle says DSU integration incomplete. | Keep beta until `PVControllerDSU` pairing is verified on device. | Not changed: stays Beta, off. |
+| Reposition Skin Buttons (Beta, off, iOS) | `EmulatorWithSkinView` | Drag editor for DeltaSkins. The programmatic overlay now has its own live editor (`PVTouchOverlay`), so two editors exist. | Decide: finish for DeltaSkins, or retire in favour of the overlay editor. | Done 2026-10-14: `skinButtonReposition` defaults ON, Advanced toggle removed; the editor entry point moves to the pause menu. |
+| AirPlay Audio Menu (off) | pause menu | Audio route picker only. | Keep; "finish" = video AirPlay, a separate project. | Not changed. |
+| Netplay (off) | lobby, settings, pause menu | Works for mGBA link cable and netpacket libretro cores; other native cores are stubs. Untested on devices since the Oct rebuild. | Keep off by default; label stays honest. | Done 2026-10-14: default ON, toggle kept, subtitle names the supported cores. |
+| Live Broadcast (off) | pause menu | ReplayKit Go Live; subtitle says early. | Keep. | Not changed. |
+| N64 Transfer Pak (off) | context menu, scene coordinator, pause menu, emulator VC | Full path exists on native and thin. | Candidate to default ON once device-verified. | Done 2026-10-14: default ON, toggle kept. |
+| SRAM Import / Export (on, iOS) | `GameContextMenu` | Simple menu actions. | Done. Could stop being a toggle. | Done 2026-10-14: unconditional; toggle and `sramImportExport` key removed. |
+| Case Companion Skins (off, iOS) | `CaseControllerSkinCoordinator`, skin selection | Wired (the May audit note asking "wire or remove" is resolved). | Keep as preference. | Not changed. |
+| Use Modern Web Server (off) | `PVWebServerManager` | Hummingbird server; parity with GCDWebServer not documented. | Keep until parity is listed. | Not changed. |
+| Auto JIT (off, non-App Store) | app delegate | Fine. | Keep. | Not changed. |
+| Disable Auto Lock (off) | app delegate | Fine. | Keep. | Not changed. |
+| iCloud Sync (non-App Store) | — | Fine. | Keep. | Not changed. |
+| UI Mode picker | root view | `.uikit` keeps the legacy `PVSettingsViewController` alive; it still lists `useMetal`, `autoJIT`, `iCloudSync` rows that must mirror Advanced. | Decide whether UIKit mode survives 3.4.0; if not, the legacy settings VC can go. | Not changed. |
 
 ## Remaining feature flags (remote-config style, keep)
 
 `inAppFreeROMs` (non-App Store), `romPathMigrator` (always on; could be hard-coded), `contentlessCores`
-(off; gates DOOM/Quake style cores), `tapToRemapUI`/`clipBuffering`/`companionController`/`lightGunCrosshair`/
+(off; gates DOOM/Quake style cores), `tapToRemapUI`/`companionController`/`lightGunCrosshair`/
 `skinButtonReposition`/`airPlayMenu` (mirrors of the Advanced toggles; the Defaults keys are what the UI reads).
 
-`clipBuffering` is the one hidden flag with no Advanced toggle: `PVEmulatorViewController+Recording` gates the
-rolling ReplayKit buffer on it. Either promote it to an Advanced toggle like the rest ("Gameplay Clips (Beta)")
-or remove the feature; recommendation: promote, since the opt-in prompt and settings keys already exist.
+`clipBuffering` was the one hidden flag with no Advanced toggle. Done 2026-10-14: promoted as "Gameplay Clips"
+(Advanced toggle bound to `Defaults[.clipBufferingEnabled]`; the existing opt-in prompt is the only other gate) and
+the flag is removed from `PVFeatureFlags` (enum case, static, both `features.json` files, manager property). The
+pause menu Save Clip entries now read `Defaults[.clipBufferingEnabled]`.
 
 ## Other
 

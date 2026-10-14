@@ -288,27 +288,25 @@ private struct GameContextMenuItems: View {
                     Label("Export Saves", systemImage: "square.and.arrow.up")
                 }
                 .disabled(!hasSaveStates && !hasBatterySaves)
-                if Defaults[.sramImportExport] {
-                    if hasBatterySaves {
-                        Button {
-                            contextMenuDelegate?.gameContextMenu(menu, didRequestExportSRAMFor: game)
-                        } label: {
-                            Label("Export Battery Save", systemImage: "memorychip")
-                        }
-                    }
-                    #if !os(tvOS)
+                if hasBatterySaves {
                     Button {
-                        contextMenuDelegate?.gameContextMenu(menu, didRequestImportSRAMFor: game)
+                        contextMenuDelegate?.gameContextMenu(menu, didRequestExportSRAMFor: game)
                     } label: {
-                        Label("Import Battery Save", systemImage: "square.and.arrow.down")
+                        Label("Export Battery Save", systemImage: "memorychip")
                     }
-                    Button {
-                        contextMenuDelegate?.gameContextMenu(menu, didRequestImportSaveFor: game)
-                    } label: {
-                        Label("Import Save Bundle", systemImage: "archivebox.fill")
-                    }
-                    #endif
                 }
+                #if !os(tvOS)
+                Button {
+                    contextMenuDelegate?.gameContextMenu(menu, didRequestImportSRAMFor: game)
+                } label: {
+                    Label("Import Battery Save", systemImage: "square.and.arrow.down")
+                }
+                Button {
+                    contextMenuDelegate?.gameContextMenu(menu, didRequestImportSaveFor: game)
+                } label: {
+                    Label("Import Save Bundle", systemImage: "archivebox.fill")
+                }
+                #endif
                 // Show download option for games available in CloudKit but not downloaded locally
                 if iCloudSyncEnabled && hasCloudRecord && !isDownloaded {
                     Button {

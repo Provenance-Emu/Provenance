@@ -23,19 +23,21 @@ internal struct AdvancedTogglesView: View {
     // Promoted from PVFeatureFlags 2026-05-22 (commits 908087274c / 72a567288b).
     // Surfaced here so users can find and toggle them without depending on
     // the Feature Flags JSON or remote-config plumbing.
-    @Default(.sramImportExport) var sramImportExport
+    // 2026-10-14: SRAM Import / Export (always on), Tap to Remap (always on) and
+    // Reposition Skin Buttons (default on; editor entry point lives in the pause
+    // menu) lost their toggles. Light Gun Crosshair, Netplay and N64 Transfer Pak
+    // now default on and keep theirs. Clip buffering is promoted as Gameplay Clips.
     @Default(.caseCompanionSkins) var caseCompanionSkins
     @Default(.liveBroadcast) var liveBroadcast
     @Default(.netplayEnabled) var netplayEnabled
     @Default(.mupenTransferPak) var mupenTransferPak
 
-    // Promoted from PVFeatureFlags 2026-05-31. Internal/experimental features
-    // surfaced as off-by-default toggles so they ship "available but disabled."
-    @Default(.tapToRemapUI) var tapToRemapUI
+    // Promoted from PVFeatureFlags 2026-05-31 as off-by-default toggles;
+    // Companion Controller and AirPlay Audio Menu are still off by default.
     @Default(.companionController) var companionController
     @Default(.lightGunCrosshair) var lightGunCrosshair
-    @Default(.skinButtonReposition) var skinButtonReposition
     @Default(.airPlayMenu) var airPlayMenu
+    @Default(.clipBufferingEnabled) var clipBufferingEnabled
 
     /// Check if the app is from the App Store
     let isAppStore: Bool = {
@@ -113,18 +115,9 @@ internal struct AdvancedTogglesView: View {
                                 showChevron: false)
                 }
 
-                // Beta-promoted toggles. Each was a PVFeatureFlag entry until
-                // 2026-05-22; promoted to first-class user settings so they're
-                // discoverable. All default OFF except sramImportExport.
+                // Toggles that were PVFeatureFlag entries until 2026-05-22;
+                // promoted to first-class user settings so they're discoverable.
                 #if os(iOS)
-                PremiumThemedToggle(isOn: $sramImportExport) {
-                    SettingsRow(title: "SRAM Import / Export",
-                                subtitle: "Show explicit battery-save import and export actions in the game context menu. iOS only — tvOS syncs saves via iCloud.",
-                                icon: .sfSymbol("square.and.arrow.up.on.square"),
-                                showChevron: false)
-                }
-                .padding(.vertical, 4)
-
                 PremiumThemedToggle(isOn: $caseCompanionSkins) {
                     SettingsRow(title: "Case Companion Skins",
                                 subtitle: "Auto-load phone-case companion DeltaSkins when a known case controller is connected (Backbone, Kishi, PocketTaco, Soolra, etc.).",
@@ -144,7 +137,7 @@ internal struct AdvancedTogglesView: View {
 
                 PremiumThemedToggle(isOn: $netplayEnabled) {
                     SettingsRow(title: "Netplay",
-                                subtitle: "Host and join rooms from the pause menu. Works with mGBA link cable and with libretro cores that support netplay packets, such as gpSP and melonDS DS. Other native cores have stub conformances and don't connect yet.",
+                                subtitle: "Host and join rooms from the pause menu. Works with mGBA link cable and with libretro cores that support netplay packets, such as gpSP and melonDS DS.",
                                 icon: .sfSymbol("wifi"),
                                 showChevron: false)
                 }
@@ -158,16 +151,7 @@ internal struct AdvancedTogglesView: View {
                 }
                 .padding(.vertical, 4)
 
-                // Experimental toggles promoted from PVFeatureFlags 2026-05-31.
-                // All default OFF — features are in-development / incomplete.
-                PremiumThemedToggle(isOn: $tapToRemapUI) {
-                    SettingsRow(title: "Tap to Remap (Beta)",
-                                subtitle: "In-development tap-to-remap controller UI. Lets you reassign buttons by tapping them; still rough.",
-                                icon: .sfSymbol("arrow.triangle.swap"),
-                                showChevron: false)
-                }
-                .padding(.vertical, 4)
-
+                // Toggles promoted from PVFeatureFlags 2026-05-31.
                 PremiumThemedToggle(isOn: $companionController) {
                     SettingsRow(title: "Companion Controller (Beta)",
                                 subtitle: "Show a companion-controller overlay (trackball / numpad / DSU peripherals) in the pause menu. DSU integration is incomplete.",
@@ -184,15 +168,13 @@ internal struct AdvancedTogglesView: View {
                 }
                 .padding(.vertical, 4)
 
-                #if os(iOS)
-                PremiumThemedToggle(isOn: $skinButtonReposition) {
-                    SettingsRow(title: "Reposition Skin Buttons (Beta)",
-                                subtitle: "Drag-to-reposition on-screen skin buttons in a layout editor. iOS only; still experimental.",
-                                icon: .sfSymbol("hand.draw"),
+                PremiumThemedToggle(isOn: $clipBufferingEnabled) {
+                    SettingsRow(title: "Gameplay Clips",
+                                subtitle: "Keeps a rolling buffer so you can save recent clips from the pause menu. Uses screen recording.",
+                                icon: .sfSymbol("scissors"),
                                 showChevron: false)
                 }
                 .padding(.vertical, 4)
-                #endif
 
                 PremiumThemedToggle(isOn: $airPlayMenu) {
                     SettingsRow(title: "AirPlay Audio Menu",

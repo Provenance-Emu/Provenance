@@ -763,7 +763,7 @@ struct ButtonRemappingView: View {
     @State private var showSaveProfileError = false
     @State private var saveProfileErrorMessage = ""
 
-    // Tap-to-remap (promoted to Defaults[.tapToRemapUI])
+    // Tap-to-remap (always available)
     @State private var tapToRemapMode = false
     @State private var showingTapToRemap = false
 
@@ -847,15 +847,13 @@ struct ButtonRemappingView: View {
                 HStack {
                     Text("Button Mappings")
                     Spacer()
-                    if Defaults[.tapToRemapUI] {
-                        Button(action: { tapToRemapMode.toggle() }) {
-                            Label(tapToRemapMode ? "Press Mode" : "List Mode",
-                                  systemImage: tapToRemapMode ? "gamecontroller.fill" : "list.bullet")
-                                .font(.caption)
-                                .foregroundColor(tapToRemapMode ? accentColor : .secondary)
-                        }
-                        .buttonStyle(.plain)
+                    Button(action: { tapToRemapMode.toggle() }) {
+                        Label(tapToRemapMode ? "Press Mode" : "List Mode",
+                              systemImage: tapToRemapMode ? "gamecontroller.fill" : "list.bullet")
+                            .font(.caption)
+                            .foregroundColor(tapToRemapMode ? accentColor : .secondary)
                     }
+                    .buttonStyle(.plain)
                 }
             } footer: {
                 if tapToRemapMode {

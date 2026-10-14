@@ -786,7 +786,7 @@ struct RetroMenuView: View {
             if Defaults[.liveBroadcast] {
                 broadcastButton
             }
-            if PVFeatureFlagsManager.shared.clipBuffering {
+            if Defaults[.clipBufferingEnabled] {
                 saveClipButton
             }
 #endif

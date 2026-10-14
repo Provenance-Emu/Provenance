@@ -26,9 +26,6 @@ public enum PVFeature: String, CaseIterable, Sendable {
     /// destination button from a list, the user presses a physical button on their controller.
     /// Disabled by default while the feature is being developed.
     case tapToRemapUI = "tapToRemapUI"
-    /// Always-on ReplayKit clip buffering: keeps a rolling recording buffer so users
-    /// can save recent gameplay clips at any time. Disabled until the feature is stable.
-    case clipBuffering = "clipBuffering"
     /// Companion Controller overlay — lets the device act as a secondary controller
     /// for systems that have non-standard input peripherals (trackball, numpad, Atari 5200 stick).
     /// Disabled by default while the DSU integration is still in progress.
@@ -139,11 +136,6 @@ public struct FeatureFlag: Codable, Sendable {
     public static let tapToRemapUI = FeatureFlag(
         enabled: false,
         description: "Tap-to-remap UX: press a physical controller button to select the remapping destination instead of choosing from a list. Disabled by default during development."
-    )
-
-    public static let clipBuffering = FeatureFlag(
-        enabled: false,
-        description: "Always-on ReplayKit clip buffering. Keeps a rolling recording buffer so users can save recent gameplay clips. Disabled until stable."
     )
 
     public static let companionController = FeatureFlag(
@@ -560,7 +552,6 @@ public final class PVFeatureFlags: @unchecked Sendable {
     public var romPathMigrator: Bool { featureStates[.romPathMigrator] ?? false }
     public var contentlessCores: Bool { featureStates[.contentlessCores] ?? false }
     public var tapToRemapUI: Bool { featureStates[.tapToRemapUI] ?? false }
-    public var clipBuffering: Bool { featureStates[.clipBuffering] ?? false }
     public var companionController: Bool { featureStates[.companionController] ?? false }
     public var lightGunCrosshair: Bool { featureStates[.lightGunCrosshair] ?? false }
     public var skinButtonReposition: Bool { featureStates[.skinButtonReposition] ?? false }
