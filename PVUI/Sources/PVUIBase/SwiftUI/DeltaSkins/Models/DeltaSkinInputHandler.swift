@@ -6,6 +6,7 @@ import PVLogging
 import PVUIBase
 import PVSettings
 import Defaults
+import PVTouchOverlay
 #if canImport(UIKit)
 import UIKit
 #endif
@@ -17,23 +18,9 @@ import GameController
 open class DeltaSkinInputHandler: ObservableObject {
     /// Button IDs that fire only on press — release events are suppressed.
     /// This Set is `static` so it is allocated once rather than on every release call.
-    private static let extendedFunctionIds: Set<String> = [
-        "screenshot", "restart", "reset", "reboot", "quit", "exit",
-        "savestates", "save_states", "saves",
-        "cheats", "cheatcodes", "cheat_codes",
-        "skins", "skin", "controllerskins",
-        "filters", "filter", "videofilters",
-        "speedmenu", "speed_menu", "gamespeed",
-        "toggleanalog", "toggle_analog", "analogmode",
-        "swapdiscs", "swap_discs", "swapdisc", "changedisc",
-        "coreoptions", "core_options", "coresettings",
-        "moreinfo", "more_info", "gameinfo", "info",
-        "reversescreens", "reverse_screens", "swapscreens", "swap_screens",
-        "haptics", "togglehaptics", "toggle_haptics",
-        "controllers", "controllersettings", "controller_settings",
-        "orientation", "orientationlock", "orientation_lock", "toggleorientation",
-        "resolution", "cycleresolution", "cycle_resolution"
-    ]
+    /// Shared with the touch lockout (`TouchInputClassifier`), so every function button handled here is
+    /// also one a sliding finger can never press.
+    private static let extendedFunctionIds: Set<String> = TouchInputClassifier.frontendFunctionTokens
 
     /// The emulator core to send inputs to
     private weak var emulatorCore: PVEmulatorCore?

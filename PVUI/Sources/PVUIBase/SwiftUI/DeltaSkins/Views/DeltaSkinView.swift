@@ -4,6 +4,7 @@ import AVFoundation  // Add this for audio buffer types
 import GameController
 import PVLogging
 import PVEmulatorCore
+import PVTouchOverlay
 #if canImport(UIKit)
 import PVSettings
 #endif
@@ -118,8 +119,16 @@ public struct DeltaSkinView: View {
     // Track multiple touch points for multi-touch support
     @State private var touchPoints: [ObjectIdentifier: CGPoint] = [:]
 
-    // Map touch IDs to button IDs for tracking which touch is pressing which button
-    @State private var touchToButtonMap: [ObjectIdentifier: String] = [:]
+    // Map touch IDs to the input commands each touch holds. One entry is the normal case;
+    // multi-button touch makes a touch hold every gameplay button under it.
+    @State private var touchToButtonMap: [ObjectIdentifier: Set<String>] = [:]
+
+    // Touches that went down on a system control (menu, quick save / load, fast-forward, switches...).
+    // They stay latched to it and never slide onto another control. See `SkinTouchSelection`.
+    @State private var systemLatchedTouches: Set<ObjectIdentifier> = []
+
+    // Multi-button (fat finger) touch: one touch presses every gameplay button under it.
+    @Default(.skinMultiButtonTouch) private var multiButtonTouch
 
     // Map touch IDs to D-pad button for tracking which touch is on the D-pad
     @State private var touchToDPadMap: [ObjectIdentifier: DeltaSkinButton] = [:]
@@ -856,16 +865,16 @@ public struct DeltaSkinView: View {
                                 // Mark this touch as processed
                                 processedTouches.insert(touch.id)
 
-                                // Handle this touch location
-                                handleTouchAtLocation(location, in: geometry.size, touchId: touch.id)
+                                // Handle this touch location (touch-down: system controls may fire)
+                                handleTouchAtLocation(location, in: geometry.size, touchId: touch.id, isTouchBegin: true)
 
                                 // Start a long-press timer for turbo toggle (0.6s hold)
                                 if Defaults[.turboEnabled] {
                                     let touchId = touch.id
                                     let timer = Timer.scheduledTimer(withTimeInterval: 0.6, repeats: false) { _ in
                                         Task { @MainActor in
-                                            // Determine which button this touch is on
-                                            if let buttonId = touchToButtonMap[touchId] {
+                                            // Determine which button this touch is on (only when it holds exactly one)
+                                            if let held = touchToButtonMap[touchId], held.count == 1, let buttonId = held.first {
                                                 let wasEnabled = inputHandler.turboManager.toggleTurbo(for: buttonId)
                                                 turboToggledThisTouch.insert(touchId)
                                                 DLOG("Turbo toggled via long-press for \(buttonId): \(wasEnabled ? "ON" : "OFF")")
@@ -953,13 +962,9 @@ public struct DeltaSkinView: View {
                                 // Remove from processed touches
                                 processedTouches.remove(touch.id)
 
-                                // Release any button associated with this touch
-                                // Remove from map FIRST, then check if button should be released
-                                if let buttonId = touchToButtonMap[touch.id] {
-                                    DLOG("Releasing button \(buttonId) for touch \(touch.id)")
-                                    touchToButtonMap.removeValue(forKey: touch.id)
-                                    handleButtonRelease(buttonId)
-                                }
+                                // Release every button this touch holds (map entry removed first)
+                                systemLatchedTouches.remove(touch.id)
+                                releaseHeldInputs(for: touch.id)
 
                                 // Release D-pad directions if this touch was on the D-pad
                                 if touchToDPadMap[touch.id] != nil {
@@ -1282,7 +1287,13 @@ public struct DeltaSkinView: View {
     }
 
     /// Handle a touch at the given location
-    private func handleTouchAtLocation(_ location: CGPoint, in size: CGSize, touchId: ObjectIdentifier) {
+    ///
+    /// `isTouchBegin` is true only for touch-down. System controls (menu, quick save / load,
+    /// fast-forward, screenshot, console switches... see `TouchInputClassifier`) fire only for a touch that
+    /// begins on them; a moving touch reaches gameplay buttons only, and a touch that began on a system
+    /// control stays latched to it.
+    private func handleTouchAtLocation(_ location: CGPoint, in size: CGSize, touchId: ObjectIdentifier,
+                                       isTouchBegin: Bool = false) {
         DLOG("handleTouchAtLocation: location=\(location), touchId=\(touchId)")
         // Store the touch location for visual feedback and direction detection
         touchLocations.insert(location)
@@ -1331,114 +1342,68 @@ public struct DeltaSkinView: View {
             }
         }
 
-        // Check if THIS specific touch is already associated with a regular button
-        // If it is and still on that button, don't re-process
-        if let existingButtonId = touchToButtonMap[touchId] {
-            // Check if touch is still on the same button
-            if let buttons = skin.buttons(for: traits) {
-                let existingButton = buttons.first { button in
-                    let inputCommand = extractInputCommand(from: button)
-                    return inputCommand == existingButtonId
-                }
-
-                if let button = existingButton {
-                    let effective = buttonWithEffectiveFrame(button)
-                    let hitFrame = hitTestFrame(for: effective)
-                    let scaledFrame = CGRect(
-                        x: hitFrame.minX * buttonScaleX + xOffset,
-                        y: yOffset + (hitFrame.minY * buttonScaleY),
-                        width: hitFrame.width * buttonScaleX,
-                        height: hitFrame.height * buttonScaleY
-                    )
-
-                    if scaledFrame.contains(location) {
-                        // Still on the same button, no need to re-process
-                        DLOG("Touch \(touchId) still on button \(existingButtonId), skipping re-processing")
-                        return
-                    }
-                }
+        // Plain-button continuation (rules in `SkinTouchSelection.continuation`). Single-button mode
+        // keeps a touch on its button while it stays inside it; multi-button mode re-derives the held set
+        // below on every move; a touch latched to a system control never moves on to anything else.
+        let held = touchToButtonMap[touchId] ?? []
+        let isLatched = systemLatchedTouches.contains(touchId)
+        let stillOnHeld = !held.isEmpty && buttons.contains { button in
+            guard held.contains(extractInputCommand(from: button)) else { return false }
+            return scaledHitFrame(for: buttonWithEffectiveFrame(button), buttonScaleX: buttonScaleX,
+                                  buttonScaleY: buttonScaleY, xOffset: xOffset, yOffset: yOffset).contains(location)
+        }
+        switch SkinTouchSelection.continuation(holdsButtons: !held.isEmpty, stillOnHeld: stillOnHeld,
+                                               isLatched: isLatched, multiButton: multiButtonTouch) {
+        case .keep:
+            DLOG("Touch \(touchId) still on \(held), skipping re-processing")
+            return
+        case .releaseAndIgnore:
+            // Began on a system control and left it: release, and press nothing until the finger lifts.
+            releaseHeldInputs(for: touchId)
+            return
+        case .resolve:
+            if !held.isEmpty, !multiButtonTouch {
+                DLOG("Touch \(touchId) moved off \(held), releasing")
+                releaseHeldInputs(for: touchId)
             }
-
-            // Touch moved off the button it was associated with
-            // Remove this touch's association FIRST, then check if button should be released
-            DLOG("Touch \(touchId) moved off button \(existingButtonId), releasing")
-            touchToButtonMap.removeValue(forKey: touchId)
-            // Now check if any other touches are still holding this button
-            handleButtonRelease(existingButtonId)
         }
 
-        // Find all candidate buttons (both D-pad and regular) that the touch might be hitting
-        struct ButtonCandidate {
-            let button: DeltaSkinButton
-            let distance: CGFloat
-            let isDPad: Bool
-        }
-
-        var candidates: [ButtonCandidate] = []
+        // Find every control under the touch; `SkinTouchSelection` picks the winner (closest, D-pad
+        // preferred unless a button is much closer), drops system controls for a sliding touch, and in
+        // multi-button mode adds the other plain gameplay buttons to hold with it.
+        var candidates: [SkinTouchCandidate] = []
+        var buttonsById: [String: DeltaSkinButton] = [:]
 
         for button in buttons {
             let effective = buttonWithEffectiveFrame(button)
-            // Check if button is a D-pad by examining its input type
             let isDPad: Bool
-            switch button.input {
-            case .directional:
-                isDPad = true
-            default:
-                isDPad = false
-            }
+            if case .directional = button.input { isDPad = true } else { isDPad = false }
 
+            let isHit: Bool
             if isDPad {
                 // For D-pad, check if location is in any direction's hit area
-                if isLocationInDPadDirection(location, button: effective, buttonScaleX: buttonScaleX, buttonScaleY: buttonScaleY, xOffset: xOffset, yOffset: yOffset) {
-                    let distance = distanceToButtonCenter(location, button: effective, buttonScaleX: buttonScaleX, buttonScaleY: buttonScaleY, xOffset: xOffset, yOffset: yOffset)
-                    candidates.append(ButtonCandidate(button: button, distance: distance, isDPad: true))
-                }
+                isHit = isLocationInDPadDirection(location, button: effective, buttonScaleX: buttonScaleX, buttonScaleY: buttonScaleY, xOffset: xOffset, yOffset: yOffset)
             } else {
                 // For regular buttons, use standard hit area with extension
-                let hitFrame = hitTestFrame(for: effective)
-                let scaledFrame = CGRect(
-                    x: hitFrame.minX * buttonScaleX + xOffset,
-                    y: yOffset + (hitFrame.minY * buttonScaleY),
-                    width: hitFrame.width * buttonScaleX,
-                    height: hitFrame.height * buttonScaleY
-                )
-
-                if scaledFrame.contains(location) {
-                    let distance = distanceToButtonCenter(location, button: effective, buttonScaleX: buttonScaleX, buttonScaleY: buttonScaleY, xOffset: xOffset, yOffset: yOffset)
-                    candidates.append(ButtonCandidate(button: button, distance: distance, isDPad: false))
-                }
+                isHit = scaledHitFrame(for: effective, buttonScaleX: buttonScaleX, buttonScaleY: buttonScaleY,
+                                       xOffset: xOffset, yOffset: yOffset).contains(location)
             }
+            guard isHit else { continue }
+
+            let distance = distanceToButtonCenter(location, button: effective, buttonScaleX: buttonScaleX, buttonScaleY: buttonScaleY, xOffset: xOffset, yOffset: yOffset)
+            candidates.append(SkinTouchCandidate(id: button.id, command: extractInputCommand(from: button),
+                                                 distance: distance, isDPad: isDPad,
+                                                 isThumbstick: isThumbstick(button), role: touchRole(of: button)))
+            buttonsById[button.id] = button
         }
 
-        // Sort candidates by priority: distance-based with D-pad preference
-        // If a D-pad is detected, prioritize it unless a regular button is significantly closer
-        candidates.sort { candidate1, candidate2 in
-            // If both are D-pad or both are regular, prefer closer one
-            if candidate1.isDPad == candidate2.isDPad {
-                return candidate1.distance < candidate2.distance
-            }
-
-            // Mixed types: prefer D-pad unless regular button is much closer
-            // Use a threshold: if regular button is 2x closer, prioritize it
-            if candidate1.isDPad && !candidate2.isDPad {
-                // candidate1 is D-pad, candidate2 is regular
-                // Prefer D-pad unless regular is significantly closer
-                return candidate2.distance > candidate1.distance * 2.0
-            } else {
-                // candidate1 is regular, candidate2 is D-pad
-                // Prefer D-pad unless regular is significantly closer
-                return candidate1.distance < candidate2.distance * 2.0
-            }
-        }
-
-        // Get the best candidate based on distance and type priority
-        let touchedButton = candidates.first?.button
-        let isDPadButton = candidates.first?.isDPad ?? false
+        let resolution = SkinTouchSelection.resolve(candidates, multiButton: multiButtonTouch, isTouchBegin: isTouchBegin)
 
         // Handle button state changes
-        if let button = touchedButton {
-            if isThumbstick(button) {
+        if let primary = resolution.primary, let button = buttonsById[primary.id] {
+            if primary.isThumbstick {
                 // Handle thumbstick
+                releaseHeldInputs(for: touchId)
                 Task {
                     if let (image, size) = await loadThumbstickImage(for: button) {
                         // Determine stick ID based on button ID (check for "left" or "right" in button ID)
@@ -1447,15 +1412,15 @@ public struct DeltaSkinView: View {
                         activeThumbsticks.append(ActiveThumbstickInfo(frame: effectiveThumbstick.frame, image: image, size: size, buttonId: stickId))
                     }
                 }
-            } else if isDPadButton, case .directional = button.input {
+            } else if primary.isDPad, case .directional = button.input {
                 // Special handling for D-pad buttons to allow direction changes
                 // Track this touch as being on the D-pad
+                releaseHeldInputs(for: touchId)
                 touchToDPadMap[touchId] = button
                 let effectiveButton = buttonWithEffectiveFrame(button)
                 handleDPadInput(effectiveButton, scale: buttonScaleX, xOffset: xOffset, yOffset: yOffset, mappingSize: mappingSize, touchId: touchId)
             } else {
-                // For non-D-pad buttons, use our multi-button press system
-                // If this touch was previously on the D-pad, release D-pad directions for it
+                // Plain buttons. If this touch was previously on the D-pad, release D-pad directions for it
                 if touchToDPadMap[touchId] != nil {
                     DLOG("Touch moved from D-pad to non-D-pad button, releasing D-pad directions")
                     // Remove from map first so releaseDPadDirectionsForTouch doesn't include it
@@ -1463,49 +1428,82 @@ public struct DeltaSkinView: View {
                     releaseDPadDirectionsForTouch(touchId)
                 }
 
-                // Extract the input command
-                let inputCommand = extractInputCommand(from: button)
-
-                // Use our enhanced button press handling that supports multiple buttons
-                // Only press if not already pressed (supports multiple touches on same button)
-                if !pressedButtons.contains(inputCommand) {
-                    handleButtonPress(inputCommand)
-                    DLOG("Pressed button \(inputCommand) via touch \(touchId)")
+                // This touch now holds `desired`. Update the map FIRST so `handleButtonRelease` sees what
+                // this touch no longer holds, then release the dropped inputs and press the new ones.
+                // Inputs another finger holds stay pressed.
+                let desired = resolution.commands
+                let previous = touchToButtonMap[touchId] ?? []
+                touchToButtonMap[touchId] = desired
+                for command in previous.subtracting(desired) {
+                    handleButtonRelease(command)
                 }
-
-                // Associate this touch with this button (update mapping even if already pressed)
-                touchToButtonMap[touchId] = inputCommand
-                DLOG("Associated touch \(touchId) with button \(inputCommand)")
+                for command in desired where !pressedButtons.contains(command) {
+                    handleButtonPress(command)
+                    DLOG("Pressed button \(command) via touch \(touchId)")
+                }
+                if resolution.latchesToSystem {
+                    systemLatchedTouches.insert(touchId)
+                }
+                DLOG("Associated touch \(touchId) with \(desired)")
 
                 // Don't update currentlyPressedButton - it's legacy and causes issues with multi-touch
                 // Each touch is tracked independently via touchToButtonMap and touchToDPadMap
             }
 
         } else {
-            // Touch is not on any button.
+            // Touch is not on any button it may press.
             // Check if it is on the NDS bottom screen touchscreen area.
             if let normalizedPoint = mapToNDSBottomScreen(location, in: size) {
                 DLOG("DS bottom screen touch began: normalized=\(normalizedPoint)")
+                releaseHeldInputs(for: touchId)
                 ndsScreenTouches.insert(touchId)
                 inputHandler.ndsBottomScreenTouched(at: normalizedPoint)
                 return
             }
 
             // Only release if this specific touch was associated with a button/D-pad
-            if let dpadButton = touchToDPadMap[touchId] {
+            if touchToDPadMap[touchId] != nil {
                 // This touch was on D-pad but moved off, release D-pad directions for this touch only
                 DLOG("Touch \(touchId) moved off D-pad, releasing directions for this touch")
                 releaseDPadDirectionsForTouch(touchId)
                 touchToDPadMap.removeValue(forKey: touchId)
-            } else if let buttonId = touchToButtonMap[touchId] {
+            } else {
                 // This touch was on a non-D-pad button but moved off, release it
-                // Remove this touch's association FIRST, then check if button should be released
-                DLOG("Touch \(touchId) moved off button \(buttonId), releasing")
-                touchToButtonMap.removeValue(forKey: touchId)
-                // Now check if any other touches are still holding this button
-                handleButtonRelease(buttonId)
+                releaseHeldInputs(for: touchId)
             }
             // Note: Don't clear currentlyPressedButton here - it's managed per-touch now
+        }
+    }
+
+    /// The role of a skin button for touch: D-pads are gameplay, console switches are system controls,
+    /// and a single input goes by its token (see `TouchInputClassifier`).
+    private func touchRole(of button: DeltaSkinButton) -> TouchInputRole {
+        if button.buttonKind == .hardwareSwitch { return .system }
+        switch button.input {
+        case .directional: return .gameplay
+        case .single(let command): return TouchInputClassifier.role(forToken: command)
+        }
+    }
+
+    /// A button's hit-test frame (`hitTestFrame(for:)`) scaled into view space.
+    private func scaledHitFrame(for button: DeltaSkinButton, buttonScaleX: CGFloat, buttonScaleY: CGFloat,
+                                xOffset: CGFloat, yOffset: CGFloat) -> CGRect {
+        let hitFrame = hitTestFrame(for: button)
+        return CGRect(
+            x: hitFrame.minX * buttonScaleX + xOffset,
+            y: yOffset + (hitFrame.minY * buttonScaleY),
+            width: hitFrame.width * buttonScaleX,
+            height: hitFrame.height * buttonScaleY
+        )
+    }
+
+    /// Drop everything `touchId` holds and release each input no other finger still holds. The map entry
+    /// is removed BEFORE releasing so `handleButtonRelease`'s other-finger check sees the post-lift state.
+    private func releaseHeldInputs(for touchId: ObjectIdentifier) {
+        guard let held = touchToButtonMap.removeValue(forKey: touchId) else { return }
+        DLOG("Releasing \(held) for touch \(touchId)")
+        for command in held {
+            handleButtonRelease(command)
         }
     }
 
@@ -2456,7 +2454,7 @@ public struct DeltaSkinView: View {
 
         // Check if any other touches are still holding this button
         // Only release if no other touches are associated with this button
-        let otherTouchesHoldingButton = touchToButtonMap.values.contains(buttonId)
+        let otherTouchesHoldingButton = touchToButtonMap.values.contains { $0.contains(buttonId) }
 
         // For D-pad buttons, check if any other D-pad touches would still activate this direction
         // This is a safety check - releaseDPadDirectionsForTouch should handle D-pad logic correctly
@@ -2629,6 +2627,7 @@ public struct DeltaSkinView: View {
         DLOG("Resetting DeltaSkinView touch state")
         touchLocations.removeAll()
         touchToButtonMap.removeAll()
+        systemLatchedTouches.removeAll()
         currentlyPressedButton = nil
         activeThumbsticks.removeAll()
     }
