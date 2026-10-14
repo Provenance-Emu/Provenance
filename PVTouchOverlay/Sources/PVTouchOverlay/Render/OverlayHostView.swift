@@ -14,6 +14,7 @@ public struct OverlayHostView: View {
     public let editing: Bool
     /// Held in `@State` so a parent re-render keeps the pressed-set (and so the releases).
     @State private var dispatcher: OverlayHitDispatcher
+    @Default(.arcadeMultiButtonTouch) private var arcadeMultiButtonTouch
 
     public init(layout: OverlayLayout, binding: SystemOverlayBinding, style: OverlayStyle, globalOpacity: Double,
                 hapticIntensity: Double, sink: any OverlayInputSink, editing: Bool = false) {
@@ -45,7 +46,8 @@ public struct OverlayHostView: View {
                     surface(group)
                 } else {
                     OverlayGroupView(group: group, palette: binding.palette, style: style, dispatcher: dispatcher,
-                                     sink: sink, hapticIntensity: hapticIntensity, editing: editing)
+                                     sink: sink, hapticIntensity: hapticIntensity, editing: editing,
+                                     multiButton: multiButton(for: group))
                         .offset(x: group.frame.minX, y: group.frame.minY)
                 }
             }
@@ -56,6 +58,11 @@ public struct OverlayHostView: View {
         .ignoresSafeArea()
         .onChange(of: editing) { _, isEditing in if isEditing { dispatcher.releaseAll() } }
         .onChange(of: layout) { _, newLayout in dispatcher.update(controls: Self.controls(of: newLayout)) }
+    }
+
+    private func multiButton(for group: ResolvedGroup) -> Bool {
+        OverlayMultiButtonTouch.applies(toGroup: group.id, familyID: binding.family(for: layout.padKind.subtype).id,
+                                        arcadeEnabled: arcadeMultiButtonTouch)
     }
 
     @ViewBuilder private func surface(_ group: ResolvedGroup) -> some View {

@@ -8,6 +8,7 @@ import PVSettings
 struct OverlayClusterRepresentable: UIViewRepresentable {
     let controls: [ResolvedControl]
     let origin: CGPoint
+    let multiButton: Bool
     let onChange: (Set<OverlayHit>) -> Void
 
     func makeUIView(context: Context) -> OverlayTouchCluster {
@@ -19,6 +20,7 @@ struct OverlayClusterRepresentable: UIViewRepresentable {
     func updateUIView(_ view: OverlayTouchCluster, context: Context) {
         view.controls = controls
         view.canvasOrigin = origin
+        view.multiButton = multiButton
         view.onChange = onChange
     }
 
@@ -60,6 +62,8 @@ struct OverlayGroupView: View {
     let sink: any OverlayInputSink
     let hapticIntensity: Double
     let editing: Bool
+    /// Multi-button ("fat finger") touch for this group's gameplay buttons.
+    var multiButton = false
     @State private var pressedState = OverlayPressedState()
     @State private var knob = OverlayKnobState()
     @State private var clickDetectors: [OverlayStickSide: OverlayStickClickDetector] = [:]
@@ -118,7 +122,8 @@ struct OverlayGroupView: View {
 
     @ViewBuilder private var touchLayer: some View {
         if let clusterFrame = clusterHitFrame {
-            OverlayClusterRepresentable(controls: clusterControls, origin: clusterFrame.origin) { hits in
+            OverlayClusterRepresentable(controls: clusterControls, origin: clusterFrame.origin,
+                                        multiButton: multiButton) { hits in
                 handle(hits)
             }
             .frame(width: clusterFrame.width, height: clusterFrame.height)

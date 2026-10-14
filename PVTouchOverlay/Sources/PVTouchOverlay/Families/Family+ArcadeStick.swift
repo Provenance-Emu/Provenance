@@ -6,6 +6,8 @@ import Foundation
 public enum ArcadeStickFamily: OverlayFamily {
     public static let id = "arcadeStick"
     public static let requiredSlots: [OverlayFamilySlot] = [.a, .b, .c, .x, .y, .z, .start, .select, .coin]
+    /// The group holding the six panel buttons (the only one with multi-button touch).
+    public static let faceGroupID = "face"
 
     private static let buttonSize: CGFloat = 48
     private static let buttonGap: CGFloat = 10
@@ -33,7 +35,8 @@ public enum ArcadeStickFamily: OverlayFamily {
                             ? OverlayPlacement(anchor: .centerLeading, inset: CGPoint(x: kit.edge, y: 0))
                             : OverlayPlacement(anchor: .bottomLeading,
                                                inset: CGPoint(x: kit.edge, y: kit.portraitBottom))),
-            OverlayGroup(id: "face", controls: faceButtons(top: top, bottom: bottom, singleRow: singleRow, binding: binding),
+            OverlayGroup(id: faceGroupID,
+                         controls: faceButtons(top: top, bottom: bottom, singleRow: singleRow, binding: binding),
                          placement: landscape
                             ? OverlayPlacement(anchor: .centerTrailing, inset: CGPoint(x: kit.edge, y: 0))
                             : OverlayPlacement(anchor: .bottomTrailing,
