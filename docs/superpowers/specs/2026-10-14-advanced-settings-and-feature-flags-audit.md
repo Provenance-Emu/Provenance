@@ -35,7 +35,7 @@ All of these are wired and read somewhere. The owner decided the promotions belo
 | Auto JIT (off, non-App Store) | app delegate | Fine. | Keep. | Not changed. |
 | Disable Auto Lock (off) | app delegate | Fine. | Keep. | Not changed. |
 | iCloud Sync (non-App Store) | — | Fine. | Keep. | Not changed. |
-| UI Mode picker | root view | `.uikit` keeps the legacy `PVSettingsViewController` alive; it still lists `useMetal`, `autoJIT`, `iCloudSync` rows that must mirror Advanced. | Decide whether UIKit mode survives 3.4.0; if not, the legacy settings VC can go. | Not changed. |
+| UI Mode picker | root view | `.uikit` kept the legacy `PVSettingsViewController` alive. | Done: UIKit mode and the legacy settings VC were removed; a stored "UIKit" value decodes to the platform default. | Done 2026-10-14: removed. |
 
 ## Remaining feature flags (remote-config style, keep)
 

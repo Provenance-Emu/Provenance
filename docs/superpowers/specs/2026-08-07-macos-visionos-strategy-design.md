@@ -60,7 +60,8 @@ real desktop chrome (menu bar, multi-window, Files integration).
   zero window-geometry code, zero `UIPointerInteraction`. Keyboard shortcuts exist only on the
   emulator scene (5 of them; ⌘L Load State is an empty stub). The SwiftUI library has no
   keyboard navigation (the legacy UIKit library's rich `UIKeyCommand` set at
-  `PVGameLibraryViewController.swift:1814+` doesn't carry over).
+  `PVGameLibraryViewController.swift:1814+` doesn't carry over; that file was deleted with the
+  UIKit main UI on 2026-10-14, so read it from the repository history).
 
 ### visionOS footprint
 
@@ -196,7 +197,7 @@ LSUIElement-style headless mode is a candidate) when they're free.
   cores rather than all 60+.
 - **Realm/CloudKit/FreemiumKit on native macOS** — believed fine (packages declare macOS) but
   unverified; include in the Phase 2 spike.
-- **`.uikit` MainUIMode and legacy UIKit library** are iOS-only debt that Phase 2 simply won't
-  port; confirm acceptable.
+- **`.uikit` MainUIMode and legacy UIKit library**: removed on 2026-10-14, so Phase 2 has
+  nothing to port.
 - Whether Phase 1's TVMedia-UI-on-desktop should become the *default* Mac experience or an
   opt-in — recommend opt-in first, promote based on feedback.
