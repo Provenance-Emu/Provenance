@@ -56,7 +56,7 @@ Source: `iFly/Sources/UI/Views/SettingsView.swift`, `SettingsView+Layout.swift`,
 - **Sidebar width is 220pt** (iFly: 200pt), so "RetroAchievements" fits in monospaced type without scaling.
 - **Done / Help** sit in a plain header row ("SETTINGS" title between them) instead of iFly's navigation toolbar.
   The old hand-drawn buttons were overlaid on the content; the new row is laid out above it. Both stay hidden
-  when `showsDoneButton` is false, as before. Done also answers Escape.
+  when `showsDoneButton` is false, as before.
 - **No controller / keyboard focus layer.** iFly's `SettingsView+Controller.swift` and `+Input.swift` drive the
   sidebar from a gamepad. Provenance's iOS settings had no such layer before, and this change does not add one.
 - **No collapsible groups.** Panes are short enough without them. `Defaults[.collapsedSections]` is no longer

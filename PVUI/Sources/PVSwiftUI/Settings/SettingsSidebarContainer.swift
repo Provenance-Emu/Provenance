@@ -109,7 +109,6 @@ struct SettingsSidebarContainer<PaneContent: View>: View {
                         .foregroundColor(.retroPink)
                 }
                 .buttonStyle(.plain)
-                .keyboardShortcut(.cancelAction)
             }
             Spacer()
             Text("settings.title", bundle: .module)
