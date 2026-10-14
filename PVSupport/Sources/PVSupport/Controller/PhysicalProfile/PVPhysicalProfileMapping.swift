@@ -19,18 +19,40 @@ public enum PVSynthesizedInput: String, CaseIterable, Sendable {
     case rightStickUp, rightStickDown, rightStickLeft, rightStickRight
 }
 
+/// The pad family a physical profile belongs to. Decides what printed labels and bare
+/// "Button <n>" names mean, because the Nintendo Switch Online pads label their faces
+/// differently: the N64 pad's A/B are its two face buttons, while the SNES pad's
+/// B/A/Y/X are the RetroPad layout.
+public enum PVPhysicalProfilePad: String, Sendable {
+    case generic
+    /// Nintendo Switch Online N64 controller (vendor name "N64 Controller").
+    case n64
+    /// Nintendo Switch Online SNES controller (vendor name "SNES Controller").
+    case snes
+    /// Nintendo Switch Online Mega Drive / Genesis control pad.
+    case megaDrive
+
+    /// Detects the family from what the system reports for the controller.
+    public static func detect(vendorName: String?, productCategory: String?) -> PVPhysicalProfilePad {
+        let haystack = ((vendorName ?? "") + " " + (productCategory ?? "")).lowercased()
+        if haystack.contains("n64") { return .n64 }
+        if haystack.contains("snes") || haystack.contains("super nintendo") || haystack.contains("super famicom") { return .snes }
+        if haystack.contains("md/gen") || haystack.contains("mega drive") || haystack.contains("megadrive") || haystack.contains("genesis") { return .megaDrive }
+        return .generic
+    }
+}
+
 /// Resolves a physical-profile element name to a synthesized input.
 ///
 /// Order: the GameController framework's own element names first (`GCInputButtonA`
-/// is "Button A", and so on), then the aliases a non-standard pad may use, then,
-/// for the Nintendo Switch Online N64 controller only, bare "Button <n>" names
-/// resolved through RetroArch's HID autoconfig for that pad.
+/// is "Button A", and so on), then the printed-label aliases of the pad family, then
+/// bare "Button <n>" names resolved through RetroArch's HID autoconfig for that pad
+/// (libretro/retroarch-joypad-autoconfig, `hid/*_Switch_Online.cfg`).
 ///
-/// The semantics follow RetroArch's `N64_Nintendo_Switch_Online.cfg`: A → RetroPad B
-/// (extended `buttonA`), B → RetroPad Y (`buttonX`), Z → L2 (`leftTrigger`),
-/// ZR → Select (`options`), Start → `menu`, Home → `home`, the C buttons → right
-/// stick directions, L/R → shoulders. The native N64 bridge and the thin libretro
-/// wrapper both read exactly those extended inputs for the N64 layout.
+/// RetroPad → extended gamepad: B → `buttonA`, A → `buttonB`, Y → `buttonX`,
+/// X → `buttonY`, L/R → shoulders, L2/R2 → triggers, Select → `options`,
+/// Start → `menu`, menu toggle → `home`. That is what the native bridges and the
+/// thin libretro wrapper read.
 public enum PVPhysicalProfileMapping {
 
     /// Element names the system uses for standard inputs.
@@ -42,69 +64,105 @@ public enum PVPhysicalProfileMapping {
         "button menu": .menu, "button options": .options, "button home": .home,
     ]
 
-    /// Aliases for pads whose element names are the labels printed on the buttons.
-    static let aliases: [String: PVSynthesizedInput] = [
-        "a": .buttonA, "b": .buttonX,
-        "x": .buttonY, "y": .buttonB,
-        "c up": .rightStickUp, "cup": .rightStickUp, "c down": .rightStickDown, "cdown": .rightStickDown,
-        "c left": .rightStickLeft, "cleft": .rightStickLeft, "c right": .rightStickRight, "cright": .rightStickRight,
-        "z": .leftTrigger, "z trigger": .leftTrigger, "trigger z": .leftTrigger, "zl": .leftTrigger,
-        "zr": .options, "select": .options, "minus": .options, "back": .options, "view": .options,
+    /// Labels common to every pad: shoulders, triggers, system buttons, directions.
+    static let commonAliases: [String: PVSynthesizedInput] = [
+        "zl": .leftTrigger, "l2": .leftTrigger, "zr": .rightTrigger, "r2": .rightTrigger,
+        "select": .options, "minus": .options, "back": .options, "view": .options, "mode": .options,
         "start": .menu, "plus": .menu,
         "home": .home,
         "l": .leftShoulder, "left bumper": .leftShoulder, "l1": .leftShoulder,
         "r": .rightShoulder, "right bumper": .rightShoulder, "r1": .rightShoulder,
-        "l2": .leftTrigger, "r2": .rightTrigger,
         "dpad": .dpad, "d pad": .dpad, "hat": .dpad,
         "left stick": .leftThumbstick, "joystick": .leftThumbstick, "stick": .leftThumbstick,
         "right stick": .rightThumbstick,
     ]
 
-    /// RetroArch `N64_Nintendo_Switch_Online.cfg` (hid driver) button indices.
-    static let n64HIDButtons: [Int: PVSynthesizedInput] = [
-        0: .buttonX,          // B
-        1: .buttonA,          // A
-        2: .rightStickUp,     // C Up
-        3: .rightStickLeft,   // C Left
-        4: .leftShoulder,     // L
-        5: .rightShoulder,    // R
-        6: .leftTrigger,      // Z
-        7: .rightStickDown,   // C Down
-        8: .rightStickRight,  // C Right
-        9: .menu,             // Start
-        10: .options,         // ZR
-        12: .home,            // Home
+    /// Face labels per family (RetroPad layout: B bottom, A right, Y left, X top).
+    static let faceAliases: [PVPhysicalProfilePad: [String: PVSynthesizedInput]] = [
+        .generic: ["a": .buttonB, "b": .buttonA, "x": .buttonY, "y": .buttonX],
+        .snes: ["a": .buttonB, "b": .buttonA, "x": .buttonY, "y": .buttonX],
+        // N64_Nintendo_Switch_Online.cfg: A → RetroPad B, B → RetroPad Y, Z → L2, ZR → Select,
+        // C buttons → right stick.
+        .n64: [
+            "a": .buttonA, "b": .buttonX,
+            "z": .leftTrigger, "z trigger": .leftTrigger, "trigger z": .leftTrigger,
+            "zr": .options,
+            "c up": .rightStickUp, "cup": .rightStickUp, "c down": .rightStickDown, "cdown": .rightStickDown,
+            "c left": .rightStickLeft, "cleft": .rightStickLeft, "c right": .rightStickRight, "cright": .rightStickRight,
+        ],
+        // MD_Gen_Control_Pad_Switch_Online.cfg: B → RetroPad B, A → Y, Y → X, X → L, Z → R, C → A, Mode → Select.
+        .megaDrive: [
+            "b": .buttonA, "a": .buttonX, "y": .buttonY, "x": .leftShoulder, "z": .rightShoulder, "c": .buttonB,
+        ],
     ]
 
-    /// True for the Nintendo Switch Online N64 controller (vendor name "N64 Controller").
-    public static func isN64Pad(vendorName: String?, productCategory: String?) -> Bool {
-        let haystack = ((vendorName ?? "") + " " + (productCategory ?? "")).lowercased()
-        return haystack.contains("n64")
-    }
+    /// RetroArch HID autoconfig button indices per family.
+    static let hidButtons: [PVPhysicalProfilePad: [Int: PVSynthesizedInput]] = [
+        // N64_Nintendo_Switch_Online.cfg
+        .n64: [
+            0: .buttonX,          // B
+            1: .buttonA,          // A
+            2: .rightStickUp,     // C Up
+            3: .rightStickLeft,   // C Left
+            4: .leftShoulder,     // L
+            5: .rightShoulder,    // R
+            6: .leftTrigger,      // Z
+            7: .rightStickDown,   // C Down
+            8: .rightStickRight,  // C Right
+            9: .menu,             // Start
+            10: .options,         // ZR
+            12: .home,            // Home
+        ],
+        // SNES_Nintendo_Switch_Online.cfg
+        .snes: [
+            0: .buttonA,          // B
+            1: .buttonB,          // A
+            2: .buttonX,          // Y
+            3: .buttonY,          // X
+            4: .leftShoulder,     // L
+            5: .rightShoulder,    // R
+            6: .leftTrigger,      // ZL
+            8: .options,          // Select
+            9: .menu,             // Start
+            15: .rightTrigger,    // ZR
+        ],
+        // MD_Gen_Control_Pad_Switch_Online.cfg
+        .megaDrive: [
+            0: .buttonA,          // B
+            1: .buttonX,          // A
+            2: .buttonY,          // Y
+            4: .rightShoulder,    // Z
+            5: .buttonB,          // C
+            6: .leftShoulder,     // X
+            7: .options,          // Mode
+            9: .menu,             // Start
+            12: .home,            // Home
+        ],
+    ]
 
-    /// Lowercases, turns `-`/`_` into spaces, collapses whitespace and drops a leading "button ".
+    /// Lowercases, turns `-`/`_` into spaces and collapses whitespace.
     static func normalize(_ name: String) -> String {
         let spaced = name.lowercased().replacingOccurrences(of: "-", with: " ").replacingOccurrences(of: "_", with: " ")
-        let collapsed = spaced.split(whereSeparator: { $0.isWhitespace }).joined(separator: " ")
-        return collapsed
+        return spaced.split(whereSeparator: { $0.isWhitespace }).joined(separator: " ")
     }
 
     /// The input an element should drive, or nil when the element is not one a core reads.
     /// - Parameters:
     ///   - name: the key of `physicalInputProfile.elements`.
-    ///   - isN64Pad: enables the "Button <n>" fallback from RetroArch's N64 autoconfig.
-    public static func input(forElementNamed name: String, isN64Pad: Bool = false) -> PVSynthesizedInput? {
+    ///   - pad: the family, which selects the face labels and the "Button <n>" table.
+    public static func input(forElementNamed name: String, pad: PVPhysicalProfilePad = .generic) -> PVSynthesizedInput? {
         let normalized = normalize(name)
         if let standard = standardNames[normalized] { return standard }
         let bare = normalized.hasPrefix("button ") ? String(normalized.dropFirst("button ".count)) : normalized
-        if let alias = aliases[bare] { return alias }
-        if isN64Pad, let index = Int(bare) { return n64HIDButtons[index] }
+        if let face = faceAliases[pad]?[bare] { return face }
+        if let common = commonAliases[bare] { return common }
+        if let index = Int(bare) { return hidButtons[pad]?[index] }
         return nil
     }
 
     /// Resolves every element name; later names never override an earlier binding of the
     /// same input, so the system's standard names win over aliases regardless of order.
-    public static func bindings(forElementNames names: [String], isN64Pad: Bool = false) -> [String: PVSynthesizedInput] {
+    public static func bindings(forElementNames names: [String], pad: PVPhysicalProfilePad = .generic) -> [String: PVSynthesizedInput] {
         var result: [String: PVSynthesizedInput] = [:]
         var taken: Set<PVSynthesizedInput> = []
         let ordered = names.sorted { lhs, rhs in
@@ -112,7 +170,7 @@ public enum PVPhysicalProfileMapping {
             return l != r ? l : lhs < rhs
         }
         for name in ordered {
-            guard let input = input(forElementNamed: name, isN64Pad: isN64Pad), !taken.contains(input) else { continue }
+            guard let input = input(forElementNamed: name, pad: pad), !taken.contains(input) else { continue }
             result[name] = input
             taken.insert(input)
         }

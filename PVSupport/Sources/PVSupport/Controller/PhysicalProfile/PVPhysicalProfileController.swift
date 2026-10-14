@@ -3,7 +3,7 @@
 //  PVSupport
 //
 //  Wraps a GCController the system exposes without an extended gamepad (the
-//  Nintendo Switch Online N64 controller on tvOS 17) and synthesizes one from
+//  Nintendo Switch Online N64/SNES/Mega Drive controllers) and synthesizes one from
 //  its physical input profile, so cores that only read `extendedGamepad` work.
 //
 
@@ -17,6 +17,8 @@ public final class PVPhysicalProfileController: GCController {
     private let synthesized = PVSynthesizedGamepad()
     /// Element name → synthesized input, as resolved for this pad.
     public private(set) var bindings: [String: PVSynthesizedInput] = [:]
+    /// Pad family the bindings were resolved for.
+    public private(set) var pad: PVPhysicalProfilePad = .generic
     private var pausedHandler: ((GCController) -> Void)?
     private var cUp = false, cDown = false, cLeft = false, cRight = false
     private var _playerIndex: GCControllerPlayerIndex = .indexUnset
@@ -26,9 +28,9 @@ public final class PVPhysicalProfileController: GCController {
     public static func isNeeded(for controller: GCController) -> Bool {
         guard controller.extendedGamepad == nil, controller.microGamepad == nil,
               !(controller is PVPhysicalProfileController) else { return false }
-        let n64 = PVPhysicalProfileMapping.isN64Pad(vendorName: controller.vendorName, productCategory: controller.productCategory)
+        let pad = PVPhysicalProfilePad.detect(vendorName: controller.vendorName, productCategory: controller.productCategory)
         let names = Array(controller.physicalInputProfile.elements.keys)
-        return PVPhysicalProfileMapping.isUsable(bindings: PVPhysicalProfileMapping.bindings(forElementNames: names, isN64Pad: n64))
+        return PVPhysicalProfileMapping.isUsable(bindings: PVPhysicalProfileMapping.bindings(forElementNames: names, pad: pad))
     }
 
     public init(wrapping controller: GCController) {
@@ -40,11 +42,11 @@ public final class PVPhysicalProfileController: GCController {
 
     private func bind() {
         let profile = base.physicalInputProfile
-        let n64 = PVPhysicalProfileMapping.isN64Pad(vendorName: base.vendorName, productCategory: base.productCategory)
-        bindings = PVPhysicalProfileMapping.bindings(forElementNames: Array(profile.elements.keys), isN64Pad: n64)
+        pad = PVPhysicalProfilePad.detect(vendorName: base.vendorName, productCategory: base.productCategory)
+        bindings = PVPhysicalProfileMapping.bindings(forElementNames: Array(profile.elements.keys), pad: pad)
         synthesized.hasOptions = bindings.values.contains(.options)
         synthesized.hasHome = bindings.values.contains(.home)
-        ILOG("PVPhysicalProfileController[\(base.vendorName ?? "?")]: \(bindings.sorted { $0.key < $1.key }.map { "\($0.key)→\($0.value.rawValue)" }.joined(separator: ", "))")
+        ILOG("PVPhysicalProfileController[\(base.vendorName ?? "?") \(pad.rawValue)]: \(bindings.sorted { $0.key < $1.key }.map { "\($0.key)→\($0.value.rawValue)" }.joined(separator: ", "))")
 
         for (name, input) in bindings {
             guard let element = profile.elements[name] else { continue }
