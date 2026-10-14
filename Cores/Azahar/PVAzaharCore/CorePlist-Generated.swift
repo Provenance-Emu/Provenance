@@ -19,7 +19,7 @@ public enum CorePlist {
   public static let pvCoreIdentifier: String = "com.provenance.core.azahar"
   public static let pvjitRequirement: String = "optional"
   public static let pvLicenseName: String = "GPL-2.0-or-later"
-  public static let pvLicenseURL: String = "https://github.com/azahar-emu/azahar/blob/HEAD/license.txt"
+  public static let pvLicenseURL: String = "https://github.com/azahar-emu/azahar/blob/master/LICENSE.txt"
   public static let pvPrincipleClass: String = "PVAzahar.PVAzaharCore"
   public static let pvProjectName: String = "Azahar"
   public static let pvProjectURL: String = "https://azahar-emu.org"

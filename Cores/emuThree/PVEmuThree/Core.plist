@@ -13,7 +13,7 @@
 	<key>PVProjectName</key>
 	<string>EmuThreeds</string>
 	<key>PVProjectURL</key>
-	<string>https://github.com/emuPlace/emuThreeDS</string>
+	<string>https://github.com/Provenance-Emu/emuThreeDS</string>
 	<key>PVProjectVersion</key>
 	<string>1.0.6</string>
 	<key>PVJITRequirement</key>
@@ -21,7 +21,7 @@
 	<key>PVLicenseName</key>
 	<string>GPL-2.0-or-later</string>
 	<key>PVLicenseURL</key>
-	<string>https://github.com/emuPlace/emuThreeDS/blob/HEAD/LICENSE</string>
+	<string>https://github.com/Provenance-Emu/emuThreeDS</string>
 	<key>PVCopyright</key>
 	<string>Copyright © 2013-2024 Citra Emulator Project</string>
 </dict>

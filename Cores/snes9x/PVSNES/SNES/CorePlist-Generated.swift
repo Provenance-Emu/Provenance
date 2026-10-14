@@ -18,7 +18,7 @@ public enum CorePlist {
   public static let pvCoreIdentifier: String = "com.provenance.core.snes9x"
   public static let pvPrincipleClass: String = "PVSNES.PVSNES9xEmulatorCore"
   public static let pvProjectName: String = "Snes9x"
-  public static let pvProjectURL: String = "http://www.snes9x.com"
+  public static let pvProjectURL: String = "https://www.snes9x.com"
   public static let pvProjectVersion: String = "1.60"
   public static let pvSupportedSystems: [String] = ["com.provenance.snes"]
 

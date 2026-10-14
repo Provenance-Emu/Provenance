@@ -18,7 +18,7 @@ public enum CorePlist {
   public static let pvCoreIdentifier: String = "com.provenance.core.fMSX"
   public static let pvPrincipleClass: String = "PVfMSX.PVfMSXEmuCore"
   public static let pvProjectName: String = "fMSX"
-  public static let pvProjectURL: String = "http://fms.komkon.org/fMSX/"
+  public static let pvProjectURL: String = "https://fms.komkon.org/fMSX/"
   public static let pvProjectVersion: String = "0"
   public static let pvSupportedSystems: [String] = ["com.provenance.msx", "com.provenance.msx2"]
   public static let pvDisabled: Bool = true

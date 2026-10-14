@@ -86,7 +86,7 @@
 			<key>PVLicenseName</key>
 			<string>GPL-3.0-or-later</string>
 			<key>PVLicenseURL</key>
-			<string>https://github.com/bsnes-emu/bsnes/blob/HEAD/LICENSE</string>
+			<string>https://github.com/bsnes-emu/bsnes/blob/master/LICENSE.txt</string>
 			<key>PVPrincipleClass</key>
 			<string>PVRetroArch.PVRetroArchCoreCore</string>
 			<key>PVProjectName</key>
@@ -130,7 +130,7 @@
 			<key>PVLicenseName</key>
 			<string>GPL-3.0-or-later</string>
 			<key>PVLicenseURL</key>
-			<string>https://github.com/bsnes-emu/bsnes/blob/HEAD/LICENSE</string>
+			<string>https://github.com/bsnes-emu/bsnes/blob/master/LICENSE.txt</string>
 			<key>PVPrincipleClass</key>
 			<string>PVRetroArch.PVRetroArchCoreCore</string>
 			<key>PVProjectName</key>
@@ -152,7 +152,7 @@
 			<key>PVLicenseName</key>
 			<string>GPL-3.0-or-later</string>
 			<key>PVLicenseURL</key>
-			<string>https://github.com/bsnes-emu/bsnes/blob/HEAD/LICENSE</string>
+			<string>https://github.com/bsnes-emu/bsnes/blob/master/LICENSE.txt</string>
 			<key>PVPrincipleClass</key>
 			<string>PVRetroArch.PVRetroArchCoreCore</string>
 			<key>PVProjectName</key>
@@ -236,7 +236,7 @@
 			<key>PVLicenseName</key>
 			<string>GPL-2.0-or-later</string>
 			<key>PVLicenseURL</key>
-			<string>https://github.com/libretro/parallel-n64/blob/HEAD/LICENSE</string>
+			<string>https://github.com/libretro/parallel-n64</string>
 			<key>PVPrincipleClass</key>
 			<string>PVRetroArch.PVRetroArchCoreCore</string>
 			<key>PVProjectName</key>
@@ -452,7 +452,7 @@
 			<key>PVLicenseName</key>
 			<string>LGPL-2.1-or-later</string>
 			<key>PVLicenseURL</key>
-			<string>https://github.com/libretro/opera-libretro/blob/HEAD/LICENSES</string>
+			<string>https://github.com/libretro/opera-libretro</string>
 			<key>PVPrincipleClass</key>
 			<string>PVRetroArch.PVRetroArchCoreCore</string>
 			<key>PVProjectName</key>
@@ -546,13 +546,13 @@
 			<key>PVLicenseName</key>
 			<string>GPL-2.0-or-later</string>
 			<key>PVLicenseURL</key>
-			<string>https://github.com/libretro/libretro-fceumm/blob/HEAD/COPYING</string>
+			<string>https://github.com/libretro/libretro-fceumm/blob/master/Copying</string>
 			<key>PVPrincipleClass</key>
 			<string>PVRetroArch.PVRetroArchCoreCore</string>
 			<key>PVProjectName</key>
 			<string>FCEUmm</string>
 			<key>PVProjectURL</key>
-			<string>https://github.com/libretro/fceumm</string>
+			<string>https://github.com/libretro/libretro-fceumm</string>
 			<key>PVProjectVersion</key>
 			<string>nightly</string>
 			<key>PVSupportedSystems</key>
@@ -850,7 +850,7 @@
 			<key>PVLicenseName</key>
 			<string>GPL-2.0-or-later</string>
 			<key>PVLicenseURL</key>
-			<string>https://github.com/visualboyadvance-m/visualboyadvance-m/blob/HEAD/COPYING</string>
+			<string>https://github.com/visualboyadvance-m/visualboyadvance-m/blob/master/LICENSE</string>
 			<key>PVPrincipleClass</key>
 			<string>PVRetroArch.PVRetroArchCoreCore</string>
 			<key>PVProjectName</key>
@@ -897,7 +897,7 @@
 			<key>PVLicenseName</key>
 			<string>LicenseRef-MAME</string>
 			<key>PVLicenseURL</key>
-			<string>https://github.com/libretro/mame2000-libretro/blob/HEAD/LICENSE.md</string>
+			<string>https://github.com/libretro/mame2000-libretro</string>
 			<key>PVPrincipleClass</key>
 			<string>PVRetroArch.PVRetroArchCoreCore</string>
 			<key>PVProjectName</key>
@@ -963,7 +963,7 @@
 			<key>PVLicenseName</key>
 			<string>LicenseRef-MAME</string>
 			<key>PVLicenseURL</key>
-			<string>https://github.com/libretro/mame2010-libretro/blob/HEAD/LICENSE.md</string>
+			<string>https://github.com/libretro/mame2010-libretro/blob/master/docs/license.txt</string>
 			<key>PVPrincipleClass</key>
 			<string>PVRetroArch.PVRetroArchCoreCore</string>
 			<key>PVProjectName</key>
@@ -987,7 +987,7 @@
 			<key>PVLicenseName</key>
 			<string>GPL-2.0-or-later</string>
 			<key>PVLicenseURL</key>
-			<string>https://github.com/libretro/mame/blob/HEAD/LICENSE.md</string>
+			<string>https://github.com/libretro/mame/blob/master/COPYING</string>
 			<key>PVPrincipleClass</key>
 			<string>PVRetroArch.PVRetroArchCoreCore</string>
 			<key>PVProjectName</key>
@@ -1036,7 +1036,7 @@
 			<key>PVLicenseName</key>
 			<string>MIT</string>
 			<key>PVLicenseURL</key>
-			<string>https://github.com/jpd002/Play-/blob/HEAD/LICENSE.md</string>
+			<string>https://github.com/jpd002/Play-/blob/master/License.txt</string>
 			<key>PVPrincipleClass</key>
 			<string>PVRetroArch.PVRetroArchCoreCore</string>
 			<key>PVProjectName</key>
@@ -1171,7 +1171,7 @@
 			<key>PVLicenseName</key>
 			<string>GPL-2.0-or-later</string>
 			<key>PVLicenseURL</key>
-			<string>https://git.tuxfamily.org/hatari/hatari.git/tree/gpl.txt</string>
+			<string>https://framagit.org/hatari/hatari/-/blob/main/gpl.txt</string>
 			<key>PVPrincipleClass</key>
 			<string>PVRetroArch.PVRetroArchCoreCore</string>
 			<key>PVProjectName</key>
@@ -1215,7 +1215,7 @@
 			<key>PVLicenseName</key>
 			<string>GPL-3.0-or-later</string>
 			<key>PVLicenseURL</key>
-			<string>https://github.com/libretro/virtualjaguar-libretro/blob/HEAD/COPYING</string>
+			<string>https://github.com/libretro/virtualjaguar-libretro/blob/master/LICENSE</string>
 			<key>PVPrincipleClass</key>
 			<string>PVRetroArch.PVRetroArchCoreCore</string>
 			<key>PVProjectName</key>
@@ -1337,7 +1337,7 @@
 			<key>PVLicenseName</key>
 			<string>GPL-2.0-or-later</string>
 			<key>PVLicenseURL</key>
-			<string>https://github.com/libretro/same_cdi/blob/HEAD/LICENSE.md</string>
+			<string>https://github.com/libretro/same_cdi/blob/master/COPYING</string>
 			<key>PVPrincipleClass</key>
 			<string>PVRetroArch.PVRetroArchCoreCore</string>
 			<key>PVProjectName</key>
@@ -1408,7 +1408,7 @@
 			<key>PVLicenseName</key>
 			<string>GPL-2.0-or-later</string>
 			<key>PVLicenseURL</key>
-			<string>https://github.com/libretro/libretro-vecx/blob/HEAD/LICENSE</string>
+			<string>https://github.com/libretro/libretro-vecx/blob/master/LICENSE.md</string>
 			<key>PVPrincipleClass</key>
 			<string>PVRetroArch.PVRetroArchCoreCore</string>
 			<key>PVProjectName</key>
@@ -1480,7 +1480,7 @@
 			<key>PVLicenseName</key>
 			<string>GPL-2.0-or-later</string>
 			<key>PVLicenseURL</key>
-			<string>https://github.com/libretro/tyrquake/blob/HEAD/GNU.txt</string>
+			<string>https://github.com/libretro/tyrquake/blob/master/LICENSE.txt</string>
 			<key>PVPrincipleClass</key>
 			<string>PVRetroArch.PVRetroArchCoreCore</string>
 			<key>PVProjectName</key>
@@ -1506,7 +1506,7 @@
 			<key>PVLicenseName</key>
 			<string>GPL-2.0-or-later</string>
 			<key>PVLicenseURL</key>
-			<string>https://github.com/libretro/vitaquake2/blob/HEAD/COPYING</string>
+			<string>https://github.com/libretro/vitaquake2/blob/libretro/LICENSE</string>
 			<key>PVPrincipleClass</key>
 			<string>PVRetroArch.PVRetroArchCoreCore</string>
 			<key>PVProjectName</key>
@@ -1532,7 +1532,7 @@
 			<key>PVLicenseName</key>
 			<string>GPL-2.0-or-later</string>
 			<key>PVLicenseURL</key>
-			<string>https://github.com/libretro/vitaquake2/blob/HEAD/COPYING</string>
+			<string>https://github.com/libretro/vitaquake2/blob/libretro/LICENSE</string>
 			<key>PVPrincipleClass</key>
 			<string>PVRetroArch.PVRetroArchCoreCore</string>
 			<key>PVProjectName</key>
@@ -1558,7 +1558,7 @@
 			<key>PVLicenseName</key>
 			<string>GPL-2.0-or-later</string>
 			<key>PVLicenseURL</key>
-			<string>https://github.com/libretro/vitaquake2/blob/HEAD/COPYING</string>
+			<string>https://github.com/libretro/vitaquake2/blob/libretro/LICENSE</string>
 			<key>PVPrincipleClass</key>
 			<string>PVRetroArch.PVRetroArchCoreCore</string>
 			<key>PVProjectName</key>
@@ -1584,7 +1584,7 @@
 			<key>PVLicenseName</key>
 			<string>GPL-2.0-or-later</string>
 			<key>PVLicenseURL</key>
-			<string>https://github.com/libretro/vitaquake2/blob/HEAD/COPYING</string>
+			<string>https://github.com/libretro/vitaquake2/blob/libretro/LICENSE</string>
 			<key>PVPrincipleClass</key>
 			<string>PVRetroArch.PVRetroArchCoreCore</string>
 			<key>PVProjectName</key>
@@ -1610,13 +1610,13 @@
 			<key>PVLicenseName</key>
 			<string>GPL-2.0-or-later</string>
 			<key>PVLicenseURL</key>
-			<string>https://github.com/libretro/2048</string>
+			<string>https://github.com/libretro/libretro-2048</string>
 			<key>PVPrincipleClass</key>
 			<string>PVRetroArch.PVRetroArchCoreCore</string>
 			<key>PVProjectName</key>
 			<string>2048</string>
 			<key>PVProjectURL</key>
-			<string>https://github.com/libretro/2048</string>
+			<string>https://github.com/libretro/libretro-2048</string>
 			<key>PVProjectVersion</key>
 			<string>Nightly</string>
 			<key>PVSupportedSystems</key>
@@ -1636,13 +1636,13 @@
 			<key>PVLicenseName</key>
 			<string>GPL-2.0-or-later</string>
 			<key>PVLicenseURL</key>
-			<string>https://github.com/libretro/xrick</string>
+			<string>https://github.com/libretro/xrick-libretro</string>
 			<key>PVPrincipleClass</key>
 			<string>PVRetroArch.PVRetroArchCoreCore</string>
 			<key>PVProjectName</key>
 			<string>Rick Dangerous</string>
 			<key>PVProjectURL</key>
-			<string>https://github.com/libretro/xrick</string>
+			<string>https://github.com/libretro/xrick-libretro</string>
 			<key>PVProjectVersion</key>
 			<string>Nightly</string>
 			<key>PVSupportedSystems</key>
@@ -1662,13 +1662,13 @@
 			<key>PVLicenseName</key>
 			<string>GPL-2.0-or-later</string>
 			<key>PVLicenseURL</key>
-			<string>https://github.com/libretro/x1</string>
+			<string>https://github.com/libretro/xmil-libretro</string>
 			<key>PVPrincipleClass</key>
 			<string>PVRetroArch.PVRetroArchCoreCore</string>
 			<key>PVProjectName</key>
 			<string>Sharp X1</string>
 			<key>PVProjectURL</key>
-			<string>https://github.com/libretro/x1</string>
+			<string>https://github.com/libretro/xmil-libretro</string>
 			<key>PVProjectVersion</key>
 			<string>Nightly</string>
 			<key>PVSupportedSystems</key>
@@ -1688,13 +1688,13 @@
 			<key>PVLicenseName</key>
 			<string>GPL-2.0-or-later</string>
 			<key>PVLicenseURL</key>
-			<string>https://github.com/libretro/theodore</string>
+			<string>https://github.com/Zlika/theodore</string>
 			<key>PVPrincipleClass</key>
 			<string>PVRetroArch.PVRetroArchCoreCore</string>
 			<key>PVProjectName</key>
 			<string>Thomson - MO/TO</string>
 			<key>PVProjectURL</key>
-			<string>https://github.com/libretro/theodore</string>
+			<string>https://github.com/Zlika/theodore</string>
 			<key>PVProjectVersion</key>
 			<string>Nightly</string>
 			<key>PVSupportedSystems</key>
@@ -1716,13 +1716,13 @@
 			<key>PVLicenseName</key>
 			<string>GPL-2.0-or-later</string>
 			<key>PVLicenseURL</key>
-			<string>https://github.com/libretro/caprice32</string>
+			<string>https://github.com/libretro/libretro-cap32</string>
 			<key>PVPrincipleClass</key>
 			<string>PVRetroArch.PVRetroArchCoreCore</string>
 			<key>PVProjectName</key>
 			<string>Amstrad - CPC/GX40000</string>
 			<key>PVProjectURL</key>
-			<string>https://github.com/libretro/caprice32</string>
+			<string>https://github.com/libretro/libretro-cap32</string>
 			<key>PVProjectVersion</key>
 			<string>Nightly</string>
 			<key>PVSupportedSystems</key>
@@ -1748,7 +1748,7 @@
 			<key>PVProjectName</key>
 			<string>Commodore - C64</string>
 			<key>PVProjectURL</key>
-			<string>https://github.com/libretro/vice</string>
+			<string>https://github.com/libretro/vice-libretro</string>
 			<key>PVProjectVersion</key>
 			<string>Nightly</string>
 			<key>PVSupportedSystems</key>
@@ -1775,7 +1775,7 @@
 			<key>PVProjectName</key>
 			<string>Commodore - C128</string>
 			<key>PVProjectURL</key>
-			<string>https://github.com/libretro/vice</string>
+			<string>https://github.com/libretro/vice-libretro</string>
 			<key>PVProjectVersion</key>
 			<string>Nightly</string>
 			<key>PVSupportedSystems</key>
@@ -1801,7 +1801,7 @@
 			<key>PVProjectName</key>
 			<string>Commodore - PET</string>
 			<key>PVProjectURL</key>
-			<string>https://github.com/libretro/vice</string>
+			<string>https://github.com/libretro/vice-libretro</string>
 			<key>PVProjectVersion</key>
 			<string>Nightly</string>
 			<key>PVSupportedSystems</key>
@@ -1827,7 +1827,7 @@
 			<key>PVProjectName</key>
 			<string>Commodore - VIC-20</string>
 			<key>PVProjectURL</key>
-			<string>https://github.com/libretro/vice</string>
+			<string>https://github.com/libretro/vice-libretro</string>
 			<key>PVProjectVersion</key>
 			<string>Nightly</string>
 			<key>PVSupportedSystems</key>
@@ -1853,7 +1853,7 @@
 			<key>PVProjectName</key>
 			<string>Commodore - C64 (x64sc)</string>
 			<key>PVProjectURL</key>
-			<string>https://github.com/libretro/vice</string>
+			<string>https://github.com/libretro/vice-libretro</string>
 			<key>PVProjectVersion</key>
 			<string>Nightly</string>
 			<key>PVSupportedSystems</key>
@@ -1882,7 +1882,7 @@
 			<key>PVProjectName</key>
 			<string>Commodore - CBM-II</string>
 			<key>PVProjectURL</key>
-			<string>https://github.com/libretro/vice</string>
+			<string>https://github.com/libretro/vice-libretro</string>
 			<key>PVProjectVersion</key>
 			<string>Nightly</string>
 			<key>PVSupportedSystems</key>
@@ -1910,7 +1910,7 @@
 			<key>PVProjectName</key>
 			<string>Commodore - PET/CBM-5x0</string>
 			<key>PVProjectURL</key>
-			<string>https://github.com/libretro/vice</string>
+			<string>https://github.com/libretro/vice-libretro</string>
 			<key>PVProjectVersion</key>
 			<string>Nightly</string>
 			<key>PVSupportedSystems</key>
@@ -1936,7 +1936,7 @@
 			<key>PVProjectName</key>
 			<string>Commodore - Plus/4</string>
 			<key>PVProjectURL</key>
-			<string>https://github.com/libretro/vice</string>
+			<string>https://github.com/libretro/vice-libretro</string>
 			<key>PVProjectVersion</key>
 			<string>Nightly</string>
 			<key>PVSupportedSystems</key>
@@ -2072,13 +2072,13 @@
 			<key>PVLicenseName</key>
 			<string>GPL-2.0-or-later</string>
 			<key>PVLicenseURL</key>
-			<string>https://docs.libretro.com/library/neko-project-ii/</string>
+			<string>https://docs.libretro.com/library/neko_project_ii_kai/</string>
 			<key>PVPrincipleClass</key>
 			<string>PVRetroArch.PVRetroArchCoreCore</string>
 			<key>PVProjectName</key>
 			<string>Neko Project II (PC-98)</string>
 			<key>PVProjectURL</key>
-			<string>https://docs.libretro.com/library/neko-project-ii/</string>
+			<string>https://docs.libretro.com/library/neko_project_ii_kai/</string>
 			<key>PVProjectVersion</key>
 			<string>Nightly</string>
 			<key>PVSupportedSystems</key>
@@ -2127,13 +2127,13 @@
 			<key>PVLicenseName</key>
 			<string>GPL-2.0-or-later</string>
 			<key>PVLicenseURL</key>
-			<string>https://docs.libretro.com/library/mrboom/</string>
+			<string>https://docs.libretro.com/library/mr_boom/</string>
 			<key>PVPrincipleClass</key>
 			<string>PVRetroArch.PVRetroArchCoreCore</string>
 			<key>PVProjectName</key>
 			<string>Mr.Boom</string>
 			<key>PVProjectURL</key>
-			<string>https://docs.libretro.com/library/mrboom/</string>
+			<string>https://docs.libretro.com/library/mr_boom/</string>
 			<key>PVProjectVersion</key>
 			<string>Nightly</string>
 			<key>PVSupportedSystems</key>
@@ -2181,13 +2181,13 @@
 			<key>PVLicenseName</key>
 			<string>GPL-2.0-or-later</string>
 			<key>PVLicenseURL</key>
-			<string>https://github.com/libretro/m2000</string>
+			<string>https://github.com/p2000t/M2000</string>
 			<key>PVPrincipleClass</key>
 			<string>PVRetroArch.PVRetroArchCoreCore</string>
 			<key>PVProjectName</key>
 			<string>Philips - P2000T</string>
 			<key>PVProjectURL</key>
-			<string>https://github.com/libretro/m2000</string>
+			<string>https://github.com/p2000t/M2000</string>
 			<key>PVProjectVersion</key>
 			<string>Nightly</string>
 			<key>PVSupportedSystems</key>
@@ -2207,13 +2207,13 @@
 			<key>PVLicenseName</key>
 			<string>GPL-2.0-or-later</string>
 			<key>PVLicenseURL</key>
-			<string>http://fuse-emulator.sourceforge.net</string>
+			<string>https://fuse-emulator.sourceforge.net</string>
 			<key>PVPrincipleClass</key>
 			<string>PVRetroArch.PVRetroArchCoreCore</string>
 			<key>PVProjectName</key>
 			<string>Sinclair - ZX Spectrum</string>
 			<key>PVProjectURL</key>
-			<string>https://github.com/libretro/fuse</string>
+			<string>https://github.com/libretro/fuse-libretro</string>
 			<key>PVProjectVersion</key>
 			<string>Nightly</string>
 			<key>PVSupportedSystems</key>
@@ -2234,13 +2234,13 @@
 			<key>PVLicenseName</key>
 			<string>GPL-2.0-or-later</string>
 			<key>PVLicenseURL</key>
-			<string>https://github.com/libretro/blueMSX</string>
+			<string>https://github.com/libretro/blueMSX-libretro</string>
 			<key>PVPrincipleClass</key>
 			<string>PVRetroArch.PVRetroArchCoreCore</string>
 			<key>PVProjectName</key>
 			<string>MSX/SVI/ColecoVision/SG-1000 (blueMSX)</string>
 			<key>PVProjectURL</key>
-			<string>https://github.com/libretro/blueMSX</string>
+			<string>https://github.com/libretro/blueMSX-libretro</string>
 			<key>PVProjectVersion</key>
 			<string>Nightly</string>
 			<key>PVSupportedSystems</key>
@@ -2264,13 +2264,13 @@
 			<key>PVLicenseName</key>
 			<string>GPL-2.0-or-later</string>
 			<key>PVLicenseURL</key>
-			<string>https://github.com/libretro/numero</string>
+			<string>https://github.com/nbarkhina/numero</string>
 			<key>PVPrincipleClass</key>
 			<string>PVRetroArch.PVRetroArchCoreCore</string>
 			<key>PVProjectName</key>
 			<string>TI-83 (Numero)</string>
 			<key>PVProjectURL</key>
-			<string>https://github.com/libretro/numero</string>
+			<string>https://github.com/nbarkhina/numero</string>
 			<key>PVProjectVersion</key>
 			<string>Nightly</string>
 			<key>PVSupportedSystems</key>
@@ -2341,7 +2341,7 @@
 			<key>PVLicenseName</key>
 			<string>GPL-3.0-or-later</string>
 			<key>PVLicenseURL</key>
-			<string>https://github.com/libretro/81-libretro/blob/HEAD/COPYING</string>
+			<string>https://github.com/libretro/81-libretro/blob/master/LICENSE</string>
 			<key>PVPrincipleClass</key>
 			<string>PVRetroArch.PVRetroArchCoreCore</string>
 			<key>PVProjectName</key>
@@ -2361,7 +2361,7 @@
 			<key>PVLicenseName</key>
 			<string>GPL-3.0-or-later</string>
 			<key>PVLicenseURL</key>
-			<string>https://github.com/libretro/bsnes-mercury/blob/HEAD/COPYING</string>
+			<string>https://github.com/libretro/bsnes-mercury/blob/master/LICENSE</string>
 			<key>PVPrincipleClass</key>
 			<string>PVRetroArch.PVRetroArchCoreCore</string>
 			<key>PVProjectName</key>
@@ -2383,7 +2383,7 @@
 			<key>PVLicenseName</key>
 			<string>LicenseRef-NonCommercial</string>
 			<key>PVLicenseURL</key>
-			<string>https://github.com/libretro/fbalpha/blob/HEAD/LICENSE.md</string>
+			<string>https://github.com/libretro/fbalpha2012/blob/master/docs/COPYING</string>
 			<key>PVPrincipleClass</key>
 			<string>PVRetroArch.PVRetroArchCoreCore</string>
 			<key>PVProjectName</key>
@@ -2406,7 +2406,7 @@
 			<key>PVLicenseName</key>
 			<string>LicenseRef-NonCommercial</string>
 			<key>PVLicenseURL</key>
-			<string>https://github.com/libretro/fbalpha/blob/HEAD/LICENSE.md</string>
+			<string>https://github.com/libretro/fbalpha2012/blob/master/docs/COPYING</string>
 			<key>PVPrincipleClass</key>
 			<string>PVRetroArch.PVRetroArchCoreCore</string>
 			<key>PVProjectName</key>
@@ -2449,7 +2449,7 @@
 			<key>PVLicenseName</key>
 			<string>GPL-3.0-or-later</string>
 			<key>PVLicenseURL</key>
-			<string>https://github.com/libretro/freechaf/blob/HEAD/COPYING</string>
+			<string>https://github.com/libretro/FreeChaF/blob/master/LICENSE</string>
 			<key>PVPrincipleClass</key>
 			<string>PVRetroArch.PVRetroArchCoreCore</string>
 			<key>PVProjectName</key>
@@ -2469,7 +2469,7 @@
 			<key>PVLicenseName</key>
 			<string>GPL-3.0-or-later</string>
 			<key>PVLicenseURL</key>
-			<string>https://github.com/libretro/FreeIntv/blob/HEAD/COPYING</string>
+			<string>https://github.com/libretro/FreeIntv/blob/master/LICENSE</string>
 			<key>PVPrincipleClass</key>
 			<string>PVRetroArch.PVRetroArchCoreCore</string>
 			<key>PVProjectName</key>
@@ -2510,7 +2510,7 @@
 			<key>PVLicenseName</key>
 			<string>GPL-3.0-or-later</string>
 			<key>PVLicenseURL</key>
-			<string>https://github.com/drhelius/Gearcoleco/blob/HEAD/COPYING</string>
+			<string>https://github.com/drhelius/Gearcoleco/blob/main/LICENSE</string>
 			<key>PVPrincipleClass</key>
 			<string>PVRetroArch.PVRetroArchCoreCore</string>
 			<key>PVProjectName</key>
@@ -2550,7 +2550,7 @@
 			<key>PVLicenseName</key>
 			<string>Zlib</string>
 			<key>PVLicenseURL</key>
-			<string>https://github.com/libretro/libretro-handy/blob/HEAD/COPYING</string>
+			<string>https://github.com/libretro/libretro-handy/blob/master/lynx/license.txt</string>
 			<key>PVPrincipleClass</key>
 			<string>PVRetroArch.PVRetroArchCoreCore</string>
 			<key>PVProjectName</key>
@@ -2674,7 +2674,7 @@
 			<key>PVLicenseName</key>
 			<string>LGPL-3.0-only</string>
 			<key>PVLicenseURL</key>
-			<string>https://github.com/libretro/neocd_libretro/blob/HEAD/LICENSE</string>
+			<string>https://github.com/libretro/neocd_libretro/blob/master/LICENSE.md</string>
 			<key>PVPrincipleClass</key>
 			<string>PVRetroArch.PVRetroArchCoreCore</string>
 			<key>PVProjectName</key>
@@ -2716,7 +2716,7 @@
 			<key>PVLicenseName</key>
 			<string>GPL-2.0-or-later</string>
 			<key>PVLicenseURL</key>
-			<string>https://github.com/libretro/libretro-uae/blob/HEAD/LICENSE</string>
+			<string>https://github.com/libretro/libretro-uae/blob/master/COPYING</string>
 			<key>PVPrincipleClass</key>
 			<string>PVRetroArch.PVRetroArchCoreCore</string>
 			<key>PVProjectName</key>
@@ -2738,7 +2738,7 @@
 			<key>PVLicenseName</key>
 			<string>GPL-2.0-or-later</string>
 			<key>PVLicenseURL</key>
-			<string>https://github.com/libretro/libretro-uae/blob/HEAD/LICENSE</string>
+			<string>https://github.com/libretro/libretro-uae/blob/master/COPYING</string>
 			<key>PVPrincipleClass</key>
 			<string>PVRetroArch.PVRetroArchCoreCore</string>
 			<key>PVProjectName</key>
@@ -2758,7 +2758,7 @@
 			<key>PVLicenseName</key>
 			<string>LGPL-2.1-or-later</string>
 			<key>PVLicenseURL</key>
-			<string>https://github.com/libretro/QuickNES_Core/blob/HEAD/COPYING</string>
+			<string>https://github.com/libretro/QuickNES_Core/blob/master/LICENSE</string>
 			<key>PVPrincipleClass</key>
 			<string>PVRetroArch.PVRetroArchCoreCore</string>
 			<key>PVProjectName</key>
@@ -2778,13 +2778,13 @@
 			<key>PVLicenseName</key>
 			<string>MIT</string>
 			<key>PVLicenseURL</key>
-			<string>https://github.com/libretro/libretro-SameDuck/blob/HEAD/LICENSE</string>
+			<string>https://github.com/libretro/sameduck/blob/SameDuck-libretro/LICENSE</string>
 			<key>PVPrincipleClass</key>
 			<string>PVRetroArch.PVRetroArchCoreCore</string>
 			<key>PVProjectName</key>
 			<string>SameDuck</string>
 			<key>PVProjectURL</key>
-			<string>https://github.com/libretro/libretro-SameDuck</string>
+			<string>https://github.com/libretro/sameduck</string>
 			<key>PVProjectVersion</key>
 			<string>Nightly</string>
 			<key>PVSupportedSystems</key>
@@ -2822,7 +2822,7 @@
 			<key>PVLicenseName</key>
 			<string>GPL-2.0-or-later</string>
 			<key>PVLicenseURL</key>
-			<string>https://github.com/libretro/smsplus-gx/blob/HEAD/COPYING</string>
+			<string>https://github.com/libretro/smsplus-gx/blob/master/docs/license</string>
 			<key>PVPrincipleClass</key>
 			<string>PVRetroArch.PVRetroArchCoreCore</string>
 			<key>PVProjectName</key>
@@ -2843,7 +2843,7 @@
 			<key>PVLicenseName</key>
 			<string>LicenseRef-Snes9x</string>
 			<key>PVLicenseURL</key>
-			<string>https://github.com/libretro/snes9x2002/blob/HEAD/LICENSE</string>
+			<string>https://github.com/libretro/snes9x2002/blob/master/src/copyright.h</string>
 			<key>PVPrincipleClass</key>
 			<string>PVRetroArch.PVRetroArchCoreCore</string>
 			<key>PVProjectName</key>
@@ -2863,7 +2863,7 @@
 			<key>PVLicenseName</key>
 			<string>LicenseRef-Snes9x</string>
 			<key>PVLicenseURL</key>
-			<string>https://github.com/libretro/snes9x2005/blob/HEAD/LICENSE</string>
+			<string>https://github.com/libretro/snes9x2005/blob/master/copyright</string>
 			<key>PVPrincipleClass</key>
 			<string>PVRetroArch.PVRetroArchCoreCore</string>
 			<key>PVProjectName</key>
@@ -2883,7 +2883,7 @@
 			<key>PVLicenseName</key>
 			<string>LicenseRef-Snes9x</string>
 			<key>PVLicenseURL</key>
-			<string>https://github.com/libretro/snes9x2005/blob/HEAD/LICENSE</string>
+			<string>https://github.com/libretro/snes9x2005/blob/master/copyright</string>
 			<key>PVPrincipleClass</key>
 			<string>PVRetroArch.PVRetroArchCoreCore</string>
 			<key>PVProjectName</key>
@@ -2903,7 +2903,7 @@
 			<key>PVLicenseName</key>
 			<string>LicenseRef-Snes9x</string>
 			<key>PVLicenseURL</key>
-			<string>https://github.com/libretro/snes9x2010/blob/HEAD/LICENSE</string>
+			<string>https://github.com/libretro/snes9x2010/blob/master/LICENSE.txt</string>
 			<key>PVPrincipleClass</key>
 			<string>PVRetroArch.PVRetroArchCoreCore</string>
 			<key>PVProjectName</key>
@@ -2943,7 +2943,7 @@
 			<key>PVLicenseName</key>
 			<string>GPL-2.0-or-later</string>
 			<key>PVLicenseURL</key>
-			<string>https://github.com/libretro/stella2023-libretro/blob/HEAD/COPYING</string>
+			<string>https://github.com/libretro/stella2023/blob/master/License.txt</string>
 			<key>PVPrincipleClass</key>
 			<string>PVRetroArch.PVRetroArchCoreCore</string>
 			<key>PVProjectName</key>
@@ -2963,7 +2963,7 @@
 			<key>PVLicenseName</key>
 			<string>GPL-2.0-or-later</string>
 			<key>PVLicenseURL</key>
-			<string>https://github.com/libretro/vba-next/blob/HEAD/COPYING</string>
+			<string>https://github.com/libretro/vba-next/blob/master/LICENSE</string>
 			<key>PVPrincipleClass</key>
 			<string>PVRetroArch.PVRetroArchCoreCore</string>
 			<key>PVProjectName</key>

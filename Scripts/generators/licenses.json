@@ -6,7 +6,7 @@
       "projectURL": "https://github.com/OpenEmu/4DO-Core",
       "version": "0",
       "license": "GPL-2.0-only",
-      "licenseURL": "https://github.com/OpenEmu/4DO-Core/blob/HEAD/COPYING",
+      "licenseURL": "https://github.com/OpenEmu/4DO-Core",
       "copyrightHolder": [
         "Copyright © 2011-2016 OpenEmu Team"
       ],
@@ -43,7 +43,7 @@
       "projectURL": "https://azahar-emu.org",
       "version": "2126.1.2+provenance",
       "license": "GPL-2.0-or-later",
-      "licenseURL": "https://github.com/azahar-emu/azahar/blob/HEAD/license.txt",
+      "licenseURL": "https://github.com/azahar-emu/azahar/blob/master/LICENSE.txt",
       "copyrightHolder": [
         "Copyright © 2014-2026 Citra Emulator Project / Azahar Emulator Project"
       ],
@@ -61,7 +61,7 @@
       "projectURL": "https://github.com/OpenEmu/Bliss-Core",
       "version": "2.1.2",
       "license": "GPL-2.0-or-later",
-      "licenseURL": "https://github.com/OpenEmu/Bliss-Core/blob/HEAD/COPYING",
+      "licenseURL": "https://github.com/OpenEmu/Bliss-Core/blob/master/Bliss/LICENSE.txt",
       "copyrightHolder": [
         "Copyright © 2003-2016 OpenEmu Team, Kyle Davis"
       ],
@@ -76,10 +76,10 @@
     {
       "name": "CrabEMU",
       "identifier": "com.provenance.core.crabemu",
-      "projectURL": "http://crabemu.sourceforge.net",
+      "projectURL": "https://crabemu.sourceforge.net",
       "version": "0.2.0",
       "license": "GPL-2.0-or-later",
-      "licenseURL": "http://crabemu.sourceforge.net",
+      "licenseURL": "https://crabemu.sourceforge.net",
       "copyrightHolder": [
         "Copyright © 2007-2014 Lawrence Sebald"
       ],
@@ -96,7 +96,7 @@
     {
       "name": "Dolphin",
       "identifier": "com.provenance.core.dolphin",
-      "projectURL": "https://github.com/Provenance-Emu/dolphin-ios-jitless/tree/brand175/master%2Bpatches",
+      "projectURL": "https://github.com/Provenance-Emu/iCube",
       "version": "14.3",
       "license": "GPL-2.0-or-later",
       "licenseURL": "https://github.com/dolphin-emu/dolphin/blob/HEAD/COPYING",
@@ -115,7 +115,7 @@
     {
       "name": "FCEUX",
       "identifier": "com.provenance.core.fceu",
-      "projectURL": "http://sourceforge.net/projects/fceultra/",
+      "projectURL": "https://sourceforge.net/projects/fceultra/",
       "version": "2.7.0",
       "license": "GPL-2.0-or-later",
       "licenseURL": "https://github.com/TASEmulators/fceux/blob/HEAD/COPYING",
@@ -137,7 +137,7 @@
       "projectURL": "https://github.com/sinamas/gambatte",
       "version": "0.5.0",
       "license": "GPL-2.0-or-later",
-      "licenseURL": "https://github.com/sinamas/gambatte/blob/HEAD/COPYING",
+      "licenseURL": "https://github.com/sinamas/gambatte",
       "copyrightHolder": [
         "Copyright © 2007-2014 Sindre Aaen"
       ],
@@ -213,7 +213,7 @@
       "projectURL": "https://github.com/mupen64plus",
       "version": "2.5",
       "license": "GPL-2.0-or-later",
-      "licenseURL": "https://github.com/mupen64plus/mupen64plus-core/blob/HEAD/COPYING",
+      "licenseURL": "https://github.com/mupen64plus/mupen64plus-core/blob/master/LICENSES",
       "copyrightHolder": [
         "Copyright © 2007-2024 Mupen64Plus Team"
       ],
@@ -303,7 +303,7 @@
       "projectURL": "https://github.com/libretro/tgbdual-libretro",
       "version": "v0.8.3",
       "license": "GPL-2.0-or-later",
-      "licenseURL": "https://github.com/libretro/tgbdual-libretro/blob/HEAD/COPYING",
+      "licenseURL": "https://github.com/libretro/tgbdual-libretro/blob/master/docs/COPYING-2.0.txt",
       "copyrightHolder": [
         "Copyright © 1997-2003 Hii"
       ],
@@ -322,7 +322,7 @@
       "projectURL": "https://github.com/visualboyadvance-m/visualboyadvance-m",
       "version": "2.2.3",
       "license": "GPL-2.0-or-later",
-      "licenseURL": "https://github.com/visualboyadvance-m/visualboyadvance-m/blob/HEAD/COPYING",
+      "licenseURL": "https://github.com/visualboyadvance-m/visualboyadvance-m/blob/master/LICENSE",
       "copyrightHolder": [
         "Copyright © 2004-2024 VBA-M Team"
       ],
@@ -337,10 +337,10 @@
     {
       "name": "EmuThreeds",
       "identifier": "com.provenance.core.emuThree",
-      "projectURL": "https://github.com/emuPlace/emuThreeDS",
+      "projectURL": "https://github.com/Provenance-Emu/emuThreeDS",
       "version": "1.0.6",
       "license": "GPL-2.0-or-later",
-      "licenseURL": "https://github.com/emuPlace/emuThreeDS/blob/HEAD/LICENSE",
+      "licenseURL": "https://github.com/Provenance-Emu/emuThreeDS",
       "copyrightHolder": [
         "Copyright © 2013-2024 Citra Emulator Project"
       ],
@@ -355,10 +355,10 @@
     {
       "name": "EP128Emu",
       "identifier": "com.provenance.core.EP128Emu",
-      "projectURL": "http://ep128emu.sourceforge.net/about.html",
+      "projectURL": "https://ep128emu.sourceforge.net/about.html",
       "version": "2.0.11",
       "license": "GPL-2.0-or-later",
-      "licenseURL": "http://ep128emu.sourceforge.net/about.html",
+      "licenseURL": "https://ep128emu.sourceforge.net/about.html",
       "copyrightHolder": [
         "Copyright © 2003-2024 István Varga"
       ],
@@ -374,10 +374,10 @@
     {
       "name": "fMSX",
       "identifier": "com.provenance.core.fMSX",
-      "projectURL": "http://fms.komkon.org/fMSX/",
+      "projectURL": "https://fms.komkon.org/fMSX/",
       "version": "0",
       "license": "LicenseRef-fMSX",
-      "licenseURL": "http://fms.komkon.org/fMSX/",
+      "licenseURL": "https://fms.komkon.org/fMSX/",
       "copyrightHolder": [
         "Copyright © 1993-2024 Marat Fayzullin"
       ],
@@ -411,7 +411,7 @@
     {
       "name": "Snes9x",
       "identifier": "com.provenance.core.snes9x",
-      "projectURL": "http://www.snes9x.com",
+      "projectURL": "https://www.snes9x.com",
       "version": "1.60",
       "license": "LicenseRef-Snes9x",
       "licenseURL": "https://github.com/snes9xgit/snes9x/blob/HEAD/LICENSE",
@@ -504,7 +504,7 @@
       "projectURL": "https://docs.libretro.com/library/bsnes/",
       "version": "nightly",
       "license": "GPL-3.0-or-later",
-      "licenseURL": "https://github.com/bsnes-emu/bsnes/blob/HEAD/LICENSE",
+      "licenseURL": "https://github.com/bsnes-emu/bsnes/blob/master/LICENSE.txt",
       "copyrightHolder": [
         "Copyright © 2004-2024 Near"
       ],
@@ -540,7 +540,7 @@
       "projectURL": "https://docs.libretro.com/library/bsnes/",
       "version": "nightly",
       "license": "GPL-3.0-or-later",
-      "licenseURL": "https://github.com/bsnes-emu/bsnes/blob/HEAD/LICENSE",
+      "licenseURL": "https://github.com/bsnes-emu/bsnes/blob/master/LICENSE.txt",
       "copyrightHolder": [
         "Copyright © 2004-2024 Near"
       ],
@@ -558,7 +558,7 @@
       "projectURL": "https://docs.libretro.com/library/bsnes/",
       "version": "nightly",
       "license": "GPL-3.0-or-later",
-      "licenseURL": "https://github.com/bsnes-emu/bsnes/blob/HEAD/LICENSE",
+      "licenseURL": "https://github.com/bsnes-emu/bsnes/blob/master/LICENSE.txt",
       "copyrightHolder": [
         "Copyright © 2004-2024 Near"
       ],
@@ -618,7 +618,7 @@
       "projectURL": "https://github.com/libretro/parallel-n64",
       "version": "Nightly",
       "license": "GPL-2.0-or-later",
-      "licenseURL": "https://github.com/libretro/parallel-n64/blob/HEAD/LICENSE",
+      "licenseURL": "https://github.com/libretro/parallel-n64",
       "copyrightHolder": [
         "Copyright © 2008-2024 Mupen64Plus Team"
       ],
@@ -784,7 +784,7 @@
       "projectURL": "https://github.com/libretro/opera-libretro",
       "version": "1.0.0",
       "license": "LGPL-2.1-or-later",
-      "licenseURL": "https://github.com/libretro/opera-libretro/blob/HEAD/LICENSES",
+      "licenseURL": "https://github.com/libretro/opera-libretro",
       "copyrightHolder": [
         "Copyright © 2012-2024 Opera Libretro Contributors"
       ],
@@ -857,10 +857,10 @@
     {
       "name": "FCEUmm",
       "identifier": "fceumm.libretro.framework",
-      "projectURL": "https://github.com/libretro/fceumm",
+      "projectURL": "https://github.com/libretro/libretro-fceumm",
       "version": "nightly",
       "license": "GPL-2.0-or-later",
-      "licenseURL": "https://github.com/libretro/libretro-fceumm/blob/HEAD/COPYING",
+      "licenseURL": "https://github.com/libretro/libretro-fceumm/blob/master/Copying",
       "copyrightHolder": [
         "Copyright © 2000-2024 FCEU Team"
       ],
@@ -1106,7 +1106,7 @@
       "projectURL": "https://docs.libretro.com/library/vba_m/",
       "version": "nightly",
       "license": "GPL-2.0-or-later",
-      "licenseURL": "https://github.com/visualboyadvance-m/visualboyadvance-m/blob/HEAD/COPYING",
+      "licenseURL": "https://github.com/visualboyadvance-m/visualboyadvance-m/blob/master/LICENSE",
       "copyrightHolder": [
         "Copyright © 2004-2024 VBA-M Team"
       ],
@@ -1145,7 +1145,7 @@
       "projectURL": "https://github.com/libretro/mame2000-libretro",
       "version": "v0.139",
       "license": "LicenseRef-MAME",
-      "licenseURL": "https://github.com/libretro/mame2000-libretro/blob/HEAD/LICENSE.md",
+      "licenseURL": "https://github.com/libretro/mame2000-libretro",
       "copyrightHolder": [
         "Copyright © 1997-2024 MAME Project"
       ],
@@ -1199,7 +1199,7 @@
       "projectURL": "https://github.com/libretro/mame2010-libretro",
       "version": "v0.139",
       "license": "LicenseRef-MAME",
-      "licenseURL": "https://github.com/libretro/mame2010-libretro/blob/HEAD/LICENSE.md",
+      "licenseURL": "https://github.com/libretro/mame2010-libretro/blob/master/docs/license.txt",
       "copyrightHolder": [
         "Copyright © 1997-2024 MAME Project"
       ],
@@ -1217,7 +1217,7 @@
       "projectURL": "https://docs.libretro.com/development/cores/core-specific/mame/",
       "version": "v0.258",
       "license": "GPL-2.0-or-later",
-      "licenseURL": "https://github.com/libretro/mame/blob/HEAD/LICENSE.md",
+      "licenseURL": "https://github.com/libretro/mame/blob/master/COPYING",
       "copyrightHolder": [
         "Copyright © 1997-2024 MAME Project"
       ],
@@ -1256,7 +1256,7 @@
       "projectURL": "https://docs.libretro.com/library/play/",
       "version": "0.66",
       "license": "MIT",
-      "licenseURL": "https://github.com/jpd002/Play-/blob/HEAD/LICENSE.md",
+      "licenseURL": "https://github.com/jpd002/Play-/blob/master/License.txt",
       "copyrightHolder": [
         "Copyright © 2012-2024 Jean-Philip Desjardins"
       ],
@@ -1365,7 +1365,7 @@
       "projectURL": "https://docs.libretro.com/library/hatari/",
       "version": "1.8",
       "license": "GPL-2.0-or-later",
-      "licenseURL": "https://git.tuxfamily.org/hatari/hatari.git/tree/gpl.txt",
+      "licenseURL": "https://framagit.org/hatari/hatari/-/blob/main/gpl.txt",
       "copyrightHolder": [
         "Copyright © 2001-2024 Hatari Contributors"
       ],
@@ -1401,7 +1401,7 @@
       "projectURL": "https://docs.libretro.com/library/virtual_jaguar/",
       "version": "2.1.0",
       "license": "GPL-3.0-or-later",
-      "licenseURL": "https://github.com/libretro/virtualjaguar-libretro/blob/HEAD/COPYING",
+      "licenseURL": "https://github.com/libretro/virtualjaguar-libretro/blob/master/LICENSE",
       "copyrightHolder": [
         "Copyright © 2010-2024 ADB Contributors"
       ],
@@ -1494,7 +1494,7 @@
       "projectURL": "https://github.com/libretro/same_cdi",
       "version": "Nightly",
       "license": "GPL-2.0-or-later",
-      "licenseURL": "https://github.com/libretro/same_cdi/blob/HEAD/LICENSE.md",
+      "licenseURL": "https://github.com/libretro/same_cdi/blob/master/COPYING",
       "copyrightHolder": [
         "Copyright © 1997-2024 MAME Project"
       ],
@@ -1549,7 +1549,7 @@
       "projectURL": "https://docs.libretro.com/library/vecx/",
       "version": "Nightly",
       "license": "GPL-2.0-or-later",
-      "licenseURL": "https://github.com/libretro/libretro-vecx/blob/HEAD/LICENSE",
+      "licenseURL": "https://github.com/libretro/libretro-vecx/blob/master/LICENSE.md",
       "copyrightHolder": [
         "Copyright © 2002 Valavan Manohararajah"
       ],
@@ -1603,7 +1603,7 @@
       "projectURL": "https://docs.libretro.com/library/tyrquake/",
       "version": "Nightly",
       "license": "GPL-2.0-or-later",
-      "licenseURL": "https://github.com/libretro/tyrquake/blob/HEAD/GNU.txt",
+      "licenseURL": "https://github.com/libretro/tyrquake/blob/master/LICENSE.txt",
       "copyrightHolder": [
         "Copyright © 1996-1997 id Software, 2007-2024 Kevin Shanahan"
       ],
@@ -1621,7 +1621,7 @@
       "projectURL": "https://github.com/libretro/vitaquake2",
       "version": "Nightly",
       "license": "GPL-2.0-or-later",
-      "licenseURL": "https://github.com/libretro/vitaquake2/blob/HEAD/COPYING",
+      "licenseURL": "https://github.com/libretro/vitaquake2/blob/libretro/LICENSE",
       "copyrightHolder": [
         "Copyright © 1997-2024 id Software"
       ],
@@ -1639,7 +1639,7 @@
       "projectURL": "https://github.com/libretro/vitaquake2",
       "version": "Nightly",
       "license": "GPL-2.0-or-later",
-      "licenseURL": "https://github.com/libretro/vitaquake2/blob/HEAD/COPYING",
+      "licenseURL": "https://github.com/libretro/vitaquake2/blob/libretro/LICENSE",
       "copyrightHolder": [
         "Copyright © 1997-2024 id Software"
       ],
@@ -1657,7 +1657,7 @@
       "projectURL": "https://github.com/libretro/vitaquake2",
       "version": "Nightly",
       "license": "GPL-2.0-or-later",
-      "licenseURL": "https://github.com/libretro/vitaquake2/blob/HEAD/COPYING",
+      "licenseURL": "https://github.com/libretro/vitaquake2/blob/libretro/LICENSE",
       "copyrightHolder": [
         "Copyright © 1997-2024 id Software"
       ],
@@ -1675,7 +1675,7 @@
       "projectURL": "https://github.com/libretro/vitaquake2",
       "version": "Nightly",
       "license": "GPL-2.0-or-later",
-      "licenseURL": "https://github.com/libretro/vitaquake2/blob/HEAD/COPYING",
+      "licenseURL": "https://github.com/libretro/vitaquake2/blob/libretro/LICENSE",
       "copyrightHolder": [
         "Copyright © 1997-2024 id Software"
       ],
@@ -1690,10 +1690,10 @@
     {
       "name": "2048",
       "identifier": "2048.libretro.framework",
-      "projectURL": "https://github.com/libretro/2048",
+      "projectURL": "https://github.com/libretro/libretro-2048",
       "version": "Nightly",
       "license": "GPL-2.0-or-later",
-      "licenseURL": "https://github.com/libretro/2048",
+      "licenseURL": "https://github.com/libretro/libretro-2048",
       "copyrightHolder": [
         "Copyright © Libretro Contributors"
       ],
@@ -1708,10 +1708,10 @@
     {
       "name": "Rick Dangerous",
       "identifier": "xrick.libretro.framework",
-      "projectURL": "https://github.com/libretro/xrick",
+      "projectURL": "https://github.com/libretro/xrick-libretro",
       "version": "Nightly",
       "license": "GPL-2.0-or-later",
-      "licenseURL": "https://github.com/libretro/xrick",
+      "licenseURL": "https://github.com/libretro/xrick-libretro",
       "copyrightHolder": [
         "Copyright © Libretro Contributors"
       ],
@@ -1726,10 +1726,10 @@
     {
       "name": "Sharp X1",
       "identifier": "x1.libretro.framework",
-      "projectURL": "https://github.com/libretro/x1",
+      "projectURL": "https://github.com/libretro/xmil-libretro",
       "version": "Nightly",
       "license": "GPL-2.0-or-later",
-      "licenseURL": "https://github.com/libretro/x1",
+      "licenseURL": "https://github.com/libretro/xmil-libretro",
       "copyrightHolder": [
         "Copyright © Libretro Contributors"
       ],
@@ -1744,10 +1744,10 @@
     {
       "name": "Thomson - MO/TO",
       "identifier": "theodore.libretro.framework",
-      "projectURL": "https://github.com/libretro/theodore",
+      "projectURL": "https://github.com/Zlika/theodore",
       "version": "Nightly",
       "license": "GPL-2.0-or-later",
-      "licenseURL": "https://github.com/libretro/theodore",
+      "licenseURL": "https://github.com/Zlika/theodore",
       "copyrightHolder": [
         "Copyright © Libretro Contributors"
       ],
@@ -1762,10 +1762,10 @@
     {
       "name": "Amstrad - CPC/GX40000",
       "identifier": "cap32.libretro.framework",
-      "projectURL": "https://github.com/libretro/caprice32",
+      "projectURL": "https://github.com/libretro/libretro-cap32",
       "version": "Nightly",
       "license": "GPL-2.0-or-later",
-      "licenseURL": "https://github.com/libretro/caprice32",
+      "licenseURL": "https://github.com/libretro/libretro-cap32",
       "copyrightHolder": [
         "Copyright © Libretro Contributors"
       ],
@@ -1780,7 +1780,7 @@
     {
       "name": "Commodore - C64",
       "identifier": "vice.x64.libretro.framework",
-      "projectURL": "https://github.com/libretro/vice",
+      "projectURL": "https://github.com/libretro/vice-libretro",
       "version": "Nightly",
       "license": "GPL-2.0-or-later",
       "licenseURL": "https://github.com/libretro/vice-libretro/blob/HEAD/vice/COPYING",
@@ -1799,7 +1799,7 @@
     {
       "name": "Commodore - C128",
       "identifier": "vice.x128.libretro.framework",
-      "projectURL": "https://github.com/libretro/vice",
+      "projectURL": "https://github.com/libretro/vice-libretro",
       "version": "Nightly",
       "license": "GPL-2.0-or-later",
       "licenseURL": "https://github.com/libretro/vice-libretro/blob/HEAD/vice/COPYING",
@@ -1817,7 +1817,7 @@
     {
       "name": "Commodore - PET",
       "identifier": "vice.xpet.libretro.framework",
-      "projectURL": "https://github.com/libretro/vice",
+      "projectURL": "https://github.com/libretro/vice-libretro",
       "version": "Nightly",
       "license": "GPL-2.0-or-later",
       "licenseURL": "https://github.com/libretro/vice-libretro/blob/HEAD/vice/COPYING",
@@ -1835,7 +1835,7 @@
     {
       "name": "Commodore - VIC-20",
       "identifier": "vice.xvic.libretro.framework",
-      "projectURL": "https://github.com/libretro/vice",
+      "projectURL": "https://github.com/libretro/vice-libretro",
       "version": "Nightly",
       "license": "GPL-2.0-or-later",
       "licenseURL": "https://github.com/libretro/vice-libretro/blob/HEAD/vice/COPYING",
@@ -1853,7 +1853,7 @@
     {
       "name": "Commodore - C64 (x64sc)",
       "identifier": "vice.x64sc.libretro.framework",
-      "projectURL": "https://github.com/libretro/vice",
+      "projectURL": "https://github.com/libretro/vice-libretro",
       "version": "Nightly",
       "license": "GPL-2.0-or-later",
       "licenseURL": "https://github.com/libretro/vice-libretro/blob/HEAD/vice/COPYING",
@@ -1872,7 +1872,7 @@
     {
       "name": "Commodore - CBM-II",
       "identifier": "vice.xcbm2.libretro.framework",
-      "projectURL": "https://github.com/libretro/vice",
+      "projectURL": "https://github.com/libretro/vice-libretro",
       "version": "Nightly",
       "license": "GPL-2.0-or-later",
       "licenseURL": "https://github.com/libretro/vice-libretro/blob/HEAD/vice/COPYING",
@@ -1890,7 +1890,7 @@
     {
       "name": "Commodore - PET/CBM-5x0",
       "identifier": "vice.xcbm5x0.libretro.framework",
-      "projectURL": "https://github.com/libretro/vice",
+      "projectURL": "https://github.com/libretro/vice-libretro",
       "version": "Nightly",
       "license": "GPL-2.0-or-later",
       "licenseURL": "https://github.com/libretro/vice-libretro/blob/HEAD/vice/COPYING",
@@ -1908,7 +1908,7 @@
     {
       "name": "Commodore - Plus/4",
       "identifier": "vice.xplus4.libretro.framework",
-      "projectURL": "https://github.com/libretro/vice",
+      "projectURL": "https://github.com/libretro/vice-libretro",
       "version": "Nightly",
       "license": "GPL-2.0-or-later",
       "licenseURL": "https://github.com/libretro/vice-libretro/blob/HEAD/vice/COPYING",
@@ -2000,10 +2000,10 @@
     {
       "name": "Neko Project II (PC-98)",
       "identifier": "nekop2.libretro.framework",
-      "projectURL": "https://docs.libretro.com/library/neko-project-ii/",
+      "projectURL": "https://docs.libretro.com/library/neko_project_ii_kai/",
       "version": "Nightly",
       "license": "GPL-2.0-or-later",
-      "licenseURL": "https://docs.libretro.com/library/neko-project-ii/",
+      "licenseURL": "https://docs.libretro.com/library/neko_project_ii_kai/",
       "copyrightHolder": [
         "Copyright © Libretro Contributors"
       ],
@@ -2037,10 +2037,10 @@
     {
       "name": "Mr.Boom",
       "identifier": "mrboom.libretro.framework",
-      "projectURL": "https://docs.libretro.com/library/mrboom/",
+      "projectURL": "https://docs.libretro.com/library/mr_boom/",
       "version": "Nightly",
       "license": "GPL-2.0-or-later",
-      "licenseURL": "https://docs.libretro.com/library/mrboom/",
+      "licenseURL": "https://docs.libretro.com/library/mr_boom/",
       "copyrightHolder": [
         "Copyright © Libretro Contributors"
       ],
@@ -2073,10 +2073,10 @@
     {
       "name": "Philips - P2000T",
       "identifier": "m2000.libretro.framework",
-      "projectURL": "https://github.com/libretro/m2000",
+      "projectURL": "https://github.com/p2000t/M2000",
       "version": "Nightly",
       "license": "GPL-2.0-or-later",
-      "licenseURL": "https://github.com/libretro/m2000",
+      "licenseURL": "https://github.com/p2000t/M2000",
       "copyrightHolder": [
         "Copyright © Libretro Contributors"
       ],
@@ -2091,10 +2091,10 @@
     {
       "name": "Sinclair - ZX Spectrum",
       "identifier": "fuse.libretro.framework",
-      "projectURL": "https://github.com/libretro/fuse",
+      "projectURL": "https://github.com/libretro/fuse-libretro",
       "version": "Nightly",
       "license": "GPL-2.0-or-later",
-      "licenseURL": "http://fuse-emulator.sourceforge.net",
+      "licenseURL": "https://fuse-emulator.sourceforge.net",
       "copyrightHolder": [
         "Copyright © 1999-2024 Philip Kendall and Fuse Contributors"
       ],
@@ -2110,10 +2110,10 @@
     {
       "name": "MSX/SVI/ColecoVision/SG-1000 (blueMSX)",
       "identifier": "bluemsx.libretro.framework",
-      "projectURL": "https://github.com/libretro/blueMSX",
+      "projectURL": "https://github.com/libretro/blueMSX-libretro",
       "version": "Nightly",
       "license": "GPL-2.0-or-later",
-      "licenseURL": "https://github.com/libretro/blueMSX",
+      "licenseURL": "https://github.com/libretro/blueMSX-libretro",
       "copyrightHolder": [
         "Copyright © Libretro Contributors"
       ],
@@ -2132,10 +2132,10 @@
     {
       "name": "TI-83 (Numero)",
       "identifier": "numero.libretro.framework",
-      "projectURL": "https://github.com/libretro/numero",
+      "projectURL": "https://github.com/nbarkhina/numero",
       "version": "Nightly",
       "license": "GPL-2.0-or-later",
-      "licenseURL": "https://github.com/libretro/numero",
+      "licenseURL": "https://github.com/nbarkhina/numero",
       "copyrightHolder": [
         "Copyright © Libretro Contributors"
       ],
@@ -2192,7 +2192,7 @@
       "projectURL": "https://github.com/libretro/81-libretro",
       "version": "Nightly",
       "license": "GPL-3.0-or-later",
-      "licenseURL": "https://github.com/libretro/81-libretro/blob/HEAD/COPYING",
+      "licenseURL": "https://github.com/libretro/81-libretro/blob/master/LICENSE",
       "copyrightHolder": null,
       "upstreamProjectURL": null,
       "forkNotes": null,
@@ -2208,7 +2208,7 @@
       "projectURL": "https://github.com/libretro/bsnes-mercury",
       "version": "nightly",
       "license": "GPL-3.0-or-later",
-      "licenseURL": "https://github.com/libretro/bsnes-mercury/blob/HEAD/COPYING",
+      "licenseURL": "https://github.com/libretro/bsnes-mercury/blob/master/LICENSE",
       "copyrightHolder": null,
       "upstreamProjectURL": null,
       "forkNotes": null,
@@ -2224,7 +2224,7 @@
       "projectURL": "https://github.com/libretro/fbalpha",
       "version": "Nightly",
       "license": "LicenseRef-NonCommercial",
-      "licenseURL": "https://github.com/libretro/fbalpha/blob/HEAD/LICENSE.md",
+      "licenseURL": "https://github.com/libretro/fbalpha2012/blob/master/docs/COPYING",
       "copyrightHolder": null,
       "upstreamProjectURL": null,
       "forkNotes": null,
@@ -2241,7 +2241,7 @@
       "projectURL": "https://github.com/libretro/fbalpha",
       "version": "Nightly",
       "license": "LicenseRef-NonCommercial",
-      "licenseURL": "https://github.com/libretro/fbalpha/blob/HEAD/LICENSE.md",
+      "licenseURL": "https://github.com/libretro/fbalpha2012/blob/master/docs/COPYING",
       "copyrightHolder": null,
       "upstreamProjectURL": null,
       "forkNotes": null,
@@ -2274,7 +2274,7 @@
       "projectURL": "https://github.com/libretro/freechaf",
       "version": "Nightly",
       "license": "GPL-3.0-or-later",
-      "licenseURL": "https://github.com/libretro/freechaf/blob/HEAD/COPYING",
+      "licenseURL": "https://github.com/libretro/FreeChaF/blob/master/LICENSE",
       "copyrightHolder": null,
       "upstreamProjectURL": null,
       "forkNotes": null,
@@ -2290,7 +2290,7 @@
       "projectURL": "https://github.com/libretro/FreeIntv",
       "version": "Nightly",
       "license": "GPL-3.0-or-later",
-      "licenseURL": "https://github.com/libretro/FreeIntv/blob/HEAD/COPYING",
+      "licenseURL": "https://github.com/libretro/FreeIntv/blob/master/LICENSE",
       "copyrightHolder": null,
       "upstreamProjectURL": null,
       "forkNotes": null,
@@ -2323,7 +2323,7 @@
       "projectURL": "https://github.com/drhelius/Gearcoleco",
       "version": "Nightly",
       "license": "GPL-3.0-or-later",
-      "licenseURL": "https://github.com/drhelius/Gearcoleco/blob/HEAD/COPYING",
+      "licenseURL": "https://github.com/drhelius/Gearcoleco/blob/main/LICENSE",
       "copyrightHolder": null,
       "upstreamProjectURL": null,
       "forkNotes": null,
@@ -2355,7 +2355,7 @@
       "projectURL": "https://github.com/libretro/libretro-handy",
       "version": "Nightly",
       "license": "Zlib",
-      "licenseURL": "https://github.com/libretro/libretro-handy/blob/HEAD/COPYING",
+      "licenseURL": "https://github.com/libretro/libretro-handy/blob/master/lynx/license.txt",
       "copyrightHolder": null,
       "upstreamProjectURL": null,
       "forkNotes": null,
@@ -2455,7 +2455,7 @@
       "projectURL": "https://github.com/libretro/neocd_libretro",
       "version": "Nightly",
       "license": "LGPL-3.0-only",
-      "licenseURL": "https://github.com/libretro/neocd_libretro/blob/HEAD/LICENSE",
+      "licenseURL": "https://github.com/libretro/neocd_libretro/blob/master/LICENSE.md",
       "copyrightHolder": null,
       "upstreamProjectURL": null,
       "forkNotes": null,
@@ -2487,7 +2487,7 @@
       "projectURL": "https://github.com/libretro/libretro-uae",
       "version": "Nightly",
       "license": "GPL-2.0-or-later",
-      "licenseURL": "https://github.com/libretro/libretro-uae/blob/HEAD/LICENSE",
+      "licenseURL": "https://github.com/libretro/libretro-uae/blob/master/COPYING",
       "copyrightHolder": null,
       "upstreamProjectURL": null,
       "forkNotes": null,
@@ -2503,7 +2503,7 @@
       "projectURL": "https://github.com/libretro/libretro-uae",
       "version": "Nightly",
       "license": "GPL-2.0-or-later",
-      "licenseURL": "https://github.com/libretro/libretro-uae/blob/HEAD/LICENSE",
+      "licenseURL": "https://github.com/libretro/libretro-uae/blob/master/COPYING",
       "copyrightHolder": null,
       "upstreamProjectURL": null,
       "forkNotes": null,
@@ -2519,7 +2519,7 @@
       "projectURL": "https://github.com/libretro/QuickNES_Core",
       "version": "Nightly",
       "license": "LGPL-2.1-or-later",
-      "licenseURL": "https://github.com/libretro/QuickNES_Core/blob/HEAD/COPYING",
+      "licenseURL": "https://github.com/libretro/QuickNES_Core/blob/master/LICENSE",
       "copyrightHolder": null,
       "upstreamProjectURL": null,
       "forkNotes": null,
@@ -2532,10 +2532,10 @@
     {
       "name": "SameDuck",
       "identifier": "sameduck.libretro.framework",
-      "projectURL": "https://github.com/libretro/libretro-SameDuck",
+      "projectURL": "https://github.com/libretro/sameduck",
       "version": "Nightly",
       "license": "MIT",
-      "licenseURL": "https://github.com/libretro/libretro-SameDuck/blob/HEAD/LICENSE",
+      "licenseURL": "https://github.com/libretro/sameduck/blob/SameDuck-libretro/LICENSE",
       "copyrightHolder": null,
       "upstreamProjectURL": null,
       "forkNotes": null,
@@ -2567,7 +2567,7 @@
       "projectURL": "https://github.com/libretro/smsplus-gx",
       "version": "Nightly",
       "license": "GPL-2.0-or-later",
-      "licenseURL": "https://github.com/libretro/smsplus-gx/blob/HEAD/COPYING",
+      "licenseURL": "https://github.com/libretro/smsplus-gx/blob/master/docs/license",
       "copyrightHolder": null,
       "upstreamProjectURL": null,
       "forkNotes": null,
@@ -2584,7 +2584,7 @@
       "projectURL": "https://github.com/libretro/snes9x2002",
       "version": "Nightly",
       "license": "LicenseRef-Snes9x",
-      "licenseURL": "https://github.com/libretro/snes9x2002/blob/HEAD/LICENSE",
+      "licenseURL": "https://github.com/libretro/snes9x2002/blob/master/src/copyright.h",
       "copyrightHolder": null,
       "upstreamProjectURL": null,
       "forkNotes": null,
@@ -2600,7 +2600,7 @@
       "projectURL": "https://github.com/libretro/snes9x2005",
       "version": "Nightly",
       "license": "LicenseRef-Snes9x",
-      "licenseURL": "https://github.com/libretro/snes9x2005/blob/HEAD/LICENSE",
+      "licenseURL": "https://github.com/libretro/snes9x2005/blob/master/copyright",
       "copyrightHolder": null,
       "upstreamProjectURL": null,
       "forkNotes": null,
@@ -2616,7 +2616,7 @@
       "projectURL": "https://github.com/libretro/snes9x2005",
       "version": "Nightly",
       "license": "LicenseRef-Snes9x",
-      "licenseURL": "https://github.com/libretro/snes9x2005/blob/HEAD/LICENSE",
+      "licenseURL": "https://github.com/libretro/snes9x2005/blob/master/copyright",
       "copyrightHolder": null,
       "upstreamProjectURL": null,
       "forkNotes": null,
@@ -2632,7 +2632,7 @@
       "projectURL": "https://github.com/libretro/snes9x2010",
       "version": "Nightly",
       "license": "LicenseRef-Snes9x",
-      "licenseURL": "https://github.com/libretro/snes9x2010/blob/HEAD/LICENSE",
+      "licenseURL": "https://github.com/libretro/snes9x2010/blob/master/LICENSE.txt",
       "copyrightHolder": null,
       "upstreamProjectURL": null,
       "forkNotes": null,
@@ -2664,7 +2664,7 @@
       "projectURL": "https://stella-emu.github.io",
       "version": "Nightly",
       "license": "GPL-2.0-or-later",
-      "licenseURL": "https://github.com/libretro/stella2023-libretro/blob/HEAD/COPYING",
+      "licenseURL": "https://github.com/libretro/stella2023/blob/master/License.txt",
       "copyrightHolder": null,
       "upstreamProjectURL": null,
       "forkNotes": null,
@@ -2680,7 +2680,7 @@
       "projectURL": "https://github.com/libretro/vba-next",
       "version": "Nightly",
       "license": "GPL-2.0-or-later",
-      "licenseURL": "https://github.com/libretro/vba-next/blob/HEAD/COPYING",
+      "licenseURL": "https://github.com/libretro/vba-next/blob/master/LICENSE",
       "copyrightHolder": null,
       "upstreamProjectURL": null,
       "forkNotes": null,

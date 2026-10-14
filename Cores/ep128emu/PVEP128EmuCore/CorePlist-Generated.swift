@@ -18,7 +18,7 @@ public enum CorePlist {
   public static let pvCoreIdentifier: String = "com.provenance.core.EP128Emu"
   public static let pvPrincipleClass: String = "PVEP128Emu.PVEP128EmuCore"
   public static let pvProjectName: String = "EP128Emu"
-  public static let pvProjectURL: String = "http://ep128emu.sourceforge.net/about.html"
+  public static let pvProjectURL: String = "https://ep128emu.sourceforge.net/about.html"
   public static let pvProjectVersion: String = "2.0.11"
   public static let pvSupportedSystems: [String] = ["com.provenance.ep128", "com.provenance.zxspectrum"]
 
