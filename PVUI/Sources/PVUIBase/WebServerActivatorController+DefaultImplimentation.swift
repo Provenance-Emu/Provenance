@@ -40,12 +40,6 @@ enum PVWebServerAlertMessageBuilder {
     }
 }
 
-#if canImport(SafariServices)
-extension PVSettingsViewController: WebServerActivatorController, SFSafariViewControllerDelegate {}
-#else
-extension PVSettingsViewController: WebServerActivatorController {}
-#endif
-
 #if os(iOS)
 import SafariServices
 
@@ -109,11 +103,8 @@ extension WebServerActivatorController where Self: UIViewController & SFSafariVi
 #if os(tvOS)
 public
 typealias WebServerActivatorControllerRootClass = UIViewController
-#else
-public
-typealias WebServerActivatorControllerRootClass = PVGameLibraryViewController
-#endif
 
+/// tvOS default; iOS view controllers use the `SFSafariViewControllerDelegate` variant above.
 public
 extension WebServerActivatorController where Self: WebServerActivatorControllerRootClass {
 
@@ -136,25 +127,10 @@ extension WebServerActivatorController where Self: WebServerActivatorControllerR
                         let message = await PVWebServerAlertMessageBuilder.wikiMessageFromManager()
                         let alert = UIAlertController(title: "Web Server Active", message: message, preferredStyle: .alert)
                         alert.preferredContentSize = CGSize(width: 300, height: 150)
-#if !os(tvOS)
-                        alert.popoverPresentationController?.barButtonItem = barButtonItem
-                        alert.popoverPresentationController?.sourceView = sender
-                        alert.popoverPresentationController?.sourceRect = sender?.bounds ?? UIScreen.main.bounds
-#endif
                         alert.addAction(UIAlertAction(title: "Stop", style: .cancel, handler: { (_: UIAlertAction) -> Void in
                             Task { await PVWebServerManager.shared.stop() }
                         }))
-#if os(iOS)
-                        let viewAction = UIAlertAction(title: "View", style: .default, handler: { (_: UIAlertAction) -> Void in
-                            self.showServer()
-                        })
-                        alert.addAction(viewAction)
-                        alert.addAction(UIAlertAction(title: "Hide (Server Continues Running)", style: .default, handler: { (_: UIAlertAction) -> Void in
-                        }))
-                        alert.preferredAction = alert.actions[alert.actions.count - 2]
-#else
                         alert.preferredAction = alert.actions.last
-#endif
                         self.present(alert, animated: true) {
                             Task { @MainActor in
                                 alert.message = await PVWebServerAlertMessageBuilder.wikiMessageFromManager()
@@ -173,11 +149,6 @@ extension WebServerActivatorController where Self: WebServerActivatorControllerR
                         """
                         let alert = UIAlertController(title: "Unable to Start Web Server", message: message, preferredStyle: .alert)
                         alert.preferredContentSize = CGSize(width: 300, height: 200)
-#if !os(tvOS)
-                        alert.popoverPresentationController?.barButtonItem = barButtonItem
-                        alert.popoverPresentationController?.sourceView = sender
-                        alert.popoverPresentationController?.sourceRect = sender?.bounds ?? UIScreen.main.bounds
-#endif
                         alert.addAction(UIAlertAction(title: "OK", style: .default, handler: { (_: UIAlertAction) -> Void in
                         }))
                         self.present(alert, animated: true) { () -> Void in }
@@ -195,11 +166,6 @@ extension WebServerActivatorController where Self: WebServerActivatorControllerR
                     """
                     let alert = UIAlertController(title: "Unable to Start Web Server", message: message, preferredStyle: .alert)
                     alert.preferredContentSize = CGSize(width: 300, height: 200)
-#if !os(tvOS)
-                    alert.popoverPresentationController?.barButtonItem = barButtonItem
-                    alert.popoverPresentationController?.sourceView = sender
-                    alert.popoverPresentationController?.sourceRect = sender?.bounds ?? UIScreen.main.bounds
-#endif
                     alert.addAction(UIAlertAction(title: "OK", style: .default, handler: { (_: UIAlertAction) -> Void in
                     }))
                     self.present(alert, animated: true) { () -> Void in }
@@ -216,14 +182,11 @@ extension WebServerActivatorController where Self: WebServerActivatorControllerR
             let alert = UIAlertController(title: "Wi-Fi Connection Required", message: message, preferredStyle: .alert)
             alert.preferredContentSize = CGSize(width: 300, height: 180)
             alert.popoverPresentationController?.barButtonItem = barButtonItem
-#if !os(tvOS)
-            alert.popoverPresentationController?.sourceView = sender
-            alert.popoverPresentationController?.sourceRect = sender?.bounds ?? UIScreen.main.bounds
-#endif
             alert.addAction(UIAlertAction(title: "OK", style: .default, handler: { (_: UIAlertAction) -> Void in
             }))
             present(alert, animated: true) { () -> Void in }
         }
     }
 }
+#endif // os(tvOS)
 #endif

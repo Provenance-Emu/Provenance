@@ -29,8 +29,7 @@ struct ContentView: View {
     // State to track delayed transition.
     // In screenshot mode there is no splash hold: show content as soon as bootup completes.
     @State private var showCompletedContent: Bool = LaunchArgument.screenshotMode.isEnabled
-    
-    
+
     var bootupView: some View {
         ZStack {
             // Show the bootup view
@@ -52,7 +51,6 @@ struct ContentView: View {
                 }
         }
     }
-    
 
     var body: some View {
         // Use a local variable to track the bootup state
@@ -99,10 +97,6 @@ struct ContentView: View {
                                 .environmentObject(ThemeManager.shared)
                                 .edgesIgnoringSafeArea(.all)
                             #endif
-                        case .uikit:
-                            UIKitHostedProvenanceMainView(appDelegate: appDelegate)
-                                .environmentObject(appDelegate)
-                                .edgesIgnoringSafeArea(.all)
                         }
                     }
                     .onAppear {

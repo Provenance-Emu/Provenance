@@ -871,9 +871,7 @@ extension UINavigationController : ControllerButtonPress {
 
 // MARK: - ControllerButtonPress - UITableViewController
 
-extension QuickTableViewController: ControllerButtonPressTableView {}
 extension UITableViewController: ControllerButtonPressTableView {}
-extension SortOptionsTableViewController: ControllerButtonPressTableView {}
 
 public
 protocol ControllerButtonPressTableView: ControllerButtonPress {
@@ -1153,26 +1151,6 @@ public extension GCKeyboard {
         }
 
         return controller
-    }
-}
-
-public final class SortOptionsTableViewController: UIViewController {
-    public var clearsSelectionOnViewWillAppear: Bool = true
-
-    public private(set) var tableView: UITableView!
-
-    public required init(withTableView tableView: UITableView) {
-        super.init(nibName: nil, bundle: nil)
-
-        self.tableView = tableView
-    }
-
-    public override func loadView() {
-        self.view = tableView
-    }
-
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
     }
 }
 

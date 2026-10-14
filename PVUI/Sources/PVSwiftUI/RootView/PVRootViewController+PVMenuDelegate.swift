@@ -92,7 +92,7 @@ extension PVRootViewController: PVMenuDelegate {
 
     public func showImportOptionsAlert() {
 #if os(iOS) || os(tvOS)
-        /// from PVGameLibraryViewController#getMoreROMs
+        /// Ported from the removed UIKit library's getMoreROMs.
         let actionSheet = UIAlertController(title: "Select Import Source", message: nil, preferredStyle: .actionSheet)
 
 #if !os(tvOS)

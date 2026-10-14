@@ -138,7 +138,7 @@ extension PVRootViewController: PVRootDelegate {
     }
 }
 
-// MARK: - Methods from PVGameLibraryViewController
+// MARK: - Library helpers
 
 @available(iOS 14, tvOS 14, *)
 extension PVRootViewController {

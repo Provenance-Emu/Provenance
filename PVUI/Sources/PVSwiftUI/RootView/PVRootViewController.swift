@@ -795,16 +795,6 @@ extension UIViewController {
 }
 
 #if os(iOS) || targetEnvironment(macCatalyst)
-// MARK: - UIDocumentPickerDelegate
-extension PVGameLibraryViewController: UIDocumentPickerDelegate {
-    public func documentPicker(_: UIDocumentPickerViewController, didPickDocumentsAt urls: [URL]) {
-        updatesController.handlePickedDocuments(urls)
-    }
-
-    public func documentPickerWasCancelled(_: UIDocumentPickerViewController) {
-        ILOG("Document picker was cancelled")
-    }
-}
 /// Navigation title with tracked uppercase text, accent icon, and a subtle retrowave tint.
 private struct RetroNavTitleView: View {
     let title: String

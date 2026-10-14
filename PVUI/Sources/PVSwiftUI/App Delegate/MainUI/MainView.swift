@@ -35,7 +35,7 @@ struct MainView: View {
     @State private var disconnectTask: Task<Void, Never>?
     @Default(.controllerStyleNavigation) private var controllerStyleNavigation
 #endif
-    
+
     var body: some View {
         GeometryReader { proxy in
             let isLandscape = proxy.size.width > proxy.size.height
@@ -141,17 +141,17 @@ struct MainView: View {
             )
         }
     }
-    
+
     // MARK: - State Checks
-    
+
     private var isEmulatorActive: Bool {
         sceneCoordinator.currentScene == .emulator
         && sceneCoordinator.showEmulator
         && appState.emulationUIState.currentGame != nil
     }
-    
+
     // MARK: - Emulator
-    
+
     @ViewBuilder
     private var emulatorView: some View {
         ZStack {
@@ -164,9 +164,9 @@ struct MainView: View {
         .animation(.easeInOut, value: sceneCoordinator.currentScene)
         .hideHomeIndicator()
     }
-    
+
     // MARK: - Main UI Mode
-    
+
     /// Resolves the current main UI mode into the appropriate root view
     @ViewBuilder
     private var mainUIForCurrentMode: some View {
@@ -189,15 +189,11 @@ struct MainView: View {
                 .environmentObject(ThemeManager.shared)
                 .edgesIgnoringSafeArea(.all)
 #endif
-        case .uikit:
-            UIKitHostedProvenanceMainView(appDelegate: appDelegate)
-                .environmentObject(appDelegate)
-                .edgesIgnoringSafeArea(.all)
         }
     }
-    
+
     // MARK: - Platform Content
-    
+
 #if os(iOS)
     @ViewBuilder
     private func iOSContentView(useTVMedia: Bool) -> some View {
@@ -214,7 +210,7 @@ struct MainView: View {
             }
         }
     }
-    
+
     private func handleTVMediaChange(_ newValue: Bool) {
         if newValue {
             disconnectTask?.cancel()
@@ -229,7 +225,7 @@ struct MainView: View {
             }
         }
     }
-    
+
     private func shouldUseTVMediaUI(isLandscape: Bool) -> Bool {
         guard #available(iOS 18.0, *) else { return false }
         if isLandscape, gamepadManager.isControllerConnected { return true }

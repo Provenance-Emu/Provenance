@@ -236,7 +236,7 @@ public struct CoreOptionTileProvider {
                 counter += 1
 
             case let .multi(display, values, _):
-                // multi options are persisted as a String title (see CoreOptionsViewController).
+                // multi options are persisted as a String title (the shared core-options persistence format).
                 // Fall back to Int index for legacy reads, then use the first isDefault or index 0.
                 let defaultIdx = values.firstIndex(where: { $0.isDefault }) ?? 0
                 let storedTitle: String = coreClass.valueForOption(option, andMD5: md5Scope)
@@ -381,7 +381,7 @@ public struct CoreOptionTileProvider {
                 current = storedInt ?? defaultIdx
             }
             let nextIndex = (current + 1) % values.count
-            // Store as String title to match CoreOptionsViewController's persistence format.
+            // Store as String title to match the core-options persistence format.
             coreClass.setValue(values[nextIndex].title, forOption: option, andMD5: md5Scope)
 
         default:
@@ -403,7 +403,7 @@ public struct CoreOptionTileProvider {
             }
         case let .multi(_, values, _):
             if values.contains(where: { $0.title == title }) {
-                // Store as String title to match CoreOptionsViewController's persistence format.
+                // Store as String title to match the core-options persistence format.
                 coreClass.setValue(title, forOption: option, andMD5: md5Scope)
             }
         default:

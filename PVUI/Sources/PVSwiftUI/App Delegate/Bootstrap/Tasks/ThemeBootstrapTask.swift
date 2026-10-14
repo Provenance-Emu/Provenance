@@ -24,7 +24,6 @@ struct ThemeBootstrapTask: BootstrapTask {
     func execute() async throws {
         ThemeManager.applySavedTheme()
         let palette = ThemeManager.shared.currentPalette
-        themeAppUI(withPalette: palette)
 #if os(tvOS)
         UIWindow.appearance().tintColor = .provenanceBlue
 #endif

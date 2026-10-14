@@ -145,7 +145,7 @@ extension PVAppDelegate {
     }
 
     private var jitPresentingViewController: UIViewController? {
-        gameLibraryViewController?.presentedViewController ?? gameLibraryViewController ?? rootNavigationVC?.presentedViewController ?? rootNavigationVC
+        rootNavigationVC?.presentedViewController ?? rootNavigationVC
     }
     #endif
 }

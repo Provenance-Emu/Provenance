@@ -96,24 +96,15 @@ public final class PVAppDelegate: UIResponder, UIApplicationDelegate, Observable
     var is_presenting_alert = false
 #endif
 
-    @MainActor weak var rootNavigationVC: UIViewController? = nil
-    @MainActor weak var gameLibraryViewController: PVGameLibraryViewController? = nil {
-        didSet {
-            ILOG("Did set gameLibraryViewController")
-            if gameLibraryViewController != nil {
-                ILOG("Initializing library notification handlers")
-                _initLibraryNotificationHandlers()
-            }
-        }
-    }
+    @MainActor weak var rootNavigationVC: UIViewController?
 
     private var cancellables = Set<AnyCancellable>()
     @MainActor private var libraryNotificationHandlersInstalled = false
 
     /// Registers the Scan ROMs / Update Metadata / Reset Library observers if no UI
-    /// mode has done so yet. Only `setupUIKitInterface` and `setupSwiftUIInterface`
-    /// used to register them, so in the TV Media and single-page UIs those
-    /// notifications were posted with nobody listening (#3672).
+    /// mode has done so yet. Only `setupSwiftUIInterface` used to register them, so in
+    /// the TV Media and single-page UIs those notifications were posted with nobody
+    /// listening (#3672).
     @MainActor
     public func installLibraryNotificationHandlersIfNeeded() {
         guard !libraryNotificationHandlersInstalled else { return }
@@ -138,11 +129,10 @@ public final class PVAppDelegate: UIResponder, UIApplicationDelegate, Observable
                         }
 
                         // Safely capture @MainActor state before doing background work.
-                        let (updatesController, romMigrator, hasLibraryVC) = await MainActor.run {
+                        let (updatesController, romMigrator) = await MainActor.run {
                             (
                                 self.appState?.libraryUpdatesController,
-                                self.appState?.gameLibrary?.romMigrator,
-                                self.gameLibraryViewController != nil
+                                self.appState?.gameLibrary?.romMigrator
                             )
                         }
                         // Synchronous — no actor hop needed (PVFeatureFlags is thread-safe)
@@ -168,13 +158,6 @@ public final class PVAppDelegate: UIResponder, UIApplicationDelegate, Observable
                                 try await migrator.fixPartialPaths()
                             } catch {
                                 ELOG("Error: \(error.localizedDescription)")
-                            }
-                        }
-
-                        // UI-affecting work should happen on main.
-                        if hasLibraryVC {
-                            await MainActor.run { [weak self] in
-                                self?.gameLibraryViewController?.checkROMs(false)
                             }
                         }
 
@@ -210,14 +193,11 @@ public final class PVAppDelegate: UIResponder, UIApplicationDelegate, Observable
                             // Launch tasks concurrently using Task handles
                             checkRomTask = Task { @MainActor [weak self] in // Needs main actor potentially
                                 guard let self = self else { return }
-                                if let libraryVC = self.gameLibraryViewController {
-                                     libraryVC.checkROMs(false) // Assuming this triggers necessary background work
-                                     DLOG("checkROMs called.")
-                                } else if let updates = self.appState?.libraryUpdatesController {
+                                if let updates = self.appState?.libraryUpdatesController {
                                      await updates.importROMDirectories()
                                      DLOG("importROMDirectories called.")
                                 } else {
-                                     WLOG("Neither gameLibraryViewController nor libraryUpdatesController available for ROM check.")
+                                     WLOG("libraryUpdatesController not available for ROM check.")
                                 }
                             }
 
@@ -278,12 +258,8 @@ public final class PVAppDelegate: UIResponder, UIApplicationDelegate, Observable
                         try RomDatabase.sharedInstance.deleteAllData()
                         Task {
                             await GameImporter.shared.initSystems()
-                            if let _ = self.gameLibraryViewController {
-                                self.gameLibraryViewController?.checkROMs(false)
-                            } else {
-                                if let updates = self.appState?.libraryUpdatesController {
-                                    await updates.importROMDirectories()
-                                }
+                            if let updates = self.appState?.libraryUpdatesController {
+                                await updates.importROMDirectories()
                             }
                             promise(.success(()))
                         }
@@ -309,7 +285,6 @@ public final class PVAppDelegate: UIResponder, UIApplicationDelegate, Observable
     @MainActor
     func _initUITheme() {
         ThemeManager.applySavedTheme()
-        themeAppUI(withPalette: ThemeManager.shared.currentPalette)
 #if os(tvOS)
         UIWindow.appearance().tintColor = .provenanceBlue
 #endif
@@ -732,33 +707,6 @@ public final class PVAppDelegate: UIResponder, UIApplicationDelegate, Observable
             unregisterMetricKitSubscriber()
         }
 #endif
-    }
-
-    @MainActor
-    func setupUIKitInterface() -> UIViewController {
-        guard let appState = appState else {
-            ELOG("`appState` was nil. Never set?")
-            return .init()
-        }
-
-        ILOG("PVAppDelegate: Setting up UIKit interface")
-        let storyboard = UIStoryboard(name: "Provenance", bundle: PVUIKit.BundleLoader.bundle)
-        guard let rootNavigation = storyboard.instantiateInitialViewController() as? UINavigationController else {
-            fatalError("No root nav controller")
-        }
-
-        self.rootNavigationVC = rootNavigation
-        guard let gameLibraryViewController = rootNavigation.viewControllers.first as? PVGameLibraryViewController else {
-            fatalError("No gameLibraryViewController")
-        }
-
-        gameLibraryViewController.updatesController = appState.libraryUpdatesController
-        gameLibraryViewController.gameImporter = appState.gameImporter
-        gameLibraryViewController.gameLibrary = appState.gameLibrary
-
-        self.gameLibraryViewController = gameLibraryViewController
-
-        return rootNavigation
     }
 
     @MainActor
