@@ -45,8 +45,6 @@ struct ProgrammaticOverlayView: View {
     /// Bumped when the core reports its real geometry, so `body` re-reads the game aspect.
     @State private var coreAVInfoRevision = 0
 
-    /// How long an empty-space press must last to open the editor.
-    private static let editHoldDuration: Double = 0.5
     /// Accepted game aspect ratios; anything else is a not-yet-booted core's fallback.
     private static let plausibleAspect: ClosedRange<CGFloat> = 0.5...2.5
     private static let fallbackAspect: CGFloat = 4.0 / 3.0
@@ -72,10 +70,9 @@ struct ProgrammaticOverlayView: View {
             let canvas = Self.canvas(for: geo)
             let template = binding.template(padKind: padKind, orientation: canvas.orientation)
             let layout = resolve(template, on: canvas, editing: editController != nil)
+            // The editor opens only on request (pause menu "Edit Layout" or the view
+            // controller's three-finger hold), never from a press on the controls' area.
             ZStack(alignment: .topLeading) {
-                editHoldArea(canvas: canvas, screens: layout.screenFrames) {
-                    beginEditing(template: template, canvas: canvas)
-                }
                 if let sink {
                     OverlayHostView(layout: layout, binding: binding, style: style, globalOpacity: globalOpacity,
                                     hapticIntensity: hapticsOn ? hapticIntensity : 0, sink: sink,
@@ -138,18 +135,6 @@ struct ProgrammaticOverlayView: View {
             viewport.detach(from: coreInstance)
             onScreenFrames([])
         }
-    }
-
-    /// Clear layer under the controls that opens the editor on a long press. The game
-    /// screens are cut out of its hit shape so touches there still reach the game view.
-    private func editHoldArea(canvas: OverlayCanvas, screens: [CGRect],
-                              onHold: @escaping () -> Void) -> some View {
-        var shape = Path(canvas.bounds)
-        for screen in screens { shape.addRect(screen) }
-        return Color.clear
-            .frame(width: canvas.size.width, height: canvas.size.height)
-            .contentShape(shape, eoFill: true)
-            .onLongPressGesture(minimumDuration: Self.editHoldDuration, perform: onHold)
     }
 
     private static func canvas(for geo: GeometryProxy) -> OverlayCanvas {

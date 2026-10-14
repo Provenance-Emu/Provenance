@@ -289,8 +289,10 @@ Plain `UIView`s with `touchesBegan/Moved/Ended/Cancelled`,
 
 ### 7.1 Editor
 
-- Enter: long-press 0.5 s on empty overlay space, or Pause → Controls → Edit
-  Layout. Core pauses, top bar hides, groups get dashed chrome. Editor and play
+- Enter: Pause → Controls → Edit Layout, or a three-finger hold (1.5 s, iOS)
+  on the controls (changed 2026-10-14: the 0.5 s empty-space long-press was
+  too easy to hit by accident; packaged DeltaSkins use the same two entries
+  and show no on-screen edit control during play). Core pauses, top bar hides, groups get dashed chrome. Editor and play
   share `OverlayCanvas` (status bar hidden) so WYSIWYG holds.
 - Gestures: drag group to move; corner handle or pinch to resize (0.5x–2.0x);
   tap selects and shows a floating inspector (opacity, scale, Detach button);

@@ -512,6 +512,17 @@ final class PauseTileMenuViewModel: ObservableObject {
             ))
         }
 
+        if emulatorVC.remappableController != nil {
+            controlsTiles.append(PauseMenuTile(
+                id: Self.remapControllerTileID,
+                icon: "arrow.left.arrow.right.circle",
+                label: String(localized: "Remap Controller"),
+                description: String(localized: "Change what each button on your controller does."),
+                colorKey: .orange,
+                dismissOnTap: false
+            ))
+        }
+
         #if !os(tvOS)
         controlsTiles.append(contentsOf: Self.touchOverlayEntries(emulatorVC: emulatorVC))
         #endif
@@ -1050,19 +1061,23 @@ final class PauseTileMenuViewModel: ObservableObject {
         return result
     }
 
+    /// Pause menu "Remap Controller": the button remapping screen for player 1's controller.
+    static let remapControllerTileID = "remapController"
+
     #if !os(tvOS)
     static let controllerLayoutTileID = "controllerLayout"
     static let editOverlayLayoutTileID = "editOverlayLayout"
 
-    /// Programmatic touch overlay entries: "Edit Layout" while the overlay is on screen, and
-    /// "Controller Layout" when the system has a variant the overlay can draw.
+    /// Touch-control entries: "Edit Layout" while editable controls are on screen (the
+    /// programmatic overlay or a packaged DeltaSkin), and "Controller Layout" when the system
+    /// has a variant the overlay can draw.
     private static func touchOverlayEntries(emulatorVC: PVEmulatorViewController) -> [PauseMenuTile] {
-        guard let game = emulatorVC.game, !game.isInvalidated,
-              let system = ProgrammaticOverlaySupport.systemIdentifier(linked: game.system?.systemIdentifier,
-                                                                       persisted: game.systemIdentifier),
-              ProgrammaticOverlaySupport.covers(system) else { return [] }
         var entries: [PauseMenuTile] = []
-        if OverlayPadKindResolver.offersVariantChoice(for: system) {
+        if let game = emulatorVC.game, !game.isInvalidated,
+           let system = ProgrammaticOverlaySupport.systemIdentifier(linked: game.system?.systemIdentifier,
+                                                                    persisted: game.systemIdentifier),
+           ProgrammaticOverlaySupport.covers(system),
+           OverlayPadKindResolver.offersVariantChoice(for: system) {
             entries.append(PauseMenuTile(
                 id: controllerLayoutTileID,
                 icon: "gamecontroller.fill",
@@ -1072,12 +1087,12 @@ final class PauseTileMenuViewModel: ObservableObject {
                 dismissOnTap: false
             ))
         }
-        if emulatorVC.isProgrammaticOverlayActive {
+        if emulatorVC.activeLayoutEditorKind != nil {
             entries.append(PauseMenuTile(
                 id: editOverlayLayoutTileID,
                 icon: "square.and.pencil",
                 label: String(localized: "Edit Layout"),
-                description: String(localized: "Move, resize and fade the touch controls."),
+                description: String(localized: "Rearrange the touch controls. Shortcut: hold three fingers on the screen."),
                 colorKey: .purple,
                 dismissOnTap: false
             ))

@@ -47,6 +47,8 @@ struct RetroMenuView: View {
     @Default(.showFPSCount) private var showFPSCount
 
     @State private var selectedCategory: MenuCategory = .main
+    /// Set by "REMAP CONTROLLER"; presents the remapping screen for that controller.
+    @State private var controllerRemapTarget: ControllerRemapTarget?
     /// Tracks whether the user is actively dragging the category scroll bar.
     /// Using @GestureState ensures the flag is always reset — even on gesture cancellation —
     /// which prevents the tab bar from locking up when a scroll ends mid-state-update.
@@ -395,6 +397,10 @@ struct RetroMenuView: View {
                 }
             }
         }
+        // Back to the game once remapping is done.
+        .controllerRemapSheet(target: $controllerRemapTarget) {
+            dismissAction(true)
+        }
         #if os(iOS)
         .confirmationDialog(String(localized: "Camera Corner"), isPresented: $showingCameraPositionPicker, titleVisibility: .visible) {
             ForEach(CameraPosition.allCases, id: \.self) { position in
@@ -479,13 +485,16 @@ struct RetroMenuView: View {
         emulatorVC.coreSupportsVirtualKeyboard ||
         emulatorVC.coreSupportsVirtualMouse ||
         hasPortDeviceOptions ||
-        hasMIDI
+        hasMIDI ||
+        emulatorVC.activeLayoutEditorKind != nil ||
+        emulatorVC.remappableController != nil
         #else
         return emulatorVC.core is CoreOptional ||
         (emulatorVC.core as? CoreActions)?.coreActions != nil ||
         hasPaletteSupport ||
         hasPortDeviceOptions ||
-        coreSupportsMIDI
+        coreSupportsMIDI ||
+        emulatorVC.remappableController != nil
         #endif
     }
 
@@ -667,7 +676,20 @@ struct RetroMenuView: View {
                     dismissMenuForSubSheetThen { emulatorVC.presentCompanionController() }
                 }
             }
+
+            // Touch-control layout editor (overlay or packaged skin); the editor pauses the game.
+            if emulatorVC.activeLayoutEditorKind != nil {
+                menuButton(title: String(localized: "EDIT LAYOUT"), icon: "square.and.pencil", color: .retroPurple) {
+                    emulatorVC.openLayoutEditor()
+                }
+            }
             #endif
+
+            if let controller = emulatorVC.remappableController {
+                menuButton(title: String(localized: "REMAP CONTROLLER"), icon: "arrow.left.arrow.right.circle", color: .retroOrange) {
+                    controllerRemapTarget = ControllerRemapTarget(controller: controller)
+                }
+            }
 
             // Per-port device type picker (e.g. Joypad → Mouse for Mario Paint)
             portDevicePickerSection

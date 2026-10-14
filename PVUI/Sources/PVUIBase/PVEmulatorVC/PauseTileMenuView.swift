@@ -107,6 +107,8 @@ struct PauseTileMenuView: View {
     @State private var showingSaveStateBrowser = false
     @State private var showingScreenshotBrowser = false
     @State private var showingControllerProfiles = false
+    /// Set by "Remap Controller"; presents the remapping screen for that controller.
+    @State private var controllerRemapTarget: ControllerRemapTarget?
     @State private var showingTransferPakConfig = false
     /// Frozen snapshot of `emulatorVC.game` captured on the main thread before the sheet opens.
     /// The sheet closure reads this instead of the live Realm object to avoid thread-violation crashes.
@@ -569,6 +571,8 @@ struct PauseTileMenuView: View {
             showingNetworkPlay = true
         case "controllerProfile":
             showingControllerProfiles = true
+        case PauseTileMenuViewModel.remapControllerTileID:
+            controllerRemapTarget = emulatorVC.remappableController.map { ControllerRemapTarget(controller: $0) }
         case "screenshot":
             dismissAction(true)
             emulatorVC.takeScreenshot()
@@ -698,7 +702,7 @@ struct PauseTileMenuView: View {
         case PauseTileMenuViewModel.controllerLayoutTileID:
             controllerLayoutContext = makeControllerLayoutContext()
         case PauseTileMenuViewModel.editOverlayLayoutTileID:
-            emulatorVC.openOverlayLayoutEditor()
+            emulatorVC.openLayoutEditor()
         #endif
 
         // MARK: MIDI device picker
@@ -1640,6 +1644,10 @@ struct PauseTileMenuView: View {
             InSessionProfilePickerView(emulatorVC: emulatorVC) {
                 showingControllerProfiles = false
             }
+        }
+        // Back to the game once remapping is done.
+        .controllerRemapSheet(target: $controllerRemapTarget) {
+            dismissAction(true)
         }
         .fullScreenCover(isPresented: $showingLogViewer) {
             RetroLogView(isFullscreen: $showingLogViewer)

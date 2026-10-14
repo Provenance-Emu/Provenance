@@ -149,9 +149,10 @@ struct DeltaSkinEditModeOverlay: View {
     }
 }
 
-// MARK: - "Edit Layout" / "Done" floating button
+// MARK: - "Done" floating button
 
-/// A pill-shaped button shown during edit mode and a separate "Reset" link.
+/// Shown only while the layout editor is open (it is entered from the pause menu or the
+/// three-finger hold): a "Done" pill that leaves edit mode and a "Reset" link.
 struct DeltaSkinEditModeToolbar: View {
     @Binding var isEditMode: Bool
     let skinIdentifier: String
@@ -160,25 +161,23 @@ struct DeltaSkinEditModeToolbar: View {
 
     var body: some View {
         VStack(spacing: 8) {
-            // Edit / Done toggle
-            Button(action: { isEditMode.toggle() }) {
-                Label(
-                    isEditMode ? "Done" : "Edit Layout",
-                    systemImage: isEditMode ? "checkmark.circle.fill" : "arrow.up.and.down.and.arrow.left.and.right"
-                )
-                .font(.system(size: 14, weight: .semibold))
-                .foregroundColor(.white)
-                .padding(.horizontal, 14)
-                .padding(.vertical, 8)
-                .background(isEditMode ? Color.green.opacity(0.85) : Color.black.opacity(0.6))
-                .clipShape(Capsule())
+            Button {
+                isEditMode = false
+            } label: {
+                Label("Done", systemImage: "checkmark.circle.fill")
+                    .font(.system(size: 14, weight: .semibold))
+                    .foregroundColor(.white)
+                    .padding(.horizontal, 14)
+                    .padding(.vertical, 8)
+                    .background(Color.green.opacity(0.85))
+                    .clipShape(Capsule())
             }
 
-            // Reset button — only shown in edit mode when there are custom offsets
-            if isEditMode && hasCustomOffsets {
-                Button(action: {
+            // Reset button — only when there are custom offsets
+            if hasCustomOffsets {
+                Button {
                     buttonOffsets.resetOffsets(for: skinIdentifier)
-                }) {
+                } label: {
                     Label("Reset to Default", systemImage: "arrow.counterclockwise")
                         .font(.system(size: 12, weight: .regular))
                         .foregroundColor(.white.opacity(0.85))

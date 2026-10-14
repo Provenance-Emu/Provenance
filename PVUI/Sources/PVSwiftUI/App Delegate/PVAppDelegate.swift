@@ -535,6 +535,10 @@ public final class PVAppDelegate: UIResponder, UIApplicationDelegate, Observable
             )
         }
 
+        PauseMenuViewRegistry.registerControllerRemapView { controller, dismissAction in
+            AnyView(InGameControllerRemapView(controller: controller, dismissAction: dismissAction))
+        }
+
         _initThemeListener()
 
         // Once per launch, a delayed low-priority pass replaces dead artwork URLs and re-downloads

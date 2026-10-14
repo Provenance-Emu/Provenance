@@ -159,12 +159,11 @@ struct EmulatorWithSkinView: View {
                     debugOverlayView
                 }
 
-                // Edit Layout toolbar — shown only when the skinButtonReposition feature flag
-                // is enabled, a skin is active AND supports the current traits. iOS only; tvOS
-                // lacks DragGesture so edit mode is unsupported there.
+                // Done / Reset controls, only while the layout editor is open. Nothing is shown
+                // during play: the editor opens from the pause menu ("Edit Layout") or the view
+                // controller's three-finger hold. iOS only; tvOS lacks DragGesture.
                 #if !os(tvOS)
-                if Defaults[.skinButtonReposition],
-                   let activeSkin = skinLoader.selectedSkin, activeSkin.supports(createSkinTraits()) {
+                if isEditMode, let activeSkin = editableSkin {
                     VStack {
                         HStack {
                             Spacer()
@@ -271,7 +270,28 @@ struct EmulatorWithSkinView: View {
                 orientationObserver = nil
                 skinChangeObserver = nil
                 filterChangeObserver = nil
+                // Release the editor's pause if the skin goes away mid-edit.
+                if isEditMode {
+                    isEditMode = false
+                    postLayoutEditing(false)
+                }
             }
+            #if !os(tvOS)
+            // Pause menu "Edit Layout" / three-finger hold. The programmatic overlay answers the
+            // same request when it is the one on screen, so act only for a fitting packaged skin.
+            .onReceive(NotificationCenter.default.publisher(for: .overlayEditLayoutRequested)) { _ in
+                guard editableSkin != nil else { return }
+                isEditMode = true
+            }
+            // The view controller pauses the core while the editor is open.
+            .onChange(of: isEditMode) { _, editing in
+                postLayoutEditing(editing)
+            }
+            // The fallback overlay replaced the skin (rotation to an unsupported orientation).
+            .onChange(of: editableSkin?.identifier) { _, identifier in
+                if identifier == nil, isEditMode { isEditMode = false }
+            }
+            #endif
             .onChange(of: selectedFilterName) { _ in
                 // Filter changes propagate naturally via state to DeltaSkinView's filters parameter
                 // No need to force view recreation - this was causing AG::precondition_failure crashes
@@ -296,6 +316,21 @@ struct EmulatorWithSkinView: View {
             .environment(\.debugSkinMappings, showDebugOverlay)
         }
         .background(Color.clear) // Ensure the background is transparent
+    }
+
+    // MARK: - Layout editor
+
+    /// The packaged skin on screen when it can be edited: selected, loaded, and fitting the
+    /// current orientation (otherwise the fallback overlay is showing instead).
+    private var editableSkin: (any DeltaSkinProtocol)? {
+        guard !skinLoader.isLoading, let skin = skinLoader.selectedSkin,
+              skin.supports(createSkinTraits()) else { return nil }
+        return skin
+    }
+
+    private func postLayoutEditing(_ editing: Bool) {
+        NotificationCenter.default.post(name: .overlayEditingDidChange, object: nil,
+                                        userInfo: OverlayNotificationPayload.userInfo(editing: editing))
     }
 
     // MARK: - Fallback controls

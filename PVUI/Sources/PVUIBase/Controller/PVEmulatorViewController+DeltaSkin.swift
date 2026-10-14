@@ -288,16 +288,6 @@ extension PVEmulatorViewController {
         }
     }
 
-    /// Pause menu "Edit Layout": closes the menu, then asks the overlay for its editor once
-    /// the menu has resumed the core, so the editor's own pause takes over (and is released
-    /// when it closes) instead of the game resuming under it.
-    func openOverlayLayoutEditor() {
-        dismissNav(resumeEmulation: true) { [weak self] in
-            self?.restoreIndicatorOverlay()
-            NotificationCenter.default.post(name: .overlayEditLayoutRequested, object: nil)
-        }
-    }
-
     /// A core restored or applied a variant (the thin core restores its port devices at load).
     @objc private func handleControllerLayoutVariantChange(_ notification: Notification) {
         DispatchQueue.main.async { [weak self] in
@@ -372,8 +362,8 @@ extension PVEmulatorViewController {
         overlayScreenFramesDidChange(frames)
     }
 
-    /// The layout editor pauses the game while it is open and resumes it when it closes,
-    /// unless something else (the pause menu) wants it paused by then.
+    /// A layout editor (overlay or DeltaSkin) pauses the game while it is open and resumes it
+    /// when it closes, unless something else (the pause menu) wants it paused by then.
     @objc private func handleOverlayEditing(_ notification: Notification) {
         guard let editing = OverlayNotificationPayload.editing(from: notification.userInfo) else { return }
         DispatchQueue.main.async { [weak self] in
@@ -652,6 +642,10 @@ extension PVEmulatorViewController {
         if let menuButton = menuButton {
             view.bringSubviewToFront(menuButton)
         }
+        #if os(iOS)
+        // The one way into the layout editor from the game screen (no on-screen control).
+        installLayoutEditorHoldGestureIfNeeded()
+        #endif
         #if !os(tvOS)
         // Add debug overlay toggle gesture
         let debugTapGesture = UITapGestureRecognizer(target: self, action: #selector(toggleDebugOverlay))

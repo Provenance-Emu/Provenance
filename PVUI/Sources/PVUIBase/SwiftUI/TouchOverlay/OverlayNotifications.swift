@@ -11,7 +11,9 @@ import Foundation
 import CoreGraphics
 
 public extension Notification.Name {
-    /// Asks the mounted overlay to open its layout editor (pause menu "Edit Layout").
+    /// Asks the mounted controls to open their layout editor (pause menu "Edit Layout", or
+    /// the three-finger hold). The programmatic overlay and a packaged DeltaSkin both listen;
+    /// only the one on screen acts (see `LayoutEditorKind`).
     static let overlayEditLayoutRequested = Notification.Name("PVOverlayEditLayoutRequested")
 
     /// The overlay's game-screen frames changed (see `OverlayNotificationPayload.frames(from:)`):
@@ -19,7 +21,8 @@ public extension Notification.Name {
     /// non-empty payload therefore also means "the overlay is mounted".
     static let overlayScreenFramesDidChange = Notification.Name("PVOverlayScreenFramesDidChange")
 
-    /// The overlay's layout editor opened or closed (see `OverlayNotificationPayload.editing(from:)`).
+    /// A layout editor (overlay or DeltaSkin) opened or closed (see
+    /// `OverlayNotificationPayload.editing(from:)`). The view controller pauses the core meanwhile.
     static let overlayEditingDidChange = Notification.Name("PVOverlayEditingDidChange")
 
     /// Posted by `PVThinLibretroCore` when the core reports new AV info (late geometry). The
