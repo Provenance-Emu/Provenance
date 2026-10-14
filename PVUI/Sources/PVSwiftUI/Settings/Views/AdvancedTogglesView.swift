@@ -129,7 +129,7 @@ internal struct AdvancedTogglesView: View {
 
                 PremiumThemedToggle(isOn: $liveBroadcast) {
                     SettingsRow(title: "Live Broadcast",
-                                subtitle: "ReplayKit Go Live button in the pause menu. Cast gameplay to Twitch / Facebook / other ReplayKit-compatible services. Early — quality and reconnect handling still iterating.",
+                                subtitle: "ReplayKit Go Live button in the pause menu. Cast gameplay to Twitch, Facebook and other ReplayKit-compatible services.",
                                 icon: .sfSymbol("dot.radiowaves.left.and.right"),
                                 showChevron: false)
                 }
@@ -153,8 +153,8 @@ internal struct AdvancedTogglesView: View {
 
                 // Toggles promoted from PVFeatureFlags 2026-05-31.
                 PremiumThemedToggle(isOn: $companionController) {
-                    SettingsRow(title: "Companion Controller (Beta)",
-                                subtitle: "Show a companion-controller overlay (trackball / numpad / DSU peripherals) in the pause menu. DSU integration is incomplete.",
+                    SettingsRow(title: "Companion Controller",
+                                subtitle: "Show a companion-controller overlay (trackball, numpad, DSU peripherals) in the pause menu.",
                                 icon: .sfSymbol("dpad"),
                                 showChevron: false)
                 }
