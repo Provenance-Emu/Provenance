@@ -569,7 +569,7 @@ public struct PVSettingsView: View {
 
     @State public var showsDoneButton: Bool = true
     #if !os(tvOS)
-    @State private var selectedTab: Int = 0
+    @State private var selectedPane: SettingsPane = .general
     @State private var searchQuery = ""
     @FocusState private var searchFocused: Bool
     /// Section chosen from search; consumed by the destination tab once it is on screen.
@@ -623,100 +623,16 @@ public struct PVSettingsView: View {
                     .opacity(themeManager.currentPalette.dark ? 0.5 : 0.2)
 
                 #if !os(tvOS)
-                // Tabbed interface for iOS
-                RetroTabView(
-                    selection: $selectedTab,
-                    content: {
-                        VStack(spacing: 0) {
-                            SettingsSearchField(text: $searchQuery, isFocused: $searchFocused)
-                                .padding(.horizontal)
-                                // Clears the hand-drawn Done / Help buttons overlaid at the top.
-                                .padding(.top, showsDoneButton ? Self.doneBarClearance : Self.searchFieldTopPadding)
-                                .padding(.bottom, 4)
-
-                            if isSearching {
-                                SettingsSearchResultsView(query: searchQuery, onSelect: selectSearchResult)
-                            } else {
-                                Group {
-                                    switch selectedTab {
-                                    case 0:
-                                        generalTabContent
-                                    case 1:
-                                        emulationTabContent
-                                    case 2:
-                                        controllerTabContent
-                                    case 3:
-                                        advancedTabContent
-                                    case 4:
-                                        aboutTabContent
-                                    default:
-                                        generalTabContent
-                                    }
-                                }
-                            }
-                        }
-                    },
-                    tabItems: tabItems
-                )
-                .overlay(
-                    // Custom navigation bar overlay
-                    VStack {
-                        HStack {
-                            if showsDoneButton {
-                                Button(action: { dismissAction() }) {
-                                    Text("settings.done", bundle: .module)
-                                        .font(.system(size: 16, weight: .bold))
-                                        .foregroundColor(Color(themeManager.currentPalette.settingsCellText ?? themeManager.currentPalette.gameLibraryText))
-                                        .padding(.horizontal, 16)
-                                        .padding(.vertical, 8)
-                                        .background(
-                                            RoundedRectangle(cornerRadius: 8)
-                                                .fill(Color(themeManager.currentPalette.settingsCellBackground ?? themeManager.currentPalette.gameLibraryBackground).opacity(0.6))
-                                                .overlay(
-                                                    RoundedRectangle(cornerRadius: 8)
-                                                        .strokeBorder(
-                                                            LinearGradient(
-                                                                gradient: Gradient(colors: [.retroPink, .retroBlue]),
-                                                                startPoint: .leading,
-                                                                endPoint: .trailing
-                                                            ),
-                                                            lineWidth: 1.5
-                                                        )
-                                                )
-                                        )
-                                }
-
-                                Spacer()
-
-                                Button(action: { showWiki = true }) {
-                                    Text("settings.help", bundle: .module)
-                                        .font(.system(size: 16, weight: .bold))
-                                        .foregroundColor(Color(themeManager.currentPalette.settingsCellText ?? themeManager.currentPalette.gameLibraryText))
-                                        .padding(.horizontal, 16)
-                                        .padding(.vertical, 8)
-                                        .background(
-                                            RoundedRectangle(cornerRadius: 8)
-                                                .fill(Color(themeManager.currentPalette.settingsCellBackground ?? themeManager.currentPalette.gameLibraryBackground).opacity(0.6))
-                                                .overlay(
-                                                    RoundedRectangle(cornerRadius: 8)
-                                                        .strokeBorder(
-                                                            LinearGradient(
-                                                                gradient: Gradient(colors: [.retroBlue, .retroPurple]),
-                                                                startPoint: .leading,
-                                                                endPoint: .trailing
-                                                            ),
-                                                            lineWidth: 1.5
-                                                        )
-                                                )
-                                        )
-                                }
-                            }
-                        }
-                        .padding(.horizontal)
-                        .padding(.top, 10)
-
-                        Spacer()
-                    }
+                // Sidebar (wide) or tab strip (narrow) of panes, after iFly's settings layout.
+                SettingsSidebarContainer(
+                    selectedPane: $selectedPane,
+                    searchQuery: $searchQuery,
+                    searchFocused: $searchFocused,
+                    pendingScrollSection: $pendingScrollSection,
+                    onDone: showsDoneButton ? { dismissAction() } : nil,
+                    onHelp: showsDoneButton ? { showWiki = true } : nil,
+                    onSelectSearchResult: selectSearchResult,
+                    paneContent: paneContent
                 )
                 #else
                 // Premium tvOS Settings with RetroWave styling
@@ -852,51 +768,14 @@ public struct PVSettingsView: View {
     }
 
     #if !os(tvOS)
-    /// Top inset that keeps the search field below the Done / Help buttons overlaid on the tab content.
-    private static let doneBarClearance: CGFloat = 52
-    /// Top inset of the search field when there is no Done / Help row.
-    private static let searchFieldTopPadding: CGFloat = 8
-
-    private var isSearching: Bool {
-        searchQuery.trimmingCharacters(in: .whitespacesAndNewlines).count >= SettingsSearchIndex.minimumQueryLength
-    }
-
-    /// Jumps to the chosen setting's tab, opens its section and (once that tab is on screen) scrolls to it.
+    /// Opens the pane holding the chosen setting's section and (once that pane is on screen) scrolls to it.
     private func selectSearchResult(_ entry: SettingsSearchEntry) {
         searchQuery = ""
         searchFocused = false
-        CollapsibleSectionExpansion.expand(title: entry.section)
         pendingScrollSection = entry.section
-        selectedTab = entry.tab.rawValue
-    }
-
-    /// Scroll container shared by the tabs. Tab content is rebuilt on every tab switch, so the scroll to a
-    /// section picked from search happens here, after the new tab has appeared.
-    private func tabScrollView<Content: View>(@ViewBuilder content: () -> Content) -> some View {
-        let tabContent = content()
-        return ScrollViewReader { proxy in
-            ScrollView {
-                tabContent
-            }
-            .task {
-                guard let section = pendingScrollSection else { return }
-                pendingScrollSection = nil
-                await Task.yield()
-                withAnimation {
-                    proxy.scrollTo(section, anchor: .top)
-                }
-            }
+        if let pane = SettingsPane(section: entry.section) {
+            selectedPane = pane
         }
-    }
-
-    private var tabItems: [RetroTabItem] {
-        [
-            RetroTabItem(title: "General", systemImage: "gearshape.fill"),
-            RetroTabItem(title: "Emulation", systemImage: "gamecontroller.fill"),
-            RetroTabItem(title: "Controller", systemImage: "hand.raised.fill"),
-            RetroTabItem(title: "Advanced", systemImage: "gearshape.2.fill"),
-            RetroTabItem(title: "About", systemImage: "info.circle.fill")
-        ]
     }
 
     @ViewBuilder
@@ -918,213 +797,98 @@ public struct PVSettingsView: View {
             showCloudSync = true
             settingsNavigator.navigate(to: .none)
         case .tab(let tab):
-            selectedTab = tab.rawValue
+            selectedPane = SettingsPane(tab: tab)
             settingsNavigator.navigate(to: .none)
         case .none:
             break
         }
     }
 
-    private var generalTabContent: some View {
-        tabScrollView {
-            VStack(spacing: 16) {
-                Text("settings.tab.general", bundle: .module)
-                    .font(.system(size: 32, weight: .bold, design: .rounded))
-                    .foregroundStyle(
-                        LinearGradient(
-                            gradient: Gradient(colors: [.retroPink, .retroPurple, .retroBlue]),
-                            startPoint: .leading,
-                            endPoint: .trailing
-                        )
-                    )
-                    .padding(.top, 20)
-                    .padding(.bottom, 10)
-                    .shadow(color: .retroPink.opacity(0.5), radius: 10, x: 0, y: 0)
-
-                #if canImport(FreemiumKit)
+    /// The sections of `pane`, in `SettingsPane.sections` order.
+    private func paneContent(_ pane: SettingsPane) -> some View {
+        VStack(alignment: .leading, spacing: 24) {
+            #if canImport(FreemiumKit)
+            if pane == .general {
                 PlusStatusBanner()
-                    .padding(.horizontal)
-                    .padding(.bottom, 4)
-                #endif
-
-                VStack(spacing: 16) {
-                    CollapsibleSection(title: SettingsSectionTitle.app) {
-                        AppSection(viewModel: viewModel)
-                            .environmentObject(viewModel)
-                    }
-                    CollapsibleSection(title: SettingsSectionTitle.library) {
-                        LibrarySection(viewModel: viewModel)
-                            .environmentObject(viewModel)
-                    }
-                    CollapsibleSection(title: SettingsSectionTitle.libraryManagement) {
-                        LibrarySection2(viewModel: viewModel)
-                            .environmentObject(viewModel)
-                    }
-                }
-                .padding(.horizontal)
             }
-            .padding(.bottom, 100)
+            #endif
+            ForEach(pane.sections, id: \.self) { section in
+                if let content = sectionContent(section) {
+                    content
+                }
+            }
         }
     }
 
-    private var emulationTabContent: some View {
-        tabScrollView {
-            VStack(spacing: 16) {
-                Text("settings.tab.emulation", bundle: .module)
-                    .font(.system(size: 32, weight: .bold, design: .rounded))
-                    .foregroundStyle(
-                        LinearGradient(
-                            gradient: Gradient(colors: [.retroPink, .retroPurple, .retroBlue]),
-                            startPoint: .leading,
-                            endPoint: .trailing
-                        )
-                    )
-                    .padding(.top, 20)
-                    .padding(.bottom, 10)
-                    .shadow(color: .retroPink.opacity(0.5), radius: 10, x: 0, y: 0)
-
-                VStack(spacing: 16) {
-                    CollapsibleSection(title: SettingsSectionTitle.coreOptions) {
-                        CoreOptionsSection()
-                    }
-                    CollapsibleSection(title: SettingsSectionTitle.saves) {
-                        SavesSection()
-                    }
-                    CollapsibleSection(title: SettingsSectionTitle.audio) {
-                        AudioSection()
-                    }
-                    CollapsibleSection(title: SettingsSectionTitle.video) {
-                        VideoSection()
-                    }
-#if os(iOS)
-                    CollapsibleSection(title: SettingsSectionTitle.recording) {
-                        RecordingSection()
-                    }
-#endif
-                    CollapsibleSection(title: SettingsSectionTitle.retroAchievements) {
-                        RetroAchievementsSection(viewModel: viewModel)
-                            .environmentObject(viewModel)
-                    }
+    /// One section of a pane, or `nil` when the section is compiled out on this platform.
+    ///
+    /// Type-erased per section on purpose: a single `@ViewBuilder` switch over ~20 sections nests
+    /// `_ConditionalContent` deep enough that iFly's equivalent crashed the runtime type demangler.
+    private func sectionContent(_ section: String) -> AnyView? {
+        switch section {
+        case SettingsSectionTitle.app:
+            return paneSection(section) { AppSection(viewModel: viewModel).environmentObject(viewModel) }
+        case SettingsSectionTitle.library:
+            return paneSection(section) { LibrarySection(viewModel: viewModel).environmentObject(viewModel) }
+        case SettingsSectionTitle.libraryManagement:
+            return paneSection(section) { LibrarySection2(viewModel: viewModel).environmentObject(viewModel) }
+        case SettingsSectionTitle.coreOptions:
+            return paneSection(section) { CoreOptionsSection() }
+        case SettingsSectionTitle.saves:
+            return paneSection(section) { SavesSection() }
+        case SettingsSectionTitle.audio:
+            return paneSection(section) { AudioSection() }
+        case SettingsSectionTitle.video:
+            return paneSection(section) { VideoSection() }
+        case SettingsSectionTitle.recording:
+            #if os(iOS)
+            return paneSection(section) { RecordingSection() }
+            #else
+            return nil
+            #endif
+        case SettingsSectionTitle.retroAchievements:
+            return paneSection(section) { RetroAchievementsSection(viewModel: viewModel).environmentObject(viewModel) }
+        case SettingsSectionTitle.controller:
+            return paneSection(section) { ControllerRowsSection() }
+        case SettingsSectionTitle.hapticsRumble:
+            return paneSection(section) { HapticsRumbleSection() }
+        case SettingsSectionTitle.dualSense:
+            return paneSection(section) { DualSenseExtrasSection() }
+        case SettingsSectionTitle.analogDeadzone:
+            return paneSection(section) { AnalogDeadzoneSection() }
+        case SettingsSectionTitle.onScreenControls:
+            return paneSection(section) { OnScreenControllerSection() }
+        case SettingsSectionTitle.deltaSkins:
+            #if !os(macOS) && !targetEnvironment(macCatalyst)
+            return paneSection(section) { DeltaSkinsSection() }
+            #else
+            return nil
+            #endif
+        case SettingsSectionTitle.socialLinks:
+            return paneSection(section) { SocialLinksSection() }
+        case SettingsSectionTitle.documentation:
+            return paneSection(section) { DocumentationSection() }
+        case SettingsSectionTitle.roadmap:
+            return paneSection(section) {
+                RoadmapSummarySection()
+                NavigationLink("View Full Roadmap →") {
+                    RoadmapView()
                 }
-                .padding(.horizontal)
+                .padding(.top, 4)
             }
-            .padding(.bottom, 100)
+        case SettingsSectionTitle.build:
+            return paneSection(section) { BuildSection(viewModel: viewModel).environmentObject(viewModel) }
+        case SettingsSectionTitle.extraInfo:
+            return paneSection(section) { ExtraInfoSection() }
+        case SettingsSectionTitle.advanced:
+            return paneSection(section) { AdvancedSection() }
+        default:
+            return nil
         }
     }
 
-    private var controllerTabContent: some View {
-        tabScrollView {
-            VStack(spacing: 16) {
-                Text("settings.tab.controller", bundle: .module)
-                    .font(.system(size: 32, weight: .bold, design: .rounded))
-                    .foregroundStyle(
-                        LinearGradient(
-                            gradient: Gradient(colors: [.retroPink, .retroPurple, .retroBlue]),
-                            startPoint: .leading,
-                            endPoint: .trailing
-                        )
-                    )
-                    .padding(.top, 20)
-                    .padding(.bottom, 10)
-                    .shadow(color: .retroPink.opacity(0.5), radius: 10, x: 0, y: 0)
-
-                VStack(spacing: 16) {
-                    CollapsibleSection(title: SettingsSectionTitle.controller) {
-                        ControllerRowsSection()
-                    }
-                    CollapsibleSection(title: SettingsSectionTitle.hapticsRumble) {
-                        HapticsRumbleSection()
-                    }
-                    CollapsibleSection(title: SettingsSectionTitle.dualSense) {
-                        DualSenseExtrasSection()
-                    }
-                    CollapsibleSection(title: SettingsSectionTitle.onScreenControls) {
-                        OnScreenControllerSection()
-                    }
-                    CollapsibleSection(title: SettingsSectionTitle.analogDeadzone) {
-                        AnalogDeadzoneSection()
-                    }
-                    #if !os(tvOS) && !os(macOS) && !targetEnvironment(macCatalyst)
-                    CollapsibleSection(title: SettingsSectionTitle.deltaSkins) {
-                        DeltaSkinsSection()
-                    }
-                    #endif
-                }
-                .padding(.horizontal)
-            }
-            .padding(.bottom, 100)
-        }
-    }
-
-    private var aboutTabContent: some View {
-        tabScrollView {
-            VStack(spacing: 16) {
-                Text("settings.tab.about", bundle: .module)
-                    .font(.system(size: 32, weight: .bold, design: .rounded))
-                    .foregroundStyle(
-                        LinearGradient(
-                            gradient: Gradient(colors: [.retroPink, .retroPurple, .retroBlue]),
-                            startPoint: .leading,
-                            endPoint: .trailing
-                        )
-                    )
-                    .padding(.top, 20)
-                    .padding(.bottom, 10)
-                    .shadow(color: .retroPink.opacity(0.5), radius: 10, x: 0, y: 0)
-
-                VStack(spacing: 16) {
-                    CollapsibleSection(title: SettingsSectionTitle.socialLinks) {
-                        SocialLinksSection()
-                    }
-                    CollapsibleSection(title: SettingsSectionTitle.documentation) {
-                        DocumentationSection()
-                    }
-                    CollapsibleSection(title: SettingsSectionTitle.roadmap) {
-                        RoadmapSummarySection()
-                        NavigationLink("View Full Roadmap →") {
-                            RoadmapView()
-                        }
-                        .padding(.top, 4)
-                    }
-                    CollapsibleSection(title: SettingsSectionTitle.build) {
-                        BuildSection(viewModel: viewModel)
-                            .environmentObject(viewModel)
-                    }
-                    CollapsibleSection(title: SettingsSectionTitle.extraInfo) {
-                        ExtraInfoSection()
-                    }
-                }
-                .padding(.horizontal)
-            }
-            .padding(.bottom, 100)
-        }
-    }
-
-    private var advancedTabContent: some View {
-        tabScrollView {
-            VStack(spacing: 16) {
-                Text("settings.tab.advanced", bundle: .module)
-                    .font(.system(size: 32, weight: .bold, design: .rounded))
-                    .foregroundStyle(
-                        LinearGradient(
-                            gradient: Gradient(colors: [.retroPink, .retroPurple, .retroBlue]),
-                            startPoint: .leading,
-                            endPoint: .trailing
-                        )
-                    )
-                    .padding(.top, 20)
-                    .padding(.bottom, 10)
-                    .shadow(color: .retroPink.opacity(0.5), radius: 10, x: 0, y: 0)
-
-                VStack(spacing: 16) {
-                    CollapsibleSection(title: SettingsSectionTitle.advanced) {
-                        AdvancedSection()
-                    }
-                }
-                .padding(.horizontal)
-            }
-            .padding(.bottom, 100)
-        }
+    private func paneSection<Content: View>(_ title: String, @ViewBuilder content: () -> Content) -> AnyView {
+        AnyView(SettingsPaneSection(title: title, content: content))
     }
     #endif
 
@@ -1246,7 +1010,7 @@ struct SettingsRow: View {
                     .font(.system(size: 20, weight: .medium))
                     .foregroundStyle(isFocused ? .white : Color(themeManager.currentPalette.settingsCellText ?? themeManager.currentPalette.gameLibraryText))
                     #else
-                    .font(.body.weight(.medium))
+                    .font(.headline)
                     .foregroundColor(Color(themeManager.currentPalette.settingsCellText ?? themeManager.currentPalette.gameLibraryText))
                     #endif
 
@@ -2058,8 +1822,8 @@ private struct RecordingSection: View {
 }
 
 #if os(tvOS)
-/// Everything controller-related in one section, as shown on tvOS. iOS splits these into separate collapsible
-/// sections (see `controllerTabContent`) because the combined list is ~40 rows long.
+/// Everything controller-related in one section, as shown on tvOS. iOS splits these into separate sections
+/// (see `SettingsPane.controllers`) because the combined list is ~40 rows long.
 private struct ControllerSection: View {
     var body: some View {
         Group {
@@ -2952,7 +2716,6 @@ private struct DeltaSkinsSection: View {
                 Text("settings.skins.skin_mode", bundle: .module)
                     .font(.system(.headline, design: .monospaced))
                     .foregroundColor(.retroBlue)
-                    .shadow(color: .retroPink.opacity(0.8), radius: 2, x: 1, y: 1)
 
                 Picker("Select skin mode", selection: $skinMode) {
                     ForEach(SkinMode.allCases, id: \.self) { theme in
@@ -2982,7 +2745,6 @@ private struct DeltaSkinsSection: View {
                 Text(skinMode.subtitle)
                     .font(.system(.subheadline, design: .monospaced))
                     .foregroundColor(.retroBlue)
-                    .shadow(color: .retroPink.opacity(0.8), radius: 2, x: 1, y: 1)
             }
             .frame(maxWidth: .infinity)
 

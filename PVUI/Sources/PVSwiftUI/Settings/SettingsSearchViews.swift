@@ -101,8 +101,8 @@ struct SettingsSearchResultsView: View {
                         } label: {
                             VStack(alignment: .leading, spacing: 2) {
                                 SettingsRow(title: entry.title, subtitle: entry.subtitle)
-                                Text("\(entry.tab.title) › \(entry.section)")
-                                    .font(.caption2)
+                                Text(SettingsPane.breadcrumb(forSection: entry.section))
+                                    .font(.caption)
                                     .foregroundColor(.retroBlue)
                                     .padding(.leading, 4)
                             }

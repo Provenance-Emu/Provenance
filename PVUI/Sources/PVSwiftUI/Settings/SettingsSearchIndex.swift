@@ -12,11 +12,11 @@ import PVUIBase
 
 // MARK: - Section titles
 
-/// Titles of the collapsible Settings sections.
+/// Titles of the Settings sections.
 ///
-/// Each value is used BOTH as the `CollapsibleSection(title:)` / tvOS section title in `SettingsSwiftUI.swift`
-/// and as the `section` of the matching search entries, so the two cannot drift. The literal values are also
-/// the persisted collapse key (`Defaults[.collapsedSections]`), so changing one resets users' collapse state.
+/// Each value is used BOTH as the section title in `SettingsSwiftUI.swift` (iOS `SettingsPaneSection`, tvOS
+/// `TVOSSettingsSection`) and as the `section` of the matching search entries, so the two cannot drift. The value
+/// is also the search scroll anchor, and `SettingsPane.sections` places each title in a sidebar pane.
 enum SettingsSectionTitle {
     static let app = "App"
     static let library = "Library"
@@ -51,19 +51,6 @@ enum SettingsSectionTitle {
     ]
 }
 
-extension SettingsTab {
-    /// Display name shown in search breadcrumbs; matches the tab bar labels.
-    var title: String {
-        switch self {
-        case .general: return "General"
-        case .emulation: return "Emulation"
-        case .controller: return "Controller"
-        case .advanced: return "Advanced"
-        case .about: return "About"
-        }
-    }
-}
-
 // MARK: - Entries
 
 struct SettingsSearchEntry: Identifiable, Hashable {
@@ -73,7 +60,8 @@ struct SettingsSearchEntry: Identifiable, Hashable {
     /// Synonyms and related terms that are matched but never displayed.
     let keywords: [String]
     let tab: SettingsTab
-    /// Exact `CollapsibleSection` title (see `SettingsSectionTitle`) that contains the row on iOS.
+    /// Exact section title (see `SettingsSectionTitle`) that contains the row on iOS; `SettingsPane(section:)`
+    /// gives the sidebar pane that shows it.
     let section: String
     /// `false` for rows that only exist in the iOS layout (or are compiled out on tvOS).
     let isAvailableOnTVOS: Bool
