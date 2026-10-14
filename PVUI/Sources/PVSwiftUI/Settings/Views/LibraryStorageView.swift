@@ -111,7 +111,7 @@ struct LibraryStorageView: View {
             VStack(alignment: .leading, spacing: 12) {
                 storageSectionLabel("Choose a location")
                 Button { showsPicker = true } label: {
-                    SettingsRow(title: "Choose a folder…", subtitle: "Share ROMs and BIOS files with iCube and iFly through a folder in Files.",
+                    SettingsRow(title: "Choose a folder…", subtitle: "Keep ROMs and BIOS files in a folder in Files, where other apps can see them.",
                                 icon: .sfSymbol("folder.badge.plus"))
                 }
                 .buttonStyle(.plain)

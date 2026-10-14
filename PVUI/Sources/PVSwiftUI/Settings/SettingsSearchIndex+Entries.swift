@@ -45,6 +45,8 @@ extension SettingsSearchIndex {
               .general, SettingsSectionTitle.library, keywords: ["artwork", "grid", "list", "covers", "sort", "layout", "theme"]),
         entry("library.migration", "Import from Another Emulator", "Bring your games and saves over from another emulator app.",
               .general, SettingsSectionTitle.library, keywords: ["migrate", "migration", "delta", "retroarch", "transfer", "import"]),
+        entry("library.connected-apps", "Connected Apps", "iCube, iFly and other emulator apps: browse their games, launch them, ask for a copy.",
+              .general, SettingsSectionTitle.library, keywords: ["ecosystem", "icube", "ifly", "dolphin", "flycast", "connected", "sibling", "send"], tvOS: false),
 
         entry("library.storage", "Storage Location", "App storage, iCloud Drive, or a folder you choose in Files.",
               .general, SettingsSectionTitle.libraryManagement, keywords: ["folder", "files", "storage", "move", "share", "icube", "ifly", "roms", "bios"], tvOS: false),

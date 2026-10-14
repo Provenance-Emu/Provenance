@@ -178,6 +178,10 @@ public extension Notification.Name {
     /// An ecosystem ROM transfer finished downloading into the import path.
     /// userInfo: "source" = EcosystemApp raw value, "name", "path".
     static let ecosystemFetchCompleted = Notification.Name("PVEcosystemFetchCompleted")
+    /// An HTTP fetch offer could not be downloaded. userInfo: `source` (EcosystemApp raw
+    /// value), `name`, `error`. A copy that arrives through a sibling app's share sheet
+    /// instead posts `ecosystemFetchCompleted` from the file handler.
+    static let ecosystemFetchFailed = Notification.Name("PVEcosystemFetchFailed")
 }
 
 // MARK: - base64url

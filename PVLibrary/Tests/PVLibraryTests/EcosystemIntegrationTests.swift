@@ -12,6 +12,17 @@ final class EcosystemCallbackParserTests: XCTestCase {
 
     // MARK: - EcosystemCallbackParser
 
+    // MARK: - Source application
+
+    func testSourceApplicationMapsSiblingBundleIDs() {
+        XCTAssertEqual(EcosystemApp(sourceApplication: "com.joemattiello.iCube"), .icube)
+        XCTAssertEqual(EcosystemApp(sourceApplication: "com.joemattiello.iCube-debug"), .icube)
+        XCTAssertEqual(EcosystemApp(sourceApplication: "com.joemattiello.iFly"), .ifly)
+        XCTAssertNil(EcosystemApp(sourceApplication: "com.apple.DocumentsApp"))
+        XCTAssertNil(EcosystemApp(sourceApplication: nil))
+    }
+
+
     func testParseValidXeniosCallback() throws {
         let games = [
             EcosystemGameScheme(titleName: "Halo 3", titleId: "5454082B"),

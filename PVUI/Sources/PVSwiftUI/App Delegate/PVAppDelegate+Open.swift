@@ -191,6 +191,16 @@ extension PVAppDelegate {
             ELOG("Unable to move file from \(url.path) to \(destinationPath.path) because \(error.localizedDescription)")
             return false
         }
+        // A copy handed over by a sibling app's share sheet (iCube, iFly): the same arrival
+        // the ecosystem screen reports for an HTTP fetch, so the user sees it land.
+        if let source = EcosystemApp(sourceApplication: options[.sourceApplication] as? String) {
+            ILOG("Ecosystem: '\(filename)' arrived from \(source.displayName)")
+            NotificationCenter.default.post(
+                name: .ecosystemFetchCompleted,
+                object: nil,
+                userInfo: ["source": source.rawValue, "name": filename, "path": destinationPath.path]
+            )
+        }
 
         return true
     }
@@ -243,6 +253,11 @@ extension PVAppDelegate {
                     )
                 } catch {
                     ELOG("Ecosystem: fetch of '\(payload.name)' failed: \(error)")
+                    NotificationCenter.default.post(
+                        name: .ecosystemFetchFailed,
+                        object: nil,
+                        userInfo: ["source": source.rawValue, "name": payload.name, "error": "\(error)"]
+                    )
                 }
             }
             return true

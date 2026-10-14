@@ -2689,6 +2689,16 @@ private struct LibrarySection: View {
             #if os(tvOS)
             .retroFocusButtonStyle(showBorder: false)
             #endif
+
+            #if !os(tvOS)
+            // The same leaf also sits under Import from Another Emulator; this row is the
+            // front door, so the sibling apps are not three levels down.
+            NavigationLink(destination: EcosystemIntegrationView()) {
+                SettingsRow(title: NSLocalizedString("ecosystem.nav.title", bundle: .module, comment: ""),
+                            subtitle: NSLocalizedString("ecosystem.settings.row.subtitle", bundle: .module, comment: ""),
+                            icon: .sfSymbol("app.connected.to.app.below.fill"))
+            }
+            #endif
         }
     }
 }

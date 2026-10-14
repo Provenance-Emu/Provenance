@@ -97,6 +97,20 @@ public enum EcosystemApp: String, CaseIterable, Codable, Sendable {
     /// The URL scheme registered by this app.
     public var urlScheme: String { rawValue }
 
+    /// The sibling app a file came from, by the bundle id iOS reports as the source
+    /// application when another app hands us a document (every iCube and iFly
+    /// configuration shares its app's bundle-id prefix). Nil for anything else.
+    public init?(sourceApplication: String?) {
+        guard let source = sourceApplication?.lowercased() else { return nil }
+        if source.hasPrefix("com.joemattiello.icube") {
+            self = .icube
+        } else if source.hasPrefix("com.joemattiello.ifly") {
+            self = .ifly
+        } else {
+            return nil
+        }
+    }
+
     // MARK: - Install Detection
 
     /// Returns `true` if this app appears to be installed on the device.

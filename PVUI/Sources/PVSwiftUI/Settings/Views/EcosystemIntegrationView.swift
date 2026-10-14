@@ -35,6 +35,7 @@ public struct EcosystemIntegrationView: View {
     /// (identified by md5 for iFly, by disc game id for iCube).
     @State private var browsedGames: [EcosystemApp: [EcosystemGameScheme]] = [:]
     @State private var lastImportedName: [EcosystemApp: String] = [:]
+    @State private var lastImportFailure: [EcosystemApp: String] = [:]
     @Environment(\.dismiss) private var dismiss
 
     public init() {}
@@ -81,6 +82,12 @@ public struct EcosystemIntegrationView: View {
             guard let sourceRaw = note.userInfo?["source"] as? String,
                   let source = EcosystemApp(rawValue: sourceRaw) else { return }
             lastImportedName[source] = note.userInfo?["name"] as? String
+            lastImportFailure[source] = nil
+        }
+        .onReceive(NotificationCenter.default.publisher(for: .ecosystemFetchFailed)) { note in
+            guard let sourceRaw = note.userInfo?["source"] as? String,
+                  let source = EcosystemApp(rawValue: sourceRaw) else { return }
+            lastImportFailure[source] = note.userInfo?["name"] as? String
         }
         .settingsSubpageTracking()
     }
@@ -116,11 +123,21 @@ public struct EcosystemIntegrationView: View {
                 }
                 .buttonStyle(.borderedProminent)
 
+                Text(String(format: NSLocalizedString("ecosystem.import.hint", bundle: .module, comment: ""), app.displayName))
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
                 if let importedName = lastImportedName[app] {
-                    Label("\u{201C}\(importedName)\u{201D} downloaded — importing to your library.",
+                    Label("\u{201C}\(importedName)\u{201D} received — importing to your library.",
                           systemImage: "checkmark.circle.fill")
                         .font(.caption)
                         .foregroundStyle(.green)
+                }
+                if let failedName = lastImportFailure[app] {
+                    Label(String(format: NSLocalizedString("ecosystem.import.failed", bundle: .module, comment: ""),
+                                 failedName, app.displayName, app.displayName),
+                          systemImage: "exclamationmark.triangle.fill")
+                        .font(.caption)
+                        .foregroundStyle(.orange)
                 }
 
                 ForEach(games) { game in
@@ -141,7 +158,7 @@ public struct EcosystemIntegrationView: View {
                         }
                         .font(.caption.weight(.semibold))
                         .buttonStyle(.bordered)
-                        Button("Import") {
+                        Button("Ask for a Copy") {
                             guard let url = app.requestGameURL(titleID: game.titleId)
                             else { return }
                             UIApplication.shared.open(url)
