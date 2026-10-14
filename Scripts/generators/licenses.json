@@ -1,24 +1,6 @@
 {
   "entries": [
     {
-      "name": "4DO/FreeDO",
-      "identifier": "com.provenance.core.FreeDO",
-      "projectURL": "https://github.com/OpenEmu/4DO-Core",
-      "version": "0",
-      "license": "GPL-2.0-only",
-      "licenseURL": "https://github.com/OpenEmu/4DO-Core",
-      "copyrightHolder": [
-        "Copyright © 2011-2016 OpenEmu Team"
-      ],
-      "upstreamProjectURL": null,
-      "forkNotes": null,
-      "appStoreCompatible": null,
-      "isRetroArch": false,
-      "supportedSystems": [
-        "com.provenance.3DO"
-      ]
-    },
-    {
       "name": "Atari 800",
       "identifier": "com.provenance.core.atari800",
       "projectURL": "https://atari800.github.io",
@@ -53,44 +35,6 @@
       "isRetroArch": false,
       "supportedSystems": [
         "com.provenance.3ds"
-      ]
-    },
-    {
-      "name": "Bliss",
-      "identifier": "com.provenance.core.bliss",
-      "projectURL": "https://github.com/OpenEmu/Bliss-Core",
-      "version": "2.1.2",
-      "license": "GPL-2.0-or-later",
-      "licenseURL": "https://github.com/OpenEmu/Bliss-Core/blob/master/Bliss/LICENSE.txt",
-      "copyrightHolder": [
-        "Copyright © 2003-2016 OpenEmu Team, Kyle Davis"
-      ],
-      "upstreamProjectURL": null,
-      "forkNotes": null,
-      "appStoreCompatible": null,
-      "isRetroArch": false,
-      "supportedSystems": [
-        "com.provenance.intellivision"
-      ]
-    },
-    {
-      "name": "CrabEMU",
-      "identifier": "com.provenance.core.crabemu",
-      "projectURL": "https://crabemu.sourceforge.net",
-      "version": "0.2.0",
-      "license": "GPL-2.0-or-later",
-      "licenseURL": "https://crabemu.sourceforge.net",
-      "copyrightHolder": [
-        "Copyright © 2007-2014 Lawrence Sebald"
-      ],
-      "upstreamProjectURL": null,
-      "forkNotes": null,
-      "appStoreCompatible": null,
-      "isRetroArch": false,
-      "supportedSystems": [
-        "com.provenance.sms",
-        "com.provenance.sg1000",
-        "com.provenance.colecovision"
       ]
     },
     {
