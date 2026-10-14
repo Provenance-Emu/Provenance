@@ -750,7 +750,22 @@ public enum MainUIMode: String, Codable, Equatable, UserDefaultsRepresentable, D
     #if os(tvOS)
     case tvosMedia = "TV Media"
     #endif
-    case uikit = "UIKit"
+
+    /// Raw value stored by the removed legacy UIKit mode.
+    static let legacyUIKitRawValue = "UIKit"
+
+    /// Decodes a stored mode. The legacy UIKit value maps to this platform's default mode.
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.singleValueContainer()
+        let rawValue = try container.decode(String.self)
+        if let mode = MainUIMode(rawValue: rawValue) {
+            self = mode
+        } else if rawValue == Self.legacyUIKitRawValue {
+            self = Defaults.Keys.mainUIMode.defaultValue
+        } else {
+            throw DecodingError.dataCorruptedError(in: container, debugDescription: "Unknown MainUIMode: \(rawValue)")
+        }
+    }
 
     public var id: String {
         rawValue
@@ -767,15 +782,11 @@ public enum MainUIMode: String, Codable, Equatable, UserDefaultsRepresentable, D
         case .tvosMedia:
             return "TV Media (Drawer)"
         #endif
-        case .uikit:
-            return "UIKit (Legacy)"
 #else
         case .singlePage:
             return "Single Page (RetroWave)"
         case .tvosMedia:
             return "TV Media (Drawer)"
-        case .uikit:
-            return "UIKit (Default)"
 #endif
 
         }
@@ -792,15 +803,11 @@ public enum MainUIMode: String, Codable, Equatable, UserDefaultsRepresentable, D
         case .tvosMedia:
             return "A tvOS-first media style UI with an overlay drawer sidebar."
         #endif
-        case .uikit:
-            return "Original UIKit mode from 1.X/2.X (Legacy)."
 #else
         case .singlePage:
             return "New SwiftUI single page mode."
         case .tvosMedia:
             return "Media-style shelves with an overlay drawer sidebar."
-        case .uikit:
-            return "Original UIKit mode."
 #endif
         }
     }
