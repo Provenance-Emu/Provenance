@@ -2708,6 +2708,8 @@ private struct DeltaSkinsSection: View {
     @Default(.skinMode) var skinMode
     #if os(iOS)
     @Default(.overlayStyle) var overlayStyle
+    @Default(.skinMultiButtonTouch) var skinMultiButtonTouch
+    @Default(.arcadeMultiButtonTouch) var arcadeMultiButtonTouch
     #endif
 
     var body: some View {
@@ -2757,6 +2759,19 @@ private struct DeltaSkinsSection: View {
                 }
             }
             .padding(.vertical, 4)
+
+            ThemedToggle(isOn: $skinMultiButtonTouch) {
+                SettingsRow(title: "Skin Multi-Button Touch",
+                            subtitle: "Controller skins: a finger covering two buttons presses both, not just the closest. The d-pad, sticks and menu buttons are unaffected.",
+                            icon: .sfSymbol("hand.point.up.left"),
+                            showChevron: false)
+            }
+            ThemedToggle(isOn: $arcadeMultiButtonTouch) {
+                SettingsRow(title: "Arcade Multi-Button Touch",
+                            subtitle: "Built-in arcade controller: a finger between two buttons presses both, handy for fighting-game combos.",
+                            icon: .sfSymbol("circle.grid.3x3"),
+                            showChevron: false)
+            }
             #endif
 
 
