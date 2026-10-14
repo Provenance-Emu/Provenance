@@ -353,6 +353,14 @@ public final class PVControllerManager: NSObject, ObservableObject {
 #endif
 
         ILOG("Controller connected: \(controller.vendorName ?? "No Vendor")")
+        // Profile diagnostics. Every core reads `extendedGamepad` only, and the
+        // tvOS pause binding falls back to `controllerPausedHandler` when a pad has
+        // neither buttonOptions nor thumbstick buttons, so a pad without an
+        // extended profile (reported for the Nintendo Switch Online N64 controller)
+        // reaches no game input at all while its Start button opens the pause menu.
+        // The element keys show what the system actually exposes for such a pad.
+        let elementKeys = controller.physicalInputProfile.elements.keys.sorted().joined(separator: ",")
+        ILOG("[INPUT-DIAG] controller profile: vendor=\(controller.vendorName ?? "nil") category=\(controller.productCategory) extended=\(controller.extendedGamepad != nil) micro=\(controller.microGamepad != nil) options=\(controller.extendedGamepad?.buttonOptions != nil) home=\(controller.extendedGamepad?.buttonHome != nil) elements=[\(elementKeys)]")
 
         // Detect physical case controllers and post the appropriate notification.
         // Smart cases (GameSir Pocket Taco, Soolra) show up as GCControllers;
