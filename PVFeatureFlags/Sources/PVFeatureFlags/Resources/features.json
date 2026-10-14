@@ -17,13 +17,6 @@
             "allowedAppTypes": ["standard", "lite", "standard.appstore", "lite.appstore"],
             "description": "Enables contentless cores like DOOM, Quake, etc."
         },
-        "dynamicLibretroScanner": {
-            "enabled": true,
-            "minVersion": "3.3.0",
-            "allowedPlatforms": ["tvos"],
-            "allowedAppTypes": ["standard", "lite", "standard.appstore", "lite.appstore"],
-            "description": "Scans Frameworks/ at startup for bare .libretro.framework dylibs and registers them as thin-wrapper cores (no RetroArch binary required). On tvOS: enabled by default. On iOS: disabled by default but can be enabled in Settings > Advanced > Feature Flags."
-        },
         "tapToRemapUI": {
             "enabled": false,
             "description": "Tap-to-remap UX in button remapping settings: press a physical controller button to select the remapping destination instead of choosing from a list. Disabled by default during development — enable in Settings > Advanced > Feature Flags."
@@ -44,11 +37,6 @@
             "enabled": false,
             "allowedPlatforms": ["ios"],
             "description": "Drag-to-reposition button layout editor for custom skins. iOS only (DragGesture unavailable on tvOS). Disabled by default — enable in Settings > Advanced > Feature Flags."
-        },
-        "enhancedArtworkSearch": {
-            "enabled": true,
-            "allowedAppTypes": ["standard", "lite", "standard.appstore", "lite.appstore"],
-            "description": "Multi-source artwork matching at ROM import time (TheGamesDB, LibretroDB, OpenVGDB). Background ArtworkSearchQueue retries unmatched games. Enabled by default — disable in Settings > Advanced > Feature Flags if regressions are found."
         },
         "airPlayMenu": {
             "enabled": false,

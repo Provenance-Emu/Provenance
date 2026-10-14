@@ -2932,6 +2932,9 @@ private struct DeltaSkinsSection: View {
     @Default(.buttonPressEffect) var buttonPressEffect
     @Default(.buttonSound) var buttonSound
     @Default(.skinMode) var skinMode
+    #if os(iOS)
+    @Default(.overlayStyle) var overlayStyle
+    #endif
 
     var body: some View {
         Section {
@@ -2972,6 +2975,17 @@ private struct DeltaSkinsSection: View {
                     .shadow(color: .retroPink.opacity(0.8), radius: 2, x: 1, y: 1)
             }
             .frame(maxWidth: .infinity)
+
+            #if os(iOS)
+            // Look of the programmatic on-screen controller (moved here from Advanced,
+            // 2026-10-14: it is a plain preference, not an experiment).
+            Picker("Overlay Style", selection: $overlayStyle) {
+                ForEach(OverlayStyle.allCases) { style in
+                    Text(style.displayName).tag(style)
+                }
+            }
+            .padding(.vertical, 4)
+            #endif
 
 
             // Button to select skins

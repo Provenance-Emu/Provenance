@@ -35,7 +35,6 @@ internal struct AdvancedTogglesView: View {
     @Default(.companionController) var companionController
     @Default(.lightGunCrosshair) var lightGunCrosshair
     @Default(.skinButtonReposition) var skinButtonReposition
-    @Default(.overlayStyle) var overlayStyle
     @Default(.airPlayMenu) var airPlayMenu
 
     /// Check if the app is from the App Store
@@ -95,7 +94,7 @@ internal struct AdvancedTogglesView: View {
                     set: { useMetalRenderer = !$0 }
                 )) {
                     SettingsRow(title: "OpenGL Renderer",
-                                subtitle: "Use OpenGL instead of Metal renderer for legacy graphics filters. Not all cores are supported.",
+                                subtitle: "Native cores only: present through OpenGL instead of Metal for the legacy graphics filters. libretro cores always use Metal.",
                                 icon: .sfSymbol("cpu"),
                                 showChevron: false)
                 }
@@ -191,13 +190,6 @@ internal struct AdvancedTogglesView: View {
                                 subtitle: "Drag-to-reposition on-screen skin buttons in a layout editor. iOS only; still experimental.",
                                 icon: .sfSymbol("hand.draw"),
                                 showChevron: false)
-                }
-                .padding(.vertical, 4)
-
-                Picker("Overlay Style", selection: $overlayStyle) {
-                    ForEach(OverlayStyle.allCases) { style in
-                        Text(style.displayName).tag(style)
-                    }
                 }
                 .padding(.vertical, 4)
                 #endif

@@ -22,12 +22,6 @@ public enum PVFeature: String, CaseIterable, Sendable {
     case inAppFreeROMs = "inAppFreeROMs"
     case romPathMigrator = "romPathMigrator"
     case contentlessCores = "contentlessCores"
-    /// Enables runtime scanning of Frameworks/ for bare libretro dylibs/frameworks
-    /// and registers them through the thin PVThinLibretroFrontend.
-    /// Platform-gated: enabled by default on tvOS; blocked on iOS by `allowedPlatforms`.
-    /// On iOS, enable via the PVFeatureFlags debug-override UI (accessible on all build
-    /// types; hidden behind a cheat code on App Store builds).
-    case dynamicLibretroScanner = "dynamicLibretroScanner"
     /// Enables tap-to-remap UX in the button remapping settings: instead of selecting a
     /// destination button from a list, the user presses a physical button on their controller.
     /// Disabled by default while the feature is being developed.
@@ -141,18 +135,6 @@ public struct FeatureFlag: Codable, Sendable {
         description: "Enables contentless cores like DOOM, Quake, etc. Disabled for App Store builds."
     )
 
-#if os(tvOS)
-    static let _dynamicLibretroScanner: Bool = true
-#else
-    static let _dynamicLibretroScanner: Bool = false
-#endif
-    public static let dynamicLibretroScanner = FeatureFlag(
-        enabled: _dynamicLibretroScanner,
-        minVersion: "3.3.0",
-        allowedAppTypes: ["standard", "lite", "standard.appstore", "lite.appstore"],
-        allowedPlatforms: ["tvos"],
-        description: "Scans Frameworks/ at startup for bare libretro dylibs/frameworks and loads them via PVThinLibretroFrontend. On tvOS: enabled by default. On iOS: disabled by default but can be enabled in Settings > Advanced > Feature Flags."
-    )
 
     public static let tapToRemapUI = FeatureFlag(
         enabled: false,
@@ -277,7 +259,7 @@ public final class PVFeatureFlags: @unchecked Sendable {
         _appType = appType ?? PVFeatureFlags.getCurrentAppType()
         _buildNumber = buildNumber ?? PVFeatureFlags.getCurrentBuildNumber()
         _appVersion = appVersion ?? PVFeatureFlags.getCurrentAppVersion()
-        // Eagerly load the bundled features.json so flags like dynamicLibretroScanner
+        // Eagerly load the bundled features.json so flags like skinButtonReposition
         // reflect their correct defaults (including allowedPlatforms) from the very
         // first isEnabled(_:) call, before any remote config has been fetched.
         _ = loadBundledConfiguration()
@@ -577,7 +559,6 @@ public final class PVFeatureFlags: @unchecked Sendable {
     public var inAppFreeROMs: Bool { featureStates[.inAppFreeROMs] ?? false }
     public var romPathMigrator: Bool { featureStates[.romPathMigrator] ?? false }
     public var contentlessCores: Bool { featureStates[.contentlessCores] ?? false }
-    public var dynamicLibretroScanner: Bool { featureStates[.dynamicLibretroScanner] ?? false }
     public var tapToRemapUI: Bool { featureStates[.tapToRemapUI] ?? false }
     public var clipBuffering: Bool { featureStates[.clipBuffering] ?? false }
     public var companionController: Bool { featureStates[.companionController] ?? false }

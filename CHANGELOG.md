@@ -505,6 +505,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Web Server Rename Checks the Source File** — Renaming or moving a file through the web uploader or WebDAV validated only the new name, so a hidden file could be renamed into a visible one and then downloaded
 
 ### Changed
+- **Dynamic libretro scanner always on** — the `dynamicLibretroScanner` feature flag and its tvOS-only platform gate are gone. The thin libretro wrapper is the only wrapper, so `PVDynamicLibretroCoreScanner` now runs on every platform; `Core.plist` cores are skipped and probes are cached, and the `dynamicLibretroScanner` UserDefaults key remains as a kill switch. Sideloaded `.libretro.framework` dylibs are therefore picked up on iOS too.
+- **Feature flag cleanup** — removed the orphaned `enhancedArtworkSearch` entry from `features.json` (nothing read it) and synced the repository copy of `features.json` with the bundled one.
+- **Advanced settings** — the OpenGL Renderer toggle now says it applies to native cores only (libretro cores always present through Metal), and the Overlay Style picker moved from Advanced to the Skins section where the other on-screen controller options live.
 - **ScalingMode renderer enabled by default** — The `scalingModeRenderer` feature flag is now enabled by default; the new `ScalingMode`-driven renderer paths (Stretch, Aspect Fill, Integer Scale, Native Resolution) are active for all users. Legacy boolean shims remain for backwards compatibility. (#3619)
 - **Metal & GL Renderers** — Both `PVMetalViewController` and `PVGLViewController` now contain the new `ScalingMode`-based layout paths, activated only when the `scalingModeRenderer` feature flag is on. (#3616)
 - **PVUSBManager Package.swift** — added `defaultLocalization: "en"` and `.process("Resources")` to support bundled localized strings. (#3600)

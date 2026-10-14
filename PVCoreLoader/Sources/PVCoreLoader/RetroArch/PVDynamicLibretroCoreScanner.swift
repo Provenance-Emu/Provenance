@@ -118,18 +118,20 @@ public final class PVDynamicLibretroCoreScanner: Sendable {
     // MARK: - Feature flag gate
     // ---------------------------------------------------------------------------
 
-    /// UserDefaults key used by `isFeatureEnabled` for direct boolean overrides
-    /// and as the key inside `PVFeatureFlagsDebugOverrides`.
-    /// Mirrors `PVFeature.dynamicLibretroScanner.rawValue` in PVFeatureFlags.
+    /// UserDefaults key of the scanner kill switch: a direct boolean, or an entry in
+    /// the `PVFeatureFlagsDebugOverrides` dictionary. The former `dynamicLibretroScanner`
+    /// feature flag was removed on 2026-10-14: the thin libretro wrapper is the only
+    /// wrapper, so the scan runs on every platform unless this key turns it off.
     public static let featureFlagKey = "dynamicLibretroScanner"
 
-    /// Returns `true` when the dynamic scanner is enabled.
+    /// Returns the kill-switch value as the debug UI sees it.
     ///
     /// Checks (in order):
     /// 1. `PVFeatureFlagsDebugOverrides` dict — set via the feature-flag debug UI
     /// 2. A direct UserDefaults boolean under `featureFlagKey`
     ///
-    /// **Off by default** — enable to test buildbot-style libretro cores.
+    /// Unset means `false` here; `isDynamicScanEnabledForMerge` is what decides
+    /// whether a scan runs, and it treats "unset" as enabled.
     public static var isFeatureEnabled: Bool {
         if let overrides = UserDefaults.standard.dictionary(forKey: "PVFeatureFlagsDebugOverrides") {
             let entry = overrides[featureFlagKey]
@@ -140,16 +142,21 @@ public final class PVDynamicLibretroCoreScanner: Sendable {
     }
 
     /// Whether `mergeDiscoveredLibretroCores(into:)` should run the scan / probe pipeline.
-    /// Prefer this over `isFeatureEnabled` alone: it respects `PVFeatureFlags` (tvOS default on),
-    /// legacy direct `UserDefaults`, and auto-enables when no plist lists libretro sub-cores (PVRetroArch not embedded).
+    ///
+    /// Enabled unless the kill switch is set to `false`. Every core in `Core.plist`
+    /// is skipped by the scan and probe results are cached, so on a shipping build
+    /// the scan only costs a directory listing; it exists for dylibs that are not in
+    /// the plist (sideloaded or newly added cores) and for migrating a game off a
+    /// retired native core.
     public static func isDynamicScanEnabledForMerge(plists: [EmulatorCoreInfoPlist]) -> Bool {
+        if let overrides = UserDefaults.standard.dictionary(forKey: "PVFeatureFlagsDebugOverrides"),
+           let value = overrides[featureFlagKey] as? Bool {
+            return value
+        }
         if UserDefaults.standard.object(forKey: featureFlagKey) != nil {
             return UserDefaults.standard.bool(forKey: featureFlagKey)
         }
-        if PVFeatureFlags.shared.isEnabled(.dynamicLibretroScanner) {
-            return true
-        }
-        return !CoreLoader.hasStaticLibretroSubcoreRegistration(in: plists)
+        return true
     }
 
     // In-memory store populated by scan().

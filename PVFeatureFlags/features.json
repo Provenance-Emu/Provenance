@@ -6,6 +6,41 @@
             "minBuildNumber": "100",
             "allowedAppTypes": ["standard", "lite"],
             "description": "Allows downloading free ROMs directly in the app. Disabled for App Store builds."
+        },
+        "romPathMigrator": {
+            "enabled": true,
+            "description": "Enables the ROM path migration tool."
+        },
+        "contentlessCores": {
+            "enabled": false,
+            "minVersion": "3.0.5",
+            "allowedAppTypes": ["standard", "lite", "standard.appstore", "lite.appstore"],
+            "description": "Enables contentless cores like DOOM, Quake, etc."
+        },
+        "tapToRemapUI": {
+            "enabled": false,
+            "description": "Tap-to-remap UX in button remapping settings: press a physical controller button to select the remapping destination instead of choosing from a list. Disabled by default during development — enable in Settings > Advanced > Feature Flags."
+        },
+        "clipBuffering": {
+            "enabled": false,
+            "description": "Always-on ReplayKit clip buffering. Keeps a rolling recording buffer so users can save recent gameplay clips at any time. Disabled until stable — enable in Settings > Advanced > Feature Flags."
+        },
+        "lightGunCrosshair": {
+            "enabled": false,
+            "description": "Renders a configurable crosshair overlay at the cursor position during light-gun gameplay. Disabled by default — enable in Settings > Advanced > Feature Flags."
+        },
+        "companionController": {
+            "enabled": false,
+            "description": "Companion Controller overlay — use this device as a secondary controller for systems with non-standard input peripherals (trackball, numpad, Atari 5200). Disabled until DSU integration is complete — enable in Settings > Advanced > Feature Flags."
+        },
+        "skinButtonReposition": {
+            "enabled": false,
+            "allowedPlatforms": ["ios"],
+            "description": "Drag-to-reposition button layout editor for custom skins. iOS only (DragGesture unavailable on tvOS). Disabled by default — enable in Settings > Advanced > Feature Flags."
+        },
+        "airPlayMenu": {
+            "enabled": false,
+            "description": "AirPlay route-picker button in the pause menu. Only audio AirPlay is currently supported; disabled by default until video AirPlay to Apple TV is implemented."
         }
     }
 }
