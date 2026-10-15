@@ -21,6 +21,9 @@ LEAF_MODULES=(
     # link until the stray `-Wl,-segalign,4000` was dropped from the lhasa target (swiftc has no `-Wl,`
     # passthrough) — see the note in Dependencies/LzhArchive/Package.swift.
     "PVArchiving"
+    # Cross-app library sharing (iFly/iCube). Tier 4 by dependency, but Realm- and
+    # UIKit-free on purpose so it builds and tests on the macOS host.
+    "PVLibrarySharing"
 )
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"

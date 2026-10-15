@@ -10,6 +10,7 @@ on:
       - 'PVSettings/**'
       - 'PVFeatureFlags/**'
       - 'PVArchiving/**'
+      - 'PVLibrarySharing/**'
       - 'Dependencies/LzhArchive/**'
       - 'Scripts/audits/spm-validate.sh'
   pull_request:
@@ -21,6 +22,7 @@ on:
       - 'PVSettings/**'
       - 'PVFeatureFlags/**'
       - 'PVArchiving/**'
+      - 'PVLibrarySharing/**'
       - 'Dependencies/LzhArchive/**'
       - 'Scripts/audits/spm-validate.sh'
   workflow_dispatch:
