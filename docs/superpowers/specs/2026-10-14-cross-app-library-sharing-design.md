@@ -288,3 +288,7 @@ Proposed additive ECS changes:
 9. Plain HTTP on the LAN? **Yes, the same as the peers. Revisit together with ECS TLS (`tls=1`).**
 10. Sync subscriptions (auto-copy new games)? **After phase 5.**
 11. Do the sharing types also go in tvOS Lite's plist? **Yes. Lite still has to compile and launch.**
+
+## Answers received after the first draft
+
+- **iFly, empty BIOS list (open question 7):** accepted. "Required" is checked per listed file only; a game is bootable when no listed `required` gameFile/bios is missing and at least one gameFile completed (ContinuityKit/Client/PullFailure.swift:18-28). Gotcha: `ContinuityManifest` decodes `bios` and `files` as non-optional arrays (Model/ContinuityManifest.swift:58-59), so Provenance must always send `"bios": []`, set `required` explicitly on every FileDescriptor, and use the kinds exactly (`gameFile` for `ROMs/<file>`). The receiver boots with its own BIOS folder; a missing NAOMI/Atomiswave BIOS surfaces as iFly's normal boot message, not a pull failure. SHA-256 is used for skip-if-present, so per-file SHA-256 stays.
