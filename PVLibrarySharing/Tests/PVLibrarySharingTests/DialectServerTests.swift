@@ -240,6 +240,12 @@ final class ICubeDialectServerTests: XCTestCase {
         try await iCube.completePairing(handle, code: try XCTUnwrap(fixture.owner.lastCode))
     }
 
+    func testOnlyARealDiscIDBecomesTheGameID() {
+        XCTAssertEqual(ICubeDialectServer.discID("gmse01"), "GMSE01")
+        XCTAssertNil(ICubeDialectServer.discID("DOL-GMSE-USA"))
+        XCTAssertNil(ICubeDialectServer.discID(nil))
+    }
+
     func testUnpairedPeerIsToldToPair() async throws {
         do {
             _ = try await source(fixture.iCubeServer()).catalogue { _ in }
@@ -333,5 +339,22 @@ final class ICubeDialectServerTests: XCTestCase {
             body: ICubePairStartRequest(peerId: client.id, name: client.name, publicKey: client.publicKeyData)
         ))
         XCTAssertEqual(pairing.status, 200)
+    }
+}
+
+final class ApprovalTimeoutTests: XCTestCase {
+    /// An unanswered prompt must not hold the request past its window.
+    func testTimeoutWinsAgainstAPromptThatNeverAnswers() async {
+        let started = Date()
+        let answer: Bool? = await withApprovalTimeout(0.05) {
+            await withCheckedContinuation { (_: CheckedContinuation<Bool, Never>) in }
+        }
+        XCTAssertNil(answer)
+        XCTAssertLessThan(Date().timeIntervalSince(started), 2)
+    }
+
+    func testAnswerBeforeTheDeadlineWins() async {
+        let answer = await withApprovalTimeout(5) { true }
+        XCTAssertEqual(answer, true)
     }
 }

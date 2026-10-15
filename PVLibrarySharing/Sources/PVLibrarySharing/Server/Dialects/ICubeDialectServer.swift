@@ -234,7 +234,7 @@ public actor ICubeDialectServer {
         await library.sharedGames().compactMap { game in
             guard let platform = SystemMap.wirePlatform(for: game.system, app: .iCube), !game.files.isEmpty else { return nil }
             return (game, ICubeWireGameIdentity(
-                gameID: game.serial?.uppercased(), md5: game.md5, crc32: nil,
+                gameID: Self.discID(game.serial), md5: game.md5, crc32: nil,
                 displayName: game.title, platform: platform, discNumber: nil, revision: nil
             ))
         }
@@ -259,6 +259,17 @@ public actor ICubeDialectServer {
             return .error(404, "no artwork for that entry")
         }
         return ServerResponse(status: 200, headers: ["Content-Type": "image/png"], body: .data(data))
+    }
+
+    /// The 6-character disc id ("GMSE01") iCube keys games by, or nil.
+    /// `PVGame.romSerial` comes from metadata and can be a product code such
+    /// as "DOL-GMSE-USA", which must not become an iCube game id; the key then
+    /// falls back to `md5:`.
+    static func discID(_ serial: String?) -> String? {
+        guard let id = serial?.uppercased(), id.count == 6, id.allSatisfy({ $0.isASCII && ($0.isLetter || $0.isNumber) }) else {
+            return nil
+        }
+        return id
     }
 
     /// `Software/<path>` per file; the primary first.

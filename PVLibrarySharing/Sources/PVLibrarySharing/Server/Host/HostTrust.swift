@@ -138,20 +138,40 @@ public actor FileHostTrustStore: HostTrustStore {
     }
 }
 
-/// Races `body` against a timeout; nil when the timeout wins. A late answer
-/// is dropped (an approval prompt can't be force-cancelled).
+/// Races `body` against a timeout; nil when the timeout wins.
+///
+/// Returns at the deadline even when `body` never finishes. A task group
+/// would wait for every child, and an approval prompt waiting on a
+/// continuation can't be cancelled, so the race resumes a continuation
+/// exactly once and leaves the loser to finish (its answer is dropped).
 func withApprovalTimeout<T: Sendable>(
     _ seconds: TimeInterval,
     _ body: @escaping @Sendable () async -> T
 ) async -> T? {
-    await withTaskGroup(of: T?.self) { group in
-        group.addTask { await body() }
-        group.addTask {
+    await withCheckedContinuation { (continuation: CheckedContinuation<T?, Never>) in
+        let once = ResumeOnce(continuation)
+        Task { once.resume(await body()) }
+        Task {
             try? await Task.sleep(nanoseconds: UInt64(seconds * 1_000_000_000))
-            return nil
+            once.resume(nil)
         }
-        let first = await group.next() ?? nil
-        group.cancelAll()
-        return first
+    }
+}
+
+/// Resumes a continuation the first time only.
+final class ResumeOnce<T: Sendable>: @unchecked Sendable {
+    private let lock = NSLock()
+    private var continuation: CheckedContinuation<T, Never>?
+
+    init(_ continuation: CheckedContinuation<T, Never>) {
+        self.continuation = continuation
+    }
+
+    func resume(_ value: T) {
+        let pending = lock.withLock { () -> CheckedContinuation<T, Never>? in
+            defer { continuation = nil }
+            return continuation
+        }
+        pending?.resume(returning: value)
     }
 }
