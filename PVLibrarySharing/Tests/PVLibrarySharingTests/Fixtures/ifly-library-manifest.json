@@ -1,0 +1,48 @@
+{
+  "version": 1,
+  "peerId": "8E0C2F6A-iFly-host",
+  "deviceName": "Joe's iPad",
+  "catalogVersion": "v1-3f2a",
+  "games": [
+    {
+      "title": "Ikaruga",
+      "platform": "Dreamcast",
+      "md5": "0123456789abcdef0123456789abcdef",
+      "sizeBytes": 1234567,
+      "artKey": "covers/ikaruga cover+1.jpg",
+      "saveStateCount": 2,
+      "lastPlayedDate": 781234567.5,
+      "playCount": 7,
+      "favorite": true,
+      "addedDate": 780000000
+    },
+    {
+      "title": "Marvel vs. Capcom 2",
+      "platform": "Naomi",
+      "sizeBytes": 42,
+      "saveStateCount": 0
+    },
+    {
+      "title": "Virtua Fighter 4",
+      "platform": "Naomi 2",
+      "md5": "FEDCBA9876543210FEDCBA9876543210",
+      "sizeBytes": 99,
+      "artKey": "vf4.jpg",
+      "saveStateCount": 0,
+      "vmuFileCount": 1
+    },
+    {
+      "title": "Metal Slug 6",
+      "platform": "Atomiswave",
+      "md5": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "sizeBytes": 100,
+      "saveStateCount": 0
+    },
+    {
+      "title": "Mystery Board",
+      "platform": "System SP",
+      "sizeBytes": 5,
+      "saveStateCount": 0
+    }
+  ]
+}

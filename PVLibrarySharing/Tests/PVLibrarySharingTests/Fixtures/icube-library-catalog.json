@@ -1,0 +1,44 @@
+{
+  "entries": [
+    {
+      "game": {
+        "crc32": "d00d",
+        "discNumber": 0,
+        "displayName": "Super Smash Bros. Melee",
+        "gameID": "GALE01",
+        "md5": "abcdef0123456789abcdef0123456789",
+        "platform": "gc",
+        "revision": 2
+      },
+      "hasArtwork": true,
+      "key": "id:GALE01|d0|r2",
+      "sizeBytes": 1459978240
+    },
+    {
+      "game": {
+        "displayName": "Mario Kart Wii",
+        "gameID": "RMCE01",
+        "platform": "wii"
+      },
+      "hasArtwork": false,
+      "key": "id:RMCE01|d0|r-1",
+      "sizeBytes": 4699979776
+    },
+    {
+      "game": {
+        "displayName": "Homebrew Disc",
+        "md5": "11112222333344445555666677778888",
+        "platform": "GameCube"
+      },
+      "hasArtwork": true,
+      "key": "md5:11112222333344445555666677778888",
+      "sizeBytes": 1000
+    }
+  ],
+  "sourceDevice": {
+    "appVersion": "1.4",
+    "name": "Living Room iPad",
+    "platform": "iOS"
+  },
+  "version": 1
+}
