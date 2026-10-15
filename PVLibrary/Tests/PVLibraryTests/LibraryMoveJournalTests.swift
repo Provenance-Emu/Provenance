@@ -63,7 +63,7 @@ final class LibraryMoveJournalTests: XCTestCase {
 
     func testUnknownLocationRawValueIsDiscarded() throws {
         try store.save(makeJournal())
-        let text = try String(contentsOf: store.url, encoding: .utf8).replacingOccurrences(of: "\"appGroup\"", with: "\"pickedFolder\"")
+        let text = try String(contentsOf: store.url, encoding: .utf8).replacingOccurrences(of: "\"appGroup\"", with: "\"notALibraryLocation\"")
         try text.write(to: store.url, atomically: true, encoding: .utf8)
         XCTAssertNil(store.load())
     }
