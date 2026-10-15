@@ -1,0 +1,213 @@
+{
+ "_comment": [
+  "App Store shot list for Provenance 3.4. `raw` is a simulator capture under RAW_DIR/<device dir>/;",
+  "compose.py frames it at the device's exact App Store size. Order = store order (name prefix)."
+ ],
+ "devices": {
+  "iphone": {
+   "size": [
+    1320,
+    2868
+   ],
+   "kind": "phone",
+   "dir": "iphone",
+   "raw_dir": "iphone",
+   "title": 0.098,
+   "top": 0.05,
+   "side": 0.1,
+   "gap": 0.03,
+   "margin": 0.05,
+   "foot": 0.025
+  },
+  "ipad": {
+   "size": [
+    2064,
+    2752
+   ],
+   "kind": "ipad",
+   "dir": "ipad",
+   "raw_dir": "ipad",
+   "title": 0.082,
+   "top": 0.045,
+   "side": 0.1,
+   "gap": 0.03,
+   "foot": 0.02
+  },
+  "tv": {
+   "size": [
+    1920,
+    1080
+   ],
+   "kind": "tv",
+   "dir": "appletv",
+   "raw_dir": "tv",
+   "title": 0.07,
+   "top": 0.05,
+   "side": 0.08,
+   "gap": 0.03,
+   "foot": 0.045
+  }
+ },
+ "shots": [
+  {
+   "name": "01-library",
+   "device": "iphone",
+   "raw": "library-home.png",
+   "title": "A library worth showing off",
+   "accent": "showing off",
+   "subtitle": "Cover art, favorites and recent saves, front and center"
+  },
+  {
+   "name": "02-play",
+   "device": "iphone",
+   "raw": "gameplay-skyline-plain.png",
+   "title": "Play the classics you own",
+   "accent": "classics",
+   "subtitle": "Touch controls built for every system, or bring a controller"
+  },
+  {
+   "name": "03-pause-menu",
+   "device": "iphone",
+   "raw": "pause-menu.png",
+   "title": "Everything, one tap away",
+   "accent": "one tap",
+   "subtitle": "Saves, cheats, filters and controls in the pause menu"
+  },
+  {
+   "name": "04-edit-layout",
+   "device": "iphone",
+   "raw": "layout-editor.png",
+   "title": "Make the controls yours",
+   "accent": "yours",
+   "subtitle": "Move and resize buttons without leaving the game"
+  },
+  {
+   "name": "05-crt",
+   "device": "iphone",
+   "raw": "gameplay-neon-crt.png",
+   "title": "That authentic CRT glow",
+   "accent": "CRT",
+   "subtitle": "CRT, LCD and handheld filters, set per game"
+  },
+  {
+   "name": "06-filters",
+   "device": "iphone",
+   "raw": "filter-browser.png",
+   "title": "Over 1,000 looks to choose from",
+   "accent": "1,000",
+   "subtitle": "For this game, this system, or everything"
+  },
+  {
+   "name": "07-every-device",
+   "device": "iphone",
+   "raw": "library-grid.png",
+   "title": "Your library on every device",
+   "accent": "every",
+   "subtitle": "iCloud sync across iPhone, iPad and Apple TV"
+  },
+  {
+   "name": "08-settings",
+   "device": "iphone",
+   "raw": "settings-touch.png",
+   "title": "Tune every detail",
+   "accent": "every",
+   "subtitle": "Every setting a tap away, with search"
+  },
+  {
+   "name": "01-library",
+   "device": "ipad",
+   "raw": "library-home.png",
+   "title": "Your games, beautifully organized",
+   "accent": "beautifully",
+   "subtitle": "Cover art, favorites and recent saves, front and center"
+  },
+  {
+   "name": "02-play",
+   "device": "ipad",
+   "raw": "gameplay-starlight-plain.png",
+   "title": "Play the classics you own",
+   "accent": "classics",
+   "subtitle": "Touch controls built for every system, or bring a controller"
+  },
+  {
+   "name": "03-settings-sidebar",
+   "device": "ipad",
+   "raw": "settings-sidebar.png",
+   "title": "Settings, side by side",
+   "accent": "side",
+   "subtitle": "A new sidebar puts every setting one tap away"
+  },
+  {
+   "name": "04-pause-menu",
+   "device": "ipad",
+   "raw": "pause-menu.png",
+   "title": "Everything, one tap away",
+   "accent": "one tap",
+   "subtitle": "Saves, cheats, filters and controls in the pause menu"
+  },
+  {
+   "name": "05-crt",
+   "device": "ipad",
+   "raw": "gameplay-neon-crt.png",
+   "title": "That authentic CRT glow",
+   "accent": "CRT",
+   "subtitle": "CRT, LCD and handheld filters, set per game"
+  },
+  {
+   "name": "06-edit-layout",
+   "device": "ipad",
+   "raw": "layout-editor.png",
+   "title": "Make the controls yours",
+   "accent": "yours",
+   "subtitle": "Move and resize buttons without leaving the game"
+  },
+  {
+   "name": "07-big-covers",
+   "device": "ipad",
+   "raw": "library-grid.png",
+   "title": "Your library on every device",
+   "accent": "every",
+   "subtitle": "iCloud sync across iPhone, iPad and Apple TV"
+  },
+  {
+   "name": "01-library",
+   "device": "tv",
+   "raw": "library-home.png",
+   "title": "Your retro library on the big screen",
+   "accent": "big screen",
+   "subtitle": "A native Apple TV app for the Siri Remote and controllers"
+  },
+  {
+   "name": "02-play",
+   "device": "tv",
+   "raw": "gameplay-neon-plain.png",
+   "title": "Play the classics you own",
+   "accent": "classics",
+   "subtitle": "Grab a controller and play from the couch"
+  },
+  {
+   "name": "03-systems",
+   "device": "tv",
+   "raw": "system-gba.png",
+   "title": "Browse by system",
+   "accent": "system",
+   "subtitle": "Recently played and every game, with cover art"
+  },
+  {
+   "name": "04-controllers",
+   "device": "tv",
+   "raw": "gameplay-starlight.png",
+   "title": "Arcade action, couch comfort",
+   "accent": "couch",
+   "subtitle": "MFi, Xbox, PlayStation and Switch Online controllers"
+  },
+  {
+   "name": "05-sync",
+   "device": "tv",
+   "raw": "gameplay-skyline.png",
+   "title": "Your saves follow you",
+   "accent": "follow",
+   "subtitle": "iCloud sync brings saves over from iPhone and iPad"
+  }
+ ]
+}
