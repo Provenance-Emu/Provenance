@@ -1294,9 +1294,17 @@ extension GameImporterDatabaseService {
             return IncomingIdentity(md5: itemMD5, legacyIndexMD5: nil, fingerprint: nil)
         }
         let indexURL = FileManager.default.fileExists(atPath: destUrl.path) ? destUrl : queueItem.url
-        guard let source = MultiFileSetIdentity.source(forIndexAt: indexURL),
-              let md5 = await identityMD5(of: source) else {
+        guard let source = MultiFileSetIdentity.source(forIndexAt: indexURL) else {
             WLOG("[IMPORT] No data track found for \(indexURL.lastPathComponent); identifying it by the index file")
+            return IncomingIdentity(md5: itemMD5, legacyIndexMD5: nil, fingerprint: nil)
+        }
+        // Placement may already have hashed it to name the set's folder.
+        var identity = queueItem.gameIdentityMD5
+        if identity == nil {
+            identity = await identityMD5(of: source)
+        }
+        guard let md5 = identity else {
+            WLOG("[IMPORT] Couldn't hash \(source.file.lastPathComponent) for \(indexURL.lastPathComponent); identifying it by the index file")
             return IncomingIdentity(md5: itemMD5, legacyIndexMD5: nil, fingerprint: nil)
         }
         queueItem.gameIdentityMD5 = md5
@@ -1341,8 +1349,14 @@ extension GameImporterDatabaseService {
 
     /// The md5Hash of a set whose identity comes from `source`.
     func identityMD5(of source: MultiFileSetIdentity.Source) async -> String? {
-        guard let fileMD5 = await calculateMD5Async(at: source.file, fromOffset: 0)?.uppercased() else { return nil }
-        return source.viaPlaylist ? MultiFileSetIdentity.playlistKey(firstDiscMD5: fileMD5).MD5.uppercased() : fileMD5
+        guard let fileMD5 = await calculateMD5Async(at: source.file, fromOffset: 0) else { return nil }
+        return Self.identityMD5(fileMD5: fileMD5, viaPlaylist: source.viaPlaylist)
+    }
+
+    /// The md5Hash of a set whose identity file (`MultiFileSetIdentity.Source.file`) hashes to `fileMD5`.
+    static func identityMD5(fileMD5: String, viaPlaylist: Bool) -> String {
+        let md5 = fileMD5.uppercased()
+        return viaPlaylist ? MultiFileSetIdentity.playlistKey(firstDiscMD5: md5).MD5.uppercased() : md5
     }
 
     static func fingerprint(of source: MultiFileSetIdentity.Source) -> MultiFileSetIdentity.Fingerprint {

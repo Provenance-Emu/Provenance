@@ -6,6 +6,9 @@
 //  discs) imports into its own folder under the system's ROM folder, named after
 //  the index file: `ROMs/<system>/<index stem>/`. Two sets whose tracks share
 //  generic names (`track01.bin`) then never collide. Single-file games stay flat.
+//  When another set has the name, the folder is `<index stem>-<first 8 of the
+//  game's md5Hash>`, so every device names it the same; folders created before
+//  that (`<index stem>-2`, `-3`, … in import order) keep their names.
 //
 //  Pure naming and path rules, Foundation only.
 //
@@ -20,8 +23,11 @@ public enum MultiFileSetFolder {
     /// Name used when an index file's stem sanitises to nothing.
     public static let fallbackName = "Disc Set"
 
-    /// Longest folder name in UTF-8 bytes, leaving room for a `-NN` suffix under the 255-byte limit.
+    /// Longest folder name in UTF-8 bytes, leaving room for a `-XXXXXXXX` suffix under the 255-byte limit.
     public static let maximumNameBytes = 240
+
+    /// Hex digits of the game's md5Hash that tell two sets with the same index name apart.
+    public static let identitySuffixLength = 8
 
     /// Name of the folder that holds the ROM tree.
     static let romsDirectoryName = "ROMs"
@@ -63,37 +69,72 @@ public enum MultiFileSetFolder {
         return name.isEmpty ? fallbackName : name
     }
 
-    /// A folder name for an index file that is free in a system folder: the base name,
-    /// else `base-2`, `base-3`, … `taken` holds every name already in the system folder
-    /// (files and folders), compared case-insensitively. `canReuse` may claim a taken
-    /// name whose folder already holds this same set (a repeated import).
+    /// A folder name for an index file that is free in a system folder. `taken` holds every
+    /// name already in the system folder (files and folders), compared case-insensitively.
+    ///
+    /// - The base name when it is free.
+    /// - Else a taken set-folder name for this index (the base name, `base-<hex>` or a legacy
+    ///   `base-N`) that `canReuse` claims: its folder already holds this same set (a repeated import).
+    /// - Else `base-<first 8 of identityMD5>`, the same on every device that imports the set.
+    /// - Else (no identity, or that name taken too) the first free `base-2`, `base-3`, …
     public static func folderName(
         forIndexFile fileName: String,
         taken: Set<String>,
+        identityMD5: String? = nil,
         canReuse: (String) -> Bool = { _ in false }
     ) -> String {
         let base = baseName(forIndexFile: fileName)
         let lowercasedTaken = Set(taken.map { $0.lowercased() })
-        var candidate = base
-        var suffix = 1
-        while lowercasedTaken.contains(candidate.lowercased()) {
-            if canReuse(candidate) { return candidate }
-            suffix += 1
-            candidate = "\(base)-\(suffix)"
+        guard lowercasedTaken.contains(base.lowercased()) else { return base }
+
+        let existingSetFolders = taken
+            .filter { isSetFolder(named: $0, forIndexFile: fileName) }
+            .sorted { lhs, rhs in
+                let lhsIsBase = lhs.lowercased() == base.lowercased()
+                let rhsIsBase = rhs.lowercased() == base.lowercased()
+                if lhsIsBase != rhsIsBase { return lhsIsBase }
+                return lhs.localizedStandardCompare(rhs) == .orderedAscending
+            }
+        if let reused = existingSetFolders.first(where: canReuse) {
+            return reused
         }
-        return candidate
+
+        if let suffix = identitySuffix(forMD5: identityMD5) {
+            let candidate = "\(base)-\(suffix)"
+            if !lowercasedTaken.contains(candidate.lowercased()) {
+                return candidate
+            }
+        }
+
+        var suffix = 2
+        while lowercasedTaken.contains("\(base)-\(suffix)".lowercased()) {
+            suffix += 1
+        }
+        return "\(base)-\(suffix)"
     }
 
-    /// True when `folderName` is the name `folderName(forIndexFile:)` gives `indexFileName`
-    /// (its base name, or the base name with a `-N` suffix).
+    /// The first `identitySuffixLength` hex digits of `md5`, uppercased like `PVGame.md5Hash`.
+    /// Nil when `md5` is missing, too short or not hex.
+    public static func identitySuffix(forMD5 md5: String?) -> String? {
+        guard let md5 else { return nil }
+        let prefix = String(md5.prefix(identitySuffixLength)).uppercased()
+        guard prefix.count == identitySuffixLength, prefix.allSatisfy(\.isHexDigit) else { return nil }
+        return prefix
+    }
+
+    /// True when `folderName` is a name `folderName(forIndexFile:)` gives `indexFileName`: its
+    /// base name, the base name with an identity suffix (`-` and 8 hex digits), or with a
+    /// legacy `-N` suffix.
     public static func isSetFolder(named folderName: String, forIndexFile indexFileName: String) -> Bool {
         guard isIndexFile(indexFileName) else { return false }
         let base = baseName(forIndexFile: indexFileName).lowercased()
         let folder = folderName.lowercased()
         if folder == base { return true }
         guard folder.hasPrefix(base + "-") else { return false }
-        let digits = folder.dropFirst(base.count + 1)
-        return !digits.isEmpty && digits.allSatisfy { $0.isASCII && $0.isNumber }
+        let suffix = folder.dropFirst(base.count + 1)
+        guard !suffix.isEmpty, suffix.allSatisfy(\.isASCII) else { return false }
+        if suffix.allSatisfy(\.isNumber) { return true }
+        return suffix.count == identitySuffixLength && suffix.allSatisfy(\.isHexDigit)
     }
 
     // MARK: Locations

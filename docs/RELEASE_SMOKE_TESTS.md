@@ -314,7 +314,10 @@ before it (or seed the files below by hand, then relaunch).
       the first one finished importing, and again with both shared in one go:
       each lands in its own folder, the first game's tracks are untouched, and
       both boot. Two different games both named `disc.gdi` go to `disc/` and
-      `disc-2/`.
+      `disc-<first 8 of the second game's MD5>/`. Import the same two in the
+      opposite order on a second device: the second game's folder has the same
+      `disc-XXXXXXXX` name on both. A `disc-2/` folder from an earlier build is
+      left as it is, and re-sharing the game in it doesn't copy it elsewhere.
 - [ ] Two different Dreamcast games whose `.gdi` files are byte-identical (same
       track layout, e.g. both `track01.bin`/`track02.raw`/`track03.bin` at the
       same LBAs): both import and both boot, one after the other and in one go.

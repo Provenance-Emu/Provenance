@@ -31,7 +31,7 @@ public enum GameSystemMover {
         // A multi-file set in a folder of its own moves into a folder of its own in the new system.
         let sourceSetFolder = MultiFileSetPlacement.setFolder(ofGameFileAt: sourceURL)
         let destinationDirectory = sourceSetFolder == nil ? systemDirectory : MultiFileSetPlacement.folder(
-            forIndexAt: sourceURL, members: oldRelatedFiles, in: systemDirectory)
+            forIndexAt: sourceURL, members: oldRelatedFiles, in: systemDirectory, identityMD5: game.md5Hash)
         try FileManager.default.createDirectory(at: destinationDirectory, withIntermediateDirectories: true)
         let move = BatchFileMove(files: [sourceURL] + oldRelatedFiles, into: destinationDirectory)
         try move.perform()

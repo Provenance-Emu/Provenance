@@ -1634,7 +1634,8 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
 
                 if MultiFileSetFolder.isIndexFile(primaryFilename) {
                     // A cue/gdi/m3u set goes into a folder of its own, as the importer places it.
-                    finalPrimaryFileURL = try placeDownloadedSet(archiveAt: assetURL, primaryFilename: primaryFilename, systemFolder: destinationDirectory)
+                    finalPrimaryFileURL = try placeDownloadedSet(archiveAt: assetURL, primaryFilename: primaryFilename,
+                                                                  systemFolder: destinationDirectory, md5: md5)
                 } else {
                     do {
                         try ArchiveManager.shared.unzipFile(at: assetURL, to: destinationDirectory)
@@ -2913,8 +2914,9 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
 
     /// Unzips a downloaded multi-file set (cue, gdi or m3u with its tracks) into a folder of its
     /// own under the system folder (`MultiFileSetFolder`), so it never collides with another
-    /// set's generic track names. Returns the index file.
-    private func placeDownloadedSet(archiveAt assetURL: URL, primaryFilename: String, systemFolder: URL) throws -> URL {
+    /// set's generic track names; on a name clash the folder carries the record's md5Hash, like the
+    /// uploading device's. Returns the index file.
+    private func placeDownloadedSet(archiveAt assetURL: URL, primaryFilename: String, systemFolder: URL, md5: String) throws -> URL {
         let fileManager = FileManager.default
         let staging = fileManager.temporaryDirectory.appendingPathComponent("rom-set-\(UUID().uuidString)", isDirectory: true)
         defer { try? fileManager.removeItem(at: staging) }
@@ -2930,7 +2932,7 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
         }
         let others = ((try? fileManager.contentsOfDirectory(at: staging, includingPropertiesForKeys: nil, options: [.skipsHiddenFiles])) ?? [])
             .filter { $0.lastPathComponent != primaryFilename }
-        let placement = try MultiFileSetPlacement.place(indexAt: index, members: others, in: systemFolder)
+        let placement = try MultiFileSetPlacement.place(indexAt: index, members: others, in: systemFolder, identityMD5: md5)
         ILOG("[IMPORT] Downloaded \(primaryFilename) and \(others.count) file(s) → \(systemFolder.lastPathComponent)/\(placement.folder.lastPathComponent)/")
         return placement.index
     }

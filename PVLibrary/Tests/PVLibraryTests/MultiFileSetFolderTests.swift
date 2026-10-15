@@ -47,9 +47,38 @@ struct MultiFileSetFolderNamingTests {
         #expect(name == "disc-2")
     }
 
+    @Test func takenNamesGetTheIdentitySuffixWhenTheIdentityIsKnown() {
+        let md5 = "1a2b3c4d5e6f708192a3b4c5d6e7f809"
+        #expect(MultiFileSetFolder.folderName(forIndexFile: "disc.gdi", taken: [], identityMD5: md5) == "disc")
+        #expect(MultiFileSetFolder.folderName(forIndexFile: "disc.gdi", taken: ["disc"], identityMD5: md5) == "disc-1A2B3C4D")
+        // Import order and legacy -N folders don't change it: two devices name the set the same.
+        #expect(MultiFileSetFolder.folderName(forIndexFile: "disc.gdi", taken: ["disc", "disc-2", "disc-3"], identityMD5: md5)
+                == "disc-1A2B3C4D")
+        // Not an MD5: the legacy numbering.
+        #expect(MultiFileSetFolder.folderName(forIndexFile: "disc.gdi", taken: ["disc"], identityMD5: "xyz") == "disc-2")
+    }
+
+    @Test func aLegacyNumberedFolderHoldingTheSameSetIsReusedBeforeTheIdentityName() {
+        let md5 = "1A2B3C4D5E6F708192A3B4C5D6E7F809"
+        let legacy = MultiFileSetFolder.folderName(forIndexFile: "disc.gdi", taken: ["disc", "disc-2"], identityMD5: md5) { $0 == "disc-2" }
+        #expect(legacy == "disc-2")
+        let identity = MultiFileSetFolder.folderName(
+            forIndexFile: "disc.gdi", taken: ["disc", "disc-1A2B3C4D"], identityMD5: md5) { $0 == "disc-1A2B3C4D" }
+        #expect(identity == "disc-1A2B3C4D")
+    }
+
+    @Test func identityNameTakenByAnotherSetFallsBackToNumbering() {
+        let md5 = "1A2B3C4D5E6F708192A3B4C5D6E7F809"
+        #expect(MultiFileSetFolder.folderName(forIndexFile: "disc.gdi", taken: ["disc", "disc-1a2b3c4d"], identityMD5: md5) == "disc-2")
+    }
+
     @Test func setFolderNamesMatchTheirIndexFile() {
         #expect(MultiFileSetFolder.isSetFolder(named: "disc", forIndexFile: "disc.gdi"))
         #expect(MultiFileSetFolder.isSetFolder(named: "Disc-12", forIndexFile: "disc.gdi"))
+        #expect(MultiFileSetFolder.isSetFolder(named: "disc-1A2B3C4D", forIndexFile: "disc.gdi"))
+        #expect(MultiFileSetFolder.isSetFolder(named: "Disc-deadbeef", forIndexFile: "disc.gdi"))
+        #expect(!MultiFileSetFolder.isSetFolder(named: "disc-1A2B3C4", forIndexFile: "disc.gdi"))
+        #expect(!MultiFileSetFolder.isSetFolder(named: "disc-1A2B3C4DE", forIndexFile: "disc.gdi"))
         #expect(!MultiFileSetFolder.isSetFolder(named: "disc-x", forIndexFile: "disc.gdi"))
         #expect(!MultiFileSetFolder.isSetFolder(named: "DOOM", forIndexFile: "install.cue"))
         #expect(!MultiFileSetFolder.isSetFolder(named: "disc", forIndexFile: "disc.chd"))
@@ -78,6 +107,7 @@ struct MultiFileSetFolderNamingTests {
         #expect(MultiFileSetFolder.saveName(forROMAt: URL(fileURLWithPath: roms + "Crazy Taxi.gdi")) == "Crazy Taxi")
         #expect(MultiFileSetFolder.saveName(forROMAt: URL(fileURLWithPath: roms + "disc/disc.gdi")) == "disc")
         #expect(MultiFileSetFolder.saveName(forROMAt: URL(fileURLWithPath: roms + "disc-2/disc.gdi")) == "disc-2")
+        #expect(MultiFileSetFolder.saveName(forROMAt: URL(fileURLWithPath: roms + "disc-1A2B3C4D/disc.gdi")) == "disc-1A2B3C4D")
         #expect(MultiFileSetFolder.saveName(forROMAt: URL(fileURLWithPath: roms + "DOOM/doom.exe")) == "doom")
     }
 }
@@ -180,6 +210,52 @@ struct MultiFileSetPlacementTests {
         #expect(!placement.reusedExistingFolder)
         #expect(library.read(library.systemDirectory.appendingPathComponent("disc/track01.bin")) == "A track01.bin")
         #expect(library.read(placement.folder.appendingPathComponent("track01.bin")) == "B track01.bin")
+    }
+
+    @Test func aDifferentSetWithTheSameIndexNameIsNamedAfterItsIdentity() throws {
+        let library = try Library()
+        defer { library.remove() }
+        let md5 = "C0FFEE00112233445566778899AABBCC"
+        let first = try writeGDISet(library, index: "disc.gdi", tag: "A")
+        _ = try MultiFileSetPlacement.place(indexAt: first.index, members: first.tracks, in: library.systemDirectory)
+        #expect(MultiFileSetPlacement.baseNameIsTaken(forIndexAt: library.imports.appendingPathComponent("disc.gdi"),
+                                                      in: library.systemDirectory))
+        // A legacy -2 folder from another set doesn't change the name.
+        let legacy = try writeGDISet(library, index: "disc.gdi", tag: "L")
+        _ = try MultiFileSetPlacement.place(indexAt: legacy.index, members: legacy.tracks, in: library.systemDirectory)
+
+        let second = try writeGDISet(library, index: "disc.gdi", tag: "B")
+        let placement = try MultiFileSetPlacement.place(
+            indexAt: second.index, members: second.tracks, in: library.systemDirectory, identityMD5: md5)
+
+        #expect(placement.folder.lastPathComponent == "disc-C0FFEE00")
+        #expect(library.read(placement.folder.appendingPathComponent("track01.bin")) == "B track01.bin")
+        #expect(MultiFileSetPlacement.isSetFolder(placement.folder))
+        #expect(MultiFileSetPlacement.indexFilesInSetFolders(of: library.systemDirectory).count == 3)
+
+        // The same set again is found in its folder, not copied into another.
+        let again = try writeGDISet(library, index: "disc.gdi", tag: "B")
+        let repeated = try MultiFileSetPlacement.place(
+            indexAt: again.index, members: again.tracks, in: library.systemDirectory, identityMD5: md5)
+        #expect(repeated.folder.lastPathComponent == "disc-C0FFEE00")
+        #expect(repeated.reusedExistingFolder)
+    }
+
+    @Test func aSetInALegacyNumberedFolderIsReusedNotCopied() throws {
+        let library = try Library()
+        defer { library.remove() }
+        let first = try writeGDISet(library, index: "disc.gdi", tag: "A")
+        _ = try MultiFileSetPlacement.place(indexAt: first.index, members: first.tracks, in: library.systemDirectory)
+        let second = try writeGDISet(library, index: "disc.gdi", tag: "B")
+        _ = try MultiFileSetPlacement.place(indexAt: second.index, members: second.tracks, in: library.systemDirectory)
+
+        let again = try writeGDISet(library, index: "disc.gdi", tag: "B")
+        let placement = try MultiFileSetPlacement.place(
+            indexAt: again.index, members: again.tracks, in: library.systemDirectory, identityMD5: "C0FFEE00112233445566778899AABBCC")
+
+        #expect(placement.folder.lastPathComponent == "disc-2")
+        #expect(placement.reusedExistingFolder)
+        #expect(!FileManager.default.fileExists(atPath: library.systemDirectory.appendingPathComponent("disc-C0FFEE00").path))
     }
 
     @Test func importingTheSameSetAgainReusesItsFolder() throws {

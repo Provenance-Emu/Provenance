@@ -71,20 +71,29 @@ public enum MultiFileSetPlacement {
 
     // MARK: Placement
 
-    /// The folder a set goes into: named after the index file, with a `-N` suffix when the
-    /// name is taken by anything other than this same set.
+    /// The folder a set goes into: named after the index file; when anything other than this
+    /// same set has that name, `<name>-<first 8 of identityMD5>` (`MultiFileSetFolder.folderName`).
+    /// `identityMD5` is the game's md5Hash; without it the suffix is the legacy `-N`.
     public static func folder(
         forIndexAt indexURL: URL,
         members: [URL],
         in systemDirectory: URL,
+        identityMD5: String? = nil,
         fileManager: FileManager = .default
     ) -> URL {
-        let taken = Set((try? fileManager.contentsOfDirectory(atPath: systemDirectory.path)) ?? [])
-        let name = MultiFileSetFolder.folderName(forIndexFile: indexURL.lastPathComponent, taken: taken) { candidate in
+        let taken = takenNames(in: systemDirectory, fileManager: fileManager)
+        let name = MultiFileSetFolder.folderName(forIndexFile: indexURL.lastPathComponent, taken: taken, identityMD5: identityMD5) { candidate in
             holdsSameSet(systemDirectory.appendingPathComponent(candidate, isDirectory: true),
                          index: indexURL, members: members, fileManager: fileManager)
         }
         return systemDirectory.appendingPathComponent(name, isDirectory: true)
+    }
+
+    /// Whether the folder name the index asks for is already used in `systemDirectory`, so
+    /// placing it needs the game's identity (`folder(forIndexAt:identityMD5:)`).
+    public static func baseNameIsTaken(forIndexAt indexURL: URL, in systemDirectory: URL, fileManager: FileManager = .default) -> Bool {
+        let base = MultiFileSetFolder.baseName(forIndexFile: indexURL.lastPathComponent).lowercased()
+        return takenNames(in: systemDirectory, fileManager: fileManager).contains { $0.lowercased() == base }
     }
 
     /// Moves the index and its members into their folder under `systemDirectory`.
@@ -93,9 +102,10 @@ public enum MultiFileSetPlacement {
         indexAt indexURL: URL,
         members: [URL],
         in systemDirectory: URL,
+        identityMD5: String? = nil,
         fileManager: FileManager = .default
     ) throws -> Placement {
-        let folder = folder(forIndexAt: indexURL, members: members, in: systemDirectory, fileManager: fileManager)
+        let folder = folder(forIndexAt: indexURL, members: members, in: systemDirectory, identityMD5: identityMD5, fileManager: fileManager)
         let reused = fileManager.fileExists(atPath: folder.path)
         try fileManager.createDirectory(at: folder, withIntermediateDirectories: true)
         let index = try move(indexURL, into: folder, keepingExisting: reused, fileManager: fileManager)
@@ -162,6 +172,10 @@ public enum MultiFileSetPlacement {
     }
 
     // MARK: Helpers
+
+    private static func takenNames(in systemDirectory: URL, fileManager: FileManager) -> Set<String> {
+        Set((try? fileManager.contentsOfDirectory(atPath: systemDirectory.path)) ?? [])
+    }
 
     private static func stem(of fileName: String) -> String {
         (fileName as NSString).deletingPathExtension.lowercased()
