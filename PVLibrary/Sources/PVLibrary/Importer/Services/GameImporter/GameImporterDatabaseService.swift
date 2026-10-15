@@ -793,11 +793,14 @@ class GameImporterDatabaseService : GameImporterDatabaseServicing {
         do {
             var resultsMaybe: [ROMMetadata]?
 
-            // Try MD5 lookup: the game's identity, then a set's index file
-            for md5 in Self.metadataLookupMD5s(identity: game.md5Hash, indexFileMD5: indexFileMD5)
-            where (resultsMaybe ?? []).isEmpty {
-                resultsMaybe = try? await lookup.searchDatabase(usingMD5: md5, systemID: nil)
+            // Try MD5 lookup: the game's identity and a set's index file. Both are searched and
+            // merged: libretrodb matches a set's data track but has no box art, while OpenVGDB has
+            // it under the cue, and the choice below prefers results with artwork.
+            var md5Results: [ROMMetadata] = []
+            for md5 in Self.metadataLookupMD5s(identity: game.md5Hash, indexFileMD5: indexFileMD5) {
+                md5Results += (try? await lookup.searchDatabase(usingMD5: md5, systemID: nil)) ?? []
             }
+            resultsMaybe = md5Results.isEmpty ? nil : md5Results
 
             // Try filename lookup if MD5 failed
             if (resultsMaybe ?? []).isEmpty {
@@ -1248,10 +1251,11 @@ extension GameImporterDatabaseService {
         queueItem.isMultiFileIndex ? queueItem.cachedMD5?.uppercased() : nil
     }
 
-    /// MD5s to look a game's metadata up by, in order. A game imported from a cue, gdi or m3u is
-    /// identified by its data track (`MultiFileSetIdentity`), but OpenVGDB keys its CD games (PSX,
-    /// Saturn, Sega CD, PC Engine CD) by the MD5 of the unmodified redump .cue, so the index file's
-    /// MD5 is tried next. It is only a lookup key: the game's md5Hash stays the identity.
+    /// MD5s to look a game's metadata up by. A game imported from a cue, gdi or m3u is identified
+    /// by its data track (`MultiFileSetIdentity`), which libretrodb's track rows match, but OpenVGDB
+    /// keys its CD games (PSX, Saturn, Sega CD, PC Engine CD) by the MD5 of the unmodified redump
+    /// .cue, so the index file's MD5 is searched too. It is only a lookup key: the game's md5Hash
+    /// stays the identity.
     static func metadataLookupMD5s(identity: String, indexFileMD5: String?) -> [String] {
         var keys = [identity.uppercased()]
         if let index = indexFileMD5?.uppercased(), !index.isEmpty, !keys.contains(index) {
