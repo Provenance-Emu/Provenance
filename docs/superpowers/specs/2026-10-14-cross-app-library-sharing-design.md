@@ -1,6 +1,6 @@
 # Cross-app library sharing (Provenance ⇄ iFly, Provenance ⇄ iCube, content server)
 
-Date: 2026-10-14. Status: phase 1 shipped, phase 2 built 2026-10-15 (see "Phase 2 as built").
+Date: 2026-10-14. Status: phase 1 shipped; phases 2 and 3 built 2026-10-15 (see "Phase 2 as built", "Phase 3 as built").
 
 ## Goal
 
@@ -324,3 +324,45 @@ Proposed additive ECS changes:
 - [ ] Copy a game already in the library: the importer skips the duplicate, and the staging folder is gone within 24 h.
 - [ ] tvOS: Copy and Stop are reachable with the remote. The copy lands in the library on Apple TV, where staging under Caches is expected.
 - [ ] BIOS and VMU/state files are never written anywhere (check `Library/Caches/LibrarySharing`).
+
+## Phase 3 as built (2026-10-15)
+
+- **NWListener, not Hummingbird.** `LibraryHTTPListener` is a small HTTP/1.1 server, with keep-alive, `Content-Length` bodies, and file bodies streamed in 256 KB chunks with each send awaited. Each dialect gets its own listener on the first free port from 8484, with `prohibitedInterfaceTypes = [.cellular]` and peer-to-peer Wi-Fi on. Every connection goes through `LANFilter`: loopback, link-local, or the on-link prefix of a local interface (which admits global IPv6). Cellular, `utun` and `ipsec` interfaces never count as LAN. Hummingbird would have hidden the remote address and the per-port Bonjour handling, and would have pulled the ServiceContext version caps into this package.
+- **Adverts use `NetService`.** `NWListener.service` can't be trusted with `_icube-continuity._tcp` (16 characters), and iCube publishes with NetService itself. The TXT record is `v=1`, a fresh `sid`, `lib=1`, `pid`, and `u0..u3` (Wi-Fi IPv4 URLs first). `_ifly-continuity._tcp` is published only while the shared library holds a Dreamcast-family game, and `_icube-continuity._tcp` only while it holds a GameCube or Wii game. Adverts are refreshed when the app becomes active and when the shared systems change.
+- **iFly dialect** (`IFlyDialectServer` with `ConsentGate`): consent auth that mirrors `ContinuityLibraryServer`. A trusted peer gets a token silently. A stranger gets one prompt and 202 until the owner answers; "Share Everything" and "Ask for Each Game" trust the peer on first use, "Don't Share" denies it.
+  - The catalogue carries an `ETag`, and a matching request gets 304.
+  - Pull manifests put the primary file first. iFly boots the first `gameFile`, as the iFly session confirmed.
+  - Paths are `ROMs/<file>`, or `ROMs/<primary stem>/<path>` for a set, so GDI tracks sit next to the `.gdi`.
+  - Every manifest has `"bios": []` and `"optionalExtras": []`, and `required` and `size` on every file.
+  - The file route serves only paths from a granted pull. "Ask for Each Game" answers 202, then 403 on a refusal. No route ever answers 429.
+- **iCube dialect** (`ICubeDialectServer`): `pair/start` and `pair/complete` are mirrored exactly. That covers 3 pairings in flight, 3 code tries, 202/401/403/410, and the trust stored before the **404 "no active handoff session"** answer.
+  - Library auth requires a paired peer and allows at most 16 live tokens.
+  - Catalogue keys are iCube's `stableKey` (`id:<GAMEID>|d0|r-1` when `PVGame.romSerial` holds the game id, else `md5:<md5>`).
+  - The manifest lists the image only, as `Software/<file>`.
+  - The file route re-derives the manifest. For an "Ask per game" peer it holds the request open for the owner's answer, as iCube does.
+- **Trust:** `FileHostTrustStore` keeps peers and grants in `Application Support/LibrarySharing/trusted-peers.json`; it holds public keys only. A known peer id can never swap keys. The host signs with the same Keychain identity the client uses.
+- **SHA-256** is computed on the first pull and cached by `(path, size, mtime)` in `hashes.json`.
+- **App:**
+  - `LibrarySharingService` (PVUI) starts the host while the setting is on, the app is active and the flag is on. iOS stops it in the background, through `ProvenanceApp`'s scene-phase handler.
+  - Owner prompts are `UIAlertController`s on top of whatever is showing.
+  - `RealmSharedLibrary` reads `PVGame` per request: the primary file plus related files, with paths relative to the primary's folder.
+- **Tests:** Provenance's own iFly and iCube clients run against these servers, both in process and over a real socket with URLSession (range resume included). The JSON is decoded with structs that copy each peer's required fields. One test asserts that no manifest lists anything but `gameFile`.
+- **Not done:**
+  - A "Don't share" action on a game's context menu (per-system exclusion is built).
+  - Serving from tvOS Top Shelf or background.
+  - `NSBonjourServices` in the Tuist dev apps.
+  - Advert refresh after each import: adverts refresh on activation instead.
+
+### Phase 3 device checklist
+
+- [ ] Share This Library on (iPhone). Unmodified iFly on another device lists the Provenance device and shows only Dreamcast/NAOMI/Atomiswave games. iFly's consent prompt appears on the Provenance device.
+- [ ] iFly copies a single-file `.chd` and a GDI set from Provenance, and both boot in iFly. With Play, iFly boots the `.gdi`, not a track.
+- [ ] "Ask for Each Game": iFly shows waiting, the Provenance device shows "wants to copy <game>", and Allow lets the copy proceed. "Never Allow This Device" moves the device to Nothing in Trusted Devices.
+- [ ] Unmodified iCube finds Provenance under `_icube-continuity._tcp`. Watch for the 16-character type: the Provenance log should show "published _icube-continuity._tcp". iCube shows "Pair", the code appears in an alert on Provenance, and pairing completes even though Provenance answers 404.
+- [ ] iCube lists only GameCube/Wii games and copies one into `Software/`. It appears in iCube's library and boots.
+- [ ] Turn Share This Library off: both peers drop the device within one browse cycle, and a copy in flight fails cleanly.
+- [ ] Remove a device in Trusted Devices mid-copy: its next request gets 401/403.
+- [ ] Background the iOS app: the listeners stop (peers lose the device), and they come back on return.
+- [ ] Apple TV as the host: same checks with the remote. Prompts appear over any screen.
+- [ ] A network that hands out global IPv6: a peer reaching the host over IPv6 is accepted. A peer through a VPN or a routed subnet is refused (watch for "refused" in the log).
+- [ ] Provenance ⇄ Provenance over the legacy dialects: device A's Nearby Libraries lists device B under the iFly and iCube types, and copies work.
