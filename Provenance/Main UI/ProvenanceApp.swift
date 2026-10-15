@@ -284,6 +284,9 @@ struct ProvenanceApp: App {
 
             // Handle scene phase changes for import pausing
             appState.handleScenePhaseChange(newPhase)
+
+            // Library sharing listens only while the app is in the foreground (iOS).
+            LibrarySharingService.handleScenePhase(newPhase)
         }
         // NOTE: no `.commands` here. The menu bar is built in UIKit —
         // `PVAppDelegate.buildMenu(with:)` → `PVMenuBarBuilder` — so that menu items

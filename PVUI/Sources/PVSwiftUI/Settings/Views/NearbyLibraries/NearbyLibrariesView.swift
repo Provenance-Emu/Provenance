@@ -20,6 +20,14 @@ struct NearbyLibrariesView: View {
     var body: some View {
         List {
             SwiftUI.Section {
+                NavigationLink {
+                    LibrarySharingSettingsView()
+                } label: {
+                    Label("Share This Library", systemImage: "square.and.arrow.up.on.square")
+                }
+            }
+
+            SwiftUI.Section {
                 if model.visiblePeers.isEmpty {
                     HStack(spacing: 12) {
                         ProgressView()

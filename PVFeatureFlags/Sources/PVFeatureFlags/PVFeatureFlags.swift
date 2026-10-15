@@ -160,8 +160,8 @@ public struct FeatureFlag: Codable, Sendable {
 
     public static let nearbyLibraries = FeatureFlag(
         enabled: false,
-        description: "Nearby Libraries: browse iFly and iCube libraries on the local network from Settings > Library. "
-            + "Read-only for now. Disabled by default — enable in Settings > Advanced > Feature Flags."
+        description: "Nearby Libraries: browse and copy games from iFly and iCube libraries on the local network, "
+            + "and share this library with them (Settings > Library). Disabled by default — enable in Settings > Advanced > Feature Flags."
     )
 }
 
