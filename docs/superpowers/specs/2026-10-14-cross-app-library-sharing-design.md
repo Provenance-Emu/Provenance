@@ -1,6 +1,6 @@
 # Cross-app library sharing (Provenance ⇄ iFly, Provenance ⇄ iCube, content server)
 
-Date: 2026-10-14. Status: phase 1 shipped; phases 2–4 built 2026-10-15 (see the "as built" sections at the end).
+Date: 2026-10-14. Status: phase 1 shipped; phases 2–5 built 2026-10-15 (see the "as built" sections at the end). Same-iCloud saves (phase 5) are blocked on open question 4.
 
 ## Goal
 
@@ -424,3 +424,37 @@ Proposed additive ECS changes:
 - [ ] Unmodified iFly and iCube against the same v1.1 Provenance still browse and copy (phase 3 checklist), and they don't show the `_pvlibrary` advert.
 - [ ] Router-less: two iPhones, Wi-Fi on but not joined to a network. Peer-to-peer browse finds the other device, and the copy uses the `.local` URL.
 - [ ] Change the library while B is paging (import on A mid-browse): B restarts and shows the full, new list.
+
+## Phase 5 as built (2026-10-15)
+
+- **`ECSSource` is a client only**, behind the same `LibrarySource` as the app peers, so browsing and `LibraryPuller` (staging, Range resume, SHA-256) are unchanged. `PeerApp.contentServer` (`ecs`) names it.
+  - Capabilities: `GET /api/v1/capabilities` must report protocol major 1, and `limits.maxPageSize` sets the page size.
+  - Auth: a token stored in the Keychain (`KeychainECSTokenStore`, one item per server URL), else `POST auth/login`, then `POST device-tokens {name, scopes:["read"]}`. A reader without `admin` scope can't mint one and keeps the session token, as §3.7 expects. A 401 signs in again once.
+  - Catalogue: `GET /libraries`, then `GET /items?libraryId=&limit=&cursor=` for each library, every page. Filtering is local, because the server has no system filter yet (proposal 1).
+  - Manifest: `rom` maps to a game file, and every other kind (`bios`, `save_state`…) is left behind.
+  - Content: `GET <contentPath>` with Range, where 200 to a ranged request means start over. A `contentPath` on another host is refused.
+- **UI:** Settings › Library › Nearby Libraries › Content Servers holds Add (address, username, password), delete, and the shared browse/copy screen. The password is used for one sign-in and never stored; the server list (URL and username) is in UserDefaults.
+- **Not built:**
+  - `_pvcontent._tcp` discovery. ECS TXT (`id, v, tls, pair, name`) carries no `lib`/`u0`, so it needs its own decoder. The type is already in every Info.plist.
+  - Artwork from ECS.
+  - Opt-in saves for same-iCloud peers, **blocked on open question 4**: all three apps need one CloudKit container for the `ic` hash, and nobody has agreed on one. Until then every peer goes through consent or pairing, and saves never travel.
+  - tvOS serving needs nothing more. tvOS keeps the host up for as long as the app runs, since it never stops on background (`LibrarySharingService.handleScenePhase`).
+- **Tests:** `ECSSourceTests` runs against an in-process fake of `apps/server/src/routes.ts`. They cover paging, local filtering, device-token minting and reuse, the reader fallback, re-sign-in, a wrong password, a newer protocol, ROM copy with Range resume, BIOS left behind, restart on 200, and a refused foreign `contentPath`. Not yet run against a live `ecs serve`; that's on the checklist.
+
+### ECS proposals (drafts; not filed)
+
+To file on Provenance-Emu/emulator-content-server once the owner approves. Each one is additive.
+
+1. **`systemIdentifier` filter on `GET /api/v1/items`.** Take comma-separated dotted ids, matching the field name. Clients filter locally until it ships.
+2. **TXT `app=ecs` and `sys=*`** on `_pvcontent._tcp`, so app peers can show a content server alongside the others and hide one that has nothing they play (the same keys as v1.1).
+3. **Optional peer-key auth with the `pvlibrary-*` prefixes.** `POST /api/v1/auth/peer/start {peerId,name,publicKey}` → nonce, and `complete {signature}` → a read device token, after the owner approves once. A LAN server could then admit a paired Provenance with no password.
+4. **Let a reader mint a read-scoped device token for itself.** Today `requireUser(request,'admin')` blocks it, so readers fall back to the shorter-lived session token.
+
+### Phase 5 device checklist
+
+- [ ] `pnpm ecs serve` with the repo's fixture library. Add the server by URL in Content Servers, sign in, browse, and see only systems this device plays.
+- [ ] Copy a ROM. It imports under the right system and boots. Kill Wi-Fi at 50 %: Retry resumes with Range, and the server log shows a 206.
+- [ ] Sign in as a guest or reader without `admin`. Browsing works on the session token, and a guest grant can't fetch BIOS (the server refuses, and the client never asks anyway).
+- [ ] Relaunch: the server opens with no password prompt (Keychain token). Revoke the device token on the server: the next browse fails with the sign-in message, and re-adding the server with the password fixes it.
+- [ ] Delete the server row: its Keychain token is gone (check with a re-add that asks to sign in).
+- [ ] tvOS: add a server with the remote keyboard, browse and copy.
