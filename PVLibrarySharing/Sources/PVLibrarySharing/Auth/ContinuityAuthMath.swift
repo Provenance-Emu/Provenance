@@ -67,4 +67,26 @@ public enum ContinuityAuthMath {
         let key = SymmetricKey(data: Data(SHA256.hash(data: Data(code.utf8))))
         return Data(HMAC<SHA256>.authenticationCode(for: transcript, using: key))
     }
+
+    // MARK: - Server side
+
+    /// True when `signature` is `publicKey`'s Ed25519 signature over the
+    /// domain's auth message.
+    public static func verifyAuth(
+        domain: ContinuityAuthDomain,
+        signature: Data,
+        nonce: Data,
+        peerId: String,
+        serverId: String,
+        publicKey: Data
+    ) -> Bool {
+        guard let key = try? Curve25519.Signing.PublicKey(rawRepresentation: publicKey) else { return false }
+        return key.isValidSignature(signature, for: authMessage(domain: domain, nonce: nonce, peerId: peerId, serverId: serverId))
+    }
+
+    /// Constant-time check of a pairing proof.
+    public static func verifyPairingProof(_ proof: Data, code: String, transcript: Data) -> Bool {
+        let key = SymmetricKey(data: Data(SHA256.hash(data: Data(code.utf8))))
+        return HMAC<SHA256>.isValidAuthenticationCode(proof, authenticating: transcript, using: key)
+    }
 }
