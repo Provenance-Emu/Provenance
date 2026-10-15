@@ -3,7 +3,7 @@
 //  PVSwiftUI
 //
 //  Settings › Library › Nearby Libraries: iFly and iCube libraries on the
-//  local network, and a read-only browser for each. Copying is phase 2.
+//  local network, a browser for each, and copying a game into the library.
 //
 
 #if os(iOS) || os(tvOS)
@@ -37,7 +37,7 @@ struct NearbyLibrariesView: View {
                 }
             } footer: {
                 Text("Turn on Library Sharing in iFly or iCube on another device on the same Wi-Fi. "
-                     + "Browsing is read-only for now.")
+                     + "Copied games are imported into your library; BIOS files and saves stay on the other device.")
             }
 
             if model.snapshot.localNetworkDenied {
@@ -171,8 +171,16 @@ struct NearbyPeerLibraryView: View {
         ForEach(model.sections) { section in
             SwiftUI.Section(section.system.fullName) {
                 ForEach(section.items) { item in
-                    NearbyItemRow(item: item, image: model.artwork[item.id], inLibrary: model.isInLibrary(item))
-                        .task(id: item.id) { await model.loadArtwork(for: item) }
+                    NearbyItemRow(
+                        item: item,
+                        image: model.artwork[item.id],
+                        inLibrary: model.isInLibrary(item),
+                        copyState: model.copies[item.id],
+                        peerName: model.title,
+                        onCopy: { model.copy(item) },
+                        onCancel: { model.cancelCopy(item) }
+                    )
+                    .task(id: item.id) { await model.loadArtwork(for: item) }
                 }
             }
         }
@@ -221,6 +229,10 @@ private struct NearbyItemRow: View {
     let item: RemoteLibraryItem
     let image: UIImage?
     let inLibrary: Bool
+    let copyState: NearbyCopyState?
+    let peerName: String
+    let onCopy: () -> Void
+    let onCancel: () -> Void
 
     var body: some View {
         HStack(spacing: 12) {
@@ -240,21 +252,62 @@ private struct NearbyItemRow: View {
             VStack(alignment: .leading, spacing: 2) {
                 Text(item.title)
                     .lineLimit(2)
-                Text(ByteCountFormatter.string(fromByteCount: item.sizeBytes, countStyle: .file))
+                Text(detail)
                     .font(.caption)
-                    .foregroundStyle(.secondary)
+                    .foregroundStyle(isFailure ? Color.red : Color.secondary)
+                    .lineLimit(3)
+                if case .downloading(let fraction) = copyState {
+                    ProgressView(value: fraction)
+                }
             }
             Spacer()
-            if inLibrary {
-                Label("In your library", systemImage: "checkmark.circle.fill")
-                    .labelStyle(.titleAndIcon)
-                    .font(.caption)
-                    .foregroundStyle(.green)
-            }
+            trailing
+                #if os(iOS)
+                .buttonStyle(.borderless)
+                #endif
         }
-        #if os(tvOS)
-        .focusable()
-        #endif
+    }
+
+    private var isFailure: Bool {
+        if case .failed = copyState { return true }
+        return false
+    }
+
+    private var detail: String {
+        let size = ByteCountFormatter.string(fromByteCount: item.sizeBytes, countStyle: .file)
+        switch copyState {
+        case .preparing(.waitingForApproval):
+            return "Waiting for approval on \(peerName)…"
+        case .preparing:
+            return "Connecting…"
+        case .downloading(let fraction):
+            return "Copying… \(Int(fraction * 100))% of \(size)"
+        case .verifying:
+            return "Checking the copy…"
+        case .importing:
+            return "Copied. Importing into your library…"
+        case .failed(let message):
+            return message
+        case nil:
+            return size
+        }
+    }
+
+    @ViewBuilder
+    private var trailing: some View {
+        if copyState?.isActive == true {
+            Button("Stop", role: .cancel, action: onCancel)
+        } else if copyState == .importing {
+            Image(systemName: "tray.and.arrow.down.fill")
+                .foregroundStyle(.secondary)
+        } else if inLibrary {
+            Label("In your library", systemImage: "checkmark.circle.fill")
+                .labelStyle(.titleAndIcon)
+                .font(.caption)
+                .foregroundStyle(.green)
+        } else {
+            Button(isFailure ? "Retry" : "Copy", action: onCopy)
+        }
     }
 }
 #endif

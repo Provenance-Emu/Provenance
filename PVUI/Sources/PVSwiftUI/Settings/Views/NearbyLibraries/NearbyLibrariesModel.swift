@@ -3,8 +3,9 @@
 //  PVSwiftUI
 //
 //  State for Settings › Library › Nearby Libraries: Bonjour discovery of iFly
-//  and iCube libraries plus one browse model per opened peer. Read-only (phase
-//  1 of docs/superpowers/specs/2026-10-14-cross-app-library-sharing-design.md).
+//  and iCube libraries, one browse model per opened peer, and copying a game
+//  into the local library (phases 1-2 of
+//  docs/superpowers/specs/2026-10-14-cross-app-library-sharing-design.md).
 //
 
 #if os(iOS) || os(tvOS)
@@ -30,6 +31,12 @@ final class NearbyLibrariesModel {
     private(set) var loadedSummaries: [String: String] = [:]
 
     @ObservationIgnored private let browser = PeerBrowser()
+    /// Copies land here before the importer moves them into the library.
+    /// App Caches, not `Imports/`: that folder is watched (see `LibraryStaging`).
+    @ObservationIgnored let staging = LibraryStaging(
+        root: FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask)[0]
+            .appendingPathComponent("LibrarySharing/Incoming", isDirectory: true)
+    )
     @ObservationIgnored private var browseTask: Task<Void, Never>?
     @ObservationIgnored private var peerModels: [String: NearbyPeerLibraryModel] = [:]
     /// Loaded on first use, not in `init`: the Keychain is only touched when a peer is opened.
@@ -73,6 +80,8 @@ final class NearbyLibrariesModel {
     func start() {
         guard browseTask == nil else { return }
         loadLocalLibrary()
+        let staging = staging
+        Task.detached(priority: .utility) { staging.sweep() }
         let stream = browser.snapshots()
         browseTask = Task { [weak self] in
             for await snapshot in stream {
@@ -148,7 +157,25 @@ final class NearbyLibrariesModel {
     }
 }
 
-/// Browsing one peer: auth or pairing, catalogue, art.
+/// Where one copy stands, for its row.
+enum NearbyCopyState: Equatable {
+    case preparing(LibraryBrowseProgress)
+    /// 0...1 over the game's files.
+    case downloading(Double)
+    case verifying
+    /// The importer has the files; the game appears in the library once it's done.
+    case importing
+    case failed(String)
+
+    var isActive: Bool {
+        switch self {
+        case .preparing, .downloading, .verifying: return true
+        case .importing, .failed: return false
+        }
+    }
+}
+
+/// Browsing one peer: auth or pairing, catalogue, art, copies.
 @MainActor
 @Observable
 final class NearbyPeerLibraryModel {
@@ -170,8 +197,11 @@ final class NearbyPeerLibraryModel {
     /// Set when a code entry was rejected, shown under the code field.
     private(set) var codeError: String?
     private(set) var artwork: [String: UIImage] = [:]
+    /// Copies started from this peer, by item id.
+    private(set) var copies: [String: NearbyCopyState] = [:]
 
     @ObservationIgnored private weak var owner: NearbyLibrariesModel?
+    @ObservationIgnored private var copyTasks: [String: Task<Void, Never>] = [:]
     @ObservationIgnored private let source: any LibrarySource
     @ObservationIgnored private var loadTask: Task<Void, Never>?
     @ObservationIgnored private var pairedThisSession = false
@@ -303,6 +333,56 @@ final class NearbyPeerLibraryModel {
                 self?.phase = .failed(error.localizedDescription)
             }
             self?.loadTask = nil
+        }
+    }
+
+    // MARK: - Copy
+
+    /// Copies `item` into staging, verified, then hands every game file to the
+    /// importer with the mapped system. Tapping again after a failure resumes
+    /// from the partial files and the cached pull manifest.
+    func copy(_ item: RemoteLibraryItem) {
+        guard copyTasks[item.id] == nil, let owner, let system = item.systemIdentifier else { return }
+        let puller = LibraryPuller(staging: owner.staging, peerKey: peer.id)
+        let staging = owner.staging
+        let source = source
+        copies[item.id] = .preparing(.connecting)
+        copyTasks[item.id] = Task { [weak self] in
+            do {
+                let pulled = try await puller.pull(item, from: source) { progress in
+                    Task { @MainActor in self?.update(item.id, with: progress) }
+                }
+                if !pulled.skippedKinds.isEmpty {
+                    ILOG("Nearby Libraries: \(item.title): left \(pulled.skippedKinds.joined(separator: ", ")) on the other device")
+                }
+                await GameImporter.shared.addImports(forPaths: pulled.gameFiles, targetSystem: system)
+                GameImporter.shared.startProcessing()
+                staging.markHandedOff(pulled.folder)
+                self?.copies[item.id] = .importing
+            } catch is CancellationError {
+                self?.copies[item.id] = nil
+            } catch {
+                WLOG("Nearby Libraries: copying \(item.title) from \(self?.peer.serviceName ?? "?") failed: \(error)")
+                self?.copies[item.id] = .failed(error.localizedDescription)
+            }
+            self?.copyTasks[item.id] = nil
+        }
+    }
+
+    /// Stops a copy. Its partial files stay, so copying again resumes.
+    func cancelCopy(_ item: RemoteLibraryItem) {
+        copyTasks[item.id]?.cancel()
+    }
+
+    private func update(_ itemId: String, with progress: LibraryPullProgress) {
+        guard copies[itemId]?.isActive == true else { return }
+        switch progress {
+        case .preparing(let step):
+            copies[itemId] = .preparing(step)
+        case let .downloading(_, _, _, done, total):
+            copies[itemId] = .downloading(total > 0 ? Double(done) / Double(total) : 0)
+        case .verifying:
+            copies[itemId] = .verifying
         }
     }
 
