@@ -44,6 +44,10 @@ concurrency:
 env:
   DEVELOPER_DIR: /Applications/Xcode_26.3.app/Contents/Developer
   XCODE_VERSION: '26.3'
+  # Self-hosted Homebrew is owned by another user: never auto-update, never
+  # fail a job over a brew hiccup when the tool is already installed.
+  HOMEBREW_NO_AUTO_UPDATE: 1
+  HOMEBREW_NO_INSTALL_CLEANUP: 1
   SWIFT_PACKAGE_ALLOW_WRITING_TO_DIRECTORY: ${{ github.workspace }}
 
 jobs:
@@ -68,7 +72,11 @@ jobs:
   testflight:
     name: Archive and upload to TestFlight (${{ matrix.platform }})
     needs: plan
-    runs-on: 'macos-26'
+    # Runner toggle: set the repo variable MACOS_RUNNER_LABELS (JSON array, e.g.
+    # ["self-hosted","studio","xcode-26"]) to run this job on the Mac Studio; leave it
+    # unset to use GitHub-hosted macos-26. Pull requests from forks ALWAYS run on the
+    # hosted runner - never run untrusted fork code on the self-hosted machine.
+    runs-on: ${{ (vars.MACOS_RUNNER_LABELS != '' && (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository)) && fromJSON(vars.MACOS_RUNNER_LABELS) || 'macos-26' }}
     # One platform per job. Previously a single job archived both in sequence,
     # and the second one — tvOS — died at the very end with exit 65 and no
     # diagnostic (run 33841167021), while iOS alone (33851969129) and tvOS alone
@@ -87,6 +95,17 @@ jobs:
       issues: write
       actions: read   # list the last successful run for the "What to Test" notes
     steps:
+      # First step, before checkout: the workflow-level DEVELOPER_DIR is set for every
+      # step, and a missing Xcode breaks the /usr/bin/git shim used by checkout.
+      - name: Verify Xcode (self-hosted)
+        if: ${{ runner.environment != 'github-hosted' }}
+        run: |
+          if [ ! -d "$DEVELOPER_DIR" ]; then
+            echo "::error::DEVELOPER_DIR ($DEVELOPER_DIR) not found on this runner - install Xcode ${XCODE_VERSION} there"
+            exit 1
+          fi
+          xcodebuild -version
+
       - name: Checkout code
         uses: actions/checkout@v4
         with:
@@ -159,7 +178,11 @@ jobs:
           ./Scripts/ci/ci-local-dylib-alert.sh "TestFlight (${{ matrix.platform }}) \`${GITHUB_SHA:0:7}\`" \
             "${MISSING_LOCAL}" "The upload was stopped."
 
+      # setup-xcode runs `sudo xcode-select -s`, which the self-hosted runner user
+      # cannot do. On self-hosted the workflow-level DEVELOPER_DIR already selects
+      # Xcode 26.3 (verified in the first step of this job).
       - name: Setup Xcode
+        if: ${{ runner.environment == 'github-hosted' }}
         uses: maxim-lobanov/setup-xcode@v1.6.0
         with:
           xcode-version: ${{ env.XCODE_VERSION }}
@@ -191,8 +214,8 @@ jobs:
       # the dSYMs stay on the runner, so TestFlight crashes are unsymbolicated.
       - name: Install tooling
         run: |
-          brew install xcbeautify 2>/dev/null || true
-          brew install getsentry/tools/sentry-cli 2>/dev/null || true
+          command -v xcbeautify >/dev/null 2>&1 || brew install xcbeautify 2>/dev/null || true
+          command -v sentry-cli >/dev/null 2>&1 || brew install getsentry/tools/sentry-cli 2>/dev/null || true
 
       # The archive embeds PVLookup's libretro cheat database. build.yml
       # generates it before archiving; this workflow did not, so the first run
@@ -433,3 +456,6 @@ jobs:
         run: |
           security list-keychains -d user -s $(security list-keychains -d user | tr -d '"' | grep -v signing.keychain-db) || true
           security delete-keychain "$RUNNER_TEMP/signing.keychain-db" 2>/dev/null || true
+          # Persistent self-hosted runner: don't leave the archive log behind to be
+          # mistaken for the next job's.
+          rm -f /tmp/testflight.log
