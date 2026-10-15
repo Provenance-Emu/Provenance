@@ -72,9 +72,16 @@ extension PVEmulatorViewController {
     /// `nil` hides the entry, as does a missing remap screen (PVSwiftUI registers it).
     var remappableController: GCController? {
         guard PauseMenuViewRegistry.hasControllerRemapView else { return nil }
+        // The classic N64 on-screen controller is a GCVirtualController, which also
+        // exposes an extended gamepad; remapping it makes no sense, so it never qualifies.
+        let virtualPad = (controllerViewController as? PVN64ControllerViewController)?.virtualController?.controller
         return RemapControllerResolver.controller(assigned: PVControllerManager.shared.allLiveControllers,
                                                   connected: GCController.controllers(),
-                                                  isRemappable: { $0.extendedGamepad != nil })
+                                                  isRemappable: { controller in
+            controller.extendedGamepad != nil
+                && controller !== virtualPad
+                && !(controller.vendorName?.localizedCaseInsensitiveContains("virtual") ?? false)
+        })
     }
 }
 
