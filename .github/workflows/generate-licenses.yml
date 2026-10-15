@@ -28,6 +28,14 @@ jobs:
           fetch-depth: 1
           token: ${{ github.token }}
 
+      # These cores keep their Core.plist inside a submodule. A plain checkout
+      # leaves those dirs empty and the generator silently drops their entries
+      # (#3745 dropped 4DO, Bliss and CrabEMU from the license list). Fetch only
+      # these, shallow; the big core submodules aren't needed. If a new core ships
+      # its Core.plist from a submodule, add its path here.
+      - name: Fetch submodules that carry a Core.plist
+        run: git submodule update --init --depth 1 Cores/4DO Cores/Bliss Cores/CrabEMU
+
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
@@ -37,6 +45,18 @@ jobs:
         run: |
           python3 Scripts/generators/generate_licenses.py
           echo "Generated LICENSES.md and Scripts/generators/licenses.json"
+
+      - name: Warn on dropped license entries
+        run: |
+          python3 - <<'PY'
+          import json, subprocess
+          old = subprocess.run(['git', 'show', 'HEAD:Scripts/generators/licenses.json'],
+                               capture_output=True, text=True).stdout
+          old_ids = {e['identifier'] for e in json.loads(old)['entries']} if old else set()
+          new_ids = {e['identifier'] for e in json.load(open('Scripts/generators/licenses.json'))['entries']}
+          for ident in sorted(old_ids - new_ids):
+              print(f"::warning::license entry dropped: {ident} (core removed, or its Core.plist is in a submodule this job doesn't fetch?)")
+          PY
 
       - name: Check for missing license data
         run: |
