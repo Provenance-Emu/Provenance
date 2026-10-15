@@ -365,7 +365,21 @@
 				<key>NSIncludesSubdomains</key>
 				<true/>
 			</dict>
+			<key>media.retroachievements.org</key>
+			<dict>
+				<key>NSExceptionAllowsInsecureHTTPLoads</key>
+				<true/>
+				<key>NSIncludesSubdomains</key>
+				<true/>
+			</dict>
 			<key>provenance-emu.com</key>
+			<dict>
+				<key>NSExceptionAllowsInsecureHTTPLoads</key>
+				<true/>
+				<key>NSIncludesSubdomains</key>
+				<true/>
+			</dict>
+			<key>retroachievements.org</key>
 			<dict>
 				<key>NSExceptionAllowsInsecureHTTPLoads</key>
 				<true/>
@@ -397,17 +411,19 @@
 	<key>NSFileProviderDomainUsageDescription</key>
 	<string>Provenance uses file provider for loading ROMs.</string>
 	<key>NSGKFriendListUsageDescription</key>
-	<string></string>
+	<string>Provenance uses GameKit to find friends for muti-player netplay.</string>
 	<key>NSLocalNetworkUsageDescription</key>
 	<string>Provenance uses the local network for RetroArch Wi-Fi emulation, web server access, AltServer, and discovering netplay rooms.</string>
 	<key>NSLocationUsageDescription</key>
 	<string>Some games may use location data to enhance emulated location gameplay features</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>Some games may use location data to enhance emulated location gameplay features</string>
+	<key>NFCReaderUsageDescription</key>
+	<string>Provenance reads and writes NFC tags that launch a game from your library.</string>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>Provenance uses the microphone for systems that support audio input (eg. Famicom, Nintendo DS, 3DS).</string>
 	<key>NSMotionUsageDescription</key>
-	<string>Provenance uses your device&apos;s accelerometer and gyroscope to emulate the portable consoles&apos; built-in accelerometer and gyroscope.</string>
+	<string>Provenance uses your device's accelerometer and gyroscope to emulate the portable consoles' built-in accelerometer and gyroscope.</string>
 	<key>NSPhotoLibraryAddUsageDescription</key>
 	<string>Provenance can set custom artworks from your photos or save screenshots to the Photo Library.</string>
 	<key>NSPhotoLibraryUsageDescription</key>

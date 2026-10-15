@@ -14,6 +14,8 @@
 	<key>com.apple.developer.icloud-container-identifiers</key>
 	<array>
 		<string>$(ICLOUD_CONTAINER_IDENTIFIER)</string>
+		<string>iCloud.com.joemattiello.iFly</string>
+		<string>iCloud.com.joemattiello.iCube</string>
 	</array>
 	<key>com.apple.developer.icloud-services</key>
 	<array>
@@ -22,11 +24,19 @@
 	</array>
 	<key>com.apple.developer.kernel.extended-virtual-addressing</key>
 	<true/>
+	<key>com.apple.developer.kernel.increased-memory-limit</key>
+	<true/>
+	<key>com.apple.developer.nfc.readersession.formats</key>
+	<array>
+		<string>NDEF</string>
+	</array>
 	<key>com.apple.developer.sustained-execution</key>
 	<true/>
 	<key>com.apple.developer.ubiquity-container-identifiers</key>
 	<array>
 		<string>$(ICLOUD_CONTAINER_IDENTIFIER)</string>
+		<string>iCloud.com.joemattiello.iFly</string>
+		<string>iCloud.com.joemattiello.iCube</string>
 	</array>
 	<key>com.apple.developer.ubiquity-kvstore-identifier</key>
 	<string>$(TeamIdentifierPrefix)$(CFBundleIdentifier)</string>
@@ -58,8 +68,6 @@
 	<array>
 		<string>$(AppIdentifierPrefix)org.provenance-emu.provenance</string>
 		<string>$(AppIdentifierPrefix)org.provenance-emu</string>
-		<!-- Shared with sibling apps (iFly): cross-app entitlement bridge —
-		     Plus unlocks iFly Pro. See PVUIBase/Support/CrossAppEntitlementPublisher.swift -->
 		<string>$(AppIdentifierPrefix)com.joemattiello.shared</string>
 	</array>
 </dict>
