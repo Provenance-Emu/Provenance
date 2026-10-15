@@ -662,6 +662,12 @@ private extension FileProviderExtension {
                 ILOG("FileProvider: ROM already exists (md5=\(md5)), skipping copy")
                 return FileProviderItem(game: existing.asDomain(), romURL: existingFileURL)
             }
+            // A cue/gdi/m3u game is keyed by its data track (`MultiFileSetIdentity`). That track
+            // dropped here on its own is not the game; pointing the record at it would break the set.
+            if MultiFileIndexKind(fileName: existing.romPath) != nil, MultiFileIndexKind(fileName: filename) == nil {
+                WLOG("FileProvider: \(filename) is a track of the set \(existing.romPath); not importing it alone")
+                throw NSFileProviderError(.cannotSynchronize)
+            }
         }
 
         let destDir = PVEmulatorConfiguration.romDirectory(forSystemIdentifier: systemID)

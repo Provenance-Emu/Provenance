@@ -314,9 +314,22 @@ before it (or seed the files below by hand, then relaunch).
       the first one finished importing, and again with both shared in one go:
       each lands in its own folder, the first game's tracks are untouched, and
       both boot. Two different games both named `disc.gdi` go to `disc/` and
-      `disc-2/`. Known limit: if the two `.gdi` files are byte-identical the
-      second game is not imported (`[IMPORT] … has the same index file MD5` in
-      the log), because the library keys a disc set by its index file's MD5.
+      `disc-2/`.
+- [ ] Two different Dreamcast games whose `.gdi` files are byte-identical (same
+      track layout, e.g. both `track01.bin`/`track02.raw`/`track03.bin` at the
+      same LBAs): both import and both boot, one after the other and in one go.
+      A set is now keyed by its data track (gdi: the last type-4 track; cue: the
+      first MODE1/MODE2 file; m3u: derived from disc 1), not the index text.
+- [ ] Share the same GDI game a second time: it is still caught as the same game
+      (`[IMPORT] … is the same game as …`), both for a game imported with this
+      build and for one imported before it.
+- [ ] Games imported before this build keep their ids: their save states,
+      per-game settings, cheats and CloudKit records are still attached, and
+      nothing is re-uploaded or duplicated in the library after updating.
+- [ ] RetroAchievements: a cue/bin (PSX) and a GDI (Dreamcast) set game imported
+      with this build is still identified (achievements list loads).
+- [ ] CloudKit: a cue or GDI set imported with this build uploads, and downloads
+      and boots on a second device.
 - [ ] Rescan (Settings › Library › Scan ROM Directories) with a set folder whose
       game was removed from the library: the game comes back; a DOS game folder
       with a `.cue` inside is not imported as a disc set.

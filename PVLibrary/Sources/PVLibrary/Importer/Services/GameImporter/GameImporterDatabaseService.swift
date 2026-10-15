@@ -133,24 +133,25 @@ class GameImporterDatabaseService : GameImporterDatabaseServicing {
             await saveRelativePath(existingGame, partialPath: partialPath, file: pathSource)
             return
         } else {
-            // Check if this is a duplicate by MD5 hash (async to avoid blocking)
-            if let md5 = (await queueItem.md5Async())?.uppercased() {
-                let matchingGame: PVGame? = try? await RealmContext.withRealm { realm in
-                    realm.objects(PVGame.self)
-                        .filter("md5Hash == %@", md5)
-                        .first?
-                        .freeze()
-                }
-
-                if let existingGameWithSameMD5 = matchingGame,
-                   targetSystem.rawValue == existingGameWithSameMD5.systemIdentifier {
-                    // A set's MD5 is its index file's. Two different GD-ROMs can share a byte-identical
-                    // .gdi, so never point a game whose files are still in place at another set's folder.
+            // Check if this is a duplicate by MD5 hash (async to avoid blocking). A cue/gdi/m3u
+            // is identified by its data track, and also by its index MD5 for games imported
+            // before that rule (`MultiFileSetIdentity`).
+            if let identity = await incomingIdentity(of: queueItem, at: destUrl),
+               let found = await existingGame(matching: identity, system: targetSystem) {
+                let existingGameWithSameMD5 = found.game
+                if found.match == .legacyIndex,
+                   let fingerprint = identity.fingerprint,
+                   !(await isSameGame(existingGameWithSameMD5, incoming: fingerprint, incomingMD5: identity.md5)) {
+                    ILOG("[IMPORT] \(partialPath) has the same index file as \(existingGameWithSameMD5.romPath) "
+                         + "(\(existingGameWithSameMD5.title)) but different data; importing it as a new game")
+                } else {
+                    // The same game, or one that can't be told apart. Never point a game whose
+                    // files are still in place at another copy's set folder.
                     if setLocation != nil,
                        let existingURL = existingGameWithSameMD5.file?.url,
                        existingURL.standardizedFileURL != destUrl.standardizedFileURL,
                        FileManager.default.fileExists(atPath: existingURL.path) {
-                        WLOG("[IMPORT] \(partialPath) has the same index file MD5 as \(existingGameWithSameMD5.romPath) "
+                        WLOG("[IMPORT] \(partialPath) is the same game as \(existingGameWithSameMD5.romPath) "
                              + "(\(existingGameWithSameMD5.title)); leaving that game as it is and not importing this set")
                         return
                     }
@@ -268,7 +269,12 @@ class GameImporterDatabaseService : GameImporterDatabaseServicing {
 
         DLOG("About to calculate MD5 for game: \(partialPath)")
         let md5StartTime = Date()
-        guard let md5 = await calculateMD5(forGame: game)?.uppercased() else {
+        // A set's identity was already hashed by the duplicate check; don't read its track twice.
+        var identityMD5 = queueItem.gameIdentityMD5
+        if identityMD5 == nil {
+            identityMD5 = await calculateMD5(forGame: game)
+        }
+        guard let md5 = identityMD5?.uppercased() else {
             ELOG("Couldn't calculate MD5 for game \(partialPath)")
             throw GameImporterError.couldNotCalculateMD5
         }
@@ -1003,6 +1009,14 @@ class GameImporterDatabaseService : GameImporterDatabaseServicing {
             return nil
         }
 
+        // A cue/gdi/m3u is identified by its data track, not its track listing (`MultiFileSetIdentity`).
+        if let source = MultiFileSetIdentity.source(forIndexAt: romPath) {
+            if let md5 = await identityMD5(of: source) {
+                return md5
+            }
+            WLOG("Couldn't hash \(source.file.lastPathComponent) for \(romPath.lastPathComponent); using the index file's MD5")
+        }
+
         // Apply 16-byte offset for iNES header if the file appears to have one
         // This ensures we hash only the PRG+CHR ROM data, matching No-Intro/OpenVGDB expectations
         if systemID == .NES && hasINESHeader(at: romPath) {
@@ -1217,5 +1231,84 @@ class GameImporterDatabaseService : GameImporterDatabaseServicing {
         } catch {
             WLOG("Serial lookup: error for '\(serialResult.serial)': \(error)")
         }
+    }
+}
+
+// MARK: - Game identity
+
+extension GameImporterDatabaseService {
+
+    /// What the duplicate check compares for an incoming item.
+    struct IncomingIdentity {
+        /// The md5Hash the game would get.
+        let md5: String
+        /// For a set: its index file's MD5, the md5Hash of games imported before `MultiFileSetIdentity`.
+        let legacyIndexMD5: String?
+        /// For a set: the file `md5` was hashed from.
+        let fingerprint: MultiFileSetIdentity.Fingerprint?
+    }
+
+    /// The identity of `queueItem`, read where its files are now (`destUrl` once moved).
+    /// A set whose data track can't be found keeps its index MD5, as before.
+    func incomingIdentity(of queueItem: ImportQueueItem, at destUrl: URL) async -> IncomingIdentity? {
+        guard let itemMD5 = (await queueItem.md5Async())?.uppercased() else { return nil }
+        guard queueItem.isMultiFileIndex else {
+            return IncomingIdentity(md5: itemMD5, legacyIndexMD5: nil, fingerprint: nil)
+        }
+        let indexURL = FileManager.default.fileExists(atPath: destUrl.path) ? destUrl : queueItem.url
+        guard let source = MultiFileSetIdentity.source(forIndexAt: indexURL),
+              let md5 = await identityMD5(of: source) else {
+            WLOG("[IMPORT] No data track found for \(indexURL.lastPathComponent); identifying it by the index file")
+            return IncomingIdentity(md5: itemMD5, legacyIndexMD5: nil, fingerprint: nil)
+        }
+        queueItem.gameIdentityMD5 = md5
+        return IncomingIdentity(md5: md5, legacyIndexMD5: itemMD5, fingerprint: Self.fingerprint(of: source))
+    }
+
+    /// The game of `system` keyed by the incoming identity, else by its legacy index MD5.
+    func existingGame(matching identity: IncomingIdentity,
+                      system: SystemIdentifier) async -> (game: PVGame, match: MultiFileSetIdentity.Match)? {
+        var candidates: [(md5: String, match: MultiFileSetIdentity.Match)] = [(identity.md5, .identity)]
+        if let legacyIndexMD5 = identity.legacyIndexMD5 {
+            candidates.append((legacyIndexMD5, .legacyIndex))
+        }
+        for (md5, match) in candidates {
+            let game: PVGame? = try? await RealmContext.withRealm { realm in
+                realm.objects(PVGame.self)
+                    .filter("md5Hash == %@ AND systemIdentifier == %@", md5, system.rawValue)
+                    .first?
+                    .freeze()
+            }
+            if let game {
+                return (game, match)
+            }
+        }
+        return nil
+    }
+
+    /// Whether `existing`, found by the legacy index MD5, holds the incoming set's data.
+    func isSameGame(_ existing: PVGame, incoming: MultiFileSetIdentity.Fingerprint, incomingMD5: String) async -> Bool {
+        let existingSource = existing.file?.url.flatMap { MultiFileSetIdentity.source(forIndexAt: $0) }
+        return await MultiFileSetIdentity.isSameGame(
+            match: .legacyIndex,
+            existing: existingSource.map(Self.fingerprint(of:)),
+            incoming: incoming,
+            incomingMD5: incomingMD5,
+            existingMD5: { [self] in
+                guard let existingSource else { return nil }
+                return await identityMD5(of: existingSource)
+            }
+        )
+    }
+
+    /// The md5Hash of a set whose identity comes from `source`.
+    func identityMD5(of source: MultiFileSetIdentity.Source) async -> String? {
+        guard let fileMD5 = await calculateMD5Async(at: source.file, fromOffset: 0)?.uppercased() else { return nil }
+        return source.viaPlaylist ? MultiFileSetIdentity.playlistKey(firstDiscMD5: fileMD5).MD5.uppercased() : fileMD5
+    }
+
+    static func fingerprint(of source: MultiFileSetIdentity.Source) -> MultiFileSetIdentity.Fingerprint {
+        let size = (try? FileManager.default.attributesOfItem(atPath: source.file.path)[.size] as? NSNumber)?.int64Value
+        return MultiFileSetIdentity.Fingerprint(file: source.file, size: size)
     }
 }

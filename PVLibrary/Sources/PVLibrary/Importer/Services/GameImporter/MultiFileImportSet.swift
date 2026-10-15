@@ -205,6 +205,56 @@ public enum MultiFileIndexReferences {
     }
 }
 
+// MARK: - Identity track
+
+extension MultiFileIndexReferences {
+
+    /// GDI track type of a data track (`0` is audio).
+    static let gdiDataTrackType = 4
+
+    /// The referenced file whose content identifies the game (see `MultiFileSetIdentity`), as written:
+    /// - cue: the first `FILE` holding a data track (`TRACK nn MODE1/…`, `MODE2/…` or `CDI/…`);
+    /// - gdi: the last data track (type 4), the high-density area with the game's IP.BIN;
+    /// - m3u: the first disc.
+    /// nil when there is no such reference (an audio-only cue, an empty playlist).
+    public static func identityReference(of kind: MultiFileIndexKind, contents: String) -> String? {
+        switch kind {
+        case .cue: return cueDataTrackFile(in: contents)
+        case .gdi: return gdiHighDensityTrackFile(in: contents)
+        case .m3u: return referencedFiles(of: .m3u, contents: contents).first
+        }
+    }
+
+    private static func cueDataTrackFile(in contents: String) -> String? {
+        let dataModes = ["MODE1", "MODE2", "CDI"]
+        var currentFile: String?
+        for line in lines(of: contents) {
+            if let found = cueReference(in: line.text) {
+                currentFile = found.name
+                continue
+            }
+            let words = line.text.split(whereSeparator: \.isWhitespace)
+            guard words.count >= 3, words[0].uppercased() == "TRACK" else { continue }
+            let mode = words[2].uppercased()
+            if dataModes.contains(where: { mode.hasPrefix($0) }), let currentFile {
+                return currentFile
+            }
+        }
+        return nil
+    }
+
+    private static func gdiHighDensityTrackFile(in contents: String) -> String? {
+        var dataTrack: String?
+        for line in lines(of: contents) where !line.isFirst {
+            let fields = line.text.split(whereSeparator: \.isWhitespace)
+            guard fields.count >= 5, Int(fields[2]) == gdiDataTrackType,
+                  let found = gdiReference(in: line.text) else { continue }
+            dataTrack = found.name
+        }
+        return dataTrack
+    }
+}
+
 // MARK: - Renamed copies
 
 /// Names a receiver gives a second file with the same name: `name-1.ext`, `name-2.ext`, …

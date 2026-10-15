@@ -193,8 +193,8 @@ public actor ImportQueueActor {
                 return true
             }
             // Check MD5 if available
-            if let existingMd5 = existing.cachedMD5?.uppercased(),
-               let itemMd5 = item.cachedMD5?.uppercased(),
+            if let existingMd5 = existing.cachedContentMD5?.uppercased(),
+               let itemMd5 = item.cachedContentMD5?.uppercased(),
                existingMd5 == itemMd5 {
                 return true
             }
@@ -871,8 +871,8 @@ public final class GameImporter: GameImporting, ObservableObject {
                     return true
                 }
                 // Check MD5 if available
-                if let existingMd5 = existing.cachedMD5?.uppercased(),
-                   let itemMd5 = item.cachedMD5?.uppercased(),
+                if let existingMd5 = existing.cachedContentMD5?.uppercased(),
+                   let itemMd5 = item.cachedContentMD5?.uppercased(),
                    existingMd5 == itemMd5 {
                     return true
                 }
@@ -958,8 +958,8 @@ public final class GameImporter: GameImporting, ObservableObject {
                     return true
                 }
                 // Check MD5 if available
-                if let existingMd5 = existing.cachedMD5?.uppercased(),
-                   let itemMd5 = item.cachedMD5?.uppercased(),
+                if let existingMd5 = existing.cachedContentMD5?.uppercased(),
+                   let itemMd5 = item.cachedContentMD5?.uppercased(),
                    existingMd5 == itemMd5 {
                     return true
                 }
@@ -2410,8 +2410,9 @@ public final class GameImporter: GameImporting, ObservableObject {
 
             ILOG("GameImportQueue - performImport completed for: \(itemName) in \(String(format: "%.2f", duration))s")
 
-            // Compute MD5 off the main thread before posting notification
-            let md5Value = await item.md5Async()
+            // Compute MD5 off the main thread before posting notification. Observers look the
+            // game up by it, so a set reports its identity (`MultiFileSetIdentity`), not its index's.
+            let md5Value = await item.gameMD5Async()
             await MainActor.run {
                 if let finalSystem = item.userChosenSystem ?? item.resolvedSystem ?? item.targetSystem() {
                     item.resolvedSystem = finalSystem
@@ -2427,7 +2428,7 @@ public final class GameImporter: GameImporting, ObservableObject {
             updateImporterStatus("Completed \(itemName)")
             ILOG("GameImportQueue - processing item in queue: \(itemName) completed successfully.")
         } catch let error as GameImporterError {
-            let errorMd5 = await item.md5Async()
+            let errorMd5 = await item.gameMD5Async()
             await MainActor.run {
                 switch error {
                 case .conflictDetected:
@@ -2461,7 +2462,7 @@ public final class GameImporter: GameImporting, ObservableObject {
         } catch {
             ELOG("GameImportQueue - processing item in queue: \(itemName) caught unexpected error: \(error.localizedDescription)")
 
-            let errorMd5 = await item.md5Async()
+            let errorMd5 = await item.gameMD5Async()
             await MainActor.run {
                 item.status = .failure(error: error)
                 updateImporterStatus("Failed \(itemName) with error: \(error.localizedDescription)")
@@ -3565,8 +3566,8 @@ public final class GameImporter: GameImporting, ObservableObject {
                 return true
             }
 
-            if let eMd5 = existing.cachedMD5?.uppercased(),
-               let newMd5 = queueItem.cachedMD5?.uppercased(),
+            if let eMd5 = existing.cachedContentMD5?.uppercased(),
+               let newMd5 = queueItem.cachedContentMD5?.uppercased(),
                eMd5 == newMd5
             {
                 return true
@@ -3806,8 +3807,8 @@ public final class GameImporter: GameImporting, ObservableObject {
                 }
 
                 // Check MD5 if available
-                if let existingMd5 = existing.cachedMD5?.uppercased(),
-                   let newMd5 = newItem.cachedMD5?.uppercased(),
+                if let existingMd5 = existing.cachedContentMD5?.uppercased(),
+                   let newMd5 = newItem.cachedContentMD5?.uppercased(),
                    existingMd5 == newMd5 {
                     return true
                 }
@@ -3842,8 +3843,8 @@ public final class GameImporter: GameImporting, ObservableObject {
                 }
 
                 // Check MD5 if available
-                if let existingMd5 = existing.cachedMD5?.uppercased(),
-                   let newMd5 = newItem.cachedMD5?.uppercased(),
+                if let existingMd5 = existing.cachedContentMD5?.uppercased(),
+                   let newMd5 = newItem.cachedContentMD5?.uppercased(),
                    existingMd5 == newMd5 {
                     return true
                 }
@@ -4267,8 +4268,10 @@ public final class GameImporter: GameImporting, ObservableObject {
                 }
             }
 
-            /// Check by MD5 for this system (fast lookup - primary key is very fast)
-            if let md5 = item.md5?.uppercased() {
+            /// Check by MD5 for this system (fast lookup - primary key is very fast).
+            /// Not for a cue/gdi/m3u: its MD5 is a track listing other games share; the
+            /// database import compares the set's identity instead (`MultiFileSetIdentity`).
+            if !item.isMultiFileIndex, let md5 = item.md5?.uppercased() {
                 do {
                     let md5Duplicate = try await RealmContext.withBackgroundRealm { realm -> Bool in
                         if let gameWithSameMD5 = realm.object(ofType: PVGame.self, forPrimaryKey: md5),
@@ -4378,8 +4381,8 @@ public final class GameImporter: GameImporting, ObservableObject {
                     }
                 }
 
-                /// Check by MD5 for this system
-                if let md5 = item.md5?.uppercased() {
+                /// Check by MD5 for this system (not for a cue/gdi/m3u, as above)
+                if !item.isMultiFileIndex, let md5 = item.md5?.uppercased() {
                     let md5Exists = try! await RealmContext.withRealm { realm -> Bool in
                         if let gameWithSameMD5 = realm.object(ofType: PVGame.self, forPrimaryKey: md5),
                            system.rawValue == gameWithSameMD5.systemIdentifier,

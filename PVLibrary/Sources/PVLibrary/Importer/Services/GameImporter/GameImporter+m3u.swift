@@ -268,16 +268,18 @@ extension GameImporter {
         return nil
     }
 
-    /// Find a game by MD5 and system identifier
+    /// Find a game by MD5 and system identifier: the playlist's game identity
+    /// (`MultiFileSetIdentity`), or its file MD5 for a game imported before that rule.
     @MainActor
     private func findGameByMD5AndSystem(primaryGameItem: ImportQueueItem, realm: Realm) async throws -> PVGame? {
-        guard let md5 = await primaryGameItem.md5Async(), !primaryGameItem.systems.isEmpty else {
+        guard let fileMD5 = await primaryGameItem.md5Async(), !primaryGameItem.systems.isEmpty else {
             return nil
         }
+        let md5s = [primaryGameItem.gameIdentityMD5, fileMD5].compactMap { $0?.uppercased() }
 
         // Try each system identifier
         for systemID in primaryGameItem.systems {
-            let games = realm.objects(PVGame.self).filter("md5Hash == %@ AND systemIdentifier == %@", md5, systemID.rawValue)
+            let games = realm.objects(PVGame.self).filter("md5Hash IN %@ AND systemIdentifier == %@", md5s, systemID.rawValue)
             if let game = games.first {
                 return game
             }

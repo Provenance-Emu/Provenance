@@ -26,9 +26,9 @@ public struct LocalLibraryEntry: Sendable, Hashable {
         self.isSingleFileImage = isSingleFileImage
     }
 
-    /// Extensions whose MD5 in Provenance is over a text index, not the image.
-    /// Provenance hashes the `.cue`/`.m3u`/`.gdi` text (and rewrites cues on
-    /// import), so those can never match a peer's MD5.
+    /// Extensions whose MD5 in Provenance is not the image's own. A `.cue`/`.m3u`/`.gdi`
+    /// game is keyed by its index text (imported before `MultiFileSetIdentity`) or by
+    /// one data track, so neither can match a peer's MD5 for the whole image.
     public static let multiFileIndexExtensions: Set<String> = ["cue", "m3u", "gdi", "ccd", "toc"]
 
     /// True when a game's MD5 can be compared with a peer's: one primary file

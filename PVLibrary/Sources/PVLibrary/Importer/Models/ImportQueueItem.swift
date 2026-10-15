@@ -267,6 +267,33 @@ public class ImportQueueItem: Identifiable, ObservableObject, Sendable {
         cache.md5
     }
 
+    /// A cue, gdi or m3u. Its MD5 is only that of a track listing, which different games
+    /// share byte for byte, so it never identifies a game on its own (`MultiFileSetIdentity`).
+    public var isMultiFileIndex: Bool {
+        MultiFileIndexKind(fileName: url.lastPathComponent) != nil
+    }
+
+    /// `cachedMD5` when it identifies the file's content; nil for an index file. Queue
+    /// de-duplication compares this, so two sets with the same index text both import.
+    public var cachedContentMD5: String? {
+        isMultiFileIndex ? nil : cachedMD5
+    }
+
+    /// The game's identity (`PVGame.md5Hash`) once the database import has worked it out,
+    /// so a set's data track is hashed once per import.
+    public var gameIdentityMD5: String? {
+        get { cache.identityMD5 }
+        set { cache.identityMD5 = newValue }
+    }
+
+    /// The MD5 to report for this item: its game's identity when known, else the file's MD5.
+    public func gameMD5Async() async -> String? {
+        if let identity = gameIdentityMD5 {
+            return identity
+        }
+        return await md5Async()
+    }
+
     /// Non-blocking async variant that computes MD5 off the main thread
     public func md5Async() async -> String? {
         if let cached = cache.md5 {
@@ -282,6 +309,7 @@ public class ImportQueueItem: Identifiable, ObservableObject, Sendable {
     // so the struct cannot prevent the class from mutating.
     private final class Cache: Codable {
         var md5: String?
+        var identityMD5: String?
     }
 
 //    @MainActor
