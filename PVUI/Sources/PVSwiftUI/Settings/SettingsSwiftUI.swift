@@ -2472,6 +2472,7 @@ private struct LibrarySection2: View {
     @Default(.autoNormalizeROMTitles) var autoNormalizeROMTitles
     @Default(.unsupportedCores) var unsupportedCores
     @State private var showSaveImportWizard = false
+    @ObservedObject private var featureFlags = PVFeatureFlagsManager.shared
 
     var body: some View {
         Section {
@@ -2547,6 +2548,19 @@ private struct LibrarySection2: View {
                     .settingsSheetDetachedFromSubpageDepth()
                     #endif
             }
+
+            #if os(iOS) || os(tvOS)
+            if featureFlags.nearbyLibraries {
+                NavigationLink(destination: NearbyLibrariesView()) {
+                    SettingsRow(title: "Nearby Libraries",
+                                subtitle: "Browse iFly and iCube libraries on this Wi-Fi network.",
+                                icon: .sfSymbol("antenna.radiowaves.left.and.right"))
+                }
+                #if os(tvOS)
+                .retroFocusButtonStyle(showBorder: false)
+                #endif
+            }
+            #endif
 
             #if os(iOS) && canImport(CoreNFC)
             if GameTagReader.isAvailable {
