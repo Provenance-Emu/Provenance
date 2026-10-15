@@ -35,6 +35,7 @@ public enum PatchPlacement: String, Sendable, CaseIterable, Identifiable {
 
 /// Owns patch import, matching, variant lifecycle, and launch preparation.
 @MainActor
+// swiftlint:disable:next type_body_length
 public final class PatchRepository {
     public static let shared = PatchRepository()
 
