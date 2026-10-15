@@ -232,6 +232,8 @@ Run all three in one session. Filter on each prefix in turn or use `CHEEVOS-DIAG
 - [ ] DuckStation — Years out of date; evaluation needed before revival
 - [ ] DosBox — Keyboard/mouse added; graphics working (#2559); native vs RetroArch dosbox-pure tradeoffs
 - [ ] RETRO_ENVIRONMENT_SET_PROC_ADDRESS_CALLBACK for MelonDS dual-screen layout
+- [ ] LATER: soft patching (cross-app UX rule 3) — pass the patch to cores that can apply it at load instead of writing a patched copy. Today every core gets a patched copy (`PatchApplier` → `PatchedROMs/`). `PatchableCore` exists (mGBA declares IPS/IPS32/UPS) but nothing consumes it, and mGBA's bridge never loads a patch. Survey per core: which native cores accept a patch (mGBA `loadPatch`, others?) and how the thin wrapper could do it (RetroArch soft-patches in the frontend, not the core, so thin would patch the in-memory buffer for `need_fullpath=false` cores — little gain over the cache). Needs a per-core metadata flag (Core.plist / `PatchableCore.supportedPatchFormats`) and a launch path that hands the patch URL to the core.
+- [ ] xdelta3 patches with LZMA secondary compression are refused. They are NOT rare: xdelta3 3.0.11 and 3.1 default to `-S lzma` whenever the binary was built with liblzma (Linux distros, Homebrew). Fix in iCube's PVPatchEngine first (vendor xz `lzma.h` headers — public domain — and link the SDK's `liblzma`; SDKs ship `liblzma.tbd` but no header), then copy the engine back to `PVPatchEngine/`.
 
 ## UI / UX
 
