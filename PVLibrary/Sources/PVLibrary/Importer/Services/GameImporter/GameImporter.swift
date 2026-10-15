@@ -2121,9 +2121,9 @@ public final class GameImporter: GameImporting, ObservableObject {
 
             // A GDI is a Dreamcast-family disc: offer only the systems that read .gdi
             if isGDI, cueItem.systems.isEmpty {
-                let gdiSystems = PVSystem.all
+                let gdiSystems = Array(PVSystem.all
                     .filter { $0.supportedExtensions.contains { $0.lowercased() == Extensions.gdi.rawValue } }
-                    .compactMap { SystemIdentifier(rawValue: $0.identifier) }
+                    .compactMap { SystemIdentifier(rawValue: $0.identifier) })
                 if !gdiSystems.isEmpty {
                     cueItem.systems = gdiSystems
                 }
