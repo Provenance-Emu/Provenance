@@ -75,20 +75,27 @@ build_and_test() {
     # non-deterministically; `.serialized` only orders tests WITHIN a suite, not across
     # them. These suites run in ~0.04s, so serial execution costs nothing.
     # Some modules may not have tests yet — that's OK
-    if (cd "$module_dir" && swift test --no-parallel 2>&1 | tail -10); then
+    local test_log
+    test_log="$(mktemp -t "spm-validate-${module}")"
+    if (cd "$module_dir" && swift test --no-parallel >"$test_log" 2>&1); then
+        tail -10 "$test_log"
         log "PASS: ${module}"
         PASSED=$((PASSED + 1))
     else
+        tail -10 "$test_log"
         # Check if failure is due to no tests vs actual test failure
-        if (cd "$module_dir" && swift test --no-parallel 2>&1 | grep -q "no tests found"); then
+        if grep -q "no tests found" "$test_log"; then
             log "PASS: ${module} (no tests, build OK)"
             PASSED=$((PASSED + 1))
         else
+            # The tail above only shows the totals; name the failing tests.
+            grep -E ": error: |error: -\[|Test Case .* failed|✘ Test" "$test_log" | head -40 || true
             log "FAIL: ${module} tests failed"
             FAILURES+=("${module} (test)")
             FAILED=$((FAILED + 1))
         fi
     fi
+    rm -f "$test_log"
 }
 
 # Main
