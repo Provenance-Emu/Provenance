@@ -10,6 +10,8 @@
 	<key>com.apple.developer.icloud-container-identifiers</key>
 	<array>
 		<string>$(ICLOUD_CONTAINER_IDENTIFIER)</string>
+		<string>iCloud.com.joemattiello.iFly</string>
+		<string>iCloud.com.joemattiello.iCube</string>
 	</array>
 	<key>com.apple.developer.icloud-services</key>
 	<array>
@@ -23,6 +25,8 @@
 	<key>com.apple.developer.ubiquity-container-identifiers</key>
 	<array>
 		<string>$(ICLOUD_CONTAINER_IDENTIFIER)</string>
+		<string>iCloud.com.joemattiello.iFly</string>
+		<string>iCloud.com.joemattiello.iCube</string>
 	</array>
 	<key>com.apple.developer.ubiquity-kvstore-identifier</key>
 	<string>$(TeamIdentifierPrefix)$(CFBundleIdentifier)</string>
