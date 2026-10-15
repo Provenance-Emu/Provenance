@@ -8,6 +8,7 @@
 import Foundation
 import Combine
 import RxSwift
+import PVFileSystem
 
 public class iCloudRomsSyncer: iCloudContainerSyncer {
     
@@ -17,13 +18,14 @@ public class iCloudRomsSyncer: iCloudContainerSyncer {
     }
     
     let gameImporter = GameImporter.shared
-    let multiFileRoms: ConcurrentDictionary<String, [URL]> = [:]
+    /// Disc sets (cue, gdi, m3u and their files) arriving one file at a time (`MultiFileSetArrivals`).
+    let multiFileSets = MultiFileSetArrivalQueue()
     var romsDatabaseSubscriber: AnyCancellable?
     
     public override var downloadedCount: Int {
         get async {
-            let multiFileRomsCount = await multiFileRoms.count
-            return await newFiles.count + multiFileRomsCount
+            let multiFileSetsCount = await multiFileSets.count
+            return await newFiles.count + multiFileSetsCount
         }
     }
     
@@ -88,12 +90,13 @@ public class iCloudRomsSyncer: iCloudContainerSyncer {
             return
         }
         
-        let parentDirectory = file.parentPathComponent
-        DLOG("attempting to add file to game import queue: \(file), parent directory: \(parentDirectory)")
+        // A file in a disc set's own folder (`ROMs/<system>/<set>/`) belongs to the system above it.
+        let systemDirectory = MultiFileSetFolder.systemFolderName(ofFileAt: file)
+        DLOG("attempting to add file to game import queue: \(file), system directory: \(systemDirectory)")
         //we should only add to the import queue files that are actual ROMs, anything else can be ignored.
-        guard parentDirectory.range(of: "com.provenance.",
+        guard systemDirectory.range(of: "com.provenance.",
                                     options: [.caseInsensitive, .anchored]) != nil,
-              let fileName = file.lastPathComponent.removingPercentEncoding
+              file.lastPathComponent.removingPercentEncoding != nil
         else {
             return
         }
@@ -103,20 +106,29 @@ public class iCloudRomsSyncer: iCloudContainerSyncer {
             return
         }
         CloudSyncManager.syncLog.event(.download, item: "roms/\(file.lastPathComponent)", status: .inProgress, detail: "\(file) does NOT exist in database, adding to import set")
-        switch file.system {
+        let system = SystemIdentifier(rawValue: systemDirectory)
+        switch system {
         case .Atari2600, .Atari5200, .Atari7800, .Genesis:
             await newFiles.insert(file)
+        // for sega cd ROMs, ignore the .brm file that is used for saves
+        case .SegaCD where "brm".caseInsensitiveCompare(file.pathExtension) == .orderedSame:
+            break
         default:
-            if let multiKey = file.multiFileNameKey {
-                var files = await multiFileRoms[multiKey] ?? [URL]()
-                files.append(file)
-                await multiFileRoms.set(files, forKey: multiKey)
-                //for sega cd ROMs, ignore the .brm file that is used for saves
-            } else if file.system != .SegaCD || "brm".caseInsensitiveCompare(file.pathExtension) != .orderedSame {
-                await newFiles.insert(file)
+            // Re-run set grouping for the file's folder: a set is released as soon as its last file
+            // is downloaded, whether that is a track or the index.
+            let pending = await pendingFilesToDownload.elements
+            let singles = await multiFileSets.arrived(file, pending: pending, importedIndexes: importedIndexFiles(besides: file))
+            for single in singles {
+                await newFiles.insert(single)
             }
         }
         await handleImportNewRomFiles()
+    }
+
+    /// Index files (cue, gdi, m3u) downloaded in `file`'s folder whose game is already in the library.
+    func importedIndexFiles(besides file: URL) -> Set<URL> {
+        Set(MultiFileSetPlacement.outermostIndexFiles(in: file.deletingLastPathComponent())
+            .filter { getGameStatus(of: $0) == .gameExists })
     }
     
     /// Checks if game exists in game cache
@@ -133,7 +145,7 @@ public class iCloudRomsSyncer: iCloudContainerSyncer {
     
     func getGameFromCache(of file: URL) -> (PVGame, SystemIdentifier)? {
         let parentDirectory = file.parentPathComponent
-        guard let system = file.system,
+        guard let system = SystemIdentifier(rawValue: MultiFileSetFolder.systemFolderName(ofFileAt: file)),
               let parentUrl = URL(string: parentDirectory)
         else {
             DLOG("error obtaining existence of \(file) in game cache.")
@@ -143,7 +155,9 @@ public class iCloudRomsSyncer: iCloudContainerSyncer {
         DLOG("system: \(system), partialPath: \(partialPath)")
         let similarName = RomDatabase.altName(file, systemIdentifier: system)
         let gamesCache = RomDatabase.gamesCache
-        let partialPathAsString = partialPath.absoluteString
+        // A game in a set folder is keyed `<system>/<set>/<index>` (its romPath).
+        let setRomPath = MultiFileSetFolder.romLocation(of: file).flatMap { $0.setFolder == nil ? nil : $0.romPath }
+        let partialPathAsString = setRomPath ?? partialPath.absoluteString
         DLOG("partialPathAsString: \(partialPathAsString), similarName: \(similarName)")
         guard let existingGame = gamesCache[partialPathAsString] ?? gamesCache[similarName]
         else {
@@ -182,11 +196,16 @@ public class iCloudRomsSyncer: iCloudContainerSyncer {
         await gameImporter.clearCompleted()
 #endif
         await removeGamesDeletedWhileApplicationClosed()
-        let arePendingFilesToDownloadEmpty = await pendingFilesToDownload.isEmpty
-        let areMultiFileRomsEmpty = await multiFileRoms.isEmpty
-        //we only proceed if there are actual ROMs to import
-        guard await !newFiles.isEmpty//OR there are multi file ROMs to import and there are no more pending files to download. this is to ensure that we have all of the files. an improvement would be to read the cue, ccd or m3u file to know how many files correspond
-                || !areMultiFileRomsEmpty && arePendingFilesToDownloadEmpty
+        // Nothing left to download: files still held for a set (a set missing a file, a lone .bin
+        // game) are imported as they are.
+        if await pendingFilesToDownload.isEmpty {
+            for single in await multiFileSets.flush() {
+                await newFiles.insert(single)
+            }
+        }
+        //we only proceed if there are actual ROMs to import, or a disc set with all of its files
+        let hasReadySets = await multiFileSets.hasReadySets
+        guard await !newFiles.isEmpty || hasReadySets
         else {
             return
         }
@@ -208,9 +227,8 @@ public class iCloudRomsSyncer: iCloudContainerSyncer {
     func importNewRomFiles() async {
         var nextFilesToProcess = await prepareNextBatchToProcess()
         if nextFilesToProcess.isEmpty,
-           let nextMultiFile = await multiFileRoms.first {
-            nextFilesToProcess = nextMultiFile.value
-            await multiFileRoms.set(nil, forKey: nextMultiFile.key)
+           let nextSet = await multiFileSets.nextSet() {
+            nextFilesToProcess = nextSet
         }
         let importPaths = [URL](nextFilesToProcess)
         await gameImporter.addImports(forPaths: importPaths)

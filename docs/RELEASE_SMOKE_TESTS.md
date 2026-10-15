@@ -336,6 +336,11 @@ before it (or seed the files below by hand, then relaunch).
       before the data-track id.
 - [ ] CloudKit: a cue or GDI set imported with this build uploads, and downloads
       and boots on a second device.
+- [ ] iCloud Drive mode, second device: a GDI set in its own folder and a PSX
+      cue/bin set appear in the library as soon as their last file has
+      downloaded (no manual rescan), each as one game; no `track01` game and
+      no game imported before its tracks. A lone `.bin` game still imports once
+      everything has downloaded. Two GDI games with `track01.bin` both import.
 - [ ] Rescan (Settings › Library › Scan ROM Directories) with a set folder whose
       game was removed from the library: the game comes back; a DOS game folder
       with a `.cue` inside is not imported as a disc set.

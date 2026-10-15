@@ -28,21 +28,4 @@ extension URL {
     var fileName: String {
         lastPathComponent.removingPercentEncoding ?? lastPathComponent
     }
-    
-    var multiFileNameKey: String? {
-        guard "cue".caseInsensitiveCompare(pathExtension) == .orderedSame
-                || "bin".caseInsensitiveCompare(pathExtension) == .orderedSame
-                || "ccd".caseInsensitiveCompare(pathExtension) == .orderedSame
-                || "img".caseInsensitiveCompare(pathExtension) == .orderedSame
-                || "sub".caseInsensitiveCompare(pathExtension) == .orderedSame
-                || "m3u".caseInsensitiveCompare(pathExtension) == .orderedSame
-                || "mds".caseInsensitiveCompare(pathExtension) == .orderedSame
-                || "mdf".caseInsensitiveCompare(pathExtension) == .orderedSame
-        else {
-            return nil
-        }
-        let key = PVEmulatorConfiguration.stripDiscNames(fromFilename: deletingPathExtension().pathDecoded)
-        DLOG("key: \(key)")
-        return key
-    }
 }
