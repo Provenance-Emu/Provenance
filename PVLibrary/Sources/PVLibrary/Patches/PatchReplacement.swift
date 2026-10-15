@@ -7,7 +7,10 @@
 //
 
 import Foundation
+import RealmSwift
+import PVRealm
 import PVFileSystem
+import PVLogging
 
 /// The rules of "Replace the Original", the destructive placement: what blocks it, how strongly
 /// the confirmation warns, the file swap, and carrying per-game settings to the new MD5.
@@ -36,6 +39,7 @@ public enum PatchReplacement {
     public enum Blocker: Error, Equatable, LocalizedError {
         case notALibraryGame
         case cloudSyncOn
+        case inICloud
         case multiFileGame
         case archive
         case notDownloaded
@@ -50,6 +54,8 @@ public enum PatchReplacement {
                 return "Pick the game from your library to replace it. A ROM picked from Files can only be patched into a copy."
             case .cloudSyncOn:
                 return "Replacing the original is off while iCloud Sync is on: your other devices would delete the game and its saves. Save a patched copy instead, or turn iCloud Sync off first."
+            case .inICloud:
+                return "This game has a copy in iCloud. Replacing it here would bring the old version back from iCloud as a second game sharing the file. Save a patched copy instead."
             case .multiFileGame:
                 return "This game is made of several files, so a patch cannot replace it. Save a patched copy instead."
             case .archive:
@@ -74,12 +80,15 @@ public enum PatchReplacement {
         public var hasRelatedFiles: Bool
         public var isDownloaded: Bool
         public var cloudSyncEnabled: Bool
+        /// The game was uploaded to iCloud once (`cloudRecordID` or `hasCloudAssets`).
+        public var isInICloud: Bool
 
-        public init(romURL: URL?, hasRelatedFiles: Bool, isDownloaded: Bool, cloudSyncEnabled: Bool) {
+        public init(romURL: URL?, hasRelatedFiles: Bool, isDownloaded: Bool, cloudSyncEnabled: Bool, isInICloud: Bool = false) {
             self.romURL = romURL
             self.hasRelatedFiles = hasRelatedFiles
             self.isDownloaded = isDownloaded
             self.cloudSyncEnabled = cloudSyncEnabled
+            self.isInICloud = isInICloud
         }
     }
 
@@ -89,6 +98,8 @@ public enum PatchReplacement {
     /// Why the original cannot be replaced, or nil when it can.
     public static func blocker(for target: Target, fileManager: FileManager = .default) -> Blocker? {
         if target.cloudSyncEnabled { return .cloudSyncOn }
+        // Turning sync back on would recreate the old MD5's row from its record.
+        if target.isInICloud { return .inICloud }
         guard let url = target.romURL else { return .fileMissing }
         let ext = url.pathExtension.lowercased()
         if target.hasRelatedFiles || multiFileExtensions.contains(ext) { return .multiFileGame }
@@ -140,6 +151,59 @@ public enum PatchReplacement {
             throw error
         }
         return PendingSwap(original: original, backup: directory.appendingPathComponent(backupName))
+    }
+
+    // MARK: - Database
+
+    /// The game's library MD5 if its file were `url`: the importer's hash, which skips NES, Lynx,
+    /// 7800 and SNES copier headers and normalises N64 byte order. `url` must resolve through
+    /// `PVFile` (under Documents or Caches), as the patch cache does.
+    public static func libraryMD5(ofFileAt url: URL, systemIdentifier: String) async -> String? {
+        let probe = PVGame()
+        probe.systemIdentifier = systemIdentifier
+        probe.file = PVFile(withURL: url, relativeRoot: .platformDefault)
+        return await GameImporterDatabaseService().calculateMD5(forGame: probe)?.uppercased()
+    }
+
+    /// Moves the game to its new MD5 once `swap` has put the patched bytes in place, then drops the
+    /// original. Patches that were the game's default launch stop being it: the game now is what
+    /// the player chose. On any failure the transaction is cancelled and the original restored.
+    @discardableResult
+    public static func commit(
+        _ swap: PendingSwap,
+        rekeying oldMD5: String,
+        to newMD5: String,
+        crc: String,
+        fileSize: Int,
+        showPatchedSeparately: Bool,
+        in realm: Realm
+    ) throws -> PVGame {
+        do {
+            realm.beginWrite()
+            let game = try GameRekey.rekey(gameWithMD5: oldMD5, to: newMD5, crc: crc, fileSize: fileSize, in: realm)
+            for patch in Array(game.patches) where patch.isDefaultLaunch {
+                patch.isDefaultLaunch = false
+                patch.isEnabled = false
+                if let variant = patch.variantGame, variant.isPatchVariant {
+                    variant.isHiddenPatchVariant = PatchRepository.isVariantHidden(
+                        showAsLibraryTile: patch.showAsLibraryTile,
+                        isDefaultLaunch: false,
+                        showPatchedSeparately: showPatchedSeparately
+                    )
+                }
+            }
+            try realm.commitWrite()
+            swap.commit()
+            return game
+        } catch {
+            if realm.isInWriteTransaction { realm.cancelWrite() }
+            do {
+                try swap.rollback()
+            } catch let rollbackError {
+                ELOG("PatchReplacement: could not restore \(swap.original.lastPathComponent) from \(swap.backup.lastPathComponent): \(rollbackError)")
+            }
+            throw error
+        }
     }
 
     // MARK: - Per-game settings

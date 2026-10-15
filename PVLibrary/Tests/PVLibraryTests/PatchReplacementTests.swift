@@ -8,6 +8,10 @@
 //
 
 import XCTest
+import CryptoKit
+import RealmSwift
+import PVRealm
+import PVFileSystem
 @testable import PVLibrary
 
 final class PatchReplacementTests: XCTestCase {
@@ -66,6 +70,14 @@ final class PatchReplacementTests: XCTestCase {
         XCTAssertEqual(PatchReplacement.blocker(for: target(try file("Game.zip", "PK"))), .archive)
     }
 
+    /// Turning sync back on would recreate the old MD5's row, pointing at the replaced file.
+    func testAGameWithAnICloudCopyIsBlocked() throws {
+        let rom = try file("Game.gba", "rom")
+        XCTAssertEqual(PatchReplacement.blocker(for: PatchReplacement.Target(
+            romURL: rom, hasRelatedFiles: false, isDownloaded: true, cloudSyncEnabled: false, isInICloud: true
+        )), .inICloud)
+    }
+
     func testMissingAndCloudOnlyFilesAreBlocked() throws {
         XCTAssertEqual(PatchReplacement.blocker(for: target(nil)), .fileMissing)
         XCTAssertEqual(PatchReplacement.blocker(for: target(directory.appendingPathComponent("Gone.gba"))), .fileMissing)
@@ -106,6 +118,88 @@ final class PatchReplacementTests: XCTestCase {
         XCTAssertThrowsError(try PatchReplacement.beginSwap(replacing: original, withContentsOf: directory.appendingPathComponent("missing.gba")))
         XCTAssertEqual(try String(contentsOf: original, encoding: .utf8), "original")
         XCTAssertEqual(try FileManager.default.contentsOfDirectory(atPath: directory.path), ["Game.gba"])
+    }
+
+    // MARK: - Commit
+
+    private let oldMD5 = "0123456789ABCDEF0123456789ABCDEF"
+    private let newMD5 = "FEDCBA9876543210FEDCBA9876543210"
+
+    private func realmWithGame() throws -> Realm {
+        let realm = try Realm(configuration: Realm.Configuration(inMemoryIdentifier: UUID().uuidString))
+        let game = PVGame()
+        game.md5Hash = oldMD5
+        game.title = "Game"
+        let state = PVSaveState()
+        state.game = game
+        let patch = PVPatch()
+        patch.id = "Patches/hack.bps"
+        patch.game = game
+        patch.baseGameMD5 = oldMD5
+        patch.isDefaultLaunch = true
+        patch.isEnabled = true
+        try realm.write { realm.add([game, state, patch] as [Object]) }
+        return realm
+    }
+
+    func testCommitMovesTheGameAndDropsTheOriginal() throws {
+        let realm = try realmWithGame()
+        let original = try file("Game.gba", "original")
+        let swap = try PatchReplacement.beginSwap(replacing: original, withContentsOf: try file("cached.gba", "patched"))
+
+        let game = try PatchReplacement.commit(
+            swap, rekeying: oldMD5, to: newMD5, crc: "ABCD1234", fileSize: 7, showPatchedSeparately: true, in: realm
+        )
+
+        XCTAssertEqual(game.md5Hash, newMD5)
+        XCTAssertEqual(game.saveStates.count, 1)
+        XCTAssertFalse(try XCTUnwrap(game.patches.first).isDefaultLaunch, "the replaced game launches itself")
+        XCTAssertEqual(try String(contentsOf: original, encoding: .utf8), "patched")
+        XCTAssertFalse(FileManager.default.fileExists(atPath: swap.backup.path))
+    }
+
+    func testAFailedCommitRestoresTheOriginalAndTheDatabase() throws {
+        let realm = try realmWithGame()
+        let taken = PVGame()
+        taken.md5Hash = newMD5
+        taken.title = "Already here"
+        try realm.write { realm.add(taken) }
+        let original = try file("Game.gba", "original")
+        let swap = try PatchReplacement.beginSwap(replacing: original, withContentsOf: try file("cached.gba", "patched"))
+
+        XCTAssertThrowsError(try PatchReplacement.commit(
+            swap, rekeying: oldMD5, to: newMD5, crc: "ABCD1234", fileSize: 7, showPatchedSeparately: true, in: realm
+        ))
+
+        XCTAssertFalse(realm.isInWriteTransaction)
+        XCTAssertEqual(try String(contentsOf: original, encoding: .utf8), "original")
+        XCTAssertEqual(try FileManager.default.contentsOfDirectory(atPath: directory.path).sorted(), ["Game.gba", "cached.gba"])
+        let game = try XCTUnwrap(realm.object(ofType: PVGame.self, forPrimaryKey: oldMD5))
+        XCTAssertTrue(try XCTUnwrap(game.patches.first).isDefaultLaunch)
+    }
+
+    // MARK: - Library MD5
+
+    /// The replaced game must get the MD5 an import of the same file would: for NES that skips the
+    /// 16-byte iNES header, so it differs from the raw file MD5.
+    func testTheLibraryMD5IsTheImportersHeaderAwareHash() async throws {
+        let folder = URL.documentsPath.appendingPathComponent("PatchedROMs/test-\(UUID().uuidString)", isDirectory: true)
+        try FileManager.default.createDirectory(at: folder, withIntermediateDirectories: true)
+        defer { try? FileManager.default.removeItem(atPath: folder.path) }
+        let payload = Data((0..<64).map { UInt8($0) })
+        var rom = Data([0x4E, 0x45, 0x53, 0x1A] + [UInt8](repeating: 0, count: 12))
+        rom.append(payload)
+        let url = folder.appendingPathComponent("Game.nes")
+        try rom.write(to: url)
+
+        let md5 = await PatchReplacement.libraryMD5(ofFileAt: url, systemIdentifier: "com.provenance.nes")
+
+        XCTAssertEqual(md5, Self.md5(payload))
+        XCTAssertNotEqual(md5, Self.md5(rom))
+    }
+
+    private static func md5(_ data: Data) -> String {
+        Insecure.MD5.hash(data: data).map { String(format: "%02X", $0) }.joined()
     }
 
     // MARK: - Per-game settings

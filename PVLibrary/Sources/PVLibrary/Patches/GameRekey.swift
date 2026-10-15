@@ -73,10 +73,10 @@ public enum GameRekey {
             patch.variantGame = game
             patch.variantGameMD5 = newKey
         }
-        for patch in realm.objects(PVPatch.self).filter("baseGameMD5 ==[c] %@", oldMD5) {
+        for patch in Array(realm.objects(PVPatch.self).filter("baseGameMD5 ==[c] %@", oldMD5)) {
             patch.baseGameMD5 = newKey
         }
-        for variant in realm.objects(PVGame.self).filter("baseGameMD5 ==[c] %@", oldMD5) {
+        for variant in Array(realm.objects(PVGame.self).filter("baseGameMD5 ==[c] %@", oldMD5)) {
             variant.baseGameMD5 = newKey
         }
         for library in Array(old.libraries) {
@@ -84,7 +84,7 @@ public enum GameRekey {
                 library.games.replace(index: index, object: game)
             }
         }
-        for profile in realm.objects(PVControllerProfile.self).filter("gameID ==[c] %@", oldMD5) {
+        for profile in Array(realm.objects(PVControllerProfile.self).filter("gameID ==[c] %@", oldMD5)) {
             profile.gameID = newKey
         }
 

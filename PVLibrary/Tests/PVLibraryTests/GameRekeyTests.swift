@@ -63,13 +63,26 @@ final class GameRekeyTests: XCTestCase {
         patch.variantGame = variant
         patch.variantGameMD5 = variant.md5Hash
 
+        // A second patch and variant: the re-key edits the very field its queries match on.
+        let second = PVPatch()
+        second.id = "Patches/second.ips"
+        second.game = game
+        second.baseGameMD5 = oldMD5.lowercased()
+        let secondVariant = PVGame()
+        secondVariant.md5Hash = "BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB"
+        secondVariant.isPatchVariant = true
+        secondVariant.baseGameMD5 = oldMD5
+        second.variantGame = secondVariant
+        second.variantGameMD5 = secondVariant.md5Hash
+
         let library = PVLibrary()
         library.games.append(game)
 
         let profile = PVControllerProfile(name: "Pad", controllerVendorName: "Pad", gameID: oldMD5)
+        let secondProfile = PVControllerProfile(name: "Keyboard", controllerVendorName: "Keyboard", gameID: oldMD5)
 
         try realm.write {
-            realm.add([game, state, cheat, recent, patch, variant, library, profile] as [Object])
+            realm.add([game, state, cheat, recent, patch, variant, second, secondVariant, library, profile, secondProfile] as [Object])
         }
         return game
     }
@@ -108,14 +121,15 @@ final class GameRekeyTests: XCTestCase {
         XCTAssertEqual(game.saveStates.count, 1)
         XCTAssertEqual(game.cheats.count, 1)
         XCTAssertEqual(game.recentPlays.count, 1)
-        XCTAssertEqual(game.patches.count, 1)
+        XCTAssertEqual(game.patches.count, 2)
         XCTAssertEqual(game.libraries.count, 1)
         XCTAssertEqual(game.libraries.first?.games.count, 1)
         XCTAssertEqual(game.system?.games.count, 1)
-        let patch = try XCTUnwrap(game.patches.first)
-        XCTAssertEqual(patch.baseGameMD5, newMD5)
-        XCTAssertEqual(patch.variantGame?.baseGameMD5, newMD5, "the patch's variant still names its base game")
-        XCTAssertEqual(realm.objects(PVControllerProfile.self).first?.gameID, newMD5)
+        for patch in game.patches {
+            XCTAssertEqual(patch.baseGameMD5, newMD5)
+            XCTAssertEqual(patch.variantGame?.baseGameMD5, newMD5, "the patch's variant still names its base game")
+        }
+        XCTAssertEqual(Array(realm.objects(PVControllerProfile.self).map(\.gameID)), [newMD5, newMD5])
     }
 
     func testTheCloudCopyIsNotClaimedForTheNewContent() throws {

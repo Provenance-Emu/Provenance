@@ -741,7 +741,8 @@ public final class PatchRepository {
             romURL: live.file?.url,
             hasRelatedFiles: !live.relatedFiles.isEmpty,
             isDownloaded: live.isDownloaded,
-            cloudSyncEnabled: Defaults[.iCloudSync]
+            cloudSyncEnabled: Defaults[.iCloudSync],
+            isInICloud: live.cloudRecordID != nil || live.hasCloudAssets
         ))
     }
 
@@ -774,12 +775,8 @@ public final class PatchRepository {
             progress: progress
         )
 
-        // The library's identity is the importer's MD5 (header-skipping for NES, Lynx, 7800 and
-        // SNES copier headers, byte order for N64), not the raw file MD5 the artifact carries.
-        let probe = PVGame()
-        probe.systemIdentifier = game.systemIdentifier
-        probe.file = PVFile(withURL: artifact.url, relativeRoot: .platformDefault)
-        guard let newMD5 = await GameImporterDatabaseService().calculateMD5(forGame: probe)?.uppercased() else {
+        // The library's identity is the importer's MD5, not the raw file MD5 the artifact carries.
+        guard let newMD5 = await PatchReplacement.libraryMD5(ofFileAt: artifact.url, systemIdentifier: game.systemIdentifier) else {
             throw PatchError.patchApplicationFailed("Could not hash the patched game")
         }
         if newMD5 != oldMD5, let existing = realm.object(ofType: PVGame.self, forPrimaryKey: newMD5) {
@@ -792,29 +789,15 @@ public final class PatchRepository {
         #endif
 
         let swap = try PatchReplacement.beginSwap(replacing: romURL, withContentsOf: artifact.url)
-        do {
-            realm.beginWrite()
-            let rekeyed = try GameRekey.rekey(gameWithMD5: oldMD5, to: newMD5, crc: crc, fileSize: size, in: realm)
-            // The game now is what the player chose; a patch that was its default launch would
-            // hide that behind a version built from a file that no longer exists.
-            for patch in rekeyed.patches where patch.isDefaultLaunch {
-                patch.isDefaultLaunch = false
-                patch.isEnabled = false
-                if let variant = patch.variantGame, variant.isPatchVariant {
-                    variant.isHiddenPatchVariant = isVariantHidden(for: patch)
-                }
-            }
-            try realm.commitWrite()
-        } catch {
-            if realm.isInWriteTransaction { realm.cancelWrite() }
-            do {
-                try swap.rollback()
-            } catch let rollbackError {
-                ELOG("PatchRepository: could not restore \(romURL.lastPathComponent) from \(swap.backup.lastPathComponent): \(rollbackError)")
-            }
-            throw error
-        }
-        swap.commit()
+        try PatchReplacement.commit(
+            swap,
+            rekeying: oldMD5,
+            to: newMD5,
+            crc: crc,
+            fileSize: size,
+            showPatchedSeparately: Defaults[.showPatchedVersionsAsSeparateItems],
+            in: realm
+        )
         // The cached copy has served its purpose and its key names the old file.
         let entry = artifact.url.deletingLastPathComponent()
         if entry.path.contains("/PatchedROMs/") {
