@@ -129,8 +129,19 @@ extension PVEmulatorViewController {
 
         // Legacy OSD overlay
         if let controllerView = controllerViewController?.view, controllerView.superview != nil {
-            controllerView.isHidden = hidden
-            DLOG("On-screen controls (OSD): \(hidden ? "hidden" : "visible")")
+            // Self-hosting cores (Dolphin, Azahar, EmuThree) add their render view
+            // inside the overlay they are hosted by, so hiding that view blanks the
+            // game while a controller is connected. Hide only the buttons there.
+            if core.touchViewController?.view === controllerView,
+               let osd = controllerViewController as? OSDControlsVisibilityObserver {
+                if osd.isOnScreenControlsVisible == hidden {
+                    osd.toggleOnScreenControlsVisibility()
+                }
+                DLOG("On-screen controls (OSD buttons, core hosted in overlay): \(hidden ? "hidden" : "visible")")
+            } else {
+                controllerView.isHidden = hidden
+                DLOG("On-screen controls (OSD): \(hidden ? "hidden" : "visible")")
+            }
         }
         #endif
     }
