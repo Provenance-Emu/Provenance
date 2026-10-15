@@ -58,8 +58,6 @@ public final class GameTagReader: NSObject, NFCNDEFReaderSessionDelegate {
 
     // MARK: NFCNDEFReaderSessionDelegate
 
-    public func readerSessionDidBecomeActive(_ session: NFCNDEFReaderSession) {}
-
     /// Required by the protocol; never called because `didDetect tags:` is implemented.
     public func readerSession(_ session: NFCNDEFReaderSession, didDetectNDEFs messages: [NFCNDEFMessage]) {}
 
