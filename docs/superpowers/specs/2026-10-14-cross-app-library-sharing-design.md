@@ -1,6 +1,6 @@
 # Cross-app library sharing (Provenance ⇄ iFly, Provenance ⇄ iCube, content server)
 
-Date: 2026-10-14. Status: design, not started.
+Date: 2026-10-14. Status: phase 1 shipped, phase 2 built 2026-10-15 (see "Phase 2 as built").
 
 ## Goal
 
@@ -294,3 +294,33 @@ Proposed additive ECS changes:
 - **iFly, empty BIOS list (open question 7):** accepted. "Required" is checked per listed file only; a game is bootable when no listed `required` gameFile/bios is missing and at least one gameFile completed (ContinuityKit/Client/PullFailure.swift:18-28). Gotcha: `ContinuityManifest` decodes `bios` and `files` as non-optional arrays (Model/ContinuityManifest.swift:58-59), so Provenance must always send `"bios": []`, set `required` explicitly on every FileDescriptor, and use the kinds exactly (`gameFile` for `ROMs/<file>`). The receiver boots with its own BIOS folder; a missing NAOMI/Atomiswave BIOS surfaces as iFly's normal boot message, not a pull failure. SHA-256 is used for skip-if-present, so per-file SHA-256 stays.
 - **iCube, pairing when idle (finding 2):** confirmed by the iCube session. `pair/complete` stores the trust first and returns 404 "no active handoff session" whenever no handoff session is up; treat that 404 as paired, then library pulls go through `library/auth/start` + `complete`.
 - **iCube, served folder (open question 6):** use relativePath `Software/<filename>`, not `Games/<file>`. iCube resolves relativePath against its Dolphin User root (`ContinuityPaths.absoluteURL`, Source/iOS/App/Common/Continuity/ContinuityPaths.swift:26) and registers the written path with the library cache; `Software/` is the only folder its scanner reads. The `gc`/`wii` codes are only per-platform sidecar naming. Keep the filename as-is (iso/gcm/gcz/rvz/wbfs/ciso/wia/dol/elf/wad).
+
+## Phase 2 as built (2026-10-15)
+
+- **Staging is not `Imports/`.** Copies land in `Library/Caches/LibrarySharing/Incoming/<app>-<hash>/files/<relativePath>`, a different location from the one §3.5 names. `Imports/` is watched: the watcher would pick up half-written `.part` files, or queue finished ones without the mapped system before the copy hands them over, and the importer's queue de-duplication would then drop the call that carries the system. `addImports(forPaths:targetSystem:)` takes paths anywhere and moves the files into `ROMs/`. Every game file of the set is handed over, the same as a ROM-folder scan.
+- **The folder is named by a hash** of (peer id, app, item id). iFly ids are `title|platform|size`, so a title could carry `/` or `..`. Every `relativePath` is checked to stay inside the folder before anything is written (`LibraryStaging.containedURL`).
+- **The pull manifest is cached** in the staging folder. iFly's `pull` is metered and can prompt per game, so a resumed copy, whether after a dropped connection or a relaunch, re-authenticates and fetches only files. Only a 404 on the file route ("not part of a granted pull") requests the manifest again, and only once.
+- **Transfer rules:**
+  - Files go smallest first, each through `<file>.part` with `Range: bytes=N-`.
+  - The copy starts a file over from zero when the host answers 200 to a ranged request, sends a 206 for another range, or answers 416. Two restarts are allowed per file.
+  - A short body resumes from what arrived.
+  - On a 401 the client re-authenticates once.
+  - SHA-256 is compared case-insensitively, and a mismatch deletes the `.part`.
+  - File downloads use a 60 s idle timeout, not the 8 s browse timeout.
+- **Copied:** game files only. BIOS (§3.6: user confirmation first) and saves are left on the host and logged. The BIOS confirmation flow is not built.
+- **Cleanup:** `LibraryStaging.sweep()` runs when Nearby Libraries opens. It removes a handed-off folder once the importer has emptied it, or after 24 h if the importer skipped a duplicate. An abandoned partial copy is removed after 7 days.
+- **Not done:** progress in `ImportStatusView` (the row shows it instead), "Play" through `provenance://open?md5=` once the import lands, and importing the peer's artwork.
+
+### Phase 2 device checklist
+
+- [ ] iFly host, Dreamcast GDI: tap Copy. The row goes from Connecting to Copying N% to Checking, then Importing. The game appears under Dreamcast and boots.
+- [ ] iFly host with Ask per game: the row shows "Waiting for approval on <device>". Allow, and the copy proceeds. Deny gives "The other device declined this copy."
+- [ ] iFly host past its free daily copies: the row shows the iFly Pro limit message (HTTP 429).
+- [ ] iFly Naomi zip with companion CHD: both files arrive and the game imports as NAOMI. Watch that `ArchiveCompanionLayout` still pairs them when the source is outside `Imports/`.
+- [ ] iCube host, GameCube `.rvz` and Wii `.wbfs`: they copy, import under GameCube/Wii without a system prompt, and boot.
+- [ ] Turn Wi-Fi off at about 50 % of a large image, then on, then tap Retry. The log shows `Range: bytes=N-` on the file request, and no second `library/pull` on iFly.
+- [ ] Kill Provenance mid-copy, relaunch, open the peer and tap Copy: the copy resumes.
+- [ ] Tamper test: serve a file whose bytes differ from the manifest hash (a debug iFly build). The copy fails with "arrived damaged" and leaves no `.part`.
+- [ ] Copy a game already in the library: the importer skips the duplicate, and the staging folder is gone within 24 h.
+- [ ] tvOS: Copy and Stop are reachable with the remote. The copy lands in the library on Apple TV, where staging under Caches is expected.
+- [ ] BIOS and VMU/state files are never written anywhere (check `Library/Caches/LibrarySharing`).
