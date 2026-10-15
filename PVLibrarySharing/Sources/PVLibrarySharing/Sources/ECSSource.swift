@@ -168,8 +168,9 @@ public actor ECSSource: LibrarySource {
         progress: @escaping @Sendable (LibraryBrowseProgress) -> Void
     ) async throws -> RemoteManifest {
         progress(.connecting)
-        let encoded = item.id.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) ?? item.id
-        let response = try await authorized(LibraryHTTPRequest(url: server.appendingPathComponent("/api/v1/items/\(encoded)/manifest")))
+        // appendingPathComponent percent-encodes the id itself.
+        let url = server.appendingRoute("/api/v1/items").appendingPathComponent(item.id).appendingPathComponent("manifest")
+        let response = try await authorized(LibraryHTTPRequest(url: url))
         switch response.status {
         case 200:
             return Self.manifest(try JSONDecoder().decode(Manifest.self, from: response.body), itemId: item.id)
@@ -222,7 +223,7 @@ public actor ECSSource: LibrarySource {
     // MARK: - Requests
 
     private func checkCapabilities() async throws {
-        let response = try await transport.send(LibraryHTTPRequest(url: server.appendingPathComponent("/api/v1/capabilities")))
+        let response = try await transport.send(LibraryHTTPRequest(url: server.appendingRoute("/api/v1/capabilities")))
         guard response.status == 200 else { throw Self.error(forStatus: response.status) }
         let capabilities = try JSONDecoder().decode(Capabilities.self, from: response.body)
         guard capabilities.protocol.major == Self.supportedMajor else {
@@ -236,7 +237,7 @@ public actor ECSSource: LibrarySource {
         var all: [T] = []
         var cursor: String?
         repeat {
-            var components = URLComponents(url: server.appendingPathComponent(path), resolvingAgainstBaseURL: false)
+            var components = URLComponents(url: server.appendingRoute(path), resolvingAgainstBaseURL: false)
             components?.queryItems = query + [URLQueryItem(name: "limit", value: String(pageSize))]
                 + (cursor.map { [URLQueryItem(name: "cursor", value: $0)] } ?? [])
             guard let url = components?.url else { throw LibrarySharingError.unreachable }
@@ -286,14 +287,14 @@ public actor ECSSource: LibrarySource {
     private func signIn() async throws -> String {
         guard let password else { throw LibrarySharingError.signInFailed }
         let login = try await transport.send(.jsonPost(
-            url: server.appendingPathComponent("/api/v1/auth/login"), body: LoginRequest(username: username, password: password)
+            url: server.appendingRoute("/api/v1/auth/login"), body: LoginRequest(username: username, password: password)
         ))
         guard login.status == 200 else {
             throw login.status == 401 ? LibrarySharingError.signInFailed : Self.error(forStatus: login.status)
         }
         let session = try JSONDecoder().decode(Session.self, from: login.body).token
         var mint = try LibraryHTTPRequest.jsonPost(
-            url: server.appendingPathComponent("/api/v1/device-tokens"),
+            url: server.appendingRoute("/api/v1/device-tokens"),
             body: DeviceTokenDraft(name: deviceName, scopes: [Self.readScope], expiresInSeconds: nil)
         )
         mint.headers["Authorization"] = "Bearer \(session)"

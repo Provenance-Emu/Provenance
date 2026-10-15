@@ -192,9 +192,9 @@ public actor PVLibrarySource: LibrarySource {
             let (response, base) = try await sendToFirstReachable(
                 candidates: candidates, preferred: activeBase, transport: transport
             ) { base in
-                var components = URLComponents(url: base.appendingPathComponent(path), resolvingAgainstBaseURL: false)
+                var components = URLComponents(url: base.appendingRoute(path), resolvingAgainstBaseURL: false)
                 components?.queryItems = items.isEmpty ? nil : items
-                var request = LibraryHTTPRequest.authorizedGet(url: components?.url ?? base.appendingPathComponent(path), token: token)
+                var request = LibraryHTTPRequest.authorizedGet(url: components?.url ?? base.appendingRoute(path), token: token)
                 if let ifNoneMatch { request.headers["If-None-Match"] = ifNoneMatch }
                 return request
             }

@@ -42,6 +42,18 @@ final class HTTPFramingTests: XCTestCase {
         XCTAssertTrue(head.hasSuffix("\r\n\r\n"))
     }
 
+    /// Peers advertise base URLs with and without a trailing slash; routes
+    /// must never gain a double slash (macOS 15 / iOS 17-18 Foundation keeps it).
+    func testRoutesJoinWithOneSlash() {
+        for base in ["http://icube.local/", "http://icube.local", "http://10.0.0.2:8080/"] {
+            let url = URL(string: base)!.appendingRoute("/api/continuity/library/catalog")  // swiftlint:disable:this force_unwrapping
+            XCTAssertFalse(url.absoluteString.contains("//api"), url.absoluteString)
+            XCTAssertEqual(url.path, "/api/continuity/library/catalog")
+        }
+        let file = ContinuityRoutes.libraryFileURL(base: URL(string: "http://icube.local/")!, key: "k", relativePath: "a b")  // swiftlint:disable:this force_unwrapping
+        XCTAssertEqual(file.path, "/api/continuity/library/file")
+    }
+
     func testByteRanges() {
         XCTAssertEqual(ByteRange.parse("bytes=10-"), ByteRange(offset: 10))
         XCTAssertEqual(ByteRange.parse("bytes=10-19")?.length(totalSize: 100), 10)

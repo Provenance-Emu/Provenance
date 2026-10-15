@@ -41,7 +41,7 @@ enum ContinuityRoutes {
     /// `base + path`, with `?key=` built through `URLComponents` like both
     /// peers do, so `+`, `|`, `:` and spaces in opaque keys survive.
     static func url(base: URL, path: String, key: String? = nil) -> URL {
-        let joined = base.appendingPathComponent(path)
+        let joined = base.appendingRoute(path)
         guard let key else { return joined }
         var components = URLComponents(url: joined, resolvingAgainstBaseURL: false)
         components?.queryItems = [URLQueryItem(name: keyQueryItem, value: key)]
@@ -51,7 +51,7 @@ enum ContinuityRoutes {
     /// `base + library/file`: iFly sends `?path=` only, iCube `?key=&path=`
     /// (it re-checks the entry's exclusion before serving a byte).
     static func libraryFileURL(base: URL, key: String?, relativePath: String) -> URL {
-        let joined = base.appendingPathComponent(libraryFile)
+        let joined = base.appendingRoute(libraryFile)
         var components = URLComponents(url: joined, resolvingAgainstBaseURL: false)
         var items: [URLQueryItem] = []
         if let key { items.append(URLQueryItem(name: keyQueryItem, value: key)) }
@@ -223,5 +223,18 @@ struct ICubeLibraryCatalog: Codable, Sendable {
         var platform: String
         var discNumber: Int?
         var revision: Int?
+    }
+}
+
+extension URL {
+    /// `base + route` with exactly one `/` between them.
+    ///
+    /// `appendingPathComponent("/api/…")` on a base that ends in `/` gives
+    /// `//api/…` on macOS 15 and iOS 17/18 (later Foundations collapse it),
+    /// and peers advertise base URLs both with and without the slash. A
+    /// server then answers 404 to every route.
+    func appendingRoute(_ route: String) -> URL {
+        let trimmed = route.drop { $0 == "/" }
+        return trimmed.isEmpty ? self : appendingPathComponent(String(trimmed))
     }
 }
