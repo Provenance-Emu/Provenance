@@ -241,14 +241,20 @@ public actor PatchApplier {
             let status = "Applying \(request.format.displayName)…"
             ILOG("PatchApplier: applying \(request.format.displayName) patch '\(request.patchURL.lastPathComponent)' to '\(request.romURL.lastPathComponent)'")
             progress?(PatchProgress(fractionCompleted: hashingShare, status: status))
-            let report = try await EngineBridge.apply(
-                patch: request.patchURL,
-                source: request.romURL,
-                output: request.outputURL,
-                format: request.format,
-                ignoreSourceChecksum: request.options.ignoreSourceChecksum
-            ) { fraction in
-                progress?(PatchProgress(fractionCompleted: hashingShare + patchingShare * fraction, status: status))
+            let report: EngineApplyReport
+            do {
+                report = try await EngineBridge.apply(
+                    patch: request.patchURL,
+                    source: request.romURL,
+                    output: request.outputURL,
+                    format: request.format,
+                    ignoreSourceChecksum: request.options.ignoreSourceChecksum
+                ) { fraction in
+                    progress?(PatchProgress(fractionCompleted: hashingShare + patchingShare * fraction, status: status))
+                }
+            } catch {
+                removeEntryDirectoryIfEmpty(request.outputURL.deletingLastPathComponent())
+                throw error
             }
             if report.ignoredTargetMismatch {
                 WLOG("PatchApplier: '\(request.patchURL.lastPathComponent)' applied to a ROM it was not made for; the result differs from the patch's target")
@@ -282,12 +288,21 @@ public actor PatchApplier {
         )
     }
 
+    /// A failed or refused apply leaves no empty entry directory behind.
+    private nonisolated static func removeEntryDirectoryIfEmpty(_ directory: URL) {
+        guard let contents = try? FileManager.default.contentsOfDirectory(atPath: directory.path), contents.isEmpty else {
+            return
+        }
+        try? FileManager.default.removeItem(at: directory)
+    }
+
     /// Refuses to start a patch whose output cannot fit, instead of failing near the end of a disc.
     private nonisolated static func ensureFreeSpace(for request: ResolveRequest, in directory: URL) throws {
         let sourceSize = fileSize(request.romURL)
         // Formats without a declared size patch roughly in place (IPS, PPF) or grow modestly.
         let required = (request.info.targetSize ?? sourceSize) + freeSpaceMargin
         guard let available = availableCapacity(at: directory), available < required else { return }
+        removeEntryDirectoryIfEmpty(request.outputURL.deletingLastPathComponent())
         throw PatchError.insufficientStorage(required: required, available: available)
     }
 

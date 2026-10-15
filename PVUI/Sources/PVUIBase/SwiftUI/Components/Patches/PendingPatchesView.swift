@@ -14,6 +14,8 @@ import PVLogging
 import PVPatching
 import PVFileSystem
 import UniformTypeIdentifiers
+import PVSettings
+import Defaults
 
 /// Global ROM Tools screen for unmatched / pending patches and patch creation entry.
 public struct PendingPatchesView: View {
@@ -26,6 +28,7 @@ public struct PendingPatchesView: View {
     @State private var showGamePicker = false
     @State private var showImporter = false
     @State private var isBusy = false
+    @Default(.showPatchedVersionsAsSeparateItems) private var showPatchedSeparately
 
     public init() {}
 
@@ -37,6 +40,14 @@ public struct PendingPatchesView: View {
                         .font(.footnote)
                         .foregroundStyle(.secondary)
                 }
+            }
+
+            SwiftUI.Section {
+                Toggle("Show patched versions as separate library items", isOn: $showPatchedSeparately)
+            } header: {
+                Text("Library")
+            } footer: {
+                Text("Off: patched versions are hidden from the library and listed under their game's Patches & Mods menu.")
             }
 
             SwiftUI.Section("ROM Tools") {

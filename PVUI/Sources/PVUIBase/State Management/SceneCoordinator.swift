@@ -109,6 +109,12 @@ public class SceneCoordinator: ObservableObject {
     @Published public var currentScene: Scenes = .main
 
     private init() {
+        // Keep patched versions' library tiles in step with "Show patched versions as separate
+        // library items", from launch on.
+        Task { @MainActor in
+            PatchRepository.shared.startObservingSettings()
+        }
+
         // Observe the EmulationUIState for changes to currentGame
         AppState.shared.$emulationUIState
             .map { $0.currentGame != nil }

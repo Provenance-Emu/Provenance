@@ -996,6 +996,11 @@ public extension Defaults.Keys {
     /// discovery). Off by default — no network calls until the user enables it.
     static let onlinePatchDatabaseEnabled = Key<Bool>("onlinePatchDatabaseEnabled", default: false)
 
+    /// "Show patched versions as separate library items" (the same setting as iCube and iFly).
+    /// On: every patched version is a library item of its own. Off: patched versions are hidden
+    /// from the grid and listed under their base game's "Patches & Mods". On by default.
+    static let showPatchedVersionsAsSeparateItems = Key<Bool>("showPatchedVersionsAsSeparateItems", default: true)
+
     /// Mupen64Plus Transfer Pak slot UI — assign a Game Boy ROM to a
     /// controller port for Pokémon Stadium / Mario Golf integration.
     /// Works on native PVMupen + thin libretro wrapper; ~20-game registry.

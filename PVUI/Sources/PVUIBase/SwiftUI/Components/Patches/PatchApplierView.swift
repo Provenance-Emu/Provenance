@@ -32,7 +32,11 @@ public struct PatchApplierView: View {
     @State private var inspection: PatchInspection?
     @State private var crcValidation: PatchCRCValidation?
     @State private var importToLibrary = true
+    @State private var placement: PatchPlacement = .newLibraryEntry
     @State private var allowCRCMismatch = false
+    /// Set when applying failed because the ROM is not the one the patch was made for. xdelta and
+    /// PPF carry no CRC to pre-check, so this is where they offer "Apply anyway".
+    @State private var sourceMismatchFailed = false
     @State private var statusMessage: String?
     @State private var progressFraction: Double = 0
     @State private var progressStatus = ""
@@ -68,6 +72,11 @@ public struct PatchApplierView: View {
                     if let target = inspection.targetCRC32 {
                         patchMetaRow("Patched CRC", String(format: "0x%08X", target))
                     }
+                    if !inspection.canVerifyIntegrity {
+                        Text("This patch carries no checksum, so it cannot confirm it was made for your ROM.")
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                    }
                 }
             }
 
@@ -76,6 +85,7 @@ public struct PatchApplierView: View {
                     get: { selectedGameMD5 ?? "" },
                     set: { newValue in
                         selectedGameMD5 = newValue.isEmpty ? nil : newValue
+                        sourceMismatchFailed = false
                         if let md5 = selectedGameMD5,
                            let game = games.first(where: { $0.md5Hash == md5 }) {
                             romURL = game.file?.url
@@ -96,19 +106,37 @@ public struct PatchApplierView: View {
 #endif
             }
 
-            if let crcValidation {
+            if crcValidation != nil || sourceMismatchFailed {
                 SwiftUI.Section("Validation") {
-                    Text(crcValidation.userMessage)
-                        .font(.footnote)
-                        .foregroundStyle(crcValidation.isMismatch ? Color.orange : Color.secondary)
-                    if crcValidation.isMismatch {
-                        Toggle("Apply anyway (ignore CRC mismatch)", isOn: $allowCRCMismatch)
+                    if let crcValidation {
+                        Text(crcValidation.userMessage)
+                            .font(.footnote)
+                            .foregroundStyle(crcValidation.isMismatch ? Color.orange : Color.secondary)
+                    }
+                    if sourceMismatchFailed {
+                        Text("The ROM does not match the one this patch was made for.")
+                            .font(.footnote)
+                            .foregroundStyle(Color.orange)
+                    }
+                    if crcValidation?.isMismatch == true || sourceMismatchFailed {
+                        Toggle("Apply anyway (ignore ROM mismatch)", isOn: $allowCRCMismatch)
                     }
                 }
             }
 
             SwiftUI.Section("Output") {
                 Toggle("Import patch into library after apply", isOn: $importToLibrary)
+                if importToLibrary {
+                    Picker("Patched version", selection: $placement) {
+                        Text("New library entry").tag(PatchPlacement.newLibraryEntry)
+                        Text("Replace the original").tag(PatchPlacement.replaceOriginal)
+                    }
+                    Text(placement == .replaceOriginal
+                         ? "Playing the game starts the patched version. The original file is kept; play it from Patches & Mods › Play Original."
+                         : "The patched version is listed under the game's Patches & Mods.")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
                 Text("Patched ROM is written to Documents/PatchedROMs/.")
                     .font(.caption)
                     .foregroundStyle(.secondary)
@@ -167,6 +195,7 @@ public struct PatchApplierView: View {
             allowsMultipleSelection: false
         ) { result in
             guard case .success(let urls) = result, let url = urls.first else { return }
+            sourceMismatchFailed = false
             switch pickerTarget {
             case .patch:
                 patchURL = url
@@ -278,7 +307,8 @@ public struct PatchApplierView: View {
                 romURL: romURL,
                 preferredGame: preferred,
                 importToLibrary: importToLibrary,
-                allowCRCMismatch: allowCRCMismatch
+                allowCRCMismatch: allowCRCMismatch,
+                placement: placement
             ) { progress in
                 Task { @MainActor in
                     progressFraction = progress.fractionCompleted
@@ -288,8 +318,13 @@ public struct PatchApplierView: View {
             lastExportURL = result.exportURL
             crcValidation = result.crcValidation
             inspection = result.inspection
+            sourceMismatchFailed = false
             statusMessage = "Applied → \(result.exportURL.lastPathComponent)"
                 + (result.importedPatch != nil ? " (imported to library)" : "")
+                + (result.checkedAgainstSource ? "" : " — not verified against the ROM")
+        } catch PatchError.sourceROMMismatch {
+            sourceMismatchFailed = true
+            statusMessage = PatchError.sourceROMMismatch.localizedDescription
         } catch {
             statusMessage = error.localizedDescription
         }

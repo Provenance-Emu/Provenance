@@ -143,9 +143,10 @@ final class StreamingApplierTests: XCTestCase {
         return all.filter { $0.hasSuffix(".partial") }
     }
 
+    /// Entry files and entry directories (a failed apply must leave neither).
     private func cacheEntries() -> [String] {
         let all = FileManager.default.enumerator(atPath: cacheDir.path)?.allObjects as? [String] ?? []
-        return all.filter { !$0.hasPrefix(".fingerprints") && $0.contains("/") && !$0.hasSuffix(".partial") }
+        return all.filter { !$0.hasPrefix(".fingerprints") && !$0.hasSuffix(".partial") }
     }
 
     private func makeBPS(source: Data, target: Data) -> Data {
