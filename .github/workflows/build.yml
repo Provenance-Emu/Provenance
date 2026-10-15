@@ -111,6 +111,17 @@ jobs:
     # the wall. 180 keeps a real buffer without masking a genuine hang.
     timeout-minutes: 180
     steps:
+      # First step, before checkout: the workflow-level DEVELOPER_DIR is set for every
+      # step, and a missing Xcode breaks the /usr/bin/git shim used by checkout.
+      - name: Verify Xcode (self-hosted)
+        if: ${{ runner.environment != 'github-hosted' }}
+        run: |
+          if [ ! -d "$DEVELOPER_DIR" ]; then
+            echo "::error::DEVELOPER_DIR ($DEVELOPER_DIR) not found on this runner - install Xcode ${XCODE_VERSION} there"
+            exit 1
+          fi
+          xcodebuild -version
+
       - name: Checkout code
         uses: actions/checkout@v4
         with:
@@ -191,21 +202,12 @@ jobs:
 
       # setup-xcode runs `sudo xcode-select -s`, which the self-hosted runner user
       # cannot do. On self-hosted the workflow-level DEVELOPER_DIR already selects
-      # Xcode 26.3, so just verify it is installed there.
+      # Xcode 26.3 (verified in the first step of this job).
       - name: Setup Xcode
         if: ${{ runner.environment == 'github-hosted' }}
         uses: maxim-lobanov/setup-xcode@v1.6.0
         with:
           xcode-version: ${{ env.XCODE_VERSION }}
-
-      - name: Verify Xcode (self-hosted)
-        if: ${{ runner.environment != 'github-hosted' }}
-        run: |
-          if [ ! -d "$DEVELOPER_DIR" ]; then
-            echo "::error::DEVELOPER_DIR ($DEVELOPER_DIR) not found on this runner - install Xcode ${XCODE_VERSION} there"
-            exit 1
-          fi
-          xcodebuild -version
 
       - name: Set Build Number
         run: |
