@@ -446,6 +446,7 @@
 					<string>rom</string>
 					<string>rvz</string>
 					<string>toc</string>
+					<string>raw</string>
 				</array>
 				<key>public.mime-type</key>
 				<array>

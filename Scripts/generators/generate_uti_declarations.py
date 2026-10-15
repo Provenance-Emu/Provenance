@@ -141,6 +141,7 @@ STANDARD_ARCHIVE_UTIS = {
 BASE_ROM_EXTENSIONS = [
     "rom", "ROM",
     "bin",
+    "raw",  # GDI track data (Dreamcast): a .gdi set shared with .raw tracks must keep Provenance in the share sheet
     "cue", "toc", "ccd",
     "chd",
     "m3u", "m3u8",
@@ -253,14 +254,17 @@ def generate_declarations(systems_plist: Path = SYSTEMS_PLIST):
     for exts in system_ext_map.values():
         all_system_exts.update(exts)
 
-    # Remove duplicates and sort (case-insensitive)
+    # Remove duplicates and sort (case-insensitive). The tie-break keeps the
+    # lowercase spelling when both cases exist ("rom" over "ROM"): sorting a set
+    # by x.lower() alone left the winner to hash order, so a run could top up the
+    # plists with "ROM" and the next --check would pass or fail by chance.
     seen = set()
     base_exts_final = []
     for e in sorted(set(BASE_ROM_EXTENSIONS) | (all_system_exts - system_claimed_exts
                                                   - set(STANDARD_ARCHIVE_UTIS.keys())
                                                   - {"zip", "rar", "7z", "iso"}
                                                   - GENERIC_EXTENSIONS_NOT_CLAIMED),
-                    key=lambda x: x.lower()):
+                    key=lambda x: (x.lower(), x != x.lower())):
         if e.lower() not in seen:
             seen.add(e.lower())
             base_exts_final.append(e)
