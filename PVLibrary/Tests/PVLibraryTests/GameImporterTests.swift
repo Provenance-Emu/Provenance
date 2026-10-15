@@ -113,7 +113,45 @@ class GameImporterTests: XCTestCase {
         
         XCTAssertTrue(gameImporter.importQueueContainsDuplicate(queue, ofItem: item2), "Duplicate should be detected by URL")
     }
-    
+
+    /// Two GDI games in their own folders both carry `track01.bin`: neither track is a duplicate of the other.
+    func testImportQueueContainsDuplicate_sameNameInAnotherFolderIsNotADuplicate() {
+        let first = ImportQueueItem(url: URL(fileURLWithPath: "/Imports/Crazy Taxi/track01.bin"))
+        let second = ImportQueueItem(url: URL(fileURLWithPath: "/Imports/Jet Set Radio/track01.bin"))
+
+        XCTAssertFalse(gameImporter.importQueueContainsDuplicate([first], ofItem: second))
+    }
+
+    func testImportQueueContainsDuplicate_sameNameInAnotherSetsChildrenIsNotADuplicate() {
+        let gdi = ImportQueueItem(url: URL(fileURLWithPath: "/Imports/Crazy Taxi/disc.gdi"))
+        gdi.childQueueItems.append(ImportQueueItem(url: URL(fileURLWithPath: "/Imports/Crazy Taxi/track01.bin")))
+        let otherTrack = ImportQueueItem(url: URL(fileURLWithPath: "/Imports/Jet Set Radio/track01.bin"))
+        let otherIndex = ImportQueueItem(url: URL(fileURLWithPath: "/Imports/Jet Set Radio/disc.gdi"))
+
+        XCTAssertFalse(gameImporter.importQueueContainsDuplicate([gdi], ofItem: otherTrack))
+        XCTAssertFalse(gameImporter.importQueueContainsDuplicate([gdi], ofItem: otherIndex))
+        XCTAssertTrue(gameImporter.importQueueContainsDuplicate(
+            [gdi], ofItem: ImportQueueItem(url: URL(fileURLWithPath: "/Imports/Crazy Taxi/track01.bin"))))
+    }
+
+    func testImportQueueContainsDuplicate_sameFolderMatchesCaseInsensitively() {
+        let first = ImportQueueItem(url: URL(fileURLWithPath: "/Imports/Game/Track01.BIN"))
+        let second = ImportQueueItem(url: URL(fileURLWithPath: "/Imports/Game/track01.bin"))
+
+        XCTAssertTrue(gameImporter.importQueueContainsDuplicate([first], ofItem: second))
+    }
+
+    /// A rescan that finds the file an item was already moved to is that item.
+    func testImportQueueContainsDuplicate_matchesWhereTheItemWasMoved() {
+        let queued = ImportQueueItem(url: URL(fileURLWithPath: "/Imports/disc.gdi"))
+        queued.destinationUrl = URL(fileURLWithPath: "/ROMs/com.provenance.dreamcast/disc/disc.gdi")
+        let rescanned = ImportQueueItem(url: URL(fileURLWithPath: "/ROMs/com.provenance.dreamcast/disc/disc.gdi"))
+        let otherSet = ImportQueueItem(url: URL(fileURLWithPath: "/ROMs/com.provenance.dreamcast/disc-1A2B3C4D/disc.gdi"))
+
+        XCTAssertTrue(gameImporter.importQueueContainsDuplicate([queued], ofItem: rescanned))
+        XCTAssertFalse(gameImporter.importQueueContainsDuplicate([queued], ofItem: otherSet))
+    }
+
     func testAddImportsThreadSafety() async {
         // Define paths to test
         let paths = [

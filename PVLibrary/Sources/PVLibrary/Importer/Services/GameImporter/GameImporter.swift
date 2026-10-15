@@ -3553,35 +3553,49 @@ public final class GameImporter: GameImporting, ObservableObject {
     }
 
     /// Checks the queue and all child elements in the queue to see if this file exists.  if it does, return true, else return false.
-    /// Duplicates are considered if the filename, id, or md5 matches
+    /// Duplicates are the same item (id), the same file (`isSameSourceFile`: name in the same folder),
+    /// or, for top-level items, the same content MD5. Two sets in different folders whose tracks share
+    /// a name (two GDI games with `track01.bin`) are not duplicates of each other.
     public func importQueueContainsDuplicate(_ queue: [ImportQueueItem], ofItem queueItem: ImportQueueItem) -> Bool {
-        let duplicate = queue.contains { existing in
+        queueContainsDuplicate(queue, ofItem: queueItem, comparingContent: true)
+    }
+
+    /// `comparingContent` is false below the top level: a set's members belong to that set, and a
+    /// byte-identical track in another set's folder (GD-ROM track 1 is often shared) is still needed there.
+    private func queueContainsDuplicate(_ queue: [ImportQueueItem], ofItem queueItem: ImportQueueItem, comparingContent: Bool) -> Bool {
+        queue.contains { existing in
             guard existing.status.blocksDuplicateProcessing else {
                 return false
             }
 
-            if (existing.url.lastPathComponent.lowercased() == queueItem.url.lastPathComponent.lowercased()
-                || existing.id == queueItem.id)
-            {
+            if existing.id == queueItem.id || Self.isSameSourceFile(existing, queueItem) {
                 return true
             }
 
-            if let eMd5 = existing.cachedContentMD5?.uppercased(),
+            if comparingContent,
+               let eMd5 = existing.cachedContentMD5?.uppercased(),
                let newMd5 = queueItem.cachedContentMD5?.uppercased(),
-               eMd5 == newMd5
-            {
+               eMd5 == newMd5 {
                 return true
             }
 
-            if (!existing.childQueueItems.isEmpty) {
-                //check the child queue items for duplicates
-                return self.importQueueContainsDuplicate(existing.childQueueItems, ofItem: queueItem)
+            if !existing.childQueueItems.isEmpty {
+                // check the child queue items for duplicates
+                return queueContainsDuplicate(existing.childQueueItems, ofItem: queueItem, comparingContent: false)
             }
-            // DLOG("Duplicate Queue Item not detected for \(existing.url.lastPathComponent.lowercased()) - compared with \(queueItem.url.lastPathComponent.lowercased())")
             return false
         }
+    }
 
-        return duplicate
+    /// Whether `incoming` is the file `existing` was queued from, or has been moved to: the same
+    /// name (case-insensitively, as APFS compares) in the same folder.
+    static func isSameSourceFile(_ existing: ImportQueueItem, _ incoming: ImportQueueItem) -> Bool {
+        [existing.url, existing.destinationUrl].compactMap { $0 }.contains { isSameFile($0, incoming.url) }
+    }
+
+    static func isSameFile(_ lhs: URL, _ rhs: URL) -> Bool {
+        lhs.lastPathComponent.caseInsensitiveCompare(rhs.lastPathComponent) == .orderedSame
+            && lhs.deletingLastPathComponent().standardizedFileURL.path == rhs.deletingLastPathComponent().standardizedFileURL.path
     }
 
     /// Batch checks multiple items for existing games in database (more efficient than individual checks)
@@ -3815,7 +3829,7 @@ public final class GameImporter: GameImporting, ObservableObject {
 
                 // Recursively check child items
                 if !existing.childQueueItems.isEmpty {
-                    return self.importQueueContainsDuplicate(existing.childQueueItems, ofItem: newItem)
+                    return self.queueContainsDuplicate(existing.childQueueItems, ofItem: newItem, comparingContent: false)
                 }
 
                 return false
@@ -3851,7 +3865,7 @@ public final class GameImporter: GameImporting, ObservableObject {
 
                 // Recursively check child items
                 if !existing.childQueueItems.isEmpty {
-                    return self.importQueueContainsDuplicate(existing.childQueueItems, ofItem: newItem)
+                    return self.queueContainsDuplicate(existing.childQueueItems, ofItem: newItem, comparingContent: false)
                 }
 
                 return false
