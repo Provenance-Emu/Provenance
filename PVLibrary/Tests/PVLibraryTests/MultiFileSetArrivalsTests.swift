@@ -191,6 +191,47 @@ struct MultiFileSetArrivalsTests {
         #expect(arrivals.heldCount == 0)
     }
 
+    @Test func onlyAFolderNamedAfterItsIndexIsASetFolder() throws {
+        let library = try Library()
+        defer { library.remove() }
+        // A set folder whose index is still downloading: its track is held for it.
+        let track = try library.download("Crazy Taxi/track01.bin")
+        let pendingIndex: Set<URL> = [library.url("Crazy Taxi/Crazy Taxi.gdi")]
+        #expect(MultiFileSetArrivals.isInSetFolder(track, pending: pendingIndex))
+        #expect(MultiFileSetArrivals.isInSetFolder(library.url("Crazy Taxi/Crazy Taxi.gdi"), pending: []))
+        #expect(MultiFileSetArrivals.isInSetFolder(library.url("disc-1A2B3C4D/disc.gdi"), pending: []))
+        var arrivals = MultiFileSetArrivals()
+        #expect(arrivals.arrived(track, pending: pendingIndex).isEmpty)
+        #expect(arrivals.heldCount == 1)
+
+        // A NAOMI GD-ROM folder beside its zip, a DOS game folder: not set folders.
+        let chd = try library.download("ikaruga/gdl-0010.chd")
+        #expect(!MultiFileSetArrivals.isInSetFolder(chd, pending: []))
+        let dosLibrary = try Library(system: "com.provenance.dos")
+        defer { dosLibrary.remove() }
+        try dosLibrary.download("DOOM/install.cue", "FILE \"doom.bin\" BINARY\n  TRACK 01 MODE1/2048\n")
+        let exe = try dosLibrary.download("DOOM/doom.exe")
+        #expect(!MultiFileSetArrivals.isInSetFolder(exe, pending: []))
+        // A flat file is not in a set folder.
+        #expect(!MultiFileSetArrivals.isInSetFolder(library.url("Crazy Taxi.chd"), pending: []))
+    }
+
+    @Test func tracksHeldForAGameAlreadyInTheLibraryAreDiscarded() throws {
+        let library = try Library()
+        defer { library.remove() }
+        var arrivals = MultiFileSetArrivals()
+        let pendingIndex: Set<URL> = [library.url("disc/disc.gdi")]
+        for track in Self.gdiTracks {
+            #expect(arrivals.arrived(try library.download("disc/\(track)"), pending: pendingIndex).isEmpty)
+        }
+        let gdi = try library.download("disc/disc.gdi", Self.gdiText)
+
+        // The syncer found disc.gdi's game in the library and skipped it.
+        arrivals.discardMembers(ofIndexAt: gdi)
+        #expect(arrivals.heldCount == 0)
+        #expect(arrivals.flush().isEmpty)
+    }
+
     @Test func queueHandsSingleFilesBackAndKeepsSetsForLater() async throws {
         let library = try Library(system: "com.provenance.psx")
         defer { library.remove() }

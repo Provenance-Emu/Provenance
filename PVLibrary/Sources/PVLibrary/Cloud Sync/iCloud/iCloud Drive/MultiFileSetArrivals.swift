@@ -11,10 +11,13 @@
 //    all downloaded is released with them (and a cue's .sbi), so a set imports as
 //    soon as its last file lands, whichever file that is.
 //  - A file that may belong to a set is held: one in a set folder
-//    (`ROMs/<system>/<set>/`), in a folder with an index still downloading or held,
-//    listed by an index already on disk, or with a disc-track extension.
-//    Anything else is released alone at once.
-//  - A file listed by an index whose game is already in the library is dropped.
+//    (`ROMs/<system>/<set>/`, `isInSetFolder`), in a folder with an index still
+//    downloading or held, listed by an index already on disk, or with a disc-track
+//    extension. Anything else is released alone at once.
+//  - A file listed by an index whose game is already in the library is dropped, and
+//    so are held files of such an index (`discardMembers(ofIndexAt:)`).
+//  - Other folders under a system folder (a DOS game, an unpacked MAME set, a NAOMI
+//    GD-ROM folder) are not set folders; the syncer ignores them as it always did.
 //  - `flush()` releases everything still held, for when no download is pending
 //    (a lone .bin game, a set missing a file).
 //
@@ -64,7 +67,7 @@ public struct MultiFileSetArrivals {
             let mayBelongToASet = !listing.isEmpty
                 || held[key, default: []].contains(where: Self.isIndex)
                 || pending.contains { Self.isIndex($0) && Self.key(of: $0.deletingLastPathComponent()) == key }
-                || MultiFileSetFolder.romLocation(of: file)?.setFolder != nil
+                || Self.isInSetFolder(file, pending: pending, fileManager: fileManager)
                 || Self.trackExtensions.contains(file.pathExtension.lowercased())
             guard mayBelongToASet else { return [[file]] }
         }
@@ -72,6 +75,28 @@ public struct MultiFileSetArrivals {
             held[key, default: []].append(file)
         }
         return regroup(folder, fileManager: fileManager)
+    }
+
+    /// Drops held files that `index` lists, when its game is already in the library.
+    public mutating func discardMembers(ofIndexAt index: URL) {
+        let key = Self.key(of: index.deletingLastPathComponent())
+        guard let files = held[key] else { return }
+        let members = MultiFileSetPlacement.members(ofIndexAt: index, among: files) + [index]
+        let remaining = files.filter { file in !members.contains { Self.isSameFile($0, file) } }
+        held[key] = remaining.isEmpty ? nil : remaining
+    }
+
+    /// Whether `file` sits in a disc set's own folder: one level below a system folder, in a folder
+    /// named after an index file there (downloaded, still pending, or `file` itself). A DOS game,
+    /// unpacked MAME or NAOMI GD-ROM folder is not one.
+    public static func isInSetFolder(_ file: URL, pending: Set<URL>, fileManager: FileManager = .default) -> Bool {
+        guard let folderName = MultiFileSetFolder.romLocation(of: file)?.setFolder else { return false }
+        let folder = file.deletingLastPathComponent()
+        let folderKey = key(of: folder)
+        let candidates = [file]
+            + pending.filter { key(of: $0.deletingLastPathComponent()) == folderKey }
+            + MultiFileSetPlacement.outermostIndexFiles(in: folder, fileManager: fileManager)
+        return candidates.contains { MultiFileSetFolder.isSetFolder(named: folderName, forIndexFile: $0.lastPathComponent) }
     }
 
     /// Everything still held, one batch per folder, index files first.
@@ -118,11 +143,12 @@ public struct MultiFileSetArrivals {
 
     // MARK: Helpers
 
-    private static func isIndex(_ url: URL) -> Bool {
+    static func isIndex(_ url: URL) -> Bool {
         MultiFileIndexKind(fileName: url.lastPathComponent) != nil
     }
 
-    private static func lists(_ index: URL, _ file: URL) -> Bool {
+    /// Whether `index` lists `file` (directly, or through a disc it lists).
+    static func lists(_ index: URL, _ file: URL) -> Bool {
         MultiFileSetPlacement.referencedNames(ofIndexAt: index).contains {
             ($0.replacingOccurrences(of: "\\", with: "/") as NSString).lastPathComponent
                 .caseInsensitiveCompare(file.lastPathComponent) == .orderedSame
@@ -147,6 +173,11 @@ actor MultiFileSetArrivalQueue {
     /// Records a downloaded file and returns the single files released by it; sets wait in `nextSet()`.
     func arrived(_ file: URL, pending: Set<URL>, importedIndexes: Set<URL>) -> [URL] {
         enqueue(arrivals.arrived(file, pending: pending, importedIndexes: importedIndexes))
+    }
+
+    /// Drops held files of a set whose game is already in the library.
+    func discardMembers(ofIndexAt index: URL) {
+        arrivals.discardMembers(ofIndexAt: index)
     }
 
     /// Releases everything held (no download is pending) and returns the single files among it.
