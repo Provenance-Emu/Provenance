@@ -55,6 +55,19 @@ final class AdvertExtensionTests: XCTestCase {
         let peers = DiscoveredPeer.deduplicated([legacy, other, shared])
         XCTAssertEqual(peers.map(\.app), [.iCube, .pvLibrary])
         XCTAssertEqual(peers.last?.appDisplayName, "Provenance")
+        XCTAssertTrue(shared.isOwnAdvert(peerId: "same"))
+    }
+
+    /// With a team-shared identity, iFly and iCube on one device share a pid:
+    /// they stay two rows, and neither counts as Provenance's own advert.
+    func testSharedIdentityAcrossAppsKeepsBothRows() throws {
+        let iFly = try XCTUnwrap(DiscoveredPeer.make(serviceType: "_ifly-continuity._tcp", serviceName: "iFly iPad",
+                                                     txt: ["v": "1", "sid": "a", "lib": "1", "pid": "team", "u0": "http://10.0.0.2", "app": "ifly"]))
+        let iCube = try XCTUnwrap(DiscoveredPeer.make(serviceType: "_icube-continuity._tcp", serviceName: "iCube iPad",
+                                                      txt: ["v": "1", "sid": "b", "lib": "1", "pid": "team", "u0": "http://10.0.0.2"]))
+        XCTAssertEqual(DiscoveredPeer.deduplicated([iFly, iCube]).count, 2)
+        XCTAssertFalse(iFly.isOwnAdvert(peerId: "team"))
+        XCTAssertFalse(iCube.isOwnAdvert(peerId: "team"))
     }
 }
 

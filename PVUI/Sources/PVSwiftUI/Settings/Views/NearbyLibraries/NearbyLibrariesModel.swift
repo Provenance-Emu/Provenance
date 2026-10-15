@@ -115,7 +115,7 @@ final class NearbyLibrariesModel {
     /// plays, never this device itself.
     var visiblePeers: [DiscoveredPeer] {
         snapshot.peers.filter { peer in
-            peer.advertisement.peerId != ownPeerId
+            !peer.isOwnAdvert(peerId: ownPeerId)
                 && !SystemMap.systems(servedBy: peer.app).isDisjoint(with: playableSystems)
                 // v1.1 `sys`: hide a peer that says it has nothing this device plays.
                 && peer.advertisement.mayServe(playableSystems)

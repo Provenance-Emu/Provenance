@@ -150,15 +150,19 @@ public struct DiscoveredPeer: Sendable, Equatable, Identifiable {
         return DiscoveredPeer(app: app, serviceName: serviceName, advertisement: advertisement)
     }
 
-    /// One entry per device, sorted by app then name. A device that
-    /// advertises several types with the same `pid` (Provenance publishes
-    /// `_pvlibrary._tcp` beside the legacy types) is listed once, preferring
-    /// `_pvlibrary._tcp`, which serves every system it shares.
+    /// One entry per device and app, sorted by app then name. A device that
+    /// advertises several types with the same `pid` and `app` (Provenance
+    /// publishes `_pvlibrary._tcp` beside the legacy types, all `app=provenance`)
+    /// is listed once, preferring `_pvlibrary._tcp`, which serves every system
+    /// it shares.
     public static func deduplicated(_ peers: [DiscoveredPeer]) -> [DiscoveredPeer] {
         var byDevice: [String: DiscoveredPeer] = [:]
         var order: [String] = []
         for peer in peers {
-            let device = peer.advertisement.peerId.map { "pid:\($0)" } ?? peer.id
+            // Keyed by app too: with a team-shared identity (spec open question 5)
+            // iFly and iCube on one device share a pid but are different libraries.
+            let appKey = peer.advertisement.appName?.lowercased() ?? peer.app.rawValue
+            let device = peer.advertisement.peerId.map { "\(appKey):\($0)" } ?? peer.id
             if let existing = byDevice[device] {
                 if existing.app != .pvLibrary && peer.app == .pvLibrary { byDevice[device] = peer }
             } else {
@@ -173,6 +177,12 @@ public struct DiscoveredPeer: Sendable, Equatable, Identifiable {
                     ? lhs.id < rhs.id
                     : lhs.serviceName.localizedCaseInsensitiveCompare(rhs.serviceName) == .orderedAscending
             }
+    }
+
+    /// True for this Provenance's own adverts (`app=provenance` and our `pid`).
+    public func isOwnAdvert(peerId: String?) -> Bool {
+        guard let peerId else { return false }
+        return advertisement.peerId == peerId && advertisement.appName?.lowercased() == "provenance"
     }
 
     /// The app behind the advert, from v1.1 `app` when present.

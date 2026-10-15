@@ -115,17 +115,22 @@ private struct AddContentServerView: View {
     @State private var username = ""
     @State private var password = ""
 
+    /// `ecs serve` listens on plain HTTP, port 8473, unless TLS is terminated in front of it.
+    static let defaultPort = 8473
+
     private var url: URL? {
         let trimmed = address.trimmingCharacters(in: .whitespaces)
-        let withScheme = trimmed.contains("://") ? trimmed : "https://" + trimmed
-        guard let url = URL(string: withScheme), url.host != nil, ["http", "https"].contains(url.scheme ?? "") else { return nil }
-        return url
+        let withScheme = trimmed.contains("://") ? trimmed : "http://" + trimmed
+        guard var components = URLComponents(string: withScheme), components.host?.isEmpty == false,
+              ["http", "https"].contains(components.scheme ?? "") else { return nil }
+        if components.port == nil, components.scheme == "http" { components.port = Self.defaultPort }
+        return components.url
     }
 
     var body: some View {
         NavigationStack {
             Form {
-                TextField("Address (https://server:8443)", text: $address)
+                TextField("Address (192.168.1.10:8473)", text: $address)
                     #if os(iOS)
                     .keyboardType(.URL)
                     .textInputAutocapitalization(.never)
