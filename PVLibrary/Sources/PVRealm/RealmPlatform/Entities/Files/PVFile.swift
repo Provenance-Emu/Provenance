@@ -378,6 +378,14 @@ public extension PVFile {
         }
     }
 
+    /// Forgets the cached MD5 and size after the file's bytes changed in place. Call inside a write
+    /// transaction; both are recomputed from disk on next use.
+    public func invalidateContentCaches() {
+        md5Cache = nil
+        sizeCache = 0
+        lastSizeCheck = nil
+    }
+
     private func setURL(_ url: URL) {
         do {
             let newPath = relativeRoot.createRelativePath(fromURL: url)
