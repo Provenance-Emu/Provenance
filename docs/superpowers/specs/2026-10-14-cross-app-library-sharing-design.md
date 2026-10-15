@@ -1,6 +1,6 @@
 # Cross-app library sharing (Provenance ⇄ iFly, Provenance ⇄ iCube, content server)
 
-Date: 2026-10-14. Status: phase 1 shipped; phases 2 and 3 built 2026-10-15 (see "Phase 2 as built", "Phase 3 as built").
+Date: 2026-10-14. Status: phase 1 shipped; phases 2–4 built 2026-10-15 (see the "as built" sections at the end).
 
 ## Goal
 
@@ -366,3 +366,61 @@ Proposed additive ECS changes:
 - [ ] Apple TV as the host: same checks with the remote. Prompts appear over any screen.
 - [ ] A network that hands out global IPv6: a peer reaching the host over IPv6 is accepted. A peer through a VPN or a routed subnet is refused (watch for "refused" in the log).
 - [ ] Provenance ⇄ Provenance over the legacy dialects: device A's Nearby Libraries lists device B under the iFly and iCube types, and copies work.
+
+## Phase 4 as built (2026-10-15)
+
+- **The v1.1 plan went to the iFly and iCube sessions before it landed.** It is in the shared notes folder as `library-sharing-v1.1-plan.md` together with the `pvlibrary-*.json` fixtures. Both sessions reported no conflicts, plus these constraints, which Provenance follows:
+  - Keep `v` and `sid` in every advert. iFly and iCube drop a record without them.
+  - Never start a new key with `u` followed by a digit.
+  - Leave the per-game keys off library adverts.
+  - Keep catalogue and manifest `version` at exactly 1 on the legacy types.
+  - Name the advert "Provenance on <device>".
+  - Keep publishing `_ifly-continuity._tcp`, because iFly can't browse `_pvlibrary._tcp` until it adopts v1.1.
+  
+  Adoption on their side is left to the owner's schedule.
+- **TXT** (`LibraryAdvertTXT`):
+  - Every advert adds `app=provenance` and `lx=1`.
+  - `sys`, `sys1`… hold the compact ids, sorted, at most 240 bytes per key. An empty value means nothing shared; `*` means unspecified. `.Unknown` is never listed.
+  - `cv` is optional and not sent yet.
+  - The legacy adverts list only their own systems; `_pvlibrary` lists every shared system.
+  - `PeerAdvertisement` decodes all of these. `mayServe(_:)` hides a peer whose `sys` misses every playable system, and a legacy advert with no `sys` is always shown.
+- **Discovery:**
+  - `PeerBrowser` also browses `_pvlibrary._tcp`.
+  - `DiscoveredPeer.deduplicated` keeps one row per `pid` and prefers `_pvlibrary`.
+  - Nearby Libraries hides the device's own adverts by comparing `pid` with its identity.
+- **`_pvlibrary._tcp` server** (`PVLibraryDialectServer`), always published while sharing is on:
+  - Consent auth through `ConsentGate` with `pvlibrary-auth-v1|`.
+  - Code pairing through `PairingGate`, shared with the iCube dialect, with `pvlibrary-pair-v1|`. A right code answers 200 `{"paired":true}` and grants "Ask per game", so the next browse needs no prompt.
+  - The catalogue uses iCube's shape: `version` 1, dotted `platform` and `systemIdentifier`, and an optional `serial`. It carries an `ETag` and supports 304.
+  - Manifest paths are `<file>`, or `<primary stem>/<path>` for a set, with the primary first. "Ask per game" runs on the manifest route (202, then 403 on a refusal), and the file route serves only granted keys.
+- **Filter and paging** (`CatalogueQuery`):
+  - `?systemIdentifier=` takes dotted or compact ids.
+  - `?limit=` (capped at 500) and `cursor` are opt-in. The cursor is `<first 8 of the version hash>.<offset>`. A cursor from a changed catalogue gets 410, and the client starts over once.
+  - The legacy iFly and iCube catalogue routes accept the same query items. Old clients send none and get the unpaged list.
+- **Client** (`PVLibrarySource`):
+  - Asks for the playable systems, 200 per page, and filters locally too.
+  - Caches the whole list under the first page's `ETag`.
+  - Polls the manifest through 202.
+- **Hosting:**
+  - A third listener runs on the next free port.
+  - Adverts are republished only when their `sys` set changes.
+  - The URL candidates end with `<host>.local` (`ProcessInfo.hostName`), which is the one that works on router-less peer-to-peer Wi-Fi.
+  - `RealmSharedLibrary` now reads every non-excluded system, caches the read for 30 s, and the systems list in settings shows the systems in the library.
+- **Info.plists:** all ten list `_pvlibrary._tcp` and `_pvcontent._tcp` (phase 5), and `NSLocalNetworkUsageDescription` mentions copying and sharing.
+- **Back-compat matrix** (tests):
+  - Old iFly client against a v1.1 Provenance: unpaged, unfiltered.
+  - Old iCube client: unchanged auth, and `version` 1.
+  - v1.1 client against a server that ignores the filter and `limit`: filtered locally.
+  - Legacy advert with no `sys`: shown.
+  - Catalogue `version` 2 is rejected.
+  - An iFly-domain signature fails on `_pvlibrary`.
+
+### Phase 4 device checklist
+
+- [ ] Two Provenance devices, both sharing: each lists the other once (not three times), labelled Provenance, and neither lists itself.
+- [ ] Browse a large library (seed thousands of games): the log shows `limit=200` pages. The list completes, and a second open is a single 304.
+- [ ] Copy a GDI set and a `.chd` from A to B, and a GameCube ISO from B to A. Each lands under the right system and boots.
+- [ ] Turn a system off in Share This Library on A: within one browse, B no longer lists those games. The `_ifly-continuity._tcp` advert disappears once no Dreamcast-family system is shared.
+- [ ] Unmodified iFly and iCube against the same v1.1 Provenance still browse and copy (phase 3 checklist), and they don't show the `_pvlibrary` advert.
+- [ ] Router-less: two iPhones, Wi-Fi on but not joined to a network. Peer-to-peer browse finds the other device, and the copy uses the `.local` URL.
+- [ ] Change the library while B is paging (import on A mid-browse): B restarts and shows the full, new list.
