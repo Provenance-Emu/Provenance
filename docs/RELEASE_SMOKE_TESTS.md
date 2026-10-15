@@ -328,6 +328,9 @@ before it (or seed the files below by hand, then relaunch).
       nothing is re-uploaded or duplicated in the library after updating.
 - [ ] RetroAchievements: a cue/bin (PSX) and a GDI (Dreamcast) set game imported
       with this build is still identified (achievements list loads).
+- [ ] A redump PSX, Saturn or Sega CD cue/bin set (unmodified `.cue`) imported
+      with this build gets its OpenVGDB title, region and box art, the same as
+      before the data-track id.
 - [ ] CloudKit: a cue or GDI set imported with this build uploads, and downloads
       and boots on a second device.
 - [ ] Rescan (Settings › Library › Scan ROM Directories) with a set folder whose

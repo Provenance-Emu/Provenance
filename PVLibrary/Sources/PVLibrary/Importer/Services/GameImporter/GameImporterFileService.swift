@@ -274,6 +274,13 @@ class GameImporterFileService : GameImporterFileServicing {
             throw GameImporterError.systemNotDetermined
         }
 
+        // Hash a cue, gdi or m3u as it arrived, before `cleanCueFile` can rewrite it or the move
+        // leaves `url` stale: OpenVGDB keys CD games by the untouched redump cue, and games imported
+        // before `MultiFileSetIdentity` by this MD5. A few hundred bytes, so cheap.
+        if queueItem.isMultiFileIndex {
+            _ = await queueItem.md5Async()
+        }
+
         let destinationFolder = targetSystem.romsDirectory
 
         // Check if the file is already in the correct system directory

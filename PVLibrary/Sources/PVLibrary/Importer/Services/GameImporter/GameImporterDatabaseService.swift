@@ -320,7 +320,7 @@ class GameImporterDatabaseService : GameImporterDatabaseServicing {
 
         DLOG("About to call finishUpdateOrImport for game: \(partialPath)")
         let finishStartTime = Date()
-        try await finishUpdateOrImport(ofGame: game)
+        try await finishUpdateOrImport(ofGame: game, indexFileMD5: Self.indexFileMD5ForLookup(of: queueItem))
         let finishDuration = Date().timeIntervalSince(finishStartTime)
         DLOG("Completed finishUpdateOrImport for game: \(partialPath) in \(String(format: "%.2f", finishDuration))s")
 
@@ -435,8 +435,9 @@ class GameImporterDatabaseService : GameImporterDatabaseServicing {
         }
     }
 
-    /// Finishes the update or import of a game
-    internal func finishUpdateOrImport(ofGame game: PVGame) async throws {
+    /// Finishes the update or import of a game. `indexFileMD5` is an extra metadata key for a
+    /// game imported from a cue, gdi or m3u (see `metadataLookupMD5s`); it is never stored.
+    internal func finishUpdateOrImport(ofGame game: PVGame, indexFileMD5: String? = nil) async throws {
         DLOG("finishUpdateOrImport: Starting for game: \(game.romPath)")
 
         // Only process if rom doesn't exist in DB
@@ -466,7 +467,8 @@ class GameImporterDatabaseService : GameImporterDatabaseServicing {
 
                     // Step 2: Do async metadata lookup
                     let tempService = GameImporterDatabaseService(lookup: lookupService, gameImporterFileService: GameImporterFileService())
-                    let updatedGame = try await tempService.getUpdatedGameInfo(for: frozenGame, forceRefresh: true)
+                    let updatedGame = try await tempService.getUpdatedGameInfo(
+                        for: frozenGame, forceRefresh: true, indexFileMD5: indexFileMD5)
 
                     var finalGame = updatedGame
                     if !updatedGame.originalArtworkURL.isEmpty && updatedGame.originalArtworkFile == nil {
@@ -777,6 +779,13 @@ class GameImporterDatabaseService : GameImporterDatabaseServicing {
 
     @discardableResult
     func getUpdatedGameInfo(for game: PVGame, forceRefresh: Bool = true) async throws -> PVGame {
+        try await getUpdatedGameInfo(for: game, forceRefresh: forceRefresh, indexFileMD5: nil)
+    }
+
+    /// Looks the game up by its md5Hash, then by `indexFileMD5` (a set's index file, see
+    /// `metadataLookupMD5s`), then by file name.
+    @discardableResult
+    func getUpdatedGameInfo(for game: PVGame, forceRefresh: Bool, indexFileMD5: String?) async throws -> PVGame {
         if forceRefresh {
             // An explicit refresh searches again even if every artwork source failed earlier this launch.
             await ArtworkDeadURLCache.shared.forgetExhausted(gameKey: game.md5Hash.uppercased())
@@ -784,25 +793,20 @@ class GameImporterDatabaseService : GameImporterDatabaseServicing {
         do {
             var resultsMaybe: [ROMMetadata]?
 
-            // Try MD5 lookup
-            resultsMaybe = try? await lookup.searchDatabase(usingMD5: game.md5Hash, systemID: nil)
+            // Try MD5 lookup: the game's identity, then a set's index file
+            for md5 in Self.metadataLookupMD5s(identity: game.md5Hash, indexFileMD5: indexFileMD5)
+            where (resultsMaybe ?? []).isEmpty {
+                resultsMaybe = try? await lookup.searchDatabase(usingMD5: md5, systemID: nil)
+            }
 
             // Try filename lookup if MD5 failed
             if (resultsMaybe ?? []).isEmpty {
                 let fileName = game.file?.url?.lastPathComponent ?? game.title
-                // Remove any extraneous stuff in the rom name
-                let nonCharRange: NSRange = (fileName as NSString).rangeOfCharacter(from: _GameImporterDatabaseServiceCharset)
-                var gameTitleLen: Int
-                if nonCharRange.length > 0, nonCharRange.location > 1 {
-                    gameTitleLen = nonCharRange.location - 1
-                } else {
-                    gameTitleLen = fileName.count
-                }
-                let subfileName = String(fileName.prefix(gameTitleLen))
-
                 // Convert system identifier to database ID
                 let system = SystemIdentifier(rawValue: game.systemIdentifier)
-                resultsMaybe = try? await lookup.searchDatabase(usingFilename: subfileName, systemID: system)
+                for name in Self.filenameLookupKeys(forFileName: fileName) where (resultsMaybe ?? []).isEmpty {
+                    resultsMaybe = try? await lookup.searchDatabase(usingFilename: name, systemID: system)
+                }
             }
 
             // If no results found, just return the original game
@@ -1231,6 +1235,40 @@ class GameImporterDatabaseService : GameImporterDatabaseServicing {
         } catch {
             WLOG("Serial lookup: error for '\(serialResult.serial)': \(error)")
         }
+    }
+}
+
+// MARK: - Metadata lookup keys
+
+extension GameImporterDatabaseService {
+
+    /// The raw MD5 of a queue item's cue, gdi or m3u, as hashed before `cleanCueFile` could rewrite it
+    /// (`GameImporterFileService.processQueueItem` caches it). Nil for any other file.
+    static func indexFileMD5ForLookup(of queueItem: ImportQueueItem) -> String? {
+        queueItem.isMultiFileIndex ? queueItem.cachedMD5?.uppercased() : nil
+    }
+
+    /// MD5s to look a game's metadata up by, in order. A game imported from a cue, gdi or m3u is
+    /// identified by its data track (`MultiFileSetIdentity`), but OpenVGDB keys its CD games (PSX,
+    /// Saturn, Sega CD, PC Engine CD) by the MD5 of the unmodified redump .cue, so the index file's
+    /// MD5 is tried next. It is only a lookup key: the game's md5Hash stays the identity.
+    static func metadataLookupMD5s(identity: String, indexFileMD5: String?) -> [String] {
+        var keys = [identity.uppercased()]
+        if let index = indexFileMD5?.uppercased(), !index.isEmpty, !keys.contains(index) {
+            keys.append(index)
+        }
+        return keys.filter { !$0.isEmpty }
+    }
+
+    /// File names to look a game's metadata up by, in order: for a cue, gdi or m3u its full name
+    /// (OpenVGDB's `romFileName` for a CD game is the redump cue name), then, for every file, the
+    /// name cut before its first bracket or other punctuation.
+    static func filenameLookupKeys(forFileName fileName: String) -> [String] {
+        let nonCharRange: NSRange = (fileName as NSString).rangeOfCharacter(from: _GameImporterDatabaseServiceCharset)
+        let gameTitleLen = nonCharRange.length > 0 && nonCharRange.location > 1 ? nonCharRange.location - 1 : fileName.count
+        let truncated = String(fileName.prefix(gameTitleLen))
+        guard MultiFileIndexKind(fileName: fileName) != nil, truncated != fileName else { return [truncated] }
+        return [fileName, truncated]
     }
 }
 
