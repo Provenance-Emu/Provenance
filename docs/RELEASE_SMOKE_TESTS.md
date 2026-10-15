@@ -308,8 +308,11 @@ before it (or seed the files below by hand, then relaunch).
       set). Provenance appears in the share sheet; one game imports under
       Dreamcast with all tracks beside the .gdi in `ROMs/com.provenance.dreamcast`,
       and it boots. No stray `track02.raw` failure in the import queue.
-- [ ] Share a second GDI game with the same track names right after the first:
-      both import and boot (the second set's .gdi points at `track01-1.bin` etc.).
+- [ ] Share two GDI games with the same track names in one go (both sets in the
+      import folder together): both import and boot (the second set's .gdi
+      points at `track01-1.bin` etc.). Known gap: a second set shared after the
+      first one finished importing still collides with `track01.bin` in the flat
+      Dreamcast ROM folder.
 - [ ] iFly: share a NAOMI zip + CHD (e.g. `ikaruga.zip` + `gdl-0010.chd`): the
       zip imports under NAOMI, `ROMs/com.provenance.naomi/ikaruga/gdl-0010.chd`
       exists, the CHD is not imported as a Dreamcast game, and the game boots

@@ -26,8 +26,9 @@ public actor MultiFileImportGate {
 
     /// Waiting files in arrival order.
     private var pending: [String] = []
-    /// Files already released that are still in the folder (the watcher reports them again on every change).
-    private var released: Set<String> = []
+    /// Files already released that are still in the folder (the watcher reports them again on
+    /// every change), by name, with the file's identity: a new file with the same name is a new arrival.
+    private var released: [String: FileIdentity] = [:]
     private var lastArrival = Date.distantPast
     /// Only the newest scheduled check runs; older ones see a stale generation and stop.
     /// (Not cancellation: a cancelled task would also cancel the import it releases into.)
@@ -62,7 +63,11 @@ public actor MultiFileImportGate {
                 continue
             }
             let key = url.lastPathComponent.lowercased()
-            guard !released.contains(key), !pending.contains(where: { $0.lowercased() == key }) else { continue }
+            if let identity = released[key] {
+                if identity == FileIdentity(url) { continue }
+                released[key] = nil
+            }
+            guard !pending.contains(where: { $0.lowercased() == key }) else { continue }
             pending.append(url.lastPathComponent)
             arrived = true
         }
@@ -92,7 +97,7 @@ public actor MultiFileImportGate {
         isScheduled = false
         let present = presentFiles()
         let presentKeys = Set(present.map { $0.lowercased() })
-        released = released.filter { presentKeys.contains($0) }
+        released = released.filter { presentKeys.contains($0.key) }
         pending.removeAll { !presentKeys.contains($0.lowercased()) }
         guard !pending.isEmpty else { return }
 
@@ -101,9 +106,15 @@ public actor MultiFileImportGate {
             schedule(after: policy.quietWindow - quiet)
             return
         }
-        if quiet < busyLimit, await isBusy() {
-            schedule(after: 1)
-            return
+        if quiet < busyLimit {
+            var busy = hasPartialCopies()
+            if !busy {
+                busy = await isBusy()
+            }
+            if busy {
+                schedule(after: 1)
+                return
+            }
         }
 
         let fixups = MultiFileImportSettler.fixups(for: snapshot(present: present, quiet: quiet), policy: policy)
@@ -115,7 +126,9 @@ public actor MultiFileImportGate {
         if !decision.release.isEmpty {
             let keys = Set(decision.release.map { $0.lowercased() })
             pending.removeAll { keys.contains($0.lowercased()) }
-            released.formUnion(keys)
+            for name in decision.release {
+                released[name.lowercased()] = FileIdentity(directory.appendingPathComponent(name, isDirectory: false))
+            }
             ILOG("MultiFileImportGate: releasing \(decision.release.joined(separator: ", "))")
             await release(decision.release.map { directory.appendingPathComponent($0, isDirectory: false) })
         }
@@ -139,6 +152,13 @@ public actor MultiFileImportGate {
             indexContents: contents,
             secondsSinceLastArrival: quiet
         )
+    }
+
+    /// A file still being copied in by `IncomingFileReceiver` (hidden until complete), such as a
+    /// large CHD whose zip already arrived: deciding now would release the zip alone.
+    private func hasPartialCopies() -> Bool {
+        let names = (try? FileManager.default.contentsOfDirectory(atPath: directory.path)) ?? []
+        return names.contains { $0.hasPrefix(IncomingFileReceiver.partialCopyPrefix) }
     }
 
     /// Regular files at the top of the import folder (hidden ones, partial copies included, skipped).
@@ -190,5 +210,16 @@ public actor MultiFileImportGate {
                 }
             }
         }
+    }
+}
+
+/// Which file a name points at: the file system's file number, which a rename keeps
+/// and a new file with the same name does not.
+private struct FileIdentity: Equatable, Sendable {
+    let number: UInt64?
+
+    init(_ url: URL) {
+        let attributes = try? FileManager.default.attributesOfItem(atPath: url.path)
+        number = (attributes?[.systemFileNumber] as? NSNumber)?.uint64Value
     }
 }

@@ -273,3 +273,107 @@ struct IncomingFileReceiverTests {
         #expect(try Data(contentsOf: copy) == Data("second".utf8))
     }
 }
+
+@Suite("Import gate")
+struct MultiFileImportGateTests {
+
+    private actor Releases {
+        private(set) var batches: [[String]] = []
+        func add(_ urls: [URL]) { batches.append(urls.map(\.lastPathComponent)) }
+    }
+
+    private let policy = MultiFileImportSettlePolicy(quietWindow: 0.1, incompleteSetTimeout: 0.6)
+
+    private func makeFolder() throws -> URL {
+        let folder = FileManager.default.temporaryDirectory
+            .appendingPathComponent("MultiFileImportGateTests-\(UUID().uuidString)", isDirectory: true)
+        try FileManager.default.createDirectory(at: folder, withIntermediateDirectories: true)
+        return folder
+    }
+
+    private func makeGate(_ folder: URL, _ releases: Releases) -> MultiFileImportGate {
+        MultiFileImportGate(directory: folder, policy: policy, isBusy: { false }, release: { await releases.add($0) })
+    }
+
+    @discardableResult
+    private func write(_ name: String, _ text: String = "x", in folder: URL) throws -> URL {
+        let url = folder.appendingPathComponent(name)
+        try Data(text.utf8).write(to: url)
+        return url
+    }
+
+    /// Polls until `count` batches arrived (or about 3 s passed).
+    private func batches(_ releases: Releases, count: Int) async -> [[String]] {
+        for _ in 0..<60 {
+            let batches = await releases.batches
+            if batches.count >= count { return batches }
+            try? await Task.sleep(nanoseconds: 50_000_000)
+        }
+        return await releases.batches
+    }
+
+    @Test func gdiSetArrivingOneFileAtATimeIsReleasedOnce() async throws {
+        let folder = try makeFolder()
+        defer { try? FileManager.default.removeItem(at: folder) }
+        let releases = Releases()
+        let gate = makeGate(folder, releases)
+
+        let gdi = "2\n1 0 4 2352 track01.bin 0\n2 756 0 2352 track02.raw 0\n"
+        await gate.submit([try write("game.gdi", gdi, in: folder)])
+        await gate.submit([try write("track02.raw", in: folder)])
+        await gate.submit([try write("track01.bin", in: folder)])
+
+        #expect(await batches(releases, count: 1) == [["game.gdi", "track01.bin", "track02.raw"]])
+    }
+
+    @Test func renamedTrackIsRenamedBackOnDisk() async throws {
+        let folder = try makeFolder()
+        defer { try? FileManager.default.removeItem(at: folder) }
+        let releases = Releases()
+        let gate = makeGate(folder, releases)
+
+        let gdi = "2\n1 0 4 2352 track01.bin 0\n2 756 0 2352 track02.raw 0\n"
+        await gate.submit([try write("game.gdi", gdi, in: folder),
+                           try write("track01.bin", in: folder),
+                           try write("track02-1.raw", in: folder)])
+
+        #expect(await batches(releases, count: 1) == [["game.gdi", "track01.bin", "track02.raw"]])
+        #expect(FileManager.default.fileExists(atPath: folder.appendingPathComponent("track02.raw").path))
+    }
+
+    @Test func gdromChdIsStagedForItsZip() async throws {
+        let folder = try makeFolder()
+        defer { try? FileManager.default.removeItem(at: folder) }
+        let releases = Releases()
+        let gate = makeGate(folder, releases)
+
+        await gate.submit([try write("ikaruga.zip", in: folder)])
+        await gate.submit([try write("gdl-0010.chd", in: folder)])
+
+        #expect(await batches(releases, count: 1) == [["ikaruga.zip"]])
+        let staged = ArchiveCompanionLayout.stagingDirectory(importDirectory: folder, archiveName: "ikaruga.zip")
+            .appendingPathComponent("gdl-0010.chd")
+        #expect(FileManager.default.fileExists(atPath: staged.path))
+    }
+
+    @Test func sameNameAfterTheFirstWasImportedIsANewArrival() async throws {
+        let folder = try makeFolder()
+        defer { try? FileManager.default.removeItem(at: folder) }
+        let releases = Releases()
+        let gate = makeGate(folder, releases)
+
+        let first = try write("Sonic.bin", "one", in: folder)
+        await gate.submit([first])
+        #expect(await batches(releases, count: 1).count == 1)
+
+        // The watcher reports a file again on every folder change: no second release.
+        await gate.submit([first])
+        try await Task.sleep(nanoseconds: 300_000_000)
+        #expect(await releases.batches.count == 1)
+
+        // Imported (moved away), then shared again under the same name.
+        try FileManager.default.removeItem(at: first)
+        await gate.submit([try write("Sonic.bin", "two", in: folder)])
+        #expect(await batches(releases, count: 2) == [["Sonic.bin"], ["Sonic.bin"]])
+    }
+}
