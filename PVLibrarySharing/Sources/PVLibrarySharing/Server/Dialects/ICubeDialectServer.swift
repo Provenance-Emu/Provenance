@@ -27,20 +27,9 @@ import PVSystems
 /// Only GameCube and Wii games are listed, as `Software/<file>`: the only
 /// folder iCube's scanner reads.
 public actor ICubeDialectServer {
-    static let pairingLifetime: TimeInterval = 120
     static let authLifetime: TimeInterval = 30
-    static let maxProofAttempts = 3
-    static let maxPendingPairings = 3
     static let maxActiveTokens = 16
     static let softwareFolder = "Software"
-
-    private struct PendingPairing {
-        let request: ICubePairStartRequest
-        let code: String
-        let expiresAt: Date
-        var attemptsLeft: Int
-        var approval: Bool?
-    }
 
     private struct PendingAuth {
         let peerId: String
@@ -55,7 +44,7 @@ public actor ICubeDialectServer {
     private let approver: any LibraryHostApproving
     private let hashes: FileHashCache
     private let sharingEnabled: @Sendable () async -> Bool
-    private var pairings: [String: PendingPairing] = [:]
+    private let pairing: PairingGate
     private var auths: [String: PendingAuth] = [:]
     private var tokens = TokenRegistry(lifetime: 60 * 60)
     /// `peerId|key` pulls the owner allowed once.
@@ -77,10 +66,15 @@ public actor ICubeDialectServer {
         self.approver = approver
         self.hashes = hashes
         self.sharingEnabled = sharingEnabled
+        // Trust first, then iCube's "no handoff session" answer: there is never one here.
+        self.pairing = PairingGate(
+            identity: identity, device: device, domain: .iCube, app: .iCube, trust: trust, approver: approver,
+            paired: .error(404, "no active handoff session")
+        )
     }
 
-    public func revokeAll() {
-        pairings.removeAll()
+    public func revokeAll() async {
+        await pairing.reset()
         auths.removeAll()
         tokens.revokeAll()
         approvedPulls.removeAll()
@@ -94,8 +88,8 @@ public actor ICubeDialectServer {
 
     public func handle(_ request: ServerRequest) async -> ServerResponse {
         switch (request.method, request.path) {
-        case ("POST", ContinuityRoutes.pairStart): return pairStart(request)
-        case ("POST", ContinuityRoutes.pairComplete): return await pairComplete(request)
+        case ("POST", ContinuityRoutes.pairStart): return await pairing.start(request)
+        case ("POST", ContinuityRoutes.pairComplete): return await pairing.complete(request)
         default: break
         }
         guard await sharingEnabled() else { return .error(403, "this device isn't sharing its library") }
@@ -108,76 +102,12 @@ public actor ICubeDialectServer {
             return .error(401, "invalid or expired library token")
         }
         switch (request.method, request.path) {
-        case ("GET", ContinuityRoutes.iCubeLibraryCatalog): return await catalog()
+        case ("GET", ContinuityRoutes.iCubeLibraryCatalog): return await catalog(request)
         case ("GET", ContinuityRoutes.libraryArt): return await art(request)
         case ("GET", ContinuityRoutes.iCubeLibraryManifest): return await manifestRoute(request)
         case ("GET", ContinuityRoutes.libraryFile): return await file(request, peer: peer)
         default: return .error(404, "not found")
         }
-    }
-
-    // MARK: - Pairing
-
-    private func pairStart(_ request: ServerRequest) -> ServerResponse {
-        guard let body: ICubePairStartRequest = decodeBody(request) else { return .error(400, "invalid pairing request") }
-        let now = Date()
-        pairings = pairings.filter { $0.value.expiresAt > now }
-        guard pairings.count < Self.maxPendingPairings else { return .error(429, "too many pairing attempts in flight") }
-        let pairingId = UUID().uuidString
-        let code = ServerTokens.pairingCode()
-        pairings[pairingId] = PendingPairing(
-            request: body, code: code, expiresAt: now.addingTimeInterval(Self.pairingLifetime), attemptsLeft: Self.maxProofAttempts
-        )
-        Task { [approver] in
-            let approved = await withApprovalTimeout(Self.pairingLifetime) {
-                await approver.approvePairing(peerName: body.name, code: code)
-            } ?? false
-            await self.resolvePairing(pairingId, approved: approved)
-        }
-        return .encoded(ICubePairStartResponse(
-            pairingId: pairingId, serverId: identity.id, serverName: device.name, serverPublicKey: identity.publicKeyData
-        ))
-    }
-
-    private func resolvePairing(_ pairingId: String, approved: Bool) {
-        pairings[pairingId]?.approval = approved
-    }
-
-    private func pairComplete(_ request: ServerRequest) async -> ServerResponse {
-        guard let body: ICubePairCompleteRequest = decodeBody(request) else { return .error(400, "invalid pairing completion") }
-        guard var pending = pairings[body.pairingId], pending.expiresAt > Date() else {
-            pairings[body.pairingId] = nil
-            return .error(410, "pairing expired or unknown")
-        }
-        switch pending.approval {
-        case nil:
-            return .error(202, "waiting for approval on the other device")
-        case false?:
-            pairings[body.pairingId] = nil
-            return .error(403, "pairing was declined")
-        case true?:
-            break
-        }
-        let transcript = ContinuityAuthMath.pairingTranscript(
-            domain: .iCube, pairingId: body.pairingId, clientId: pending.request.peerId,
-            serverId: identity.id, clientPublicKey: pending.request.publicKey, serverPublicKey: identity.publicKeyData
-        )
-        guard ContinuityAuthMath.verifyPairingProof(body.proof, code: pending.code, transcript: transcript) else {
-            pending.attemptsLeft -= 1
-            if pending.attemptsLeft <= 0 {
-                pairings[body.pairingId] = nil
-                return .error(410, "too many bad codes — start pairing again")
-            }
-            pairings[body.pairingId] = pending
-            return .error(401, "wrong code")
-        }
-        pairings[body.pairingId] = nil
-        await trust.add(TrustedPeer(
-            id: pending.request.peerId, name: pending.request.name,
-            publicKey: pending.request.publicKey, app: PeerApp.iCube.rawValue
-        ))
-        // Trust first, then iCube's "no handoff session" answer: there is never one here.
-        return .error(404, "no active handoff session")
     }
 
     // MARK: - Library auth
@@ -244,10 +174,18 @@ public actor ICubeDialectServer {
         await entries().first { $0.identity.stableKey == key }
     }
 
-    private func catalog() async -> ServerResponse {
-        let catalog = ICubeWireCatalog(sourceDevice: WireSourceDevice(device), entries: await entries().map {
-            ICubeWireCatalog.Entry(key: $0.identity.stableKey, game: $0.identity, sizeBytes: $0.game.sizeBytes, hasArtwork: $0.game.hasArtwork)
-        })
+    private func catalog(_ request: ServerRequest) async -> ServerResponse {
+        // v1.1 filter and paging are additive: iCube itself sends neither.
+        let query = CatalogueQuery(query: request.query)
+        let all = await entries()
+            .filter { query.admits($0.game.system) }
+            .map { ICubeWireCatalog.Entry(key: $0.identity.stableKey, game: $0.identity, sizeBytes: $0.game.sizeBytes, hasArtwork: $0.game.hasArtwork) }
+            .sorted { $0.key < $1.key }
+        let version = FileSHA256.hex(of: Data(all.map { "\($0.key)|\($0.sizeBytes)\n" }.joined().utf8))
+        guard let page = try? query.page(all, version: version) else {
+            return .error(410, "the catalogue changed; start from the first page")
+        }
+        let catalog = ICubeWireCatalog(sourceDevice: WireSourceDevice(device), entries: page.items, nextCursor: page.nextCursor)
         guard let data = try? iCubeEncoded(catalog) else { return .error(500, "catalog build failed") }
         return .json(data)
     }

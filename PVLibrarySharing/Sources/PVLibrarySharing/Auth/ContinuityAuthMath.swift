@@ -14,6 +14,8 @@ import Foundation
 public enum ContinuityAuthDomain: String, Sendable, CaseIterable {
     case iFly = "ifly-continuity"
     case iCube = "icube-continuity"
+    /// The shared `_pvlibrary._tcp` type (v1.1).
+    case pvLibrary = "pvlibrary"
 
     /// `"<domain>-auth-v1|"`: prefix of the library-auth message.
     public var authPrefix: String { "\(rawValue)-auth-v1|" }

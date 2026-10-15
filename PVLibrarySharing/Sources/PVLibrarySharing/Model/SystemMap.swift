@@ -25,6 +25,7 @@ public enum SystemMap {
         switch app {
         case .iFly: return iFlyPlatforms[key]
         case .iCube: return iCubePlatforms[key]
+        case .pvLibrary: return systemIdentifier(compact: platform)
         }
     }
 
@@ -34,7 +35,26 @@ public enum SystemMap {
         switch app {
         case .iFly: return Set(iFlyPlatforms.values)
         case .iCube: return Set(iCubePlatforms.values)
+        case .pvLibrary: return Set(SystemIdentifier.allCases).subtracting([.Unknown])
         }
+    }
+
+    // MARK: - Dotted ids (v1.1)
+
+    static let dottedPrefix = "com.provenance."
+
+    /// A dotted id (`com.provenance.dreamcast`) or its compact TXT form
+    /// (`dreamcast`), case-insensitively.
+    public static func systemIdentifier(compact value: String) -> SystemIdentifier? {
+        let trimmed = value.trimmingCharacters(in: .whitespaces)
+        let dotted = trimmed.lowercased().hasPrefix(dottedPrefix) ? trimmed : dottedPrefix + trimmed
+        if let exact = SystemIdentifier(rawValue: dotted) { return exact }
+        return SystemIdentifier.allCases.first { $0.rawValue.caseInsensitiveCompare(dotted) == .orderedSame }
+    }
+
+    /// `com.provenance.dreamcast` → `dreamcast`, the TXT `sys` form.
+    public static func compact(_ system: SystemIdentifier) -> String {
+        system.rawValue.hasPrefix(dottedPrefix) ? String(system.rawValue.dropFirst(dottedPrefix.count)) : system.rawValue
     }
 
     // MARK: - Tables

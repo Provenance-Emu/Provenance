@@ -112,8 +112,15 @@ public enum LANFilter {
     }
 
     /// Base URLs a peer can reach this device on (`u0..u3`): IPv4 addresses
-    /// on Wi-Fi/Ethernet first, at most `limit`.
-    public static func baseURLs(port: UInt16, interfaces: [LocalInterfaceAddress] = currentInterfaces(), limit: Int = 4) -> [URL] {
+    /// on Wi-Fi/Ethernet first, then the `<host>.local` name. The name is what
+    /// works over router-less peer-to-peer Wi-Fi, which has no IPv4 address
+    /// (iCube advertises the same kind of `.local` URL). At most `limit`.
+    public static func baseURLs(
+        port: UInt16,
+        interfaces: [LocalInterfaceAddress] = currentInterfaces(),
+        hostName: String? = ProcessInfo.processInfo.hostName,
+        limit: Int = 4
+    ) -> [URL] {
         let ipv4 = interfaces.filter { $0.address.isIPv4 && !$0.address.isLinkLocal }
         let ordered = ipv4.sorted { lhs, rhs in
             let left = lhs.name.hasPrefix("en") ? 0 : 1
@@ -121,13 +128,15 @@ public enum LANFilter {
             return (left, lhs.name) < (right, rhs.name)
         }
         var seen = Set<String>()
-        return ordered.compactMap { interface -> URL? in
+        var hosts = ordered.compactMap { interface -> String? in
             let text = interface.address.bytes.map(String.init).joined(separator: ".")
-            guard seen.insert(text).inserted else { return nil }
-            return URL(string: "http://\(text):\(port)")
+            return seen.insert(text).inserted ? text : nil
         }
-        .prefix(limit)
-        .map { $0 }
+        if let hostName, hostName.lowercased().hasSuffix(".local"), hostName.count > ".local".count {
+            // Keep room for the name: it is the only candidate that works without a router.
+            hosts = Array(hosts.prefix(max(limit - 1, 0))) + [hostName]
+        }
+        return hosts.prefix(limit).compactMap { URL(string: "http://\($0):\(port)") }
     }
 
     private static func bytes(of sockaddrPointer: UnsafeMutablePointer<sockaddr>) -> IPAddressBytes? {

@@ -1,0 +1,31 @@
+{
+  "files" : [
+    {
+      "kind" : "gameFile",
+      "relativePath" : "Ikaruga/Ikaruga.gdi",
+      "required" : true,
+      "sha256" : "4f3c8d2e7b1a6c5d9e0f1a2b3c4d5e6f708192a3b4c5d6e7f8091a2b3c4d5e6f",
+      "size" : 92
+    },
+    {
+      "kind" : "gameFile",
+      "relativePath" : "Ikaruga/track01.bin",
+      "required" : true,
+      "sha256" : "0b1c2d3e4f5a6b7c8d9e0f1a2b3c4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a0b1c",
+      "size" : 70000
+    }
+  ],
+  "game" : {
+    "displayName" : "Ikaruga",
+    "md5" : "aaaa0000aaaa0000aaaa0000aaaa0000",
+    "platform" : "com.provenance.dreamcast"
+  },
+  "mintedAt" : "2026-10-15T09:00:00Z",
+  "sessionId" : "md5:aaaa0000aaaa0000aaaa0000aaaa0000",
+  "sourceDevice" : {
+    "appVersion" : "3.4.0",
+    "name" : "Joe's iPad",
+    "platform" : "iOS"
+  },
+  "version" : 1
+}

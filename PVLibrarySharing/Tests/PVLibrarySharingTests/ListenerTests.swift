@@ -78,14 +78,25 @@ final class LANFilterTests: XCTestCase {
 
     func testBaseURLsPreferWiFiIPv4() {
         let interfaces = home + [LocalInterfaceAddress(name: "bridge100", address: ip("10.0.0.1"), netmask: ip("255.255.255.0"))]
-        XCTAssertEqual(LANFilter.baseURLs(port: 8484, interfaces: interfaces).map(\.absoluteString), [
+        XCTAssertEqual(LANFilter.baseURLs(port: 8484, interfaces: interfaces, hostName: "localhost").map(\.absoluteString), [
             "http://192.168.1.20:8484", "http://10.0.0.1:8484"
+        ])
+        // Router-less peer-to-peer: no IPv4, but the .local name still reaches us.
+        XCTAssertEqual(LANFilter.baseURLs(port: 8484, interfaces: [], hostName: "Joes-iPad.local").map(\.absoluteString), [
+            "http://Joes-iPad.local:8484"
         ])
     }
 
     func testAdvertTXTMatchesTheContinuityCodec() throws {
-        let txt = LibraryAdvertTXT.record(peerId: "pid-1", urls: [URL(string: "http://192.168.1.20:8484")!], sessionId: "sid-1")
-        XCTAssertEqual(txt, ["v": "1", "sid": "sid-1", "lib": "1", "pid": "pid-1", "u0": "http://192.168.1.20:8484"])
+        let txt = LibraryAdvertTXT.record(
+            peerId: "pid-1", urls: [URL(string: "http://192.168.1.20:8484")!], systems: [.Dreamcast, .NAOMI], sessionId: "sid-1"
+        )
+        XCTAssertEqual(txt, [
+            "v": "1", "sid": "sid-1", "lib": "1", "pid": "pid-1", "u0": "http://192.168.1.20:8484",
+            "app": "provenance", "lx": "1", "sys": "dreamcast,naomi"
+        ])
+        // iFly and iCube drop a record without `v` and `sid`, and read `u<digit>` as URLs: no new key may start that way.
+        XCTAssertFalse(txt.keys.contains { $0.hasPrefix("u") && $0.dropFirst().first?.isNumber == true && !$0.hasPrefix("u0") })
         // Provenance's own browser accepts it as a library peer.
         let peer = try XCTUnwrap(DiscoveredPeer.make(serviceType: "_ifly-continuity._tcp.", serviceName: "Provenance iPad", txt: txt))
         XCTAssertEqual(peer.advertisement.peerId, "pid-1")

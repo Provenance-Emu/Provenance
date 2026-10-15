@@ -1,0 +1,35 @@
+{
+  "entries" : [
+    {
+      "game" : {
+        "displayName" : "Ikaruga",
+        "md5" : "aaaa0000aaaa0000aaaa0000aaaa0000",
+        "platform" : "com.provenance.dreamcast"
+      },
+      "hasArtwork" : true,
+      "key" : "md5:aaaa0000aaaa0000aaaa0000aaaa0000",
+      "sizeBytes" : 79092,
+      "systemIdentifier" : "com.provenance.dreamcast"
+    },
+    {
+      "game" : {
+        "displayName" : "Super Mario Sunshine",
+        "gameID" : "GMSE01",
+        "md5" : "cccc2222cccc2222cccc2222cccc2222",
+        "platform" : "com.provenance.gamecube",
+        "serial" : "GMSE01"
+      },
+      "hasArtwork" : false,
+      "key" : "md5:cccc2222cccc2222cccc2222cccc2222",
+      "sizeBytes" : 1459617792,
+      "systemIdentifier" : "com.provenance.gamecube"
+    }
+  ],
+  "nextCursor" : "3f2a9c1d.2",
+  "sourceDevice" : {
+    "appVersion" : "3.4.0",
+    "name" : "Joe's iPad",
+    "platform" : "iOS"
+  },
+  "version" : 1
+}

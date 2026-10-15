@@ -103,12 +103,19 @@ public actor IFlyDialectServer {
     }
 
     private func catalogue(_ request: ServerRequest) async -> ServerResponse {
-        let games = await servedGames().map(\.wire)
+        // v1.1 filter and paging are additive: iFly itself sends neither.
+        let query = CatalogueQuery(query: request.query)
+        let games = await servedGames().filter { query.admits($0.game.system) }.map(\.wire).sorted { $0.id < $1.id }
         let version = IFlyWireLibraryManifest.version(of: games)
-        if request.header("If-None-Match") == version {
+        if query.cursor == nil, request.header("If-None-Match") == version {
             return ServerResponse(status: 304)
         }
-        let manifest = IFlyWireLibraryManifest(peerId: identity.id, deviceName: device.name, games: games, catalogVersion: version)
+        guard let page = try? query.page(games, version: version) else {
+            return .error(410, "the catalogue changed; start from the first page")
+        }
+        let manifest = IFlyWireLibraryManifest(
+            peerId: identity.id, deviceName: device.name, games: page.items, catalogVersion: version, nextCursor: page.nextCursor
+        )
         guard let data = try? JSONEncoder().encode(manifest) else { return .error(500, "library manifest build failed") }
         return .json(data, headers: ["ETag": version])
     }

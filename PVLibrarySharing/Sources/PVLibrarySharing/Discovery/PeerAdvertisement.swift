@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import PVSystems
 
 /// What a peer's TXT record says, decoded the way both apps'
 /// `ContinuityTXTRecord.decode` do (iFly ContinuityKit and iCube PVContinuity
@@ -23,6 +24,11 @@ import Foundation
 ///
 /// Game keys (`name`, `plat`, `gid`, `md5`, …) ride only on handoff adverts
 /// and are out of scope here.
+///
+/// v1.1 adds, all optional and ignored by older peers (spec §3.2): `app`
+/// (provenance/ifly/icube/ecs), `lx` (library-extension level), `sys`,
+/// `sys1`, `sys2`… (compact system ids with a shareable item, ≤240 bytes per
+/// key; `*` = unspecified) and `cv` (catalogue-version prefix).
 public struct PeerAdvertisement: Sendable, Equatable {
     public static let maxURLCandidates = 4
 
@@ -32,6 +38,14 @@ public struct PeerAdvertisement: Sendable, Equatable {
     public var peerId: String?
     public var urlCandidates: [URL]
     public var deviceType: String?
+    /// v1.1 `app`, e.g. "provenance".
+    public var appName: String?
+    /// v1.1 `lx`; nil for a legacy-only advert.
+    public var extensionLevel: Int?
+    /// v1.1 `sys*`; nil when absent or `*` (unspecified).
+    public var systems: Set<SystemIdentifier>?
+    /// v1.1 `cv`.
+    public var catalogueVersion: String?
 
     public init(
         payloadVersion: Int,
@@ -39,7 +53,11 @@ public struct PeerAdvertisement: Sendable, Equatable {
         sharesLibrary: Bool,
         peerId: String?,
         urlCandidates: [URL],
-        deviceType: String? = nil
+        deviceType: String? = nil,
+        appName: String? = nil,
+        extensionLevel: Int? = nil,
+        systems: Set<SystemIdentifier>? = nil,
+        catalogueVersion: String? = nil
     ) {
         self.payloadVersion = payloadVersion
         self.sessionId = sessionId
@@ -47,6 +65,10 @@ public struct PeerAdvertisement: Sendable, Equatable {
         self.peerId = peerId
         self.urlCandidates = urlCandidates
         self.deviceType = deviceType
+        self.appName = appName
+        self.extensionLevel = extensionLevel
+        self.systems = systems
+        self.catalogueVersion = catalogueVersion
     }
 
     /// nil when `v` or `sid` is missing or `v` isn't an integer, as in both apps.
@@ -65,8 +87,34 @@ public struct PeerAdvertisement: Sendable, Equatable {
             sharesLibrary: txt["lib"] == "1",
             peerId: txt["pid"],
             urlCandidates: urls,
-            deviceType: txt["dt"]
+            deviceType: txt["dt"],
+            appName: txt["app"],
+            extensionLevel: txt["lx"].flatMap(Int.init),
+            systems: Self.decodeSystems(txt),
+            catalogueVersion: txt["cv"]
         )
+    }
+
+    /// Joins `sys`, `sys1`, `sys2`… (stopping at the first gap). Unknown ids
+    /// are dropped; nil when no key is present or the value is `*`.
+    static func decodeSystems(_ txt: [String: String]) -> Set<SystemIdentifier>? {
+        var parts: [String] = []
+        if let first = txt["sys"] { parts.append(first) } else { return nil }
+        var index = 1
+        while let next = txt["sys\(index)"] {
+            parts.append(next)
+            index += 1
+        }
+        let values = parts.joined(separator: ",").split(separator: ",").map { $0.trimmingCharacters(in: .whitespaces) }
+        if values.contains("*") { return nil }
+        return Set(values.compactMap { SystemMap.systemIdentifier(compact: $0) })
+    }
+
+    /// Whether this peer may have something for `playable`: true when it
+    /// doesn't say (legacy, or `sys=*`).
+    public func mayServe(_ playable: Set<SystemIdentifier>) -> Bool {
+        guard let systems else { return true }
+        return !systems.isDisjoint(with: playable)
     }
 }
 
@@ -102,14 +150,39 @@ public struct DiscoveredPeer: Sendable, Equatable, Identifiable {
         return DiscoveredPeer(app: app, serviceName: serviceName, advertisement: advertisement)
     }
 
-    /// One entry per `id`, keeping the first seen; sorted by app then name.
+    /// One entry per device, sorted by app then name. A device that
+    /// advertises several types with the same `pid` (Provenance publishes
+    /// `_pvlibrary._tcp` beside the legacy types) is listed once, preferring
+    /// `_pvlibrary._tcp`, which serves every system it shares.
     public static func deduplicated(_ peers: [DiscoveredPeer]) -> [DiscoveredPeer] {
-        var seen = Set<String>()
-        return peers
-            .filter { seen.insert($0.id).inserted }
+        var byDevice: [String: DiscoveredPeer] = [:]
+        var order: [String] = []
+        for peer in peers {
+            let device = peer.advertisement.peerId.map { "pid:\($0)" } ?? peer.id
+            if let existing = byDevice[device] {
+                if existing.app != .pvLibrary && peer.app == .pvLibrary { byDevice[device] = peer }
+            } else {
+                byDevice[device] = peer
+                order.append(device)
+            }
+        }
+        return order.compactMap { byDevice[$0] }
             .sorted { lhs, rhs in
                 if lhs.app != rhs.app { return lhs.app.rawValue < rhs.app.rawValue }
-                return lhs.serviceName.localizedCaseInsensitiveCompare(rhs.serviceName) == .orderedAscending
+                return lhs.serviceName.localizedCaseInsensitiveCompare(rhs.serviceName) == .orderedSame
+                    ? lhs.id < rhs.id
+                    : lhs.serviceName.localizedCaseInsensitiveCompare(rhs.serviceName) == .orderedAscending
             }
+    }
+
+    /// The app behind the advert, from v1.1 `app` when present.
+    public var appDisplayName: String {
+        switch advertisement.appName?.lowercased() {
+        case "ifly": return "iFly"
+        case "icube": return "iCube"
+        case "provenance": return "Provenance"
+        case "ecs": return "Content Server"
+        default: return app.displayName
+        }
     }
 }

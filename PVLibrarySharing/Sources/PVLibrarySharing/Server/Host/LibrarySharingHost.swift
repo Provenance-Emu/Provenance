@@ -12,36 +12,75 @@ import PVSystems
 public enum ServedDialect: String, CaseIterable, Sendable {
     case iFly
     case iCube
+    /// v1.1 `_pvlibrary._tcp`: every shared system, published whenever sharing is on.
+    case pvLibrary
 
-    public var serviceType: String {
-        switch self {
-        case .iFly: return PeerApp.iFly.serviceType
-        case .iCube: return PeerApp.iCube.serviceType
-        }
-    }
+    public var serviceType: String { app.serviceType }
 
     var app: PeerApp {
         switch self {
         case .iFly: return .iFly
         case .iCube: return .iCube
+        case .pvLibrary: return .pvLibrary
         }
     }
 
-    /// Published only while the shared library holds one of these systems, so
-    /// an iFly user never sees a Provenance that has nothing for iFly.
+    /// The legacy types are published only while the shared library holds one
+    /// of their systems, so an iFly user never sees a Provenance that has
+    /// nothing for iFly. `_pvlibrary` serves everything.
     public var systems: Set<SystemIdentifier> { SystemMap.systems(servedBy: app) }
+
+    var alwaysPublished: Bool { self == .pvLibrary }
 }
 
 /// The TXT record of a library advert, in the codec both peers decode
-/// (`ContinuityTXTRecord`): `v`, a fresh `sid`, `lib=1`, `pid`, `u0..u3`.
-/// `tok` is never published.
+/// (`ContinuityTXTRecord`): `v=1`, a fresh `sid`, `lib=1`, `pid`, `u0..u3`.
+/// `tok` and the per-game keys are never published, so neither peer mistakes
+/// it for a handoff. v1.1 keys ride along (old peers ignore them): `app`,
+/// `lx`, `sys`/`sys1`… and `cv`.
 public enum LibraryAdvertTXT {
-    public static func record(peerId: String, urls: [URL], sessionId: String = UUID().uuidString) -> [String: String] {
-        var txt = ["v": "1", "sid": sessionId, "lib": "1", "pid": peerId]
+    /// The most bytes one `sys*` value may hold.
+    public static let maxSystemsBytes = 240
+
+    public static func record(
+        peerId: String,
+        urls: [URL],
+        systems: Set<SystemIdentifier>? = nil,
+        catalogueVersion: String? = nil,
+        sessionId: String = UUID().uuidString
+    ) -> [String: String] {
+        var txt = ["v": "1", "sid": sessionId, "lib": "1", "pid": peerId, "app": "provenance", "lx": "1"]
         for (index, url) in urls.prefix(PeerAdvertisement.maxURLCandidates).enumerated() {
             txt["u\(index)"] = url.absoluteString
         }
+        for (index, chunk) in systemChunks(systems).enumerated() {
+            txt[index == 0 ? "sys" : "sys\(index)"] = chunk
+        }
+        if let catalogueVersion {
+            txt["cv"] = String(catalogueVersion.prefix(8))
+        }
         return txt
+    }
+
+    /// Compact ids, sorted, comma-joined, split so no value passes
+    /// `maxSystemsBytes`. `["*"]` when unspecified.
+    static func systemChunks(_ systems: Set<SystemIdentifier>?) -> [String] {
+        guard let systems else { return ["*"] }
+        // An empty value says "nothing shared", not "unspecified".
+        guard !systems.isEmpty else { return [""] }
+        var chunks: [String] = []
+        var current = ""
+        for name in systems.subtracting([.Unknown]).map(SystemMap.compact).sorted() {
+            let candidate = current.isEmpty ? name : current + "," + name
+            if candidate.utf8.count > maxSystemsBytes, !current.isEmpty {
+                chunks.append(current)
+                current = name
+            } else {
+                current = candidate
+            }
+        }
+        if !current.isEmpty { chunks.append(current) }
+        return chunks
     }
 }
 
@@ -60,10 +99,13 @@ public actor LibrarySharingHost {
     private let library: any SharedLibraryProviding
     private let iFly: IFlyDialectServer
     private let iCube: ICubeDialectServer
+    private let pvLibrary: PVLibraryDialectServer
     private let sharing = SharingFlag()
 
     private var listeners: [ServedDialect: LibraryHTTPListener] = [:]
     private var advertisers: [ServedDialect: BonjourAdvertiser] = [:]
+    /// The `sys` set each live advert carries, so an unchanged one isn't republished.
+    private var advertisedSystems: [ServedDialect: Set<SystemIdentifier>] = [:]
 
     public init(
         identity: PeerIdentity,
@@ -83,6 +125,10 @@ public actor LibrarySharingHost {
             approver: approver, hashes: hashes, sharingEnabled: enabled
         )
         iCube = ICubeDialectServer(
+            identity: identity, device: device, library: library, trust: trust,
+            approver: approver, hashes: hashes, sharingEnabled: enabled
+        )
+        pvLibrary = PVLibraryDialectServer(
             identity: identity, device: device, library: library, trust: trust,
             approver: approver, hashes: hashes, sharingEnabled: enabled
         )
@@ -118,24 +164,34 @@ public actor LibrarySharingHost {
         listeners.removeAll()
         for advertiser in advertisers.values { await advertiser.withdraw() }
         advertisers.removeAll()
+        advertisedSystems.removeAll()
         await iFly.revokeAll()
         await iCube.revokeAll()
+        await pvLibrary.revokeAll()
     }
 
     /// Re-reads the shared library and publishes or withdraws each dialect's
-    /// advert. Call after an import, a deletion or a sharing-settings change.
+    /// advert, with its `sys` list. Call after an import, a deletion or a
+    /// sharing-settings change.
     public func refreshAdvertisements() async {
         guard sharing.value else { return }
-        let systems = Set(await library.sharedGames().map(\.system))
+        let shared = Set(await library.sharedGames().map(\.system))
         for dialect in ServedDialect.allCases {
-            let wanted = !dialect.systems.isDisjoint(with: systems)
-            if wanted, advertisers[dialect] == nil, let port = listeners[dialect]?.port {
-                let advertiser = BonjourAdvertiser(type: dialect.serviceType, name: "Provenance \(device.name)", port: port)
-                await advertiser.publish(txt: LibraryAdvertTXT.record(peerId: identity.id, urls: LANFilter.baseURLs(port: port)))
-                advertisers[dialect] = advertiser
-            } else if !wanted, let advertiser = advertisers.removeValue(forKey: dialect) {
+            let systems = shared.intersection(dialect.systems)
+            let wanted = dialect.alwaysPublished || !systems.isEmpty
+            if wanted, advertisers[dialect] != nil, advertisedSystems[dialect] == systems { continue }
+            if let advertiser = advertisers.removeValue(forKey: dialect) {
                 await advertiser.withdraw()
+                advertisedSystems[dialect] = nil
             }
+            guard wanted, let port = listeners[dialect]?.port else { continue }
+            // iCube and iFly list this name under Nearby Devices.
+            let advertiser = BonjourAdvertiser(type: dialect.serviceType, name: "Provenance on \(device.name)", port: port)
+            await advertiser.publish(txt: LibraryAdvertTXT.record(
+                peerId: identity.id, urls: LANFilter.baseURLs(port: port), systems: systems
+            ))
+            advertisers[dialect] = advertiser
+            advertisedSystems[dialect] = systems
         }
     }
 
@@ -143,6 +199,7 @@ public actor LibrarySharingHost {
     public func revoke(peerId: String) async {
         await iFly.revoke(peerId: peerId)
         await iCube.revoke(peerId: peerId)
+        await pvLibrary.revoke(peerId: peerId)
     }
 
     private func handler(for dialect: ServedDialect) -> ServerRequestHandler {
@@ -152,6 +209,9 @@ public actor LibrarySharingHost {
             return { await server.handle($0) }
         case .iCube:
             let server = iCube
+            return { await server.handle($0) }
+        case .pvLibrary:
+            let server = pvLibrary
             return { await server.handle($0) }
         }
     }

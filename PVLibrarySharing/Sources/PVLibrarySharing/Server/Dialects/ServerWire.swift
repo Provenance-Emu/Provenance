@@ -47,6 +47,8 @@ struct IFlyWireLibraryManifest: Codable, Sendable {
     var deviceName: String
     var games: [Game]
     var catalogVersion: String?
+    /// v1.1 paging; absent unless the request asked for `limit`.
+    var nextCursor: String?
 
     struct Game: Codable, Sendable, Equatable {
         var title: String
@@ -127,6 +129,8 @@ struct ICubeWireCatalog: Codable, Sendable {
     var version = 1
     var sourceDevice: WireSourceDevice
     var entries: [Entry]
+    /// v1.1 paging; absent unless the request asked for `limit`.
+    var nextCursor: String?
 
     struct Entry: Codable, Sendable {
         var key: String
@@ -177,4 +181,57 @@ extension SystemMap {
         default: return nil
         }
     }
+}
+
+// MARK: - _pvlibrary (v1.1)
+
+/// iCube's `GameIdentity` plus the v1.1 optional `serial`. `platform` holds
+/// the dotted system id.
+struct PVWireGameIdentity: Codable, Sendable, Equatable {
+    var gameID: String?
+    var md5: String?
+    var crc32: String?
+    var serial: String?
+    var displayName: String
+    var platform: String
+    var discNumber: Int?
+    var revision: Int?
+}
+
+/// iCube's catalog shape (`version` stays 1) with v1.1 additions: each entry's
+/// dotted `systemIdentifier`, and `nextCursor` when paging.
+struct PVWireCatalog: Codable, Sendable {
+    var version = 1
+    var sourceDevice: WireSourceDevice
+    var entries: [Entry]
+    var nextCursor: String?
+
+    struct Entry: Codable, Sendable {
+        var key: String
+        var game: PVWireGameIdentity
+        var sizeBytes: Int64
+        var hasArtwork: Bool
+        var systemIdentifier: String?
+    }
+
+    /// `"v1-" + sha256` over the entries' keys, sizes and art flags.
+    static func version(of entries: [Entry]) -> String {
+        let input = entries.map { "\($0.key)|\($0.sizeBytes)|\($0.hasArtwork)\n" }.joined()
+        return "v1-" + FileSHA256.hex(of: Data(input.utf8))
+    }
+}
+
+/// iCube's manifest shape, `game` as `PVWireGameIdentity`.
+struct PVWireManifest: Codable, Sendable {
+    var version = 1
+    var sessionId: String
+    var mintedAt: Date
+    var sourceDevice: WireSourceDevice
+    var game: PVWireGameIdentity
+    var files: [WireFileDescriptor]
+}
+
+/// `_pvlibrary` pair/complete success body.
+struct PVPairedResponse: Codable, Sendable {
+    var paired = true
 }
