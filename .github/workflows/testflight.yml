@@ -42,7 +42,10 @@ concurrency:
   cancel-in-progress: false   # never cancel a half-finished upload
 
 env:
-  DEVELOPER_DIR: /Applications/Xcode_26.3.app/Contents/Developer
+  # GitHub-hosted runners only: the setup-xcode step pins this version. The self-hosted
+  # Studio runner does NOT use it - it selects Xcode from vars.XCODE_PATH (default
+  # /Applications/Xcode.app, currently Xcode 27) in the "Select Xcode (self-hosted)" step.
+  # DEVELOPER_DIR is deliberately not set at workflow level so hosted runs are unaffected.
   XCODE_VERSION: '26.3'
   # Self-hosted Homebrew is owned by another user: never auto-update, never
   # fail a job over a brew hiccup when the tool is already installed.
@@ -73,7 +76,7 @@ jobs:
     name: Archive and upload to TestFlight (${{ matrix.platform }})
     needs: plan
     # Runner toggle: set the repo variable MACOS_RUNNER_LABELS (JSON array, e.g.
-    # ["self-hosted","studio","xcode-26"]) to run this job on the Mac Studio; leave it
+    # ["self-hosted","macOS","ARM64","studio"]) to run this job on the Mac Studio; leave it
     # unset to use GitHub-hosted macos-26. Pull requests from forks ALWAYS run on the
     # hosted runner - never run untrusted fork code on the self-hosted machine.
     runs-on: ${{ (vars.MACOS_RUNNER_LABELS != '' && (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository)) && fromJSON(vars.MACOS_RUNNER_LABELS) || 'macos-26' }}
@@ -95,16 +98,24 @@ jobs:
       issues: write
       actions: read   # list the last successful run for the "What to Test" notes
     steps:
-      # First step, before checkout: the workflow-level DEVELOPER_DIR is set for every
-      # step, and a missing Xcode breaks the /usr/bin/git shim used by checkout.
-      - name: Verify Xcode (self-hosted)
+      # First step, before checkout. No sudo on the self-hosted runner, so Xcode is selected
+      # via DEVELOPER_DIR (exported to later steps) rather than `xcode-select -s`. Default is
+      # the Studio's /Applications/Xcode.app (Xcode 27); set the repo variable XCODE_PATH
+      # (e.g. /Applications/Xcode_26.3.app) to override. A missing Xcode breaks the
+      # /usr/bin/git shim used by checkout, so fail here with a clear message instead.
+      # GitHub-hosted runners skip this and use setup-xcode below (XCODE_VERSION).
+      - name: Select Xcode (self-hosted)
         if: ${{ runner.environment != 'github-hosted' }}
+        env:
+          XCODE_PATH: ${{ vars.XCODE_PATH || '/Applications/Xcode.app' }}
         run: |
-          if [ ! -d "$DEVELOPER_DIR" ]; then
-            echo "::error::DEVELOPER_DIR ($DEVELOPER_DIR) not found on this runner - install Xcode ${XCODE_VERSION} there"
+          DEV="$XCODE_PATH/Contents/Developer"
+          if [ ! -d "$DEV" ]; then
+            echo "::error::Xcode not found at $XCODE_PATH on this runner - install it there or set the XCODE_PATH repo variable"
             exit 1
           fi
-          xcodebuild -version
+          echo "DEVELOPER_DIR=$DEV" >> "$GITHUB_ENV"
+          DEVELOPER_DIR="$DEV" xcodebuild -version
 
       - name: Checkout code
         uses: actions/checkout@v4
@@ -179,8 +190,8 @@ jobs:
             "${MISSING_LOCAL}" "The upload was stopped."
 
       # setup-xcode runs `sudo xcode-select -s`, which the self-hosted runner user
-      # cannot do. On self-hosted the workflow-level DEVELOPER_DIR already selects
-      # Xcode 26.3 (verified in the first step of this job).
+      # cannot do. On self-hosted the first step of this job selects Xcode via
+      # DEVELOPER_DIR (vars.XCODE_PATH, default /Applications/Xcode.app = Xcode 27).
       - name: Setup Xcode
         if: ${{ runner.environment == 'github-hosted' }}
         uses: maxim-lobanov/setup-xcode@v1.6.0
