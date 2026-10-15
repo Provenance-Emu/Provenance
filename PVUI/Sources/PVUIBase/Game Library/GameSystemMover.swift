@@ -5,6 +5,7 @@
 
 import Foundation
 import PVLibrary
+import PVLogging
 import PVRealm
 import RealmSwift
 
@@ -27,16 +28,26 @@ public enum GameSystemMover {
         let oldRelatedFiles = Array(game.relatedFiles.compactMap { $0.url })
 
         let destinationDirectory = PVEmulatorConfiguration.romDirectory(forSystemIdentifier: system.identifier)
+        try FileManager.default.createDirectory(at: destinationDirectory, withIntermediateDirectories: true)
         let move = BatchFileMove(files: [sourceURL] + oldRelatedFiles, into: destinationDirectory)
         try move.perform()
 
         var movedGame: PVGame?
         do {
             try realm.write {
-                guard !game.isInvalidated, let thawedGame = game.thaw() else { return }
-                thawedGame.system = system
-                thawedGame.systemIdentifier = system.identifier
-                thawedGame.romPath = (system.identifier as NSString).appendingPathComponent(sourceURL.lastPathComponent)
+                let thawedGame: PVGame? = game.thaw() ?? realm.object(ofType: PVGame.self, forPrimaryKey: game.md5Hash)
+                guard let thawedGame, !thawedGame.isInvalidated else {
+                    ELOG("GameSystemMover: could not resolve live game for '\(game.title)' (md5: \(game.md5Hash))")
+                    return
+                }
+                let liveSystem = system.isFrozen ? (system.thaw() ?? realm.object(ofType: PVSystem.self, forPrimaryKey: system.identifier)) : system
+                guard let liveSystem else {
+                    ELOG("GameSystemMover: could not resolve live system '\(system.identifier)'")
+                    return
+                }
+                thawedGame.system = liveSystem
+                thawedGame.systemIdentifier = liveSystem.identifier
+                thawedGame.romPath = (liveSystem.identifier as NSString).appendingPathComponent(sourceURL.lastPathComponent)
                 if let primary = move.pairs.first {
                     thawedGame.file = PVFile(withURL: primary.destination)
                 }
