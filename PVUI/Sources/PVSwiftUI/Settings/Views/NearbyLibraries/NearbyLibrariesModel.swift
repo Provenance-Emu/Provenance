@@ -32,12 +32,17 @@ final class NearbyLibrariesModel {
     @ObservationIgnored private let browser = PeerBrowser()
     @ObservationIgnored private var browseTask: Task<Void, Never>?
     @ObservationIgnored private var peerModels: [String: NearbyPeerLibraryModel] = [:]
-    @ObservationIgnored let identity: PeerIdentity
-
-    init() {
+    /// Loaded on first use, not in `init`: the Keychain is only touched when a peer is opened.
+    @ObservationIgnored private var loadedIdentity: PeerIdentity?
+    var identity: PeerIdentity {
+        if let loadedIdentity { return loadedIdentity }
         // Name Provenance so the iFly/iCube owner knows which app is asking.
-        identity = KeychainPeerIdentityStore().loadOrCreate(name: "Provenance on \(UIDevice.current.name)")
+        let created = KeychainPeerIdentityStore().loadOrCreate(name: "Provenance on \(UIDevice.current.name)")
+        loadedIdentity = created
+        return created
     }
+
+    init() {}
 
     /// Peers worth listing: libraries whose app serves a system Provenance plays.
     var visiblePeers: [DiscoveredPeer] {
@@ -110,7 +115,10 @@ final class NearbyLibrariesModel {
         do {
             let realm = try Realm(configuration: RealmConfiguration.realmConfig)
             playableSystems = Set(realm.objects(PVSystem.self)
-                .filter { !$0.cores.isEmpty }
+                // A system is playable only with a core that can actually launch:
+                // enabled, and its class or bundled libretro dylib present. Lite
+                // builds carry rows for cores they do not ship.
+                .filter { system in system.cores.contains { !$0.disabled && $0.hasCoreClass } }
                 .compactMap { SystemIdentifier(rawValue: $0.identifier) })
 
             let shareable = PeerApp.allCases.reduce(into: Set<SystemIdentifier>()) {
