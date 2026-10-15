@@ -156,7 +156,7 @@ public struct GameTagSiblingApp: Equatable, Sendable {
         GameTagSiblingApp(name: "iFly",
                           schemes: ["ifly"],
                           hosts: ["ifly-emu.com"],
-                          bundleIdentifiers: [])
+                          bundleIdentifiers: ["com.joemattiello.iFly"])
     ]
 
     static func matching(url: URL) -> GameTagSiblingApp? {
