@@ -3621,7 +3621,7 @@ public final class GameImporter: GameImporting, ObservableObject {
 
             /// Group items by system directory for efficient batch queries
             let itemsBySystem = Dictionary(grouping: items) { item -> String in
-                Self.systemFolderName(of: item.url)
+                MultiFileSetFolder.systemFolderName(ofFileAt: item.url)
             }
 
             for (systemDir, systemItems) in itemsBySystem {
@@ -4224,7 +4224,7 @@ public final class GameImporter: GameImporting, ObservableObject {
                     guard let gameWithSameSize = gamesWithSameSize.first else {
                         return false
                     }
-                    if let systemID = SystemIdentifier(rawValue: Self.systemFolderName(of: item.url)) {
+                    if let systemID = SystemIdentifier(rawValue: MultiFileSetFolder.systemFolderName(ofFileAt: item.url)) {
                         let partialPath = RomDatabase.romPath(for: item.url, systemIdentifier: systemID.rawValue)
                         if gameWithSameSize.romPath == partialPath,
                            let fileURL = gameWithSameSize.file?.url,
@@ -4250,7 +4250,7 @@ public final class GameImporter: GameImporting, ObservableObject {
         }
 
         /// If file is already in a system ROM directory, check that system first (avoids expensive system detection)
-        if let systemFromPath = SystemIdentifier(rawValue: Self.systemFolderName(of: item.url)) {
+        if let systemFromPath = SystemIdentifier(rawValue: MultiFileSetFolder.systemFolderName(ofFileAt: item.url)) {
             let partialPath = RomDatabase.romPath(for: item.url, systemIdentifier: systemFromPath.rawValue)
             let similarName = RomDatabase.altName(item.url, systemIdentifier: systemFromPath)
 

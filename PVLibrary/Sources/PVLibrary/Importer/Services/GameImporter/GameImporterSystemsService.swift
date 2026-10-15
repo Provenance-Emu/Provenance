@@ -10,6 +10,7 @@ import os
 import PVLookup
 import PVSystems
 import PVPrimitives
+import PVFileSystem
 
 public protocol SkinImporterServicing {
     func importSkin(from url: URL) async throws
@@ -158,7 +159,7 @@ class GameImporterSystemsService: GameImporterSystemsServicing {
         DLOG("- Extracted extension: \(fileExtension)")
 
         /// Step 1: Check if file is already in a system directory (fastest check)
-        if let system = SystemIdentifier(rawValue: item.url.deletingLastPathComponent().lastPathComponent) {
+        if let system = SystemIdentifier(rawValue: MultiFileSetFolder.systemFolderName(ofFileAt: item.url)) {
             DLOG("Found system from path: \(system)")
             return cacheAndReturn([system])
         }

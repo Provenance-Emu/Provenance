@@ -66,6 +66,13 @@ struct MultiFileSetFolderNamingTests {
         #expect(MultiFileSetFolder.romLocation(of: URL(fileURLWithPath: "/x/Documents/Imports/disc.gdi")) == nil)
     }
 
+    @Test func systemFolderSkipsTheSetFolder() {
+        let roms = "/x/Documents/ROMs/com.provenance.dreamcast/"
+        #expect(MultiFileSetFolder.systemFolderName(ofFileAt: URL(fileURLWithPath: roms + "game.chd")) == "com.provenance.dreamcast")
+        #expect(MultiFileSetFolder.systemFolderName(ofFileAt: URL(fileURLWithPath: roms + "disc-2/disc.gdi")) == "com.provenance.dreamcast")
+        #expect(MultiFileSetFolder.systemFolderName(ofFileAt: URL(fileURLWithPath: "/x/Documents/Imports/disc.gdi")) == "Imports")
+    }
+
     @Test func savesFollowTheFolderOnlyForADeduplicatedSet() {
         let roms = "/x/Documents/ROMs/com.provenance.dreamcast/"
         #expect(MultiFileSetFolder.saveName(forROMAt: URL(fileURLWithPath: roms + "Crazy Taxi.gdi")) == "Crazy Taxi")

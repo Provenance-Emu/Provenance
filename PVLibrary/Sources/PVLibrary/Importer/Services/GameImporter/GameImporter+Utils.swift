@@ -6,18 +6,8 @@
 //
 
 import PVPatching
-import PVFileSystem
 
 extension GameImporter {
-
-    /// The system folder a library file sits in: its parent, or for a file in a multi-file
-    /// set's own folder (`ROMs/<system>/<set>/<file>`), the folder above that.
-    static func systemFolderName(of url: URL) -> String {
-        if let location = MultiFileSetFolder.romLocation(of: url), location.setFolder != nil {
-            return location.systemIdentifier
-        }
-        return url.deletingLastPathComponent().lastPathComponent
-    }
 
     /// Checks if a given ROM file is a Skin file
     internal func isSkin(_ queueItem: ImportQueueItem) -> Bool {

@@ -132,6 +132,15 @@ public enum MultiFileSetFolder {
         )
     }
 
+    /// The system folder a library file sits in: its parent, or for a file in a set folder
+    /// (`ROMs/<system>/<set>/<file>`), the folder above that.
+    public static func systemFolderName(ofFileAt url: URL) -> String {
+        if let location = romLocation(of: url), location.setFolder != nil {
+            return location.systemIdentifier
+        }
+        return url.deletingLastPathComponent().lastPathComponent
+    }
+
     /// The set folder an index file sits in, when it sits in one of its own
     /// (`ROMs/<system>/<folder>/<index>`, with `folder` named after the index file).
     public static func setFolder(ofIndexFileAt url: URL) -> String? {
