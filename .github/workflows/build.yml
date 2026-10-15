@@ -41,6 +41,10 @@ env:
   SWIFT_PACKAGE_ALLOW_WRITING_TO_DIRECTORY: ${{ github.workspace }}
   DEVELOPER_DIR: /Applications/Xcode_26.3.app/Contents/Developer
   XCODE_VERSION: '26.3'
+  # Self-hosted Homebrew is owned by another user: never auto-update, never
+  # fail a job over a brew hiccup when the tool is already installed.
+  HOMEBREW_NO_AUTO_UPDATE: 1
+  HOMEBREW_NO_INSTALL_CLEANUP: 1
 
 jobs:
   build:
@@ -94,7 +98,11 @@ jobs:
           # rather than something you just changed. `make` / Xcode still build
           # the "Provenance-Lite (AppStore)" scheme on demand.
 
-    runs-on: 'macos-26'
+    # Runner toggle: set the repo variable MACOS_RUNNER_LABELS (JSON array, e.g.
+    # ["self-hosted","studio","xcode-26"]) to run this job on the Mac Studio; leave it
+    # unset to use GitHub-hosted macos-26. Pull requests from forks ALWAYS run on the
+    # hosted runner - never run untrusted fork code on the self-hosted machine.
+    runs-on: ${{ (vars.MACOS_RUNNER_LABELS != '' && (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository)) && fromJSON(vars.MACOS_RUNNER_LABELS) || 'macos-26' }}
     continue-on-error: ${{ matrix.optional || false }}
     # The archive step alone has measured 104 min on a cold Xcode build, and
     # since DerivedData is no longer cached (see the Cache SPM step) cold is
@@ -181,10 +189,23 @@ jobs:
           path: ${{ runner.temp }}/missing-local-dylibs.txt
           retention-days: 3
 
+      # setup-xcode runs `sudo xcode-select -s`, which the self-hosted runner user
+      # cannot do. On self-hosted the workflow-level DEVELOPER_DIR already selects
+      # Xcode 26.3, so just verify it is installed there.
       - name: Setup Xcode
+        if: ${{ runner.environment == 'github-hosted' }}
         uses: maxim-lobanov/setup-xcode@v1.6.0
         with:
           xcode-version: ${{ env.XCODE_VERSION }}
+
+      - name: Verify Xcode (self-hosted)
+        if: ${{ runner.environment != 'github-hosted' }}
+        run: |
+          if [ ! -d "$DEVELOPER_DIR" ]; then
+            echo "::error::DEVELOPER_DIR ($DEVELOPER_DIR) not found on this runner - install Xcode ${XCODE_VERSION} there"
+            exit 1
+          fi
+          xcodebuild -version
 
       - name: Set Build Number
         run: |
@@ -327,9 +348,15 @@ jobs:
 
       - name: Install dependencies
         run: |
-          brew install ldid xcbeautify 2>/dev/null || true
+          # Skip tools already present (self-hosted runner ships them preinstalled).
+          for tool in ldid xcbeautify; do
+            command -v "$tool" >/dev/null 2>&1 || brew install "$tool" 2>/dev/null || true
+          done
           # PVAzahar's pre-build builds PVlibAzahar with cmake + ninja and needs python3 >= 3.10.
-          brew install cmake ninja python@3.12 2>/dev/null || true
+          for tool in cmake ninja; do
+            command -v "$tool" >/dev/null 2>&1 || brew install "$tool" 2>/dev/null || true
+          done
+          command -v python3.12 >/dev/null 2>&1 || brew install python@3.12 2>/dev/null || true
 
       - name: Clean Build Directory
         run: |
