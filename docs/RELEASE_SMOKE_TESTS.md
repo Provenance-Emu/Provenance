@@ -303,6 +303,25 @@ before it (or seed the files below by hand, then relaunch).
       no grid left over the picture.
 - [ ] DS LCD look frame rate on an older device (A12/A13): no dropped frames.
 
+### Multi-file games from iFly / iCube share sheet
+- [ ] iFly: share a GDI game whose tracks mix `.bin` and `.raw` (e.g. a 3-track
+      set). Provenance appears in the share sheet; one game imports under
+      Dreamcast with all tracks beside the .gdi in `ROMs/com.provenance.dreamcast`,
+      and it boots. No stray `track02.raw` failure in the import queue.
+- [ ] Share a second GDI game with the same track names right after the first:
+      both import and boot (the second set's .gdi points at `track01-1.bin` etc.).
+- [ ] iFly: share a NAOMI zip + CHD (e.g. `ikaruga.zip` + `gdl-0010.chd`): the
+      zip imports under NAOMI, `ROMs/com.provenance.naomi/ikaruga/gdl-0010.chd`
+      exists, the CHD is not imported as a Dreamcast game, and the game boots
+      (flycast finds the GD-ROM under `{stem}/`). Imports has no leftover
+      `.archive-companions` folder.
+- [ ] iFly: share an .m3u multi-disc set (each disc a .gdi or .cue with tracks):
+      one game imports with every disc and track; disc swap works in game.
+- [ ] iCube: share a single-file disc image (.rvz/.iso): imports after ~3 s as before.
+- [ ] Share the same file twice from Files ("Open in"): the original stays in
+      Files, the second copy imports (as `name-1.ext`), and `Documents/Inbox` is
+      empty afterwards.
+
 ### Carried over from earlier sessions (see memory notes)
 - [ ] Background/resume: no main-thread deadlock on resume (Metal drawable).
 - [ ] Dolphin scaling modes (Aspect Fill / Integer / Native) on device.
