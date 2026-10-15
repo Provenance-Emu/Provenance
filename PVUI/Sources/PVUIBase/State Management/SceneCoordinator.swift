@@ -1000,7 +1000,7 @@ public class SceneCoordinator: ObservableObject {
         guard let romURL = game.file?.url else { return }
         /// Matches `Paths.batterySavesPath(forROM:)`, which is what actually
         /// determines the on-disk folder the core will read.
-        let romName = romURL.deletingPathExtension().lastPathComponent
+        let romName = MultiFileSetFolder.saveName(forROMAt: romURL)
         guard !romName.isEmpty else { return }
         let gameTitle = game.title
 

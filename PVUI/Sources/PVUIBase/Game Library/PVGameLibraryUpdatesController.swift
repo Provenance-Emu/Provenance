@@ -433,8 +433,8 @@ public final class PVGameLibraryUpdatesController: ObservableObject {
             /// Files modified since last scan definitely need checking
             /// Files not modified might still need checking if they're not in database
             let newGames = files.keys.filter { fileURL in
-                let filename = fileURL.lastPathComponent
-                let partialPath = (system.identifier as NSString).appendingPathComponent(filename)
+                /// `<system>/<file>`, or `<system>/<set folder>/<file>` for a multi-file set in a folder of its own
+                let partialPath = RomDatabase.romPath(for: fileURL, systemIdentifier: system.identifier)
                 let altName = RomDatabase.altName(fileURL, systemIdentifier: system.identifier)
 
                 /// Quick check: If file exists in cache by partialPath or altName, skip

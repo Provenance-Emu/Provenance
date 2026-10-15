@@ -313,10 +313,29 @@ public extension PVEmulatorConfiguration {
     }
     
     class func path(forGame game: PVGame) -> URL? {
-        return Paths.romsPath.appendingPathComponent(game.systemIdentifier).appendingPathComponent(game.file?.url?.lastPathComponent ?? game.title)
+        return path(forGame: game, url: game.file?.url)
     }
+
+    /// `ROMs/<system>/<file name>` for one of a game's files. A multi-file set that lives in a
+    /// folder of its own (`MultiFileSetFolder`) keeps that folder, also for a related file
+    /// recorded without it, so nothing here ever points at a flat file of another game.
     class func path(forGame game: PVGame, url:URL?) -> URL {
-        return Paths.romsPath.appendingPathComponent(game.systemIdentifier).appendingPathComponent(url?.lastPathComponent ?? game.title)
+        let systemDirectory = Paths.romsPath.appendingPathComponent(game.systemIdentifier)
+        guard let url else {
+            return systemDirectory.appendingPathComponent(game.title)
+        }
+        if let location = MultiFileSetFolder.romLocation(of: url),
+           location.setFolder != nil,
+           location.systemIdentifier == game.systemIdentifier {
+            return systemDirectory.appendingPathComponent(location.relativePath)
+        }
+        if let gameFile = game.file?.url, gameFile != url,
+           let location = MultiFileSetFolder.romLocation(of: gameFile),
+           let folder = location.setFolder,
+           location.systemIdentifier == game.systemIdentifier {
+            return systemDirectory.appendingPathComponent(folder).appendingPathComponent(url.lastPathComponent)
+        }
+        return systemDirectory.appendingPathComponent(url.lastPathComponent)
     }
 }
 
@@ -337,7 +356,9 @@ public extension PVEmulatorConfiguration {
 
     @objc
     class func m3uFile(forURL gamePath: URL, identifier: String) -> URL? {
-        let gameDirectory = romDirectory(forSystemIdentifier: identifier)
+        // A multi-file set keeps its m3u beside it in its own folder; never pick up a flat one.
+        let isInSetFolder = MultiFileSetFolder.romLocation(of: gamePath)?.setFolder != nil
+        let gameDirectory = isInSetFolder ? gamePath.deletingLastPathComponent() : romDirectory(forSystemIdentifier: identifier)
         let filenameWithoutExtension = stripDiscNames(fromFilename: gamePath.deletingPathExtension().lastPathComponent)
 
         do {

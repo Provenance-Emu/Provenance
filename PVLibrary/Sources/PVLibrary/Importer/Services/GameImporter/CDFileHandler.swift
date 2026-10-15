@@ -58,16 +58,7 @@ class DefaultCDFileHandler: CDFileHandling {
 
     /// Reads a cue, gdi or m3u file, trying the encodings such files are written in.
     static func readIndexText(at cueFileURL: URL) throws -> String {
-        let encodings: [String.Encoding] = [.utf8, .windowsCP1252, .isoLatin1, .macOSRoman]
-
-        for encoding in encodings {
-            if let contents = try? String(contentsOf: cueFileURL, encoding: encoding) {
-                return contents
-            }
-        }
-
-        // Fallback to UTF-8 and let it throw if it fails
-        return try String(contentsOf: cueFileURL, encoding: .utf8)
+        try MultiFileIndexReferences.readText(at: cueFileURL)
     }
 
     /// Normalizes a CUE line by fixing quote issues and cleaning up malformed FILE lines

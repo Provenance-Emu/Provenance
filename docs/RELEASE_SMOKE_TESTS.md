@@ -306,13 +306,27 @@ before it (or seed the files below by hand, then relaunch).
 ### Multi-file games from iFly / iCube share sheet
 - [ ] iFly: share a GDI game whose tracks mix `.bin` and `.raw` (e.g. a 3-track
       set). Provenance appears in the share sheet; one game imports under
-      Dreamcast with all tracks beside the .gdi in `ROMs/com.provenance.dreamcast`,
-      and it boots. No stray `track02.raw` failure in the import queue.
-- [ ] Share two GDI games with the same track names in one go (both sets in the
-      import folder together): both import and boot (the second set's .gdi
-      points at `track01-1.bin` etc.). Known gap: a second set shared after the
-      first one finished importing still collides with `track01.bin` in the flat
-      Dreamcast ROM folder.
+      Dreamcast with all tracks beside the .gdi in its own folder,
+      `ROMs/com.provenance.dreamcast/<gdi name>/`, and it boots on flycast. No
+      stray `track02.raw` failure in the import queue; the log has one
+      `[IMPORT] <name>.gdi and N file(s) it lists → …/<folder>/` line.
+- [ ] Share a second GDI game with the same track names (`track01.bin`, …) after
+      the first one finished importing, and again with both shared in one go:
+      each lands in its own folder, the first game's tracks are untouched, and
+      both boot. Two different games both named `disc.gdi` go to `disc/` and
+      `disc-2/`. Known limit: if the two `.gdi` files are byte-identical the
+      second game is not imported (`[IMPORT] … has the same index file MD5` in
+      the log), because the library keys a disc set by its index file's MD5.
+- [ ] Rescan (Settings › Library › Scan ROM Directories) with a set folder whose
+      game was removed from the library: the game comes back; a DOS game folder
+      with a `.cue` inside is not imported as a disc set.
+- [ ] Delete a game that lives in a set folder: the folder is gone; a flat game
+      with a `track01.bin` of its own in the same system folder is untouched.
+- [ ] CloudKit: with ROM sync on, import a GDI set on one device and download it
+      on another: it lands in `ROMs/com.provenance.dreamcast/<gdi name>/` there
+      too and boots.
+- [ ] A flat cue/bin or GDI game imported before this build still launches, and
+      saves for it are where they were.
 - [ ] iFly: share a NAOMI zip + CHD (e.g. `ikaruga.zip` + `gdl-0010.chd`): the
       zip imports under NAOMI, `ROMs/com.provenance.naomi/ikaruga/gdl-0010.chd`
       exists, the CHD is not imported as a Dreamcast game, and the game boots

@@ -3235,11 +3235,19 @@ public final class GameImporter: GameImporting, ObservableObject {
         // Handle directory ROM sets — could be a DOSBox game folder or a MAME unpacked ROM set.
         // DOSBox is identified synchronously (file-system heuristic); MAME requires an async DB lookup.
         if item.fileType == .folder {
+            let setIndexFiles = MultiFileSetPlacement.outermostIndexFiles(in: item.url)
             if isDOSBoxFolder(item) {
                 ILOG("Folder '\(fileName)' identified as DOSBox game — importing as DOS game")
                 item.systems = [.DOS]
                 item.fileType = .game
                 // Fall through to normal game processing.
+            } else if !setIndexFiles.isEmpty {
+                // A disc set handed over as a folder (index file plus tracks) is not a MAME set:
+                // import each index file; the importer moves it and its tracks into a set folder.
+                ILOG("[IMPORT] Folder '\(fileName)' holds disc set(s) \(setIndexFiles.map(\.lastPathComponent)); importing them")
+                await importQueueActor.removeImport(byID: item.id)
+                await addImports(forPaths: setIndexFiles)
+                return
             } else {
                 ILOG("Processing potential MAME ROM folder: \(fileName)")
                 let mameSystemID = await ArchiveZipSupportChecker.shared.shouldTreatFolderAsMameRom(item.url)
@@ -3613,7 +3621,7 @@ public final class GameImporter: GameImporting, ObservableObject {
 
             /// Group items by system directory for efficient batch queries
             let itemsBySystem = Dictionary(grouping: items) { item -> String in
-                item.url.deletingLastPathComponent().lastPathComponent
+                Self.systemFolderName(of: item.url)
             }
 
             for (systemDir, systemItems) in itemsBySystem {
@@ -3653,7 +3661,8 @@ public final class GameImporter: GameImporting, ObservableObject {
                 /// for duplicate detection. MD5 will be computed later during import if needed.
                 for item in systemItems {
                     let filename = item.url.lastPathComponent
-                    let partialPath = (systemID.rawValue as NSString).appendingPathComponent(filename)
+                    let partialPath = RomDatabase.romPath(for: item.url, systemIdentifier: systemID.rawValue)
+                    let isInSetFolder = MultiFileSetFolder.romLocation(of: item.url)?.setFolder != nil
 
                     // Helper to check if game needs update and collect info
                     func checkGame(_ game: PVGame, fileURL: URL, partialPath: String) {
@@ -3693,7 +3702,9 @@ public final class GameImporter: GameImporting, ObservableObject {
                     }
 
                     /// Check by filename match against existing games (case-insensitive)
-                    /// This is faster than MD5 and catches most duplicates
+                    /// This is faster than MD5 and catches most duplicates.
+                    /// Not for a set in its own folder: another set may use the same index name.
+                    guard !isInSetFolder else { continue }
                     let lowercaseFilename = filename.lowercased()
                     for (romPath, game) in romPathsToGame {
                         if romPath.lowercased().hasSuffix(lowercaseFilename) {
@@ -4213,9 +4224,8 @@ public final class GameImporter: GameImporting, ObservableObject {
                     guard let gameWithSameSize = gamesWithSameSize.first else {
                         return false
                     }
-                    let filename = item.url.lastPathComponent
-                    if let systemID = SystemIdentifier(rawValue: item.url.deletingLastPathComponent().lastPathComponent) {
-                        let partialPath = (systemID.rawValue as NSString).appendingPathComponent(filename)
+                    if let systemID = SystemIdentifier(rawValue: Self.systemFolderName(of: item.url)) {
+                        let partialPath = RomDatabase.romPath(for: item.url, systemIdentifier: systemID.rawValue)
                         if gameWithSameSize.romPath == partialPath,
                            let fileURL = gameWithSameSize.file?.url,
                            FileManager.default.fileExists(atPath: fileURL.path) {
@@ -4240,9 +4250,8 @@ public final class GameImporter: GameImporting, ObservableObject {
         }
 
         /// If file is already in a system ROM directory, check that system first (avoids expensive system detection)
-        if let systemFromPath = SystemIdentifier(rawValue: item.url.deletingLastPathComponent().lastPathComponent) {
-            let filename = item.url.lastPathComponent
-            let partialPath = (systemFromPath.rawValue as NSString).appendingPathComponent(filename)
+        if let systemFromPath = SystemIdentifier(rawValue: Self.systemFolderName(of: item.url)) {
+            let partialPath = RomDatabase.romPath(for: item.url, systemIdentifier: systemFromPath.rawValue)
             let similarName = RomDatabase.altName(item.url, systemIdentifier: systemFromPath)
 
             /// Check cache by partialPath and altName

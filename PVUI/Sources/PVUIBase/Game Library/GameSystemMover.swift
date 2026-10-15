@@ -27,7 +27,11 @@ public enum GameSystemMover {
         let oldFileURL = game.file?.url
         let oldRelatedFiles = Array(game.relatedFiles.compactMap { $0.url })
 
-        let destinationDirectory = PVEmulatorConfiguration.romDirectory(forSystemIdentifier: system.identifier)
+        let systemDirectory = PVEmulatorConfiguration.romDirectory(forSystemIdentifier: system.identifier)
+        // A multi-file set in a folder of its own moves into a folder of its own in the new system.
+        let sourceSetFolder = MultiFileSetPlacement.setFolder(ofGameFileAt: sourceURL)
+        let destinationDirectory = sourceSetFolder == nil ? systemDirectory : MultiFileSetPlacement.folder(
+            forIndexAt: sourceURL, members: oldRelatedFiles, in: systemDirectory)
         try FileManager.default.createDirectory(at: destinationDirectory, withIntermediateDirectories: true)
         let move = BatchFileMove(files: [sourceURL] + oldRelatedFiles, into: destinationDirectory)
         try move.perform()
@@ -47,7 +51,8 @@ public enum GameSystemMover {
                 }
                 thawedGame.system = liveSystem
                 thawedGame.systemIdentifier = liveSystem.identifier
-                thawedGame.romPath = (liveSystem.identifier as NSString).appendingPathComponent(sourceURL.lastPathComponent)
+                thawedGame.romPath = RomDatabase.romPath(
+                    for: destinationDirectory.appendingPathComponent(sourceURL.lastPathComponent), systemIdentifier: liveSystem.identifier)
                 if let primary = move.pairs.first {
                     thawedGame.file = PVFile(withURL: primary.destination)
                 }
@@ -66,6 +71,10 @@ public enum GameSystemMover {
             // The record vanished mid-move; put the files back where they were.
             move.revert()
             throw CocoaError(.fileNoSuchFile)
+        }
+        if let sourceSetFolder,
+           (try? FileManager.default.contentsOfDirectory(atPath: sourceSetFolder.path))?.isEmpty == true {
+            try? FileManager.default.removeItem(at: sourceSetFolder)
         }
         RomDatabase.removeGameFromCache(
             oldRomPath: oldRomPath,

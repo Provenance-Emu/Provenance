@@ -204,7 +204,7 @@ public extension Paths {
         guard let romPath = romPath else {
             return Paths.batterySavesPath.appendingPathComponent("NULL", isDirectory: true)
         }
-        let romName: String = romPath.deletingPathExtension().lastPathComponent
+        let romName: String = MultiFileSetFolder.saveName(forROMAt: romPath)
         let batterySavesDirectory = Paths.batterySavesPath.appendingPathComponent(romName, isDirectory: true)
         
         do {
@@ -221,7 +221,7 @@ public extension Paths {
             return Paths.saveSavesPath.appendingPathComponent("NULL", isDirectory: true)
         }
         
-        let romName: String = romPath.deletingPathExtension().lastPathComponent
+        let romName: String = MultiFileSetFolder.saveName(forROMAt: romPath)
         let saveSavesPath = Paths.saveSavesPath.appendingPathComponent(romName, isDirectory: true)
         
         do {
@@ -250,7 +250,7 @@ public extension Paths {
             return Paths.cheatsPath.appendingPathComponent("NULL", isDirectory: true)
         }
 
-        let romName: String = romPath.deletingPathExtension().lastPathComponent
+        let romName: String = MultiFileSetFolder.saveName(forROMAt: romPath)
         let cheatsDirectory = Paths.cheatsPath.appendingPathComponent(romName, isDirectory: true)
 
         do {

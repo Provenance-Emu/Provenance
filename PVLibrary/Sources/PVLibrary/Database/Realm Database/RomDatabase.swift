@@ -1194,6 +1194,8 @@ public extension RomDatabase {
         }
 
         let romURL = PVEmulatorConfiguration.path(forGame: game)
+        // A multi-file set in a folder of its own goes with its last game (checked after the record is gone).
+        let setFolder = romURL.flatMap { MultiFileSetPlacement.setFolder(ofGameFileAt: $0) }
         if let romURL = romURL, FileManager.default.fileExists(atPath: romURL.path) {
             do {
                 try FileManager.default.removeItem(at: romURL)
@@ -1226,6 +1228,14 @@ public extension RomDatabase {
                 ELOG("\(error.localizedDescription)")
             }
             ELOG("\(error.localizedDescription)")
+        }
+        if let setFolder {
+            let removed = MultiFileSetPlacement.removeSetFolderIfUnused(setFolder) { romPathPrefix in
+                realm.objects(PVGame.self).filter("romPath BEGINSWITH[c] %@", romPathPrefix).first != nil
+            }
+            if removed {
+                ILOG("[IMPORT] Removed set folder \(setFolder.lastPathComponent) with its last game")
+            }
         }
     }
 
@@ -1429,9 +1439,11 @@ public extension RomDatabase {
         else {
             return
         }
+        // Only this folder's own files: a system folder's subfolders hold other games
+        // (multi-file sets in folders of their own) whose tracks may share these names.
         let children: [String]
         do {
-            children = try fileManager.subpathsOfDirectory(atPath: parentDirectory.pathDecoded)
+            children = try fileManager.contentsOfDirectory(atPath: parentDirectory.pathDecoded)
         } catch {
             ELOG("error retrieving files at directory: \(parentDirectory), \(error)")
             return

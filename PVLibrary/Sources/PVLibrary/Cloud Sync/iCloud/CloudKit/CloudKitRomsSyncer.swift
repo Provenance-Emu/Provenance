@@ -1632,18 +1632,23 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
                     throw CloudSyncError.fileSystemError(NSError(domain: "CloudKitRomsSyncer", code: -1, userInfo: [NSLocalizedDescriptionKey: "Archive file is empty or corrupted"]))
                 }
 
-                do {
-                    try ArchiveManager.shared.unzipFile(at: assetURL, to: destinationDirectory)
-                } catch {
-                    throw CloudSyncError.zipError(DescriptiveError(description: "Failed to unzip \(assetURL.path) to \(destinationDirectory.path): \(error.localizedDescription)"))
-                }
-                VLOG("Successfully unzipped archive to \(destinationDirectory.path)")
-                // Find the primary file (e.g., .iso, .bin) to return its URL
-                // This logic might need refinement based on how primary files are identified
-                if let firstFile = try? FileManager.default.contentsOfDirectory(at: destinationDirectory, includingPropertiesForKeys: nil).first {
-                    finalPrimaryFileURL = firstFile
+                if MultiFileSetFolder.isIndexFile(primaryFilename) {
+                    // A cue/gdi/m3u set goes into a folder of its own, as the importer places it.
+                    finalPrimaryFileURL = try placeDownloadedSet(archiveAt: assetURL, primaryFilename: primaryFilename, systemFolder: destinationDirectory)
                 } else {
-                    WLOG("Could not determine primary file URL after unzipping to \(destinationDirectory.path)")
+                    do {
+                        try ArchiveManager.shared.unzipFile(at: assetURL, to: destinationDirectory)
+                    } catch {
+                        throw CloudSyncError.zipError(DescriptiveError(description: "Failed to unzip \(assetURL.path) to \(destinationDirectory.path): \(error.localizedDescription)"))
+                    }
+                    VLOG("Successfully unzipped archive to \(destinationDirectory.path)")
+                    // Find the primary file (e.g., .iso, .bin) to return its URL
+                    // This logic might need refinement based on how primary files are identified
+                    if let firstFile = try? FileManager.default.contentsOfDirectory(at: destinationDirectory, includingPropertiesForKeys: nil).first {
+                        finalPrimaryFileURL = firstFile
+                    } else {
+                        WLOG("Could not determine primary file URL after unzipping to \(destinationDirectory.path)")
+                    }
                 }
             } else {
                 // Handle single file download
@@ -2906,6 +2911,30 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
         }
     }
 
+    /// Unzips a downloaded multi-file set (cue, gdi or m3u with its tracks) into a folder of its
+    /// own under the system folder (`MultiFileSetFolder`), so it never collides with another
+    /// set's generic track names. Returns the index file.
+    private func placeDownloadedSet(archiveAt assetURL: URL, primaryFilename: String, systemFolder: URL) throws -> URL {
+        let fileManager = FileManager.default
+        let staging = fileManager.temporaryDirectory.appendingPathComponent("rom-set-\(UUID().uuidString)", isDirectory: true)
+        defer { try? fileManager.removeItem(at: staging) }
+        do {
+            try fileManager.createDirectory(at: staging, withIntermediateDirectories: true)
+            try ArchiveManager.shared.unzipFile(at: assetURL, to: staging)
+        } catch {
+            throw CloudSyncError.zipError(DescriptiveError(description: "Failed to unzip \(assetURL.path): \(error.localizedDescription)"))
+        }
+        let index = staging.appendingPathComponent(primaryFilename)
+        guard fileManager.fileExists(atPath: index.path) else {
+            throw CloudSyncError.fileSystemError(CocoaError(.fileNoSuchFile, userInfo: [NSFilePathErrorKey: index.path]))
+        }
+        let others = ((try? fileManager.contentsOfDirectory(at: staging, includingPropertiesForKeys: nil, options: [.skipsHiddenFiles])) ?? [])
+            .filter { $0.lastPathComponent != primaryFilename }
+        let placement = try MultiFileSetPlacement.place(indexAt: index, members: others, in: systemFolder)
+        ILOG("[IMPORT] Downloaded \(primaryFilename) and \(others.count) file(s) → \(systemFolder.lastPathComponent)/\(placement.folder.lastPathComponent)/")
+        return placement.index
+    }
+
     private func updateLocalDownloadStatus(md5: String, isDownloaded: Bool, fileURL: URL?, record: CKRecord? = nil) async throws {
         VLOG("Updating download status for \(md5): isDownloaded = \(isDownloaded), fileURL = \(fileURL?.path ?? "nil")")
 
@@ -2970,6 +2999,11 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
                     let newFile = PVFile(withURL: validFileURL, relativeRoot: .platformDefault)
                     liveGame.file = newFile // Replace or create
                     VLOG("Updated/Created PVFile with URL \(validFileURL.path) for game \(md5).")
+                    // A set placed in a folder of its own: romPath follows it (rescans and the
+                    // iCloud Drive "deleted while closed" check read romPath).
+                    if MultiFileSetFolder.romLocation(of: validFileURL)?.setFolder != nil {
+                        liveGame.romPath = RomDatabase.romPath(for: validFileURL, systemIdentifier: liveGame.systemIdentifier)
+                    }
                 } else {
                     VLOG("PVFile URL already correct for game \(md5).")
                 }

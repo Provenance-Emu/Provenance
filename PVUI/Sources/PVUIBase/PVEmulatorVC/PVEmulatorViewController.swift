@@ -932,7 +932,11 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
 
         // First check if the user selected a specific related file
         if let selectedDiscFilename = game.selectedDiscFilename {
-            let url = URL(fileURLWithPath: selectedDiscFilename, relativeTo: PVEmulatorConfiguration.romDirectory(forSystemIdentifier: game.system?.systemIdentifier ?? .RetroArch))
+            // A multi-file set keeps its discs in its own folder, next to the game file.
+            let gamePath = PVEmulatorConfiguration.path(forGame: game)
+            let discDirectory = gamePath.flatMap { MultiFileSetFolder.romLocation(of: $0)?.setFolder != nil ? $0.deletingLastPathComponent() : nil }
+                ?? PVEmulatorConfiguration.romDirectory(forSystemIdentifier: game.system?.systemIdentifier ?? .RetroArch)
+            let url = URL(fileURLWithPath: selectedDiscFilename, relativeTo: discDirectory)
             if FileManager.default.fileExists(atPath: url.path(percentEncoded: false)) {
                 romPathMaybe = url
             }

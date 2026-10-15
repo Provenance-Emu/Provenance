@@ -280,9 +280,12 @@ class GameImporterFileService : GameImporterFileServicing {
         let currentDirectory = queueItem.url.deletingLastPathComponent()
         let fileName = queueItem.url.lastPathComponent
         let expectedPath = destinationFolder.appendingPathComponent(fileName)
+        // A multi-file set already in a folder of its own under this system (a library rescan).
+        let isInOwnSetFolder = currentDirectory.deletingLastPathComponent().standardizedFileURL.path == destinationFolder.standardizedFileURL.path
+            && MultiFileSetPlacement.isSetFolder(currentDirectory)
 
         // If the file is already in the correct location, clean CUE files and return
-        if currentDirectory.path == destinationFolder.path {
+        if currentDirectory.path == destinationFolder.path || isInOwnSetFolder {
             ILOG("ROM file \(fileName) is already in the correct location for system \(targetSystem.rawValue), skipping move")
 
             // Clean CUE files even if already in correct location
@@ -297,14 +300,23 @@ class GameImporterFileService : GameImporterFileServicing {
             queueItem.destinationUrl = queueItem.url
             moveStagedArchiveCompanions(forQueueItem: queueItem)
 
+            // Tracks join the file where it is: the system folder, or its set folder.
             // Check if there are child items that need to be processed
             if !queueItem.childQueueItems.isEmpty {
-                try await moveChildImports(forQueueItem: queueItem, to: destinationFolder)
+                try await moveChildImports(forQueueItem: queueItem, to: currentDirectory)
             }
             // Move any associated files (e.g. bin/cue for m3u) that may still be in Imports
             if !queueItem.resolvedAssociatedFileURLs.isEmpty {
-                try await moveAssociatedFiles(forQueueItem: queueItem, to: destinationFolder)
+                try await moveAssociatedFiles(forQueueItem: queueItem, to: currentDirectory)
             }
+            return
+        }
+
+        // A game made of several files (cue, gdi or m3u and what it lists) gets a folder of its
+        // own, so two sets with generic track names (track01.bin) never collide. Sets imported
+        // flat before this stay where they are.
+        if MultiFileSetPlacement.isMultiFileSet(indexAt: queueItem.url) {
+            try await placeMultiFileSet(queueItem, systemFolder: destinationFolder)
             return
         }
 
@@ -415,6 +427,57 @@ class GameImporterFileService : GameImporterFileServicing {
         } catch {
             throw GameImporterError.failedToMoveROM(error)
         }
+    }
+
+    /// Moves an index file and the files it lists into `<system>/<index name>/` (see
+    /// `MultiFileSetFolder`), keeping their names so the index needs no rewriting. Files the
+    /// importer matched by a similar name but the index doesn't list go to the system folder
+    /// as before; a listed file that hasn't arrived yet is expected inside the set folder.
+    private func placeMultiFileSet(_ queueItem: ImportQueueItem, systemFolder: URL) async throws {
+        let indexURL = queueItem.url
+        let fileManager = FileManager.default
+        if indexURL.pathExtension.lowercased() == "cue" {
+            do {
+                try cdFileHandler.cleanCueFile(at: indexURL)
+            } catch {
+                WLOG("Failed to clean CUE file \(indexURL.lastPathComponent): \(error.localizedDescription). Continuing with import.")
+            }
+        }
+
+        let associated = queueItem.resolvedAssociatedFileURLs
+        let listed = MultiFileSetPlacement.members(ofIndexAt: indexURL, among: associated)
+        let present = listed.filter { fileManager.fileExists(atPath: $0.path) }
+        let notListed = associated.filter { !listed.contains($0) }
+
+        let placement: MultiFileSetPlacement.Placement
+        do {
+            try fileManager.createDirectory(at: systemFolder, withIntermediateDirectories: true)
+            placement = try MultiFileSetPlacement.place(indexAt: indexURL, members: present, in: systemFolder)
+        } catch {
+            throw GameImporterError.failedToMoveROM(error)
+        }
+        let folderName = placement.folder.lastPathComponent
+        ILOG("[IMPORT] \(indexURL.lastPathComponent) and \(present.count) file(s) it lists → \(systemFolder.lastPathComponent)/\(folderName)/"
+             + (placement.reusedExistingFolder ? " (this set was already there)" : ""))
+        queueItem.destinationUrl = placement.index
+
+        let missing = listed.filter { !present.contains($0) }.map { placement.folder.appendingPathComponent($0.lastPathComponent) }
+        queueItem.resolvedAssociatedFileURLs = notListed
+        if !notListed.isEmpty {
+            try await moveAssociatedFiles(forQueueItem: queueItem, to: systemFolder)
+        }
+        queueItem.resolvedAssociatedFileURLs = placement.members + missing + queueItem.resolvedAssociatedFileURLs
+        try await moveChildImports(forQueueItem: queueItem, to: placement.folder)
+        removeEmptyImportSubfolder(indexURL.deletingLastPathComponent())
+    }
+
+    /// A set that arrived as a folder inside Imports leaves that folder empty once placed.
+    private func removeEmptyImportSubfolder(_ folder: URL) {
+        let imports = Paths.romsImportPath.standardizedFileURL.path
+        let path = folder.standardizedFileURL.path
+        guard path != imports, path.hasPrefix(imports + "/"),
+              (try? FileManager.default.contentsOfDirectory(atPath: path))?.isEmpty == true else { return }
+        try? FileManager.default.removeItem(at: folder)
     }
 
     // MARK: - Utility

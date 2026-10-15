@@ -7,6 +7,7 @@
 
 import PVRealm
 import Foundation
+import PVFileSystem
 import PVLogging
 import PVLookup
 import PVSystems
@@ -141,8 +142,7 @@ public extension RomDatabase {
     }
     static func addRelativeFileCache(_ file:URL, game: PVGame, cache:[String:PVGame]) -> [String:PVGame] {
         var cache = cache
-        cache[(game.systemIdentifier as NSString)
-            .appendingPathComponent(file.lastPathComponent)] = game.detached()
+        cache[romPath(for: file, systemIdentifier: game.systemIdentifier)] = game.detached()
         cache[altName(file, systemIdentifier: game.systemIdentifier)]=game.detached()
         return cache
     }
@@ -186,8 +186,7 @@ public extension RomDatabase {
         // Remove any entries for related files
         game.relatedFiles.forEach { relatedFile in
             if let url = relatedFile.url {
-                let key = (game.systemIdentifier as NSString).appendingPathComponent(url.lastPathComponent)
-                cache.removeValue(forKey: key)
+                cache.removeValue(forKey: romPath(for: url, systemIdentifier: game.systemIdentifier))
                 cache.removeValue(forKey: altName(url, systemIdentifier: game.systemIdentifier))
             }
         }
@@ -218,24 +217,39 @@ public extension RomDatabase {
 
         // Remove any entries for old related files
         oldRelatedFiles.forEach { url in
-            let key = (oldSystemIdentifier as NSString).appendingPathComponent(url.lastPathComponent)
-            cache.removeValue(forKey: key)
+            cache.removeValue(forKey: romPath(for: url, systemIdentifier: oldSystemIdentifier))
             cache.removeValue(forKey: altName(url, systemIdentifier: oldSystemIdentifier))
         }
 
         // Update the cache
         _gamesCache = cache
     }
+    /// `<system>/<name without disc numbers>`; for a file in a multi-file set's own folder,
+    /// `<system>/<set folder>/<name>`, so two sets with the same index name never share a key.
     static func altName(_ romPath:URL, systemIdentifier:String) -> String {
         var similarName = romPath.deletingPathExtension().lastPathComponent
         similarName = PVEmulatorConfiguration.stripDiscNames(fromFilename: similarName)
-        return (systemIdentifier as NSString).appendingPathComponent(similarName)
+        return (romDirectoryKey(for: romPath, systemIdentifier: systemIdentifier) as NSString).appendingPathComponent(similarName)
     }
 
     static func altName(_ romPath:URL, systemIdentifier:SystemIdentifier) -> String {
-        var similarName = romPath.deletingPathExtension().lastPathComponent
-        similarName = PVEmulatorConfiguration.stripDiscNames(fromFilename: similarName)
-        return (systemIdentifier.rawValue as NSString).appendingPathComponent(similarName)
+        altName(romPath, systemIdentifier: systemIdentifier.rawValue)
+    }
+
+    /// `PVGame.romPath` for a file: `<system>/<file>`, or `<system>/<set folder>/<file>` for a
+    /// file in a multi-file set's own folder (`MultiFileSetFolder`).
+    static func romPath(for url: URL, systemIdentifier: String) -> String {
+        (romDirectoryKey(for: url, systemIdentifier: systemIdentifier) as NSString).appendingPathComponent(url.lastPathComponent)
+    }
+
+    /// `<system>`, or `<system>/<set folder>` when `url` sits in a set folder of that system.
+    private static func romDirectoryKey(for url: URL, systemIdentifier: String) -> String {
+        guard let location = MultiFileSetFolder.romLocation(of: url),
+              let folder = location.setFolder,
+              location.systemIdentifier == systemIdentifier else {
+            return systemIdentifier
+        }
+        return (systemIdentifier as NSString).appendingPathComponent(folder)
     }
 
     static func reloadFileSystemROMCache() {
@@ -257,16 +271,25 @@ public extension RomDatabase {
                 NSLog(error.localizedDescription)
             }
         }
-        guard let contents = try? FileManager.default.contentsOfDirectory(at: systemDir, includingPropertiesForKeys: nil, options: [.skipsSubdirectoryDescendants, .skipsHiddenFiles]),
+        guard let contents = try? FileManager.default.contentsOfDirectory(at: systemDir, includingPropertiesForKeys: [.isDirectoryKey], options: [.skipsSubdirectoryDescendants, .skipsHiddenFiles]),
               !contents.isEmpty else {
             return files
         }
+        let detachedSystem = system.detached()
+        let isDirectory = { (url: URL) in (try? url.resourceValues(forKeys: [.isDirectoryKey]).isDirectory) == true }
         contents
-            .filter { system.extensions.contains($0.pathExtension) }
+            .filter { system.extensions.contains($0.pathExtension) && !(isDirectory($0) && MultiFileSetPlacement.isSetFolder($0)) }
             .forEach {
                 file in
-                files[file] = system.detached()
+                files[file] = detachedSystem
             }
+        // Multi-file sets live in a folder of their own; a folder that is itself a game
+        // (DOS, an unpacked MAME set) is not looked into.
+        let gameFolders = Set((_gamesCache ?? [:]).values.filter { $0.systemIdentifier == system.identifier }.map { $0.romPath.lowercased() })
+        MultiFileSetPlacement.indexFilesInSetFolders(of: systemDir)
+            .filter { system.extensions.contains($0.pathExtension) || system.extensions.contains($0.pathExtension.lowercased()) }
+            .filter { !gameFolders.contains(romPath(for: $0.deletingLastPathComponent(), systemIdentifier: system.identifier).lowercased()) }
+            .forEach { files[$0] = detachedSystem }
         return files
     }
 

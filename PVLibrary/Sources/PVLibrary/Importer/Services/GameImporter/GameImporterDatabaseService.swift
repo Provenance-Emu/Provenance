@@ -104,8 +104,12 @@ class GameImporterDatabaseService : GameImporterDatabaseServicing {
         #endif
 
         let filename = queueItem.url.lastPathComponent
-        let partialPath = (targetSystem.rawValue as NSString).appendingPathComponent(filename)
-        let similarName = RomDatabase.altName(queueItem.url, systemIdentifier: targetSystem)
+        // A multi-file set in a folder of its own is keyed by that folder too, so a second set
+        // with the same index name (disc.gdi) never matches the first one's record.
+        let setLocation = Self.setFolderLocation(of: destUrl, system: targetSystem)
+        let pathSource = setLocation == nil ? queueItem.url : destUrl
+        let partialPath = setLocation?.romPath ?? (targetSystem.rawValue as NSString).appendingPathComponent(filename)
+        let similarName = RomDatabase.altName(pathSource, systemIdentifier: targetSystem)
 
         DLOG("Checking game cache for partialPath: \(partialPath) or similarName: \(similarName)")
         let gamesCache = RomDatabase.gamesCache
@@ -126,7 +130,7 @@ class GameImporterDatabaseService : GameImporterDatabaseServicing {
 
             // Otherwise, just update the relative path
             DLOG("Updating relative path for existing game")
-            await saveRelativePath(existingGame, partialPath: partialPath, file: queueItem.url)
+            await saveRelativePath(existingGame, partialPath: partialPath, file: pathSource)
             return
         } else {
             // Check if this is a duplicate by MD5 hash (async to avoid blocking)
@@ -140,8 +144,18 @@ class GameImporterDatabaseService : GameImporterDatabaseServicing {
 
                 if let existingGameWithSameMD5 = matchingGame,
                    targetSystem.rawValue == existingGameWithSameMD5.systemIdentifier {
+                    // A set's MD5 is its index file's. Two different GD-ROMs can share a byte-identical
+                    // .gdi, so never point a game whose files are still in place at another set's folder.
+                    if setLocation != nil,
+                       let existingURL = existingGameWithSameMD5.file?.url,
+                       existingURL.standardizedFileURL != destUrl.standardizedFileURL,
+                       FileManager.default.fileExists(atPath: existingURL.path) {
+                        WLOG("[IMPORT] \(partialPath) has the same index file MD5 as \(existingGameWithSameMD5.romPath) "
+                             + "(\(existingGameWithSameMD5.title)); leaving that game as it is and not importing this set")
+                        return
+                    }
                     ILOG("Found existing game with same MD5 hash: \(existingGameWithSameMD5.title), updating relative path")
-                    await saveRelativePath(existingGameWithSameMD5, partialPath: partialPath, file: queueItem.url)
+                    await saveRelativePath(existingGameWithSameMD5, partialPath: partialPath, file: pathSource)
                     return
                 }
             }
@@ -178,13 +192,18 @@ class GameImporterDatabaseService : GameImporterDatabaseServicing {
 
         DLOG("Starting database ROM import for: \(queueItem.url.lastPathComponent)")
         let filename = queueItem.url.lastPathComponent
+        let setLocation = Self.setFolderLocation(of: destinationUrl, system: systemID)
         let filenameSansExtension = queueItem.url.deletingPathExtension().lastPathComponent
         let titleFromFilename = PVEmulatorConfiguration.stripDiscNames(fromFilename: filenameSansExtension)
         let title: String = Defaults[.autoNormalizeROMTitles]
             ? titleFromFilename.normalizedROMTitle()
             : titleFromFilename
         let destinationDir = (systemID.rawValue as NSString)
-        let partialPath: String = (systemID.rawValue as NSString).appendingPathComponent(filename)
+        let partialPath: String = setLocation?.romPath ?? (systemID.rawValue as NSString).appendingPathComponent(filename)
+        /// Files of a set in its own folder are recorded where they are; flat files keep the legacy `<system>/<name>` form.
+        func relatedFile(_ url: URL) -> PVFile {
+            setLocation == nil ? PVFile(withPartialPath: destinationDir.appendingPathComponent(url.lastPathComponent)) : PVFile(withURL: url)
+        }
 
         DLOG("Creating game object with title: \(title), partialPath: \(partialPath)")
 
@@ -196,7 +215,7 @@ class GameImporterDatabaseService : GameImporterDatabaseServicing {
 
             let filesCache = RomDatabase.getFileSystemROMCache(for: system)
             let files = Array(filesCache.keys)
-            let name = RomDatabase.altName(queueItem.url, systemIdentifier: systemID)
+            let name = RomDatabase.altName(setLocation == nil ? queueItem.url : destinationUrl, systemIdentifier: systemID)
 
             return (files, name)
         }
@@ -222,7 +241,7 @@ class GameImporterDatabaseService : GameImporterDatabaseServicing {
             let relativeName = RomDatabase.altName(url, systemIdentifier: systemID)
             if relativeName == name {
                 matchedCount += 1
-                relatedPVFiles.append(PVFile(withPartialPath: destinationDir.appendingPathComponent(url.lastPathComponent)))
+                relatedPVFiles.append(relatedFile(url))
                 // Only log matches to reduce overhead
                 DLOG("Found matching related file: \(url.lastPathComponent)")
             }
@@ -235,7 +254,7 @@ class GameImporterDatabaseService : GameImporterDatabaseServicing {
             DLOG("Processing \(relatedFiles.count) additional related files")
             for url in relatedFiles {
                 DLOG("Adding related file: \(url.lastPathComponent)")
-                relatedPVFiles.append(PVFile(withPartialPath: destinationDir.appendingPathComponent(url.lastPathComponent))) //, relativeRoot: .iCloud))
+                relatedPVFiles.append(relatedFile(url))
             }
         }
 
@@ -331,6 +350,14 @@ class GameImporterDatabaseService : GameImporterDatabaseServicing {
         DLOG("Successfully completed database import for: \(partialPath)")
     }
 
+    /// Where `url` sits when it is in a multi-file set's own folder of `system`; nil for a flat file.
+    static func setFolderLocation(of url: URL, system: SystemIdentifier) -> MultiFileSetFolder.ROMLocation? {
+        guard let location = MultiFileSetFolder.romLocation(of: url),
+              location.setFolder != nil,
+              location.systemIdentifier == system.rawValue else { return nil }
+        return location
+    }
+
     /// Saves the relative path for a given game and updates cloud sync status if needed
     func saveRelativePath(_ existingGame: PVGame, partialPath: String, file: URL) async {
         let md5 = existingGame.md5Hash
@@ -364,9 +391,13 @@ class GameImporterDatabaseService : GameImporterDatabaseServicing {
                         gameToUpdate.file = pvFile
                         ILOG("[LOCAL SCAN FIX] Created PVFile for game: \(gameToUpdate.title)")
                     } else if let existingFile = gameToUpdate.file {
-                        // Update the partial path if it's different
-                        if existingFile.partialPath != partialPath {
-                            existingFile.partialPath = partialPath
+                        // Update the partial path if it's different. A file in a set folder is
+                        // recorded under its `ROMs/` path, which the resolver finds.
+                        let filePartialPath = MultiFileSetFolder.romLocation(of: file)?.setFolder == nil
+                            ? partialPath
+                            : RelativeRoot.platformDefault.createRelativePath(fromURL: file)
+                        if existingFile.partialPath != filePartialPath {
+                            existingFile.partialPath = filePartialPath
                             ILOG("[LOCAL SCAN FIX] Updated partialPath for game: \(gameToUpdate.title)")
                         }
                     }
