@@ -14,6 +14,9 @@ import PVRealm
 import PVLogging
 import PVPatching
 import PVFileSystem
+#if canImport(PVAppIntents)
+import PVAppIntents
+#endif
 
 /// Dedicated Patch Applier: pick patch + ROM, validate CRC, apply with progress.
 public struct PatchApplierView: View {
@@ -44,6 +47,7 @@ public struct PatchApplierView: View {
     @State private var showFilePicker = false
     @State private var pickerTarget: PickerTarget = .patch
     @State private var lastExportURL: URL?
+    @State private var confirmingReplace = false
 
     public init(preselectedGameMD5: String? = nil) {
         self.preselectedGameMD5 = preselectedGameMD5
@@ -125,21 +129,26 @@ public struct PatchApplierView: View {
             }
 
             SwiftUI.Section("Output") {
-                Toggle("Import patch into library after apply", isOn: $importToLibrary)
+                Toggle("Add to library", isOn: $importToLibrary)
                 if importToLibrary {
                     Picker("Patched version", selection: $placement) {
-                        Text("New library entry").tag(PatchPlacement.newLibraryEntry)
-                        Text("Use instead of the original").tag(PatchPlacement.replaceOriginal)
+                        Text("Play with the Patch").tag(PatchPlacement.onDemand)
+                        Text("Save a Patched Copy").tag(PatchPlacement.newLibraryEntry)
+                        Text("Replace the Original").tag(PatchPlacement.replaceOriginal)
                     }
-                    Text(placement == .replaceOriginal
-                         ? "Playing the game starts the patched version. The original file is kept; play it from Patches & Mods › Play Original."
-                         : "The patched version is listed under the game's Patches & Mods.")
+                    Text(placementDetail)
+                        .font(.caption)
+                        .foregroundStyle(placement == .replaceOriginal ? Color.orange : Color.secondary)
+                    if placement == .replaceOriginal, let replaceBlocker {
+                        Text(replaceBlocker.localizedDescription)
+                            .font(.caption)
+                            .foregroundStyle(Color.orange)
+                    }
+                } else {
+                    Text("The patched ROM is written to Documents/PatchedROMs/ and not added to the library.")
                         .font(.caption)
                         .foregroundStyle(.secondary)
                 }
-                Text("Patched ROM is written to Documents/PatchedROMs/.")
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
                 if let lastExportURL {
                     Text("Last output: \(lastExportURL.lastPathComponent)")
                         .font(.caption)
@@ -166,11 +175,15 @@ public struct PatchApplierView: View {
 
             SwiftUI.Section {
                 Button {
-                    Task { await apply() }
+                    if replacing {
+                        confirmingReplace = true
+                    } else {
+                        Task { await apply() }
+                    }
                 } label: {
-                    Label("Apply Patch", systemImage: "bandage")
+                    Label(replacing ? "Replace Original…" : "Apply Patch", systemImage: "bandage")
                 }
-                .disabled(isBusy || patchURL == nil || romURL == nil)
+                .disabled(isBusy || patchURL == nil || romURL == nil || (replacing && replaceBlocker != nil))
             }
 
             SwiftUI.Section("More") {
@@ -187,6 +200,14 @@ public struct PatchApplierView: View {
             }
         }
         .navigationTitle("Patch Applier")
+        .alert("Replace the original?", isPresented: $confirmingReplace) {
+            Button("Replace", role: .destructive) {
+                Task { await apply() }
+            }
+            Button("Cancel", role: .cancel) {}
+        } message: {
+            Text(Self.replaceWarning(for: replaceRisk))
+        }
 #if !os(tvOS)
         .navigationBarTitleDisplayMode(.inline)
         .fileImporter(
@@ -213,6 +234,52 @@ public struct PatchApplierView: View {
                let game = games.first(where: { $0.md5Hash == md5 }) {
                 romURL = game.file?.url
             }
+        }
+    }
+
+    private var replacing: Bool {
+        importToLibrary && placement == .replaceOriginal
+    }
+
+    private var selectedGame: PVGame? {
+        guard let md5 = selectedGameMD5 else { return nil }
+        return games.first(where: { $0.md5Hash == md5 })
+    }
+
+    private var placementDetail: String {
+        switch placement {
+        case .onDemand:
+            return "Playing the game starts the patched version, patched when you play it. Your original file is not touched; play it from Patches & Mods › Play Original."
+        case .newLibraryEntry:
+            return "Adds the patched game to your library as its own game, listed under the game's Patches & Mods. The original stays as it is."
+        case .replaceOriginal:
+            return "Overwrites the game's file with the patched one. Saves, cheats and play history stay with the game. This cannot be undone."
+        }
+    }
+
+    /// Why the selected game cannot be replaced, or nil.
+    private var replaceBlocker: PatchReplacement.Blocker? {
+        guard let game = selectedGame else { return .notALibraryGame }
+        if AppState.shared.emulationUIState.core != nil { return .gameRunning }
+        return PatchRepository.shared.replacementBlocker(for: game)
+    }
+
+    private var replaceRisk: PatchReplacement.Risk {
+        PatchReplacement.Risk.assess(
+            canVerifyIntegrity: inspection?.canVerifyIntegrity ?? false,
+            applyingAnyway: allowCRCMismatch
+        )
+    }
+
+    static func replaceWarning(for risk: PatchReplacement.Risk) -> String {
+        let base = "The game's file will be overwritten with the patched one. This cannot be undone."
+        switch risk {
+        case .verified:
+            return base
+        case .unverifiable:
+            return base + "\n\nThis patch has no checksum, so nothing confirms it was made for this ROM. If it was not, the game may be broken for good. Keep a backup of the original."
+        case .knownMismatch:
+            return base + "\n\nThis ROM is NOT the one the patch was made for. The result will probably not work, and the original will be gone. Keep a backup of the original."
         }
     }
 
@@ -315,13 +382,26 @@ public struct PatchApplierView: View {
                     progressStatus = progress.status
                 }
             }
-            lastExportURL = result.exportURL
+            lastExportURL = result.outputURL
             crcValidation = result.crcValidation
             inspection = result.inspection
             sourceMismatchFailed = false
-            statusMessage = "Applied → \(result.exportURL.lastPathComponent)"
-                + (result.importedPatch != nil ? " (imported to library)" : "")
-                + (result.checkedAgainstSource ? "" : " — not verified against the ROM")
+            if let newMD5 = result.replacedGameMD5 {
+                // The game moved to the patched file's MD5.
+                loadGames()
+                selectedGameMD5 = newMD5
+                self.romURL = selectedGame?.file?.url
+                crcValidation = nil
+#if canImport(PVAppIntents)
+                WidgetDataWriter.shared.writeFromRealm()
+#endif
+                statusMessage = "Replaced \(result.outputURL.lastPathComponent) with the patched version."
+                    + (result.checkedAgainstSource ? "" : " Not verified against the ROM.")
+            } else {
+                statusMessage = "Applied → \(result.outputURL.lastPathComponent)"
+                    + (result.importedPatch != nil ? " (added to library)" : "")
+                    + (result.checkedAgainstSource ? "" : " — not verified against the ROM")
+            }
         } catch PatchError.sourceROMMismatch {
             sourceMismatchFailed = true
             statusMessage = PatchError.sourceROMMismatch.localizedDescription
