@@ -273,11 +273,13 @@
 		<string>_icube-continuity._tcp</string>
 		<string>_ifly-continuity._tcp</string>
 		<string>_provenance-np._tcp</string>
+		<string>_pvcontent._tcp</string>
+		<string>_pvlibrary._tcp</string>
 	</array>
 	<key>NSHighResolutionCapable</key>
 	<true/>
 	<key>NSLocalNetworkUsageDescription</key>
-	<string>Provenance uses the local network to find and communicate with AltServer, and to browse game libraries shared by iFly and iCube on nearby devices.</string>
+	<string>Provenance uses the local network to find and communicate with AltServer, and to browse, copy and share game libraries with Provenance, iFly and iCube on nearby devices.</string>
 	<key>NSUbiquitousContainers</key>
 	<dict>
 		<key>iCloud.org.provenance-emu.provenance</key>

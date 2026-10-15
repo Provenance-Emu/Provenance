@@ -404,6 +404,8 @@
 		<string>_icube-continuity._tcp</string>
 		<string>_ifly-continuity._tcp</string>
 		<string>_provenance-np._tcp</string>
+		<string>_pvcontent._tcp</string>
+		<string>_pvlibrary._tcp</string>
 		<string>_webdav._tcp</string>
 	</array>
 	<key>NSCameraUsageDescription</key>
@@ -415,7 +417,7 @@
 	<key>NSGKFriendListUsageDescription</key>
 	<string>Provenance uses GameKit to find friends for muti-player netplay.</string>
 	<key>NSLocalNetworkUsageDescription</key>
-	<string>Provenance uses the local network for RetroArch Wi-Fi emulation, web server access, AltServer, and discovering netplay rooms, and to browse game libraries shared by iFly and iCube on nearby devices.</string>
+	<string>Provenance uses the local network for RetroArch Wi-Fi emulation, web server access, AltServer, and discovering netplay rooms, and to browse, copy and share game libraries with Provenance, iFly and iCube on nearby devices.</string>
 	<key>NSLocationUsageDescription</key>
 	<string>Some games may use location data to enhance emulated location gameplay features</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
