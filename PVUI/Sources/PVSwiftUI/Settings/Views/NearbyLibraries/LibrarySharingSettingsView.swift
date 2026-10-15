@@ -19,13 +19,14 @@ struct LibrarySharingSettingsView: View {
                 Toggle("Share This Library", isOn: $service.isEnabled)
                 statusRow
             } footer: {
-                Text("Nearby iFly and iCube devices on this Wi-Fi can browse and copy the games they can play. "
+                Text("Nearby devices on this Wi-Fi can browse and copy the games they can play: another Provenance sees every "
+                     + "system you share, iFly only Dreamcast and arcade boards, iCube only GameCube and Wii. "
                      + "BIOS files and saves are never shared. "
                      + sharingScope)
             }
 
             SwiftUI.Section("Systems") {
-                ForEach(LibrarySharingService.shareableSystems, id: \.self) { system in
+                ForEach(service.librarySystems, id: \.self) { system in
                     Toggle(system.fullName, isOn: Binding(
                         get: { !service.excludedSystems.contains(system.rawValue) },
                         set: { shared in
@@ -57,7 +58,10 @@ struct LibrarySharingSettingsView: View {
         #if os(iOS)
         .navigationBarTitleDisplayMode(.inline)
         #endif
-        .task { await service.refreshTrust() }
+        .task {
+            await service.refreshTrust()
+            await service.loadLibrarySystems()
+        }
         .settingsSubpageTracking()
     }
 

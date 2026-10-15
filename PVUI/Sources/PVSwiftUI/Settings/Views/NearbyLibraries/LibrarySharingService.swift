@@ -76,21 +76,36 @@ public final class LibrarySharingService {
         excludedSystems = Set(UserDefaults.standard.stringArray(forKey: Keys.excludedSystems) ?? [])
     }
 
-    /// Every system some peer app can receive, for the settings list.
-    static var shareableSystems: [SystemIdentifier] {
-        ServedDialect.allCases.flatMap(\.systems).sorted()
+    /// Systems with at least one game in the library, for the settings list.
+    /// `_pvlibrary` serves all of them; iFly and iCube see only their own.
+    private(set) var librarySystems: [SystemIdentifier] = []
+
+    func loadLibrarySystems() async {
+        librarySystems = await Task.detached(priority: .userInitiated) { () -> [SystemIdentifier] in
+            guard let realm = try? Realm(configuration: RealmConfiguration.realmConfig) else { return [] }
+            let ids = Set(realm.objects(PVGame.self).distinct(by: ["systemIdentifier"]).map(\.systemIdentifier))
+            return ids.compactMap(SystemIdentifier.init(rawValue:)).sorted()
+        }.value
     }
 
     // MARK: - Lifecycle
 
-    /// Called from the app's scene-phase handler.
+    /// Called from the app's scene-phase handler. Only `.background` stops
+    /// the listeners: `.inactive` also covers the Local Network permission
+    /// alert that the first listener start raises, and Control Center, and
+    /// stopping there would churn the host.
     public static func handleScenePhase(_ phase: ScenePhase) {
-        shared.appActive = phase == .active
-        #if os(iOS)
+        switch phase {
+        case .active:
+            shared.appActive = true
+        case .background:
+            #if os(iOS)
+            shared.appActive = false
+            #endif
+        default:
+            return
+        }
         Task { await shared.apply() }
-        #else
-        if phase == .active { Task { await shared.apply() } }
-        #endif
     }
 
     private var shouldRun: Bool {
@@ -167,33 +182,52 @@ public final class LibrarySharingService {
 
 // MARK: - The library, from Realm
 
-/// Reads shareable games from Realm per request: Dreamcast-family and
-/// GameCube/Wii games whose files are on this device, minus the systems the
-/// owner turned off. Primary file first, then related files (GDI tracks,
+/// Reads shareable games from Realm (cached briefly): every game whose files
+/// are on this device, minus the systems the owner turned off. Each dialect
+/// then lists only its own systems. Primary file first, then related files (GDI tracks,
 /// cue/bin sets) with their path relative to the primary's folder.
 final class RealmSharedLibrary: SharedLibraryProviding, @unchecked Sendable {
+    /// How long one read of the library serves catalogue, art and file
+    /// requests. A browse fires one art request per visible row; re-reading
+    /// Realm and stat-ing every file for each would be wasteful.
+    static let snapshotLifetime: TimeInterval = 30
+
+    private struct Snapshot {
+        let excluded: Set<String>
+        let games: [SharedGame]
+        let artKeys: [String: String]
+        let takenAt: Date
+    }
+
     private let lock = NSLock()
-    /// Game id → artwork cache key, from the last `sharedGames()`.
-    private var artKeys: [String: String] = [:]
+    private var snapshot: Snapshot?
 
     func sharedGames() async -> [SharedGame] {
-        let excluded = Set(UserDefaults.standard.stringArray(forKey: LibrarySharingService.Keys.excludedSystems) ?? [])
-        let systems = ServedDialect.allCases.flatMap(\.systems).map(\.rawValue).filter { !excluded.contains($0) }
-        let (games, keys) = await Task.detached(priority: .userInitiated) { Self.read(systems: systems) }.value
-        lock.withLock { artKeys = keys }
-        return games
+        await current().games
     }
 
     func artwork(forGameId id: String) async -> Data? {
-        guard let key = lock.withLock({ artKeys[id] }), let url = PVMediaCache.filePath(forKey: key) else { return nil }
+        guard let key = await current().artKeys[id], let url = PVMediaCache.filePath(forKey: key) else { return nil }
         return try? Data(contentsOf: url)
     }
 
-    private static func read(systems: [String]) -> ([SharedGame], [String: String]) {
+    private func current() async -> Snapshot {
+        let excluded = Set(UserDefaults.standard.stringArray(forKey: LibrarySharingService.Keys.excludedSystems) ?? [])
+        if let cached = lock.withLock({ snapshot }), cached.excluded == excluded,
+           Date().timeIntervalSince(cached.takenAt) < Self.snapshotLifetime {
+            return cached
+        }
+        let (games, keys) = await Task.detached(priority: .userInitiated) { Self.read(excluding: Array(excluded)) }.value
+        let fresh = Snapshot(excluded: excluded, games: games, artKeys: keys, takenAt: Date())
+        lock.withLock { snapshot = fresh }
+        return fresh
+    }
+
+    private static func read(excluding excluded: [String]) -> ([SharedGame], [String: String]) {
         guard let realm = try? Realm(configuration: RealmConfiguration.realmConfig) else { return ([], [:]) }
         var games: [SharedGame] = []
         var keys: [String: String] = [:]
-        let rows = realm.objects(PVGame.self).filter("systemIdentifier IN %@ AND isHiddenPatchVariant == false", systems)
+        let rows = realm.objects(PVGame.self).filter("NOT (systemIdentifier IN %@) AND isHiddenPatchVariant == false", excluded)
         for game in rows {
             guard let system = SystemIdentifier(rawValue: game.systemIdentifier),
                   let primary = game.file?.url, FileManager.default.fileExists(atPath: primary.path) else { continue }
@@ -263,6 +297,15 @@ struct HostPromptPresenter: LibraryHostApproving {
         )
     }
 
+    /// A little under the servers' 120 s approval window, so the alert goes
+    /// away before the peer is told "no".
+    static let promptTimeout: TimeInterval = 115
+
+    /// One alert at a time: a prompt that arrives while another is up waits
+    /// its turn instead of failing to present.
+    @MainActor private static var showing = false
+    @MainActor private static var waiting: [CheckedContinuation<Void, Never>] = []
+
     @MainActor
     private func ask<T: Sendable>(
         title: String,
@@ -270,13 +313,36 @@ struct HostPromptPresenter: LibraryHostApproving {
         choices: [(String, UIAlertAction.Style, T)],
         fallback: T
     ) async -> T {
+        if Self.showing {
+            await withCheckedContinuation { Self.waiting.append($0) }
+        }
+        Self.showing = true
+        defer {
+            if Self.waiting.isEmpty {
+                Self.showing = false
+            } else {
+                Self.waiting.removeFirst().resume()
+            }
+        }
         guard let presenter = Self.topViewController() else { return fallback }
-        return await withCheckedContinuation { continuation in
-            let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
+        let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
+        return await withCheckedContinuation { (continuation: CheckedContinuation<T, Never>) in
+            var answered = false
+            let answer: (T) -> Void = { value in
+                guard !answered else { return }
+                answered = true
+                continuation.resume(returning: value)
+            }
             for (label, style, value) in choices {
-                alert.addAction(UIAlertAction(title: label, style: style) { _ in continuation.resume(returning: value) })
+                alert.addAction(UIAlertAction(title: label, style: style) { _ in answer(value) })
             }
             presenter.present(alert, animated: true)
+            Task { @MainActor in
+                try? await Task.sleep(nanoseconds: UInt64(Self.promptTimeout * 1_000_000_000))
+                guard !answered else { return }
+                alert.dismiss(animated: true)
+                answer(fallback)
+            }
         }
     }
 

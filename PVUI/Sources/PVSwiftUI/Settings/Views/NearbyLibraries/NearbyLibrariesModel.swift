@@ -51,9 +51,19 @@ final class NearbyLibrariesModel {
 
     init() {}
 
-    /// Peers worth listing: libraries whose app serves a system Provenance plays.
+    /// This device's own peer id: with Share This Library on, its own adverts
+    /// show up in the browse and must be left out.
+    private(set) var ownPeerId: String?
+
+    /// Peers worth listing: libraries whose app serves a system Provenance
+    /// plays, never this device itself.
     var visiblePeers: [DiscoveredPeer] {
-        snapshot.peers.filter { !SystemMap.systems(servedBy: $0.app).isDisjoint(with: playableSystems) }
+        snapshot.peers.filter { peer in
+            peer.advertisement.peerId != ownPeerId
+                && !SystemMap.systems(servedBy: peer.app).isDisjoint(with: playableSystems)
+                // v1.1 `sys`: hide a peer that says it has nothing this device plays.
+                && peer.advertisement.mayServe(playableSystems)
+        }
     }
 
     /// Browse failures per app, for the status footer. An empty list with a
@@ -79,6 +89,7 @@ final class NearbyLibrariesModel {
 
     func start() {
         guard browseTask == nil else { return }
+        ownPeerId = identity.id
         loadLocalLibrary()
         let staging = staging
         Task.detached(priority: .utility) { staging.sweep() }
@@ -215,6 +226,9 @@ final class NearbyPeerLibraryModel {
             source = IFlyContinuitySource(baseURLs: peer.baseURLs, identity: owner.identity)
         case .iCube:
             source = ICubeContinuitySource(baseURLs: peer.baseURLs, identity: owner.identity)
+        case .pvLibrary:
+            // Ask only for what this device plays; the source filters locally too.
+            source = PVLibrarySource(baseURLs: peer.baseURLs, identity: owner.identity, systems: owner.playableSystems)
         }
     }
 

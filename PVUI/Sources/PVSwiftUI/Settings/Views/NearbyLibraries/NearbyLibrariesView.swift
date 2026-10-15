@@ -31,7 +31,7 @@ struct NearbyLibrariesView: View {
                 if model.visiblePeers.isEmpty {
                     HStack(spacing: 12) {
                         ProgressView()
-                        Text("Looking for iFly and iCube libraries on this network…")
+                        Text("Looking for libraries on this network…")
                             .foregroundStyle(.secondary)
                     }
                 } else {
@@ -44,7 +44,7 @@ struct NearbyLibrariesView: View {
                     }
                 }
             } footer: {
-                Text("Turn on Library Sharing in iFly or iCube on another device on the same Wi-Fi. "
+                Text("Turn on Library Sharing in iFly, iCube or Provenance on another device on the same Wi-Fi. "
                      + "Copied games are imported into your library; BIOS files and saves stay on the other device.")
             }
 
@@ -87,20 +87,28 @@ private struct NearbyPeerRow: View {
     let peer: DiscoveredPeer
     let summary: String?
 
+    static func symbol(for app: PeerApp) -> String {
+        switch app {
+        case .iFly: return "opticaldisc"
+        case .iCube: return "cube"
+        case .pvLibrary: return "books.vertical"
+        }
+    }
+
     var body: some View {
         HStack(spacing: 12) {
-            Image(systemName: peer.app == .iFly ? "opticaldisc" : "cube")
+            Image(systemName: Self.symbol(for: peer.app))
                 .font(.title2)
                 .frame(width: 32)
             VStack(alignment: .leading, spacing: 2) {
                 Text(peer.serviceName)
                     .font(.body)
-                Text(summary ?? "\(peer.app.displayName) · Tap to browse")
+                Text(summary ?? "\(peer.appDisplayName) · Tap to browse")
                     .font(.caption)
                     .foregroundStyle(.secondary)
             }
             Spacer()
-            Text(peer.app.displayName)
+            Text(peer.appDisplayName)
                 .font(.caption.bold())
                 .padding(.horizontal, 8)
                 .padding(.vertical, 3)
