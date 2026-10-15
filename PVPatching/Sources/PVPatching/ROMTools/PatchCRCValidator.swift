@@ -43,9 +43,9 @@ public enum PatchCRCValidator: Sendable {
         patchCRC32(data)
     }
 
+    /// CRC32 of a file, read in chunks (disc images are never loaded whole).
     public static func crc32(ofFileAt url: URL) throws -> UInt32 {
-        let data = try Data(contentsOf: url, options: .mappedIfSafe)
-        return crc32(of: data)
+        try FileDigest.compute(url, kinds: .crc32).crc32 ?? 0
     }
 
     public static func validate(romURL: URL, inspection: PatchInspection) throws -> PatchCRCValidation {

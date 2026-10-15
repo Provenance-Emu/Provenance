@@ -90,30 +90,30 @@ final class BPSPatcherTests: XCTestCase {
 
     // MARK: - Minimum-size guard (pre-existing)
 
-    func testEmptyPatchThrows() {
-        XCTAssertThrowsError(try patcher.apply(patch: Data(), to: Data())) { error in
+    func testEmptyPatchThrows() async {
+        await assertThrowsAsync(try await patcher.apply(patch: Data(), to: Data())) { error in
             guard case PatchError.corruptPatchFile = error else {
                 return XCTFail("Expected corruptPatchFile, got \(error)")
             }
         }
     }
 
-    func testTooSmallPatchThrows() {
+    func testTooSmallPatchThrows() async {
         // 18 bytes: valid header + 14 trailing bytes — below the 19-byte minimum.
         var data = Data("BPS1".utf8)
         data.append(contentsOf: [UInt8](repeating: 0x00, count: 14))
         XCTAssertEqual(data.count, 18)
-        XCTAssertThrowsError(try patcher.apply(patch: data, to: Data())) { error in
+        await assertThrowsAsync(try await patcher.apply(patch: data, to: Data())) { error in
             guard case PatchError.corruptPatchFile = error else {
                 return XCTFail("Expected corruptPatchFile, got \(error)")
             }
         }
     }
 
-    func testBadHeaderThrows() {
+    func testBadHeaderThrows() async {
         var data = Data("XBPS".utf8)
         data.append(contentsOf: [UInt8](repeating: 0x00, count: 20))
-        XCTAssertThrowsError(try patcher.apply(patch: data, to: Data())) { error in
+        await assertThrowsAsync(try await patcher.apply(patch: data, to: Data())) { error in
             guard case PatchError.corruptPatchFile = error else {
                 return XCTFail("Expected corruptPatchFile, got \(error)")
             }
@@ -122,32 +122,32 @@ final class BPSPatcherTests: XCTestCase {
 
     // MARK: - Valid patch application
 
-    func testApplyTargetReadPatch() throws {
+    func testApplyTargetReadPatch() async throws {
         let source = Data([0x00, 0x01, 0x02])
         let target = Data([0xDE, 0xAD, 0xBE])
         let patch = makeBPSPatchTargetRead(source: source, target: target)
-        let result = try patcher.apply(patch: patch, to: source)
+        let result = try await patcher.apply(patch: patch, to: source)
         XCTAssertEqual(result, target)
     }
 
-    func testApplySourceReadIdentityPatch() throws {
+    func testApplySourceReadIdentityPatch() async throws {
         // SourceRead: output should be identical to input
         let source = Data([0x01, 0x02, 0x03, 0x04])
         let patch = makeBPSPatchSourceRead(source: source)
-        let result = try patcher.apply(patch: patch, to: source)
+        let result = try await patcher.apply(patch: patch, to: source)
         XCTAssertEqual(result, source)
     }
 
-    func testApplyPatchProducesLargerTarget() throws {
+    func testApplyPatchProducesLargerTarget() async throws {
         // TargetRead can write a target that is larger than the source
         let source = Data([0x01, 0x02])
         let target = Data([0x01, 0x02, 0x03, 0x04, 0x05])
         let patch = makeBPSPatchTargetRead(source: source, target: target)
-        let result = try patcher.apply(patch: patch, to: source)
+        let result = try await patcher.apply(patch: patch, to: source)
         XCTAssertEqual(result, target)
     }
 
-    func testApplyEmptyTargetPatch() throws {
+    func testApplyEmptyTargetPatch() async throws {
         // Degenerate patch: target size is 0, no actions needed
         let source = Data([0x01, 0x02])
         var body = Data("BPS1".utf8)
@@ -160,45 +160,46 @@ final class BPSPatcherTests: XCTestCase {
         let patchCRC = crc32(body)
         body.append(contentsOf: le32(patchCRC))
 
-        let result = try patcher.apply(patch: body, to: source)
+        let result = try await patcher.apply(patch: body, to: source)
         XCTAssertEqual(result, Data())
     }
 
-    func testApplyPatchWithSingleByteTarget() throws {
+    func testApplyPatchWithSingleByteTarget() async throws {
         let source = Data([0xFF])
         let target = Data([0x42])
         let patch = makeBPSPatchTargetRead(source: source, target: target)
-        let result = try patcher.apply(patch: patch, to: source)
+        let result = try await patcher.apply(patch: patch, to: source)
         XCTAssertEqual(Array(result), [0x42])
     }
 
     // MARK: - CRC mismatch errors
 
-    func testPatchCRCMismatchThrows() {
+    func testPatchCRCMismatchThrows() async {
         let source = Data([0x01, 0x02, 0x03])
         var patch = makeBPSPatchTargetRead(source: source, target: Data([0xAA, 0xBB, 0xCC]))
         // Corrupt a byte in the patch body (before the CRC fields) to invalidate patch CRC
         patch[5] ^= 0xFF
-        XCTAssertThrowsError(try patcher.apply(patch: patch, to: source)) { error in
-            guard case PatchError.crcMismatch = error else {
-                return XCTFail("Expected crcMismatch, got \(error)")
+        await assertThrowsAsync(try await patcher.apply(patch: patch, to: source)) { error in
+            // PVPatchEngine reports a failed patch CRC32 as a damaged patch.
+            guard case PatchError.corruptPatchFile = error else {
+                return XCTFail("Expected corruptPatchFile, got \(error)")
             }
         }
     }
 
-    func testSourceCRCMismatchThrows() {
+    func testSourceCRCMismatchThrows() async {
         // Build a valid patch for correctSource, then apply it with wrongSource
         let correctSource = Data([0x01, 0x02, 0x03])
         let wrongSource   = Data([0xFF, 0xFE, 0xFD])
         let patch = makeBPSPatchTargetRead(source: correctSource, target: Data([0xAA, 0xBB, 0xCC]))
-        XCTAssertThrowsError(try patcher.apply(patch: patch, to: wrongSource)) { error in
+        await assertThrowsAsync(try await patcher.apply(patch: patch, to: wrongSource)) { error in
             guard case PatchError.sourceROMMismatch = error else {
                 return XCTFail("Expected sourceROMMismatch, got \(error)")
             }
         }
     }
 
-    func testTargetCRCMismatchThrows() {
+    func testTargetCRCMismatchThrows() async {
         let source = Data([0x01, 0x02, 0x03])
         var patch = makeBPSPatchTargetRead(source: source, target: Data([0xDE, 0xAD, 0xBE]))
 
@@ -210,7 +211,7 @@ final class BPSPatcherTests: XCTestCase {
         let newCRCBytes = le32(newPatchCRC)
         for i in 0..<4 { patch[patch.count - 4 + i] = newCRCBytes[i] }
 
-        XCTAssertThrowsError(try patcher.apply(patch: patch, to: source)) { error in
+        await assertThrowsAsync(try await patcher.apply(patch: patch, to: source)) { error in
             guard case PatchError.patchedROMVerificationFailed = error else {
                 return XCTFail("Expected patchedROMVerificationFailed, got \(error)")
             }
@@ -223,7 +224,7 @@ final class BPSPatcherTests: XCTestCase {
     ///
     /// This test uses two SourceCopy actions to rearrange source bytes:
     ///   source[2..4] → target[0..2], source[0..1] → target[3..4]
-    func testSourceCopy() throws {
+    func testSourceCopy() async throws {
         let source = Data([0x00, 0x01, 0x02, 0x03, 0x04])
         let target = Data([0x02, 0x03, 0x04, 0x00, 0x01])
 
@@ -238,7 +239,7 @@ final class BPSPatcherTests: XCTestCase {
         let actionBytes: [UInt8] = [0x8A, 0x84, 0x86, 0x8B]
         let patch = buildBPSPatch(source: source, target: target, actionBytes: actionBytes)
 
-        let result = try patcher.apply(patch: patch, to: source)
+        let result = try await patcher.apply(patch: patch, to: source)
         XCTAssertEqual(Array(result), Array(target))
     }
 
@@ -247,7 +248,7 @@ final class BPSPatcherTests: XCTestCase {
     /// TargetCopy replicates already-written target bytes within the output buffer.
     ///
     /// Strategy: write the first byte via TargetRead, then TargetCopy the remainder.
-    func testTargetCopy() throws {
+    func testTargetCopy() async throws {
         let source = Data(repeating: 0x00, count: 8)
         let target = Data(repeating: 0xAA, count: 8)
 
@@ -259,7 +260,7 @@ final class BPSPatcherTests: XCTestCase {
         let actionBytes: [UInt8] = [0x81, 0xAA, 0x9B, 0x80]
         let patch = buildBPSPatch(source: source, target: target, actionBytes: actionBytes)
 
-        let result = try patcher.apply(patch: patch, to: source)
+        let result = try await patcher.apply(patch: patch, to: source)
         XCTAssertEqual(Array(result), Array(target))
     }
 
@@ -269,7 +270,7 @@ final class BPSPatcherTests: XCTestCase {
     ///
     /// Attempting TargetCopy at outputOffset=0 (nothing written yet) must throw
     /// `corruptPatchFile` before any output is produced.
-    func testTargetCopyForwardReferenceGuard() {
+    func testTargetCopyForwardReferenceGuard() async {
         let source = Data([0xAA])
         let target = Data([0xAA])
 
@@ -280,7 +281,7 @@ final class BPSPatcherTests: XCTestCase {
         let actionBytes: [UInt8] = [0x83, 0x80]
         let patch = buildBPSPatch(source: source, target: target, actionBytes: actionBytes)
 
-        XCTAssertThrowsError(try patcher.apply(patch: patch, to: source)) { error in
+        await assertThrowsAsync(try await patcher.apply(patch: patch, to: source)) { error in
             guard case PatchError.corruptPatchFile = error else {
                 return XCTFail("Expected corruptPatchFile for forward reference, got \(error)")
             }

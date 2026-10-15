@@ -8,7 +8,7 @@ import XCTest
 @testable import PVPatching
 
 final class PatchCreatorTests: XCTestCase {
-    func testCreateAndApplyBPSRoundTrip() throws {
+    func testCreateAndApplyBPSRoundTrip() async throws {
         let original = Data((0..<256).map { UInt8($0) })
         var modified = original
         modified[10] = 0xAA
@@ -26,7 +26,7 @@ final class PatchCreatorTests: XCTestCase {
         try original.write(to: originalURL)
         try modified.write(to: modifiedURL)
 
-        _ = try PatchCreator().create(
+        _ = try await PatchCreator().create(
             originalURL: originalURL,
             modifiedURL: modifiedURL,
             outputURL: patchURL,
@@ -41,11 +41,11 @@ final class PatchCreatorTests: XCTestCase {
         XCTAssertEqual(inspection.sourceCRC32, crc32(original))
         XCTAssertEqual(inspection.targetCRC32, crc32(modified))
 
-        let applied = try BPSPatcher().apply(patch: Data(contentsOf: patchURL), to: original)
+        let applied = try await BPSPatcher().apply(patch: Data(contentsOf: patchURL), to: original)
         XCTAssertEqual(applied, modified)
     }
 
-    func testCreateBPSWhenModifiedIsShorterThanOriginal() throws {
+    func testCreateBPSWhenModifiedIsShorterThanOriginal() async throws {
         let original = Data((0..<64).map { UInt8($0) })
         let modified = Data(original.prefix(40)) // shrink
 
@@ -60,18 +60,18 @@ final class PatchCreatorTests: XCTestCase {
         try original.write(to: originalURL)
         try modified.write(to: modifiedURL)
 
-        _ = try PatchCreator().create(
+        _ = try await PatchCreator().create(
             originalURL: originalURL,
             modifiedURL: modifiedURL,
             outputURL: patchURL,
             format: .bps
         )
 
-        let applied = try BPSPatcher().apply(patch: Data(contentsOf: patchURL), to: original)
+        let applied = try await BPSPatcher().apply(patch: Data(contentsOf: patchURL), to: original)
         XCTAssertEqual(applied, modified)
     }
 
-    func testCreateAndApplyIPSRoundTrip() throws {
+    func testCreateAndApplyIPSRoundTrip() async throws {
         let original = Data(repeating: 0x00, count: 64)
         var modified = original
         modified[5] = 0x11
@@ -89,14 +89,14 @@ final class PatchCreatorTests: XCTestCase {
         try original.write(to: originalURL)
         try modified.write(to: modifiedURL)
 
-        _ = try PatchCreator().create(
+        _ = try await PatchCreator().create(
             originalURL: originalURL,
             modifiedURL: modifiedURL,
             outputURL: patchURL,
             format: .ips
         )
 
-        let applied = try IPSPatcher().apply(patch: Data(contentsOf: patchURL), to: original)
+        let applied = try await IPSPatcher().apply(patch: Data(contentsOf: patchURL), to: original)
         XCTAssertEqual(applied, modified)
     }
 
@@ -115,7 +115,7 @@ final class PatchCreatorTests: XCTestCase {
         let patchURL = dir.appendingPathComponent("Zelda Translation.bps")
         try original.write(to: romURL)
         try modified.write(to: modURL)
-        _ = try PatchCreator().create(
+        _ = try await PatchCreator().create(
             originalURL: romURL,
             modifiedURL: modURL,
             outputURL: patchURL,
@@ -135,7 +135,7 @@ final class PatchCreatorTests: XCTestCase {
         XCTAssertEqual(first.patchedMD5, second.patchedMD5)
     }
 
-    func testCreateAndApplyIPS32RoundTrip() throws {
+    func testCreateAndApplyIPS32RoundTrip() async throws {
         // Force an offset that requires 32-bit IPS encoding (> 0xFFFFFF).
         var original = Data(repeating: 0x00, count: 0x1000000 + 16)
         var modified = original
@@ -153,14 +153,14 @@ final class PatchCreatorTests: XCTestCase {
         try original.write(to: originalURL)
         try modified.write(to: modifiedURL)
 
-        _ = try PatchCreator().create(
+        _ = try await PatchCreator().create(
             originalURL: originalURL,
             modifiedURL: modifiedURL,
             outputURL: patchURL,
             format: .ips32
         )
 
-        let applied = try IPSPatcher().apply(
+        let applied = try await IPSPatcher().apply(
             patch: Data(contentsOf: patchURL),
             to: original,
             isIPS32: true
@@ -168,11 +168,11 @@ final class PatchCreatorTests: XCTestCase {
         XCTAssertEqual(applied, modified)
     }
 
-    func testInspectorRanksExactCRCMatchHighest() throws {
+    func testInspectorRanksExactCRCMatchHighest() async throws {
         let original = Data([1, 2, 3, 4, 5, 6, 7, 8])
         var modified = original
         modified[2] = 9
-        let patch = try PatchCreator().createBPSForTests(original: original, modified: modified)
+        let patch = try await PatchCreator().createBPSForTests(original: original, modified: modified)
 
         let inspection = try PatchInspector().inspect(patchData: patch, format: .bps, fallbackTitle: "Hack")
         let candidates = [
@@ -187,7 +187,7 @@ final class PatchCreatorTests: XCTestCase {
 }
 
 private extension PatchCreator {
-    func createBPSForTests(original: Data, modified: Data) throws -> Data {
+    func createBPSForTests(original: Data, modified: Data) async throws -> Data {
         let dir = FileManager.default.temporaryDirectory
             .appendingPathComponent("bps-inline-\(UUID().uuidString)", isDirectory: true)
         try FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true)
@@ -197,7 +197,7 @@ private extension PatchCreator {
         let p = dir.appendingPathComponent("p.bps")
         try original.write(to: o)
         try modified.write(to: m)
-        _ = try create(originalURL: o, modifiedURL: m, outputURL: p, format: .bps)
+        _ = try await create(originalURL: o, modifiedURL: m, outputURL: p, format: .bps)
         return try Data(contentsOf: p)
     }
 }

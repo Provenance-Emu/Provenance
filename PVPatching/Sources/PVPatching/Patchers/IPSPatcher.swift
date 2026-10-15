@@ -5,166 +5,35 @@
 //  Created by Provenance Emu on 2026-03-07.
 //  Copyright © 2026 Provenance Emu. All rights reserved.
 //
-//  IPS (International Patching System) format implementation.
-//  Supports both classic IPS and IPS32 (large ROM extension).
-//
-//  Format spec: https://zerosoft.zophar.net/ips.php
+//  IPS (International Patching System) and IPS32 patches.
+//  Decoding is done by PVPatchEngine, which streams through files; this type keeps the
+//  in-memory API for small ROMs and tests. `PatchApplier` uses the engine directly.
 //
 
 import Foundation
 
 /// Applies IPS and IPS32 patches to ROM data.
 ///
-/// IPS format:
-/// - Header: "PATCH" (5 bytes)
-/// - Records: offset (3 bytes BE), length (2 bytes BE), data
-///   - If length == 0: RLE record — repeat count (2 bytes BE), byte value (1 byte)
-/// - EOF marker: "EOF" (3 bytes)
-///
-/// IPS32 format extends offsets to 4 bytes BE.
+/// IPS: "PATCH", records of offset (3 bytes BE) + length (2 bytes BE) + data, or an RLE record
+/// (length 0, then count (2 bytes BE) and the byte), "EOF", optional 3-byte truncation size.
+/// IPS32 uses 4-byte offsets and "EEOF".
 public struct IPSPatcher: Sendable {
-
-    private static let header = Array("PATCH".utf8)
-    private static let eof    = Array("EOF".utf8)
-    private static let eof32  = Array("EEOF".utf8)
-
     public init() {}
 
     /// Determine if a patch file uses IPS32 format based on its file extension.
     ///
-    /// IPS32 detection MUST be done by examining the file extension (`.ips32`), NOT by
-    /// scanning the patch body for the "EEOF" byte sequence. Scanning the entire file for
-    /// "EEOF" is unreliable because the bytes `0x45 0x45 0x4F 0x46` can legitimately appear
-    /// inside a record's data payload in a standard IPS patch, causing false positives.
-    ///
-    /// - Parameter url: The patch file URL.
-    /// - Returns: `true` if the extension is `ips32` (case-insensitive).
+    /// An IPS32 patch that starts with "PATCH" can only be told apart by its `.ips32` extension:
+    /// the bytes of "EEOF" can legitimately appear inside a record of a classic IPS patch, so the
+    /// body must never be scanned for them.
     public static func isIPS32Format(url: URL) -> Bool {
         url.pathExtension.lowercased() == "ips32"
     }
 
     /// Apply an IPS patch to source data and return the patched result.
     ///
-    /// - Parameters:
-    ///   - patch: The raw IPS patch file data.
-    ///   - source: The source ROM data to patch.
-    ///   - isIPS32: `true` for IPS32 (large ROM) patches that use 4-byte offsets.
-    ///              **Must be determined from the file extension** (`.ips32`), never by
-    ///              scanning the patch body for the "EEOF" byte sequence — see `isIPS32Format(url:)`.
-    /// - Returns: The patched ROM data.
+    /// - Parameter isIPS32: `true` for IPS32 patches; determine it with `isIPS32Format(url:)`.
     /// - Throws: `PatchError` on format or integrity issues.
-    public func apply(patch: Data, to source: Data, isIPS32: Bool = false) throws -> Data {
-        var result = source
-
-        var pos = 0
-
-        // Validate header
-        guard patch.count >= 5 else {
-            throw PatchError.corruptPatchFile("File too small to contain IPS header")
-        }
-        let headerBytes = Array(patch[0..<5])
-        guard headerBytes == Self.header else {
-            throw PatchError.corruptPatchFile("Invalid IPS header")
-        }
-        pos = 5
-
-        let offsetSize = isIPS32 ? 4 : 3
-        let eofMarker = isIPS32 ? Self.eof32 : Self.eof
-
-        while pos < patch.count {
-            // "EOF" (0x45 0x4F 0x46) is also a valid 3-byte record offset (0x454F46).
-            // Only treat it as the terminator when nothing but the optional 3-byte
-            // truncation size can follow; otherwise it is a record at that offset.
-            let markerSize = eofMarker.count
-            if pos + markerSize <= patch.count {
-                let remaining = patch.count - pos
-                let candidate = Array(patch[pos..<(pos + markerSize)])
-                let isTrailer = remaining == markerSize || (!isIPS32 && remaining == markerSize + 3)
-                if candidate == eofMarker && isTrailer { break }
-            }
-
-            guard pos + offsetSize + 2 <= patch.count else {
-                throw PatchError.corruptPatchFile("Unexpected end of patch data")
-            }
-
-            // Read offset
-            let offset: Int
-            if isIPS32 {
-                offset = readBE32(patch, at: pos)
-                pos += 4
-            } else {
-                offset = readBE24(patch, at: pos)
-                pos += 3
-            }
-
-            // Read length
-            let length = readBE16(patch, at: pos)
-            pos += 2
-
-            if length == 0 {
-                // RLE record
-                guard pos + 3 <= patch.count else {
-                    throw PatchError.corruptPatchFile("Truncated RLE record")
-                }
-                let rleCount = readBE16(patch, at: pos)
-                pos += 2
-                let rleByte = patch[pos]
-                pos += 1
-
-                let needed = offset + rleCount
-                try growIfNeeded(&result, to: needed, source: source)
-                result.replaceSubrange(offset..<(offset + rleCount), with: Data(repeating: rleByte, count: rleCount))
-            } else {
-                // Standard record
-                guard pos + length <= patch.count else {
-                    throw PatchError.corruptPatchFile("Truncated patch data record")
-                }
-                let patchData = patch[pos..<(pos + length)]
-                pos += length
-
-                let needed = offset + length
-                try growIfNeeded(&result, to: needed, source: source)
-                result.replaceSubrange(offset..<(offset + length), with: patchData)
-            }
-        }
-
-        // IPS patches may encode a truncation size after the EOF marker
-        // (some tools write 3 bytes after "EOF" indicating target size)
-        let eofEnd = pos + eofMarker.count
-        if !isIPS32 && eofEnd + 3 <= patch.count {
-            let truncSize = readBE24(patch, at: eofEnd)
-            if truncSize > 0 && truncSize < result.count {
-                result = result[0..<truncSize]
-            }
-        }
-
-        return result
-    }
-
-    // MARK: - Private helpers
-
-    /// Classic IPS offsets top out at 16 MiB. IPS32 can address 4 GiB, so cap how far a
-    /// single patch may extend the image to keep a hostile offset from allocating gigabytes.
-    static let maxGrowth = 256 * 1024 * 1024
-
-    private func growIfNeeded(_ result: inout Data, to needed: Int, source: Data) throws {
-        guard result.count < needed else { return }
-        guard needed - source.count <= Self.maxGrowth else {
-            throw PatchError.corruptPatchFile("IPS record extends the image by more than \(Self.maxGrowth / (1024 * 1024)) MiB")
-        }
-        result.append(contentsOf: Data(repeating: 0, count: needed - result.count))
-    }
-
-    private func readBE24(_ data: Data, at offset: Int) -> Int {
-        Int(data[offset]) << 16 | Int(data[offset + 1]) << 8 | Int(data[offset + 2])
-    }
-
-    private func readBE32(_ data: Data, at offset: Int) -> Int {
-        Int(data[offset]) << 24 | Int(data[offset + 1]) << 16 |
-        Int(data[offset + 2]) << 8 | Int(data[offset + 3])
-    }
-
-    private func readBE16(_ data: Data, at offset: Int) -> Int {
-        Int(data[offset]) << 8 | Int(data[offset + 1])
+    public func apply(patch: Data, to source: Data, isIPS32: Bool = false) async throws -> Data {
+        try await EngineBridge.apply(format: isIPS32 ? .ips32 : .ips, patch: patch, source: source)
     }
 }

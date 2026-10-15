@@ -57,70 +57,70 @@ final class IPSPatcherTests: XCTestCase {
 
     // MARK: - Tests
 
-    func testApplySimplePatch() throws {
+    func testApplySimplePatch() async throws {
         let source = Data([0x00, 0x01, 0x02, 0x03, 0x04])
         let patch = makeIPSPatch(records: [(offset: 1, data: [0xAA, 0xBB])])
-        let result = try patcher.apply(patch: patch, to: source)
+        let result = try await patcher.apply(patch: patch, to: source)
         XCTAssertEqual(Array(result), [0x00, 0xAA, 0xBB, 0x03, 0x04])
     }
 
-    func testApplyRLERecord() throws {
+    func testApplyRLERecord() async throws {
         let source = Data(repeating: 0x00, count: 10)
         let patch = makeIPSRLEPatch(offset: 2, count: 4, byte: 0xFF)
-        let result = try patcher.apply(patch: patch, to: source)
+        let result = try await patcher.apply(patch: patch, to: source)
         XCTAssertEqual(Array(result), [0x00, 0x00, 0xFF, 0xFF, 0xFF, 0xFF, 0x00, 0x00, 0x00, 0x00])
     }
 
-    func testPatchExtendsROMIfNeeded() throws {
+    func testPatchExtendsROMIfNeeded() async throws {
         let source = Data([0x01, 0x02])
         let patch = makeIPSPatch(records: [(offset: 4, data: [0xCC])])
-        let result = try patcher.apply(patch: patch, to: source)
+        let result = try await patcher.apply(patch: patch, to: source)
         XCTAssertEqual(result.count, 5)
         XCTAssertEqual(result[4], 0xCC)
     }
 
-    func testApplyMultipleRecords() throws {
+    func testApplyMultipleRecords() async throws {
         let source = Data(repeating: 0x00, count: 10)
         let patch = makeIPSPatch(records: [
             (offset: 0, data: [0xAA]),
             (offset: 5, data: [0xBB, 0xCC])
         ])
-        let result = try patcher.apply(patch: patch, to: source)
+        let result = try await patcher.apply(patch: patch, to: source)
         XCTAssertEqual(result[0], 0xAA)
         XCTAssertEqual(result[5], 0xBB)
         XCTAssertEqual(result[6], 0xCC)
     }
 
-    func testInvalidHeaderThrows() {
+    func testInvalidHeaderThrows() async {
         let badPatch = Data("BADPATCH".utf8)
-        XCTAssertThrowsError(try patcher.apply(patch: badPatch, to: Data())) { error in
+        await assertThrowsAsync(try await patcher.apply(patch: badPatch, to: Data())) { error in
             guard case PatchError.corruptPatchFile = error else {
                 return XCTFail("Expected corruptPatchFile, got \(error)")
             }
         }
     }
 
-    func testEmptyPatchThrows() {
-        XCTAssertThrowsError(try patcher.apply(patch: Data(), to: Data()))
+    func testEmptyPatchThrows() async {
+        await assertThrowsAsync(try await patcher.apply(patch: Data(), to: Data()))
     }
 }
 
 final class IPSEOFOffsetTests: XCTestCase {
     /// A record whose 3-byte offset is 0x454F46 spells "EOF". Decoders must only treat
     /// "EOF" as the terminator when it is actually the trailer.
-    func testRecordAtEOFOffsetIsAppliedNotTreatedAsTerminator() throws {
+    func testRecordAtEOFOffsetIsAppliedNotTreatedAsTerminator() async throws {
         let eofOffset = 0x454F46
         let source = Data(repeating: 0x00, count: eofOffset + 8)
         var patch = Data("PATCH".utf8)
         patch.append(contentsOf: [0x45, 0x4F, 0x46])      // offset 0x454F46
         patch.append(contentsOf: [0x00, 0x02, 0xAB, 0xCD]) // length 2, data
         patch.append(contentsOf: Data("EOF".utf8))
-        let result = try IPSPatcher().apply(patch: patch, to: source)
+        let result = try await IPSPatcher().apply(patch: patch, to: source)
         XCTAssertEqual(result[eofOffset], 0xAB)
         XCTAssertEqual(result[eofOffset + 1], 0xCD)
     }
 
-    func testCreatorRoundTripsAChangeAtTheEOFOffset() throws {
+    func testCreatorRoundTripsAChangeAtTheEOFOffset() async throws {
         let eofOffset = 0x454F46
         let original = Data(repeating: 0x11, count: eofOffset + 4)
         var modified = original
@@ -137,19 +137,19 @@ final class IPSEOFOffsetTests: XCTestCase {
         try original.write(to: originalURL)
         try modified.write(to: modifiedURL)
 
-        _ = try PatchCreator().create(
+        _ = try await PatchCreator().create(
             originalURL: originalURL, modifiedURL: modifiedURL, outputURL: patchURL,
             format: .ips, metadata: PatchMetadata(title: "eof")
         )
-        let applied = try IPSPatcher().apply(patch: try Data(contentsOf: patchURL), to: original)
+        let applied = try await IPSPatcher().apply(patch: try Data(contentsOf: patchURL), to: original)
         XCTAssertEqual(applied, modified)
     }
 
-    func testIPS32RefusesAbsurdGrowth() {
+    func testIPS32RefusesAbsurdGrowth() async {
         var patch = Data("PATCH".utf8)
         patch.append(contentsOf: [0xF0, 0x00, 0x00, 0x00]) // offset ~3.75 GiB
         patch.append(contentsOf: [0x00, 0x01, 0xFF])
         patch.append(contentsOf: Data("EEOF".utf8))
-        XCTAssertThrowsError(try IPSPatcher().apply(patch: patch, to: Data(count: 16), isIPS32: true))
+        await assertThrowsAsync(try await IPSPatcher().apply(patch: patch, to: Data(count: 16), isIPS32: true))
     }
 }

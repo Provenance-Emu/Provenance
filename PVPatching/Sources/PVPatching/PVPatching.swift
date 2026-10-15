@@ -8,7 +8,9 @@
 
 /// PVPatching — ROM patch file support for Provenance.
 ///
-/// Supports applying and creating patches in common formats (IPS, BPS, UPS, PPF),
+/// Applies IPS, IPS32, BPS, UPS, PPF and xdelta3 (VCDIFF) patches through PVPatchEngine, which
+/// streams to the output file: disc images of several gigabytes patch in bounded memory, and
+/// inputs and outputs are hashed by streaming too. Creates BPS and IPS/IPS32 patches,
 /// plus an opt-in online catalog client for RomHacking.net discovery and a
 /// `ROMToolOperation` foundation (Patch Applier / batch apply; CHD convert later).
 /// Original ROMs are never modified; patched ROMs are stored under `PatchedROMs/`
@@ -26,5 +28,5 @@
 /// ```
 public enum PVPatching {
     /// Module version string.
-    public static let version = "1.3.5"
+    public static let version = "1.4.0"
 }

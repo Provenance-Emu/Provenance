@@ -14,7 +14,7 @@ final class PatchCacheFastPathTests: XCTestCase {
     private var original = Data()
     private var modified = Data()
 
-    override func setUpWithError() throws {
+    override func setUp() async throws {
         dir = FileManager.default.temporaryDirectory
             .appendingPathComponent("FastPath-\(UUID().uuidString)", isDirectory: true)
         try FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true)
@@ -26,7 +26,7 @@ final class PatchCacheFastPathTests: XCTestCase {
         patchURL = dir.appendingPathComponent("Game-hack.bps")
         try original.write(to: romURL)
         try modified.write(to: modifiedURL)
-        _ = try PatchCreator().create(
+        _ = try await PatchCreator().create(
             originalURL: romURL, modifiedURL: modifiedURL, outputURL: patchURL,
             format: .bps, metadata: PatchMetadata(title: "fast")
         )

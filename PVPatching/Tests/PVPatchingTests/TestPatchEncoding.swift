@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import XCTest
 
 // MARK: - VLI / CRC helpers
 
@@ -30,4 +31,22 @@ func crc32(_ data: Data) -> UInt32 {
         }
     }
     return ~crc
+}
+
+// MARK: - Async assertions
+
+/// `XCTAssertThrowsError` for async expressions (the patchers run on PVPatchEngine, which is async).
+func assertThrowsAsync<T>(
+    _ expression: @autoclosure () async throws -> T,
+    _ message: String = "",
+    file: StaticString = #filePath,
+    line: UInt = #line,
+    _ handler: (Error) -> Void = { _ in }
+) async {
+    do {
+        _ = try await expression()
+        XCTFail("Expected an error. \(message)", file: file, line: line)
+    } catch {
+        handler(error)
+    }
 }

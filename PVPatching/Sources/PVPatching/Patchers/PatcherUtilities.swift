@@ -79,6 +79,15 @@ func patchCRC32(_ data: some DataProtocol) -> UInt32 {
     return ~crc
 }
 
+/// Continue a CRC32 over more data: `patchCRC32Continue(patchCRC32(a), b) == patchCRC32(a + b)`.
+func patchCRC32Continue(_ previous: UInt32, _ data: some DataProtocol) -> UInt32 {
+    var crc = ~previous
+    for byte in data {
+        crc = crc32Table[Int((crc ^ UInt32(byte)) & 0xFF)] ^ (crc >> 8)
+    }
+    return ~crc
+}
+
 /// Encode an integer as a BPS/UPS variable-length integer.
 func encodeVLI(_ n: Int) -> [UInt8] {
     var bytes: [UInt8] = []

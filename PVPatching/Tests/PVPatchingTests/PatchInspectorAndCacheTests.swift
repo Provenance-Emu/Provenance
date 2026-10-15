@@ -24,7 +24,7 @@ final class PatchInspectorAndCacheTests: XCTestCase {
         let patchURL = dir.appendingPathComponent("game.bps")
         try original.write(to: romURL)
         try modified.write(to: modURL)
-        _ = try PatchCreator().create(
+        _ = try await PatchCreator().create(
             originalURL: romURL,
             modifiedURL: modURL,
             outputURL: patchURL,
@@ -54,7 +54,7 @@ final class PatchInspectorAndCacheTests: XCTestCase {
         XCTAssertTrue(FileManager.default.fileExists(atPath: second.path))
     }
 
-    func testUnambiguousMatchRequiresClearWinner() throws {
+    func testUnambiguousMatchRequiresClearWinner() async throws {
         let inspection = PatchInspection(
             format: .ips,
             title: "Hack",
@@ -73,7 +73,7 @@ final class PatchInspectorAndCacheTests: XCTestCase {
         XCTAssertNil(PatchInspector().unambiguousMatch(from: ranked))
     }
 
-    func testIdenticalROMsFailCreation() throws {
+    func testIdenticalROMsFailCreation() async throws {
         let dir = FileManager.default.temporaryDirectory
             .appendingPathComponent("PatchSame-\(UUID().uuidString)", isDirectory: true)
         try FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true)
@@ -86,12 +86,11 @@ final class PatchInspectorAndCacheTests: XCTestCase {
         try data.write(to: a)
         try data.write(to: b)
 
-        XCTAssertThrowsError(
-            try PatchCreator().create(originalURL: a, modifiedURL: b, outputURL: out, format: .bps)
+        await assertThrowsAsync(try await PatchCreator().create(originalURL: a, modifiedURL: b, outputURL: out, format: .bps)
         )
     }
 
-    func testDefaultOutputStemIsHumanReadable() {
+    func testDefaultOutputStemIsHumanReadable() async {
         let rom = URL(fileURLWithPath: "/tmp/Zelda.nes")
         let patch = URL(fileURLWithPath: "/tmp/French Translation.bps")
         let stem = PatchApplier.defaultOutputStem(romURL: rom, patchURL: patch)

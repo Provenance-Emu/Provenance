@@ -48,6 +48,10 @@ public enum PatchError: Error, LocalizedError, Sendable {
     case sourceROMNotFound(URL)
     case outputWriteFailed(Error)
     case patchApplicationFailed(String)
+    /// The surrounding task was cancelled while patching.
+    case cancelled
+    /// The volume does not have room for the patched file.
+    case insufficientStorage(required: UInt64, available: UInt64)
 
     public var errorDescription: String? {
         switch self {
@@ -69,6 +73,12 @@ public enum PatchError: Error, LocalizedError, Sendable {
             return "Failed to write patched ROM: \(error.localizedDescription)"
         case .patchApplicationFailed(let reason):
             return "Patch application failed: \(reason)"
+        case .cancelled:
+            return "Patching was cancelled"
+        case .insufficientStorage(let required, let available):
+            let formatter = ByteCountFormatter()
+            return "Not enough free space to patch: needs \(formatter.string(fromByteCount: Int64(clamping: required))), "
+                + "\(formatter.string(fromByteCount: Int64(clamping: available))) available"
         }
     }
 }

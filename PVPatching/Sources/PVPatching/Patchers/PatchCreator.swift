@@ -55,7 +55,7 @@ public struct PatchCreator: Sendable {
         metadata: PatchMetadata = PatchMetadata(),
         verifyRoundTrip: Bool = true,
         progress: (@Sendable (PatchProgress) -> Void)? = nil
-    ) throws -> URL {
+    ) async throws -> URL {
         progress?(PatchProgress(fractionCompleted: 0.05, status: "Reading ROMs…"))
         let original = try Data(contentsOf: originalURL, options: .mappedIfSafe)
         let modified = try Data(contentsOf: modifiedURL, options: .mappedIfSafe)
@@ -79,11 +79,11 @@ public struct PatchCreator: Sendable {
             let applied: Data
             switch format {
             case .bps:
-                applied = try BPSPatcher().apply(patch: patchData, to: original)
+                applied = try await BPSPatcher().apply(patch: patchData, to: original)
             case .ips:
-                applied = try IPSPatcher().apply(patch: patchData, to: original, isIPS32: false)
+                applied = try await IPSPatcher().apply(patch: patchData, to: original, isIPS32: false)
             case .ips32:
-                applied = try IPSPatcher().apply(patch: patchData, to: original, isIPS32: true)
+                applied = try await IPSPatcher().apply(patch: patchData, to: original, isIPS32: true)
             }
             guard applied == modified else {
                 throw PatchError.patchedROMVerificationFailed

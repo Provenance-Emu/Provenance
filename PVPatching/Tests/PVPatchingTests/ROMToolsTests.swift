@@ -9,13 +9,13 @@ import XCTest
 
 final class ROMToolsTests: XCTestCase {
 
-    func testCRC32KnownVector() {
+    func testCRC32KnownVector() async {
         // CRC-32/ISO-HDLC of "123456789" is 0xCBF43926.
         let data = Data("123456789".utf8)
         XCTAssertEqual(PatchCRCValidator.crc32(of: data), 0xCBF4_3926)
     }
 
-    func testValidateMatchedAndMismatched() throws {
+    func testValidateMatchedAndMismatched() async throws {
         let dir = FileManager.default.temporaryDirectory
             .appendingPathComponent("ROMToolsCRC-\(UUID().uuidString)", isDirectory: true)
         try FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true)
@@ -50,7 +50,7 @@ final class ROMToolsTests: XCTestCase {
         XCTAssertTrue(mismatch.userMessage.contains("Warning"))
     }
 
-    func testValidateUnavailableWithoutSourceCRC() throws {
+    func testValidateUnavailableWithoutSourceCRC() async throws {
         let inspection = PatchInspection(
             format: .ips,
             title: "IPS",
@@ -81,7 +81,7 @@ final class ROMToolsTests: XCTestCase {
         try original.write(to: romURL)
         try modified.write(to: modifiedURL)
 
-        _ = try PatchCreator().create(
+        _ = try await PatchCreator().create(
             originalURL: romURL,
             modifiedURL: modifiedURL,
             outputURL: patchURL,
@@ -118,7 +118,7 @@ final class ROMToolsTests: XCTestCase {
         try original.write(to: romURL)
         try modified.write(to: modifiedURL)
 
-        _ = try PatchCreator().create(
+        _ = try await PatchCreator().create(
             originalURL: romURL,
             modifiedURL: modifiedURL,
             outputURL: patchURL,
@@ -166,7 +166,7 @@ final class ROMToolsTests: XCTestCase {
         try original.write(to: romURL)
         try modified.write(to: modifiedURL)
         try Data().write(to: badPatch)
-        _ = try PatchCreator().create(
+        _ = try await PatchCreator().create(
             originalURL: romURL,
             modifiedURL: modifiedURL,
             outputURL: goodPatch,
@@ -190,14 +190,14 @@ final class ROMToolsTests: XCTestCase {
         XCTAssertFalse(plan.jobs[0].crcValidation.isMismatch)
     }
 
-    func testPatchFormatMagicSniffing() {
+    func testPatchFormatMagicSniffing() async {
         XCTAssertEqual(PatchFormat.detect(fromMagic: Data("PATCH\u{0}".utf8)), .ips)
         XCTAssertEqual(PatchFormat.detect(fromMagic: Data("BPS1\u{0}".utf8)), .bps)
         XCTAssertEqual(PatchFormat.detect(fromMagic: Data("UPS1\u{0}".utf8)), .ups)
         XCTAssertEqual(PatchFormat.detect(fromMagic: Data("PPF30".utf8)), .ppf)
         XCTAssertNil(PatchFormat.detect(fromMagic: Data([0x50, 0x4B, 0x03, 0x04, 0x14])))
         XCTAssertTrue(PatchFormat.implementedFileExtensions.isSuperset(of: ["ips", "bps", "ups", "ppf"]))
-        XCTAssertFalse(PatchFormat.implementedFileExtensions.contains("xdelta"))
+        XCTAssertTrue(PatchFormat.implementedFileExtensions.isSuperset(of: ["xdelta", "xdelta3", "vcdiff"]))
     }
 
     func testBatchSkipsCRCMismatchUnlessAllowed() async throws {
@@ -225,7 +225,7 @@ final class VariableLengthIntegerTests: XCTestCase {
     /// Regression: the decoder used `|=` where the BPS/UPS spec adds, so any value
     /// whose implicit carry bit collided with the next group decoded wrong
     /// (`[0x00, 0x81]` came back as 128 instead of 256).
-    func testRoundTripAcrossGroupBoundaries() {
+    func testRoundTripAcrossGroupBoundaries() async {
         let values = [0, 1, 127, 128, 129, 255, 256, 257, 16_383, 16_384, 16_511, 16_512,
                       1 << 20, (1 << 21) - 1, 1 << 24, 0x1234_5678, 1 << 32, (1 << 40) + 3]
         for value in values {
@@ -236,7 +236,7 @@ final class VariableLengthIntegerTests: XCTestCase {
         }
     }
 
-    func testKnownEncodings() {
+    func testKnownEncodings() async {
         var pos = 0
         XCTAssertEqual(readVLI(Data([0x00, 0x81]), pos: &pos), 256)
         pos = 0
@@ -245,7 +245,7 @@ final class VariableLengthIntegerTests: XCTestCase {
         XCTAssertEqual(readVLI(Data([0xFF]), pos: &pos), 127)
     }
 
-    func testUnterminatedAndOversizedEncodingsFailLoudly() {
+    func testUnterminatedAndOversizedEncodingsFailLoudly() async {
         var pos = 0
         XCTAssertEqual(readVLI(Data([0x00, 0x00, 0x00]), pos: &pos), Int.max)
         pos = 0
@@ -258,20 +258,20 @@ final class VariantOutputStemTests: XCTestCase {
 
     /// Save-state and battery folders are keyed by the ROM stem, so a variant named
     /// exactly like its base ROM would share (and on delete, wipe) the base game's saves.
-    func testSameNamedPatchNeverReusesTheBaseStem() {
+    func testSameNamedPatchNeverReusesTheBaseStem() async {
         let patch = URL(fileURLWithPath: "/patches/Game.ips")
         let stem = PatchApplier.defaultOutputStem(romURL: rom, patchURL: patch)
         XCTAssertNotEqual(stem.lowercased(), "game")
         XCTAssertEqual(stem, "Game [patched]")
     }
 
-    func testCaseAndWhitespaceVariantsOfTheBaseStemAreRejected() {
+    func testCaseAndWhitespaceVariantsOfTheBaseStemAreRejected() async {
         XCTAssertEqual(PatchApplier.variantSafeStem("GAME", romURL: rom), "Game [patched]")
         XCTAssertEqual(PatchApplier.variantSafeStem("  game ", romURL: rom), "Game [patched]")
         XCTAssertEqual(PatchApplier.variantSafeStem("", romURL: rom), "Game [patched]")
     }
 
-    func testDistinctStemsPassThrough() {
+    func testDistinctStemsPassThrough() async {
         XCTAssertEqual(PatchApplier.variantSafeStem("Game (Hard Mode)", romURL: rom), "Game (Hard Mode)")
         let patch = URL(fileURLWithPath: "/patches/Game - English v1.2.bps")
         XCTAssertEqual(PatchApplier.defaultOutputStem(romURL: rom, patchURL: patch), "Game - English v1.2")
