@@ -110,6 +110,9 @@ open class DeltaSkinInputHandler: ObservableObject {
     /// Per-session position memory for the current system's console switches.
     private var hardwareSwitchLatch: (system: SystemIdentifier, latch: HardwareSwitchLatch)?
 
+    /// Dreamcast skin tokens already logged as reaching the responder this session (one line each).
+    private var loggedDreamcastTokens: Set<String> = []
+
     /// Turns a position-less switch id (Manic `tvType`, `leftDifficulty`...) into the
     /// position-specific id for the core; any other id comes back unchanged.
     /// `nil` means "drop this event" (a release whose press was never seen).
@@ -1909,7 +1912,7 @@ open class DeltaSkinInputHandler: ObservableObject {
 
         // The Dreamcast enum presses Up for any string it doesn't know; drop those tokens instead.
         if ObjectIdentifier(buttonType) == ObjectIdentifier(PVDreamcastButton.self), Self.dreamcastButton(forSkinToken: normalizedId) == nil {
-            WLOG("Dropping skin token '\(buttonId)' (normalized '\(normalizedId)'): no \(systemId) button for it")
+            Self.logDroppedDreamcastToken(buttonId, normalized: normalizedId, system: systemId)
             return
         }
 
@@ -2030,11 +2033,16 @@ open class DeltaSkinInputHandler: ObservableObject {
             if let r = core as? PVDreamcastSystemResponderClient {
                 // Handled either way: falling through would reach the generic enum init, which presses Up.
                 guard let b = Self.dreamcastButton(forSkinToken: id) else {
-                    WLOG("Dropping skin token '\(buttonId)' (normalized '\(id)'): no \(systemId) button for it")
+                    Self.logDroppedDreamcastToken(buttonId, normalized: id, system: systemId)
                     return true
+                }
+                if isPressed, loggedDreamcastTokens.insert(id).inserted {
+                    ILOG("[INPUT-DIAG] Dreamcast skin token '\(buttonId)' -> PVDreamcastButton.\(b.stringValue) on \(systemId), core=\(type(of: core))")
                 }
                 isPressed ? r.didPush(b, forPlayer: 0) : r.didRelease(b, forPlayer: 0)
                 return true
+            } else {
+                ELOG("[INPUT-DIAG] Dreamcast skin token '\(buttonId)' not sent: core \(type(of: core)) is not a PVDreamcastSystemResponderClient (\(systemId))")
             }
         case .PCE, .SGFX:
             if let r = core as? PVPCESystemResponderClient {
@@ -2378,6 +2386,12 @@ open class DeltaSkinInputHandler: ObservableObject {
         default:
             return nil
         }
+    }
+
+    /// Logs a skin token the Dreamcast pad has no control for, naming the token and the system, so a
+    /// device log shows exactly which skin input went nowhere.
+    private static func logDroppedDreamcastToken(_ token: String, normalized: String, system: SystemIdentifier) {
+        WLOG("[INPUT-DIAG] Dropping skin token '\(token)' (normalized '\(normalized)'): no \(system) button for it")
     }
 
     /// Normalize skin button IDs to canonical names per system

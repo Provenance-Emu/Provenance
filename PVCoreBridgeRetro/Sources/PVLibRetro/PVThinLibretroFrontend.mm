@@ -789,6 +789,9 @@ static const size_t kThinNetpacketQueueLimitBytes = 32 * 1024 * 1024;
     NSArray<NSArray<NSDictionary<NSString *, id> *> *> *_controllerPortInfo;
     // Current device type selected per port (default RETRO_DEVICE_JOYPAD = 1)
     unsigned _portDeviceTypes[THIN_MAX_PLAYERS];
+    // One bit per (port, base device class) already named by the [INPUT-DIAG] poll log
+    // (zeroed with the instance; one frontend serves one core instance).
+    uint64_t _inputDiagLoggedDevices;
 
     // Core capability flags set via environment callbacks
     bool _coreSupportsNoGame;
@@ -5963,6 +5966,22 @@ NSNotificationName const PVEmulatorCoreDidFailToStartNotification =
     if (!s_loggedInputPoll) {
         ILOG(@"ThinFrontend: ✅ Core is polling input (port=%u dev=%u idx=%u id=%u) delegate=%@", port, dev, idx, bid, self.frontendDelegate);
         s_loggedInputPoll = true;
+    }
+
+    // Name the device class the core reads on each port, once per load. On-screen and responder
+    // presses land in the joypad bitmask; a core polling a port as a light gun, mouse or pointer
+    // reads other fields, so its face buttons go dead while the d-pad may still work.
+    {
+        const unsigned devClass = dev & RETRO_DEVICE_MASK;
+        // 8 ports x 8 base classes (NONE..POINTER are 0-6) fill the 64-bit mask.
+        if (port < THIN_MAX_PLAYERS && devClass < 8) {
+            const uint64_t bit = 1ull << (port * 8 + devClass);
+            if ((_inputDiagLoggedDevices & bit) == 0) {
+                _inputDiagLoggedDevices |= bit;
+                ILOG(@"[INPUT-DIAG] ThinFrontend: core reads port=%u device=%u (class %u) idx=%u id=%u; port device set=%u",
+                     port, dev, devClass, idx, bid, _portDeviceTypes[port]);
+            }
+        }
     }
 
     if (self.frontendDelegate) {

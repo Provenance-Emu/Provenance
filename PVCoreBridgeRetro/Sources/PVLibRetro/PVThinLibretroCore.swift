@@ -1158,9 +1158,12 @@ extension PVThinLibretroCore: PortDeviceConfigurable {
         let portCount = max(1, min(_bridge.controllerPortInfo.count, thinMaxPlayers))
         for port in 0..<portCount {
             let key = portDevicePersistenceKey(port: port)
+            // A port device other than the joypad changes which buttons the core reads (flycast's light
+            // gun reads the d-pad but not the face buttons or Start), so every branch names its source.
             if UserDefaults.standard.object(forKey: key) != nil {
                 let saved = UInt(UserDefaults.standard.integer(forKey: key))
                 _bridge.setControllerPortDevice(UInt32(saved), forPort: UInt32(port))
+                ILOG("[INPUT-DIAG] ThinLibretroCore: port \(port) device=\(saved) from saved key \(key)")
             } else {
                 // Migration path: fall back to the keys older builds wrote.
                 let legacyKey = legacyPortDevicePersistenceKeys(port: port)
@@ -1170,11 +1173,12 @@ extension PVThinLibretroCore: PortDeviceConfigurable {
                     _bridge.setControllerPortDevice(UInt32(saved), forPort: UInt32(port))
                     // Re-save under the new per-core/per-game key so future lookups hit the new namespace.
                     UserDefaults.standard.set(Int(saved), forKey: key)
+                    ILOG("[INPUT-DIAG] ThinLibretroCore: port \(port) device=\(saved) from legacy key \(legacyKey)")
                 } else if let defaultDevice = platformDefaultPortDevice(forPort: port) {
                     // Apply system-specific device-type defaults when no user preference is saved.
                     // This runs AFTER retro_load_game so the core's SET_CONTROLLER_INFO has fired.
                     _bridge.setControllerPortDevice(UInt32(defaultDevice), forPort: UInt32(port))
-                    ILOG("ThinLibretroCore: applied platform default device=\(defaultDevice) on port \(port)")
+                    ILOG("[INPUT-DIAG] ThinLibretroCore: port \(port) device=\(defaultDevice) from platform default")
                 } else {
                     // No saved pref and no platform default: still push the tracked device
                     // (RETRO_DEVICE_JOYPAD by default, set in init) so the core is explicitly
@@ -1183,7 +1187,7 @@ extension PVThinLibretroCore: PortDeviceConfigurable {
                     // at boot until the user toggles or restarts the core.
                     let fallback = UInt(_bridge.currentDeviceType(forPort: UInt32(port)))
                     _bridge.setControllerPortDevice(UInt32(fallback), forPort: UInt32(port))
-                    ILOG("ThinLibretroCore: applied tracked default device=\(fallback) on port \(port)")
+                    ILOG("[INPUT-DIAG] ThinLibretroCore: port \(port) device=\(fallback) from tracked default")
                 }
             }
         }
