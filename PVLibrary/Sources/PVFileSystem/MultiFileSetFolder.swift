@@ -7,8 +7,10 @@
 //  the index file: `ROMs/<system>/<index stem>/`. Two sets whose tracks share
 //  generic names (`track01.bin`) then never collide. Single-file games stay flat.
 //  When another set has the name, the folder is `<index stem>-<first 8 of the
-//  game's md5Hash>`, so every device names it the same; folders created before
-//  that (`<index stem>-2`, `-3`, … in import order) keep their names.
+//  game's md5Hash>` rather than a number given in import order, so a device that
+//  already has the first set names the second one the same way. Which set gets the
+//  bare name still depends on which arrived first. Folders created before this
+//  (`<index stem>-2`, `-3`, …) keep their names.
 //
 //  Pure naming and path rules, Foundation only.
 //
@@ -75,7 +77,7 @@ public enum MultiFileSetFolder {
     /// - The base name when it is free.
     /// - Else a taken set-folder name for this index (the base name, `base-<hex>` or a legacy
     ///   `base-N`) that `canReuse` claims: its folder already holds this same set (a repeated import).
-    /// - Else `base-<first 8 of identityMD5>`, the same on every device that imports the set.
+    /// - Else `base-<first 8 of identityMD5>`, independent of how many sets came before.
     /// - Else (no identity, or that name taken too) the first free `base-2`, `base-3`, …
     public static func folderName(
         forIndexFile fileName: String,
