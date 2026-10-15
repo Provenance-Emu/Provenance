@@ -53,6 +53,11 @@ class DefaultCDFileHandler: CDFileHandling {
 
     /// Reads a CUE file trying multiple encodings to handle encoding issues
     private func readCueFileWithEncodingFallback(cueFileURL: URL) throws -> String {
+        try Self.readIndexText(at: cueFileURL)
+    }
+
+    /// Reads a cue, gdi or m3u file, trying the encodings such files are written in.
+    static func readIndexText(at cueFileURL: URL) throws -> String {
         let encodings: [String.Encoding] = [.utf8, .windowsCP1252, .isoLatin1, .macOSRoman]
 
         for encoding in encodings {
@@ -217,6 +222,21 @@ class DefaultCDFileHandler: CDFileHandling {
         }
     }
 
+    /// Points an index file (cue, gdi, m3u) at `newName` wherever it references `oldName`,
+    /// for a track the receiver renamed on a name clash (`track01-1.bin`). Same read and
+    /// write as `cleanCueFile`: any of the usual encodings in, UTF-8 out, only when changed.
+    /// Returns whether the file changed.
+    @discardableResult
+    func rewriteReference(inIndexFileAt url: URL, from oldName: String, to newName: String) throws -> Bool {
+        guard let kind = MultiFileIndexKind(fileName: url.lastPathComponent) else { return false }
+        let originalContents = try Self.readIndexText(at: url)
+        let rewritten = MultiFileIndexReferences.rewritingReference(in: originalContents, kind: kind, from: oldName, to: newName)
+        guard rewritten != originalContents else { return false }
+        try rewritten.write(to: url, atomically: true, encoding: .utf8)
+        ILOG("Pointed \(url.lastPathComponent) at \(newName) instead of \(oldName)")
+        return true
+    }
+
     /// Fixes a FILE line in a CUE file to ensure proper format
     private func fixCueFileLine(_ line: String) -> String {
         var workingLine = line.trimmingCharacters(in: .whitespaces)
@@ -282,5 +302,29 @@ class DefaultCDFileHandler: CDFileHandling {
         }
 
         return "FILE \"\(cleanFilename)\" \(fileType)"
+    }
+}
+
+extension CDFileHandling {
+
+    /// The tracks a GDI track table lists, relative to the .gdi.
+    func parseGDI(gdiFileURL: URL) throws -> [String] {
+        let contents = try DefaultCDFileHandler.readIndexText(at: gdiFileURL)
+        return MultiFileIndexReferences.referencedFiles(of: .gdi, contents: contents)
+    }
+
+    /// The track files a .cue or .gdi references; nil for any other file or when it can't be read.
+    func referencedTrackFiles(ofIndexAt url: URL) -> [String]? {
+        switch MultiFileIndexKind(fileName: url.lastPathComponent) {
+        case .cue: return try? parseCueSheet(cueFileURL: url)
+        case .gdi: return try? parseGDI(gdiFileURL: url)
+        case .m3u, nil: return nil
+        }
+    }
+
+    /// Whether `url` is a disc index whose tracks travel with it (.cue or .gdi).
+    func isTrackIndex(_ url: URL) -> Bool {
+        let kind = MultiFileIndexKind(fileName: url.lastPathComponent)
+        return kind == .cue || kind == .gdi
     }
 }

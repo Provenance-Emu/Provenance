@@ -603,40 +603,12 @@ extension ProvenanceApp {
         }
 #endif
 
-        // Handle ROM files as before. Derive a unique destination so re-sharing a
-        // file with the same name doesn't throw and silently drop the import.
-        var destinationPath = Paths.romsImportPath.appendingPathComponent(filename, isDirectory: false)
-        if FileManager.default.fileExists(atPath: destinationPath.path) {
-            let dir = destinationPath.deletingLastPathComponent()
-            let ext = destinationPath.pathExtension
-            let base = destinationPath.deletingPathExtension().lastPathComponent
-            var index = 1
-            while index < 10_000 {
-                let name = ext.isEmpty ? "\(base)-\(index)" : "\(base)-\(index).\(ext)"
-                let candidate = dir.appendingPathComponent(name, isDirectory: false)
-                if !FileManager.default.fileExists(atPath: candidate.path) { destinationPath = candidate; break }
-                index += 1
-            }
-        }
-        var secureDocument = false
+        // ROM files: always copied (never moved) inside the security scope, since with
+        // LSSupportsOpeningDocumentsInPlace the URL can be the sender's original. A
+        // same-name file gets a unique name instead of being dropped; the multi-file
+        // import gate repairs any track reference that rename breaks.
         do {
-            defer {
-                if secureDocument {
-                    url.stopAccessingSecurityScopedResource()
-                }
-
-            }
-
-            // Doesn't seem we need access in dev builds?
-            secureDocument = url.startAccessingSecurityScopedResource()
-
-            //            if let openInPlace = options[.openInPlace] as? Bool, openInPlace {
-            try FileManager.default.copyItem(at: url, to: destinationPath)
-            //            } else {
-            //                try FileManager.default.moveItem(at: url, to: destinationPath)
-            //            }
-
-            let copiedDestination = destinationPath
+            let copiedDestination = try IncomingFileReceiver.receive(url, into: Paths.romsImportPath)
             let copiedFilename = filename
             Task { @MainActor in
                 PVToastManager.post(.fileImported(fileName: copiedFilename))
@@ -644,11 +616,8 @@ extension ProvenanceApp {
                 self.openEmulatorSceneIfNeeded()
             }
         } catch {
-            ELOG("Unable to move file from \(url.path) to \(destinationPath.path) because \(error.localizedDescription)")
-            return
+            ELOG("Unable to copy file from \(url.path) into \(Paths.romsImportPath.path) because \(error.localizedDescription)")
         }
-
-        return
     }
 
     /// Handle the `provenance://install-skin?url=<encoded-url>` deep link.

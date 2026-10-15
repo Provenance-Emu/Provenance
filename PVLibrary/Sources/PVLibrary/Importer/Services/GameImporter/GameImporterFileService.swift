@@ -295,6 +295,7 @@ class GameImporterFileService : GameImporterFileServicing {
             }
 
             queueItem.destinationUrl = queueItem.url
+            moveStagedArchiveCompanions(forQueueItem: queueItem)
 
             // Check if there are child items that need to be processed
             if !queueItem.childQueueItems.isEmpty {
@@ -318,6 +319,7 @@ class GameImporterFileService : GameImporterFileServicing {
             WLOG("ROM name collision with DIFFERENT content for \(fileName); importing as \(uniqueDest.lastPathComponent) to avoid data loss")
             do {
                 queueItem.destinationUrl = try await moveFile(queueItem.url, toExplicitDestination: uniqueDest)
+                moveStagedArchiveCompanions(forQueueItem: queueItem)
                 if !queueItem.childQueueItems.isEmpty {
                     try await moveChildImports(forQueueItem: queueItem, to: destinationFolder)
                 }
@@ -344,6 +346,7 @@ class GameImporterFileService : GameImporterFileServicing {
             }
 
             queueItem.destinationUrl = expectedPath
+            moveStagedArchiveCompanions(forQueueItem: queueItem)
 
             // If the file is in the imports directory, delete it to avoid duplicates
             if queueItem.url.path.contains("/Imports/") {
@@ -394,6 +397,7 @@ class GameImporterFileService : GameImporterFileServicing {
         // If we get here, we need to move the file
         do {
             queueItem.destinationUrl = try await moveFile(queueItem.url, to: destinationFolder)
+            moveStagedArchiveCompanions(forQueueItem: queueItem)
 
             // Clean CUE file again after moving (in case it was already in destination)
             if let destinationUrl = queueItem.destinationUrl,
@@ -460,6 +464,42 @@ class GameImporterFileService : GameImporterFileServicing {
         queueItem.resolvedAssociatedFileURLs = updatedURLs
     }
 
+
+    /// Moves the companions staged for an imported archive (a NAOMI GD-ROM CHD that
+    /// arrived flat, see `MultiFileImportGate`) into `{archive stem}/` next to it, where
+    /// flycast looks for them. Best effort: a companion that can't move stays staged.
+    internal func moveStagedArchiveCompanions(forQueueItem queueItem: ImportQueueItem) {
+        let sourceName = queueItem.url.lastPathComponent
+        guard ArchiveCompanionLayout.isHost(sourceName), let archive = queueItem.destinationUrl else { return }
+        let fileManager = FileManager.default
+        let staging = ArchiveCompanionLayout.stagingDirectory(importDirectory: Paths.romsImportPath, archiveName: sourceName)
+        guard let companions = try? fileManager.contentsOfDirectory(
+            at: staging, includingPropertiesForKeys: nil, options: [.skipsHiddenFiles]), !companions.isEmpty else { return }
+
+        let target = ArchiveCompanionLayout.companionDirectory(forArchiveAt: archive)
+        do {
+            try fileManager.createDirectory(at: target, withIntermediateDirectories: true)
+        } catch {
+            ELOG("Could not create \(target.path) for the companions of \(sourceName): \(error.localizedDescription)")
+            return
+        }
+        for companion in companions {
+            let destination = target.appendingPathComponent(companion.lastPathComponent)
+            guard !fileManager.fileExists(atPath: destination.path) else {
+                WLOG("\(destination.lastPathComponent) already exists next to \(archive.lastPathComponent); leaving the staged copy")
+                continue
+            }
+            do {
+                try fileManager.moveItem(at: companion, to: destination)
+                ILOG("Moved \(companion.lastPathComponent) to \(target.lastPathComponent)/ next to \(archive.lastPathComponent)")
+            } catch {
+                ELOG("Could not move \(companion.lastPathComponent) next to \(archive.lastPathComponent): \(error.localizedDescription)")
+            }
+        }
+        if (try? fileManager.contentsOfDirectory(atPath: staging.path))?.isEmpty == true {
+            try? fileManager.removeItem(at: staging)
+        }
+    }
 
     /// Moves a file to the conflicts directory
     internal func moveToConflictsFolder(_ queueItem: ImportQueueItem, conflictsPath: URL) async throws {

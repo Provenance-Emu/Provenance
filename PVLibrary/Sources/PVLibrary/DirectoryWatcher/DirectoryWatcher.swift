@@ -109,6 +109,9 @@ public final class DirectoryWatcher: ObservableObject {
     private var isFlushingBufferedEvents = false
     /// Track if paused for emulation
     private var isPausedForEmulation = false
+    /// Holds multi-file games (gdi/cue/m3u sets, NAOMI zip + CHD) in the ROM import folder
+    /// until they are complete. Nil for every other watched folder.
+    private var importGate: MultiFileImportGate?
 
     /// The extractors for the supported archive types
     private let extractors: [ArchiveType: ArchiveExtractor] = [
@@ -165,6 +168,13 @@ public final class DirectoryWatcher: ObservableObject {
         self.options = options
         self.watcherManager = FileWatcherManager(label: "org.provenance-emu.provenance.fileWatcherManager")
         ILOG("DirectoryWatcher initialized with directory: \(directory.path), includeSubdirectories: \(options.includeSubdirectories)")
+        if directory.standardizedFileURL.path == Paths.romsImportPath.standardizedFileURL.path {
+            importGate = MultiFileImportGate(
+                directory: directory,
+                isBusy: { [weak self] in await self?.isWatchingAnyFile() ?? false },
+                release: { [weak self] urls in await self?.deliverSettledImports(urls) }
+            )
+        }
         createDirectoryIfNeeded()
         Task {
             processExistingArchives()
@@ -718,7 +728,7 @@ public final class DirectoryWatcher: ObservableObject {
 
         // Pass archive to GameImporter like any other file
         // GameImporter will handle BIOS detection and extraction
-        completedFilesContinuation?.yield([url])
+        submitCompletedFiles([url])
     }
 
     private func processNonArchive(at url: URL) {
@@ -733,7 +743,7 @@ public final class DirectoryWatcher: ObservableObject {
             return
         }
 
-        completedFilesContinuation?.yield([url])
+        submitCompletedFiles([url])
     }
 
     private func processFile(at url: URL) {
@@ -781,6 +791,36 @@ public final class DirectoryWatcher: ObservableObject {
     private func handleCompletedFile(at path: URL) {
         ILOG("Handling completed file: \(path.lastPathComponent)")
         processFile(at: path)
+    }
+
+    /// Completed files go through the multi-file gate when this is the import folder.
+    private func submitCompletedFiles(_ urls: [URL]) {
+        guard let importGate else {
+            completedFilesContinuation?.yield(urls)
+            return
+        }
+        Task { await importGate.submit(urls) }
+    }
+
+    /// Queues files for import through the multi-file gate (the import folder's initial
+    /// scan uses this), or straight to the completed-files stream for other folders.
+    public func submitForImport(_ urls: [URL]) async {
+        guard let importGate else {
+            completedFilesContinuation?.yield(urls)
+            return
+        }
+        await importGate.submit(urls)
+    }
+
+    /// Where the gate sends settled files: the completed-files stream, or the importer
+    /// directly when nothing is listening yet (cold launch from a share sheet).
+    private func deliverSettledImports(_ urls: [URL]) async {
+        if let completedFilesContinuation {
+            completedFilesContinuation.yield(urls)
+        } else {
+            await GameImporter.shared.addImports(forPaths: urls)
+            GameImporter.shared.startProcessing()
+        }
     }
 }
 
@@ -866,7 +906,11 @@ fileprivate extension DirectoryWatcher {
                 }
 
                 if !itemsToImport.isEmpty {
-                    await GameImporter.shared.addImports(forPaths: itemsToImport)
+                    if let importGate = self.importGate {
+                        await importGate.submit(itemsToImport)
+                    } else {
+                        await GameImporter.shared.addImports(forPaths: itemsToImport)
+                    }
                 }
 
                 ILOG("Finished processing existing files")

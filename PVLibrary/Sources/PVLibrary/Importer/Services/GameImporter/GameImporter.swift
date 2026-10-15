@@ -1661,8 +1661,8 @@ public final class GameImporter: GameImporting, ObservableObject {
                 importQueue[index].status = .partial(expectedFiles: [item.url.path(percentEncoded: false)])
                 indicesToRemove.append(index)
 
-                // If this is a CUE file, process its BIN files
-                if item.url.pathExtension.lowercased() == "cue" {
+                // If this is a CUE or GDI file, process its track files
+                if cdRomFileHandler.isTrackIndex(item.url) {
                     processCUEFileInQueue(item, primaryGameItem: primaryGameItem,
                                           importQueue: &importQueue, indicesToRemove: &indicesToRemove)
                 }
@@ -1693,8 +1693,8 @@ public final class GameImporter: GameImporting, ObservableObject {
             ILOG("Found file on disk for M3U: \(fileURL.lastPathComponent)")
             primaryGameItem.resolvedAssociatedFileURLs.append(fileURL)
 
-            // If this is a CUE file, try to find its BIN files
-            if fileURL.pathExtension.lowercased() == "cue" {
+            // If this is a CUE or GDI file, try to find its track files
+            if cdRomFileHandler.isTrackIndex(fileURL) {
                 processBINFilesFromCUEOnDisk(cueURL: fileURL, primaryGameItem: primaryGameItem)
             }
         }
@@ -1702,7 +1702,7 @@ public final class GameImporter: GameImporting, ObservableObject {
 
     /// Process BIN files from a CUE file on disk
     private func processBINFilesFromCUEOnDisk(cueURL: URL, primaryGameItem: ImportQueueItem) {
-        if let binFiles = try? cdRomFileHandler.parseCueSheet(cueFileURL: cueURL) {
+        if let binFiles = cdRomFileHandler.referencedTrackFiles(ofIndexAt: cueURL) {
             for binFile in binFiles {
                 let binURL = cueURL.deletingLastPathComponent().appendingPathComponent(binFile)
                 if cdRomFileHandler.fileExistsAtPath(binURL) && !primaryGameItem.resolvedAssociatedFileURLs.contains(binURL) {
@@ -1830,8 +1830,8 @@ public final class GameImporter: GameImporting, ObservableObject {
     /// Process a CUE file found in the queue
     private func processCUEFileInQueue(_ cueItem: ImportQueueItem, primaryGameItem: ImportQueueItem,
                                        importQueue: inout [ImportQueueItem], indicesToRemove: inout [Int]) {
-        // Try to parse the CUE file
-        if let binFiles = try? cdRomFileHandler.parseCueSheet(cueFileURL: cueItem.url) {
+        // Try to parse the CUE (or GDI) file
+        if let binFiles = cdRomFileHandler.referencedTrackFiles(ofIndexAt: cueItem.url) {
             processBINFilesFromCUE(binFiles, cueURL: cueItem.url, primaryGameItem: primaryGameItem,
                                    importQueue: &importQueue, indicesToRemove: &indicesToRemove)
         } else {
@@ -1957,9 +1957,9 @@ public final class GameImporter: GameImporting, ObservableObject {
 
     /// Process CUE files to find their associated BIN files on disk
     internal func processCUEFilesForBINs(primaryGameItem: ImportQueueItem) {
-        for resolvedURL in primaryGameItem.resolvedAssociatedFileURLs where resolvedURL.pathExtension.lowercased() == Extensions.cue.rawValue {
-            // Try to parse the CUE to find BIN files
-            if let binFiles = try? cdRomFileHandler.parseCueSheet(cueFileURL: resolvedURL) {
+        for resolvedURL in primaryGameItem.resolvedAssociatedFileURLs where cdRomFileHandler.isTrackIndex(resolvedURL) {
+            // Try to parse the CUE (or GDI) to find its track files
+            if let binFiles = cdRomFileHandler.referencedTrackFiles(ofIndexAt: resolvedURL) {
                 for binFile in binFiles {
                     let binPath = resolvedURL.deletingLastPathComponent().appendingPathComponent(binFile)
                     if cdRomFileHandler.fileExistsAtPath(binPath) && !primaryGameItem.resolvedAssociatedFileURLs.contains(binPath) {
@@ -2004,17 +2004,18 @@ public final class GameImporter: GameImporting, ObservableObject {
         while i >= 0 {
             let currentItem = importQueue[i]
 
-            // Skip non-CUE files
-            guard currentItem.url.pathExtension.lowercased() == Extensions.cue.rawValue else {
+            // Only CUE sheets and GDI track tables carry tracks
+            guard cdRomFileHandler.isTrackIndex(currentItem.url) else {
                 i -= 1
                 continue
             }
 
             let cueItem = currentItem
             let cueURL = cueItem.url
-            VLOG("Processing CUE: \(cueURL.lastPathComponent)")
+            let isGDI = cueURL.pathExtension.lowercased() == Extensions.gdi.rawValue
+            VLOG("Processing \(isGDI ? "GDI" : "CUE"): \(cueURL.lastPathComponent)")
 
-            guard let referencedFileNames = try? cdRomFileHandler.parseCueSheet(cueFileURL: cueURL) else {
+            guard let referencedFileNames = cdRomFileHandler.referencedTrackFiles(ofIndexAt: cueURL) else {
                 WLOG("Could not parse CUE sheet: \(cueURL.lastPathComponent)")
                 cueItem.fileType = .cdRom // Still mark as CD-ROM
                 // Add all .bin, .img, etc. files in the same directory as expected if CUE parsing fails but they exist
@@ -2114,7 +2115,19 @@ public final class GameImporter: GameImporting, ObservableObject {
             cueItem.fileType = .cdRom // CUE always implies CD-ROM
 
             // Detect adjacent .sbi file (LibCrypt subchannel data for PSX region protection)
-            detectAdjacentSBIFile(forCUEURL: cueURL, primaryGameItem: cueItem)
+            if !isGDI {
+                detectAdjacentSBIFile(forCUEURL: cueURL, primaryGameItem: cueItem)
+            }
+
+            // A GDI is a Dreamcast-family disc: offer only the systems that read .gdi
+            if isGDI, cueItem.systems.isEmpty {
+                let gdiSystems = PVSystem.all
+                    .filter { $0.supportedExtensions.contains { $0.lowercased() == Extensions.gdi.rawValue } }
+                    .compactMap { SystemIdentifier(rawValue: $0.identifier) }
+                if !gdiSystems.isEmpty {
+                    cueItem.systems = gdiSystems
+                }
+            }
 
             // Set CD-ROM systems for CUE files so they show the right system selection list
             if cueItem.systems.isEmpty {

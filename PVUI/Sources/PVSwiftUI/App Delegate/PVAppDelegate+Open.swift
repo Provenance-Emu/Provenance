@@ -165,30 +165,14 @@ extension PVAppDelegate {
         ILOG("PVAppDelegate: handle fileURL url: \(url.description), options: \(options.description)")
 
         let filename = url.lastPathComponent
-        // If a file with this name already exists at the destination, copy/move
-        // would throw and the incoming file would be silently dropped (common
-        // when re-sharing the same ROM). Derive a unique name instead.
-        let destinationPath = Self.uniqueImportDestination(
-            Paths.romsImportPath.appendingPathComponent(filename, isDirectory: false))
-        var secureDocument = false
+        // Always a copy, inside the security scope: with LSSupportsOpeningDocumentsInPlace
+        // the URL can be the sender's original. A same-name file gets a unique name rather
+        // than being dropped (common when re-sharing the same ROM).
+        let destinationPath: URL
         do {
-            defer {
-                if secureDocument {
-                    url.stopAccessingSecurityScopedResource()
-                }
-
-            }
-
-            // Doesn't seem we need access in dev builds?
-            secureDocument = url.startAccessingSecurityScopedResource()
-
-            if let openInPlace = options[.openInPlace] as? Bool, openInPlace {
-                try FileManager.default.copyItem(at: url, to: destinationPath)
-            } else {
-                try FileManager.default.moveItem(at: url, to: destinationPath)
-            }
+            destinationPath = try IncomingFileReceiver.receive(url, into: Paths.romsImportPath)
         } catch {
-            ELOG("Unable to move file from \(url.path) to \(destinationPath.path) because \(error.localizedDescription)")
+            ELOG("Unable to copy file from \(url.path) into \(Paths.romsImportPath.path) because \(error.localizedDescription)")
             return false
         }
         // A copy handed over by a sibling app's share sheet (iCube, iFly): the same arrival
@@ -203,24 +187,6 @@ extension PVAppDelegate {
         }
 
         return true
-    }
-
-    /// Return `candidate` if no file exists there, otherwise append `-1`, `-2`, …
-    /// before the extension until the path is free. Prevents silently dropping an
-    /// incoming file when one with the same name already exists at the import dir.
-    static func uniqueImportDestination(_ candidate: URL) -> URL {
-        guard FileManager.default.fileExists(atPath: candidate.path) else { return candidate }
-        let dir = candidate.deletingLastPathComponent()
-        let ext = candidate.pathExtension
-        let base = candidate.deletingPathExtension().lastPathComponent
-        var index = 1
-        while index < 10_000 {
-            let name = ext.isEmpty ? "\(base)-\(index)" : "\(base)-\(index).\(ext)"
-            let url = dir.appendingPathComponent(name, isDirectory: false)
-            if !FileManager.default.fileExists(atPath: url.path) { return url }
-            index += 1
-        }
-        return candidate
     }
 
     /// Ecosystem callbacks: a queried app answering with its game list

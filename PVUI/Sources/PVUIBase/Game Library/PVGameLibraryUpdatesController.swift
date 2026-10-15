@@ -326,7 +326,9 @@ public final class PVGameLibraryUpdatesController: ObservableObject {
         Task {
             let initialScan = await scanInitialFiles(at: importPath)
             if !initialScan.isEmpty {
-                await gameImporter.addImports(forPaths: initialScan)
+                // Through the multi-file gate: a share sheet can cold-launch the app
+                // halfway through handing over a GDI set.
+                await directoryWatcher.submitForImport(initialScan)
             }
 
             for await extractedFiles in directoryWatcher.extractedFilesStream(at: importPath) {
@@ -680,9 +682,10 @@ public final class PVGameLibraryUpdatesController: ObservableObject {
             DLOG("Skipped \(skippedCount) file(s) that no longer exist (likely moved during import)")
         }
 
-        // Process files in batches, prioritizing .m3u and .cue files
-        let priorityFiles = existingFiles.filter { ["m3u", "cue"].contains($0.pathExtension.lowercased()) }
-        let otherFiles = existingFiles.filter { !["m3u", "cue"].contains($0.pathExtension.lowercased()) }
+        // Process files in batches, index files (.m3u, .cue, .gdi) first so their tracks attach to them
+        let indexExtensions: Set<String> = ["m3u", "cue", "gdi"]
+        let priorityFiles = existingFiles.filter { indexExtensions.contains($0.pathExtension.lowercased()) }
+        let otherFiles = existingFiles.filter { !indexExtensions.contains($0.pathExtension.lowercased()) }
 
         DLOG("Found \(priorityFiles.count) priority files and \(otherFiles.count) other files")
 
