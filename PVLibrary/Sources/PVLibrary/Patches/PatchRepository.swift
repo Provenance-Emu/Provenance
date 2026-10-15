@@ -17,17 +17,18 @@ import PVArchiving
 import PVSettings
 import Defaults
 
-/// Where a patch applied from the Patch Applier goes in the library. The same choice is offered
-/// in iCube and iFly.
+/// What the Patch Applier does with a patch. The same three choices are offered in iCube and iFly.
 public enum PatchPlacement: String, Sendable, CaseIterable, Identifiable {
-    /// The patched copy is a library entry of its own: listed under the base game's
-    /// "Patches & Mods", and an item of its own in the grid when "Show patched versions as
+    /// "Play with the Patch": the original file is kept and the game's entry starts the patched
+    /// version, built in the patch cache when played. The original stays playable from
+    /// "Play Original"; the patch gets no entry of its own.
+    case onDemand
+    /// "Save a Patched Copy": the patched copy is a library entry of its own, listed under the base
+    /// game's "Patches & Mods", and an item of its own in the grid when "Show patched versions as
     /// separate library items" is on.
     case newLibraryEntry
-    /// The patched copy takes the original's place: the base game's entry launches it and it gets
-    /// no entry of its own. The original ROM file is kept and stays playable from "Play Original".
-    /// (iCube's "Replace the Original" deletes the original; doing that here needs the base game's
-    /// MD5 identity re-keyed, so the UI calls this "Use instead of the original".)
+    /// "Replace the Original": the patched bytes overwrite the game's ROM file and the game moves to
+    /// the new MD5 with its saves, cheats and history (`GameRekey`). Destructive; the UI confirms.
     case replaceOriginal
 
     public var id: String { rawValue }
@@ -596,8 +597,12 @@ public final class PatchRepository {
     public struct StandaloneApplyResult {
         public var inspection: PatchInspection
         public var crcValidation: PatchCRCValidation
-        public var exportURL: URL
+        /// Where the patched ROM is: the exported file, the cached copy the library launches, or
+        /// the replaced original.
+        public var outputURL: URL
         public var importedPatch: PVPatch?
+        /// Set when the original was replaced: the game's MD5 after the replacement.
+        public var replacedGameMD5: String?
         /// Whether applying checked the ROM or the result against the patch and it matched.
         /// False for IPS, for patches made without checks, and when the source check was ignored.
         public var checkedAgainstSource: Bool
@@ -605,12 +610,12 @@ public final class PatchRepository {
 
     /// Apply `patchURL` to `romURL` for the Patch Applier UI.
     ///
-    /// Writes under `Documents/PatchedROMs/`, optionally imports/links the patch
-    /// into the library. Throws on CRC mismatch unless `allowCRCMismatch` is set; with it set the
-    /// patch is applied with its source check off (BPS/UPS/PPF/xdelta), and the choice is
-    /// remembered for the imported patch so its variant keeps launching.
-    ///
-    /// - Parameter placement: where the imported patch's variant goes in the library.
+    /// Without `importToLibrary` the patched ROM is exported to `Documents/PatchedROMs/`. With it,
+    /// `placement` decides: the patch is linked to the game (played on demand, or as its own entry),
+    /// or it replaces the game's file (`replaceOriginal(…)`; needs `preferredGame`).
+    /// Throws on CRC mismatch unless `allowCRCMismatch` is set; with it set the patch is applied with
+    /// its source check off (BPS/UPS/PPF/xdelta), and the choice is remembered for the imported patch
+    /// so its variant keeps launching.
     public func applyStandalone(
         patchURL: URL,
         romURL: URL,
@@ -632,7 +637,25 @@ public final class PatchRepository {
             }
         }
 
-        let dest = URL.documentsPath.appendingPathComponent("PatchedROMs", isDirectory: true)
+        if importToLibrary, placement == .replaceOriginal {
+            guard let preferredGame else { throw PatchReplacement.Blocker.notALibraryGame }
+            let replaced = try await replaceOriginal(
+                of: preferredGame,
+                with: patchURL,
+                patchSHA256: inspection.patchSHA256,
+                allowCRCMismatch: allowCRCMismatch,
+                progress: progress
+            )
+            return StandaloneApplyResult(
+                inspection: inspection,
+                crcValidation: crcValidation,
+                outputURL: replaced.romURL,
+                importedPatch: nil,
+                replacedGameMD5: replaced.md5,
+                checkedAgainstSource: replaced.checkedAgainstSource
+            )
+        }
+
         let preferred = "\(PatchApplier.defaultOutputStem(romURL: romURL, patchURL: patchURL)).\(romURL.pathExtension)"
         let options = PatchApplyOptions(ignoreSourceChecksum: allowCRCMismatch)
         let artifact = try await applier.apply(
@@ -642,45 +665,54 @@ public final class PatchRepository {
             options: options,
             progress: progress
         )
-        let exportURL = try await applier.exportPatchedCopy(
-            patchURL: patchURL,
-            romURL: romURL,
-            to: dest,
-            preferredName: preferred,
-            options: options
-        )
 
-        var imported: PVPatch?
-        if importToLibrary {
-            // Copy patch into the patches directory for stable library identity.
-            let patchDest = try copyIntoPatchesDirectory(patchURL, sha256: inspection.patchSHA256)
-            imported = try await importPatch(
-                at: patchDest,
-                preferredGame: preferredGame,
-                autoMatch: preferredGame == nil,
-                ignoreSourceChecksum: allowCRCMismatch
+        guard importToLibrary else {
+            // Only a loose file was asked for.
+            let exportURL = try await applier.exportPatchedCopy(
+                patchURL: patchURL,
+                romURL: romURL,
+                to: URL.documentsPath.appendingPathComponent("PatchedROMs", isDirectory: true),
+                preferredName: preferred,
+                options: options
             )
-            if let patch = imported {
-                try setPlacement(placement, for: patch)
-            }
+            return StandaloneApplyResult(
+                inspection: inspection,
+                crcValidation: crcValidation,
+                outputURL: exportURL,
+                importedPatch: nil,
+                replacedGameMD5: nil,
+                checkedAgainstSource: artifact.checkedAgainstSource ?? false
+            )
         }
+
+        // Copy patch into the patches directory for stable library identity.
+        let patchDest = try copyIntoPatchesDirectory(patchURL, sha256: inspection.patchSHA256)
+        let imported = try await importPatch(
+            at: patchDest,
+            preferredGame: preferredGame,
+            autoMatch: preferredGame == nil,
+            ignoreSourceChecksum: allowCRCMismatch
+        )
+        try setPlacement(placement, for: imported)
 
         return StandaloneApplyResult(
             inspection: inspection,
             crcValidation: crcValidation,
-            exportURL: exportURL,
+            outputURL: imported.variantGame?.file?.url ?? artifact.url,
             importedPatch: imported,
+            replacedGameMD5: nil,
             checkedAgainstSource: artifact.checkedAgainstSource ?? false
         )
     }
 
-    /// Puts a linked patch's variant where `placement` says. Replacing the original makes the patch
-    /// the base game's default launch; a new entry leaves the default as it was.
+    /// Puts a linked patch's variant where `placement` says. On demand makes the patch the base
+    /// game's default launch; a new entry leaves the default as it was. Replacing the original is
+    /// not a placement of a linked patch (see `replaceOriginal(…)`).
     public func setPlacement(_ placement: PatchPlacement, for patch: PVPatch) throws {
         switch placement {
-        case .newLibraryEntry:
+        case .newLibraryEntry, .replaceOriginal:
             return
-        case .replaceOriginal:
+        case .onDemand:
             let realm = RomDatabase.sharedInstance.realm
             guard let live = patch.thaw() ?? realm.object(ofType: PVPatch.self, forPrimaryKey: patch.id),
                   live.baseGameMD5 != nil else {
@@ -689,6 +721,98 @@ public final class PatchRepository {
             }
             try setDefaultLaunch(true, for: live)
         }
+    }
+
+    // MARK: - Replace the original
+
+    /// The game after its original was replaced.
+    public struct Replacement: Sendable {
+        public var md5: String
+        public var romURL: URL
+        public var checkedAgainstSource: Bool
+    }
+
+    /// Whether `game`'s file can be replaced by a patch, or why not. The caller also refuses while
+    /// the game is running (`PatchReplacement.Blocker.gameRunning`), which this layer cannot see.
+    public func replacementBlocker(for game: PVGame) -> PatchReplacement.Blocker? {
+        let live = game.isFrozen ? (game.thaw() ?? game) : game
+        guard !live.isInvalidated else { return .fileMissing }
+        return PatchReplacement.blocker(for: PatchReplacement.Target(
+            romURL: live.file?.url,
+            hasRelatedFiles: !live.relatedFiles.isEmpty,
+            isDownloaded: live.isDownloaded,
+            cloudSyncEnabled: Defaults[.iCloudSync],
+            isInICloud: live.cloudRecordID != nil || live.hasCloudAssets
+        ))
+    }
+
+    /// Overwrites `game`'s ROM file with the patched bytes and moves the game to the new MD5,
+    /// keeping its saves, cheats, history, other patches and per-game settings. The patch itself is
+    /// not added to the library: it is part of the game now.
+    ///
+    /// The file is swapped atomically and the original kept aside until the database update has
+    /// committed; if that fails the original is put back.
+    public func replaceOriginal(
+        of game: PVGame,
+        with patchURL: URL,
+        patchSHA256: String,
+        allowCRCMismatch: Bool,
+        progress: (@Sendable (PatchProgress) -> Void)? = nil
+    ) async throws -> Replacement {
+        if let blocker = replacementBlocker(for: game) { throw blocker }
+        let realm = RomDatabase.sharedInstance.realm
+        let oldMD5 = game.md5Hash
+        guard let romURL = game.file?.url else { throw PatchReplacement.Blocker.fileMissing }
+        if patches(forGameMD5: oldMD5).contains(where: { $0.patchSHA256 == patchSHA256 }) {
+            throw PatchReplacement.Blocker.patchAlreadyAttached
+        }
+
+        let artifact = try await applier.apply(
+            patchURL: patchURL,
+            to: romURL,
+            outputStem: PatchApplier.defaultOutputStem(romURL: romURL, patchURL: patchURL),
+            options: PatchApplyOptions(ignoreSourceChecksum: allowCRCMismatch),
+            progress: progress
+        )
+
+        // The library's identity is the importer's MD5, not the raw file MD5 the artifact carries.
+        guard let newMD5 = await PatchReplacement.libraryMD5(ofFileAt: artifact.url, systemIdentifier: game.systemIdentifier) else {
+            throw PatchError.patchApplicationFailed("Could not hash the patched game")
+        }
+        if newMD5 != oldMD5, let existing = realm.object(ofType: PVGame.self, forPrimaryKey: newMD5) {
+            throw PatchReplacement.Blocker.alreadyInLibrary(title: existing.title)
+        }
+        let crc = try await Self.crcString(for: artifact)
+        let size = (try? FileManager.default.attributesOfItem(atPath: artifact.url.path)[.size] as? Int) ?? 0
+        #if canImport(CoreSpotlight) && !os(tvOS)
+        let spotlightIdentifier = game.spotlightUniqueIdentifier
+        #endif
+
+        let swap = try PatchReplacement.beginSwap(replacing: romURL, withContentsOf: artifact.url, newMD5: newMD5)
+        try PatchReplacement.commit(
+            swap,
+            rekeying: oldMD5,
+            to: newMD5,
+            crc: crc,
+            fileSize: size,
+            showPatchedSeparately: Defaults[.showPatchedVersionsAsSeparateItems],
+            in: realm
+        )
+        // The cached copy has served its purpose and its key names the old file.
+        let entry = artifact.url.deletingLastPathComponent()
+        if entry.path.contains("/PatchedROMs/") {
+            try? FileManager.default.removeItem(atPath: entry.path)
+        }
+
+        if newMD5 != oldMD5 {
+            #if canImport(CoreSpotlight) && !os(tvOS)
+            RomDatabase.sharedInstance.deleteFromSpotlight(spotlightIdentifier: spotlightIdentifier)
+            #endif
+            PatchReplacement.copyPerGameSettings(fromMD5: oldMD5, toMD5: newMD5, in: .standard)
+        }
+        RomDatabase.reloadGamesCache(force: true)
+        ILOG("PatchRepository: replaced \(romURL.lastPathComponent) with \(patchURL.lastPathComponent) (\(oldMD5) → \(newMD5))")
+        return Replacement(md5: newMD5, romURL: romURL, checkedAgainstSource: artifact.checkedAgainstSource ?? false)
     }
 
     /// Copy `patchURL` into `Paths.patchesPath` without clobbering a different patch that

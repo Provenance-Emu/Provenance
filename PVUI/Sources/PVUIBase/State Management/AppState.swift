@@ -522,6 +522,8 @@ public class AppState: ObservableObject {
             // Keep patched versions' library visibility in step with "Show patched versions as
             // separate library items" — only once the database is open.
             PatchRepository.shared.startObservingSettings()
+            // Finish a Replace the Original that a kill interrupted before the database update.
+            Task.detached(priority: .utility) { PatchReplacement.recoverInterruptedSwapsInLibrary() }
         } catch {
             ELOG("AppState: Error initializing database: \(error.localizedDescription)")
             bootupStateManager.transition(to: .error(error))

@@ -32,7 +32,7 @@ final class PatchRepositoryOptionsTests: XCTestCase {
         XCTAssertFalse(PatchRepository.isVariantHidden(showAsLibraryTile: true, isDefaultLaunch: false, showPatchedSeparately: false))
     }
 
-    /// "Replace the original" makes the patch the default launch: the base game's entry plays it,
+    /// "Play with the Patch" makes the patch the default launch: the base game's entry plays it,
     /// so the variant must not get a second entry whatever the setting says.
     func testTheDefaultLaunchVersionNeverGetsASecondEntry() {
         for showSeparately in [true, false] {
@@ -59,8 +59,8 @@ final class PatchRepositoryOptionsTests: XCTestCase {
         XCTAssertFalse(repository.ignoresSourceChecksum(patchID: first))
     }
 
-    func testPlacementsAreTheTwoCrossAppChoices() {
-        XCTAssertEqual(PatchPlacement.allCases, [.newLibraryEntry, .replaceOriginal])
+    func testPlacementsAreTheThreeCrossAppChoices() {
+        XCTAssertEqual(PatchPlacement.allCases, [.onDemand, .newLibraryEntry, .replaceOriginal])
     }
 
     func testXDeltaPatchesAreImportable() {
