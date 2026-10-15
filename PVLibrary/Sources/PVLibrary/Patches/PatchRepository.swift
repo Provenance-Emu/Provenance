@@ -14,16 +14,121 @@ import PVRealm
 import PVFileSystem
 import PVPrimitives
 import PVArchiving
+import PVSettings
+import Defaults
+
+/// Where a patch applied from the Patch Applier goes in the library. The same choice is offered
+/// in iCube and iFly.
+public enum PatchPlacement: String, Sendable, CaseIterable, Identifiable {
+    /// The patched copy is a library entry of its own: listed under the base game's
+    /// "Patches & Mods", and an item of its own in the grid when "Show patched versions as
+    /// separate library items" is on.
+    case newLibraryEntry
+    /// The patched copy takes the original's place: the base game's entry launches it and it gets
+    /// no entry of its own. The original ROM file is kept and stays playable from "Play Original".
+    /// (iCube's "Replace the Original" deletes the original; doing that here needs the base game's
+    /// MD5 identity re-keyed, so the UI calls this "Use instead of the original".)
+    case replaceOriginal
+
+    public var id: String { rawValue }
+}
 
 /// Owns patch import, matching, variant lifecycle, and launch preparation.
 @MainActor
+// swiftlint:disable:next type_body_length
 public final class PatchRepository {
     public static let shared = PatchRepository()
 
     private let inspector = PatchInspector()
     private let applier = PatchApplier()
 
+    private var settingsObservation: Task<Void, Never>?
+
     private init() {}
+
+    // MARK: - Settings
+
+    /// Applies "Show patched versions as separate library items" to every variant now and whenever
+    /// it changes. Idempotent; call once the database is open (AppState does, after
+    /// `RomDatabase.initDefaultDatabase()`).
+    public func startObservingSettings() {
+        guard settingsObservation == nil else { return }
+        settingsObservation = Task { @MainActor [weak self] in
+            for await _ in Defaults.updates(.showPatchedVersionsAsSeparateItems) {
+                self?.reconcileVariantVisibility()
+            }
+        }
+    }
+
+    /// Whether a variant is hidden from the library grid.
+    ///
+    /// The default launch version plays from the base game's entry, so it never gets a second one.
+    /// Otherwise the global setting shows every variant, and with it off a patch's own
+    /// `showAsLibraryTile` still does.
+    public nonisolated static func isVariantHidden(
+        showAsLibraryTile: Bool,
+        isDefaultLaunch: Bool,
+        showPatchedSeparately: Bool
+    ) -> Bool {
+        if isDefaultLaunch { return true }
+        return !(showPatchedSeparately || showAsLibraryTile)
+    }
+
+    private func isVariantHidden(for patch: PVPatch?) -> Bool {
+        Self.isVariantHidden(
+            showAsLibraryTile: patch?.showAsLibraryTile ?? false,
+            isDefaultLaunch: patch?.isDefaultLaunch ?? false,
+            showPatchedSeparately: Defaults[.showPatchedVersionsAsSeparateItems]
+        )
+    }
+
+    /// Re-derives `isHiddenPatchVariant` for every managed variant from the current setting.
+    public func reconcileVariantVisibility() {
+        guard RomDatabase.databaseInitialized else { return }
+        let realm = RomDatabase.sharedInstance.realm
+        let patches = realm.objects(PVPatch.self).filter("variantGame != nil")
+        let stale = patches.filter { patch in
+            guard let variant = patch.variantGame, variant.isPatchVariant else { return false }
+            return variant.isHiddenPatchVariant != self.isVariantHidden(for: patch)
+        }
+        guard !stale.isEmpty else { return }
+        do {
+            try RomDatabase.sharedInstance.writeTransaction {
+                for patch in stale {
+                    patch.variantGame?.isHiddenPatchVariant = isVariantHidden(for: patch)
+                }
+            }
+            ILOG("PatchRepository: updated library visibility of \(stale.count) patched version(s)")
+        } catch {
+            WLOG("PatchRepository: could not update patched-version visibility: \(error.localizedDescription)")
+        }
+    }
+
+    // MARK: - "Apply anyway"
+
+    /// Patch IDs the user chose to apply to a ROM they were not made for. Every later apply of the
+    /// patch (import, launch, a rebuilt cache after tvOS purges Caches) has to repeat the choice, or
+    /// the variant made a moment ago fails its source check on the next cache miss. Kept in
+    /// UserDefaults so the Realm schema does not change.
+    nonisolated static let ignoreSourceChecksumKey = "PatchRepository.patchesIgnoringSourceChecksum"
+
+    public func ignoresSourceChecksum(patchID: String) -> Bool {
+        Self.patchIDsIgnoringSourceChecksum().contains(patchID)
+    }
+
+    public func setIgnoresSourceChecksum(_ ignore: Bool, patchID: String) {
+        var ids = Self.patchIDsIgnoringSourceChecksum()
+        if ignore { ids.insert(patchID) } else { ids.remove(patchID) }
+        UserDefaults.standard.set(ids.sorted(), forKey: Self.ignoreSourceChecksumKey)
+    }
+
+    private nonisolated static func patchIDsIgnoringSourceChecksum() -> Set<String> {
+        Set(UserDefaults.standard.stringArray(forKey: ignoreSourceChecksumKey) ?? [])
+    }
+
+    private func applyOptions(for patchID: String) -> PatchApplyOptions {
+        PatchApplyOptions(ignoreSourceChecksum: ignoresSourceChecksum(patchID: patchID))
+    }
 
     // MARK: - Queries
 
@@ -54,9 +159,10 @@ public final class PatchRepository {
     public func importPatch(
         at url: URL,
         preferredGame: PVGame? = nil,
-        autoMatch: Bool = true
+        autoMatch: Bool = true,
+        ignoreSourceChecksum: Bool? = nil
     ) async throws -> PVPatch {
-        guard let format = PatchFormat.detect(from: url) else {
+        guard let format = PatchFormat.detect(fileAt: url) else {
             throw PatchError.unsupportedFormat(url.pathExtension)
         }
 
@@ -120,6 +226,10 @@ public final class PatchRepository {
             }
         }
 
+        if let ignoreSourceChecksum {
+            setIgnoresSourceChecksum(ignoreSourceChecksum, patchID: patch.id)
+        }
+
         if linkedGame == nil, autoMatch {
             _ = try await matchPatch(patch)
         } else if let linkedGame {
@@ -173,9 +283,9 @@ public final class PatchRepository {
                 var crc: UInt32?
                 if !snap.storedCRC.isEmpty, let value = UInt32(snap.storedCRC, radix: 16) {
                     crc = value
-                } else if needsSourceCRC, let path = snap.filePath,
-                          let data = try? Data(contentsOf: URL(fileURLWithPath: path), options: .mappedIfSafe) {
-                    crc = patchCRC32(data)
+                } else if needsSourceCRC, let path = snap.filePath {
+                    // Streamed: a disc image is never loaded whole.
+                    crc = try? PatchCRCValidator.crc32(ofFileAt: URL(fileURLWithPath: path))
                 }
                 return PatchMatchCandidate(
                     id: snap.md5,
@@ -274,14 +384,14 @@ public final class PatchRepository {
             patch.outputStem ?? PatchApplier.defaultOutputStem(romURL: romURL, patchURL: patchURL),
             romURL: romURL
         )
-        let artifact = try await applier.apply(patchURL: patchURL, to: romURL, outputStem: stem)
+        let artifact = try await applier.apply(
+            patchURL: patchURL,
+            to: romURL,
+            outputStem: stem,
+            options: applyOptions(for: patch.id)
+        )
         let variantMD5 = artifact.patchedMD5
-        let patchedCRC: String = {
-            if let data = try? Data(contentsOf: artifact.url, options: .mappedIfSafe) {
-                return String(format: "%08X", patchCRC32(data))
-            }
-            return ""
-        }()
+        let patchedCRC = try await Self.crcString(for: artifact)
 
         var result: PVGame?
         try RomDatabase.sharedInstance.writeTransaction {
@@ -296,7 +406,7 @@ public final class PatchRepository {
                 if existing.isPatchVariant || existing.patchID == livePatch?.id {
                     // Our managed variant — refresh metadata / file pointer.
                     existing.isPatchVariant = true
-                    existing.isHiddenPatchVariant = !(livePatch?.showAsLibraryTile ?? false)
+                    existing.isHiddenPatchVariant = isVariantHidden(for: livePatch)
                     existing.baseGameMD5 = liveBase?.md5Hash
                     existing.patchID = livePatch?.id
                     existing.file = Self.makeVariantFile(for: artifact.url)
@@ -315,7 +425,7 @@ public final class PatchRepository {
             variant.systemIdentifier = liveBase?.systemIdentifier ?? ""
             variant.system = liveBase?.system
             variant.isPatchVariant = true
-            variant.isHiddenPatchVariant = !(livePatch?.showAsLibraryTile ?? false)
+            variant.isHiddenPatchVariant = isVariantHidden(for: livePatch)
             variant.baseGameMD5 = liveBase?.md5Hash
             variant.patchID = livePatch?.id
             variant.originalArtworkURL = liveBase?.originalArtworkURL ?? ""
@@ -346,8 +456,8 @@ public final class PatchRepository {
         try RomDatabase.sharedInstance.writeTransaction {
             guard let p = patch.thaw() ?? realm.object(ofType: PVPatch.self, forPrimaryKey: patch.id) else { return }
             p.showAsLibraryTile = show
-            if let variant = p.variantGame {
-                variant.isHiddenPatchVariant = !show
+            if let variant = p.variantGame, variant.isPatchVariant {
+                variant.isHiddenPatchVariant = isVariantHidden(for: p)
             }
         }
     }
@@ -362,10 +472,16 @@ public final class PatchRepository {
                     .forEach {
                         $0.isDefaultLaunch = false
                         $0.isEnabled = false
+                        if let variant = $0.variantGame, variant.isPatchVariant {
+                            variant.isHiddenPatchVariant = isVariantHidden(for: $0)
+                        }
                     }
             }
             p.isDefaultLaunch = enabled
             p.isEnabled = enabled
+            if let variant = p.variantGame, variant.isPatchVariant {
+                variant.isHiddenPatchVariant = isVariantHidden(for: p)
+            }
         }
     }
 
@@ -396,8 +512,10 @@ public final class PatchRepository {
             patchURL: patchURL,
             to: romURL,
             outputStem: stem,
+            options: applyOptions(for: livePatch.id),
             progress: progress
         )
+        let patchedCRC = try await Self.crcString(for: artifact)
 
         var result: PVGame?
         try RomDatabase.sharedInstance.writeTransaction {
@@ -415,7 +533,7 @@ public final class PatchRepository {
                     existing.romPath = artifact.url.lastPathComponent
                     existing.isDownloaded = true
                     existing.isPatchVariant = true
-                    existing.isHiddenPatchVariant = !(p?.showAsLibraryTile ?? false)
+                    existing.isHiddenPatchVariant = isVariantHidden(for: p)
                     existing.baseGameMD5 = baseMD5
                     existing.patchID = p?.id
                 }
@@ -430,7 +548,7 @@ public final class PatchRepository {
             variant.systemIdentifier = base?.systemIdentifier ?? ""
             variant.system = base?.system
             variant.isPatchVariant = true
-            variant.isHiddenPatchVariant = !(p?.showAsLibraryTile ?? false)
+            variant.isHiddenPatchVariant = isVariantHidden(for: p)
             variant.baseGameMD5 = baseMD5
             variant.patchID = p?.id
             variant.originalArtworkURL = base?.originalArtworkURL ?? ""
@@ -439,6 +557,7 @@ public final class PatchRepository {
             variant.file = Self.makeVariantFile(for: artifact.url)
             variant.romPath = artifact.url.lastPathComponent
             variant.isDownloaded = true
+            variant.crc = patchedCRC
             realm.add(variant, update: .modified)
 
             p?.variantGame = variant
@@ -451,6 +570,19 @@ public final class PatchRepository {
             throw PatchError.patchApplicationFailed("Failed to prepare patch variant for launch")
         }
         return result
+    }
+
+    /// The patched ROM's CRC32 as stored in `PVGame.crc`. Artifacts recorded before streaming
+    /// patching carry none; those are hashed off the main actor, in chunks.
+    private nonisolated static func crcString(for artifact: PatchArtifact) async throws -> String {
+        if let crc = artifact.patchedCRC32 {
+            return String(format: "%08X", crc)
+        }
+        let url = artifact.url
+        let crc = try await Task.detached(priority: .userInitiated) {
+            try PatchCRCValidator.crc32(ofFileAt: url)
+        }.value
+        return String(format: "%08X", crc)
     }
 
     /// Build a `PVFile` rooted at the platform documents/caches directory so
@@ -466,22 +598,34 @@ public final class PatchRepository {
         public var crcValidation: PatchCRCValidation
         public var exportURL: URL
         public var importedPatch: PVPatch?
+        /// Whether applying checked the ROM or the result against the patch and it matched.
+        /// False for IPS, for patches made without checks, and when the source check was ignored.
+        public var checkedAgainstSource: Bool
     }
 
     /// Apply `patchURL` to `romURL` for the Patch Applier UI.
     ///
     /// Writes under `Documents/PatchedROMs/`, optionally imports/links the patch
-    /// into the library. Throws on CRC mismatch unless `allowCRCMismatch` is set.
+    /// into the library. Throws on CRC mismatch unless `allowCRCMismatch` is set; with it set the
+    /// patch is applied with its source check off (BPS/UPS/PPF/xdelta), and the choice is
+    /// remembered for the imported patch so its variant keeps launching.
+    ///
+    /// - Parameter placement: where the imported patch's variant goes in the library.
     public func applyStandalone(
         patchURL: URL,
         romURL: URL,
         preferredGame: PVGame? = nil,
         importToLibrary: Bool = true,
         allowCRCMismatch: Bool = false,
+        placement: PatchPlacement = .newLibraryEntry,
         progress: (@Sendable (PatchProgress) -> Void)? = nil
     ) async throws -> StandaloneApplyResult {
-        let inspection = try inspector.inspect(patchURL: patchURL)
-        let crcValidation = try PatchCRCValidator.validate(romURL: romURL, inspection: inspection)
+        let inspection = try await Task.detached(priority: .userInitiated) {
+            try PatchInspector().inspect(patchURL: patchURL)
+        }.value
+        let crcValidation = try await Task.detached(priority: .userInitiated) {
+            try PatchCRCValidator.validate(romURL: romURL, inspection: inspection)
+        }.value
         if crcValidation.isMismatch, !allowCRCMismatch {
             if case .mismatched(let expected, let actual) = crcValidation {
                 throw PatchError.crcMismatch(expected: expected, actual: actual)
@@ -490,12 +634,20 @@ public final class PatchRepository {
 
         let dest = URL.documentsPath.appendingPathComponent("PatchedROMs", isDirectory: true)
         let preferred = "\(PatchApplier.defaultOutputStem(romURL: romURL, patchURL: patchURL)).\(romURL.pathExtension)"
+        let options = PatchApplyOptions(ignoreSourceChecksum: allowCRCMismatch)
+        let artifact = try await applier.apply(
+            patchURL: patchURL,
+            to: romURL,
+            outputStem: (preferred as NSString).deletingPathExtension,
+            options: options,
+            progress: progress
+        )
         let exportURL = try await applier.exportPatchedCopy(
             patchURL: patchURL,
             romURL: romURL,
             to: dest,
             preferredName: preferred,
-            progress: progress
+            options: options
         )
 
         var imported: PVPatch?
@@ -505,16 +657,38 @@ public final class PatchRepository {
             imported = try await importPatch(
                 at: patchDest,
                 preferredGame: preferredGame,
-                autoMatch: preferredGame == nil
+                autoMatch: preferredGame == nil,
+                ignoreSourceChecksum: allowCRCMismatch
             )
+            if let patch = imported {
+                try setPlacement(placement, for: patch)
+            }
         }
 
         return StandaloneApplyResult(
             inspection: inspection,
             crcValidation: crcValidation,
             exportURL: exportURL,
-            importedPatch: imported
+            importedPatch: imported,
+            checkedAgainstSource: artifact.checkedAgainstSource ?? false
         )
+    }
+
+    /// Puts a linked patch's variant where `placement` says. Replacing the original makes the patch
+    /// the base game's default launch; a new entry leaves the default as it was.
+    public func setPlacement(_ placement: PatchPlacement, for patch: PVPatch) throws {
+        switch placement {
+        case .newLibraryEntry:
+            return
+        case .replaceOriginal:
+            let realm = RomDatabase.sharedInstance.realm
+            guard let live = patch.thaw() ?? realm.object(ofType: PVPatch.self, forPrimaryKey: patch.id),
+                  live.baseGameMD5 != nil else {
+                // Not linked to a game yet: nothing to take the place of.
+                return
+            }
+            try setDefaultLaunch(true, for: live)
+        }
     }
 
     /// Copy `patchURL` into `Paths.patchesPath` without clobbering a different patch that
@@ -637,6 +811,7 @@ public final class PatchRepository {
             romURL: romURL,
             to: dest,
             preferredName: preferred,
+            options: applyOptions(for: livePatch.id),
             progress: progress
         )
     }
@@ -683,6 +858,7 @@ public final class PatchRepository {
             : nil
         let variantFileURL = managedVariant?.file?.url
         let patchFileURL = live.file?.url
+        setIgnoresSourceChecksum(false, patchID: live.id)
 
         try RomDatabase.sharedInstance.writeTransaction {
             if let managedVariant, !managedVariant.isInvalidated {
@@ -716,16 +892,4 @@ public final class PatchRepository {
             try deletePatch(patch)
         }
     }
-}
-
-/// Local CRC32 for matching (mirrors PVPatching's internal `patchCRC32`).
-private func patchCRC32(_ data: Data) -> UInt32 {
-    var crc: UInt32 = 0xFFFF_FFFF
-    for byte in data {
-        crc ^= UInt32(byte)
-        for _ in 0..<8 {
-            crc = (crc >> 1) ^ (0xEDB8_8320 * (crc & 1))
-        }
-    }
-    return ~crc
 }

@@ -12,6 +12,8 @@ import PVLibrary
 import PVRealm
 import PVLogging
 import PVPatching
+import PVSettings
+import Defaults
 
 /// Per-game patch manager: list, play, default, tile visibility, export, reapply, delete.
 public struct PatchManagerView: View {
@@ -182,6 +184,7 @@ public struct PatchManagerView: View {
 
 private struct PatchRowView: View {
     let patch: PVPatch
+    @Default(.showPatchedVersionsAsSeparateItems) private var showPatchedSeparately
     let isBusy: Bool
     let onPlay: () -> Void
     let onToggleDefault: () -> Void
@@ -211,7 +214,11 @@ private struct PatchRowView: View {
             HStack(spacing: 12) {
                 Button("Play", action: onPlay)
                 Button(patch.isDefaultLaunch ? "Clear Default" : "Set Default", action: onToggleDefault)
-                Button(patch.showAsLibraryTile ? "Hide Tile" : "Add Tile", action: onToggleTile)
+                // With the global setting on every patched version is listed already, and the
+                // default launch version plays from the base game's entry.
+                if !showPatchedSeparately, !patch.isDefaultLaunch {
+                    Button(patch.showAsLibraryTile ? "Hide Tile" : "Add Tile", action: onToggleTile)
+                }
             }
             .buttonStyle(.bordered)
             .disabled(isBusy)

@@ -372,7 +372,8 @@ struct MultiFileImportGateTests {
         #expect(await releases.batches.count == 1)
 
         // Imported (moved away), then shared again under the same name.
-        try FileManager.default.removeItem(at: first)
+        // atPath: — the URL overload is PVLibrary's async extension (DirectoryWatcher.swift).
+        try FileManager.default.removeItem(atPath: first.path)
         await gate.submit([try write("Sonic.bin", "two", in: folder)])
         #expect(await batches(releases, count: 2) == [["Sonic.bin"], ["Sonic.bin"]])
     }

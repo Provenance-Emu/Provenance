@@ -204,7 +204,8 @@ public actor BatchPatchApplier {
         return plan
     }
 
-    /// Apply planned jobs. Skips CRC mismatches unless `allowCRCMismatch` is true.
+    /// Apply planned jobs. Skips CRC mismatches unless `allowCRCMismatch` is true, in which case
+    /// the patches are applied with the source check off (otherwise BPS/UPS would still refuse).
     public func apply(
         jobs: [BatchPatchJob],
         outputDirectory: URL,
@@ -233,7 +234,8 @@ public actor BatchPatchApplier {
                 let url = try await applier.exportPatchedCopy(
                     patchURL: job.patchURL,
                     romURL: job.romURL,
-                    to: outputDirectory
+                    to: outputDirectory,
+                    options: PatchApplyOptions(ignoreSourceChecksum: allowCRCMismatch)
                 ) { step in
                     let overall = base + (step.fractionCompleted / Double(total))
                     progress?(PatchProgress(fractionCompleted: overall, status: step.status))

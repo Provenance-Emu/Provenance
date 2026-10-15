@@ -125,6 +125,10 @@ struct TVMediaGameTileView<MenuContent: View>: View {
                         .frame(width: tileWidth, height: baseHeight)
                         .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
                         .overlay(focusBorder)
+                        .overlay(alignment: .topLeading) {
+                            PatchTileBadge(isPatchVariant: game.isPatchVariant, md5: game.md5Hash)
+                                .padding(8)
+                        }
                         .overlay(alignment: .topTrailing) {
                             if game.hasCloudAssets && !game.isDownloaded {
                                 CloudSyncIndicatorView(

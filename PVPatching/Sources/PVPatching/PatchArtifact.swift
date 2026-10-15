@@ -29,6 +29,12 @@ public struct PatchArtifact: Sendable, Equatable, Codable {
     public var format: PatchFormat
     /// Whether the result came from an existing cache entry.
     public var wasCached: Bool
+    /// CRC32 of the patched ROM bytes. nil in artifacts recorded before streaming patching.
+    public var patchedCRC32: UInt32?
+    /// Whether applying checked the source or the result against the patch and it matched
+    /// (a BPS/UPS CRC32, a PPF block check, xdelta3 window checksums). False for IPS, and for a
+    /// patch applied with the source check ignored. nil when unknown (older records).
+    public var checkedAgainstSource: Bool?
 
     public init(
         url: URL,
@@ -38,7 +44,9 @@ public struct PatchArtifact: Sendable, Equatable, Codable {
         sourceSHA256: String,
         patchSHA256: String,
         format: PatchFormat,
-        wasCached: Bool
+        wasCached: Bool,
+        patchedCRC32: UInt32? = nil,
+        checkedAgainstSource: Bool? = nil
     ) {
         self.url = url
         self.outputStem = outputStem
@@ -48,6 +56,8 @@ public struct PatchArtifact: Sendable, Equatable, Codable {
         self.patchSHA256 = patchSHA256
         self.format = format
         self.wasCached = wasCached
+        self.patchedCRC32 = patchedCRC32
+        self.checkedAgainstSource = checkedAgainstSource
     }
 }
 

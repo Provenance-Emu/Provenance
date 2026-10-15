@@ -21,6 +21,12 @@ public struct PatchInspection: Sendable, Equatable {
     public var targetCRC32: UInt32?
     public var sourceSize: Int?
     public var targetSize: Int?
+    /// xdelta3 only: the smallest source the patch can read from (a lower bound, not a declared size).
+    public var minimumSourceSize: Int?
+    /// Whether applying can check the ROM or the result against the patch (BPS/UPS CRC32, a PPF block
+    /// check, xdelta3 window checksums). False for IPS and for PPF/xdelta3 patches made without checks:
+    /// such a patch applies to the wrong ROM without complaint, so never let it replace the only copy.
+    public var canVerifyIntegrity: Bool
     public var patchSHA256: String
 
     public init(
@@ -33,6 +39,8 @@ public struct PatchInspection: Sendable, Equatable {
         targetCRC32: UInt32? = nil,
         sourceSize: Int? = nil,
         targetSize: Int? = nil,
+        minimumSourceSize: Int? = nil,
+        canVerifyIntegrity: Bool? = nil,
         patchSHA256: String
     ) {
         self.format = format
@@ -44,6 +52,8 @@ public struct PatchInspection: Sendable, Equatable {
         self.targetCRC32 = targetCRC32
         self.sourceSize = sourceSize
         self.targetSize = targetSize
+        self.minimumSourceSize = minimumSourceSize
+        self.canVerifyIntegrity = canVerifyIntegrity ?? format.hasIntegrityCheck
         self.patchSHA256 = patchSHA256
     }
 }
@@ -103,12 +113,41 @@ public struct PatchMatchCandidate: Sendable, Equatable, Identifiable {
 public struct PatchInspector: Sendable {
     public init() {}
 
+    /// Reads the patch header through PVPatchEngine and hashes the file by streaming, so a
+    /// several-hundred-megabyte disc patch is never loaded whole.
     public func inspect(patchURL: URL) throws -> PatchInspection {
-        guard let format = PatchFormat.detect(from: patchURL) else {
+        guard let format = PatchFormat.detect(fileAt: patchURL) else {
             throw PatchError.unsupportedFormat(patchURL.pathExtension)
         }
-        let data = try Data(contentsOf: patchURL, options: .mappedIfSafe)
-        return try inspect(patchData: data, format: format, fallbackTitle: patchURL.deletingPathExtension().lastPathComponent)
+        let fallbackTitle = patchURL.deletingPathExtension().lastPathComponent
+        let sha = try FileDigest.compute(patchURL, kinds: .sha256).sha256 ?? ""
+        guard EngineBridge.engineFormat(format) != nil else {
+            return PatchInspection(format: format, title: fallbackTitle, patchSHA256: sha)
+        }
+
+        let info = try EngineBridge.inspect(patchURL)
+        if let reason = info.unsupportedReason {
+            throw PatchError.unsupportedFormat(reason)
+        }
+        var inspection = PatchInspection(
+            format: format,
+            title: fallbackTitle,
+            sourceCRC32: info.sourceCRC32,
+            targetCRC32: info.targetCRC32,
+            sourceSize: info.sourceSize.map { Int(clamping: $0) },
+            targetSize: info.targetSize.map { Int(clamping: $0) },
+            minimumSourceSize: info.minimumSourceSize.map { Int(clamping: $0) },
+            canVerifyIntegrity: info.canVerifyIntegrity,
+            patchSHA256: sha
+        )
+        if let text = info.patchDescription {
+            if format == .bps {
+                applyBPSMetadata(Data(text.utf8), to: &inspection)
+            } else {
+                inspection.patchDescription = text
+            }
+        }
+        return inspection
     }
 
     public func inspect(patchData: Data, format: PatchFormat, fallbackTitle: String? = nil) throws -> PatchInspection {
@@ -190,6 +229,18 @@ public struct PatchInspector: Sendable {
 
     // MARK: - Private
 
+    /// BPS metadata is free-form; many tools write JSON with title/author/version/description.
+    private func applyBPSMetadata(_ metaData: Data, to inspection: inout PatchInspection) {
+        if let json = try? JSONSerialization.jsonObject(with: metaData) as? [String: Any] {
+            inspection.title = (json["title"] as? String) ?? inspection.title
+            inspection.author = json["author"] as? String
+            inspection.version = json["version"] as? String
+            inspection.patchDescription = (json["description"] as? String) ?? (json["desc"] as? String)
+        } else if let text = String(data: metaData, encoding: .utf8), !text.isEmpty {
+            inspection.patchDescription = text
+        }
+    }
+
     private func inspectBPS(_ data: Data, sha: String, fallbackTitle: String?) throws -> PatchInspection {
         guard data.count >= 19, data[0..<4].elementsEqual("BPS1".utf8) else {
             throw PatchError.corruptPatchFile("Invalid BPS header")
@@ -198,35 +249,19 @@ public struct PatchInspector: Sendable {
         let sourceSize = readVLI(data, pos: &pos)
         let targetSize = readVLI(data, pos: &pos)
         let metadataLength = readVLI(data, pos: &pos)
-        var title = fallbackTitle
-        var author: String?
-        var version: String?
-        var description: String?
-        if metadataLength > 0, pos + metadataLength <= data.count {
-            let metaData = data[pos..<(pos + metadataLength)]
-            if let json = try? JSONSerialization.jsonObject(with: Data(metaData)) as? [String: Any] {
-                title = (json["title"] as? String) ?? title
-                author = json["author"] as? String
-                version = json["version"] as? String
-                description = (json["description"] as? String) ?? (json["desc"] as? String)
-            } else if let text = String(data: Data(metaData), encoding: .utf8), !text.isEmpty {
-                description = text
-            }
-        }
-        let sourceCRC = data.readLE32(at: data.count - 12)
-        let targetCRC = data.readLE32(at: data.count - 8)
-        return PatchInspection(
+        var inspection = PatchInspection(
             format: .bps,
-            title: title,
-            author: author,
-            version: version,
-            patchDescription: description,
-            sourceCRC32: sourceCRC,
-            targetCRC32: targetCRC,
+            title: fallbackTitle,
+            sourceCRC32: data.readLE32(at: data.count - 12),
+            targetCRC32: data.readLE32(at: data.count - 8),
             sourceSize: sourceSize,
             targetSize: targetSize,
             patchSHA256: sha
         )
+        if metadataLength > 0, pos + metadataLength <= data.count {
+            applyBPSMetadata(Data(data[pos..<(pos + metadataLength)]), to: &inspection)
+        }
+        return inspection
     }
 
     private func inspectUPS(_ data: Data, sha: String, fallbackTitle: String?) throws -> PatchInspection {

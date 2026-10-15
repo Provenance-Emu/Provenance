@@ -127,6 +127,9 @@ public actor PatchCache {
         }
     }
 
+    /// The directory that holds every cache entry.
+    public nonisolated var rootDirectory: URL { cacheDirectory }
+
     /// Look up a cached patched ROM using already-loaded file data.
     public func cachedURL(
         romData: Data,
@@ -134,7 +137,15 @@ public actor PatchCache {
         outputStem: String,
         extension ext: String
     ) -> URL? {
-        let key = PatchHashing.cacheKey(romData: romData, patchData: patchData)
+        cachedURL(
+            key: PatchHashing.cacheKey(romData: romData, patchData: patchData),
+            outputStem: outputStem,
+            extension: ext
+        )
+    }
+
+    /// Look up a cached patched ROM by cache key (see `PatchHashing.cacheKey`).
+    func cachedURL(key: String, outputStem: String, extension ext: String) -> URL? {
         let candidate = cacheEntry(for: key, outputStem: outputStem, extension: ext)
         if FileManager.default.fileExists(atPath: candidate.path) {
             return candidate
@@ -171,8 +182,17 @@ public actor PatchCache {
         return outputURL
     }
 
+    /// Where the entry for `key` lives, with its directory created. The engine writes there through
+    /// a `.partial` sibling and renames it into place, so nothing is copied after patching.
+    func preparedEntryURL(key: String, outputStem: String, extension ext: String) throws -> URL {
+        let entryDir = cacheDirectory.appendingPathComponent(key, isDirectory: true)
+        try FileManager.default.createDirectory(at: entryDir, withIntermediateDirectories: true)
+        return cacheEntry(for: key, outputStem: outputStem, extension: ext)
+    }
+
     /// Copy a cached (or newly applied) artifact into a destination directory with a
-    /// collision-safe filename. Never overwrites an existing different file.
+    /// collision-safe filename. Never overwrites an existing different file. On APFS the copy is a
+    /// clone, so exporting a disc image does not double its disk use.
     public func export(
         artifactURL: URL,
         to directory: URL,
@@ -207,7 +227,11 @@ public actor PatchCache {
 
     /// Remove the cached entry for a specific ROM + patch pair.
     public func remove(romData: Data, patchData: Data) throws {
-        let key = PatchHashing.cacheKey(romData: romData, patchData: patchData)
+        try remove(key: PatchHashing.cacheKey(romData: romData, patchData: patchData))
+    }
+
+    /// Remove the cached entry for a cache key.
+    func remove(key: String) throws {
         let entryDir = cacheDirectory.appendingPathComponent(key, isDirectory: true)
         if FileManager.default.fileExists(atPath: entryDir.path) {
             try FileManager.default.removeItem(at: entryDir)

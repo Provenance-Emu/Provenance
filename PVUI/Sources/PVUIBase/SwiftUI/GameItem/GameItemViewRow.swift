@@ -93,11 +93,9 @@ struct GameItemViewRow<Presentable: GameItemPresentable>: SwiftUI.View, Equatabl
                         .frame(width: 60, height: 60)
                         .scaleEffect(hoverScale)
                         .overlay(alignment: .bottomLeading) {
-                            if game.isPatchVariant {
-                                PatchIndicatorView()
-                                    .scaleEffect(0.75, anchor: .bottomLeading)
-                                    .padding(2)
-                            }
+                            PatchTileBadge(isPatchVariant: game.isPatchVariant, md5: game.md5)
+                                .scaleEffect(0.75, anchor: .bottomLeading)
+                                .padding(2)
                         }
                         .overlay(alignment: .topTrailing) {
                             if shouldShowCloudIndicator {

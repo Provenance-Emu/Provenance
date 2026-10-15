@@ -18,13 +18,16 @@ let package = Package(
         )
     ],
     dependencies: [
-        .package(path: "../PVLogging")
+        .package(path: "../PVLogging"),
+        // Streaming IPS/BPS/UPS/PPF/xdelta3 engine shared with iCube and iFly.
+        .package(path: "../PVPatchEngine")
     ],
     targets: [
         .target(
             name: "PVPatching",
             dependencies: [
-                "PVLogging"
+                "PVLogging",
+                .product(name: "PVPatchEngine", package: "PVPatchEngine")
             ],
             path: "Sources/PVPatching"
         ),

@@ -165,7 +165,7 @@ public struct CreatePatchView: View {
 
                 // Encoding can be CPU-heavy — keep it off the main actor.
                 let created = try await Task.detached(priority: .userInitiated) {
-                    try PatchCreator().create(
+                    try await PatchCreator().create(
                         originalURL: originalURL,
                         modifiedURL: modifiedURL,
                         outputURL: output,

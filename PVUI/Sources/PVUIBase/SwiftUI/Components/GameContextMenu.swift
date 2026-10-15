@@ -148,31 +148,30 @@ private struct GameContextMenuItems: View {
                     VariantPatchMenu(variant: game, menu: menu)
                 }
 
-                // Patches submenu — modeled after disc selection; base games only.
+                // "Patches & Mods" — the same section as iCube and iFly. A flat Section, not a
+                // nested Menu: a Menu inside a tvOS context menu has no usable presentation.
                 if !game.isPatchVariant {
                     let linkedPatches = Array(
                         PatchRepository.shared.patches(forGameMD5: game.md5Hash)
                             .map { $0.isFrozen ? $0 : $0.freeze() }
                     )
-                    Menu {
-                        Button {
-                            contextMenuDelegate?.gameContextMenu(menu, didRequestPlayOriginalFor: game)
-                        } label: {
-                            Label("Play Original", systemImage: "play.circle")
+                    Section("Patches & Mods") {
+                        ForEach(linkedPatches, id: \.id) { patch in
+                            Button {
+                                contextMenuDelegate?.gameContextMenu(menu, didRequestPlayPatch: patch, for: game)
+                            } label: {
+                                Label(
+                                    patch.isDefaultLaunch ? "Play \(patch.displayTitle) ★" : "Play \(patch.displayTitle)",
+                                    systemImage: "bandage"
+                                )
+                            }
                         }
                         if !linkedPatches.isEmpty {
-                            Divider()
-                            ForEach(linkedPatches, id: \.id) { patch in
-                                Button {
-                                    contextMenuDelegate?.gameContextMenu(menu, didRequestPlayPatch: patch, for: game)
-                                } label: {
-                                    Label(
-                                        patch.isDefaultLaunch ? "\(patch.displayTitle) ★" : patch.displayTitle,
-                                        systemImage: "bandage"
-                                    )
-                                }
+                            Button {
+                                contextMenuDelegate?.gameContextMenu(menu, didRequestPlayOriginalFor: game)
+                            } label: {
+                                Label("Play Original", systemImage: "play.circle")
                             }
-                            Divider()
                         }
 #if !os(tvOS)
                         // Needs the Files picker; on tvOS patches arrive via the web server / iCloud.
@@ -187,16 +186,13 @@ private struct GameContextMenuItems: View {
                         } label: {
                             Label("Apply Patch…", systemImage: "wand.and.stars")
                         }
-                        Button {
-                            contextMenuDelegate?.gameContextMenu(menu, didRequestManagePatchesFor: game)
-                        } label: {
-                            Label("Manage Patches…", systemImage: "list.bullet.rectangle")
+                        if !linkedPatches.isEmpty {
+                            Button {
+                                contextMenuDelegate?.gameContextMenu(menu, didRequestManagePatchesFor: game)
+                            } label: {
+                                Label("Manage…", systemImage: "list.bullet.rectangle")
+                            }
                         }
-                    } label: {
-                        Label(
-                            linkedPatches.isEmpty ? "Patches" : "Patches (\(linkedPatches.count))",
-                            systemImage: "bandage"
-                        )
                     }
                 }
 
@@ -775,9 +771,8 @@ extension GameContextMenuItems {
 
 // MARK: - Variant tile menu
 
-/// Context-menu entries for a library tile that is a patched copy: play the
-/// original, reapply the patch, or open the base game's patch manager (where
-/// Delete lives behind a confirmation).
+/// The "Patches & Mods" section of a patched copy: play the original, reapply the
+/// patch, or open the base game's patch manager (where Delete lives behind a confirmation).
 private struct VariantPatchMenu: View {
     let variant: PVGame
     let menu: GameContextMenu
@@ -793,7 +788,7 @@ private struct VariantPatchMenu: View {
     }
 
     var body: some View {
-        Menu {
+        Section(patch.map { "Patches & Mods: \($0.displayTitle)" } ?? "Patches & Mods") {
             if let baseGame {
                 Button {
                     menu.contextMenuDelegate?.gameContextMenu(menu, didRequestPlayOriginalFor: baseGame)
@@ -822,8 +817,6 @@ private struct VariantPatchMenu: View {
                     Label("Manage Patches…", systemImage: "list.bullet.rectangle")
                 }
             }
-        } label: {
-            Label(patch.map { "Patch: \($0.displayTitle)" } ?? "Patch", systemImage: "bandage")
         }
     }
 }

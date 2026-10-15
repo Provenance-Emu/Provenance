@@ -37,12 +37,20 @@ enum PatchHashing {
 
     /// Bump whenever a patcher's output for the same inputs can change (decoder bug fixes,
     /// new format handling). Old entries are then simply misses instead of stale bad output.
+
+    ///
+    /// Still "r2" after the move to PVPatchEngine: a differential run of the in-memory patchers
+    /// against the engine (IPS, IPS32, BPS, UPS, PPF 1-3; clean, mutated, truncated and
+    /// wrong-source inputs) found no input where both succeed with different output.
     static let patcherRevision = "r2"
 
     static func cacheKey(romData: Data, patchData: Data) -> String {
-        let romHash = sha256Hex(romData)
-        let patchHash = sha256Hex(patchData)
-        let combined = Data((romHash + patchHash + patcherRevision).utf8)
+        cacheKey(romSHA256: sha256Hex(romData), patchSHA256: sha256Hex(patchData))
+    }
+
+    /// Same key as `cacheKey(romData:patchData:)`, from digests computed by streaming.
+    static func cacheKey(romSHA256: String, patchSHA256: String) -> String {
+        let combined = Data((romSHA256 + patchSHA256 + patcherRevision).utf8)
         return String(sha256Hex(combined).prefix(32))
     }
 }

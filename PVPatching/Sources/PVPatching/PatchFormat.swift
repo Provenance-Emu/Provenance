@@ -18,9 +18,10 @@ public enum PatchFormat: String, CaseIterable, Sendable, Codable, Identifiable {
     case bps
     /// Universal Patch System — bidirectional patching with CRC.
     case ups
-    /// xdelta version 1/2 binary delta patches.
+    /// A `.xdelta` / `.delta` patch. Files with this extension are almost always xdelta3
+    /// (VCDIFF) and are applied as such; true xdelta 1 files are refused by their magic bytes.
     case xdelta
-    /// xdelta version 3 binary delta patches.
+    /// xdelta version 3 binary delta patches (VCDIFF, RFC 3284).
     case xdelta3
     /// PlayStation Patch Format — used for PSX patches.
     case ppf
@@ -68,8 +69,8 @@ public enum PatchFormat: String, CaseIterable, Sendable, Codable, Identifiable {
     /// Whether this format includes a CRC/hash check for the target ROM.
     public var hasIntegrityCheck: Bool {
         switch self {
-        case .bps, .ups, .ppf, .xdelta3: return true
-        case .ips, .ips32, .xdelta, .aps, .rup, .nsp: return false
+        case .bps, .ups, .ppf, .xdelta, .xdelta3: return true
+        case .ips, .ips32, .aps, .rup, .nsp: return false
         }
     }
 
@@ -77,8 +78,8 @@ public enum PatchFormat: String, CaseIterable, Sendable, Codable, Identifiable {
     /// Formats that are declared but still throw `unsupportedFormat` return false.
     public var isImplemented: Bool {
         switch self {
-        case .ips, .ips32, .bps, .ups, .ppf: return true
-        case .xdelta, .xdelta3, .aps, .rup, .nsp: return false
+        case .ips, .ips32, .bps, .ups, .ppf, .xdelta, .xdelta3: return true
+        case .aps, .rup, .nsp: return false
         }
     }
 
@@ -100,6 +101,14 @@ public enum PatchFormat: String, CaseIterable, Sendable, Codable, Identifiable {
         if head.prefix(5).elementsEqual("IPS32".utf8) { return .ips32 }
         if head.prefix(3) == Data([0xD6, 0xC3, 0xC4]) { return .xdelta3 }
         return nil
+    }
+
+    /// Detect the format of a patch file from its magic bytes, falling back to its extension
+    /// for formats PVPatchEngine does not read. A `.xdelta` file with a VCDIFF header is `.xdelta`;
+    /// a VCDIFF file under any other name is `.xdelta3`.
+    public static func detect(fileAt url: URL) -> PatchFormat? {
+        let byName = detect(from: url)
+        return EngineBridge.detect(fileAt: url, nameHint: byName) ?? byName
     }
 
     /// Detect patch format from a file URL based on its extension.

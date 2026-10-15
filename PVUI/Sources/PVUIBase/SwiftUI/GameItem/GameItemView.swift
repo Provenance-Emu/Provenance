@@ -277,11 +277,9 @@ public struct GameItemPresentableView<Presentable: GameItemPresentable>: SwiftUI
                             }
                         }
                         .overlay(alignment: .topLeading) {
-                            if game.isPatchVariant {
-                                PatchIndicatorView()
-                                    .padding(CompactShelfDiscOverlay.padding(constrainHeight: constrainHeight, shelfRowHeightScale: shelfRowHeightScale))
-                                    .scaleEffect(CompactShelfDiscOverlay.scale(constrainHeight: constrainHeight, shelfRowHeightScale: shelfRowHeightScale), anchor: .topLeading)
-                            }
+                            PatchTileBadge(isPatchVariant: game.isPatchVariant, md5: game.md5)
+                                .padding(CompactShelfDiscOverlay.padding(constrainHeight: constrainHeight, shelfRowHeightScale: shelfRowHeightScale))
+                                .scaleEffect(CompactShelfDiscOverlay.scale(constrainHeight: constrainHeight, shelfRowHeightScale: shelfRowHeightScale), anchor: .topLeading)
                         }
                 case .row:
                     GameItemViewRow(game: game, artwork: artwork, constrainHeight: constrainHeight, viewType: viewType)
