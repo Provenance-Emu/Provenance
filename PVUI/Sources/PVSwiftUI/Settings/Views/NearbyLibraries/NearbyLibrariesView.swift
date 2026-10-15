@@ -13,6 +13,7 @@ import SwiftUI
 
 struct NearbyLibrariesView: View {
     @State private var model = NearbyLibrariesModel()
+    @State private var showingAddServer = false
     #if os(tvOS)
     @Environment(\.dismiss) private var dismiss
     #endif
@@ -46,6 +47,28 @@ struct NearbyLibrariesView: View {
             } footer: {
                 Text("Turn on Library Sharing in iFly, iCube or Provenance on another device on the same Wi-Fi. "
                      + "Copied games are imported into your library; BIOS files and saves stay on the other device.")
+            }
+
+            SwiftUI.Section {
+                ForEach(model.contentServers) { server in
+                    let peer = model.contentServerPeer(server)
+                    NavigationLink {
+                        NearbyPeerLibraryView(model: model.peerModel(for: peer))
+                    } label: {
+                        NearbyPeerRow(peer: peer, summary: model.loadedSummaries[peer.id] ?? server.username)
+                    }
+                }
+                .onDelete { model.removeContentServers(at: $0) }
+                Button("Add Content Server…") { showingAddServer = true }
+            } header: {
+                Text("Content Servers")
+            } footer: {
+                Text("An emulator-content-server on your network or at home. Provenance keeps a sign-in token in the Keychain, never your password.")
+            }
+            .sheet(isPresented: $showingAddServer) {
+                AddContentServerView { url, username, password in
+                    model.addContentServer(url: url, username: username, password: password)
+                }
             }
 
             if model.snapshot.localNetworkDenied {
@@ -83,6 +106,55 @@ struct NearbyLibrariesView: View {
     }
 }
 
+/// URL, username and password for a content server. The password is used
+/// once to sign in and is not stored.
+private struct AddContentServerView: View {
+    let onAdd: (URL, String, String) -> Void
+    @Environment(\.dismiss) private var dismiss
+    @State private var address = ""
+    @State private var username = ""
+    @State private var password = ""
+
+    private var url: URL? {
+        let trimmed = address.trimmingCharacters(in: .whitespaces)
+        let withScheme = trimmed.contains("://") ? trimmed : "https://" + trimmed
+        guard let url = URL(string: withScheme), url.host != nil, ["http", "https"].contains(url.scheme ?? "") else { return nil }
+        return url
+    }
+
+    var body: some View {
+        NavigationStack {
+            Form {
+                TextField("Address (https://server:8443)", text: $address)
+                    #if os(iOS)
+                    .keyboardType(.URL)
+                    .textInputAutocapitalization(.never)
+                    #endif
+                    .autocorrectionDisabled()
+                TextField("Username", text: $username)
+                    #if os(iOS)
+                    .textInputAutocapitalization(.never)
+                    #endif
+                    .autocorrectionDisabled()
+                SecureField("Password", text: $password)
+            }
+            .navigationTitle("Add Content Server")
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button("Cancel") { dismiss() }
+                }
+                ToolbarItem(placement: .confirmationAction) {
+                    Button("Add") {
+                        if let url { onAdd(url, username, password) }
+                        dismiss()
+                    }
+                    .disabled(url == nil || username.isEmpty || password.isEmpty)
+                }
+            }
+        }
+    }
+}
+
 private struct NearbyPeerRow: View {
     let peer: DiscoveredPeer
     let summary: String?
@@ -92,6 +164,7 @@ private struct NearbyPeerRow: View {
         case .iFly: return "opticaldisc"
         case .iCube: return "cube"
         case .pvLibrary: return "books.vertical"
+        case .contentServer: return "server.rack"
         }
     }
 

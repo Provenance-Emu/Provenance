@@ -49,7 +49,63 @@ final class NearbyLibrariesModel {
         return created
     }
 
+    /// Content servers the user added by URL (phase 5). Passwords are never
+    /// stored: the first sign-in uses the one typed in `pendingPasswords`,
+    /// and the server's token then lives in the Keychain.
+    struct ContentServer: Codable, Hashable, Identifiable {
+        var url: URL
+        var username: String
+        var id: URL { url }
+    }
+
+    static let contentServersKey = "LibrarySharing.contentServers"
+    private(set) var contentServers: [ContentServer] = {
+        guard let data = UserDefaults.standard.data(forKey: NearbyLibrariesModel.contentServersKey) else { return [] }
+        return (try? JSONDecoder().decode([ContentServer].self, from: data)) ?? []
+    }()
+    @ObservationIgnored private var pendingPasswords: [URL: String] = [:]
+
     init() {}
+
+    func addContentServer(url: URL, username: String, password: String) {
+        let server = ContentServer(url: url, username: username)
+        contentServers.removeAll { $0.url == url }
+        contentServers.append(server)
+        pendingPasswords[url] = password
+        // A re-added server signs in again with the new password.
+        KeychainECSTokenStore().setToken(nil, for: url)
+        peerModels[contentServerPeer(server).id] = nil
+        saveContentServers()
+    }
+
+    func removeContentServers(at offsets: IndexSet) {
+        for server in offsets.map({ contentServers[$0] }) {
+            KeychainECSTokenStore().setToken(nil, for: server.url)
+            peerModels[contentServerPeer(server).id] = nil
+        }
+        contentServers.remove(atOffsets: offsets)
+        saveContentServers()
+    }
+
+    private func saveContentServers() {
+        UserDefaults.standard.set(try? JSONEncoder().encode(contentServers), forKey: Self.contentServersKey)
+    }
+
+    /// A content server presented as a peer, so the browse screen is shared.
+    func contentServerPeer(_ server: ContentServer) -> DiscoveredPeer {
+        DiscoveredPeer(app: .contentServer, serviceName: server.url.host ?? server.url.absoluteString, advertisement: PeerAdvertisement(
+            payloadVersion: 1, sessionId: "", sharesLibrary: true, peerId: server.url.absoluteString, urlCandidates: [server.url]
+        ))
+    }
+
+    /// The source for a content server: the typed password once, then the Keychain token.
+    func contentServerSource(for peer: DiscoveredPeer) -> ECSSource? {
+        guard let url = peer.baseURLs.first, let server = contentServers.first(where: { $0.url == url }) else { return nil }
+        return ECSSource(
+            server: url, username: server.username, password: pendingPasswords.removeValue(forKey: url),
+            deviceName: identity.name, systems: playableSystems, tokens: KeychainECSTokenStore()
+        )
+    }
 
     /// This device's own peer id: with Share This Library on, its own adverts
     /// show up in the browse and must be left out.
@@ -229,6 +285,9 @@ final class NearbyPeerLibraryModel {
         case .pvLibrary:
             // Ask only for what this device plays; the source filters locally too.
             source = PVLibrarySource(baseURLs: peer.baseURLs, identity: owner.identity, systems: owner.playableSystems)
+        case .contentServer:
+            source = owner.contentServerSource(for: peer)
+                ?? PVLibrarySource(baseURLs: peer.baseURLs, identity: owner.identity, systems: owner.playableSystems)
         }
     }
 
