@@ -45,6 +45,10 @@ public enum PVFeature: String, CaseIterable, Sendable {
     /// Currently only audio AirPlay is supported; video mirroring to Apple TV is not yet
     /// implemented. Disabled by default until full video AirPlay support lands.
     case airPlayMenu = "airPlayMenu"
+    /// Settings › Library › Nearby Libraries: browse iFly and iCube libraries on the
+    /// local network (read-only; copying is phase 2 of the cross-app sharing spec).
+    /// Disabled by default; enable in Settings > Advanced > Feature Flags.
+    case nearbyLibraries
 }
 
 /// Enum representing supported OS platforms for feature flag filtering
@@ -152,6 +156,12 @@ public struct FeatureFlag: Codable, Sendable {
     public static let airPlayMenu = FeatureFlag(
         enabled: false,
         description: "AirPlay route-picker button in the pause menu. Only audio AirPlay is currently supported; disabled by default until video AirPlay to Apple TV is implemented."
+    )
+
+    public static let nearbyLibraries = FeatureFlag(
+        enabled: false,
+        description: "Nearby Libraries: browse iFly and iCube libraries on the local network from Settings > Library. "
+            + "Read-only for now. Disabled by default — enable in Settings > Advanced > Feature Flags."
     )
 }
 
@@ -556,6 +566,7 @@ public final class PVFeatureFlags: @unchecked Sendable {
     public var lightGunCrosshair: Bool { featureStates[.lightGunCrosshair] ?? false }
     public var skinButtonReposition: Bool { featureStates[.skinButtonReposition] ?? false }
     public var airPlayMenu: Bool { featureStates[.airPlayMenu] ?? false }
+    public var nearbyLibraries: Bool { featureStates[.nearbyLibraries] ?? false }
 
     // MARK: - Feature Queries
 

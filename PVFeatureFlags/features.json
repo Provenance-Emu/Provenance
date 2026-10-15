@@ -37,6 +37,10 @@
         "airPlayMenu": {
             "enabled": false,
             "description": "AirPlay route-picker button in the pause menu. Only audio AirPlay is currently supported; disabled by default until video AirPlay to Apple TV is implemented."
+        },
+        "nearbyLibraries": {
+            "enabled": false,
+            "description": "Nearby Libraries: browse iFly and iCube libraries on the local network from Settings > Library. Read-only for now. Disabled by default — enable in Settings > Advanced > Feature Flags."
         }
     }
 }
