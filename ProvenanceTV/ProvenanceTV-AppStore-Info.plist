@@ -285,6 +285,8 @@
 	<array>
 		<string>_altserver._tcp</string>
 		<string>_http._tcp</string>
+		<string>_icube-continuity._tcp</string>
+		<string>_ifly-continuity._tcp</string>
 		<string>_provenance-np._tcp</string>
 		<string>_webdav._tcp</string>
 	</array>
@@ -293,7 +295,7 @@
 	<key>NSFileProviderDomainUsageDescription</key>
 	<string>Provenance uses file provider for loading ROMs.</string>
 	<key>NSLocalNetworkUsageDescription</key>
-	<string>Provenance uses the local network to find and communicate with AltServer.</string>
+	<string>Provenance uses the local network to find and communicate with AltServer, and to browse game libraries shared by iFly and iCube on nearby devices.</string>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>Provenance uses the microphone for systems that support audio input (eg. Famicom).</string>
 	<key>NSPhotoLibraryAddUsageDescription</key>

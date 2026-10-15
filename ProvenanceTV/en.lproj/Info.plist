@@ -199,12 +199,14 @@
 	<key>NSBonjourServices</key>
 	<array>
 		<string>_altserver._tcp</string>
+		<string>_icube-continuity._tcp</string>
+		<string>_ifly-continuity._tcp</string>
 		<string>_provenance-np._tcp</string>
 	</array>
 	<key>NSHighResolutionCapable</key>
 	<true/>
 	<key>NSLocalNetworkUsageDescription</key>
-	<string>Provenance uses the local network to find game controllers, communicate with AltServer, and discover netplay rooms.</string>
+	<string>Provenance uses the local network to find game controllers, communicate with AltServer, and discover netplay rooms, and to browse game libraries shared by iFly and iCube on nearby devices.</string>
 	<key>NSUbiquitousContainers</key>
 	<dict>
 		<key>iCloud.org.provenance-emu.provenance</key>
