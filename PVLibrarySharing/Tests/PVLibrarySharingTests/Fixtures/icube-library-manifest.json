@@ -1,0 +1,26 @@
+{
+  "files" : [
+    {
+      "kind" : "gameFile",
+      "relativePath" : "Software/Super Mario Sunshine.rvz",
+      "required" : true,
+      "sha256" : "9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08",
+      "size" : 1459617792
+    }
+  ],
+  "game" : {
+    "discNumber" : 0,
+    "displayName" : "Super Mario Sunshine",
+    "gameID" : "GMSE01",
+    "platform" : "gc",
+    "revision" : 0
+  },
+  "mintedAt" : "2026-10-15T09:00:00Z",
+  "sessionId" : "library-GMSE01",
+  "sourceDevice" : {
+    "appVersion" : "1.2.0",
+    "name" : "Living Room TV",
+    "platform" : "tvOS"
+  },
+  "version" : 1
+}

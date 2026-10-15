@@ -24,11 +24,19 @@ enum ContinuityRoutes {
     static let iFlyLibraryManifest = "/api/continuity/library/manifest"
     /// iCube only: the whole catalogue.
     static let iCubeLibraryCatalog = "/api/continuity/library/catalog"
+    /// iFly only: `POST {gameId}` → one game's pull manifest. Metered on the host.
+    static let iFlyLibraryPull = "/api/continuity/library/pull"
+    /// iCube only: `GET ?key=` → one game's pull manifest (same path as iFly's
+    /// catalogue, different meaning).
+    static let iCubeLibraryManifest = "/api/continuity/library/manifest"
+    /// Both: one file of a granted manifest. iFly `?path=`, iCube `?key=&path=`.
+    static let libraryFile = "/api/continuity/library/file"
     /// iCube pairing; exists from app launch, independent of sharing.
     static let pairStart = "/api/continuity/pair/start"
     static let pairComplete = "/api/continuity/pair/complete"
 
     static let keyQueryItem = "key"
+    static let pathQueryItem = "path"
 
     /// `base + path`, with `?key=` built through `URLComponents` like both
     /// peers do, so `+`, `|`, `:` and spaces in opaque keys survive.
@@ -39,6 +47,72 @@ enum ContinuityRoutes {
         components?.queryItems = [URLQueryItem(name: keyQueryItem, value: key)]
         return components?.url ?? joined
     }
+
+    /// `base + library/file`: iFly sends `?path=` only, iCube `?key=&path=`
+    /// (it re-checks the entry's exclusion before serving a byte).
+    static func libraryFileURL(base: URL, key: String?, relativePath: String) -> URL {
+        let joined = base.appendingPathComponent(libraryFile)
+        var components = URLComponents(url: joined, resolvingAgainstBaseURL: false)
+        var items: [URLQueryItem] = []
+        if let key { items.append(URLQueryItem(name: keyQueryItem, value: key)) }
+        items.append(URLQueryItem(name: pathQueryItem, value: relativePath))
+        components?.queryItems = items
+        return components?.url ?? joined
+    }
+}
+
+// MARK: - Pull manifest (both apps)
+
+/// The fields of iFly's and iCube's `ContinuityManifest` a pull needs.
+///
+/// Lenient on purpose: `mintedAt`, `sourceDevice`, `game`, `saveState` and
+/// `optionalExtras` are not decoded (Provenance never copies a peer's state,
+/// and iFly's library manifests carry a `game` identity shaped differently
+/// from iCube's). The version is still checked: both apps reject anything
+/// outside 1...1. iCube has no `bios` key at all, so it is optional here; iFly
+/// always sends it.
+struct ContinuityPullManifest: Decodable, Sendable {
+    static let supportedVersions: ClosedRange<Int> = 1...1
+
+    var version: Int
+    var files: [Descriptor]
+    var bios: [Descriptor]?
+
+    /// `FileDescriptor` in both apps. `required` is always encoded by both.
+    struct Descriptor: Codable, Sendable {
+        var kind: String
+        var relativePath: String
+        var sha256: String
+        var size: Int64
+        var required: Bool?
+    }
+
+    enum CodingKeys: String, CodingKey {
+        case version, files, bios
+    }
+
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        let version = try container.decode(Int.self, forKey: .version)
+        guard Self.supportedVersions.contains(version) else {
+            throw LibrarySharingError.unsupportedCatalogueVersion(version)
+        }
+        self.version = version
+        self.files = try container.decode([Descriptor].self, forKey: .files)
+        self.bios = try container.decodeIfPresent([Descriptor].self, forKey: .bios)
+    }
+
+    func remoteManifest(itemId: String) -> RemoteManifest {
+        let all = files + (bios ?? [])
+        return RemoteManifest(itemId: itemId, files: all.map {
+            RemoteFile(kind: $0.kind, relativePath: $0.relativePath, sha256: $0.sha256, size: $0.size, required: $0.required ?? true)
+        })
+    }
+}
+
+/// iFly's `ContinuityLibraryMessages.PullRequest`.
+struct IFlyPullRequest: Codable, Sendable {
+    var gameId: String
 }
 
 // MARK: - Shared auth messages

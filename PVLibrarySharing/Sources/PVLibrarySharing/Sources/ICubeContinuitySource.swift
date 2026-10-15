@@ -38,6 +38,10 @@ public struct ICubePairingHandle: Sendable, Equatable {
 /// `"icube-continuity-auth-v1|peerId|serverId|" + nonce`) → `{libraryToken}`,
 /// `GET library/catalog` (Bearer, version-checked) and `GET library/art?key=`
 /// with the entry's `stableKey`.
+///
+/// Copying: `GET library/manifest?key=` → that entry's manifest (the disc
+/// image only, never the owner's saves), then `GET library/file?key=&path=`
+/// with Range. Both re-check the entry's exclusion, so either can answer 404.
 public actor ICubeContinuitySource: LibrarySource {
     public static let defaultApprovalTimeout: TimeInterval = 120
     public static let defaultPollInterval: TimeInterval = 1
@@ -94,6 +98,58 @@ public actor ICubeContinuitySource: LibrarySource {
         let response = try await authorizedGet(path: ContinuityRoutes.libraryArt, key: artKey, progress: { _ in })
         // A missing cover is a placeholder, never an error (iCube's own client agrees).
         return response.status == 200 ? response.body : nil
+    }
+
+    // MARK: - Pull
+
+    public func pullManifest(
+        for item: RemoteLibraryItem,
+        progress: @escaping @Sendable (LibraryBrowseProgress) -> Void
+    ) async throws -> RemoteManifest {
+        progress(.connecting)
+        var response = try await authorizedGet(path: ContinuityRoutes.iCubeLibraryManifest, key: item.id, progress: progress)
+        if response.status == 401 {
+            token = nil
+            response = try await authorizedGet(path: ContinuityRoutes.iCubeLibraryManifest, key: item.id, progress: progress)
+        }
+        switch response.status {
+        case 200:
+            return try JSONDecoder().decode(ContinuityPullManifest.self, from: response.body).remoteManifest(itemId: item.id)
+        case 404:
+            // The owner excluded the game or no longer has it; iCube doesn't say which.
+            throw LibrarySharingError.itemUnavailable
+        default:
+            if response.status == 401 || response.status == 403 { token = nil }
+            throw Self.error(forStatus: response.status)
+        }
+    }
+
+    public func download(
+        _ file: RemoteFile,
+        of manifest: RemoteManifest,
+        to partialFile: URL,
+        resumeOffset: Int64,
+        progress: @escaping @Sendable (Int64) -> Void
+    ) async throws -> LibraryDownloadResponse {
+        var reauthenticated = false
+        while true {
+            let token = try await libraryToken()
+            guard let base = activeBase ?? candidates.first else { throw LibrarySharingError.unreachable }
+            let request = LibraryHTTPRequest.authorizedGet(
+                url: ContinuityRoutes.libraryFileURL(base: base, key: manifest.itemId, relativePath: file.relativePath),
+                token: token
+            )
+            let response = try await transport.download(request, to: partialFile, resumeOffset: resumeOffset, progress: progress)
+            if isPullerHandledDownloadStatus(response.status) { return response }
+            if response.status == 401 && !reauthenticated {
+                reauthenticated = true
+                self.token = nil
+                continue
+            }
+            if response.status == 401 || response.status == 403 { self.token = nil }
+            if response.status == 404 { throw LibrarySharingError.fileUnavailable(file.fileName) }
+            throw Self.error(forStatus: response.status)
+        }
     }
 
     // MARK: - Pairing

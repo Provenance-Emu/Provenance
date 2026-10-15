@@ -29,6 +29,27 @@ public enum LibrarySharingError: Error, Equatable, Sendable {
     case unreachable
     /// Any other HTTP status.
     case invalidResponse(status: Int)
+
+    // MARK: Copying (phase 2)
+
+    /// The host owner declined this one copy (iFly "Ask per game"). Browsing
+    /// still works.
+    case pullDeclined
+    /// iFly 429: the host's free copies for today are used up.
+    case hostLimitReached
+    /// The game is gone from the host, or the owner excluded it (404 on the
+    /// pull or manifest route; iCube doesn't tell the two apart).
+    case itemUnavailable
+    /// The host no longer serves a file of a granted manifest (404 on the
+    /// file route).
+    case fileUnavailable(String)
+    /// A downloaded file's SHA-256 didn't match the manifest. The partial file
+    /// was deleted.
+    case checksumMismatch(String)
+    /// A manifest path that would land outside the staging folder.
+    case unsafePath(String)
+    /// The host offered no game file for the item.
+    case nothingToCopy
 }
 
 extension LibrarySharingError: LocalizedError {
@@ -54,6 +75,20 @@ extension LibrarySharingError: LocalizedError {
             return "Couldn't reach the other device. Check that both are on the same Wi-Fi."
         case .invalidResponse(let status):
             return "The other device answered with an unexpected error (HTTP \(status))."
+        case .pullDeclined:
+            return "The other device declined this copy."
+        case .hostLimitReached:
+            return "That device has used up its free copies for today. iFly Pro on that device removes the limit."
+        case .itemUnavailable:
+            return "That game isn't shared anymore."
+        case .fileUnavailable(let name):
+            return "The other device stopped offering \(name). Try the copy again."
+        case .checksumMismatch(let name):
+            return "\(name) arrived damaged. Try the copy again."
+        case .unsafePath(let path):
+            return "The other device offered a file with an unsafe path (\(path))."
+        case .nothingToCopy:
+            return "The other device offered nothing to copy for this game."
         }
     }
 }

@@ -1,0 +1,66 @@
+{
+  "bios" : [
+    {
+      "kind" : "bios",
+      "relativePath" : "BIOS/dc_boot.bin",
+      "required" : true,
+      "sha256" : "1111111111111111111111111111111111111111111111111111111111111111",
+      "size" : 2097152
+    }
+  ],
+  "files" : [
+    {
+      "kind" : "gameFile",
+      "modifiedAt" : "2026-09-30T18:22:01Z",
+      "relativePath" : "ROMs/Ikaruga/Ikaruga.gdi",
+      "required" : true,
+      "sha256" : "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+      "size" : 92
+    },
+    {
+      "kind" : "gameFile",
+      "relativePath" : "ROMs/Ikaruga/track01.bin",
+      "required" : true,
+      "sha256" : "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "size" : 1425312
+    },
+    {
+      "kind" : "gameFile",
+      "relativePath" : "ROMs/Ikaruga/track03.bin",
+      "required" : true,
+      "sha256" : "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+      "size" : 1185760800
+    },
+    {
+      "kind" : "vmuPerGame",
+      "relativePath" : "flycast/Ikaruga_vmu_save_A1.bin",
+      "required" : true,
+      "sha256" : "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+      "size" : 131072
+    }
+  ],
+  "game" : {
+    "displayName" : "Ikaruga",
+    "md5Hash" : "0123456789abcdef0123456789abcdef",
+    "platform" : "dreamcast"
+  },
+  "mintedAt" : "2026-10-15T09:00:00Z",
+  "optionalExtras" : [
+
+  ],
+  "saveState" : {
+    "relativePath" : "flycast/Ikaruga_1.state",
+    "screenshotAvailable" : false,
+    "sha256" : "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+    "size" : 18874368,
+    "slot" : 1,
+    "stem" : "Ikaruga"
+  },
+  "sessionId" : "library-pull-6E1F",
+  "sourceDevice" : {
+    "appVersion" : "2.4.0",
+    "name" : "Joe's iPad",
+    "platform" : "iOS"
+  },
+  "version" : 1
+}

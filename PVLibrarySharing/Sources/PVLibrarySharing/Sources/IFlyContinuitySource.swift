@@ -18,6 +18,10 @@ import Foundation
 /// - Catalogue: `GET library/manifest` (Bearer) is the whole library, with an
 ///   `ETag`; a repeat fetch sends `If-None-Match` and a 304 reuses the cache.
 /// - Art: `GET library/art?key=<artKey>` (Bearer).
+/// - Pull: `POST library/pull {gameId}` (Bearer) → a `ContinuityManifest`. The
+///   only metered route: 202 while an "Ask per game" owner decides (poll),
+///   403 when they decline, 429 when the host's free copies are used up.
+///   Files: `GET library/file?path=` with Range, for paths of a granted pull.
 public actor IFlyContinuitySource: LibrarySource {
     public static let defaultApprovalTimeout: TimeInterval = 120
     public static let defaultPollInterval: TimeInterval = 1
@@ -96,6 +100,85 @@ public actor IFlyContinuitySource: LibrarySource {
         }
     }
 
+    // MARK: - Pull
+
+    public func pullManifest(
+        for item: RemoteLibraryItem,
+        progress: @escaping @Sendable (LibraryBrowseProgress) -> Void
+    ) async throws -> RemoteManifest {
+        progress(.connecting)
+        let body = IFlyPullRequest(gameId: item.id)
+        var reauthenticated = false
+        let deadline = Date().addingTimeInterval(approvalTimeout)
+        while true {
+            try Task.checkCancellation()
+            let token = try await libraryToken(progress: progress)
+            let (response, base) = try await sendToFirstReachable(
+                candidates: candidates, preferred: activeBase, transport: transport
+            ) { base in
+                var request = try LibraryHTTPRequest.jsonPost(
+                    url: ContinuityRoutes.url(base: base, path: ContinuityRoutes.iFlyLibraryPull), body: body
+                )
+                request.headers["Authorization"] = "Bearer \(token)"
+                return request
+            }
+            activeBase = base
+            switch response.status {
+            case 200:
+                let decoder = JSONDecoder()
+                return try decoder.decode(ContinuityPullManifest.self, from: response.body).remoteManifest(itemId: item.id)
+            case 202:
+                progress(.waitingForApproval)
+                guard Date() < deadline else { throw LibrarySharingError.approvalTimedOut }
+                try await Task.sleep(nanoseconds: UInt64(pollInterval * 1_000_000_000))
+            case 401 where !reauthenticated:
+                reauthenticated = true
+                self.token = nil
+            default:
+                if response.status == 401 { self.token = nil }
+                throw Self.pullError(forStatus: response.status)
+            }
+        }
+    }
+
+    public func download(
+        _ file: RemoteFile,
+        of manifest: RemoteManifest,
+        to partialFile: URL,
+        resumeOffset: Int64,
+        progress: @escaping @Sendable (Int64) -> Void
+    ) async throws -> LibraryDownloadResponse {
+        var reauthenticated = false
+        while true {
+            let token = try await libraryToken(progress: { _ in })
+            let base = try activeBaseOrFirst()
+            let request = LibraryHTTPRequest.authorizedGet(
+                url: ContinuityRoutes.libraryFileURL(base: base, key: nil, relativePath: file.relativePath), token: token
+            )
+            let response = try await transport.download(request, to: partialFile, resumeOffset: resumeOffset, progress: progress)
+            if isPullerHandledDownloadStatus(response.status) { return response }
+            if response.status == 401 && !reauthenticated {
+                reauthenticated = true
+                self.token = nil
+                continue
+            }
+            if response.status == 401 { self.token = nil }
+            if response.status == 404 { throw LibrarySharingError.fileUnavailable(file.fileName) }
+            throw Self.error(forStatus: response.status)
+        }
+    }
+
+    /// iFly's pull statuses (`ContinuityLibraryClient.requestPull`): 403 here
+    /// declines one copy, not browsing.
+    static func pullError(forStatus status: Int) -> LibrarySharingError {
+        switch status {
+        case 403: return .pullDeclined
+        case 404: return .itemUnavailable
+        case 429: return .hostLimitReached
+        default: return error(forStatus: status)
+        }
+    }
+
     // MARK: - Mapping
 
     static func catalogue(from manifest: IFlyLibraryManifest) -> RemoteCatalogue {
@@ -115,6 +198,13 @@ public actor IFlyContinuitySource: LibrarySource {
     }
 
     // MARK: - Private
+
+    /// The base that answered last; a pull always follows a browse or an auth
+    /// that set it. Falls back to the first advertised URL.
+    private func activeBaseOrFirst() throws -> URL {
+        guard let base = activeBase ?? candidates.first else { throw LibrarySharingError.unreachable }
+        return base
+    }
 
     private func fetchManifest(
         progress: @escaping @Sendable (LibraryBrowseProgress) -> Void
