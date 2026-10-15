@@ -1437,7 +1437,9 @@ public struct DeltaSkinView: View {
                 for command in previous.subtracting(desired) {
                     handleButtonRelease(command)
                 }
-                for command in desired where !pressedButtons.contains(command) {
+                // Only newly covered inputs: one this touch already held stays as it is, so a sticky
+                // button released by double-tap is not pressed again by the next move.
+                for command in desired.subtracting(previous) where !pressedButtons.contains(command) {
                     handleButtonPress(command)
                     DLOG("Pressed button \(command) via touch \(touchId)")
                 }

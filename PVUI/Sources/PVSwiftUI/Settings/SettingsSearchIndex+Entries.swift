@@ -222,6 +222,12 @@ extension SettingsSearchIndex {
               .controller, SettingsSectionTitle.deltaSkins, keywords: ["click", "audio", "touch controls", "skin"], tvOS: false),
         entry("skins.effect", "Button Effect Style", nil,
               .controller, SettingsSectionTitle.deltaSkins, keywords: ["press", "animation", "touch controls", "skin"], tvOS: false),
+        entry("skins.multibutton", "Skin Multi-Button Touch",
+              "Controller skins: a finger covering two buttons presses both, not just the closest. The d-pad, sticks and menu buttons are unaffected.",
+              .controller, SettingsSectionTitle.deltaSkins, keywords: ["fat finger", "touch controls", "combo", "skin"], tvOS: false),
+        entry("skins.arcademultibutton", "Arcade Multi-Button Touch",
+              "Built-in arcade controller: a finger between two buttons presses both, handy for fighting-game combos.",
+              .controller, SettingsSectionTitle.deltaSkins, keywords: ["fat finger", "touch controls", "combo", "arcade", "overlay"], tvOS: false),
         entry("skins.deltastyles", "Visit DeltaStyles.com", "Download more skins from the DeltaStyles website.",
               .controller, SettingsSectionTitle.deltaSkins, keywords: ["delta skin", "download", "skin", "web"], tvOS: false)
     ]

@@ -15,22 +15,6 @@ public enum OverlayHitTester {
     private static let octantWidth: CGFloat = 45
     private static let octantCount = 8
 
-    public static func hits(at points: [CGPoint], controls: [ResolvedControl],
-                            previousDPad: [String: Set<OverlayDPadDirection>]) -> Set<OverlayHit> {
-        var result = Set<OverlayHit>()
-        for point in points {
-            guard let target = topControl(at: point, in: controls) else { continue }
-            if case .dpad = target.control.kind {
-                let directions = dpadDirections(point: point, in: target.frame,
-                                                previous: previousDPad[target.id] ?? [])
-                for direction in directions { result.insert(.dpad(id: target.id, direction)) }
-            } else {
-                result.insert(.control(id: target.id))
-            }
-        }
-        return result
-    }
-
     /// A finger inside a draw frame wins; otherwise the nearest centre among hit frames.
     public static func topControl(at point: CGPoint, in controls: [ResolvedControl]) -> ResolvedControl? {
         if let inside = controls.first(where: { $0.frame.contains(point) }) { return inside }

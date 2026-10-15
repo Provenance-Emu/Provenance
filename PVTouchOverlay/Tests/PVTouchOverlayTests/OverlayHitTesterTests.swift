@@ -12,6 +12,13 @@ struct OverlayHitTesterTests {
             frame: frame, hitFrame: hit)
     }
 
+    /// The cluster's hits for fingers that went down at `points`.
+    static func hits(at points: [CGPoint], controls: [ResolvedControl]) -> Set<OverlayHit> {
+        var tracker = OverlayTouchTracker<Int>(controls: controls)
+        for (index, point) in points.enumerated() { tracker.began(index, at: point) }
+        return tracker.hits()
+    }
+
     let buttonA = button("a", CGRect(x: 100, y: 100, width: 56, height: 56),
                          CGRect(x: 80, y: 80, width: 96, height: 96))
     let buttonB = button("b", CGRect(x: 150, y: 100, width: 56, height: 56),
@@ -30,20 +37,20 @@ struct OverlayHitTesterTests {
     @Test("Finger inside a draw frame wins over an overlapping hit frame")
     func drawFrameWins() {
         // (160, 128) is inside b's draw frame and inside a's hit frame but not a's draw frame.
-        let hits = OverlayHitTester.hits(at: [CGPoint(x: 160, y: 128)], controls: [buttonA, buttonB], previousDPad: [:])
+        let hits = Self.hits(at: [CGPoint(x: 160, y: 128)], controls: [buttonA, buttonB])
         #expect(hits == [.control(id: "b")])
     }
 
     @Test("In the overlap of two hit frames the nearest centre wins")
     func nearestCentre() {
-        let hits = OverlayHitTester.hits(at: [CGPoint(x: 140, y: 85)], controls: [buttonA, buttonB], previousDPad: [:])
+        let hits = Self.hits(at: [CGPoint(x: 140, y: 85)], controls: [buttonA, buttonB])
         #expect(hits == [.control(id: "a")])
     }
 
     @Test("Multiple touches produce the union")
     func union() {
         let touches = [CGPoint(x: 110, y: 110), CGPoint(x: 190, y: 110)]
-        let hits = OverlayHitTester.hits(at: touches, controls: [buttonA, buttonB], previousDPad: [:])
+        let hits = Self.hits(at: touches, controls: [buttonA, buttonB])
         #expect(hits == [.control(id: "a"), .control(id: "b")])
     }
 
