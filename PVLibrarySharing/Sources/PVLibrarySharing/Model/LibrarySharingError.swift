@@ -50,6 +50,13 @@ public enum LibrarySharingError: Error, Equatable, Sendable {
     case unsafePath(String)
     /// The host offered no game file for the item.
     case nothingToCopy
+
+    // MARK: Content servers (phase 5)
+
+    /// The content server refused the username or password.
+    case signInFailed
+    /// The content server speaks a protocol major version this build doesn't.
+    case unsupportedServer(String)
 }
 
 extension LibrarySharingError: LocalizedError {
@@ -89,6 +96,10 @@ extension LibrarySharingError: LocalizedError {
             return "The other device offered a file with an unsafe path (\(path))."
         case .nothingToCopy:
             return "The other device offered nothing to copy for this game."
+        case .signInFailed:
+            return "The content server didn't accept that username and password."
+        case .unsupportedServer(let detail):
+            return "That content server isn't compatible with this version of Provenance (\(detail))."
         }
     }
 }

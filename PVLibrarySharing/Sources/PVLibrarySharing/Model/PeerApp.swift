@@ -21,6 +21,9 @@ public enum PeerApp: String, CaseIterable, Sendable, Codable, Hashable {
     /// iFly's consent auth, neutral `pvlibrary-*` prefixes, dotted system ids.
     /// Provenance speaks it today; the advert's `app` key says which app.
     case pvLibrary = "pvlibrary"
+    /// Provenance-Emu/emulator-content-server (`/api/v1`, spec §1.4, §3.7).
+    /// Added by URL in Settings; `_pvcontent._tcp` adverts aren't browsed yet.
+    case contentServer = "ecs"
 
     /// The Bonjour service type each app advertises its library under.
     ///
@@ -33,6 +36,7 @@ public enum PeerApp: String, CaseIterable, Sendable, Codable, Hashable {
         case .iFly: return "_ifly-continuity._tcp"
         case .iCube: return "_icube-continuity._tcp"
         case .pvLibrary: return "_pvlibrary._tcp"
+        case .contentServer: return "_pvcontent._tcp"
         }
     }
 
@@ -42,6 +46,7 @@ public enum PeerApp: String, CaseIterable, Sendable, Codable, Hashable {
         case .iFly: return "iFly"
         case .iCube: return "iCube"
         case .pvLibrary: return "Provenance"
+        case .contentServer: return "Content Server"
         }
     }
 
@@ -50,7 +55,7 @@ public enum PeerApp: String, CaseIterable, Sendable, Codable, Hashable {
         switch self {
         case .iFly: return .iFly
         case .iCube: return .iCube
-        case .pvLibrary: return .pvLibrary
+        case .pvLibrary, .contentServer: return .pvLibrary
         }
     }
 

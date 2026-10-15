@@ -25,7 +25,7 @@ public enum SystemMap {
         switch app {
         case .iFly: return iFlyPlatforms[key]
         case .iCube: return iCubePlatforms[key]
-        case .pvLibrary: return systemIdentifier(compact: platform)
+        case .pvLibrary, .contentServer: return systemIdentifier(compact: platform)
         }
     }
 
@@ -35,7 +35,7 @@ public enum SystemMap {
         switch app {
         case .iFly: return Set(iFlyPlatforms.values)
         case .iCube: return Set(iCubePlatforms.values)
-        case .pvLibrary: return Set(SystemIdentifier.allCases).subtracting([.Unknown])
+        case .pvLibrary, .contentServer: return Set(SystemIdentifier.allCases).subtracting([.Unknown])
         }
     }
 

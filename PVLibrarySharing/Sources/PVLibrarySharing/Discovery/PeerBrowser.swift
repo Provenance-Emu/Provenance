@@ -64,7 +64,9 @@ public final class PeerBrowser: @unchecked Sendable {
     /// Bumped per `snapshots()` call so ending an old stream can't stop a newer browse.
     private var generation = 0
 
-    public init(apps: [PeerApp] = PeerApp.allCases) {
+    /// Content servers are added by URL; their `_pvcontent._tcp` adverts carry
+    /// no `lib`/`u0` and aren't browsed here.
+    public init(apps: [PeerApp] = PeerApp.allCases.filter { $0 != .contentServer }) {
         self.apps = apps
     }
 

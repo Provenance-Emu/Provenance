@@ -23,13 +23,17 @@ public struct RemoteFile: Sendable, Hashable, Codable {
     public var size: Int64
     /// Whether the peer considers the game unusable without this file.
     public var required: Bool
+    /// Where the bytes live when the source addresses files by URL rather
+    /// than by path (emulator-content-server's `contentPath`); nil for app peers.
+    public var contentPath: String?
 
-    public init(kind: String, relativePath: String, sha256: String, size: Int64, required: Bool = true) {
+    public init(kind: String, relativePath: String, sha256: String, size: Int64, required: Bool = true, contentPath: String? = nil) {
         self.kind = kind
         self.relativePath = relativePath
         self.sha256 = sha256.lowercased()
         self.size = size
         self.required = required
+        self.contentPath = contentPath
     }
 
     public var isGameFile: Bool { kind == Self.gameFileKind }
