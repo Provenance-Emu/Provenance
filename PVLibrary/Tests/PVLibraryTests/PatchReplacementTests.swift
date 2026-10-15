@@ -90,10 +90,11 @@ final class PatchReplacementTests: XCTestCase {
         let original = try file("Game.gba", "original")
         let patched = try file("patched.gba", "patched")
 
-        let swap = try PatchReplacement.beginSwap(replacing: original, withContentsOf: patched)
+        let swap = try PatchReplacement.beginSwap(replacing: original, withContentsOf: patched, newMD5: newMD5)
         XCTAssertEqual(try String(contentsOf: original, encoding: .utf8), "patched")
         XCTAssertEqual(try String(contentsOf: swap.backup, encoding: .utf8), "original")
         XCTAssertTrue(swap.backup.lastPathComponent.hasPrefix("."), "the backup is hidden from the library")
+        XCTAssertTrue(swap.backup.lastPathComponent.hasPrefix(".Game.gba.original-\(newMD5)-"), "the backup names the MD5 the game moves to")
 
         swap.commit()
         XCTAssertFalse(FileManager.default.fileExists(atPath: swap.backup.path))
@@ -105,7 +106,7 @@ final class PatchReplacementTests: XCTestCase {
         let original = try file("Game.gba", "original")
         let patched = try file("patched.gba", "patched")
 
-        let swap = try PatchReplacement.beginSwap(replacing: original, withContentsOf: patched)
+        let swap = try PatchReplacement.beginSwap(replacing: original, withContentsOf: patched, newMD5: newMD5)
         try swap.rollback()
 
         XCTAssertEqual(try String(contentsOf: original, encoding: .utf8), "original")
@@ -115,7 +116,7 @@ final class PatchReplacementTests: XCTestCase {
     func testAFailedCopyLeavesTheOriginalUntouched() throws {
         let original = try file("Game.gba", "original")
 
-        XCTAssertThrowsError(try PatchReplacement.beginSwap(replacing: original, withContentsOf: directory.appendingPathComponent("missing.gba")))
+        XCTAssertThrowsError(try PatchReplacement.beginSwap(replacing: original, withContentsOf: directory.appendingPathComponent("missing.gba"), newMD5: newMD5))
         XCTAssertEqual(try String(contentsOf: original, encoding: .utf8), "original")
         XCTAssertEqual(try FileManager.default.contentsOfDirectory(atPath: directory.path), ["Game.gba"])
     }
@@ -145,7 +146,7 @@ final class PatchReplacementTests: XCTestCase {
     func testCommitMovesTheGameAndDropsTheOriginal() throws {
         let realm = try realmWithGame()
         let original = try file("Game.gba", "original")
-        let swap = try PatchReplacement.beginSwap(replacing: original, withContentsOf: try file("cached.gba", "patched"))
+        let swap = try PatchReplacement.beginSwap(replacing: original, withContentsOf: try file("cached.gba", "patched"), newMD5: newMD5)
 
         let game = try PatchReplacement.commit(
             swap, rekeying: oldMD5, to: newMD5, crc: "ABCD1234", fileSize: 7, showPatchedSeparately: true, in: realm
@@ -165,7 +166,7 @@ final class PatchReplacementTests: XCTestCase {
         taken.title = "Already here"
         try realm.write { realm.add(taken) }
         let original = try file("Game.gba", "original")
-        let swap = try PatchReplacement.beginSwap(replacing: original, withContentsOf: try file("cached.gba", "patched"))
+        let swap = try PatchReplacement.beginSwap(replacing: original, withContentsOf: try file("cached.gba", "patched"), newMD5: newMD5)
 
         XCTAssertThrowsError(try PatchReplacement.commit(
             swap, rekeying: oldMD5, to: newMD5, crc: "ABCD1234", fileSize: 7, showPatchedSeparately: true, in: realm
@@ -176,6 +177,83 @@ final class PatchReplacementTests: XCTestCase {
         XCTAssertEqual(try FileManager.default.contentsOfDirectory(atPath: directory.path).sorted(), ["Game.gba", "cached.gba"])
         let game = try XCTUnwrap(realm.object(ofType: PVGame.self, forPrimaryKey: oldMD5))
         XCTAssertTrue(try XCTUnwrap(game.patches.first).isDefaultLaunch)
+    }
+
+    // MARK: - Recovery
+
+    private func backup(for name: String, md5: String, contents: String = "original") throws -> URL {
+        try file(".\(name).original-\(md5)-\(UUID().uuidString.prefix(8))", contents)
+    }
+
+    private func emptyRealm() throws -> Realm {
+        try Realm(configuration: Realm.Configuration(inMemoryIdentifier: UUID().uuidString))
+    }
+
+    func testABackupWhoseMD5IsInTheDatabaseIsDroppedAndTheROMKept() throws {
+        let realm = try realmWithGame()
+        try realm.write { realm.create(PVGame.self, value: ["md5Hash": newMD5.lowercased(), "title": "Patched"]) }
+        let rom = try file("Game.gba", "patched")
+        let spare = try backup(for: "Game.gba", md5: newMD5)
+
+        let handled = PatchReplacement.recoverInterruptedSwaps(in: [directory], realm: realm)
+
+        XCTAssertEqual(handled, 1)
+        XCTAssertFalse(FileManager.default.fileExists(atPath: spare.path))
+        XCTAssertEqual(try String(contentsOf: rom, encoding: .utf8), "patched")
+    }
+
+    func testABackupWhoseMD5IsNotInTheDatabaseRestoresTheOriginal() throws {
+        let realm = try realmWithGame()
+        let rom = try file("Game.gba", "patched")
+        _ = try backup(for: "Game.gba", md5: newMD5)
+
+        let handled = PatchReplacement.recoverInterruptedSwaps(in: [directory], realm: realm)
+
+        XCTAssertEqual(handled, 1)
+        XCTAssertEqual(try String(contentsOf: rom, encoding: .utf8), "original")
+        XCTAssertEqual(try FileManager.default.contentsOfDirectory(atPath: directory.path), ["Game.gba"])
+    }
+
+    func testAMissingROMIsRestoredFromItsBackup() throws {
+        _ = try backup(for: "Game.gba", md5: newMD5)
+
+        PatchReplacement.recoverInterruptedSwaps(in: [directory], realm: try emptyRealm())
+
+        XCTAssertEqual(try String(contentsOf: directory.appendingPathComponent("Game.gba"), encoding: .utf8), "original")
+    }
+
+    func testAnInterruptedSwapIsRecoveredEndToEnd() throws {
+        let realm = try realmWithGame()
+        let original = try file("Game.gba", "original")
+        // beginSwap ran; the process died before the database update.
+        _ = try PatchReplacement.beginSwap(replacing: original, withContentsOf: try file("cached.gba", "patched"), newMD5: newMD5)
+        XCTAssertEqual(try String(contentsOf: original, encoding: .utf8), "patched")
+
+        PatchReplacement.recoverInterruptedSwaps(in: [directory], realm: realm)
+
+        XCTAssertEqual(try String(contentsOf: original, encoding: .utf8), "original")
+        XCTAssertEqual(try FileManager.default.contentsOfDirectory(atPath: directory.path).sorted(), ["Game.gba", "cached.gba"])
+    }
+
+    func testAnUnfinishedStagedCopyIsDeleted() throws {
+        let stray = try file(".Game.gba.patched-\(UUID().uuidString)", "half")
+        _ = try file("Game.gba", "original")
+
+        let handled = PatchReplacement.recoverInterruptedSwaps(in: [directory], realm: try emptyRealm())
+
+        XCTAssertEqual(handled, 1)
+        XCTAssertFalse(FileManager.default.fileExists(atPath: stray.path))
+        XCTAssertEqual(try String(contentsOf: directory.appendingPathComponent("Game.gba"), encoding: .utf8), "original")
+    }
+
+    func testRecoveryLeavesUnrelatedFilesAlone() throws {
+        let names = [".DS_Store", ".hidden.gba", ".Game.gba.original-notanmd5-12345678", ".Game.gba.original-\(newMD5)", ".Game.gba.patched-x", "Game.gba", "visible.original-\(newMD5)-12345678"]
+        for name in names { _ = try file(name, "keep") }
+
+        let handled = PatchReplacement.recoverInterruptedSwaps(in: [directory], realm: try emptyRealm())
+
+        XCTAssertEqual(handled, 0)
+        XCTAssertEqual(try FileManager.default.contentsOfDirectory(atPath: directory.path).sorted(), names.sorted())
     }
 
     // MARK: - Library MD5

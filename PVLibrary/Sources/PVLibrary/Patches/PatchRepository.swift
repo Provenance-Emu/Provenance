@@ -788,7 +788,7 @@ public final class PatchRepository {
         let spotlightIdentifier = game.spotlightUniqueIdentifier
         #endif
 
-        let swap = try PatchReplacement.beginSwap(replacing: romURL, withContentsOf: artifact.url)
+        let swap = try PatchReplacement.beginSwap(replacing: romURL, withContentsOf: artifact.url, newMD5: newMD5)
         try PatchReplacement.commit(
             swap,
             rekeying: oldMD5,
