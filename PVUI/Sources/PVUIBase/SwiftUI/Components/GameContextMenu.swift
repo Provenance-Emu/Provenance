@@ -307,6 +307,15 @@ private struct GameContextMenuItems: View {
                     Label("Import Save Bundle", systemImage: "archivebox.fill")
                 }
                 #endif
+                #if os(iOS) && canImport(CoreNFC)
+                if GameTagWriter.isAvailable {
+                    Button {
+                        GameTagWriter.shared.write(game: game)
+                    } label: {
+                        Label("Write to NFC Tag", systemImage: "wave.3.right")
+                    }
+                }
+                #endif
                 // Show download option for games available in CloudKit but not downloaded locally
                 if iCloudSyncEnabled && hasCloudRecord && !isDownloaded {
                     Button {

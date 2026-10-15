@@ -205,6 +205,13 @@ struct ProvenanceApp: App {
                         // Don't open immediately - wait for bootup completion
                         openEmulatorSceneWhenReady()
                         return
+                    } else if let md5Value = PVGameMD5(fromLaunchURL: url) {
+                        // Universal link https://provenance-emu.com/game/<md5>: Handoff,
+                        // Spotlight web results, and NFC game tags read in the background.
+                        ILOG("ProvenanceApp: Found game universal link with MD5: \(md5Value)")
+                        AppState.shared.appOpenAction = .openMD5(md5Value)
+                        openEmulatorSceneWhenReady()
+                        return
                     } else {
                         WLOG("ProvenanceApp: Unrecognized URL format: \(url.absoluteString)")
                     }

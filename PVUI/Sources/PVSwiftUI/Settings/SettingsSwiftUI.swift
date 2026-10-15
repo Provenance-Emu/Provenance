@@ -2548,6 +2548,18 @@ private struct LibrarySection2: View {
                     #endif
             }
 
+            #if os(iOS) && canImport(CoreNFC)
+            if GameTagReader.isAvailable {
+                Button {
+                    GameTagReader.shared.scanAndOpenGame()
+                } label: {
+                    SettingsRow(title: "Scan NFC Tag",
+                                subtitle: "Open a game from a tag written with Write to NFC Tag.",
+                                icon: .sfSymbol("wave.3.right"))
+                }
+            }
+            #endif
+
             NavigationLink(destination: BatchArtworkMatchingView()) {
                 SettingsRow(title: "Batch Artwork Matcher",
                             subtitle: "Find and apply artwork for multiple games at once.",

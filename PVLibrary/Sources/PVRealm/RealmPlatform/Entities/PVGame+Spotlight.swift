@@ -32,12 +32,6 @@ private enum SpotlightArtworkThumbnail {
     static let jpegCompressionQuality: CGFloat = 0.9
 }
 
-/// HTTPS base paths for ``NSUserActivity/webpageURL`` (custom URL schemes are rejected). Must match `applinks:provenance-emu.com` and the host’s `apple-app-site-association`.
-private enum ProvenanceUserActivityWebLink {
-    /// Public game page by ROM MD5 — keep in sync with provenance-emu.com routing and AASA `paths`.
-    static let gameByMD5Prefix = "https://provenance-emu.com/game/"
-}
-
 public extension PVGame {
     
     fileprivate enum Consts {
@@ -255,7 +249,8 @@ public extension PVGame {
         #endif
 
         // Universal link / Handoff: https only (`provenance://` is not allowed here).
-        if let pageURL = URL(string: "\(ProvenanceUserActivityWebLink.gameByMD5Prefix)\(md5Hash)") {
+        // Same URL NFC game tags carry; it must match the AASA `/game/*` component.
+        if let pageURL = ProvenanceDeepLink.gameUniversalLink(md5Hash) {
             activity.webpageURL = pageURL
         }
 

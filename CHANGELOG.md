@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased] — 3.4.0 (in development)
 
 ### Added
+- **NFC game tags (iOS)** — "Write to NFC Tag" in a game's context menu writes a tag that launches the game: tap the tag with an iPhone, even with Provenance closed, and the game opens. Settings › Library › Scan NFC Tag reads a tag from inside the app. The tag holds the `https://provenance-emu.com/game/<md5>` link plus an `app=…;title=…` text record, the same layout iFly and iCube use; a tag written by one of those apps reports which app it belongs to. Tags are not locked, so they can be rewritten. Shown only on devices with an NFC reader. Opening `https://provenance-emu.com/game/<md5>` links (Handoff, Spotlight) now launches the game as well.
 - **Log Import** — the retrowave log viewer can now import a previously exported `.txt`/`.log` file or `.zip` bundle and display it in place of live logs, with a banner to return to live logs. (#3645)
 - **AspectRatioOverride enum** — New `AspectRatioOverride` enum in `PVPrimitives` defines per-core aspect ratio overrides (Auto, 4:3, 16:9, 1:1, 8:7, Stretch) with display metadata and aspect ratio values. (#3619)
 - **File Provider Save States & Screenshots** — Provenance now exposes Save States and Screenshots as browsable top-level folders in Files.app; each game with saves/screenshots gets a named sub-folder, and files can be copied out or deleted from Files.app. (#3617)

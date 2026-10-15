@@ -24,3 +24,9 @@ public let PVLibraryScreenURL = ProvenanceDeepLink.libraryScreenURL
 public func PVOpenGameMD5URI(_ md5: String) -> String {
     ProvenanceDeepLink.openGameMD5URI(md5)
 }
+
+/// The game MD5 in a launch URL: `provenance://open?md5=<md5>` or the universal link
+/// `https://provenance-emu.com/game/<md5>`. `nil` for any other URL.
+public func PVGameMD5(fromLaunchURL url: URL) -> String? {
+    ProvenanceDeepLink.gameMD5(from: url)
+}
