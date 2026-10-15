@@ -519,6 +519,9 @@ public class AppState: ObservableObject {
             try await bootWorker.initializeDatabase()
             ILOG("AppState: Database initialization completed successfully")
             bootupStateManager.transition(to: .databaseInitialized)
+            // Keep patched versions' library visibility in step with "Show patched versions as
+            // separate library items" — only once the database is open.
+            PatchRepository.shared.startObservingSettings()
         } catch {
             ELOG("AppState: Error initializing database: \(error.localizedDescription)")
             bootupStateManager.transition(to: .error(error))

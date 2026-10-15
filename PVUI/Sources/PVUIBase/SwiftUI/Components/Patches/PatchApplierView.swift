@@ -129,7 +129,7 @@ public struct PatchApplierView: View {
                 if importToLibrary {
                     Picker("Patched version", selection: $placement) {
                         Text("New library entry").tag(PatchPlacement.newLibraryEntry)
-                        Text("Replace the original").tag(PatchPlacement.replaceOriginal)
+                        Text("Use instead of the original").tag(PatchPlacement.replaceOriginal)
                     }
                     Text(placement == .replaceOriginal
                          ? "Playing the game starts the patched version. The original file is kept; play it from Patches & Mods › Play Original."

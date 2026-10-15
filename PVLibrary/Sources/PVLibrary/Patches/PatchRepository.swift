@@ -26,6 +26,8 @@ public enum PatchPlacement: String, Sendable, CaseIterable, Identifiable {
     case newLibraryEntry
     /// The patched copy takes the original's place: the base game's entry launches it and it gets
     /// no entry of its own. The original ROM file is kept and stays playable from "Play Original".
+    /// (iCube's "Replace the Original" deletes the original; doing that here needs the base game's
+    /// MD5 identity re-keyed, so the UI calls this "Use instead of the original".)
     case replaceOriginal
 
     public var id: String { rawValue }
@@ -46,7 +48,8 @@ public final class PatchRepository {
     // MARK: - Settings
 
     /// Applies "Show patched versions as separate library items" to every variant now and whenever
-    /// it changes. Idempotent; call once at launch.
+    /// it changes. Idempotent; call once the database is open (AppState does, after
+    /// `RomDatabase.initDefaultDatabase()`).
     public func startObservingSettings() {
         guard settingsObservation == nil else { return }
         settingsObservation = Task { @MainActor [weak self] in
@@ -80,6 +83,7 @@ public final class PatchRepository {
 
     /// Re-derives `isHiddenPatchVariant` for every managed variant from the current setting.
     public func reconcileVariantVisibility() {
+        guard RomDatabase.databaseInitialized else { return }
         let realm = RomDatabase.sharedInstance.realm
         let patches = realm.objects(PVPatch.self).filter("variantGame != nil")
         let stale = patches.filter { patch in
