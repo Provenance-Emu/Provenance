@@ -456,7 +456,7 @@ class GameImporterFileService : GameImporterFileServicing {
         let present = listed.filter { fileManager.fileExists(atPath: $0.path) }
         let notListed = associated.filter { !listed.contains($0) }
 
-        let identityMD5 = await identityMD5ForFolderName(of: queueItem, systemFolder: systemFolder)
+        let identityMD5 = await identityMD5ForFolderName(of: queueItem)
         let placement: MultiFileSetPlacement.Placement
         do {
             try fileManager.createDirectory(at: systemFolder, withIntermediateDirectories: true)
@@ -479,23 +479,18 @@ class GameImporterFileService : GameImporterFileServicing {
         removeEmptyImportSubfolder(indexURL.deletingLastPathComponent())
     }
 
-    /// The game's md5Hash when another entry already has the set's folder name: the folder is then
-    /// named after it (`MultiFileSetFolder.folderName`), the same on every device. The data track's
-    /// identity is kept on the queue item so the database import doesn't hash it again; a set whose
-    /// track isn't there is named after its index MD5, its md5Hash in that case. Nil when the name is free.
-    private func identityMD5ForFolderName(of queueItem: ImportQueueItem, systemFolder: URL) async -> String? {
-        let indexURL = queueItem.url
-        guard MultiFileSetPlacement.baseNameIsTaken(forIndexAt: indexURL, in: systemFolder) else { return nil }
+    /// The game's identity, which names the set's folder (`MultiFileSetFolder.folderName`) the same
+    /// on every device. Kept on the queue item so the database import doesn't hash the track again.
+    /// Nil when the data track can't be found or read: the folder then takes the bare stem.
+    private func identityMD5ForFolderName(of queueItem: ImportQueueItem) async -> String? {
         if let identity = queueItem.gameIdentityMD5 {
             return identity
         }
-        if let source = MultiFileSetIdentity.source(forIndexAt: indexURL),
-           let fileMD5 = try? await calculateMD5Async(of: source.file) {
-            let identity = GameImporterDatabaseService.identityMD5(fileMD5: fileMD5, viaPlaylist: source.viaPlaylist)
-            queueItem.gameIdentityMD5 = identity
-            return identity
-        }
-        return await queueItem.md5Async()
+        guard let source = MultiFileSetIdentity.source(forIndexAt: queueItem.url),
+              let fileMD5 = try? await calculateMD5Async(of: source.file) else { return nil }
+        let identity = GameImporterDatabaseService.identityMD5(fileMD5: fileMD5, viaPlaylist: source.viaPlaylist)
+        queueItem.gameIdentityMD5 = identity
+        return identity
     }
 
     /// A set that arrived as a folder inside Imports leaves that folder empty once placed.

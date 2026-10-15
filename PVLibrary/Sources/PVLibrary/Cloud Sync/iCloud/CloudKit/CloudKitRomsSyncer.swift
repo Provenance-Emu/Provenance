@@ -2914,8 +2914,8 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
 
     /// Unzips a downloaded multi-file set (cue, gdi or m3u with its tracks) into a folder of its
     /// own under the system folder (`MultiFileSetFolder`), so it never collides with another
-    /// set's generic track names; on a name clash the folder carries the record's md5Hash, like the
-    /// uploading device's. Returns the index file.
+    /// set's generic track names, named after the record's md5Hash as the importer names it.
+    /// Returns the index file.
     private func placeDownloadedSet(archiveAt assetURL: URL, primaryFilename: String, systemFolder: URL, md5: String) throws -> URL {
         let fileManager = FileManager.default
         let staging = fileManager.temporaryDirectory.appendingPathComponent("rom-set-\(UUID().uuidString)", isDirectory: true)

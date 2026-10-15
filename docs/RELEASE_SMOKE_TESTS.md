@@ -307,18 +307,19 @@ before it (or seed the files below by hand, then relaunch).
 - [ ] iFly: share a GDI game whose tracks mix `.bin` and `.raw` (e.g. a 3-track
       set). Provenance appears in the share sheet; one game imports under
       Dreamcast with all tracks beside the .gdi in its own folder,
-      `ROMs/com.provenance.dreamcast/<gdi name>/`, and it boots on flycast. No
+      `ROMs/com.provenance.dreamcast/<gdi name>-<first 8 of its MD5>/`, and it
+      boots on flycast. No
       stray `track02.raw` failure in the import queue; the log has one
       `[IMPORT] <name>.gdi and N file(s) it lists → …/<folder>/` line.
 - [ ] Share a second GDI game with the same track names (`track01.bin`, …) after
       the first one finished importing, and again with both shared in one go:
       each lands in its own folder, the first game's tracks are untouched, and
-      both boot. Two different games both named `disc.gdi` go to `disc/` and
-      `disc-<first 8 of the second game's MD5>/`. With game X already in
-      `disc/` on two devices, add game Y on one: Y lands in the same
-      `disc-XXXXXXXX/` on both (local import on one, CloudKit download on the
-      other). A `disc-2/` folder from an earlier build is left as it is, and
-      re-sharing the game in it doesn't copy it elsewhere.
+      both boot. Two different games both named `disc.gdi` go to
+      `disc-<first 8 of each game's MD5>/`. Import the same two in the opposite
+      order on a second device (or let CloudKit download them): both folder
+      names match the first device's. A `disc/` or `disc-2/` folder from an
+      earlier build is left as it is, and re-sharing the game in it doesn't
+      copy it elsewhere.
 - [ ] Two different Dreamcast games whose `.gdi` files are byte-identical (same
       track layout, e.g. both `track01.bin`/`track02.raw`/`track03.bin` at the
       same LBAs): both import and both boot, one after the other and in one go.
@@ -348,8 +349,8 @@ before it (or seed the files below by hand, then relaunch).
 - [ ] Delete a game that lives in a set folder: the folder is gone; a flat game
       with a `track01.bin` of its own in the same system folder is untouched.
 - [ ] CloudKit: with ROM sync on, import a GDI set on one device and download it
-      on another: it lands in `ROMs/com.provenance.dreamcast/<gdi name>/` there
-      too and boots.
+      on another: it lands in the same `ROMs/com.provenance.dreamcast/<gdi
+      name>-<first 8 of its MD5>/` there and boots.
 - [ ] A flat cue/bin or GDI game imported before this build still launches, and
       saves for it are where they were.
 - [ ] iFly: share a NAOMI zip + CHD (e.g. `ikaruga.zip` + `gdl-0010.chd`): the

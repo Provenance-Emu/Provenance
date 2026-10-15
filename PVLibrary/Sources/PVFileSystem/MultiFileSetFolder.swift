@@ -6,11 +6,11 @@
 //  discs) imports into its own folder under the system's ROM folder, named after
 //  the index file: `ROMs/<system>/<index stem>/`. Two sets whose tracks share
 //  generic names (`track01.bin`) then never collide. Single-file games stay flat.
-//  When another set has the name, the folder is `<index stem>-<first 8 of the
-//  game's md5Hash>` rather than a number given in import order, so a device that
-//  already has the first set names the second one the same way. Which set gets the
-//  bare name still depends on which arrived first. Folders created before this
-//  (`<index stem>-2`, `-3`, …) keep their names.
+//  A set imported from now on goes into `<index stem>-<first 8 of the game's
+//  md5Hash>`, even when the bare stem is free, so every device names it the same
+//  whatever order sets arrive in. Folders created before this (`<index stem>`,
+//  `<index stem>-2`, `-3`, …) keep their names and are reused for the set they
+//  hold. Without an identity the bare stem is used, then `-2`, `-3`, ….
 //
 //  Pure naming and path rules, Foundation only.
 //
@@ -71,14 +71,14 @@ public enum MultiFileSetFolder {
         return name.isEmpty ? fallbackName : name
     }
 
-    /// A folder name for an index file that is free in a system folder. `taken` holds every
-    /// name already in the system folder (files and folders), compared case-insensitively.
+    /// The folder name for an index file in a system folder. `taken` holds every name already
+    /// in the system folder (files and folders), compared case-insensitively.
     ///
-    /// - The base name when it is free.
-    /// - Else a taken set-folder name for this index (the base name, `base-<hex>` or a legacy
-    ///   `base-N`) that `canReuse` claims: its folder already holds this same set (a repeated import).
-    /// - Else `base-<first 8 of identityMD5>`, independent of how many sets came before.
-    /// - Else (no identity, or that name taken too) the first free `base-2`, `base-3`, …
+    /// - A taken set-folder name for this index (the base name, `base-<hex>` or a legacy `base-N`)
+    ///   that `canReuse` claims: its folder already holds this same set (a repeated import).
+    /// - Else `base-<first 8 of identityMD5>`, the same on every device whatever the import order.
+    /// - Else (no identity, or that name taken by another set) the base name when free, then the
+    ///   first free `base-2`, `base-3`, …
     public static func folderName(
         forIndexFile fileName: String,
         taken: Set<String>,
@@ -87,7 +87,6 @@ public enum MultiFileSetFolder {
     ) -> String {
         let base = baseName(forIndexFile: fileName)
         let lowercasedTaken = Set(taken.map { $0.lowercased() })
-        guard lowercasedTaken.contains(base.lowercased()) else { return base }
 
         let existingSetFolders = taken
             .filter { isSetFolder(named: $0, forIndexFile: fileName) }
@@ -108,6 +107,7 @@ public enum MultiFileSetFolder {
             }
         }
 
+        guard lowercasedTaken.contains(base.lowercased()) else { return base }
         var suffix = 2
         while lowercasedTaken.contains("\(base)-\(suffix)".lowercased()) {
             suffix += 1
@@ -193,8 +193,9 @@ public enum MultiFileSetFolder {
     }
 
     /// The name save states, battery saves and cheats are filed under for a ROM: its
-    /// stem, except for an index file in a de-duplicated set folder (`disc-2/disc.gdi`),
-    /// which uses the folder name so two sets with the same index name don't share saves.
+    /// stem, except for an index file in a suffixed set folder (`disc-1A2B3C4D/disc.gdi`,
+    /// legacy `disc-2/disc.gdi`), which uses the folder name so two sets with the same
+    /// index name don't share saves.
     public static func saveName(forROMAt url: URL) -> String {
         let stem = url.deletingPathExtension().lastPathComponent
         guard let folder = setFolder(ofIndexFileAt: url),

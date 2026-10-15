@@ -71,9 +71,9 @@ public enum MultiFileSetPlacement {
 
     // MARK: Placement
 
-    /// The folder a set goes into: named after the index file; when anything other than this
-    /// same set has that name, `<name>-<first 8 of identityMD5>` (`MultiFileSetFolder.folderName`).
-    /// `identityMD5` is the game's md5Hash; without it the suffix is the legacy `-N`.
+    /// The folder a set goes into (`MultiFileSetFolder.folderName`): a set folder that already holds
+    /// this same set, else `<index stem>-<first 8 of identityMD5>`. `identityMD5` is the game's
+    /// md5Hash; without it the bare stem, then `-N`.
     public static func folder(
         forIndexAt indexURL: URL,
         members: [URL],
@@ -87,13 +87,6 @@ public enum MultiFileSetPlacement {
                          index: indexURL, members: members, fileManager: fileManager)
         }
         return systemDirectory.appendingPathComponent(name, isDirectory: true)
-    }
-
-    /// Whether the folder name the index asks for is already used in `systemDirectory`, so
-    /// placing it needs the game's identity (`folder(forIndexAt:identityMD5:)`).
-    public static func baseNameIsTaken(forIndexAt indexURL: URL, in systemDirectory: URL, fileManager: FileManager = .default) -> Bool {
-        let base = MultiFileSetFolder.baseName(forIndexFile: indexURL.lastPathComponent).lowercased()
-        return takenNames(in: systemDirectory, fileManager: fileManager).contains { $0.lowercased() == base }
     }
 
     /// Moves the index and its members into their folder under `systemDirectory`.
