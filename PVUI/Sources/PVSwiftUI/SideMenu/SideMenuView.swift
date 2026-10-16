@@ -208,14 +208,14 @@ SideMenuView: SwiftUI.View {
     }
 
     private func handleVerticalNavigation(_ value: Float, proxy: ScrollViewProxy? = nil) {
-        var items = ["home", "settings", "imports"]
+        var fixedItems = ["home", "settings", "imports"]
         if showsNearbyLibraries {
-            items.append(Self.nearbyItem)
+            fixedItems.append(Self.nearbyItem)
         }
         if netplayEnabled {
-            items.append("netplay")
+            fixedItems.append("netplay")
         }
-        items += sortedConsoles().map(\.identifier)
+        let items = fixedItems + sortedConsoles().map(\.identifier)
 
         if let currentIndex = items.firstIndex(of: focusedItem ?? "") {
             let newIndex: Int
