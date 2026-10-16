@@ -47,21 +47,7 @@ internal struct AdvancedTogglesView: View {
     
     var body: some View {
         VStack(spacing: 16) {
-            // Title with retrowave styling
-            Text("ADVANCED OPTIONS")
-                .font(.system(size: 20, weight: .bold, design: .rounded))
-                .foregroundStyle(
-                    LinearGradient(
-                        gradient: Gradient(colors: [.retroPink, .retroPurple, .retroBlue]),
-                        startPoint: .leading,
-                        endPoint: .trailing
-                    )
-                )
-                .padding(.top, 8)
-                .padding(.bottom, 8)
-                .shadow(color: .retroPink.opacity(0.5), radius: 5, x: 0, y: 0)
-            
-            // Options with retrowave styling
+            // No title of its own: the enclosing Advanced section already heads it.
             VStack(spacing: 12) {
                 if !isAppStore {
                     PremiumThemedToggle(isOn: $autoJIT) {

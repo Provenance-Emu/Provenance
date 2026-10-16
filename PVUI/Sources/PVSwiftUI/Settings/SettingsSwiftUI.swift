@@ -1134,6 +1134,28 @@ struct SettingsRow: View {
     }
 }
 
+/// Labels a group of rows inside one settings section (e.g. the debug rows at the end of Advanced).
+private struct SettingsSubheading: View {
+    let title: String
+
+    var body: some View {
+        Text(title)
+            #if os(tvOS)
+            .font(.system(size: 22, weight: .semibold))
+            .foregroundStyle(Color.white.opacity(0.7))
+            .padding(.top, 12)
+            #else
+            .font(.footnote.weight(.heavy))
+            .tracking(1.2)
+            .textCase(.uppercase)
+            .foregroundColor(.retroPink)
+            .padding(.top, 12)
+            .padding(.horizontal, 4)
+            #endif
+            .accessibilityAddTraits(.isHeader)
+    }
+}
+
 // MARK: - Section Views
 private struct AppSection: View {
     @ObservedObject var viewModel: PVSettingsViewModel
@@ -1828,8 +1850,7 @@ private struct ControllerSection: View {
             ControllerRowsSection()
             subheading("settings.section.haptics_rumble")
             HapticsRumbleSection()
-            Text("DualSense / DS4 Features")
-                .modifier(SubheadingStyle())
+            SettingsSubheading(title: "DualSense / DS4 Features")
             DualSenseExtrasSection()
             subheading("settings.section.analog_deadzone")
             AnalogDeadzoneSection()
@@ -1837,18 +1858,8 @@ private struct ControllerSection: View {
     }
 
     /// The sections are no longer headed individually, so tvOS (one combined section) labels each group here.
-    private func subheading(_ key: LocalizedStringKey) -> some View {
-        Text(key, bundle: .module)
-            .modifier(SubheadingStyle())
-    }
-
-    private struct SubheadingStyle: ViewModifier {
-        func body(content: Content) -> some View {
-            content
-                .font(.system(size: 22, weight: .semibold))
-                .foregroundStyle(Color.white.opacity(0.7))
-                .padding(.top, 12)
-        }
+    private func subheading(_ key: String) -> some View {
+        SettingsSubheading(title: NSLocalizedString(key, bundle: .module, comment: ""))
     }
 }
 #endif
@@ -2664,7 +2675,8 @@ private struct AdvancedSection: View {
             #endif
             AdvancedTogglesView()
 
-            // App Group File Browser for debugging
+            SettingsSubheading(title: "Developer Tools")
+
             NavigationLink(destination: AppGroupFileBrowserView()) {
                 SettingsRow(title: "App Group File Browser",
                             subtitle: "Browse files in the app group container for debugging.",
