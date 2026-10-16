@@ -313,7 +313,9 @@ jobs:
           for gen in G3 G6; do
             cer="$RUNNER_TEMP/AppleWWDRCA$gen.cer"
             curl -fsSL "https://www.apple.com/certificateauthority/AppleWWDRCA$gen.cer" -o "$cer"
-            security import "$cer" -k "$KEYCHAIN" -t cert >/dev/null
+            # "already exists" when the runner user's own keychain has it (the GUI-session runner's
+            # login keychain does); the chain then resolves from there, so that is fine.
+            security import "$cer" -k "$KEYCHAIN" -t cert >/dev/null 2>&1 || echo "WWDR $gen already in a keychain"
             rm -f "$cer"
           done
           # Let codesign use the keys without an interactive prompt.
