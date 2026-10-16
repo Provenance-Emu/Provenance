@@ -126,9 +126,10 @@ void PVAzaharJITProbeSignalHandler(int sig) {
 }
 
 - (BOOL)loadFileAtPath:(NSString *)path error:(NSError **)error {
-    NSString *userDir = self.userDirectoryPath;   // pushed by PVAzaharCore.loadFile
+    if (self.willLoadFile) { self.willLoadFile(); }
+    NSString *userDir = self.userDirectoryPath;   // pushed by PVAzaharCore's init
     if (userDir.length == 0) {
-        ELOG(@"[PVAzahar] userDirectoryPath is not set; PVAzaharCore sets it before loadFileAtPath:");
+        ELOG(@"[PVAzahar] userDirectoryPath is not set; PVAzaharCore sets it in init");
         if (error) {
             *error = [NSError errorWithDomain:@"PVAzaharCore" code:1
                                      userInfo:@{NSLocalizedDescriptionKey: @"Azahar has no user directory"}];

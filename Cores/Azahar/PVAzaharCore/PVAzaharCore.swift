@@ -16,7 +16,7 @@ enum PVAzaharCoreError {
 @objc @objcMembers
 public final class PVAzaharCore: PVEmulatorCore, @unchecked Sendable {
     /// azahar's user directory: Documents/Azahar on iOS, Library/Caches/Azahar on tvOS (Documents is not
-    /// writable there). `loadFile` pushes it into the bridge, which hands it to FileUtil::SetUserPath.
+    /// writable there). `init` pushes it into the bridge, which hands it to FileUtil::SetUserPath.
     public static var userRootURL: URL { PVAzaharDataMigrator.defaultTargetRoot() }
     /// Mirrors PVCoreAudio: `.ambient` (silenced by the ring/silent switch) when true, `.playback` otherwise.
     public static var respectsMuteSwitch: Bool { Defaults[.respectMuteSwitch] }
@@ -46,6 +46,10 @@ public final class PVAzaharCore: PVEmulatorCore, @unchecked Sendable {
         self.bridge = objcBridge
         // The bridge never imports this Swift module (see PVAzaharRenderSurface), so it gets the view class here.
         _bridge.renderViewClass = PVAzaharRenderView.self
+        _bridge.userDirectoryPath = Self.userRootURL.path
+        // The host calls the bridge's loadFileAtPath: directly (PVEmulatorViewController), so a `loadFile`
+        // override here would never run; the bridge calls this hook instead.
+        _bridge.willLoadFile = { [weak self] in self?.prepareForLoad() }
         // Load runs on the bridge's emulation thread, so the host only learns the outcome from these.
         _bridge.onEmulationStarted = { [weak self] in
             // Bind `self` before entering the main-actor region: capturing the weak optional
@@ -70,13 +74,12 @@ public final class PVAzaharCore: PVEmulatorCore, @unchecked Sendable {
         }
     }
 
-    public override func loadFile(atPath path: String) throws {
+    /// Runs from the bridge's `willLoadFile`, before azahar picks its user path and reads the options.
+    private func prepareForLoad() {
         Self.migrateEmuThreeDataIfNeeded()
         PVAzaharCoreOptions.apply(to: _bridge)
-        _bridge.userDirectoryPath = Self.userRootURL.path
         _bridge.respectsMuteSwitch = Self.respectsMuteSwitch
         observeOptionUpdates()
-        try super.loadFile(atPath: path)
     }
 
     /// Settings posts "OptionUpdated" when the user changes a core option in-game; layout, swap and

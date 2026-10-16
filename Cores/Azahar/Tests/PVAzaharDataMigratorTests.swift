@@ -96,4 +96,25 @@ final class PVAzaharDataMigratorTests: XCTestCase {
         XCTAssertFalse(plan.hasWork)
         XCTAssertFalse(migrator.alreadyMigrated)
     }
+
+    // MARK: - User root (PVAzaharCore.userRootURL)
+
+    /// The user root is the app sandbox's own folder, never the library location (App Group or picked
+    /// folder): azahar's nand/sdmc have lived there since the first build, and no library move carries them.
+    func testUserRootIsAzaharInTheSandboxPlatformFolder() {
+        #if os(tvOS)
+        let base = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask)[0]
+        #else
+        let base = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
+        #endif
+        let root = PVAzaharDataMigrator.defaultTargetRoot()
+        XCTAssertEqual(root.standardizedFileURL, base.appendingPathComponent("Azahar").standardizedFileURL)
+        XCTAssertFalse(root.path.contains("/Shared/AppGroup/"), "the user root must not follow the App Group container")
+    }
+
+    /// emuThreeDS's root and Azahar's share a parent, so the import is a same-volume rename.
+    func testUserRootSitsInTheLegacyRoot() {
+        XCTAssertEqual(PVAzaharDataMigrator.defaultTargetRoot().deletingLastPathComponent().standardizedFileURL,
+                       PVAzaharDataMigrator.defaultLegacyRoot().standardizedFileURL)
+    }
 }

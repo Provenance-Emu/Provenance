@@ -49,8 +49,12 @@ NS_SWIFT_UI_ACTOR
 /// A UIView subclass conforming to PVAzaharRenderSurface; set in PVAzaharCore's init.
 @property (nonatomic, strong, nullable) Class renderViewClass;
 /// azahar's user directory (PVAzaharCore.userRootURL: Documents/Azahar on iOS, Caches/Azahar on tvOS).
-/// Set before `loadFileAtPath:`, which hands it to FileUtil::SetUserPath.
+/// Set in PVAzaharCore's init; `loadFileAtPath:` hands it to FileUtil::SetUserPath.
 @property (nonatomic, copy, nullable) NSString *userDirectoryPath;
+/// Called synchronously at the top of `loadFileAtPath:`, on the caller's thread. The host loads through the
+/// bridge (PVEmulatorViewController calls `bridge.loadFile`, never `PVAzaharCore.loadFile`), so the Swift
+/// core's per-load setup (options, mute switch, emuThreeDS import) has to run from here.
+@property (nonatomic, copy, nullable) void (^willLoadFile)(void);
 /// The "Respect mute switch" setting: `.ambient` audio session when YES, `.playback` otherwise. Set before start.
 @property (nonatomic, assign) BOOL respectsMuteSwitch;
 
