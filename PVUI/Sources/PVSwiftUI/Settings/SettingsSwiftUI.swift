@@ -1196,32 +1196,15 @@ private struct CoreOptionsSection: View {
         Section {
 
             #if os(tvOS)
-            NavigationLink(destination: CoreLanguageSelectionView(selection: $coreLanguage)) {
-                HStack {
-                    SettingsRow(title: "Core Language",
-                                subtitle: "Language used by emulator cores. Default follows device locale.",
-                                icon: .sfSymbol("globe"))
-                    Spacer()
-                    Text(coreLanguage.description)
-                        .font(.system(size: 16, weight: .semibold))
-                        .foregroundStyle(
-                            LinearGradient(colors: [.retroBlue, .retroPurple], startPoint: .leading, endPoint: .trailing)
-                        )
-                        .lineLimit(1)
-                        .padding(.horizontal, 14)
-                        .padding(.vertical, 8)
-                        .background(
-                            RoundedRectangle(cornerRadius: 8)
-                                .fill(Color.white.opacity(0.05))
-                                .overlay(
-                                    RoundedRectangle(cornerRadius: 8)
-                                        .strokeBorder(
-                                            LinearGradient(colors: [Color.retroBlue.opacity(0.5), Color.retroPurple.opacity(0.3)], startPoint: .leading, endPoint: .trailing),
-                                            lineWidth: 1
-                                        )
-                                )
-                        )
-                }
+            NavigationLink(destination: TVOSSettingsChoiceView(title: "Core Language",
+                                                              icon: "globe",
+                                                              choices: CoreLanguageSetting.allCases,
+                                                              selection: $coreLanguage,
+                                                              label: \.description)) {
+                SettingsRow(title: "Core Language",
+                            subtitle: "Language used by emulator cores. Default follows device locale.",
+                            value: coreLanguage.description,
+                            icon: .sfSymbol("globe"))
             }
             .retroFocusButtonStyle(showBorder: false)
             #else
@@ -1248,19 +1231,24 @@ private struct CoreOptionsSection: View {
     }
 }
 
-// MARK: - tvOS Core Language Selection
+// MARK: - tvOS Choice List
 
 #if os(tvOS)
-/// RetroWave-styled language selection list for tvOS, replacing the clipped default Picker
-private struct CoreLanguageSelectionView: View {
-    @Binding var selection: CoreLanguageSetting
+/// RetroWave-styled single-choice list for tvOS, replacing the clipped default Picker.
+/// Picking a row stores it and pops back to Settings.
+private struct TVOSSettingsChoiceView<Value: Hashable>: View {
+    let title: String
+    let icon: String
+    let choices: [Value]
+    @Binding var selection: Value
+    let label: (Value) -> String
     @Environment(\.dismiss) private var dismiss
 
     var body: some View {
         ScrollView {
             VStack(spacing: 0) {
                 headerView
-                languageList
+                choiceList
             }
             .padding(.horizontal, 48)
             .padding(.vertical, 24)
@@ -1273,12 +1261,12 @@ private struct CoreLanguageSelectionView: View {
 
     private var headerView: some View {
         HStack(spacing: 12) {
-            Image(systemName: "globe")
+            Image(systemName: icon)
                 .font(.system(size: 28, weight: .semibold))
                 .foregroundStyle(
                     LinearGradient(colors: [.retroPink, .retroPurple], startPoint: .leading, endPoint: .trailing)
                 )
-            Text("Core Language")
+            Text(title)
                 .font(.system(size: 32, weight: .bold))
                 .foregroundStyle(
                     LinearGradient(colors: [.retroBlue, .retroPurple], startPoint: .leading, endPoint: .trailing)
@@ -1288,14 +1276,14 @@ private struct CoreLanguageSelectionView: View {
         .padding(.bottom, 24)
     }
 
-    private var languageList: some View {
+    private var choiceList: some View {
         VStack(spacing: 4) {
-            ForEach(CoreLanguageSetting.allCases, id: \.self) { lang in
-                LanguageSelectionRow(
-                    language: lang,
-                    isSelected: selection == lang
+            ForEach(choices, id: \.self) { choice in
+                TVOSSettingsChoiceRow(
+                    title: label(choice),
+                    isSelected: selection == choice
                 ) {
-                    selection = lang
+                    selection = choice
                     dismiss()
                 }
             }
@@ -1312,16 +1300,16 @@ private struct CoreLanguageSelectionView: View {
     }
 }
 
-/// Individual row in the language selection list with RetroWave focus styling
-private struct LanguageSelectionRow: View {
-    let language: CoreLanguageSetting
+/// Individual row in a `TVOSSettingsChoiceView` with RetroWave focus styling
+private struct TVOSSettingsChoiceRow: View {
+    let title: String
     let isSelected: Bool
     let action: () -> Void
 
     var body: some View {
         Button(action: action) {
             HStack(spacing: 14) {
-                Text(language.description)
+                Text(title)
                     .font(.system(size: 22, weight: isSelected ? .semibold : .regular))
                     .foregroundColor(isSelected ? .white : .white.opacity(0.75))
                     .lineLimit(1)
@@ -1363,21 +1351,17 @@ private struct SavesSection: View {
     @Default(.askToAutoLoad) var askToAutoLoad
     @Default(.timedAutoSaveInterval) var timedAutoSaveInterval
 
-    var timedAutosaveLabelText: String {
-        "\(timedAutoSaveInterval/60.0) minutes between timed auto saves."
+    private var intervalTitle: String {
+        NSLocalizedString("settings.saves.auto_save_time", bundle: .module, comment: "")
     }
-
-    private static let oneMinute: TimeInterval = 60
-    private static let thirtyMinutes: TimeInterval = 1800
 
     var body: some View {
         Section {
             savesToggles
-#if !os(tvOS)
-            timedAutosaveSlider
-#else
-            // TODO: TVOS Selection of autosave time
-#endif
+            // Dimmed rather than hidden while timed saves are off, so search can still land on it.
+            timedAutosaveInterval
+                .disabled(!timedAutoSaves)
+                .opacity(timedAutoSaves ? 1 : 0.5)
         }
     }
 
@@ -1409,14 +1393,30 @@ private struct SavesSection: View {
         }
     }
 
-#if !os(tvOS)
-    @ViewBuilder
-    private var timedAutosaveSlider: some View {
-        HStack {
-            Text("settings.saves.auto_save_time", bundle: .module)
+#if os(tvOS)
+    private var timedAutosaveInterval: some View {
+        NavigationLink(destination: TVOSSettingsChoiceView(title: intervalTitle,
+                                                          icon: "timer",
+                                                          choices: AutoSaveIntervalRules.choices(including: timedAutoSaveInterval),
+                                                          selection: $timedAutoSaveInterval,
+                                                          label: AutoSaveIntervalRules.durationLabel)) {
+            SettingsRow(title: intervalTitle,
+                        subtitle: AutoSaveIntervalRules.caption(timedAutoSaveInterval),
+                        value: AutoSaveIntervalRules.durationLabel(timedAutoSaveInterval),
+                        icon: .sfSymbol("timer"))
+        }
+        .retroFocusButtonStyle(showBorder: false)
+    }
+#else
+    private var timedAutosaveInterval: some View {
+        VStack(alignment: .leading, spacing: 4) {
+            SettingsRow(title: intervalTitle,
+                        subtitle: AutoSaveIntervalRules.caption(timedAutoSaveInterval),
+                        icon: .sfSymbol("timer"),
+                        showChevron: false)
             RetroWaveSlider(value: $timedAutoSaveInterval,
-                           in: Self.oneMinute...Self.thirtyMinutes,
-                           step: Self.oneMinute,
+                           in: AutoSaveIntervalRules.minimum...AutoSaveIntervalRules.maximum,
+                           step: AutoSaveIntervalRules.step,
                            onEditingChanged: { _ in },
                            label: { Text("settings.saves.auto_save_time_label", bundle: .module) },
                            minimumValueLabel: { Text("settings.saves.min_1", bundle: .module) },
@@ -1430,9 +1430,6 @@ private struct SavesSection: View {
                                    .foregroundColor(RetroTheme.retroBlue)
                            })
         }
-        Text(timedAutosaveLabelText)
-            .font(.subheadline)
-            .foregroundColor(.secondary)
     }
 #endif
 }

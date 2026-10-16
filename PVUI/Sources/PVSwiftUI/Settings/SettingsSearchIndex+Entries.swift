@@ -98,7 +98,7 @@ extension SettingsSearchIndex {
         entry("saves.timed", "Timed Auto Saves", "Periodically create save states while you play.",
               .emulation, SettingsSectionTitle.saves, keywords: ["autosave", "interval", "periodic", "save state"]),
         entry("saves.interval", "Auto-save Time", "Minutes between timed auto saves.",
-              .emulation, SettingsSectionTitle.saves, keywords: ["autosave", "interval", "minutes", "timer"], tvOS: false),
+              .emulation, SettingsSectionTitle.saves, keywords: ["autosave", "interval", "minutes", "timer"]),
 
         entry("audio.headphones", "Pause on Headphones Disconnect", "Auto-pause emulation when AirPods or Bluetooth headphones disconnect.",
               .emulation, SettingsSectionTitle.audio, keywords: ["airpods", "bluetooth", "unplug", "pause"]),
