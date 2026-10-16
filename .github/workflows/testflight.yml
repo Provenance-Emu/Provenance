@@ -116,6 +116,12 @@ jobs:
           fi
           echo "DEVELOPER_DIR=$DEV" >> "$GITHUB_ENV"
           DEVELOPER_DIR="$DEV" xcodebuild -version
+          # Xcode 26+ ships the Metal compiler as a separate component. The Studio's Xcode 27
+          # had none ("cannot execute tool 'metal' due to missing Metal Toolchain"), and every
+          # app build compiles shaders. Installed system-wide, so this is a no-op once present.
+          if ! DEVELOPER_DIR="$DEV" xcodebuild -showComponent MetalToolchain | grep -q 'Status: installed'; then
+            DEVELOPER_DIR="$DEV" xcodebuild -downloadComponent MetalToolchain
+          fi
 
       - name: Checkout code
         uses: actions/checkout@v4
@@ -295,13 +301,26 @@ jobs:
           }
           import_p12 "$CERT_P12" "$P12_PASS"
           import_p12 "$DEV_CERT_P12" "$DEV_P12_PASS"
+          # The identities only count as valid if their WWDR intermediate is in the
+          # search list. GitHub's images ship it in the System keychain; the self-hosted
+          # Studio's System keychain has only the WWDR cert that expired in 2023 and the
+          # runner's user (ghrunner) has none, so iCube run 38841260362 imported both p12s
+          # and found "0 valid identities". G3 issues the current certs; G6 is its successor.
+          for gen in G3 G6; do
+            cer="$RUNNER_TEMP/AppleWWDRCA$gen.cer"
+            curl -fsSL "https://www.apple.com/certificateauthority/AppleWWDRCA$gen.cer" -o "$cer"
+            security import "$cer" -k "$KEYCHAIN" -t cert >/dev/null
+            rm -f "$cer"
+          done
           # Let codesign use the keys without an interactive prompt.
           security set-key-partition-list -S apple-tool:,apple:,codesign: \
             -s -k "$KEYCHAIN_PASSWORD" "$KEYCHAIN" >/dev/null
           # Prepend to the search list so xcodebuild finds the identities.
           security list-keychains -d user -s "$KEYCHAIN" $(security list-keychains -d user | tr -d '"')
+          # Without -v this also lists rejected identities with the reason
+          # (e.g. CSSMERR_TP_NOT_TRUSTED), which is what a failure needs.
           echo "Signing identities available:"
-          security find-identity -v -p codesigning "$KEYCHAIN"
+          security find-identity -p codesigning "$KEYCHAIN"
           # Both must be present, or the archive step silently mints a new
           # Development cert and we are back to filling the account cap.
           for want in "Apple Distribution" "Apple Development"; do

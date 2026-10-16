@@ -132,6 +132,12 @@ jobs:
           fi
           echo "DEVELOPER_DIR=$DEV" >> "$GITHUB_ENV"
           DEVELOPER_DIR="$DEV" xcodebuild -version
+          # Xcode 26+ ships the Metal compiler as a separate component. The Studio's Xcode 27
+          # had none ("cannot execute tool 'metal' due to missing Metal Toolchain"), and every
+          # app build compiles shaders. Installed system-wide, so this is a no-op once present.
+          if ! DEVELOPER_DIR="$DEV" xcodebuild -showComponent MetalToolchain | grep -q 'Status: installed'; then
+            DEVELOPER_DIR="$DEV" xcodebuild -downloadComponent MetalToolchain
+          fi
 
       - name: Checkout code
         uses: actions/checkout@v4

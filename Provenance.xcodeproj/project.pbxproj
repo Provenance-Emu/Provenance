@@ -1309,7 +1309,7 @@
 		1A2A95A917F7682400F1CB0D /* libstdc++.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = "libstdc++.dylib"; path = "usr/lib/libstdc++.dylib"; sourceTree = SDKROOT; };
 		1A2B0E8A1AD187F4005FB77C /* testdata.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = testdata.txt; sourceTree = "<group>"; };
 		1A2B0E8D1AD18961005FB77C /* libc++.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = "libc++.dylib"; path = "usr/lib/libc++.dylib"; sourceTree = SDKROOT; };
-		1A3D409417B2DCE4004DFFFC /* Provenance.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Provenance.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		1A3D409417B2DCE4004DFFFC /* Provenance-Dev.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Provenance-Dev.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		1A3D409717B2DCE4004DFFFC /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		1A3D409917B2DCE4004DFFFC /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		1A3D409B17B2DCE4004DFFFC /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
@@ -2872,7 +2872,7 @@
 		1A3D409517B2DCE4004DFFFC /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				1A3D409417B2DCE4004DFFFC /* Provenance.app */,
+				1A3D409417B2DCE4004DFFFC /* Provenance-Dev.app */,
 				1AD9AA351ACC988F00EC87A0 /* Provenance Tests.xctest */,
 				BE9FDCB71C210B9E0046DF0E /* TopShelf.appex */,
 				B3E21D6B203211BE009939D3 /* Spotlight.appex */,
@@ -3581,7 +3581,7 @@
 				B3061FB02F776FCB000F8839 /* JITManager */,
 			);
 			productName = Provenance;
-			productReference = 1A3D409417B2DCE4004DFFFC /* Provenance.app */;
+			productReference = 1A3D409417B2DCE4004DFFFC /* Provenance-Dev.app */;
 			productType = "com.apple.product-type.application";
 		};
 		1AD9AA341ACC988F00EC87A0 /* Provenance Tests */ = {
@@ -6083,6 +6083,8 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = B326758527B1E0BB0033C5D1 /* Build-iOS.xcconfig */;
 			buildSettings = {
+				PRODUCT_MODULE_NAME = Provenance;
+				PRODUCT_NAME = "Provenance-Dev";
 				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				APP_DISPLAY_NAME = "Prov Debug";
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
@@ -6151,6 +6153,8 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = B326758527B1E0BB0033C5D1 /* Build-iOS.xcconfig */;
 			buildSettings = {
+				PRODUCT_MODULE_NAME = Provenance;
+				PRODUCT_NAME = "Provenance-Dev";
 				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				APP_DISPLAY_NAME = "$(TARGET_NAME)";
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
@@ -6272,7 +6276,7 @@
 				SWIFT_COMPILATION_MODE = singlefile;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_SUPPRESS_WARNINGS = YES;
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Provenance.app/Provenance";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Provenance-Dev.app/Provenance-Dev";
 			};
 			name = Debug;
 		};
@@ -6328,7 +6332,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				"PROVISIONING_PROFILE_SPECIFIER[sdk=macosx*]" = "";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Provenance.app/Provenance";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Provenance-Dev.app/Provenance-Dev";
 			};
 			name = Release;
 		};
@@ -8247,6 +8251,8 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = B326758527B1E0BB0033C5D1 /* Build-iOS.xcconfig */;
 			buildSettings = {
+				PRODUCT_MODULE_NAME = Provenance;
+				PRODUCT_NAME = "Provenance-Dev";
 				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				APP_DISPLAY_NAME = "$(TARGET_NAME)";
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
@@ -8363,7 +8369,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				"PROVISIONING_PROFILE_SPECIFIER[sdk=macosx*]" = "";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Provenance.app/Provenance";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Provenance-Dev.app/Provenance-Dev";
 			};
 			name = Archive;
 		};
