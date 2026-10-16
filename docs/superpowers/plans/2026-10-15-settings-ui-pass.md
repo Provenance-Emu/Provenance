@@ -10,14 +10,14 @@ line-local and leaves restructuring those blocks for later.
 
 ## P1 — bugs
 
-1. **[batch] tvOS: Menu leaves Settings from two subpages.** `PendingPatchesView` (Library Management ›
+1. **[done 18c6284ef9] tvOS: Menu leaves Settings from two subpages.** `PendingPatchesView` (Library Management ›
    Patches / ROM Tools) and `PVLogSessionBrowserView` (Advanced › Session Logs) never register with the
    settings subpage refcount, so `SettingsWrapperView.canPop` stays false and Menu exits Settings instead of
    going back. Every other tvOS destination tracks. Fix: `.settingsSubpageTracking()` on both link
    destinations.
    Files: `SettingsSwiftUI.swift`.
 
-2. **[batch] Search finds rows that no longer exist, three of them labelled "(Beta)".** The Oct 14 pass
+2. **[done ea5ac90c60] Search finds rows that no longer exist, three of them labelled "(Beta)".** The Oct 14 pass
    removed the SRAM Import / Export, Tap to Remap and Reposition Skin Buttons toggles. Their index entries
    remain, so a search opens Advanced and shows nothing. "Programmatic Touch Overlay" is now the Overlay Style
    picker in Delta Skins. Gameplay Clips has no entry. Companion Controller still says "(Beta)", which App
@@ -25,7 +25,7 @@ line-local and leaves restructuring those blocks for later.
    that no displayed index text says "beta".
    Files: `SettingsSearchIndex+Entries.swift`, `SettingsSearchIndexTests.swift`.
 
-3. **[batch] Two "Haptic Feedback" rows, and one of them does nothing.** Controllers › Haptics & Rumble and
+3. **[done 2b9184e1ab] Two "Haptic Feedback" rows, and one of them does nothing.** Controllers › Haptics & Rumble and
    Touch Controls › On-Screen Controls both show "Haptic Feedback — Vibrate when pressing on-screen
    buttons." The first writes `Defaults[.hapticFeedback]`, which nothing reads. Every touch path reads
    `buttonVibration`. The pause-menu **Rumble** tile and the skin `toggleHaptics` button also flip the dead
@@ -37,19 +37,21 @@ line-local and leaves restructuring those blocks for later.
    Files: `SettingsSwiftUI.swift`, `PauseTileMenuView(Model).swift`, `DeltaSkinInputHandler.swift`,
    `PVSettingsModel.swift`, `GCControllerHapticsManager.swift` (comments), search entries.
 
-4. **[batch] tvOS can't set the timed auto-save interval** (`// TODO: TVOS Selection of autosave time`). On
+4. **[done 24c5fb0370] tvOS can't set the timed auto-save interval** (`// TODO: TVOS Selection of autosave time`). On
    iOS the caption reads "5.0 minutes between timed auto saves." and the slider shows even when Timed Auto
    Saves is off. Fix:
    - tvOS gets a selection list of presets, following the `CoreLanguageSelectionView` pattern, because the
      default Picker clips on tvOS.
    - The caption is formatted by a pure helper with tests.
-   - The interval controls appear only while Timed Auto Saves is on.
+   - As built: the interval controls dim and disable while Timed Auto Saves is off rather than hiding, so
+     a search result still lands on a row. Core Language moved onto the same generic
+     `TVOSSettingsChoiceView`.
 
    Files: `SettingsSwiftUI.swift`, new `SettingsValueFormatting.swift`, new test.
 
 ## P2 — findability and duplication
 
-5. **[batch] Advanced has a second title.** On iOS the pane shows "Advanced" and then a gradient
+5. **[done 2fdc102ce7] Advanced has a second title.** On iOS the pane shows "Advanced" and then a gradient
    "ADVANCED OPTIONS" heading; on tvOS, "ADVANCED" and then "ADVANCED OPTIONS". The developer tools (file
    browser, Spotlight debug, logs) run straight on from the user toggles. Fix: drop the extra heading and
    head the debug rows with "Developer Tools".
@@ -75,15 +77,16 @@ line-local and leaves restructuring those blocks for later.
 
 ## P3 — visual consistency
 
-10. **[batch] On-Screen Controls sliders are a bare `Text` plus slider** (opacity, scale), unlike the
+10. **[done 96b88447d3] On-Screen Controls sliders are a bare `Text` plus slider** (opacity, scale), unlike the
     deadzone and rumble rows, which put a `SettingsRow` (icon, title, description) above the slider. The
     section also has unused `buttonSound` / `buttonPressEffect` / `playButtonSound`, a nested
     `#if !os(tvOS)` inside an `#if !os(tvOS)`, and inconsistent title case ("On-Screen Joypad with
     keyboard"). Same for Saves (auto-save slider) and Audio (volume slider). Other dead code: the
-    commented-out Volume HUD, Web Server and feature-flag blocks, and a no-op `rotationEffect`.
+    commented-out Volume HUD and a no-op `rotationEffect`. The commented-out Web Server and
+    feature-flag blocks in the Library sections are left for the `shared-libs-ui` session's area.
     Files: `SettingsSwiftUI.swift`.
 
-11. **[batch] Pickers without `SettingsRow` labels.** Skin Mode is a 100pt wheel with uppercased raw
+11. **[done 43157ab5f6] Pickers without `SettingsRow` labels.** Skin Mode is a 100pt wheel with uppercased raw
     values. Overlay Style and Core Deadzone Mode are bare pickers. The Core Compatibility row is a hand-built
     `HStack` with `accentColor`. Fix: `SettingsRow` labels, menu style on iOS.
     Files: `SettingsSwiftUI.swift`.
@@ -94,7 +97,30 @@ line-local and leaves restructuring those blocks for later.
     the pause-menu tile look (see `ImportStatusView`). This is a session on its own: it needs a device pass
     on both platforms.
 
-13. **DualSense Mic Button Action uses raw string tags** (`"muteAudio"` / `"none"`). Back it with an enum.
+13. **DualSense Mic Button Action uses raw string tags** (`"muteAudio"` / `"none"`). The view now keeps
+    them in one table (43157ab5f6); the key itself is still a `String`. Back it with an enum.
 
 14. **Two different `isAppStore` checks** (`AppState.shared.isAppStore` vs `PVAppType` in
     `AdvancedTogglesView`). Use one.
+
+## Found during the batch
+
+15. **`HapticFeedbackService` has its own key with no UI.** `@AppStorage("hapticFeedbackEnabled")` gates
+    the success/error/selection taps in menus, and nothing in Settings writes it. Either add it as a "UI
+    Haptics" row in Haptics & Rumble, or drop the check.
+
+16. **Volume HUD (`Defaults[.volumeHUD]`) is still read** by `PVControllerViewController`, but its
+    Settings row was commented out (the dead comment is now removed). Decide whether it comes back.
+
+17. **The pause menu and Settings offer different auto-save presets.** The pause-menu long-press menu has
+    2/5/10/15/30 min; Settings on tvOS has 1/2/5/10/15/20/30 (`AutoSaveIntervalRules.presets`). PVUIBase
+    can't import PVSwiftUI, so sharing them means moving the rules down a tier.
+
+18. **Device pass needed for this batch:**
+    - tvOS: Menu from Patches / ROM Tools and from Session Logs goes back one level.
+    - tvOS: Saves › Auto-save Time opens the list, a pick sticks, and the row dims while Timed Auto
+      Saves is off.
+    - iPhone and iPad: the Skin Mode, Overlay Style, Core Deadzone Mode and Mic Button menus show their
+      row text and the selected value.
+    - In game: the pause-menu Rumble tile silences controller and device rumble, and the skin
+      "toggle haptics" button silences on-screen button taps.
