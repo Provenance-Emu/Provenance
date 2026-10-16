@@ -148,9 +148,9 @@ private struct SecretDPadView: View {
                 ScrollView {
                     if let markdownPath = Bundle.main.path(forResource: "CONTRIBUTORS", ofType: "md"),
                        let markdown = FileManager.default.contents(atPath: markdownPath) {
-                        MarkdownView(text: String(data: markdown, encoding: .utf8) ?? "# CONTRIBUTORS\n\nNo CONTRIBUTORS file found.", baseURL: nil)
+                        MarkdownView(String(data: markdown, encoding: .utf8) ?? "# CONTRIBUTORS\n\nNo CONTRIBUTORS file found.")
                     } else {
-                        MarkdownView(text: "# CONTRIBUTORS\n\nNo CONTRIBUTORS file found.", baseURL: nil)
+                        MarkdownView("# CONTRIBUTORS\n\nNo CONTRIBUTORS file found.")
                     }
                 }
             }

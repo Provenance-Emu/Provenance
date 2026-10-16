@@ -114,31 +114,42 @@ public struct RetroWaveCoreListItemView: View {
 
     @ObservedObject private var themeManager = ThemeManager.shared
 
+    // Typed once here so `body` doesn't re-infer each optional-palette fallback.
+    private var tintColor: Color { themeManager.currentPalette.defaultTintColor.swiftUIColor }
+    private var cellTextColor: Color {
+        themeManager.currentPalette.settingsCellText?.swiftUIColor ?? themeManager.currentPalette.gameLibraryText.swiftUIColor
+    }
+    private var headerTextColor: Color { themeManager.currentPalette.settingsHeaderText?.swiftUIColor ?? tintColor }
+    private var cellBackgroundColor: Color {
+        themeManager.currentPalette.settingsCellBackground?.swiftUIColor ?? Color(themeManager.currentPalette.gameLibraryBackground)
+    }
+    private var backgroundOpacity: Double { themeManager.currentPalette.dark ? 0.6 : 0.9 }
+
     public var body: some View {
         VStack(alignment: .leading, spacing: 12) {
             // Core name and option count with glow effect
             HStack {
                 Text(item.name)
                     .font(.system(size: 18, weight: .bold))
-                    .foregroundColor(themeManager.currentPalette.settingsCellText?.swiftUIColor ?? themeManager.currentPalette.gameLibraryText.swiftUIColor)
-                    .shadow(color: themeManager.currentPalette.defaultTintColor.swiftUIColor.opacity(0.5), radius: 2, x: 0, y: 0)
+                    .foregroundColor(cellTextColor)
+                    .shadow(color: tintColor.opacity(0.5), radius: 2, x: 0, y: 0)
 
                 Spacer()
 
                 Text("\(item.optionCount) options")
                     .font(.system(size: 14, weight: .medium))
-                    .foregroundColor(themeManager.currentPalette.settingsHeaderText?.swiftUIColor ?? themeManager.currentPalette.defaultTintColor.swiftUIColor)
+                    .foregroundColor(headerTextColor)
                     .padding(.horizontal, 10)
                     .padding(.vertical, 4)
                     .background(
                         Capsule()
                             .fill(
-                                (themeManager.currentPalette.settingsCellBackground?.swiftUIColor ?? Color(themeManager.currentPalette.gameLibraryBackground))
-                                    .opacity(themeManager.currentPalette.dark ? 0.6 : 0.9)
+                                cellBackgroundColor
+                                    .opacity(backgroundOpacity)
                             )
                             .overlay(
                                 Capsule()
-                                    .strokeBorder((themeManager.currentPalette.settingsHeaderText?.swiftUIColor ?? themeManager.currentPalette.defaultTintColor.swiftUIColor).opacity(themeManager.currentPalette.dark ? 0.7 : 0.5), lineWidth: 1)
+                                    .strokeBorder(headerTextColor.opacity(themeManager.currentPalette.dark ? 0.7 : 0.5), lineWidth: 1)
                             )
                     )
             }
@@ -150,7 +161,7 @@ public struct RetroWaveCoreListItemView: View {
                     HStack {
                         Text("Supported Systems:")
                             .font(.system(size: 14, weight: .medium))
-                            .foregroundColor(themeManager.currentPalette.settingsHeaderText?.swiftUIColor ?? themeManager.currentPalette.defaultTintColor.swiftUIColor)
+                            .foregroundColor(headerTextColor)
 
                         Spacer()
 
@@ -163,11 +174,11 @@ public struct RetroWaveCoreListItemView: View {
                                 HStack(spacing: 4) {
                                     Text(isExpanded ? "Collapse" : "Show All")
                                         .font(.system(size: 12))
-                                        .foregroundColor(themeManager.currentPalette.defaultTintColor.swiftUIColor)
+                                        .foregroundColor(tintColor)
 
                                     Image(systemName: isExpanded ? "chevron.up" : "chevron.down")
                                         .font(.system(size: 10))
-                                        .foregroundColor(themeManager.currentPalette.defaultTintColor.swiftUIColor)
+                                        .foregroundColor(tintColor)
                                 }
                             }
                             .buttonStyle(PlainButtonStyle())
@@ -185,12 +196,12 @@ public struct RetroWaveCoreListItemView: View {
                                     .resizable()
                                     .aspectRatio(contentMode: .fit)
                                     .frame(width: 36, height: 36)
-                                    .shadow(color: (themeManager.currentPalette.settingsHeaderText?.swiftUIColor ?? themeManager.currentPalette.defaultTintColor.swiftUIColor).opacity(0.5), radius: 4)
+                                    .shadow(color: headerTextColor.opacity(0.5), radius: 4)
 
                                 // System name with truncation
                                 Text(system.name)
                                     .font(.system(size: 10))
-                                    .foregroundColor((themeManager.currentPalette.settingsCellText?.swiftUIColor ?? themeManager.currentPalette.gameLibraryText.swiftUIColor).opacity(0.8))
+                                    .foregroundColor(cellTextColor.opacity(0.8))
                                     .lineLimit(1)
                                     .truncationMode(.tail)
                                     .frame(width: 60)
@@ -203,7 +214,7 @@ public struct RetroWaveCoreListItemView: View {
                     if !isExpanded && item.systems.count > 8 {
                         Text("+ \(item.systems.count - 8) more systems")
                             .font(.system(size: 12))
-                            .foregroundColor((themeManager.currentPalette.settingsHeaderText?.swiftUIColor ?? themeManager.currentPalette.defaultTintColor.swiftUIColor).opacity(0.8))
+                            .foregroundColor(headerTextColor.opacity(0.8))
                             .padding(.top, 4)
                     }
                 }
@@ -214,16 +225,16 @@ public struct RetroWaveCoreListItemView: View {
         .background(
             RoundedRectangle(cornerRadius: 12)
                 .fill(
-                    (themeManager.currentPalette.settingsCellBackground?.swiftUIColor ?? Color(themeManager.currentPalette.gameLibraryBackground))
-                        .opacity(themeManager.currentPalette.dark ? 0.6 : 0.9)
+                    cellBackgroundColor
+                        .opacity(backgroundOpacity)
                 )
                 .overlay(
                     RoundedRectangle(cornerRadius: 12)
                         .strokeBorder(
                             LinearGradient(
                                 gradient: Gradient(colors: [
-                                    themeManager.currentPalette.defaultTintColor.swiftUIColor,
-                                    (themeManager.currentPalette.settingsHeaderText?.swiftUIColor ?? themeManager.currentPalette.defaultTintColor.swiftUIColor)
+                                    tintColor,
+                                    headerTextColor
                                 ]),
                                 startPoint: .topLeading,
                                 endPoint: .bottomTrailing
@@ -232,7 +243,7 @@ public struct RetroWaveCoreListItemView: View {
                         )
                 )
         )
-        .shadow(color: (themeManager.currentPalette.settingsHeaderText?.swiftUIColor ?? themeManager.currentPalette.defaultTintColor.swiftUIColor).opacity(0.3), radius: 8)
+        .shadow(color: headerTextColor.opacity(0.3), radius: 8)
     }
 }
 

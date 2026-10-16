@@ -602,8 +602,6 @@ void System_Vibrate(int mode) {
 //    AudioServicesPlaySystemSoundWithVibration(kSystemSoundID_Vibrate, nil, dictionary);
 }
 
-@implementation CLLocationManager
-@end
 // Function that returns a vector of strings representing camera device names
 std::vector<std::string> __cameraGetDeviceList() {
     std::vector<std::string> deviceList;

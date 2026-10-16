@@ -84,8 +84,9 @@ let package = Package(
         .package(url: "https://github.com/mtgto/Unrar.swift.git",
                     .upToNextMajor(from: "0.3.16")),
         .package(name: "LzhArchive", path: "../Dependencies/LzhArchive"),
+        /// 20.0.6 (realm-core 20.1.5) is the first release that compiles with Xcode 27.
         .package(url: "https://github.com/realm/realm-swift.git",
-                 from: "20.0.0"),
+                 from: "20.0.6")
     ],
 
     targets: [

@@ -575,37 +575,70 @@ public struct RetroLogView: View {
         @State private var isExpanded: Bool = false
         #endif
 
+        // Split out of `body` so the row type-checks in reasonable time.
+        private var levelColor: Color { viewModel.logLevelColor(log.level) }
+
+        private var headerRow: some View {
+            HStack {
+                Text(log.formattedTimestamp)
+                    .font(.system(size: 10, design: .monospaced))
+                    .foregroundColor(levelColor.opacity(0.8))
+
+                Spacer()
+
+                Text(log.level.name.uppercased())
+                    .font(.system(size: 10, weight: .bold, design: .monospaced))
+                    .foregroundColor(levelColor)
+                    .padding(.horizontal, 6)
+                    .padding(.vertical, 2)
+                    .background(Color.black.opacity(0.7))
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 4)
+                            .strokeBorder(levelColor.opacity(0.7), lineWidth: 1)
+                    )
+                    .shadow(color: levelColor.opacity(0.5), radius: 2, x: 0, y: 0)
+            }
+        }
+
+        private var cardBorderGradient: LinearGradient {
+            let colors: [Color] = isCopying
+                ? [RetroTheme.retroPink, RetroTheme.retroBlue]
+                : [levelColor.opacity(0.3), RetroTheme.retroDarkBlue.opacity(0.1)]
+            return LinearGradient(gradient: Gradient(colors: colors), startPoint: .topLeading, endPoint: .bottomTrailing)
+        }
+
+        private var cardBackground: some View {
+            RoundedRectangle(cornerRadius: 6)
+                .fill(Color.black.opacity(0.4))
+                .overlay(
+                    RoundedRectangle(cornerRadius: 6)
+                        .strokeBorder(cardBorderGradient, lineWidth: isCopying ? 2 : 1)
+                )
+        }
+
+        #if os(tvOS)
+        private var focusBorderGradient: LinearGradient {
+            guard isFocused else {
+                return LinearGradient(colors: [.clear, .clear], startPoint: .leading, endPoint: .trailing)
+            }
+            return LinearGradient(
+                colors: [RetroTheme.retroPink.opacity(0.6), RetroTheme.retroBlue.opacity(0.4)],
+                startPoint: .topLeading,
+                endPoint: .bottomTrailing
+            )
+        }
+        #endif
+
         var body: some View {
             VStack(alignment: .leading, spacing: 4) {
                 // Header with timestamp and level
-                HStack {
-                    Text(log.formattedTimestamp)
-                        .font(.system(size: 10, design: .monospaced))
-                        .foregroundColor(viewModel.logLevelColor(log.level).opacity(0.8))
-
-                    Spacer()
-
-                    Text(log.level.name.uppercased())
-                        .font(.system(size: 10, weight: .bold, design: .monospaced))
-                        .foregroundColor(viewModel.logLevelColor(log.level))
-                        .padding(.horizontal, 6)
-                        .padding(.vertical, 2)
-                        .background(Color.black.opacity(0.7))
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 4)
-                                .strokeBorder(
-                                    viewModel.logLevelColor(log.level).opacity(0.7),
-                                    lineWidth: 1
-                                )
-                        )
-                        .shadow(color: viewModel.logLevelColor(log.level).opacity(0.5), radius: 2, x: 0, y: 0)
-                }
+                headerRow
 
                 // Message with glow effect based on log level
                 Text(log.message)
                     .font(.system(size: 12, weight: .medium, design: .monospaced))
                     .foregroundColor(.white)
-                    .shadow(color: viewModel.logLevelColor(log.level).opacity(0.3), radius: 1, x: 0, y: 0)
+                    .shadow(color: levelColor.opacity(0.3), radius: 1, x: 0, y: 0)
                     #if os(tvOS)
                     .lineLimit(isExpanded || viewModel.showFullDetails ? nil : 3)
                     #else
@@ -645,24 +678,7 @@ public struct RetroLogView: View {
             }
             .padding(.vertical, 8)
             .padding(.horizontal, 12)
-            .background(
-                RoundedRectangle(cornerRadius: 6)
-                    .fill(Color.black.opacity(0.4))
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 6)
-                            .strokeBorder(
-                                LinearGradient(
-                                    gradient: Gradient(colors: [
-                                        isCopying ? RetroTheme.retroPink : viewModel.logLevelColor(log.level).opacity(0.3),
-                                        isCopying ? RetroTheme.retroBlue : RetroTheme.retroDarkBlue.opacity(0.1)
-                                    ]),
-                                    startPoint: .topLeading,
-                                    endPoint: .bottomTrailing
-                                ),
-                                lineWidth: isCopying ? 2 : 1
-                            )
-                    )
-            )
+            .background(cardBackground)
             .padding(.horizontal, 4)
             .padding(.vertical, 2)
             #if os(tvOS)
@@ -676,16 +692,7 @@ public struct RetroLogView: View {
             )
             .overlay(
                 RoundedRectangle(cornerRadius: 6)
-                    .strokeBorder(
-                        isFocused ?
-                            LinearGradient(
-                                colors: [RetroTheme.retroPink.opacity(0.6), RetroTheme.retroBlue.opacity(0.4)],
-                                startPoint: .topLeading,
-                                endPoint: .bottomTrailing
-                            ) :
-                            LinearGradient(colors: [.clear, .clear], startPoint: .leading, endPoint: .trailing),
-                        lineWidth: isFocused ? 2 : 0
-                    )
+                    .strokeBorder(focusBorderGradient, lineWidth: isFocused ? 2 : 0)
                     .animation(.easeInOut(duration: 0.15), value: isFocused)
             )
             .onTapGesture {
