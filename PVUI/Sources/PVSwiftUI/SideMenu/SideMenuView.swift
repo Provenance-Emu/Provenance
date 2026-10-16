@@ -14,6 +14,8 @@ import PVLibrary
 import PVThemes
 import PVFeatureFlags
 import Combine
+import Defaults
+import PVSettings
 @_exported import PVUIBase
 
 #if canImport(UIKit)
@@ -91,6 +93,10 @@ SideMenuView: SwiftUI.View {
     }
 
     @State private var delayTask: Task<Void, Never>?
+
+    /// The library's netplay lobby (rooms nearby, host a game).
+    @State private var showNetplayLobby = false
+    @Default(.netplayEnabled) private var netplayEnabled
 
     public init(gameLibrary: PVGameLibrary<RealmDatabaseDriver>, viewModel: PVRootViewModel, delegate: PVMenuDelegate, rootDelegate: PVRootDelegate) {
         self.gameLibrary = gameLibrary
@@ -193,6 +199,8 @@ SideMenuView: SwiftUI.View {
             delegate.didTapImports()
         case Self.nearbyItem:
             showNearbyLibraries = true
+        case "netplay":
+            showNetplayLobby = true
         default:
             // Handle console selection
             delegate.didTapConsole(with: focusedItem)
@@ -203,6 +211,9 @@ SideMenuView: SwiftUI.View {
         var items = ["home", "settings", "imports"]
         if showsNearbyLibraries {
             items.append(Self.nearbyItem)
+        }
+        if netplayEnabled {
+            items.append("netplay")
         }
         items += sortedConsoles().map(\.identifier)
 
@@ -216,7 +227,7 @@ SideMenuView: SwiftUI.View {
             focusedItem = items[newIndex]
 
             // Force scroll to top for the first few items
-            if newIndex <= 2 { // home, settings, imports
+            if newIndex < fixedItems.count {
                 withAnimation {
                     proxy?.scrollTo(menuNamespace, anchor: .top)
                 }
@@ -298,6 +309,21 @@ SideMenuView: SwiftUI.View {
                 .focusableIfAvailable()
                 .focused($focusedItem, equals: Self.nearbyItem)
             }
+        }
+    }
+
+    @ViewBuilder
+    private func networkPlaySection() -> some View {
+        if netplayEnabled {
+            Rectangle()
+                .fill(Color.retroCyan.opacity(0.15))
+                .frame(height: 1)
+
+            MenuItemView(icon: .sfSymbol("network"), rowTitle: "Network Play", isFocused: focusedItem == "netplay") {
+                showNetplayLobby = true
+            }
+            .focusableIfAvailable()
+            .focused($focusedItem, equals: "netplay")
         }
     }
 
@@ -386,6 +412,7 @@ SideMenuView: SwiftUI.View {
                                 addGamesSection()
                                 importQueueSection()
                                 nearbyLibrariesSection()
+                                networkPlaySection()
 
                                 #if canImport(FreemiumKit)
                                 Rectangle()
@@ -447,6 +474,9 @@ SideMenuView: SwiftUI.View {
             NearbyLibrariesSheet()
         }
         #endif
+        .sheet(isPresented: $showNetplayLobby) {
+            NetplayLibraryLobbyView()
+        }
         .onDisappear {
             delayTask?.cancel()
             continuousNavigationTask?.cancel()

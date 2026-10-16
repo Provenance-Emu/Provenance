@@ -255,6 +255,38 @@ public actor PVNetplayManager {
         await withdrawAdvertisement()
     }
 
+    // MARK: - Lobby launch
+
+    /// Set by the library lobby just before it launches a game; taken by the
+    /// emulator once the game's core has started.
+    private var pendingLaunchIntent: NetplayLaunchIntent?
+
+    /// Remember what to do once the game `intent.gameMD5` has booted.
+    /// Replaces any earlier intent.
+    public func setLaunchIntent(_ intent: NetplayLaunchIntent?) {
+        pendingLaunchIntent = intent
+    }
+
+    /// The pending intent, if it is for the game `md5` and hasn't expired.
+    /// An intent is taken at most once; any other launch discards it.
+    public func takeLaunchIntent(forGameMD5 md5: String, at now: Date = Date()) -> NetplayLaunchIntent? {
+        defer { pendingLaunchIntent = nil }
+        guard let intent = pendingLaunchIntent, intent.applies(toGameMD5: md5, at: now) else { return nil }
+        return intent
+    }
+
+    /// Wait until the active bridge supports netplay, which a thin core
+    /// reports only once its netpacket interface registers after boot.
+    /// - Returns: false when there is no bridge or it isn't ready in time.
+    public func waitUntilNetplayReady(timeout: Duration = .seconds(15), pollInterval: Duration = .milliseconds(250)) async -> Bool {
+        let deadline = ContinuousClock.now + timeout
+        while true {
+            if activeBridge?.supportsNetplay == true { return true }
+            guard ContinuousClock.now < deadline, !Task.isCancelled else { return false }
+            try? await Task.sleep(for: pollInterval)
+        }
+    }
+
     // MARK: - LAN advertisement
 
     private func withdrawAdvertisement() async {
@@ -359,6 +391,10 @@ public final class ObservableNetplayManager: ObservableObject {
 
     public func hostingRestartsGame() async -> Bool {
         await manager.hostingRestartsGame
+    }
+
+    public func setLaunchIntent(_ intent: NetplayLaunchIntent?) async {
+        await manager.setLaunchIntent(intent)
     }
 
     public func startDiscovery() {

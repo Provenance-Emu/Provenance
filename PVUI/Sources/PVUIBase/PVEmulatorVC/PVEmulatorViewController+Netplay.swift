@@ -21,6 +21,14 @@ import ObjectiveC
 
 private enum NetplayAssociatedKeys {
     static var startTask: UInt8 = 0
+    static var openNetworkPlay: UInt8 = 0
+}
+
+private enum NetplayLaunchIntentDefaults {
+    /// How long a thin core may take to register its netpacket interface.
+    static let readyTimeout: Duration = .seconds(15)
+    /// Let the boot settle (first frames, pause-menu hint) before opening the menu.
+    static let hostMenuDelay: Duration = .seconds(1)
 }
 
 /// Box wrapper so a Swift Task value can be stored via objc_setAssociatedObject.
@@ -59,7 +67,7 @@ extension PVEmulatorViewController {
         // that could register an outdated bridge after this call completes.
         netplayStartTaskBox?.task.cancel()
         netplayStartTaskBox = nil
-        let task = Task {
+        let task = Task { @MainActor [weak self] in
             // Guard against cancellation: if stopNetplayBridge() ran before this
             // task was scheduled, don't re-register a stale bridge.
             guard !Task.isCancelled else {
@@ -73,8 +81,66 @@ extension PVEmulatorViewController {
             // unregister it.  stopNetplayBridge() is responsible for clearing the
             // bridge on teardown.
             ILOG("Netplay: registered \(bridge.netplayEngineName) bridge with PVNetplayManager.")
+            await self?.runNetplayLaunchIntentIfAny()
         }
         netplayStartTaskBox = TaskBox(task)
+    }
+
+    // MARK: - Lobby launch intent
+
+    /// Whether the pause menu should open Network Play the next time it
+    /// appears. Read once by `PauseTileMenuView`.
+    private var opensNetworkPlayOnNextMenu: Bool {
+        get { (objc_getAssociatedObject(self, &NetplayAssociatedKeys.openNetworkPlay) as? Bool) ?? false }
+        set { objc_setAssociatedObject(self, &NetplayAssociatedKeys.openNetworkPlay, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC) }
+    }
+
+    /// True once after the library lobby launched this game to host.
+    func takeNetworkPlayMenuRequest() -> Bool {
+        defer { opensNetworkPlayOnNextMenu = false }
+        return opensNetworkPlayOnNextMenu
+    }
+
+    /// Carry out what the library's netplay lobby asked for when it launched
+    /// this game: join a room, or open the room setup to host.
+    @MainActor
+    private func runNetplayLaunchIntentIfAny() async {
+        guard let md5 = game?.md5Hash, !md5.isEmpty,
+              let intent = await PVNetplayManager.shared.takeLaunchIntent(forGameMD5: md5) else { return }
+        ILOG("Netplay: running lobby launch intent \(intent.action)")
+
+        guard await PVNetplayManager.shared.waitUntilNetplayReady(timeout: NetplayLaunchIntentDefaults.readyTimeout) else {
+            // Cancelled: the game stopped while waiting.
+            guard !Task.isCancelled else { return }
+            PVToastManager.post(
+                String(localized: "This game's core doesn't support netplay."),
+                type: .warning,
+                icon: "antenna.radiowaves.left.and.right.slash"
+            )
+            return
+        }
+
+        switch intent.action {
+        case .join(let room):
+            do {
+                try await PVNetplayManager.shared.join(room: room, settings: NetplaySettings.fromStoredDefaults())
+                let message = (core as? any PVNetplayCapable)?.netplayHostStartsGame == true
+                    ? String(localized: "Joined \(room.hostName). Waiting for the host to start.")
+                    : String(localized: "Joined \(room.hostName).")
+                PVToastManager.post(message, type: .success, icon: "antenna.radiowaves.left.and.right")
+            } catch {
+                ELOG("Netplay: lobby join failed: \(error.localizedDescription)")
+                PVToastManager.post(
+                    String(localized: "Couldn't join \(room.hostName): \(error.localizedDescription)"),
+                    type: .error,
+                    duration: 5
+                )
+            }
+        case .host:
+            try? await Task.sleep(for: NetplayLaunchIntentDefaults.hostMenuDelay)
+            opensNetworkPlayOnNextMenu = true
+            showMenu(nil)
+        }
     }
 
     /// Deregister the active netplay bridge when the core stops.

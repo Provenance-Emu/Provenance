@@ -596,7 +596,10 @@ struct TVMediaMainView: View {
                 },
                 onSelectNearby: featureFlagsManager.nearbyLibraries ? {
                     router.present(.nearbyLibraries)
-                } : nil
+                } : nil,
+                onSelectNetplay: {
+                    router.activeModal = .netplayLobby
+                }
             )
             .tvMediaFocusScope(sidebarNamespace)
             .tvMediaPrefersDefaultFocus(focusCoordinator.isSidebarExpanded, in: sidebarNamespace)
@@ -793,6 +796,13 @@ struct TVMediaMainView: View {
             }
         case .nearbyLibraries:
             NearbyLibrariesSheet()
+        case .netplayLobby:
+            NetplayLibraryLobbyView()
+                #if os(tvOS)
+                .onExitCommand {
+                    router.dismissModal()
+                }
+                #endif
         case .artworkSearch(let game):
             let actions = gameActions
             NavigationStack {

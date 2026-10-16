@@ -2,6 +2,8 @@ import SwiftUI
 import PVLibrary
 import PVThemes
 import PVUIBase
+import Defaults
+import PVSettings
 
 #if os(tvOS) || os(iOS)
 
@@ -18,6 +20,10 @@ struct TVMediaSidebarRail: View {
     let onSelectImports: () -> Void
     /// Opens Nearby Libraries; nil hides the item (`nearbyLibraries` flag off).
     var onSelectNearby: (() -> Void)?
+
+    let onSelectNetplay: () -> Void
+
+    @Default(.netplayEnabled) private var netplayEnabled
 
     @FocusState private var focusedItem: SidebarItem?
     @ObservedObject private var iconManager = IconManager.shared
@@ -171,6 +177,10 @@ struct TVMediaSidebarRail: View {
                 if onSelectNearby != nil {
                     sidebarButton(for: .nearby)
                         .id(SidebarItem.nearby)
+                }
+                if netplayEnabled {
+                    sidebarButton(for: .netplay)
+                        .id(SidebarItem.netplay)
                 }
                 sidebarButton(for: .settings)
                     .id(SidebarItem.settings)
@@ -445,6 +455,8 @@ struct TVMediaSidebarRail: View {
             onSelectImports()
         case .nearby:
             onSelectNearby?()
+        case .netplay:
+            onSelectNetplay()
         }
 
         focusedItem = nil
@@ -514,6 +526,9 @@ struct TVMediaSidebarRail: View {
         if onSelectNearby != nil {
             items.append(.nearby)
         }
+        if netplayEnabled {
+            items.append(.netplay)
+        }
         items += [.settings, .destination(.logs), .status]
         return items
     }
@@ -545,6 +560,7 @@ private enum SidebarItem: Hashable {
     case status
     case imports
     case nearby
+    case netplay
 
     static let mainNavItems: [SidebarItem] = [
         .destination(.home),
@@ -562,6 +578,7 @@ private enum SidebarItem: Hashable {
         case .status: return "Status"
         case .imports: return "Imports"
         case .nearby: return "Nearby"
+        case .netplay: return "Network Play"
         }
     }
 
@@ -582,6 +599,7 @@ private enum SidebarItem: Hashable {
         case .status: return "info.circle"
         case .imports: return "tray.and.arrow.down"
         case .nearby: return "antenna.radiowaves.left.and.right"
+        case .netplay: return "network"
         }
     }
 
@@ -592,7 +610,7 @@ private enum SidebarItem: Hashable {
             return d == dest
         case .settings: return dest == .settings
         case .status: return dest == .status
-        case .imports, .nearby: return false
+        case .imports, .nearby, .netplay: return false
         }
     }
 }

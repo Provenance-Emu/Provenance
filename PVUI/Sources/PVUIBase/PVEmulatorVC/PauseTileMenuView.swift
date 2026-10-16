@@ -1511,6 +1511,15 @@ struct PauseTileMenuView: View {
 
     // MARK: - Body
 
+    /// The library lobby launched this game to host: go straight to Network Play.
+    private func openNetworkPlayIfRequested() {
+        #if canImport(PVNetplay)
+        if emulatorVC.takeNetworkPlayMenuRequest() {
+            showingNetworkPlay = true
+        }
+        #endif
+    }
+
     var body: some View {
         GeometryReader { geo in
             ZStack {
@@ -1865,6 +1874,7 @@ struct PauseTileMenuView: View {
             if focusedTileID == nil, let first = firstEnabledTileID() {
                 focusedTileID = first
             }
+            openNetworkPlayIfRequested()
         }
         .onChange(of: focusedTileID) { newID in
             withAnimation(.easeInOut(duration: 0.2)) {
@@ -1907,6 +1917,7 @@ struct PauseTileMenuView: View {
             initializeHardwareSwitchStatesIfNeeded()
             rebuildSections()
             reattachTVOSFocusIfNeeded()
+            openNetworkPlayIfRequested()
         }
         .onChange(of: focusedTileID) { newID in
             withAnimation(.easeInOut(duration: 0.2)) {
