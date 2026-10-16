@@ -191,7 +191,9 @@ struct GameItemViewCell<Presentable: GameItemPresentable>: View, Equatable {
                     .aspectRatio(contentMode: .fit)
                     .blur(radius: 10)
                     .opacity(glowIntensity * 0.3)
-                    .overlay(
+                    // The closure form accepts only a View, so `blendMode` resolves to
+                    // View.blendMode (the iOS 27 SDK finds the ShapeStyle overload ambiguous).
+                    .overlay {
                         LinearGradient(
                             gradient: Gradient(colors: [
                                 .clear,
@@ -202,7 +204,7 @@ struct GameItemViewCell<Presentable: GameItemPresentable>: View, Equatable {
                             endPoint: .bottomTrailing
                         )
                         .blendMode(.screen)
-                    )
+                    }
             }
 
             /// Main artwork - always shown
