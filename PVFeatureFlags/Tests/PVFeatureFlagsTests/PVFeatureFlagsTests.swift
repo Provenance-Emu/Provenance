@@ -336,6 +336,60 @@ struct PVFeatureFlagsTests {
         #expect(flags.isEnabled(.romPathMigrator) == true)
     }
 
+    // MARK: - Remote Configuration Merging
+
+    /// A remote file that lists only `inAppFreeROMs`: remote wins for that key,
+    /// every other flag keeps its bundled entry.
+    private static let partialRemoteJSON = """
+    { "features": { "inAppFreeROMs": { "enabled": false } } }
+    """
+
+    @Test func testRemoteConfigurationKeepsBundledFlagsItOmits() async throws {
+        let file = FileManager.default.temporaryDirectory
+            .appendingPathComponent("partial-remote-\(UUID().uuidString).json")
+        try Self.partialRemoteJSON.write(to: file, atomically: true, encoding: .utf8)
+        defer { try? FileManager.default.removeItem(at: file) }
+
+        let flags = PVFeatureFlags(appType: .standard, buildNumber: "200", appVersion: "3.0.5")
+        flags.clearDebugOverrides()
+        #expect(flags.isEnabled(.inAppFreeROMs) == true)
+        #expect(flags.isEnabled(.romPathMigrator) == true)
+
+        try await flags.loadConfiguration(from: file)
+
+        #expect(flags.isEnabled(.inAppFreeROMs) == false, "a key the remote file lists overrides the bundled one")
+        #expect(flags.isEnabled(.romPathMigrator) == true, "a key the remote file omits keeps its bundled value")
+        #expect(flags.configuration?.features["nearbyLibraries"] != nil)
+    }
+
+    @MainActor @Test func testManagerRemoteCacheKeepsBundledFlagsItOmits() async throws {
+        let cacheURL = URL(string: "https://example.com/manager-partial-remote.json")!
+        let partial = try JSONDecoder().decode(FeatureFlagsConfiguration.self, from: Data(Self.partialRemoteJSON.utf8))
+        let seedFetcher = PVFeatureFlagsFetcher(url: cacheURL, maxRetries: 0, cacheDuration: 3600)
+        seedFetcher.clearCache()
+        seedFetcher.saveToCache(partial)
+        defer { seedFetcher.clearCache() }
+
+        let flags = PVFeatureFlags(appType: .standard, buildNumber: "200", appVersion: "3.0.5")
+        flags.clearDebugOverrides()
+        let manager = PVFeatureFlagsManager(featureFlags: flags)
+        manager.configureRemote(url: cacheURL, cacheDuration: 3600, maxRetries: 0)
+
+        try await manager.loadRemoteConfiguration()
+
+        // Read the engine: the manager's published copy updates on a later main-queue hop.
+        #expect(flags.isEnabled(.inAppFreeROMs) == false)
+        #expect(flags.isEnabled(.romPathMigrator) == true)
+    }
+
+    @Test func testDebugConfigurationStillReplacesEverything() throws {
+        let flags = PVFeatureFlags(appType: .standard, buildNumber: "200", appVersion: "3.0.5")
+        flags.clearDebugOverrides()
+        flags.setDebugConfiguration(features: ["inAppFreeROMs": FeatureFlag(enabled: true)])
+        #expect(flags.isEnabled(.romPathMigrator) == false)
+        #expect(flags.configuration?.features.count == 1)
+    }
+
     // MARK: - PVFeatureFlagsFetcher
 
     @Test func testFetcherCaching() throws {

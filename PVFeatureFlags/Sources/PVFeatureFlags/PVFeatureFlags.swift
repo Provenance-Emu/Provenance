@@ -307,17 +307,35 @@ public final class PVFeatureFlags: @unchecked Sendable {
         request.timeoutInterval = 10
         let (data, _) = try await URLSession.shared.data(for: request)
         let config = try JSONDecoder().decode(FeatureFlagsConfiguration.self, from: data)
-        setConfiguration(config)
+        applyRemoteConfiguration(config)
     }
+
+    /// Applies a remote (or cached remote) configuration on top of the bundled
+    /// `features.json`: a key the remote file lists wins, and a key it omits keeps
+    /// its bundled entry. Replacing the whole configuration instead turned every
+    /// flag the remote file doesn't know yet (a new one, say) off.
+    internal func applyRemoteConfiguration(_ remote: FeatureFlagsConfiguration) {
+        guard let bundled = Self.bundledConfiguration else {
+            setConfiguration(remote)
+            return
+        }
+        setConfiguration(FeatureFlagsConfiguration(
+            features: bundled.features.merging(remote.features) { _, remoteFlag in remoteFlag }
+        ))
+    }
+
+    /// The `features.json` shipped inside the SPM package, decoded once.
+    private static let bundledConfiguration: FeatureFlagsConfiguration? = {
+        guard let url = Bundle.module.url(forResource: "features", withExtension: "json"),
+              let data = try? Data(contentsOf: url) else { return nil }
+        return try? JSONDecoder().decode(FeatureFlagsConfiguration.self, from: data)
+    }()
 
     /// Load the bundled `features.json` shipped inside the SPM package.
     /// - Returns: `true` if the bundled configuration was loaded successfully.
     @discardableResult
     public func loadBundledConfiguration() -> Bool {
-        guard let url = Bundle.module.url(forResource: "features", withExtension: "json"),
-              let data = try? Data(contentsOf: url),
-              let config = try? JSONDecoder().decode(FeatureFlagsConfiguration.self, from: data)
-        else { return false }
+        guard let config = Self.bundledConfiguration else { return false }
         setConfiguration(config)
         return true
     }
@@ -605,16 +623,16 @@ public final class PVFeatureFlags: @unchecked Sendable {
         }
 
         if fetcher.isCacheValid(), let cached = fetcher.loadCached() {
-            featureFlags.setConfiguration(cached)
+            featureFlags.applyRemoteConfiguration(cached)
             return
         }
 
         do {
             let config = try await fetcher.fetchWithRetry()
-            featureFlags.setConfiguration(config)
+            featureFlags.applyRemoteConfiguration(config)
         } catch {
             if let stale = fetcher.loadCached() {
-                featureFlags.setConfiguration(stale)
+                featureFlags.applyRemoteConfiguration(stale)
                 return
             }
             if featureFlags.loadBundledConfiguration() { return }
@@ -634,7 +652,7 @@ public final class PVFeatureFlags: @unchecked Sendable {
             throw PVFeatureFlagsFetcherError.notConfigured
         }
         let config = try await fetcher.fetchWithRetry()
-        featureFlags.setConfiguration(config)
+        featureFlags.applyRemoteConfiguration(config)
     }
 
     // MARK: - Debug Overrides
