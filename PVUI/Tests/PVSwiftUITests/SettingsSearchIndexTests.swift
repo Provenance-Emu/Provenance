@@ -34,6 +34,22 @@ struct SettingsSearchIndexTests {
         #expect(licenses?.tvOSSection == SettingsSectionTitle.tvOSAbout)
     }
 
+    @Test("No displayed text says beta (App Review rejects it)")
+    func noBetaWording() {
+        for entry in SettingsSearchIndex.entries {
+            let shown = [entry.title, entry.subtitle ?? ""].joined(separator: " ").lowercased()
+            #expect(!shown.contains("beta"), "\(entry.id) shows beta wording")
+        }
+    }
+
+    @Test("Rows removed from Settings have no entries left behind")
+    func removedRowsAreGone() {
+        let ids = Set(SettingsSearchIndex.entries.map(\.id))
+        for removed in ["adv.sram", "adv.taptoremap", "adv.skinreposition", "adv.touchoverlay"] {
+            #expect(!ids.contains(removed), "\(removed) points at a row that no longer exists")
+        }
+    }
+
     // MARK: Query handling
 
     @Test("Queries under the minimum length return nothing")
@@ -99,6 +115,18 @@ struct SettingsSearchIndexTests {
         let ids = SettingsSearchIndex.search("icloud").map(\.id)
         #expect(ids.contains("libman.cloudsync"))
         #expect(ids.contains("adv.icloudsync"))
+    }
+
+    @Test("clips finds Gameplay Clips")
+    func clips() {
+        let ids = SettingsSearchIndex.search("clips").map(\.id)
+        #expect(ids.contains("adv.clips"))
+    }
+
+    @Test("overlay style finds the Delta Skins picker")
+    func overlayStyle() {
+        let results = SettingsSearchIndex.search("overlay style")
+        #expect(results.first?.id == "skins.overlaystyle")
     }
 
     @Test("deadzone finds the analog deadzone rows")
