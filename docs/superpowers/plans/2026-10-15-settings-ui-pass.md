@@ -86,7 +86,7 @@ line-local and leaves restructuring those blocks for later.
     feature-flag blocks in the Library sections are left for the `shared-libs-ui` session's area.
     Files: `SettingsSwiftUI.swift`.
 
-11. **[done 43157ab5f6] Pickers without `SettingsRow` labels.** Skin Mode is a 100pt wheel with uppercased raw
+11. **[done 43157ab5f6, tvOS focus f6803307d0] Pickers without `SettingsRow` labels.** Skin Mode is a 100pt wheel with uppercased raw
     values. Overlay Style and Core Deadzone Mode are bare pickers. The Core Compatibility row is a hand-built
     `HStack` with `accentColor`. Fix: `SettingsRow` labels, menu style on iOS.
     Files: `SettingsSwiftUI.swift`.
