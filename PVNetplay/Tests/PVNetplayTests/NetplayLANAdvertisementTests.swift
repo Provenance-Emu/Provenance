@@ -307,4 +307,26 @@ struct ManagerAdvertisementLifecycleTests {
         #expect(advertiser.withdrawals == 1)
         withExtendedLifetime(bridge) {}
     }
+
+    @Test("An unchanged room is not republished on every core tick")
+    func unchangedRoomNotRepublished() async throws {
+        let advertiser = RecordingAdvertiser()
+        let manager = PVNetplayManager(advertiser: advertiser)
+        let bridge = HostingBridge(advertisesOwnRoom: false)
+        await manager.setActiveBridge(bridge)
+
+        try await manager.host(settings: .defaultLAN)
+        let hosted = makeRoom(port: 2626, players: 1)
+        await manager.bridgeStateChanged(.hosting(room: hosted))
+        await manager.bridgeStateChanged(.hosting(room: hosted))
+        #expect(advertiser.advertised.count == 2) // host() + the first tick (new session id)
+        await manager.bridgeStateChanged(.hosting(room: NetplayRoom(
+            id: hosted.id, hostName: hosted.hostName, gameName: "", gameHash: "",
+            coreIdentifier: hosted.coreIdentifier, maxPlayers: 4, currentPlayers: 2,
+            isLAN: true, hostAddress: "0.0.0.0", port: 2626
+        )))
+        #expect(advertiser.advertised.count == 3)
+        #expect(advertiser.advertised.last?.currentPlayers == 2)
+        withExtendedLifetime(bridge) {}
+    }
 }

@@ -27,6 +27,9 @@ public actor PVNetplayManager {
 
     /// What the current LAN advertisement was built from; nil when none is published.
     private var advertisementContext: (settings: NetplaySettings, game: NetplayHostedGame?)?
+    /// The TXT record last published, so a core that reports its room every
+    /// tick (Dolphin polls at 1 Hz) doesn't republish an unchanged record.
+    private var lastAdvertisedTXT: [String: String]?
 
     init(advertiser: (any NetplayRoomAdvertising)?) {
         self.advertiser = advertiser
@@ -106,7 +109,7 @@ public actor PVNetplayManager {
             // Republish the player count.
             if let context = advertisementContext,
                let advertised = Self.lanAdvertisement(for: room, settings: context.settings, game: context.game) {
-                await advertiser?.advertise(advertised)
+                await advertise(advertised)
             }
         case (.connecting, .connected(let session)):
             // A core that reports its own connection (PPSSPP ad hoc,
@@ -160,7 +163,7 @@ public actor PVNetplayManager {
             if !bridge.netplayAdvertisesOwnRoom,
                let advertised = Self.lanAdvertisement(for: hostedRoom, settings: settings, game: game) {
                 advertisementContext = (settings, game)
-                await advertiser?.advertise(advertised)
+                await advertise(advertised)
             }
         } catch {
             state = .idle
@@ -289,9 +292,17 @@ public actor PVNetplayManager {
 
     // MARK: - LAN advertisement
 
+    private func advertise(_ room: NetplayRoom) async {
+        let txt = NetplayRoomTXTRecord.txtRecord(for: room)
+        guard txt != lastAdvertisedTXT else { return }
+        lastAdvertisedTXT = txt
+        await advertiser?.advertise(room)
+    }
+
     private func withdrawAdvertisement() async {
         guard advertisementContext != nil else { return }
         advertisementContext = nil
+        lastAdvertisedTXT = nil
         await advertiser?.withdraw()
     }
 

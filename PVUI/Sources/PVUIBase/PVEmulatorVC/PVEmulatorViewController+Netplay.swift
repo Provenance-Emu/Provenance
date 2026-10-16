@@ -60,6 +60,13 @@ extension PVEmulatorViewController {
     func startNetplayBridgeIfNeeded() {
         guard let bridge = core as? any PVNetplayCapable else {
             DLOG("Netplay: core does not conform to PVNetplayCapable — skipping bridge registration.")
+            // The lobby may have launched this game for netplay; say why nothing happens.
+            if let md5 = game?.md5Hash, !md5.isEmpty {
+                Task {
+                    guard await PVNetplayManager.shared.takeLaunchIntent(forGameMD5: md5) != nil else { return }
+                    Self.postNetplayUnsupportedToast()
+                }
+            }
             return
         }
         // Cancel any prior start task before creating a new one so that a
@@ -112,11 +119,7 @@ extension PVEmulatorViewController {
         guard await PVNetplayManager.shared.waitUntilNetplayReady(timeout: NetplayLaunchIntentDefaults.readyTimeout) else {
             // Cancelled: the game stopped while waiting.
             guard !Task.isCancelled else { return }
-            PVToastManager.post(
-                String(localized: "This game's core doesn't support netplay."),
-                type: .warning,
-                icon: "antenna.radiowaves.left.and.right.slash"
-            )
+            Self.postNetplayUnsupportedToast()
             return
         }
 
@@ -141,6 +144,14 @@ extension PVEmulatorViewController {
             opensNetworkPlayOnNextMenu = true
             showMenu(nil)
         }
+    }
+
+    private static func postNetplayUnsupportedToast() {
+        PVToastManager.post(
+            String(localized: "This game's core doesn't support netplay."),
+            type: .warning,
+            icon: "antenna.radiowaves.left.and.right.slash"
+        )
     }
 
     /// Deregister the active netplay bridge when the core stops.
