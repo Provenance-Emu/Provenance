@@ -572,194 +572,203 @@ public struct SyncLogViewer: View {
         .padding(.vertical, 10)
     }
 
-    /// The filter panel — retrowave panel style with gradient border
-    private var filterPanel: some View {
-        VStack(alignment: .leading, spacing: 14) {
-            // Log type filters
-            VStack(alignment: .leading, spacing: 6) {
-                Text("LOG TYPES")
-                    .font(.system(size: 11, weight: .heavy))
-                    .foregroundColor(.retroPink)
-                    .tracking(1.2)
+    /// One toggle chip of the filter panel. Kept out of `filterPanel` so that body
+    /// type-checks in reasonable time.
+    private func filterChip<Label: View>(isSelected: Bool, color: Color, @ViewBuilder label: () -> Label) -> some View {
+        let shape = RoundedRectangle(cornerRadius: 6, style: .continuous)
+        let textColor: Color = isSelected ? Color.white : Color.white.opacity(0.5)
+        let fillColor: Color = isSelected ? color.opacity(0.25) : Color.white.opacity(0.05)
+        let strokeColor: Color = isSelected ? color.opacity(0.7) : Color.white.opacity(0.1)
+        let glowColor: Color = isSelected ? color.opacity(0.4) : Color.clear
+        return label()
+            .padding(.horizontal, 10)
+            .padding(.vertical, 5)
+            .foregroundColor(textColor)
+            .background(shape.fill(fillColor))
+            .overlay(shape.strokeBorder(strokeColor, lineWidth: 1))
+            .shadow(color: glowColor, radius: 4)
+    }
 
-                ScrollView(.horizontal, showsIndicators: false) {
-                    HStack(spacing: 6) {
-                        ForEach(SyncLogEntry.LogType.allCases, id: \.self) { logType in
-                            let isSelected = viewModel.selectedLogTypes.contains(logType)
+    /// Log type toggles of the filter panel.
+    private var logTypeFilters: some View {
+        VStack(alignment: .leading, spacing: 6) {
+            Text("LOG TYPES")
+                .font(.system(size: 11, weight: .heavy))
+                .foregroundColor(.retroPink)
+                .tracking(1.2)
 
-                            Button(action: {
-                                if isSelected {
-                                    viewModel.selectedLogTypes.remove(logType)
-                                } else {
-                                    viewModel.selectedLogTypes.insert(logType)
-                                }
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack(spacing: 6) {
+                    ForEach(SyncLogEntry.LogType.allCases, id: \.self) { logType in
+                        let isSelected = viewModel.selectedLogTypes.contains(logType)
+
+                        Button(action: {
+                            if isSelected {
+                                viewModel.selectedLogTypes.remove(logType)
+                            } else {
+                                viewModel.selectedLogTypes.insert(logType)
+                            }
 #if !os(tvOS)
-                                HapticFeedbackService.shared.playSelection()
+                            HapticFeedbackService.shared.playSelection()
 #endif
-                            }) {
+                        }) {
+                            filterChip(isSelected: isSelected, color: logType.color) {
                                 Text(logType.rawValue.uppercased())
                                     .font(.system(size: 11, weight: .bold))
-                                    .padding(.horizontal, 10)
-                                    .padding(.vertical, 5)
-                                    .foregroundColor(isSelected ? .white : .white.opacity(0.5))
-                                    .background(
-                                        RoundedRectangle(cornerRadius: 6, style: .continuous)
-                                            .fill(isSelected ? logType.color.opacity(0.25) : Color.white.opacity(0.05))
-                                    )
-                                    .overlay(
-                                        RoundedRectangle(cornerRadius: 6, style: .continuous)
-                                            .strokeBorder(isSelected ? logType.color.opacity(0.7) : Color.white.opacity(0.1), lineWidth: 1)
-                                    )
-                                    .shadow(color: isSelected ? logType.color.opacity(0.4) : .clear, radius: 4)
                             }
-                            .buttonStyle(PlainButtonStyle())
                         }
+                        .buttonStyle(PlainButtonStyle())
                     }
-                    .padding(.horizontal, 2)
                 }
+                .padding(.horizontal, 2)
             }
+        }
+    }
 
-            // Operation filters
-            VStack(alignment: .leading, spacing: 6) {
-                Text("OPERATIONS")
-                    .font(.system(size: 11, weight: .heavy))
-                    .foregroundColor(.retroPink)
-                    .tracking(1.2)
+    /// Sync operation toggles of the filter panel.
+    private var operationFilters: some View {
+        VStack(alignment: .leading, spacing: 6) {
+            Text("OPERATIONS")
+                .font(.system(size: 11, weight: .heavy))
+                .foregroundColor(.retroPink)
+                .tracking(1.2)
 
-                ScrollView(.horizontal, showsIndicators: false) {
-                    HStack(spacing: 6) {
-                        ForEach(SyncLogEntry.SyncOperation.allCases, id: \.self) { operation in
-                            let isSelected = viewModel.selectedOperations.contains(operation)
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack(spacing: 6) {
+                    ForEach(SyncLogEntry.SyncOperation.allCases, id: \.self) { operation in
+                        let isSelected = viewModel.selectedOperations.contains(operation)
 
-                            Button(action: {
-                                if isSelected {
-                                    viewModel.selectedOperations.remove(operation)
-                                } else {
-                                    viewModel.selectedOperations.insert(operation)
-                                }
+                        Button(action: {
+                            if isSelected {
+                                viewModel.selectedOperations.remove(operation)
+                            } else {
+                                viewModel.selectedOperations.insert(operation)
+                            }
 #if !os(tvOS)
-                                HapticFeedbackService.shared.playSelection()
+                            HapticFeedbackService.shared.playSelection()
 #endif
-                            }) {
+                        }) {
+                            filterChip(isSelected: isSelected, color: .retroBlue) {
                                 HStack(spacing: 4) {
                                     Image(systemName: operation.icon)
                                         .font(.system(size: 11))
                                     Text(operation.rawValue.uppercased())
                                         .font(.system(size: 11, weight: .bold))
                                 }
-                                .padding(.horizontal, 10)
-                                .padding(.vertical, 5)
-                                .foregroundColor(isSelected ? .white : .white.opacity(0.5))
-                                .background(
-                                    RoundedRectangle(cornerRadius: 6, style: .continuous)
-                                        .fill(isSelected ? Color.retroBlue.opacity(0.25) : Color.white.opacity(0.05))
-                                )
-                                .overlay(
-                                    RoundedRectangle(cornerRadius: 6, style: .continuous)
-                                        .strokeBorder(isSelected ? Color.retroBlue.opacity(0.7) : Color.white.opacity(0.1), lineWidth: 1)
-                                )
-                                .shadow(color: isSelected ? Color.retroBlue.opacity(0.4) : .clear, radius: 4)
                             }
-                            .buttonStyle(PlainButtonStyle())
                         }
+                        .buttonStyle(PlainButtonStyle())
                     }
-                    .padding(.horizontal, 2)
                 }
+                .padding(.horizontal, 2)
             }
+        }
+    }
 
-            // Date range filter
-            VStack(alignment: .leading, spacing: 6) {
-                Text("DATE RANGE")
-                    .font(.system(size: 11, weight: .heavy))
-                    .foregroundColor(.retroPink)
-                    .tracking(1.2)
+    /// Date range row (and, off tvOS, the pickers) of the filter panel.
+    private var dateRangeFilter: some View {
+        VStack(alignment: .leading, spacing: 6) {
+            Text("DATE RANGE")
+                .font(.system(size: 11, weight: .heavy))
+                .foregroundColor(.retroPink)
+                .tracking(1.2)
 
-                HStack(spacing: 8) {
-                    Button(action: {
-                        withAnimation {
-                            showDateRangePicker.toggle()
-                        }
+            HStack(spacing: 8) {
+                Button(action: {
+                    withAnimation {
+                        showDateRangePicker.toggle()
+                    }
 #if !os(tvOS)
-                        HapticFeedbackService.shared.playSelection()
+                    HapticFeedbackService.shared.playSelection()
 #endif
-                    }) {
-                        HStack(spacing: 6) {
-                            Image(systemName: "calendar")
-                                .font(.system(size: 12))
-                                .foregroundColor(.retroCyan)
-                            Text("\(dateOnlyFormatter.string(from: startDate)) – \(dateOnlyFormatter.string(from: endDate))")
-                                .font(.system(size: 12, weight: .medium))
-                        }
+                }) {
+                    HStack(spacing: 6) {
+                        Image(systemName: "calendar")
+                            .font(.system(size: 12))
+                            .foregroundColor(.retroCyan)
+                        Text("\(dateOnlyFormatter.string(from: startDate)) – \(dateOnlyFormatter.string(from: endDate))")
+                            .font(.system(size: 12, weight: .medium))
+                    }
+                    .padding(.horizontal, 10)
+                    .padding(.vertical, 6)
+                    .foregroundColor(.white.opacity(0.8))
+                    .background(
+                        RoundedRectangle(cornerRadius: 6, style: .continuous)
+                            .fill(Color.white.opacity(0.06))
+                    )
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 6, style: .continuous)
+                            .strokeBorder(Color.retroCyan.opacity(0.3), lineWidth: 1)
+                    )
+                }
+                .buttonStyle(PlainButtonStyle())
+
+                Spacer()
+
+                Button(action: {
+                    startDate = Calendar.current.date(byAdding: .day, value: -7, to: Date()) ?? Date()
+                    endDate = Date()
+                    viewModel.customStartDate = startDate
+                    viewModel.customEndDate = endDate
+#if !os(tvOS)
+                    HapticFeedbackService.shared.playSelection()
+#endif
+                }) {
+                    Text("RESET")
+                        .font(.system(size: 10, weight: .heavy))
+                        .tracking(0.8)
                         .padding(.horizontal, 10)
                         .padding(.vertical, 6)
-                        .foregroundColor(.white.opacity(0.8))
+                        .foregroundColor(.retroPurple)
                         .background(
                             RoundedRectangle(cornerRadius: 6, style: .continuous)
-                                .fill(Color.white.opacity(0.06))
+                                .fill(Color.retroPurple.opacity(0.15))
                         )
                         .overlay(
                             RoundedRectangle(cornerRadius: 6, style: .continuous)
-                                .strokeBorder(Color.retroCyan.opacity(0.3), lineWidth: 1)
+                                .strokeBorder(Color.retroPurple.opacity(0.5), lineWidth: 1)
                         )
-                    }
-                    .buttonStyle(PlainButtonStyle())
-
-                    Spacer()
-
-                    Button(action: {
-                        startDate = Calendar.current.date(byAdding: .day, value: -7, to: Date()) ?? Date()
-                        endDate = Date()
-                        viewModel.customStartDate = startDate
-                        viewModel.customEndDate = endDate
-#if !os(tvOS)
-                        HapticFeedbackService.shared.playSelection()
-#endif
-                    }) {
-                        Text("RESET")
-                            .font(.system(size: 10, weight: .heavy))
-                            .tracking(0.8)
-                            .padding(.horizontal, 10)
-                            .padding(.vertical, 6)
-                            .foregroundColor(.retroPurple)
-                            .background(
-                                RoundedRectangle(cornerRadius: 6, style: .continuous)
-                                    .fill(Color.retroPurple.opacity(0.15))
-                            )
-                            .overlay(
-                                RoundedRectangle(cornerRadius: 6, style: .continuous)
-                                    .strokeBorder(Color.retroPurple.opacity(0.5), lineWidth: 1)
-                            )
-                    }
-                    .buttonStyle(PlainButtonStyle())
                 }
-#if !os(tvOS)
-                if showDateRangePicker {
-                    VStack {
-                        DatePicker("Start Date", selection: $startDate, displayedComponents: [.date])
-                            .datePickerStyle(CompactDatePickerStyle())
-                            .onChange(of: startDate) { _ in
-                                viewModel.customStartDate = startDate
-                            }
-
-                        DatePicker("End Date", selection: $endDate, displayedComponents: [.date])
-                            .datePickerStyle(CompactDatePickerStyle())
-                            .onChange(of: endDate) { _ in
-                                viewModel.customEndDate = endDate
-                            }
-                    }
-                    .padding(10)
-                    .background(
-                        RoundedRectangle(cornerRadius: 8, style: .continuous)
-                            .fill(Color.white.opacity(0.05))
-                    )
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 8, style: .continuous)
-                            .strokeBorder(Color.retroPurple.opacity(0.3), lineWidth: 1)
-                    )
-                    .transition(.move(edge: .top).combined(with: .opacity))
-                }
-#endif
+                .buttonStyle(PlainButtonStyle())
             }
+#if !os(tvOS)
+            if showDateRangePicker {
+                VStack {
+                    DatePicker("Start Date", selection: $startDate, displayedComponents: [.date])
+                        .datePickerStyle(CompactDatePickerStyle())
+                        .onChange(of: startDate) { _ in
+                            viewModel.customStartDate = startDate
+                        }
+
+                    DatePicker("End Date", selection: $endDate, displayedComponents: [.date])
+                        .datePickerStyle(CompactDatePickerStyle())
+                        .onChange(of: endDate) { _ in
+                            viewModel.customEndDate = endDate
+                        }
+                }
+                .padding(10)
+                .background(
+                    RoundedRectangle(cornerRadius: 8, style: .continuous)
+                        .fill(Color.white.opacity(0.05))
+                )
+                .overlay(
+                    RoundedRectangle(cornerRadius: 8, style: .continuous)
+                        .strokeBorder(Color.retroPurple.opacity(0.3), lineWidth: 1)
+                )
+                .transition(.move(edge: .top).combined(with: .opacity))
+            }
+#endif
+        }
+    }
+
+    /// The filter panel — retrowave panel style with gradient border
+    private var filterPanel: some View {
+        VStack(alignment: .leading, spacing: 14) {
+            logTypeFilters
+
+            operationFilters
+
+            dateRangeFilter
         }
         .padding(14)
         .background(
