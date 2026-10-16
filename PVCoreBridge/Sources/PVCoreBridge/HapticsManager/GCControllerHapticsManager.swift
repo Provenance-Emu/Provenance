@@ -102,7 +102,7 @@ public final class GCControllerHapticsManager {
     /// Avoids reading UserDefaults on every rumble call.
     private var _cachedIntensityMultiplier: Float = 1.0
 
-    /// Global haptic intensity multiplier driven by `hapticFeedback` and
+    /// Global haptic intensity multiplier driven by the `rumbleEnabled`, `rumbleControllerEnabled` and
     /// `controllerHapticIntensity` UserDefaults keys (written by PVSettings).
     public var intensityMultiplier: Float { _cachedIntensityMultiplier }
 
@@ -248,7 +248,7 @@ public final class GCControllerHapticsManager {
 
     private func refreshIntensityCache() {
         // Gate controller rumble on the dedicated Tier 4 toggles only.
-        // `hapticFeedback` controls on-screen button feedback and must not silence game rumble.
+        // On-screen button feedback (`buttonVibration`) must not silence game rumble.
         let rumbleEnabled = UserDefaults.standard.object(forKey: "rumbleEnabled") as? Bool ?? true
         #if os(iOS) && !targetEnvironment(macCatalyst)
         // The device-body taptic is INDEPENDENT of the controller-motor toggle: it is

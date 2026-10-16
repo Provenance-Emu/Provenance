@@ -622,11 +622,11 @@ open class DeltaSkinInputHandler: ObservableObject {
         return frontendScreenSwapPressConsumed
     }
 
-    /// Toggle haptic feedback on or off globally.
+    /// Toggle on-screen button haptics (`buttonVibration`, the key every touch path reads).
     private func toggleHapticsButtonPressed() {
         DLOG("ToggleHaptics button pressed")
-        let current = Defaults[.hapticFeedback]
-        Defaults[.hapticFeedback] = !current
+        let current = Defaults[.buttonVibration]
+        Defaults[.buttonVibration] = !current
         ILOG("Haptic feedback toggled to \(!current)")
     }
 

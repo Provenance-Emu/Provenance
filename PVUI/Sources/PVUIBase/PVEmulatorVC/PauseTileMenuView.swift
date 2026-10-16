@@ -169,7 +169,7 @@ struct PauseTileMenuView: View {
     // Metal filter state — read/write directly to react to changes.
 
     // Haptic feedback toggle
-    @Default(.hapticFeedback) private var hapticFeedbackEnabled
+    @Default(.rumbleEnabled) private var rumbleEnabled
     @Default(.showFPSCount) private var showFPSCount
     @Default(.buttonPressEffect) private var buttonPressEffect
     @Default(.buttonSound) private var buttonSound
@@ -235,7 +235,7 @@ struct PauseTileMenuView: View {
         viewModel.rebuild(
             emulatorVC: emulatorVC,
             showFPSCount: showFPSCount,
-            hapticFeedbackEnabled: hapticFeedbackEnabled,
+            rumbleEnabled: rumbleEnabled,
             featureFlags: featureFlags,
             indicatorRegistry: indicatorRegistry,
             hasControllerProfiles: hasControllerProfiles,
@@ -666,7 +666,7 @@ struct PauseTileMenuView: View {
             }
             rebuildSections()
         case "rumbleToggle":
-            hapticFeedbackEnabled.toggle()
+            rumbleEnabled.toggle()
             rebuildSections()
         case "keyboardToggle":
             #if canImport(UIKit) && !os(tvOS)

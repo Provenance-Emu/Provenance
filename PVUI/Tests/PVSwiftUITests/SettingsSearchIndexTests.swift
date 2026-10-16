@@ -89,7 +89,7 @@ struct SettingsSearchIndexTests {
         let ids = SettingsSearchIndex.search("rumble").map(\.id)
         let titlePrefix = try #require(ids.firstIndex(of: "haptics.profiles")) // "Rumble Profiles"
         let titleContains = try #require(ids.firstIndex(of: "haptics.rumble")) // "Game Rumble"
-        let otherMatch = try #require(ids.firstIndex(of: "haptics.feedback")) // only the section name matches
+        let otherMatch = try #require(ids.firstIndex(of: "haptics.triggers")) // only the section name matches
         #expect(titlePrefix < titleContains)
         #expect(titleContains < otherMatch)
     }

@@ -57,7 +57,7 @@ final class PauseTileMenuViewModel: ObservableObject {
     ///
     /// - Parameters:
     ///   - emulatorVC: The active emulator view controller.
-    ///   - hapticFeedbackEnabled: Whether rumble/haptic is on.
+    ///   - rumbleEnabled: Whether game rumble is on (`Defaults[.rumbleEnabled]`).
     ///   - featureFlags: Feature flag environment value.
     ///   - indicatorRegistry: Shared indicator state registry.
     ///   - hasControllerProfiles: Whether any controller profiles exist.
@@ -65,7 +65,7 @@ final class PauseTileMenuViewModel: ObservableObject {
     func rebuild(
         emulatorVC: PVEmulatorViewController,
         showFPSCount: Bool,
-        hapticFeedbackEnabled: Bool,
+        rumbleEnabled: Bool,
         featureFlags: PVFeatureFlagsManager,
         indicatorRegistry: PVIndicatorRegistry,
         hasControllerProfiles: Bool,
@@ -413,7 +413,7 @@ final class PauseTileMenuViewModel: ObservableObject {
                 dismissOnTap: false
             ))
         }
-        if let rumbleTile = Self.rumbleToggleTile(core: emulatorVC.core, hapticFeedbackEnabled: hapticFeedbackEnabled) {
+        if let rumbleTile = Self.rumbleToggleTile(core: emulatorVC.core, rumbleEnabled: rumbleEnabled) {
             controlsTiles.append(rumbleTile)
         }
         if emulatorVC.virtualInputState.supportsMouse {
@@ -954,16 +954,16 @@ final class PauseTileMenuViewModel: ObservableObject {
         )
     }
 
-    private static func rumbleToggleTile(core: PVEmulatorCore, hapticFeedbackEnabled: Bool) -> PauseMenuTile? {
+    private static func rumbleToggleTile(core: PVEmulatorCore, rumbleEnabled: Bool) -> PauseMenuTile? {
         guard let rumbleCore = core as? EmulatorCoreRumbleDataSource,
               rumbleCore.supportsRumble else { return nil }
         return PauseMenuTile(
             id: "rumbleToggle",
-            icon: hapticFeedbackEnabled ? "waveform.path" : "waveform.path.badge.minus",
+            icon: rumbleEnabled ? "waveform.path" : "waveform.path.badge.minus",
             label: String(localized: "Rumble"),
-            badge: hapticFeedbackEnabled ? "ON" : "OFF",
-            description: String(localized: "Toggle rumble / haptic feedback for this core."),
-            colorKey: hapticFeedbackEnabled ? .green : .gray,
+            badge: rumbleEnabled ? "ON" : "OFF",
+            description: String(localized: "Turn game rumble on or off. Applies to every game."),
+            colorKey: rumbleEnabled ? .green : .gray,
             dismissOnTap: false
         )
     }

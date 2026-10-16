@@ -161,11 +161,10 @@ public extension Defaults.Keys {
     static let controllerScale = Key<Double>("controllerScale", default: 1.0)
 
     static let pauseButtonIsMenuButton = Key<Bool>("pauseButtonIsMenuButton", default: false)
-    static let hapticFeedback = Key<Bool>("hapticFeedback", default: true)
 
     /// Master on/off for all game rumble output from emulator cores.
     /// When `false`, neither controller motors nor the device Taptic Engine will fire
-    /// in response to in-game rumble events. UI tap feedback (`hapticFeedback`) is unaffected.
+    /// in response to in-game rumble events. On-screen button feedback (`buttonVibration`) is unaffected.
     static let rumbleEnabled = Key<Bool>("rumbleEnabled", default: true)
 
     /// Controls whether the device Taptic Engine fires for in-game rumble events.

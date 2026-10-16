@@ -156,8 +156,6 @@ extension SettingsSearchIndex {
         entry("ctrl.keyboardmapping", "Keyboard Mapping", "Remap keyboard keys to controller buttons.",
               .controller, SettingsSectionTitle.controller, keywords: ["keys", "remap", "hardware keyboard"], tvOS: false),
 
-        entry("haptics.feedback", "Haptic Feedback", "Vibrate when pressing on-screen buttons.",
-              .controller, SettingsSectionTitle.hapticsRumble, keywords: ["vibration", "vibrate", "taptic", "touch"], tvOS: false),
         entry("haptics.rumble", "Game Rumble", "Master on/off for all in-game rumble events from emulator cores.",
               .controller, SettingsSectionTitle.hapticsRumble, keywords: ["rumble", "vibration", "force feedback", "motors"]),
         entry("haptics.device", "Device Taptic Engine", "Use the iPhone/iPad Taptic Engine for in-game rumble when no controller is connected.",

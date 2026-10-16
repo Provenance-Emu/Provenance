@@ -2088,10 +2088,10 @@ private struct CoreDeadzoneEntryRow: View {
 }
 
 /// Comprehensive "Haptics & Rumble" settings section.
+/// On-screen button haptics (`buttonVibration`) live in On-Screen Controls, not here.
 /// Consolidates the master toggle, per-source granular toggles, intensity slider,
 /// DualSense adaptive-trigger toggle, "Test Rumble" button, and a link to Rumble Profiles.
 private struct HapticsRumbleSection: View {
-    @Default(.hapticFeedback) var hapticFeedback
     @Default(.rumbleEnabled) var rumbleEnabled
     @Default(.rumbleDeviceEnabled) var rumbleDeviceEnabled
     @Default(.rumbleControllerEnabled) var rumbleControllerEnabled
@@ -2101,12 +2101,6 @@ private struct HapticsRumbleSection: View {
     var body: some View {
         #if !os(tvOS)
         Section {
-            ThemedToggle(isOn: $hapticFeedback) {
-                SettingsRow(title: "Haptic Feedback",
-                            subtitle: "Vibrate when pressing on-screen buttons.",
-                            icon: .sfSymbol("iphone.radiowaves.left.and.right"),
-                            showChevron: false)
-            }
             ThemedToggle(isOn: $rumbleEnabled) {
                 SettingsRow(title: "Game Rumble",
                             subtitle: "Master on/off for all in-game rumble events from emulator cores.",
