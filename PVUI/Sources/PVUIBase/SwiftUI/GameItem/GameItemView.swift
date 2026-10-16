@@ -81,7 +81,7 @@ public struct GameItemView: SwiftUI.View {
         self.gamepadManager = gamepadManager
         // Seed from the memory cache so a cell re-entering the screen never flashes the placeholder.
         self._artwork = State(initialValue: artwork ?? residentArtwork(forURL: game.isInvalidated ? "" : game.trueArtworkURL))
-        self.isVisible = isVisible
+        self._isVisible = State(initialValue: isVisible)
         self.action = action
     }
 
@@ -248,7 +248,7 @@ public struct GameItemPresentableView<Presentable: GameItemPresentable>: SwiftUI
         self.gamepadManager = gamepadManager
         // Seed from the memory cache so a cell re-entering the screen never flashes the placeholder.
         self._artwork = State(initialValue: artwork ?? residentArtwork(forURL: game.isInvalidated ? "" : game.trueArtworkURL))
-        self.isVisible = isVisible
+        self._isVisible = State(initialValue: isVisible)
         self.action = action
     }
 
