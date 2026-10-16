@@ -478,7 +478,6 @@ struct TVOSSettingsSection<Content: View>: View {
                                 AnyShapeStyle(Color.retroPink) :
                                 AnyShapeStyle(Color.white.opacity(0.4))
                         )
-                        .rotationEffect(.degrees(isExpanded ? 0 : 0))
                         .animation(.spring(response: 0.3), value: isExpanded)
                 }
                 .padding(.horizontal, 24)
@@ -1627,7 +1626,6 @@ private struct ExtraInfoSection: View {
 private struct AudioSection: View {
     #if !os(tvOS)
     @Default(.volume) var volume
-    @Default(.volumeHUD) var volumeHUD
     @Default(.respectMuteSwitch) var respectMuteSwitch
     #endif
     @Default(.pauseOnHeadphonesDisconnect) var pauseOnHeadphonesDisconnect
@@ -1645,13 +1643,11 @@ private struct AudioSection: View {
                             subtitle: respectMuteSwitch ? "Disable game audio when system ringer is muted. Does not apply to headphones or external audio destinations." : "Play game audio when system ringer is muted. Does not apply to headphones or external audio destinations.",
                             icon: respectMuteSwitch ? .sfSymbol("speaker.slash.fill") : .sfSymbol("speaker.slash"))
             }
-//            ThemedToggle(isOn: $volumeHUD) {
-//                SettingsRow(title: "Volume HUD",
-//                            subtitle: "Show volume indicator when changing volume.",
-//                            icon: .sfSymbol("speaker.wave.2"))
-//            }
-            HStack {
-                Text("settings.audio.volume", bundle: .module)
+            VStack(alignment: .leading, spacing: 4) {
+                SettingsRow(title: NSLocalizedString("settings.audio.volume", bundle: .module, comment: ""),
+                            subtitle: NSLocalizedString("settings.audio.volume_description", bundle: .module, comment: ""),
+                            icon: .sfSymbol("speaker.wave.2"),
+                            showChevron: false)
                 RetroWaveSlider<Float>(value: $volume,
                                      in: 0...1,
                                      step: 0.1,
@@ -1668,9 +1664,6 @@ private struct AudioSection: View {
                                              .foregroundColor(RetroTheme.retroBlue)
                                      })
             }
-            Text("settings.audio.volume_description", bundle: .module)
-                .font(.caption)
-                .foregroundColor(.secondary)
             #endif
             // Add the new navigation link wrapped in PaidFeatureView
             PaidFeatureView {
@@ -2315,21 +2308,20 @@ private struct OnScreenControllerSection: View {
     @Default(.buttonTints) var buttonTints
     @Default(.allRightShoulders) var allRightShoulders
     @Default(.buttonVibration) var buttonVibration
-    @Default(.buttonSound) var buttonSound
-    @Default(.buttonPressEffect) var buttonPressEffect
     @Default(.stickyButtonsEnabled) var stickyButtonsEnabled
     @Default(.missingButtonsAlwaysOn) var missingButtonsAlwaysOn
     @Default(.onscreenJoypad) var onscreenJoypad
     @Default(.onscreenJoypadWithKeyboard) var onscreenJoypadWithKeyboard
     @Default(.hideOnScreenControlsWithController) var hideOnScreenControlsWithController
-#if !os(tvOS)
     @Default(.movableButtons) var movableButtons
-#endif
 
     var body: some View {
         Section {
-            HStack {
-                Text("settings.on_screen.controller_opacity", bundle: .module)
+            VStack(alignment: .leading, spacing: 4) {
+                SettingsRow(title: NSLocalizedString("settings.on_screen.controller_opacity", bundle: .module, comment: ""),
+                            subtitle: NSLocalizedString("settings.on_screen.transparency_description", bundle: .module, comment: ""),
+                            icon: .sfSymbol("circle.lefthalf.filled"),
+                            showChevron: false)
                 RetroWaveSlider<Double>(value: $controllerOpacity,
                                      in: 0...1.0,
                                      step: 0.05,
@@ -2346,8 +2338,11 @@ private struct OnScreenControllerSection: View {
                                              .foregroundColor(RetroTheme.retroBlue)
                                      })
             }
-            HStack {
-                Text("Controller Scale")
+            VStack(alignment: .leading, spacing: 4) {
+                SettingsRow(title: "Controller Scale",
+                            subtitle: "Scales on-screen controls and adjusts the game viewport so nothing clips or overlaps.",
+                            icon: .sfSymbol("arrow.up.left.and.arrow.down.right"),
+                            showChevron: false)
                 RetroWaveSlider<Double>(value: $controllerScale,
                                      in: 0.5...2.0,
                                      step: 0.05,
@@ -2396,7 +2391,7 @@ private struct OnScreenControllerSection: View {
                             icon: .sfSymbol("l.joystick.tilt.left.fill"))
             }
             ThemedToggle(isOn: $onscreenJoypadWithKeyboard) {
-                SettingsRow(title: "On-Screen Joypad with keyboard",
+                SettingsRow(title: "On-Screen Joypad with Keyboard",
                             subtitle: "Show a touch Joystick pad on supported systems when the P1 controller is 'Keyboard'. Useful on iPad OS for systems with an analog joystick (N64, PSX, etc.)",
                             icon: .sfSymbol("keyboard.badge.eye"))
             }
@@ -2410,12 +2405,7 @@ private struct OnScreenControllerSection: View {
                             subtitle: "Double-tap a button to lock it held down. Double-tap again to release. Useful for auto-run in platformers.",
                             icon: .sfSymbol("lock.rectangle"))
             }
-
         }
-    }
-
-    private func playButtonSound(_ sound: ButtonSound) {
-        PVUIBase.ButtonSoundGenerator.shared.playSound(sound, pan: 0, volume: 1.0)
     }
 }
 #endif

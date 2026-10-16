@@ -192,7 +192,7 @@ extension SettingsSearchIndex {
               .controller, SettingsSectionTitle.onScreenControls, keywords: ["touch controls", "extra buttons"], tvOS: false),
         entry("onscreen.joystick", "On-Screen Joystick", "Show a touch Joystick pad on supported systems.",
               .controller, SettingsSectionTitle.onScreenControls, keywords: ["analog", "stick", "touch controls", "joypad"], tvOS: false),
-        entry("onscreen.joystickkeyboard", "On-Screen Joypad with keyboard", "Show a touch Joystick pad on supported systems when the P1 controller is 'Keyboard'.",
+        entry("onscreen.joystickkeyboard", "On-Screen Joypad with Keyboard", "Show a touch Joystick pad on supported systems when the P1 controller is 'Keyboard'.",
               .controller, SettingsSectionTitle.onScreenControls, keywords: ["analog", "stick", "ipad", "n64", "psx"], tvOS: false),
         entry("onscreen.movable", "Movable Buttons", "Allow player to move on screen controller buttons. Tap with 3-fingers 3 times to toggle.",
               .controller, SettingsSectionTitle.onScreenControls, keywords: ["reposition", "drag", "layout", "touch controls"], tvOS: false),
