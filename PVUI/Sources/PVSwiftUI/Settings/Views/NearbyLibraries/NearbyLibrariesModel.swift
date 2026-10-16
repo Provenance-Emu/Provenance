@@ -114,12 +114,7 @@ final class NearbyLibrariesModel {
     /// Peers worth listing: libraries whose app serves a system Provenance
     /// plays, never this device itself.
     var visiblePeers: [DiscoveredPeer] {
-        snapshot.peers.filter { peer in
-            !peer.isOwnAdvert(peerId: ownPeerId)
-                && !SystemMap.systems(servedBy: peer.app).isDisjoint(with: playableSystems)
-                // v1.1 `sys`: hide a peer that says it has nothing this device plays.
-                && peer.advertisement.mayServe(playableSystems)
-        }
+        snapshot.peers.filter { $0.isVisible(ownPeerId: ownPeerId, playable: playableSystems) }
     }
 
     /// Browse failures per app, for the status footer. An empty list with a

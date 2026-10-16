@@ -185,6 +185,16 @@ public struct DiscoveredPeer: Sendable, Equatable, Identifiable {
         return advertisement.peerId == peerId && advertisement.appName?.lowercased() == "provenance"
     }
 
+    /// Whether Nearby Libraries lists this peer on a device whose own peer id
+    /// is `ownPeerId` and that plays `playable`: never this device's own
+    /// advert (Share This Library is on), only an app that serves a system
+    /// this device plays, and not a peer whose v1.1 `sys` says it has none.
+    public func isVisible(ownPeerId: String?, playable: Set<SystemIdentifier>) -> Bool {
+        !isOwnAdvert(peerId: ownPeerId)
+            && !SystemMap.systems(servedBy: app).isDisjoint(with: playable)
+            && advertisement.mayServe(playable)
+    }
+
     /// The app behind the advert, from v1.1 `app` when present.
     public var appDisplayName: String {
         switch advertisement.appName?.lowercased() {

@@ -69,6 +69,34 @@ final class AdvertExtensionTests: XCTestCase {
         XCTAssertFalse(iFly.isOwnAdvert(peerId: "team"))
         XCTAssertFalse(iCube.isOwnAdvert(peerId: "team"))
     }
+
+    /// Two Provenance devices on one network: the advert one device's host
+    /// publishes on `_pvlibrary._tcp` is listed on the other, and only there.
+    func testAnotherProvenanceIsVisibleAndThisOneIsNot() throws {
+        let txt = LibraryAdvertTXT.record(peerId: "ipad", urls: [URL(string: "http://10.0.0.2:8486")!], systems: [.SNES, .GameCube])
+        let peer = try XCTUnwrap(DiscoveredPeer.make(serviceType: "_pvlibrary._tcp.", serviceName: "Provenance on iPad", txt: txt))
+
+        XCTAssertTrue(peer.isVisible(ownPeerId: "iphone", playable: [.SNES, .NES]), "another device sharing a system this one plays")
+        XCTAssertTrue(peer.isVisible(ownPeerId: nil, playable: [.GameCube]))
+        XCTAssertFalse(peer.isVisible(ownPeerId: "ipad", playable: [.SNES]), "this device's own advert")
+        XCTAssertFalse(peer.isVisible(ownPeerId: "iphone", playable: [.Genesis]), "nothing shared that this device plays")
+        XCTAssertFalse(peer.isVisible(ownPeerId: "iphone", playable: []), "no playable systems loaded")
+
+        let emptyLibrary = try XCTUnwrap(DiscoveredPeer.make(
+            serviceType: "_pvlibrary._tcp", serviceName: "Provenance on TV",
+            txt: LibraryAdvertTXT.record(peerId: "tv", urls: [URL(string: "http://10.0.0.4:8486")!], systems: [])
+        ))
+        XCTAssertFalse(emptyLibrary.isVisible(ownPeerId: "iphone", playable: [.SNES]), "sharing on, but no games")
+    }
+
+    /// iFly and iCube adverts carry no `sys` before v1.1: listed whenever this
+    /// device plays one of the systems that app serves.
+    func testLegacyPeersAreVisibleByTheirAppsSystems() throws {
+        let iCube = try XCTUnwrap(DiscoveredPeer.make(serviceType: "_icube-continuity._tcp", serviceName: "iCube iPad",
+                                                      txt: ["v": "1", "sid": "b", "lib": "1", "pid": "cube", "u0": "http://10.0.0.3"]))
+        XCTAssertTrue(iCube.isVisible(ownPeerId: "iphone", playable: [.Wii, .SNES]))
+        XCTAssertFalse(iCube.isVisible(ownPeerId: "iphone", playable: [.SNES]))
+    }
 }
 
 final class CatalogueQueryTests: XCTestCase {
