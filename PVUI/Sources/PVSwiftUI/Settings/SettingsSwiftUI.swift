@@ -2583,7 +2583,7 @@ private struct LibrarySection2: View {
             .retroFocusButtonStyle(showBorder: false)
             #endif
 
-            NavigationLink(destination: PendingPatchesView()) {
+            NavigationLink(destination: PendingPatchesView().settingsSubpageTracking()) {
                 SettingsRow(title: "Patches / ROM Tools",
                             subtitle: "Patch Applier, batch apply, online search, create BPS/IPS, and manage imports.",
                             icon: .sfSymbol("bandage"))
@@ -2714,7 +2714,7 @@ private struct AdvancedSection: View {
             #endif
 
             // Session log file browser
-            NavigationLink(destination: PVLogSessionBrowserView()) {
+            NavigationLink(destination: PVLogSessionBrowserView().settingsSubpageTracking()) {
                 SettingsRow(title: "Session Logs",
                             subtitle: "View and manage file-based session log archives.",
                             icon: .sfSymbol("doc.on.doc"))
