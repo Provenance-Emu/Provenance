@@ -29,6 +29,9 @@ public struct NetplayLobbyView: View {
     /// MD5 hash of the local ROM — threaded down to the room browser for hash verification.
     /// Pass an empty string if unknown (verification will show "unknown" state).
     let localGameHash: String
+    /// Serial / game ID and system of the local game, for the room's LAN advertisement.
+    let gameSerial: String
+    let systemIdentifier: String
 
     @State private var showRoomBrowser = false
     @State private var showSpectate = false
@@ -42,10 +45,28 @@ public struct NetplayLobbyView: View {
 
     @Environment(\.dismiss) private var dismiss
 
-    public init(gameName: String, coreIdentifier: String, localGameHash: String = "") {
+    public init(
+        gameName: String,
+        coreIdentifier: String,
+        localGameHash: String = "",
+        gameSerial: String = "",
+        systemIdentifier: String = ""
+    ) {
         self.gameName = gameName
         self.coreIdentifier = coreIdentifier
         self.localGameHash = localGameHash
+        self.gameSerial = gameSerial
+        self.systemIdentifier = systemIdentifier
+    }
+
+    private var hostedGame: NetplayHostedGame {
+        NetplayHostedGame(
+            name: gameName,
+            md5: localGameHash,
+            serial: gameSerial,
+            systemIdentifier: systemIdentifier,
+            coreIdentifier: coreIdentifier
+        )
     }
 
     public var body: some View {
@@ -137,7 +158,7 @@ public struct NetplayLobbyView: View {
                 NetplayRoomBrowserView(gameName: gameName, coreIdentifier: coreIdentifier, localGameHash: localGameHash, spectateMode: true)
             }
             .sheet(isPresented: $showCreateRoom) {
-                NetplayCreateRoomView(gameName: gameName, coreIdentifier: coreIdentifier)
+                NetplayCreateRoomView(gameName: gameName, coreIdentifier: coreIdentifier, hostedGame: hostedGame)
             }
             .sheet(isPresented: $showSettings) {
                 NetplaySettingsView()

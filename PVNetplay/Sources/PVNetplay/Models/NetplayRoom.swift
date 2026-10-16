@@ -49,6 +49,13 @@ public struct NetplayRoom: Identifiable, Sendable, Hashable {
     public let discoverySource: DiscoverySource
     /// Time at which this room was last seen
     public let lastSeen: Date
+    /// The game's serial / game ID (e.g. "GALE01"), empty when unknown.
+    /// Disc games have many dumps (ISO, RVZ, CISO) with different MD5s but
+    /// the same serial, so a joiner can match on it when the MD5 differs.
+    public let gameSerial: String
+    /// The host game's system identifier (e.g. "com.provenance.gamecube"),
+    /// empty when unknown.
+    public let systemIdentifier: String
 
     public init(
         id: UUID = UUID(),
@@ -67,7 +74,9 @@ public struct NetplayRoom: Identifiable, Sendable, Hashable {
         allowsSpectators: Bool = true,
         spectatorCount: Int = 0,
         discoverySource: DiscoverySource = .bonjour,
-        lastSeen: Date = Date()
+        lastSeen: Date = Date(),
+        gameSerial: String = "",
+        systemIdentifier: String = ""
     ) {
         self.id = id
         self.hostName = hostName
@@ -86,6 +95,8 @@ public struct NetplayRoom: Identifiable, Sendable, Hashable {
         self.spectatorCount = spectatorCount
         self.discoverySource = discoverySource
         self.lastSeen = lastSeen
+        self.gameSerial = gameSerial
+        self.systemIdentifier = systemIdentifier
     }
 
     /// Whether the room still has open player slots

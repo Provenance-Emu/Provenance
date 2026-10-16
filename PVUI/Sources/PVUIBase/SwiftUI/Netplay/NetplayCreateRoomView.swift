@@ -21,6 +21,8 @@ import UIKit
 public struct NetplayCreateRoomView: View {
     let gameName: String
     let coreIdentifier: String
+    /// Published in the room's LAN advertisement so joiners can find the game.
+    let hostedGame: NetplayHostedGame?
 
     @StateObject private var netplay = ObservableNetplayManager.shared
     @State private var settings = NetplaySettings.fromStoredDefaults()
@@ -36,9 +38,10 @@ public struct NetplayCreateRoomView: View {
 
     @Environment(\.dismiss) private var dismiss
 
-    public init(gameName: String, coreIdentifier: String) {
+    public init(gameName: String, coreIdentifier: String, hostedGame: NetplayHostedGame? = nil) {
         self.gameName = gameName
         self.coreIdentifier = coreIdentifier
+        self.hostedGame = hostedGame
     }
 
     public var body: some View {
@@ -161,7 +164,7 @@ public struct NetplayCreateRoomView: View {
         isStarting = true
         Task { @MainActor in
             do {
-                try await netplay.host(settings: settings)
+                try await netplay.host(settings: settings, game: hostedGame)
                 // Navigate to waiting room — do not dismiss yet.
                 showWaitingRoom = true
             } catch {

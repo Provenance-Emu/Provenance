@@ -36,6 +36,7 @@ public final class PVNetplayBonjourDiscovery: NSObject, ObservableObject {
     private var browser: NetServiceBrowser?
     private var pendingServices: [NetService] = []
     private var resolvedServices: [String: NetService] = [:]
+    private var roomIDsByService: [String: UUID] = [:]
 
     // MARK: - Discovery Control
 
@@ -54,7 +55,9 @@ public final class PVNetplayBonjourDiscovery: NSObject, ObservableObject {
         browser?.stop()
         browser = nil
         pendingServices.removeAll()
+        resolvedServices.values.forEach { $0.stopMonitoring() }
         resolvedServices.removeAll()
+        roomIDsByService.removeAll()
         rooms.removeAll()
         isSearching = false
     }
@@ -68,85 +71,36 @@ public final class PVNetplayBonjourDiscovery: NSObject, ObservableObject {
     // MARK: - Private Helpers
 
     private func updateRoom(from service: NetService) {
-        guard let hostName = service.hostName, !hostName.isEmpty else { return }
+        guard let hostAddress = NetplayRoomTXTRecord.preferredHostAddress(
+            addresses: service.addresses ?? [],
+            hostName: service.hostName
+        ) else { return }
 
         let txtData = service.txtRecordData()
         let txtDict = txtData.map { NetService.dictionary(fromTXTRecord: $0) } ?? [:]
+        let txt = txtDict.compactMapValues { String(data: $0, encoding: .utf8) }
 
-        func txtString(_ key: String) -> String? {
-            guard let data = txtDict[key] else { return nil }
-            return String(data: data, encoding: .utf8)
-        }
-
-        let gameName = txtString("game") ?? txtString("content") ?? "Unknown Game"
-        let gameHash = txtString("hash") ?? ""
-        let coreID = txtString("core") ?? ""
-        let hostNickname = txtString("nickname") ?? service.name
-        let maxPlayers = Int(txtString("maxPlayers") ?? "2") ?? 2
-        let currentPlayers = Int(txtString("players") ?? "1") ?? 1
-        let spectatorCount = Int(txtString("spectators") ?? "0") ?? 0
-        let port = UInt16(service.port > 0 ? service.port : 55435)
-        let hasPassword = txtString("password") == "1"
-        let allowSpectators = txtString("allowSpectators") != "0"
-
-        // Derive a stable UUID from the service name when no sessionId TXT record is present.
-        // This prevents SwiftUI list identity churn on every TXT update.
-        let sessionUUID: UUID
-        if let sid = txtString("sessionId"), let parsed = UUID(uuidString: sid) {
-            sessionUUID = parsed
-        } else {
-            // Derive a stable 16-byte identifier from the service name using
-            // an XOR-fold over the UTF-8 bytes. This is deterministic across
-            // launches (unlike Hasher, which is randomised per-process) and
-            // safe (no buffer-size mismatch between an Int and a 16-byte UUID field).
-            let nameBytes = Array(service.name.utf8)
-            var bytes = [UInt8](repeating: 0, count: 16)
-            for (i, byte) in nameBytes.enumerated() {
-                bytes[i % 16] ^= byte
-            }
-            // Tag as UUID version 4 / variant 1 so the value is well-formed.
-            bytes[6] = (bytes[6] & 0x0f) | 0x40
-            bytes[8] = (bytes[8] & 0x3f) | 0x80
-            let uuidTuple = (
-                bytes[0], bytes[1], bytes[2], bytes[3],
-                bytes[4], bytes[5], bytes[6], bytes[7],
-                bytes[8], bytes[9], bytes[10], bytes[11],
-                bytes[12], bytes[13], bytes[14], bytes[15]
-            )
-            sessionUUID = UUID(uuid: uuidTuple)
-        }
-        let room = NetplayRoom(
-            id: sessionUUID,
-            hostName: hostNickname,
-            gameName: gameName,
-            gameHash: gameHash,
-            coreIdentifier: coreID,
-            maxPlayers: maxPlayers,
-            currentPlayers: currentPlayers,
-            isLAN: true,
-            hostAddress: hostName,
-            port: port,
-            isPasswordProtected: hasPassword,
-            allowsSpectators: allowSpectators,
-            spectatorCount: spectatorCount,
-            discoverySource: .bonjour,
-            lastSeen: Date()
+        let room = NetplayRoomTXTRecord.room(
+            fromTXT: txt,
+            serviceName: service.name,
+            hostAddress: hostAddress,
+            port: service.port
         )
 
-        if let idx = rooms.firstIndex(where: { $0.hostAddress == room.hostAddress && $0.port == room.port }) {
+        // One room per advertised service: a TXT update replaces it.
+        if let idx = rooms.firstIndex(where: { $0.id == room.id || $0.hostAddress == room.hostAddress && $0.port == room.port }) {
             rooms[idx] = room
         } else {
             rooms.append(room)
         }
+        roomIDsByService[service.name] = room.id
     }
 
     private func removeRoom(forService service: NetService) {
-        // Prefer the previously resolved hostName since the service passed to
-        // netServiceBrowser(_:didRemove:) may be unresolved (hostName == nil).
-        let resolved = resolvedServices[service.name]
-        guard let hostName = resolved?.hostName ?? service.hostName else { return }
-        let port = UInt16(service.port > 0 ? service.port : 55435)
-        rooms.removeAll { $0.hostAddress == hostName && $0.port == port }
+        // The service passed to didRemove may be unresolved, so look the room
+        // up by the instance name it was added under.
+        guard let id = roomIDsByService.removeValue(forKey: service.name) else { return }
+        rooms.removeAll { $0.id == id }
     }
 }
 
@@ -178,7 +132,7 @@ extension PVNetplayBonjourDiscovery: @preconcurrency NetServiceBrowserDelegate {
     ) {
         removeRoom(forService: service)
         pendingServices.removeAll { $0 === service }
-        resolvedServices.removeValue(forKey: service.name)
+        resolvedServices.removeValue(forKey: service.name)?.stopMonitoring()
     }
 
     public func netServiceBrowser(
@@ -196,6 +150,9 @@ extension PVNetplayBonjourDiscovery: @preconcurrency NetServiceDelegate {
         pendingServices.removeAll { $0 === sender }
         resolvedServices[sender.name] = sender
         updateRoom(from: sender)
+        // Without monitoring, didUpdateTXTRecord never fires and the player
+        // count a host republishes is never seen.
+        sender.startMonitoring()
     }
 
     public func netService(

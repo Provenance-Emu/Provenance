@@ -60,6 +60,10 @@ extension PVThinLibretroCore: PVNetplayCapable {
     /// PPSSPP reads its ad hoc server and port offset only when the game boots.
     var netplayHostingRestartsGame: Bool { isPPSSPPAdhocCore }
 
+    /// Netpacket sessions publish their room through `NetpacketTransport`.
+    /// PPSSPP ad hoc runs its own server, so `PVNetplayManager` publishes it.
+    var netplayAdvertisesOwnRoom: Bool { !isPPSSPPAdhocCore }
+
     /// Start hosting or join a host. Netpacket sessions have players only, so
     /// spectating is unsupported.
     func startNetplay(role: NetplayRole, settings: NetplaySettings) async throws {
@@ -91,14 +95,7 @@ extension PVThinLibretroCore: PVNetplayCapable {
         if case .host = transportRole {
             transport.bonjourAdvertisement = (
                 name: Self.bonjourInstanceName("\(room.hostName) — \(room.gameName)"),
-                txtRecord: [
-                    "sessionId": room.id.uuidString,
-                    "nickname": room.hostName,
-                    "game": room.gameName,
-                    "core": room.coreIdentifier,
-                    "maxPlayers": String(room.maxPlayers),
-                    "allowSpectators": "0"
-                ]
+                txtRecord: NetplayRoomTXTRecord.txtRecord(for: room)
             )
         }
 
@@ -233,7 +230,7 @@ extension PVThinLibretroCore {
         return NetplayRoom(
             hostName: settings.nickname.isEmpty ? "Provenance" : settings.nickname,
             gameName: gameName,
-            gameHash: "",
+            gameHash: romMD5 ?? "",
             coreIdentifier: coreIdentifier ?? "",
             maxPlayers: settings.maxPlayers,
             currentPlayers: 1,
@@ -655,7 +652,7 @@ extension PVThinLibretroCore {
         return NetplayRoom(
             hostName: settings.nickname.isEmpty ? "Provenance" : settings.nickname,
             gameName: gameName,
-            gameHash: "",
+            gameHash: romMD5 ?? "",
             coreIdentifier: coreIdentifier ?? "",
             maxPlayers: settings.maxPlayers,
             currentPlayers: 1,

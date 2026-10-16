@@ -1766,7 +1766,9 @@ struct PauseTileMenuView: View {
             NetplayLobbyView(
                 gameName: emulatorVC.game?.title ?? "",
                 coreIdentifier: emulatorVC.core.coreIdentifier ?? "",
-                localGameHash: emulatorVC.game?.md5Hash ?? ""
+                localGameHash: emulatorVC.game?.md5Hash ?? "",
+                gameSerial: emulatorVC.game?.romSerial ?? "",
+                systemIdentifier: emulatorVC.game?.systemIdentifier ?? ""
             )
         }
         #endif

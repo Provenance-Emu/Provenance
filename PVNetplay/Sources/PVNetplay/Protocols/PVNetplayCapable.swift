@@ -41,6 +41,7 @@ public protocol PVNetplayCapable: AnyObject, Sendable {
     var netplayHostStartsGame: Bool { get }
     func startNetplayGame() async throws
     var netplayHostingRestartsGame: Bool { get }
+    var netplayAdvertisesOwnRoom: Bool { get }
 
     #if canImport(Combine)
     /// A publisher that emits state changes.
@@ -66,6 +67,11 @@ extension PVNetplayCapable {
     /// Whether hosting restarts the running game, because the core reads its
     /// network settings only at boot (PPSSPP ad hoc). The UI warns first.
     public var netplayHostingRestartsGame: Bool { false }
+
+    /// Whether the core publishes its hosted room on the local network itself
+    /// (thin netpacket cores do, through `NetpacketTransport`). When false,
+    /// `PVNetplayManager` publishes it, so LAN players can find the room.
+    public var netplayAdvertisesOwnRoom: Bool { false }
 }
 
 public enum NetplayError: Error, LocalizedError, Sendable {
