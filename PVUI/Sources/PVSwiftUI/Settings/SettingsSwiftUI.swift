@@ -1157,17 +1157,29 @@ private struct SettingsSubheading: View {
 
 /// A `SettingsRow` with a trailing menu of choices. A bare menu-style `Picker` outside a `List` shows only the
 /// selected value, so the row's title and description would disappear.
+/// On tvOS the whole row is one focusable link into a `TVOSSettingsChoiceView`, so the row highlights on focus.
 private struct SettingsMenuPickerRow<Value: Hashable>: View {
     let title: String
     let subtitle: String?
-    let icon: SettingsIcon
+    /// SF Symbol name; tvOS also heads the choice list with it.
+    let symbol: String
     let choices: [Value]
     @Binding var selection: Value
     let label: (Value) -> String
 
     var body: some View {
+        #if os(tvOS)
+        NavigationLink(destination: TVOSSettingsChoiceView(title: title,
+                                                          icon: symbol,
+                                                          choices: choices,
+                                                          selection: $selection,
+                                                          label: label)) {
+            SettingsRow(title: title, subtitle: subtitle, value: label(selection), icon: .sfSymbol(symbol))
+        }
+        .retroFocusButtonStyle(showBorder: false)
+        #else
         HStack {
-            SettingsRow(title: title, subtitle: subtitle, icon: icon, showChevron: false)
+            SettingsRow(title: title, subtitle: subtitle, icon: .sfSymbol(symbol), showChevron: false)
             Picker(title, selection: $selection) {
                 ForEach(choices, id: \.self) { choice in
                     Text(label(choice)).tag(choice)
@@ -1177,6 +1189,7 @@ private struct SettingsMenuPickerRow<Value: Hashable>: View {
             .labelsHidden()
             .tint(.retroPink)
         }
+        #endif
     }
 }
 
@@ -1990,7 +2003,7 @@ private struct AnalogDeadzoneSection: View {
             }
             SettingsMenuPickerRow(title: "Core Deadzone Mode",
                                   subtitle: modeDescription,
-                                  icon: .sfSymbol("dial.medium"),
+                                  symbol: "dial.medium",
                                   choices: Array(Self.modes.indices),
                                   selection: $coreDeadzoneMode,
                                   label: { Self.modes[$0].label })
@@ -2234,7 +2247,7 @@ private struct DualSenseExtrasSection: View {
             }
             SettingsMenuPickerRow(title: "Mic Button Action",
                                   subtitle: "Action performed when the DualSense microphone button is pressed.",
-                                  icon: .sfSymbol("mic.fill"),
+                                  symbol: "mic.fill",
                                   choices: Self.micActions.map(\.value),
                                   selection: $micButtonAction,
                                   label: Self.micActionLabel)
@@ -2753,7 +2766,7 @@ private struct DeltaSkinsSection: View {
         Section {
             SettingsMenuPickerRow(title: "Skin Mode",
                                   subtitle: skinMode.subtitle,
-                                  icon: .sfSymbol("paintbrush.pointed"),
+                                  symbol: "paintbrush.pointed",
                                   choices: SkinMode.allCases,
                                   selection: $skinMode,
                                   label: \.description)
@@ -2763,7 +2776,7 @@ private struct DeltaSkinsSection: View {
             // 2026-10-14: it is a plain preference, not an experiment).
             SettingsMenuPickerRow(title: "Overlay Style",
                                   subtitle: "Look of the built-in on-screen controller.",
-                                  icon: .sfSymbol("circle.grid.cross"),
+                                  symbol: "circle.grid.cross",
                                   choices: OverlayStyle.allCases,
                                   selection: $overlayStyle,
                                   label: \.displayName)
