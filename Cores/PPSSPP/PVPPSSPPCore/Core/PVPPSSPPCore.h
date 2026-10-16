@@ -110,8 +110,6 @@ typedef enum PVJaguarButton: NSInteger PVJaguarButton;
 /// Maps the Stretch option and the app's scaling mode onto PPSSPP's display flags.
 - (void) applyDisplayScalingSetting;
 @end
-@interface CLLocationManager : NSObject
-@end
 static __weak PVPPSSPPCoreBridge *_current;
 
 NS_HEADER_AUDIT_END(nullability, sendability)
