@@ -1155,6 +1155,31 @@ private struct SettingsSubheading: View {
     }
 }
 
+/// A `SettingsRow` with a trailing menu of choices. A bare menu-style `Picker` outside a `List` shows only the
+/// selected value, so the row's title and description would disappear.
+private struct SettingsMenuPickerRow<Value: Hashable>: View {
+    let title: String
+    let subtitle: String?
+    let icon: SettingsIcon
+    let choices: [Value]
+    @Binding var selection: Value
+    let label: (Value) -> String
+
+    var body: some View {
+        HStack {
+            SettingsRow(title: title, subtitle: subtitle, icon: icon, showChevron: false)
+            Picker(title, selection: $selection) {
+                ForEach(choices, id: \.self) { choice in
+                    Text(label(choice)).tag(choice)
+                }
+            }
+            .pickerStyle(.menu)
+            .labelsHidden()
+            .tint(.retroPink)
+        }
+    }
+}
+
 // MARK: - Section Views
 private struct AppSection: View {
     @ObservedObject var viewModel: PVSettingsViewModel
@@ -1934,12 +1959,16 @@ private struct AnalogDeadzoneSection: View {
     @Default(.coreDeadzoneMode) var coreDeadzoneMode
     @State private var showingCompatibility = false
 
-    private let modeLabels = ["Auto", "Universal", "Core-Managed"]
-    private let modeDescriptions = [
-        "Skip universal if core reports managing deadzone",
-        "Always apply universal deadzone",
-        "Let each core manage its own deadzone"
+    /// `Defaults[.coreDeadzoneMode]` values, in order: 0 Auto, 1 Universal, 2 Core-Managed.
+    private static let modes: [(label: String, description: String)] = [
+        ("Auto", "Skip the universal deadzone when a core manages its own."),
+        ("Universal", "Always apply the universal deadzone."),
+        ("Core-Managed", "Let each core manage its own deadzone.")
     ]
+
+    private var modeDescription: String {
+        Self.modes.indices.contains(coreDeadzoneMode) ? Self.modes[coreDeadzoneMode].description : ""
+    }
 
     var body: some View {
         Section(
@@ -1959,34 +1988,19 @@ private struct AnalogDeadzoneSection: View {
                     Image(systemName: "circle.dashed")
                 }
             }
-            Picker("Core Deadzone Mode", selection: $coreDeadzoneMode) {
-                ForEach(0..<modeLabels.count, id: \.self) { index in
-                    VStack(alignment: .leading) {
-                        Text(modeLabels[index])
-                        Text(modeDescriptions[index])
-                            .font(.caption)
-                            .foregroundColor(.secondary)
-                    }
-                    .tag(index)
-                }
-            }
-            .pickerStyle(.menu)
+            SettingsMenuPickerRow(title: "Core Deadzone Mode",
+                                  subtitle: modeDescription,
+                                  icon: .sfSymbol("dial.medium"),
+                                  choices: Array(Self.modes.indices),
+                                  selection: $coreDeadzoneMode,
+                                  label: { Self.modes[$0].label })
             Button {
                 showingCompatibility = true
             } label: {
-                HStack {
-                    Image(systemName: "list.bullet.clipboard")
-                        .foregroundColor(.accentColor)
-                    Text("settings.controller.core_compatibility", bundle: .module)
-                    Spacer()
-                    let done = CoreDeadzoneCompatibilityCatalog.supportedEntries.count
-                    let total = CoreDeadzoneCompatibilityCatalog.entries.count
-                    Text(verbatim: "\(done)/\(total)")
-                        .foregroundColor(.secondary)
-                    Image(systemName: "chevron.right")
-                        .font(.caption)
-                        .foregroundColor(.secondary)
-                }
+                SettingsRow(title: NSLocalizedString("settings.controller.core_compatibility", bundle: .module, comment: ""),
+                            subtitle: "Which cores coordinate with the universal deadzone.",
+                            value: "\(CoreDeadzoneCompatibilityCatalog.supportedEntries.count)/\(CoreDeadzoneCompatibilityCatalog.entries.count)",
+                            icon: .sfSymbol("list.bullet.clipboard"))
             }
             #if os(tvOS)
             .retroFocusButtonStyle(showBorder: false)
@@ -2203,6 +2217,13 @@ private struct DualSenseExtrasSection: View {
     @Default(.controllerLightBarEnabled) var lightBarEnabled
     @Default(.dualSenseMicButtonAction) var micButtonAction
 
+    /// `Defaults[.dualSenseMicButtonAction]` values and their labels, in menu order.
+    private static let micActions: [(value: String, label: String)] = [("muteAudio", "Mute Audio"), ("none", "None")]
+
+    private static func micActionLabel(_ value: String) -> String {
+        micActions.first { $0.value == value }?.label ?? value
+    }
+
     var body: some View {
         Section {
             ThemedToggle(isOn: $lightBarEnabled) {
@@ -2211,15 +2232,12 @@ private struct DualSenseExtrasSection: View {
                             icon: .sfSymbol("light.beacon.max.fill"),
                             showChevron: false)
             }
-            Picker(selection: $micButtonAction,
-                   label: SettingsRow(title: "Mic Button Action",
-                                      subtitle: "Action performed when the DualSense microphone button is pressed.",
-                                      icon: .sfSymbol("mic.fill"),
-                                      showChevron: false)) {
-                Text("Mute Audio").tag("muteAudio")
-                Text("None").tag("none")
-            }
-            .pickerStyle(.menu)
+            SettingsMenuPickerRow(title: "Mic Button Action",
+                                  subtitle: "Action performed when the DualSense microphone button is pressed.",
+                                  icon: .sfSymbol("mic.fill"),
+                                  choices: Self.micActions.map(\.value),
+                                  selection: $micButtonAction,
+                                  label: Self.micActionLabel)
         }
     }
 }
@@ -2733,51 +2751,22 @@ private struct DeltaSkinsSection: View {
 
     var body: some View {
         Section {
-            VStack {
-                Text("settings.skins.skin_mode", bundle: .module)
-                    .font(.system(.headline, design: .monospaced))
-                    .foregroundColor(.retroBlue)
-
-                Picker("Select skin mode", selection: $skinMode) {
-                    ForEach(SkinMode.allCases, id: \.self) { theme in
-                        Text(theme.rawValue.uppercased()).tag(theme)
-                    }
-                }
-#if !os(tvOS)
-                .pickerStyle(.wheel)
-#else
-                .pickerStyle(.automatic)
-#endif
-                .frame(height: 100)
-                .overlay(
-                    RoundedRectangle(cornerRadius: 8)
-                        .strokeBorder(
-                            LinearGradient(
-                                gradient: Gradient(colors: [.retroPink, .retroBlue]),
-                                startPoint: .leading,
-                                endPoint: .trailing
-                            ),
-                            lineWidth: 1.5
-                        )
-                )
-                .background(Color.retroBlack.opacity(0.5))
-                .cornerRadius(8)
-
-                Text(skinMode.subtitle)
-                    .font(.system(.subheadline, design: .monospaced))
-                    .foregroundColor(.retroBlue)
-            }
-            .frame(maxWidth: .infinity)
+            SettingsMenuPickerRow(title: "Skin Mode",
+                                  subtitle: skinMode.subtitle,
+                                  icon: .sfSymbol("paintbrush.pointed"),
+                                  choices: SkinMode.allCases,
+                                  selection: $skinMode,
+                                  label: \.description)
 
             #if os(iOS)
             // Look of the programmatic on-screen controller (moved here from Advanced,
             // 2026-10-14: it is a plain preference, not an experiment).
-            Picker("Overlay Style", selection: $overlayStyle) {
-                ForEach(OverlayStyle.allCases) { style in
-                    Text(style.displayName).tag(style)
-                }
-            }
-            .padding(.vertical, 4)
+            SettingsMenuPickerRow(title: "Overlay Style",
+                                  subtitle: "Look of the built-in on-screen controller.",
+                                  icon: .sfSymbol("circle.grid.cross"),
+                                  choices: OverlayStyle.allCases,
+                                  selection: $overlayStyle,
+                                  label: \.displayName)
 
             ThemedToggle(isOn: $skinMultiButtonTouch) {
                 SettingsRow(title: "Skin Multi-Button Touch",
