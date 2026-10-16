@@ -43,7 +43,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "1A3D409317B2DCE4004DFFFC"
-               BuildableName = "Provenance.app"
+               BuildableName = "Provenance-Dev.app"
                BlueprintName = "Provenance"
                ReferencedContainer = "container:Provenance.xcodeproj">
             </BuildableReference>
@@ -73,7 +73,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "1A3D409317B2DCE4004DFFFC"
-            BuildableName = "Provenance.app"
+            BuildableName = "Provenance-Dev.app"
             BlueprintName = "Provenance"
             ReferencedContainer = "container:Provenance.xcodeproj">
          </BuildableReference>
@@ -112,7 +112,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "1A3D409317B2DCE4004DFFFC"
-            BuildableName = "Provenance.app"
+            BuildableName = "Provenance-Dev.app"
             BlueprintName = "Provenance"
             ReferencedContainer = "container:Provenance.xcodeproj">
          </BuildableReference>
@@ -135,7 +135,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "1A3D409317B2DCE4004DFFFC"
-            BuildableName = "Provenance.app"
+            BuildableName = "Provenance-Dev.app"
             BlueprintName = "Provenance"
             ReferencedContainer = "container:Provenance.xcodeproj">
          </BuildableReference>
