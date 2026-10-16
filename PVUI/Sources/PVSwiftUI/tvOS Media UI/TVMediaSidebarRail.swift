@@ -509,11 +509,13 @@ struct TVMediaSidebarRail: View {
     }
 
     private var sidebarItems: [SidebarItem] {
-        SidebarItem.mainNavItems + [.imports] + (onSelectNearby != nil ? [.nearby] : []) + [
-            .settings,
-            .destination(.logs),
-            .status
-        ]
+        var items = SidebarItem.mainNavItems
+        items.append(.imports)
+        if onSelectNearby != nil {
+            items.append(.nearby)
+        }
+        items += [.settings, .destination(.logs), .status]
+        return items
     }
 
     private func moveSidebarFocus(isNext: Bool) {

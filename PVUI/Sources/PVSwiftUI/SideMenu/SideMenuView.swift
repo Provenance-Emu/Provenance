@@ -153,7 +153,8 @@ SideMenuView: SwiftUI.View {
             .receive(on: DispatchQueue.main)
             .filter { _ in
                 print("viewModel.isMenuVisible: \(viewModel.isMenuVisible)")
-                return viewModel.isMenuVisible
+                // The Nearby Libraries sheet owns the controller while it is up.
+                return viewModel.isMenuVisible && !showNearbyLibraries
             }
             .sink { event in
                 // Suppress while a full-screen retrowave alert is on top.
@@ -199,7 +200,11 @@ SideMenuView: SwiftUI.View {
     }
 
     private func handleVerticalNavigation(_ value: Float, proxy: ScrollViewProxy? = nil) {
-        let items = ["home", "settings", "imports"] + (showsNearbyLibraries ? [Self.nearbyItem] : []) + sortedConsoles().map(\.identifier)
+        var items = ["home", "settings", "imports"]
+        if showsNearbyLibraries {
+            items.append(Self.nearbyItem)
+        }
+        items += sortedConsoles().map(\.identifier)
 
         if let currentIndex = items.firstIndex(of: focusedItem ?? "") {
             let newIndex: Int

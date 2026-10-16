@@ -83,8 +83,8 @@ public final class LibrarySharingService {
             .map { _ in PVFeatureFlags.shared.isEnabled(.nearbyLibraries) }
             .removeDuplicates()
             .receive(on: DispatchQueue.main)
-            .sink { [weak self] _ in
-                Task { await self?.apply() }
+            .sink { _ in
+                Task { @MainActor in await LibrarySharingService.shared.apply() }
             }
     }
 
