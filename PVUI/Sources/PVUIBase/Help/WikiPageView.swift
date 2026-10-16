@@ -58,7 +58,8 @@ public struct WikiPageView: View {
         #if os(tvOS)
         ScrollView {
             Button(action: {}) {
-                MarkdownView(text: page.content, baseURL: WikiConstants.baseURL)
+                MarkdownView(page.content)
+                    .markdownBaseURL(WikiConstants.baseURL)
                     .font(.custom("Menlo", size: 14), for: .body)
                     .font(.custom("Menlo", size: 24), for: .h1)
                     .font(.custom("Menlo", size: 20), for: .h2)
@@ -125,7 +126,8 @@ private struct WikiContentView: View {
                 if fragment != nil {
                     sectionedContent
                 } else {
-                    MarkdownView(text: page.content, baseURL: WikiConstants.baseURL)
+                    MarkdownView(page.content)
+                        .markdownBaseURL(WikiConstants.baseURL)
                         .padding()
                 }
             }
@@ -173,10 +175,8 @@ private struct WikiContentView: View {
         let referenceDefs = extractReferenceDefinitions(page.content)
         return VStack(alignment: .leading, spacing: 0) {
             ForEach(sections) { section in
-                MarkdownView(
-                    text: referenceDefs.isEmpty ? section.content : referenceDefs + "\n\n" + section.content,
-                    baseURL: WikiConstants.baseURL
-                )
+                MarkdownView(referenceDefs.isEmpty ? section.content : referenceDefs + "\n\n" + section.content)
+                    .markdownBaseURL(WikiConstants.baseURL)
                 .id(section.anchorID)
             }
         }

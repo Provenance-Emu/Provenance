@@ -104,7 +104,8 @@ let package = Package(
         .package(url: "https://github.com/SvenTiigi/WhatsNewKit.git", from: "2.2.1"),
 
         /// https://swiftpackageindex.com/LiYanan2004/MarkdownView
-        .package(url: "https://github.com/LiYanan2004/MarkdownView.git", from: "1.7.0"),
+        /// 3.0.0 is the first release that compiles against the iOS 27 SDK.
+        .package(url: "https://github.com/LiYanan2004/MarkdownView.git", from: "3.0.0"),
 
         // MARK: Snapshot testing (Milestone 3 — Screenshot Automation)
         /// Prefire: generates snapshot tests from SwiftUI #Preview macros.

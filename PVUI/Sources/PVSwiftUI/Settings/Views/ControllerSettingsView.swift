@@ -1061,7 +1061,7 @@ private struct KeyboardControlsGuideView: View {
     var body: some View {
         ScrollView {
             #if os(tvOS)
-            MarkdownView(text: keyboardMappingDocs)
+            MarkdownView(keyboardMappingDocs)
                 .font(.custom("Menlo", size: 14), for: .body)
                 .font(.custom("Menlo", size: 24), for: .h1)
                 .font(.custom("Menlo", size: 20), for: .h2)
@@ -1079,7 +1079,7 @@ private struct KeyboardControlsGuideView: View {
                 )
                 .focusable()
             #else
-            MarkdownView(text: keyboardMappingDocs)
+            MarkdownView(keyboardMappingDocs)
                 .font(.custom("Menlo", size: 14), for: .body)
                 .font(.custom("Menlo", size: 24), for: .h1)
                 .font(.custom("Menlo", size: 20), for: .h2)
