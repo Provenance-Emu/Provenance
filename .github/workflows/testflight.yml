@@ -79,7 +79,11 @@ jobs:
     # ["self-hosted","macOS","ARM64","studio"]) to run this job on the Mac Studio; leave it
     # unset to use GitHub-hosted macos-26. Pull requests from forks ALWAYS run on the
     # hosted runner - never run untrusted fork code on the self-hosted machine.
-    runs-on: ${{ (vars.MACOS_RUNNER_LABELS != '' && (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository)) && fromJSON(vars.MACOS_RUNNER_LABELS) || 'macos-26' }}
+    # TESTFLIGHT_RUNNER_LABELS, when set, overrides MACOS_RUNNER_LABELS for this job only:
+    # signing needs a runner in a logged-in GUI session (["self-hosted","studio-gui"]); the
+    # Studio's LaunchDaemon runners (ghrunner) fail every codesign with errSecInternalComponent
+    # (iCube runs 38851908047, 38855707340).
+    runs-on: ${{ ((vars.TESTFLIGHT_RUNNER_LABELS || vars.MACOS_RUNNER_LABELS) != '' && (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository)) && fromJSON(vars.TESTFLIGHT_RUNNER_LABELS || vars.MACOS_RUNNER_LABELS) || 'macos-26' }}
     # One platform per job. Previously a single job archived both in sequence,
     # and the second one — tvOS — died at the very end with exit 65 and no
     # diagnostic (run 33841167021), while iOS alone (33851969129) and tvOS alone
