@@ -167,6 +167,7 @@ enum TVMediaModal: Identifiable, Equatable {
     case romInstructions
     case artworkSearch(game: PVGame)
     case imagePicker(game: PVGame)
+    case nearbyLibraries
 
     var id: String {
         switch self {
@@ -190,6 +191,8 @@ enum TVMediaModal: Identifiable, Equatable {
             return "artworkSearch-\(game.id)"
         case .imagePicker(let game):
             return "imagePicker-\(game.id)"
+        case .nearbyLibraries:
+            return "nearbyLibraries"
         }
     }
 

@@ -106,6 +106,28 @@ struct NearbyLibrariesView: View {
     }
 }
 
+/// Nearby Libraries presented from the library itself (side menu on iOS, the
+/// TV sidebar rail), not pushed from Settings: it brings its own navigation
+/// stack, which the peer and Share This Library screens push onto.
+struct NearbyLibrariesSheet: View {
+    #if os(iOS)
+    @Environment(\.dismiss) private var dismiss
+    #endif
+
+    var body: some View {
+        NavigationStack {
+            NearbyLibrariesView()
+                #if os(iOS)
+                .toolbar {
+                    ToolbarItem(placement: .confirmationAction) {
+                        Button("Done") { dismiss() }
+                    }
+                }
+                #endif
+        }
+    }
+}
+
 /// URL, username and password for a content server. The password is used
 /// once to sign in and is not stored.
 private struct AddContentServerView: View {

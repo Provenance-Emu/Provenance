@@ -16,6 +16,8 @@ struct TVMediaSidebarRail: View {
     let onSelectSettings: () -> Void
     let onSelectStatus: () -> Void
     let onSelectImports: () -> Void
+    /// Opens Nearby Libraries; nil hides the item (`nearbyLibraries` flag off).
+    var onSelectNearby: (() -> Void)?
 
     @FocusState private var focusedItem: SidebarItem?
     @ObservedObject private var iconManager = IconManager.shared
@@ -166,6 +168,10 @@ struct TVMediaSidebarRail: View {
                 // Footer items
                 sidebarButton(for: .imports)
                     .id(SidebarItem.imports)
+                if onSelectNearby != nil {
+                    sidebarButton(for: .nearby)
+                        .id(SidebarItem.nearby)
+                }
                 sidebarButton(for: .settings)
                     .id(SidebarItem.settings)
                 sidebarButton(for: .destination(.logs))
@@ -437,6 +443,8 @@ struct TVMediaSidebarRail: View {
             onSelectStatus()
         case .imports:
             onSelectImports()
+        case .nearby:
+            onSelectNearby?()
         }
 
         focusedItem = nil
@@ -501,8 +509,7 @@ struct TVMediaSidebarRail: View {
     }
 
     private var sidebarItems: [SidebarItem] {
-        SidebarItem.mainNavItems + [
-            .imports,
+        SidebarItem.mainNavItems + [.imports] + (onSelectNearby != nil ? [.nearby] : []) + [
             .settings,
             .destination(.logs),
             .status
@@ -535,6 +542,7 @@ private enum SidebarItem: Hashable {
     case settings
     case status
     case imports
+    case nearby
 
     static let mainNavItems: [SidebarItem] = [
         .destination(.home),
@@ -551,6 +559,7 @@ private enum SidebarItem: Hashable {
         case .settings: return "Settings"
         case .status: return "Status"
         case .imports: return "Imports"
+        case .nearby: return "Nearby"
         }
     }
 
@@ -570,6 +579,7 @@ private enum SidebarItem: Hashable {
         case .settings: return "gearshape"
         case .status: return "info.circle"
         case .imports: return "tray.and.arrow.down"
+        case .nearby: return "antenna.radiowaves.left.and.right"
         }
     }
 
@@ -580,7 +590,7 @@ private enum SidebarItem: Hashable {
             return d == dest
         case .settings: return dest == .settings
         case .status: return dest == .status
-        case .imports: return false
+        case .imports, .nearby: return false
         }
     }
 }

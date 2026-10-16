@@ -12,6 +12,7 @@ import SwiftUI
 import RealmSwift
 import PVLibrary
 import PVThemes
+import PVFeatureFlags
 import Combine
 @_exported import PVUIBase
 
@@ -71,6 +72,23 @@ SideMenuView: SwiftUI.View {
     @State private var continuousNavigationTask: Task<Void, Never>?
 
     @ObservedObject private var gamepadManager = GamepadManager.shared
+
+    @ObservedObject private var featureFlags = PVFeatureFlagsManager.shared
+
+    @State private var showNearbyLibraries = false
+
+    /// Focus id of the Nearby Libraries row (gamepad navigation).
+    private static let nearbyItem = "nearby"
+
+    /// Nearby Libraries lives in Settings too; the library gets its own row so
+    /// shared libraries on this network are one tap away.
+    private var showsNearbyLibraries: Bool {
+        #if os(iOS) || os(tvOS)
+        return featureFlags.nearbyLibraries
+        #else
+        return false
+        #endif
+    }
 
     @State private var delayTask: Task<Void, Never>?
 
@@ -172,6 +190,8 @@ SideMenuView: SwiftUI.View {
             delegate.didTapSettings()
         case "imports":
             delegate.didTapImports()
+        case Self.nearbyItem:
+            showNearbyLibraries = true
         default:
             // Handle console selection
             delegate.didTapConsole(with: focusedItem)
@@ -179,7 +199,7 @@ SideMenuView: SwiftUI.View {
     }
 
     private func handleVerticalNavigation(_ value: Float, proxy: ScrollViewProxy? = nil) {
-        let items = ["home", "settings", "imports"] + sortedConsoles().map(\.identifier)
+        let items = ["home", "settings", "imports"] + (showsNearbyLibraries ? [Self.nearbyItem] : []) + sortedConsoles().map(\.identifier)
 
         if let currentIndex = items.firstIndex(of: focusedItem ?? "") {
             let newIndex: Int
@@ -255,6 +275,24 @@ SideMenuView: SwiftUI.View {
             }
             .focusableIfAvailable()
             .focused($focusedItem, equals: "imports")
+        }
+    }
+
+    @ViewBuilder
+    private func nearbyLibrariesSection() -> some View {
+        if showsNearbyLibraries {
+            Group {
+                Rectangle()
+                    .fill(Color.retroCyan.opacity(0.15))
+                    .frame(height: 1)
+
+                MenuItemView(icon: .sfSymbol("antenna.radiowaves.left.and.right"), rowTitle: "Nearby Libraries",
+                             isFocused: focusedItem == Self.nearbyItem) {
+                    showNearbyLibraries = true
+                }
+                .focusableIfAvailable()
+                .focused($focusedItem, equals: Self.nearbyItem)
+            }
         }
     }
 
@@ -342,6 +380,7 @@ SideMenuView: SwiftUI.View {
                                 headerItems()
                                 addGamesSection()
                                 importQueueSection()
+                                nearbyLibrariesSection()
 
                                 #if canImport(FreemiumKit)
                                 Rectangle()
@@ -398,6 +437,11 @@ SideMenuView: SwiftUI.View {
                 }
             )
         }
+        #if os(iOS) || os(tvOS)
+        .sheet(isPresented: $showNearbyLibraries) {
+            NearbyLibrariesSheet()
+        }
+        #endif
         .onDisappear {
             delayTask?.cancel()
             continuousNavigationTask?.cancel()

@@ -593,7 +593,10 @@ struct TVMediaMainView: View {
                 },
                 onSelectImports: {
                     showingImportsAlert = true
-                }
+                },
+                onSelectNearby: featureFlagsManager.nearbyLibraries ? {
+                    router.present(.nearbyLibraries)
+                } : nil
             )
             .tvMediaFocusScope(sidebarNamespace)
             .tvMediaPrefersDefaultFocus(focusCoordinator.isSidebarExpanded, in: sidebarNamespace)
@@ -788,6 +791,8 @@ struct TVMediaMainView: View {
             NavigationStack {
                 TVMediaROMInstructionsView(onDismiss: { router.dismissModal() })
             }
+        case .nearbyLibraries:
+            NearbyLibrariesSheet()
         case .artworkSearch(let game):
             let actions = gameActions
             NavigationStack {
