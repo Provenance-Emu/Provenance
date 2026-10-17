@@ -57,23 +57,26 @@ line-local and leaves restructuring those blocks for later.
    head the debug rows with "Developer Tools".
    Files: `AdvancedTogglesView.swift` (heading only), `SettingsSwiftUI.swift`.
 
-6. **Gameplay features live under Advanced.** Netplay, N64 Transfer Pak, Light Gun Crosshair, Gameplay
+6. **[done bbc25e28f3] Gameplay features live under Advanced.** Netplay, N64 Transfer Pak, Light Gun Crosshair, Gameplay
    Clips, Live Broadcast, AirPlay Audio Menu, Companion Controller and Case Companion Skins are user
    features, not advanced settings. Proposal: a "Gameplay Features" section in the Emulation pane (and a
    tvOS section). That needs a new `SettingsSectionTitle`, a pane mapping, a tvOS section, search entries
-   and test updates in one commit. Deferred because `netplay-lan` is editing those toggles.
+   and test updates in one commit. As built: `GameplayFeaturesSection` (Emulation pane, tvOS section after
+   Saves), search ids renamed `play.*`, Netplay text mentions the library Network Play lobby.
 
-7. **Library Management is 16 rows in one card.** Storage, cloud, backup, import, nearby, NFC, artwork,
+7. **[done a9b38c2b5e] Library Management is 16 rows in one card.** Storage, cloud, backup, import, nearby, NFC, artwork,
    patches, two toggles, four maintenance actions and Reset all sit together. Proposal: sub-headings
    (Storage & Sync / Library Tools / Import Options / Maintenance), with Reset Library last and set apart.
-   Deferred: `shared-libs-ui` is editing this block.
+   As built: "Library Options" instead of "Import Options" (Show Unsupported Cores is not an import option);
+   Reset Library is the last Maintenance row.
 
-8. **Advanced › iCloud Sync duplicates Cloud Sync Settings** (non-App Store builds only). Drop it, or turn
+8. **[done 70f1fd76c5, dropped] Advanced › iCloud Sync duplicates Cloud Sync Settings** (non-App Store builds only). Drop it, or turn
    it into a link to the Cloud Sync page.
 
-9. **The Version row says "AppStore" on App Store builds made off master** (`PVSettingsViewModel.versionText`;
+9. **[done f60c34a8ca] The Version row says "AppStore" on App Store builds made off master** (`PVSettingsViewModel.versionText`;
    sideloads say "Beta"). Also, `??` binds looser than `+`, so the build-number suffix is dead code. Decide
-   what the row should show.
+   what the row should show. As built: "3.4.0 (build)" everywhere (Settings and side menu), no channel
+   suffix; the Settings check was really `ALTDeviceID`, so AltStore installs said "AppStore".
 
 ## P3 — visual consistency
 
@@ -91,30 +94,34 @@ line-local and leaves restructuring those blocks for later.
     `HStack` with `accentColor`. Fix: `SettingsRow` labels, menu style on iOS.
     Files: `SettingsSwiftUI.swift`.
 
-12. **iCloud Sync UI still isn't on retrowave tiles.** `CloudSyncSettingsView` (1,959 lines),
+12. **[done 4b932c6212] iCloud Sync UI still isn't on retrowave tiles.** `CloudSyncSettingsView` (1,959 lines),
     `SyncLogViewer` (995) and `CloudSyncStatusView` use their own row types (`CloudSyncToggleRow`,
     `CloudSyncStepperRow`, `CloudSyncSelectionRow`) on flat `retroBlack.opacity(0.3)` cards. The target is
-    the pause-menu tile look (see `ImportStatusView`). This is a session on its own: it needs a device pass
-    on both platforms.
+    the pause-menu tile look (see `ImportStatusView`). As built: an April pass had already styled the rows,
+    headers and `SyncLogViewer`; the 26 flat panels left now use `cloudSyncCard()` / new `cloudSyncTile()`,
+    and iOS gets the tvOS grid background. `CloudSyncStatusView` is unreachable (only its preview creates
+    it) and was left alone; delete it in a follow-up.
 
-13. **DualSense Mic Button Action uses raw string tags** (`"muteAudio"` / `"none"`). The view now keeps
+13. **[done a3af5d4f78] DualSense Mic Button Action uses raw string tags** (`"muteAudio"` / `"none"`). The view now keeps
     them in one table (43157ab5f6); the key itself is still a `String`. Back it with an enum.
 
-14. **Two different `isAppStore` checks** (`AppState.shared.isAppStore` vs `PVAppType` in
+14. **[done 0f5a77beda] Two different `isAppStore` checks** (`AppState.shared.isAppStore` vs `PVAppType` in
     `AdvancedTogglesView`). Use one.
 
 ## Found during the batch
 
-15. **`HapticFeedbackService` has its own key with no UI.** `@AppStorage("hapticFeedbackEnabled")` gates
+15. **[done a5dc4efdd0, dropped] `HapticFeedbackService` has its own key with no UI.** `@AppStorage("hapticFeedbackEnabled")` gates
     the success/error/selection taps in menus, and nothing in Settings writes it. Either add it as a "UI
-    Haptics" row in Haptics & Rumble, or drop the check.
+    Haptics" row in Haptics & Rumble, or drop the check. Dropped: it only gates taps in the Cloud Sync
+    screens and the support prompt, which iOS System Haptics already covers.
 
-16. **Volume HUD (`Defaults[.volumeHUD]`) is still read** by `PVControllerViewController`, but its
+16. **[done ce4e854f24, restored] Volume HUD (`Defaults[.volumeHUD]`) is still read** by `PVControllerViewController`, but its
     Settings row was commented out (the dead comment is now removed). Decide whether it comes back.
 
-17. **The pause menu and Settings offer different auto-save presets.** The pause-menu long-press menu has
+17. **[done 92462068b9] The pause menu and Settings offer different auto-save presets.** The pause-menu long-press menu has
     2/5/10/15/30 min; Settings on tvOS has 1/2/5/10/15/20/30 (`AutoSaveIntervalRules.presets`). PVUIBase
-    can't import PVSwiftUI, so sharing them means moving the rules down a tier.
+    can't import PVSwiftUI, so sharing them means moving the rules down a tier. As built:
+    `AutoSaveIntervalRules` lives in PVSettings; the tile lists the presets plus the stored value.
 
 18. **Device pass needed for this batch:**
     - tvOS: Menu from Patches / ROM Tools and from Session Logs goes back one level.
@@ -124,3 +131,7 @@ line-local and leaves restructuring those blocks for later.
       row text and the selected value.
     - In game: the pause-menu Rumble tile silences controller and device rumble, and the skin
       "toggle haptics" button silences on-screen button taps.
+    - In game (batch 2): the Timed Auto Save tile's long-press lists 1-30 min; Volume HUD off shows the
+      system volume overlay in the next game; the DualSense mic button still mutes after the enum change.
+    - Settings (batch 2): Emulation › Gameplay Features on iPhone, iPad and tvOS (tvOS focus into and out
+      of the new section); Library Management subheadings; Cloud Sync Settings cards on iPhone and tvOS.
