@@ -178,8 +178,7 @@ struct CloudKitRecordsManagementView: View {
                 }
                 .frame(maxWidth: .infinity)
                 .padding(.vertical, 12)
-                .background(Color.retroBlack.opacity(0.3))
-                .cornerRadius(8)
+                .cloudSyncTile()
 
                 // Total Storage
                 VStack {
@@ -193,8 +192,7 @@ struct CloudKitRecordsManagementView: View {
                 }
                 .frame(maxWidth: .infinity)
                 .padding(.vertical, 12)
-                .background(Color.retroBlack.opacity(0.3))
-                .cornerRadius(8)
+                .cloudSyncTile()
 
                 // Record Types
                 VStack {
@@ -208,8 +206,7 @@ struct CloudKitRecordsManagementView: View {
                 }
                 .frame(maxWidth: .infinity)
                 .padding(.vertical, 12)
-                .background(Color.retroBlack.opacity(0.3))
-                .cornerRadius(8)
+                .cloudSyncTile()
             }
         }
     }
@@ -281,7 +278,7 @@ struct CloudKitRecordsManagementView: View {
                 .background(
                     RoundedRectangle(cornerRadius: 12)
                         .fill(viewModel.selectedRecordType == stats.recordType ?
-                              stats.color.opacity(0.15) : Color.retroBlack.opacity(0.3))
+                              stats.color.opacity(0.15) : Color.black.opacity(0.7))
                         .overlay(
                             RoundedRectangle(cornerRadius: 12)
                                 .stroke(viewModel.selectedRecordType == stats.recordType ?
@@ -486,9 +483,7 @@ struct CloudKitRecordsManagementView: View {
                 }
             }
         }
-        .padding()
-        .background(Color.retroBlack.opacity(0.3))
-        .cornerRadius(12)
+        .cloudSyncCard()
     }
 
     private func recordRow(record: CloudKitRecordItem) -> some View {
@@ -623,8 +618,7 @@ struct CloudKitRecordsManagementView: View {
                     }
                     .padding()
                     .frame(maxWidth: .infinity, alignment: .leading)
-                    .background(Color.retroBlack.opacity(0.3))
-                    .cornerRadius(8)
+                    .cloudSyncTile()
 
                     // Size and Dates
                     HStack(spacing: 12) {
@@ -639,8 +633,7 @@ struct CloudKitRecordsManagementView: View {
                             }
                             .frame(maxWidth: .infinity)
                             .padding()
-                            .background(Color.retroBlack.opacity(0.3))
-                            .cornerRadius(8)
+                            .cloudSyncTile()
                         }
 
                         if let created = record.createdAt {
@@ -654,8 +647,7 @@ struct CloudKitRecordsManagementView: View {
                             }
                             .frame(maxWidth: .infinity)
                             .padding()
-                            .background(Color.retroBlack.opacity(0.3))
-                            .cornerRadius(8)
+                            .cloudSyncTile()
                         }
 
                         if let modified = record.modifiedAt {
@@ -669,8 +661,7 @@ struct CloudKitRecordsManagementView: View {
                             }
                             .frame(maxWidth: .infinity)
                             .padding()
-                            .background(Color.retroBlack.opacity(0.3))
-                            .cornerRadius(8)
+                            .cloudSyncTile()
                         }
                     }
 
@@ -695,8 +686,7 @@ struct CloudKitRecordsManagementView: View {
                         }
                         .padding()
                         .frame(maxWidth: .infinity, alignment: .leading)
-                        .background(Color.retroBlack.opacity(0.3))
-                        .cornerRadius(8)
+                        .cloudSyncTile()
                     }
 
                     // Delete Button

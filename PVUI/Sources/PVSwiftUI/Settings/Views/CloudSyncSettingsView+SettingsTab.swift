@@ -71,9 +71,7 @@ extension CloudSyncSettingsView {
                 }
             }
             #if !os(tvOS)
-            .padding()
-            .background(Color.retroBlack.opacity(0.3))
-            .cornerRadius(10)
+            .cloudSyncCard()
             #endif
         }
     }
@@ -119,9 +117,7 @@ extension CloudSyncSettingsView {
                 }
             }
             #if !os(tvOS)
-            .padding()
-            .background(Color.retroBlack.opacity(0.3))
-            .cornerRadius(10)
+            .cloudSyncCard()
             #endif
         }
     }
@@ -166,9 +162,7 @@ extension CloudSyncSettingsView {
                 }
             }
             #if !os(tvOS)
-            .padding()
-            .background(Color.retroBlack.opacity(0.3))
-            .cornerRadius(10)
+            .cloudSyncCard()
             #endif
         }
     }
@@ -231,7 +225,7 @@ extension CloudSyncSettingsView {
             .padding(12)
             .background(
                 RoundedRectangle(cornerRadius: 8)
-                    .fill(currentiCloudSyncMode == mode ? Color.retroPink.opacity(0.2) : Color.retroBlack.opacity(0.3))
+                    .fill(currentiCloudSyncMode == mode ? Color.retroPink.opacity(0.2) : Color.black.opacity(0.7))
                     .overlay(
                         RoundedRectangle(cornerRadius: 8)
                             .stroke(currentiCloudSyncMode == mode ? Color.retroPink : Color.clear, lineWidth: 1)
@@ -287,9 +281,7 @@ extension CloudSyncSettingsView {
                 .disabled(viewModel.isPerformingInitialSync)
             }
             #if !os(tvOS)
-            .padding()
-            .background(Color.retroBlack.opacity(0.3))
-            .cornerRadius(10)
+            .cloudSyncCard()
             #endif
         }
     }

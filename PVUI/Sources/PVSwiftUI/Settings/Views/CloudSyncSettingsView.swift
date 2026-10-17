@@ -54,15 +54,11 @@ public struct CloudSyncSettingsView: View {
 
     public var body: some View {
         ZStack {
-            #if os(tvOS)
             Color(red: 0.04, green: 0.04, blue: 0.12)
                 .edgesIgnoringSafeArea(.all)
             RetroGrid(lineSpacing: 30, lineColor: Color.retroPink.opacity(0.04))
                 .edgesIgnoringSafeArea(.all)
                 .opacity(0.4)
-            #else
-            Color.retroDarkBlue.edgesIgnoringSafeArea(.all)
-            #endif
 
             VStack(spacing: 0) {
                 statusHeader
@@ -78,11 +74,7 @@ public struct CloudSyncSettingsView: View {
                     recordsManagementTab.tag(4)
                 }
                 .tabViewStyle(.page(indexDisplayMode: .never))
-                #if os(tvOS)
                 .background(Color.white.opacity(0.02))
-                #else
-                .background(Color.retroBlack.opacity(0.3))
-                #endif
                 .cornerRadius(10)
                 .padding(.horizontal)
                 .padding(.bottom)
@@ -505,9 +497,7 @@ public struct CloudSyncSettingsView: View {
                         .foregroundColor(Color.retroPurple)
                 }
             }
-            .padding()
-            .background(Color.retroBlack.opacity(0.3))
-            .cornerRadius(10)
+            .cloudSyncCard()
         }
     }
 
@@ -593,9 +583,7 @@ public struct CloudSyncSettingsView: View {
                         .progressViewStyle(CircularProgressViewStyle(tint: .retroBlue))
                     Spacer()
                 }
-                .padding()
-                .background(Color.retroBlack.opacity(0.3))
-                .cornerRadius(10)
+                .cloudSyncCard()
             } else {
                 RetroCharts.BarChart(
                     values: [
@@ -622,9 +610,7 @@ public struct CloudSyncSettingsView: View {
                             .fontWeight(.bold)
                     }
                 }
-                .padding()
-                .background(Color.retroBlack.opacity(0.3))
-                .cornerRadius(10)
+                .cloudSyncCard()
             }
         }
     }
@@ -748,8 +734,7 @@ public struct CloudSyncSettingsView: View {
                         }
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 8)
-                        .background(Color.retroBlack.opacity(0.3))
-                        .cornerRadius(8)
+                        .cloudSyncTile()
 
                         VStack {
                             Text(verbatim: "\(viewModel.totalFiles ?? 0)")
@@ -763,8 +748,7 @@ public struct CloudSyncSettingsView: View {
                         }
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 8)
-                        .background(Color.retroBlack.opacity(0.3))
-                        .cornerRadius(8)
+                        .cloudSyncTile()
 
                         // Estimated time
                         VStack {
@@ -793,14 +777,11 @@ public struct CloudSyncSettingsView: View {
                         }
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 8)
-                        .background(Color.retroBlack.opacity(0.3))
-                        .cornerRadius(8)
+                        .cloudSyncTile()
                     }
                 }
             }
-            .padding()
-            .background(Color.retroBlack.opacity(0.3))
-            .cornerRadius(10)
+            .cloudSyncCard()
         }
     }
 
@@ -900,9 +881,7 @@ public struct CloudSyncSettingsView: View {
                             .fontWeight(.bold)
                     }
                 }
-                .padding()
-                .background(Color.retroBlack.opacity(0.3))
-                .cornerRadius(10)
+                .cloudSyncCard()
             }
         }
     }
@@ -937,9 +916,7 @@ public struct CloudSyncSettingsView: View {
                         .foregroundColor(.retroBlue)
                 }
             }
-            .padding()
-            .background(Color.retroBlack.opacity(0.3))
-            .cornerRadius(10)
+            .cloudSyncCard()
         }
     }
 
@@ -1147,8 +1124,7 @@ public struct CloudSyncSettingsView: View {
                                     .foregroundColor(.gray)
                             }
                             .padding()
-                            .background(Color.retroBlack.opacity(0.3))
-                            .cornerRadius(8)
+                            .cloudSyncTile()
                         }
                     }
                 }
@@ -1645,6 +1621,26 @@ extension View {
                     .strokeBorder(
                         LinearGradient(
                             colors: [Color.retroPurple.opacity(0.4), Color.retroPink.opacity(0.3)],
+                            startPoint: .topLeading,
+                            endPoint: .bottomTrailing
+                        ),
+                        lineWidth: 1
+                    )
+            )
+    }
+
+    /// Small stat tile (a count or a label over a value): the card look at tile size, no padding of its own.
+    func cloudSyncTile() -> some View {
+        self
+            .background(
+                RoundedRectangle(cornerRadius: 10, style: .continuous)
+                    .fill(Color.black.opacity(0.7))
+            )
+            .overlay(
+                RoundedRectangle(cornerRadius: 10, style: .continuous)
+                    .strokeBorder(
+                        LinearGradient(
+                            colors: [Color.retroBlue.opacity(0.4), Color.retroPurple.opacity(0.3)],
                             startPoint: .topLeading,
                             endPoint: .bottomTrailing
                         ),
