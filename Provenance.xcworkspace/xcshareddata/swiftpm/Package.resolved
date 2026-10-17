@@ -181,6 +181,15 @@
       }
     },
     {
+      "identity" : "pvpatchengine",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/Provenance-Emu/PVPatchEngine.git",
+      "state" : {
+        "revision" : "ba3594ea9997bf3e94070bafc3be0c912a382593",
+        "version" : "1.0.0"
+      }
+    },
+    {
       "identity" : "realm-core",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/realm/realm-core.git",
