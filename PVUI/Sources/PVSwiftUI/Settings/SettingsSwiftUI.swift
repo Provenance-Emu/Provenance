@@ -1664,6 +1664,7 @@ private struct ExtraInfoSection: View {
 private struct AudioSection: View {
     #if !os(tvOS)
     @Default(.volume) var volume
+    @Default(.volumeHUD) var volumeHUD
     @Default(.respectMuteSwitch) var respectMuteSwitch
     #endif
     @Default(.pauseOnHeadphonesDisconnect) var pauseOnHeadphonesDisconnect
@@ -1680,6 +1681,12 @@ private struct AudioSection: View {
                 SettingsRow(title: "Respect Silent Mode",
                             subtitle: respectMuteSwitch ? "Disable game audio when system ringer is muted. Does not apply to headphones or external audio destinations." : "Play game audio when system ringer is muted. Does not apply to headphones or external audio destinations.",
                             icon: respectMuteSwitch ? .sfSymbol("speaker.slash.fill") : .sfSymbol("speaker.slash"))
+            }
+            ThemedToggle(isOn: $volumeHUD) {
+                SettingsRow(title: "Volume HUD",
+                            subtitle: "In a game, show a slim volume bar instead of the system volume overlay. Takes effect from the next game.",
+                            icon: .sfSymbol("speaker.wave.2.circle"),
+                            showChevron: false)
             }
             VStack(alignment: .leading, spacing: 4) {
                 SettingsRow(title: NSLocalizedString("settings.audio.volume", bundle: .module, comment: ""),

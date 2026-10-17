@@ -128,6 +128,11 @@ struct SettingsSearchIndexTests {
         #expect(results.first?.id == "skins.overlaystyle")
     }
 
+    @Test("volume hud finds the restored Volume HUD row")
+    func volumeHUD() {
+        #expect(SettingsSearchIndex.search("volume hud").first?.id == "audio.volumehud")
+    }
+
     @Test("deadzone finds the analog deadzone rows")
     func deadzone() {
         let ids = SettingsSearchIndex.search("deadzone").map(\.id)

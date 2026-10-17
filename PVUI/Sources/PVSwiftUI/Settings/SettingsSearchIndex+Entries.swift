@@ -104,6 +104,8 @@ extension SettingsSearchIndex {
               .emulation, SettingsSectionTitle.audio, keywords: ["airpods", "bluetooth", "unplug", "pause"]),
         entry("audio.silent", "Respect Silent Mode", "Disable game audio when system ringer is muted.",
               .emulation, SettingsSectionTitle.audio, keywords: ["mute", "ringer", "switch", "sound"], tvOS: false),
+        entry("audio.volumehud", "Volume HUD", "In a game, show a slim volume bar instead of the system volume overlay.",
+              .emulation, SettingsSectionTitle.audio, keywords: ["volume", "overlay", "indicator", "bar"], tvOS: false),
         entry("audio.volume", "Volume", "Game audio volume.",
               .emulation, SettingsSectionTitle.audio, keywords: ["loud", "sound", "level"], tvOS: false),
         entry("audio.engine", "Audio Engine", "Configure audio engine, buffer and latency settings.",
