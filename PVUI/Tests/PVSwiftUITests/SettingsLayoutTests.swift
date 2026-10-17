@@ -56,6 +56,7 @@ struct SettingsLayoutTests {
         #expect(SettingsPane(section: SettingsSectionTitle.hapticsRumble) == .controllers)
         #expect(SettingsPane(section: SettingsSectionTitle.libraryManagement) == .library)
         #expect(SettingsPane(section: SettingsSectionTitle.video) == .audioVideo)
+        #expect(SettingsPane(section: SettingsSectionTitle.gameplayFeatures) == .emulation)
     }
 
     @Test("Legacy tab deep links open the pane holding that tab's first section")

@@ -64,7 +64,7 @@ struct SettingsSearchIndexTests {
     func caseAndDiacriticInsensitive() {
         let lower = SettingsSearchIndex.search("pokemon").map(\.id)
         let accented = SettingsSearchIndex.search("POKÉMON").map(\.id)
-        #expect(lower.contains("adv.transferpak"))
+        #expect(lower.contains("play.transferpak"))
         #expect(lower == accented)
     }
 
@@ -119,7 +119,16 @@ struct SettingsSearchIndexTests {
     @Test("clips finds Gameplay Clips")
     func clips() {
         let ids = SettingsSearchIndex.search("clips").map(\.id)
-        #expect(ids.contains("adv.clips"))
+        #expect(ids.contains("play.clips"))
+    }
+
+    @Test("Gameplay features are searched under Emulation, not Advanced")
+    func gameplayFeatures() {
+        let netplay = SettingsSearchIndex.search("netplay").first { $0.id == "play.netplay" }
+        #expect(netplay?.section == SettingsSectionTitle.gameplayFeatures)
+        #expect(netplay?.tab == .emulation)
+        #expect(netplay?.tvOSSection == SettingsSectionTitle.gameplayFeatures)
+        #expect(!SettingsSearchIndex.entries.contains { $0.section == SettingsSectionTitle.advanced && $0.title == "Netplay" })
     }
 
     @Test("overlay style finds the Delta Skins picker")

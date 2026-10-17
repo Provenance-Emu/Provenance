@@ -136,7 +136,7 @@ enum SettingsPane: String, CaseIterable, Identifiable {
         case .library:
             return [SettingsSectionTitle.library, SettingsSectionTitle.libraryManagement]
         case .emulation:
-            return [SettingsSectionTitle.coreOptions, SettingsSectionTitle.saves]
+            return [SettingsSectionTitle.coreOptions, SettingsSectionTitle.saves, SettingsSectionTitle.gameplayFeatures]
         case .audioVideo:
             return [SettingsSectionTitle.audio, SettingsSectionTitle.video, SettingsSectionTitle.recording]
         case .controllers:

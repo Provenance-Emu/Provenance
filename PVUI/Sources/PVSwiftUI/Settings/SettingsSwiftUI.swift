@@ -676,6 +676,10 @@ public struct PVSettingsView: View {
                                     SavesSection()
                                 }
 
+                                TVOSSettingsSection(title: SettingsSectionTitle.gameplayFeatures, icon: "sparkles") {
+                                    GameplayFeaturesSection()
+                                }
+
                                 TVOSSettingsSection(title: SettingsSectionTitle.audio, icon: "speaker.wave.3.fill") {
                                     AudioSection()
                                 }
@@ -835,6 +839,8 @@ public struct PVSettingsView: View {
             return paneSection(section) { CoreOptionsSection() }
         case SettingsSectionTitle.saves:
             return paneSection(section) { SavesSection() }
+        case SettingsSectionTitle.gameplayFeatures:
+            return paneSection(section) { GameplayFeaturesSection() }
         case SettingsSectionTitle.audio:
             return paneSection(section) { AudioSection() }
         case SettingsSectionTitle.video:

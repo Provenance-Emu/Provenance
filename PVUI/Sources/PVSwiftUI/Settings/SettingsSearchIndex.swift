@@ -23,6 +23,7 @@ enum SettingsSectionTitle {
     static let libraryManagement = "Library Management"
     static let coreOptions = "Core Options"
     static let saves = "Saves"
+    static let gameplayFeatures = "Gameplay Features"
     static let audio = "Audio"
     static let video = "Video"
     static let recording = "Recording & Streaming"
@@ -45,7 +46,7 @@ enum SettingsSectionTitle {
 
     /// Every title an entry's `section` may use.
     static let all: Set<String> = [
-        app, library, libraryManagement, coreOptions, saves, audio, video, recording, retroAchievements,
+        app, library, libraryManagement, coreOptions, saves, gameplayFeatures, audio, video, recording, retroAchievements,
         controller, hapticsRumble, dualSense, onScreenControls, analogDeadzone, deltaSkins,
         socialLinks, documentation, roadmap, build, extraInfo, advanced
     ]
