@@ -1245,19 +1245,19 @@ private extension PauseTileMenuViewModel {
     static func timedAutoSaveTile(isEnabled: Bool) -> PauseMenuTile {
         let timedEnabled = Defaults[.timedAutoSaves]
         let interval = Defaults[.timedAutoSaveInterval]
-        let intervalMinutes = max(1, Int((interval / 60.0).rounded()))
-        let quickIntervals: [Int] = [2, 5, 10, 15, 30]
+        let intervalMinutes = max(1, Int((interval / AutoSaveIntervalRules.secondsPerMinute).rounded()))
+        // Same presets as Settings on tvOS; a value set with the iOS slider is listed too.
         let lpOptions: [PauseMenuTileLongPressOption] = [
             PauseMenuTileLongPressOption(
                 id: "autosave_off",
                 title: String(localized: "Off"),
                 isSelected: !timedEnabled
             )
-        ] + quickIntervals.map { minutes in
+        ] + AutoSaveIntervalRules.choices(including: interval).map { seconds in
             PauseMenuTileLongPressOption(
-                id: "autosave_interval_\(minutes * 60)",
-                title: "\(minutes)m",
-                isSelected: timedEnabled && intervalMinutes == minutes
+                id: "autosave_interval_\(Int(seconds))",
+                title: "\(Int((seconds / AutoSaveIntervalRules.secondsPerMinute).rounded()))m",
+                isSelected: timedEnabled && seconds == interval
             )
         }
         return PauseMenuTile(
