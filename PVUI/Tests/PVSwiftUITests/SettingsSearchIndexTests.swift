@@ -45,7 +45,7 @@ struct SettingsSearchIndexTests {
     @Test("Rows removed from Settings have no entries left behind")
     func removedRowsAreGone() {
         let ids = Set(SettingsSearchIndex.entries.map(\.id))
-        for removed in ["adv.sram", "adv.taptoremap", "adv.skinreposition", "adv.touchoverlay"] {
+        for removed in ["adv.sram", "adv.taptoremap", "adv.skinreposition", "adv.touchoverlay", "adv.icloudsync"] {
             #expect(!ids.contains(removed), "\(removed) points at a row that no longer exists")
         }
     }
@@ -114,7 +114,6 @@ struct SettingsSearchIndexTests {
     func icloud() {
         let ids = SettingsSearchIndex.search("icloud").map(\.id)
         #expect(ids.contains("libman.cloudsync"))
-        #expect(ids.contains("adv.icloudsync"))
     }
 
     @Test("clips finds Gameplay Clips")

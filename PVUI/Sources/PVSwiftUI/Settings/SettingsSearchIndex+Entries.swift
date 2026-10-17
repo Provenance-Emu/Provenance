@@ -239,8 +239,6 @@ extension SettingsSearchIndex {
               .advanced, SettingsSectionTitle.advanced, keywords: ["jit", "just in time", "dynarec", "performance", "debugger"], hiddenInAppStore: true),
         entry("adv.autolock", "Disable Auto Lock", "Prevent device from auto-locking during gameplay.",
               .advanced, SettingsSectionTitle.advanced, keywords: ["sleep", "screen timeout", "idle", "display"]),
-        entry("adv.icloudsync", "iCloud Sync", "Sync save states and settings across devices.",
-              .advanced, SettingsSectionTitle.advanced, keywords: ["icloud", "sync", "backup", "cloudkit", "devices"], hiddenInAppStore: true),
         entry("adv.opengl", "OpenGL Renderer", "Native cores only: present through OpenGL instead of Metal for the legacy graphics filters. libretro cores always use Metal.",
               .advanced, SettingsSectionTitle.advanced, keywords: ["metal", "gl", "graphics", "shader", "filter"]),
         entry("adv.uimode", "UI Mode", "Choose between different UI modes.",

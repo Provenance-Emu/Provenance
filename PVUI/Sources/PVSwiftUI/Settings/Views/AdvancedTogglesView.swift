@@ -15,7 +15,6 @@ import PVSettings
 internal struct AdvancedTogglesView: View {
     @Default(.autoJIT) var autoJIT
     @Default(.disableAutoLock) var disableAutoLock
-    @Default(.iCloudSync) var iCloudSync
     @Default(.useMetal) var useMetalRenderer
     @Default(.mainUIMode) var mainUIMode
     @Default(.useModernWebServer) var useModernWebServer
@@ -66,16 +65,6 @@ internal struct AdvancedTogglesView: View {
                                 showChevron: false)
                 }
                 .padding(.vertical, 4)
-                
-                if !isAppStore {
-                    PremiumThemedToggle(isOn: $iCloudSync) {
-                        SettingsRow(title: "iCloud Sync",
-                                    subtitle: "Sync save states and settings across devices.",
-                                    icon: .sfSymbol("icloud"),
-                                    showChevron: false)
-                    }
-                    .padding(.vertical, 4)
-                }
                 
                 PremiumThemedToggle(isOn: Binding(
                     get: { !useMetalRenderer },
