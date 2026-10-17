@@ -2505,6 +2505,7 @@ private struct LibrarySection2: View {
 
     var body: some View {
         Section {
+            SettingsSubheading(title: "Storage & Sync")
 
             #if !os(tvOS)
             NavigationLink(destination: LibraryStorageView()) {
@@ -2515,44 +2516,35 @@ private struct LibrarySection2: View {
             #endif
 
             #if os(tvOS)
-                // Cloud Sync Settings
+            NavigationLink(destination: CloudSyncSettingsView()) {
+                SettingsRow(title: "Cloud Sync Settings",
+                            subtitle: "Manage CloudKit and iCloud Drive sync settings.",
+                            icon: .sfSymbol("icloud"))
+            }
+            .retroFocusButtonStyle(showBorder: false)
+            #else
+            PaidFeatureView {
                 NavigationLink(destination: CloudSyncSettingsView()) {
                     SettingsRow(title: "Cloud Sync Settings",
-                                 subtitle: "Manage CloudKit and iCloud Drive sync settings",
-                                 icon: .sfSymbol("icloud"))
+                                subtitle: "Manage CloudKit and iCloud Drive sync settings.",
+                                icon: .sfSymbol("icloud"))
                 }
-                .retroFocusButtonStyle(showBorder: false)
-                NavigationLink(destination: BackupRestoreView()) {
-                    SettingsRow(title: "Backup & Restore",
-                                subtitle: "Manually back up and restore saves, database, and artwork.",
-                                icon: .sfSymbol("archivebox"))
-                }
-                .retroFocusButtonStyle(showBorder: false)
-            #else
-//            if viewModel.showFeatureFlagsDebug {
-                PaidFeatureView {
-                    // Cloud Sync Settings
-                    NavigationLink(destination: CloudSyncSettingsView()) {
-                        SettingsRow(title: "Cloud Sync Settings",
-                                     subtitle: "Manage CloudKit and iCloud Drive sync settings.",
-                                     icon: .sfSymbol("icloud"))
-                    }
-                }  lockedView: {
-                    SettingsRow(title: "Cloud Sync Settings",
-                              subtitle: "Unlock to access CloudKit and iCloud Drive sync settings.",
-                              icon: .sfSymbol("lock.fill"),
-                              showChevron: false)
-                }
-                .freemiumKitColorReset()
-//            }
+            } lockedView: {
+                SettingsRow(title: "Cloud Sync Settings",
+                            subtitle: "Unlock to access CloudKit and iCloud Drive sync settings.",
+                            icon: .sfSymbol("lock.fill"),
+                            showChevron: false)
+            }
+            .freemiumKitColorReset()
             #endif
 
-            #if !os(tvOS)
             NavigationLink(destination: BackupRestoreView()) {
                 SettingsRow(title: "Backup & Restore",
                             subtitle: "Manually back up and restore saves, database, and artwork.",
                             icon: .sfSymbol("archivebox"))
             }
+            #if os(tvOS)
+            .retroFocusButtonStyle(showBorder: false)
             #endif
 
             Button {
@@ -2577,6 +2569,8 @@ private struct LibrarySection2: View {
                     .settingsSheetDetachedFromSubpageDepth()
                     #endif
             }
+
+            SettingsSubheading(title: "Library Tools")
 
             #if os(iOS) || os(tvOS)
             if featureFlags.nearbyLibraries {
@@ -2621,6 +2615,17 @@ private struct LibrarySection2: View {
             .retroFocusButtonStyle(showBorder: false)
             #endif
 
+            NavigationLink(destination: ROMTitleNormalizationView()) {
+                SettingsRow(title: "Normalize Existing Library",
+                            subtitle: "Preview and clean up ROM annotation tags from current library titles.",
+                            icon: .sfSymbol("text.badge.checkmark"))
+            }
+            #if os(tvOS)
+            .retroFocusButtonStyle(showBorder: false)
+            #endif
+
+            SettingsSubheading(title: "Library Options")
+
             ThemedToggle(isOn: $autoNormalizeROMTitles) {
                 SettingsRow(title: "Auto-Normalize Titles on Import",
                             subtitle: "Strip region/revision tags from ROM filenames (e.g. '(USA)', '[!]') when importing.",
@@ -2635,14 +2640,7 @@ private struct LibrarySection2: View {
                             showChevron: false)
             }
 
-            NavigationLink(destination: ROMTitleNormalizationView()) {
-                SettingsRow(title: "Normalize Existing Library",
-                            subtitle: "Preview and clean up ROM annotation tags from current library titles.",
-                            icon: .sfSymbol("text.badge.checkmark"))
-            }
-            #if os(tvOS)
-            .retroFocusButtonStyle(showBorder: false)
-            #endif
+            SettingsSubheading(title: "Maintenance")
 
             Button(action: viewModel.reimportROMs) {
                 SettingsRow(title: "Scan ROM Directories",
@@ -2671,6 +2669,7 @@ private struct LibrarySection2: View {
             .retroFocusButtonStyle(showBorder: false)
             #endif
 
+            // Kept last: it deletes the whole library.
             Button(role: .destructive, action: viewModel.resetData) {
                 SettingsRow(title: "Reset Library",
                             subtitle: "Delete all game data, settings, and custom artwork, then re-import from scratch.",
