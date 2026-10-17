@@ -2230,13 +2230,6 @@ private struct DualSenseExtrasSection: View {
     @Default(.controllerLightBarEnabled) var lightBarEnabled
     @Default(.dualSenseMicButtonAction) var micButtonAction
 
-    /// `Defaults[.dualSenseMicButtonAction]` values and their labels, in menu order.
-    private static let micActions: [(value: String, label: String)] = [("muteAudio", "Mute Audio"), ("none", "None")]
-
-    private static func micActionLabel(_ value: String) -> String {
-        micActions.first { $0.value == value }?.label ?? value
-    }
-
     var body: some View {
         Section {
             ThemedToggle(isOn: $lightBarEnabled) {
@@ -2248,9 +2241,9 @@ private struct DualSenseExtrasSection: View {
             SettingsMenuPickerRow(title: "Mic Button Action",
                                   subtitle: "Action performed when the DualSense microphone button is pressed.",
                                   symbol: "mic.fill",
-                                  choices: Self.micActions.map(\.value),
+                                  choices: DualSenseMicButtonAction.allCases,
                                   selection: $micButtonAction,
-                                  label: Self.micActionLabel)
+                                  label: \.displayName)
         }
     }
 }

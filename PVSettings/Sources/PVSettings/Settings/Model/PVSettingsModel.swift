@@ -195,8 +195,7 @@ public extension Defaults.Keys {
     // MARK: DualSense Extras
 
     /// Action to perform when the DualSense microphone button is pressed during gameplay.
-    /// Supported values: "muteAudio", "none".
-    static let dualSenseMicButtonAction = Key<String>("dualSenseMicButtonAction", default: "muteAudio")
+    static let dualSenseMicButtonAction = Key<DualSenseMicButtonAction>("dualSenseMicButtonAction", default: .muteAudio)
 
     /// Intensity multiplier for external controller rumble motors via GCDeviceHaptics.
     /// Range 0.0 (silent) – 1.0 (full intensity). Default 1.0.

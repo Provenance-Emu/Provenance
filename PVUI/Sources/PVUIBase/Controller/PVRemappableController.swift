@@ -181,11 +181,10 @@ public final class PVRemappableController: NSObject {
     }
 
     private func handleMicButtonPressed() {
-        let action = Defaults[.dualSenseMicButtonAction]
-        switch action {
-        case "muteAudio":
+        switch Defaults[.dualSenseMicButtonAction] {
+        case .muteAudio:
             NotificationCenter.default.post(name: .PVControllerMicButtonToggleMute, object: wrappedController)
-        default:
+        case .doNothing:
             break
         }
     }
