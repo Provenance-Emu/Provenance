@@ -38,11 +38,7 @@ internal struct AdvancedTogglesView: View {
     @Default(.airPlayMenu) var airPlayMenu
     @Default(.clipBufferingEnabled) var clipBufferingEnabled
 
-    /// Check if the app is from the App Store
-    let isAppStore: Bool = {
-        guard let appType = Bundle.main.infoDictionary?["PVAppType"] as? String else { return false }
-        return appType.lowercased().contains("appstore")
-    }()
+    private var isAppStore: Bool { AppState.shared.isAppStore }
     
     var body: some View {
         VStack(spacing: 16) {
