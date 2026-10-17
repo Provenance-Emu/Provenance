@@ -99,8 +99,10 @@ line-local and leaves restructuring those blocks for later.
     `CloudSyncStepperRow`, `CloudSyncSelectionRow`) on flat `retroBlack.opacity(0.3)` cards. The target is
     the pause-menu tile look (see `ImportStatusView`). As built: an April pass had already styled the rows,
     headers and `SyncLogViewer`; the 26 flat panels left now use `cloudSyncCard()` / new `cloudSyncTile()`,
-    and iOS gets the tvOS grid background. `CloudSyncStatusView` is unreachable (only its preview creates
-    it) and was left alone; delete it in a follow-up.
+    and iOS gets the tvOS grid background. `CloudSyncStatusView` was unreachable (only its preview created
+    it). Its one feature the live screen lacked, files still to sync per content type, moved into the
+    Cloud Sync progress card (it now reads both syncer stores; the old view only read iCloud Drive's and
+    cast to `CloudKitSyncer`, so it never filled in on iOS); then the view was deleted.
 
 13. **[done a3af5d4f78] DualSense Mic Button Action uses raw string tags** (`"muteAudio"` / `"none"`). The view now keeps
     them in one table (43157ab5f6); the key itself is still a `String`. Back it with an enum.

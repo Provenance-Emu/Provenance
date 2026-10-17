@@ -100,6 +100,8 @@ public class UnifiedCloudSyncViewModel: ObservableObject {
     @Published public var syncingFiles: Int = 0
     @Published public var totalFiles: Int? = nil
     @Published public var currentSyncFile: String?
+    /// Files still to sync per content type, shown under the progress counts.
+    @Published var pendingByType: [CloudSyncPendingItem] = []
 
     // Debug information
     @Published public var iCloudDiagnostics = ""
@@ -712,6 +714,22 @@ public class UnifiedCloudSyncViewModel: ObservableObject {
                 }
             }
             .store(in: &cancellables)
+    }
+
+    /// Recount `pendingByType` from every registered syncer (CloudKit and iCloud Drive keep separate stores).
+    func refreshPendingByType() {
+        let syncers = CloudKitSyncerStore.shared.activeSyncers + SyncerStore.shared.activeSyncers
+        var seen = Set<ObjectIdentifier>()
+        let unique = syncers.filter { seen.insert(ObjectIdentifier($0)).inserted }
+        Task { [weak self] in
+            var counts: [(directories: Set<String>, pending: Int)] = []
+            for syncer in unique {
+                let pending = await syncer.pendingFilesToDownload.count + syncer.newFiles.count
+                counts.append((directories: syncer.directories, pending: pending))
+            }
+            let items = CloudSyncPendingBreakdown.items(from: counts)
+            await MainActor.run { self?.pendingByType = items }
+        }
     }
 
     /// Check if iCloud/CloudKit is available

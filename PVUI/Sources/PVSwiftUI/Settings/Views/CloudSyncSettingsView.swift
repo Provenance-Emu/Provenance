@@ -45,6 +45,8 @@ public struct CloudSyncSettingsView: View {
     @State internal var showDiagnostics = false
 
     @StateObject internal var viewModel = UnifiedCloudSyncViewModel()
+    /// How often the per-type pending counts refresh while a sync runs.
+    private let pendingRefreshTimer = Timer.publish(every: 2, on: .main, in: .common).autoconnect()
 
     #if os(tvOS)
     @Environment(\.dismiss) private var dismiss
@@ -780,8 +782,36 @@ public struct CloudSyncSettingsView: View {
                         .cloudSyncTile()
                     }
                 }
+
+                if !viewModel.pendingByType.isEmpty {
+                    pendingByTypeTiles
+                }
             }
             .cloudSyncCard()
+        }
+        .onAppear { viewModel.refreshPendingByType() }
+        .onReceive(pendingRefreshTimer) { _ in viewModel.refreshPendingByType() }
+    }
+
+    /// Still to sync, per content type.
+    private var pendingByTypeTiles: some View {
+        LazyVGrid(columns: [GridItem(.adaptive(minimum: 110), spacing: 10)], spacing: 10) {
+            ForEach(viewModel.pendingByType) { item in
+                VStack(spacing: 2) {
+                    Text(verbatim: "\(item.count)")
+                        .font(.title3)
+                        .fontWeight(.bold)
+                        .foregroundColor(.retroBlue)
+                    Text(item.label)
+                        .font(.caption)
+                        .foregroundColor(.gray)
+                        .lineLimit(1)
+                }
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, 8)
+                .cloudSyncTile()
+                .accessibilityElement(children: .combine)
+            }
         }
     }
 
