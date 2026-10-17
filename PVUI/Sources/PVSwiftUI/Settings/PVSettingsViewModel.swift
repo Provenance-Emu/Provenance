@@ -49,11 +49,6 @@ class PVSettingsViewModel: ObservableObject {
         return filters
     }
 
-    /// Check if the app is from the App Store
-    var isAppStore: Bool {
-        Bundle.main.infoDictionary?["ALTDeviceID"] != nil
-    }
-
     /// Computed property to get app version
     var appVersion: String {
         Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "Unknown"
@@ -115,17 +110,9 @@ class PVSettingsViewModel: ObservableObject {
         return buildDateString
     }
 
+    /// "3.4.0 (4521)". Branch and revision have their own rows.
     var versionText: String {
-        var versionText = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String
-        versionText = versionText ?? "" + (" (\(Bundle.main.infoDictionary?["CFBundleVersion"] ?? ""))")
-        if !isMasterBranch {
-            if isAppStore {
-                versionText = "\(versionText ?? "") AppStore"
-            } else {
-                versionText = "\(versionText ?? "") Beta"
-            }
-        }
-        return versionText ?? "Unknown"
+        AppVersionLabel.current
     }
 
     /// Function to setup conflicts observer
