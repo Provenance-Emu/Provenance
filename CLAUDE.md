@@ -75,7 +75,7 @@ The app is split into ~26 `PV*` Swift Package frameworks. Key modules:
 - **PVNetplay** — Central netplay support code for retroarch and game center
 - **PVPLlists** — Core and System plist processing and other serializer
 - **PVPatching** — ROM/disc patches (IPS, IPS32, BPS, UPS, PPF, xdelta3): import, matching, cache, Patch Applier, patch creation, online catalog
-- **PVPatchEngine** — the streaming patch engine PVPatching applies through (bounded memory, 64-bit offsets, vendored Apache-2.0 xdelta3). A verbatim copy of iCube's `Source/iOS/PVPatchEngine`, shared with iCube and iFly: change it there first and copy it back, and only `PVPatching/Sources/PVPatching/Engine/EngineBridge.swift` may import it (its `PatchFormat`/`PatchError`/`PatchProgress` clash with PVPatching's)
+- **PVPatchEngine** — the streaming patch engine PVPatching applies through (bounded memory, 64-bit offsets, vendored Apache-2.0 xdelta3). Its own repo, github.com/Provenance-Emu/PVPatchEngine, which iCube and iFly also depend on by URL: change it there, tag a release, bump the version in `PVPatching/Package.swift`. Only `PVPatching/Sources/PVPatching/Engine/EngineBridge.swift` may import it (its `PatchFormat`/`PatchError`/`PatchProgress` clash with PVPatching's)
 - **PVPrimitives** — Base data types shared across modules
 - **PVQuicklookSupport** — iOS and macOS Quicklook api support code
 - **PVRcheevos** — RetroAchievements C client integration
