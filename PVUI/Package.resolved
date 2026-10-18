@@ -1,5 +1,5 @@
 {
-  "originHash" : "0c611028d01b3d510d202a32be1937904c66121746b66e4a4a5c8887a3299bee",
+  "originHash" : "757d50c03b971131599ef8395d08424b0dbaaab7f766821ce18f131ee2d61e9f",
   "pins" : [
     {
       "identity" : "activityindicatorview",
@@ -170,6 +170,24 @@
       "state" : {
         "revision" : "172a7f0a95f99f6656f6b2d0531b648c08d26c56",
         "version" : "2.10.0"
+      }
+    },
+    {
+      "identity" : "pvpatchengine",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/Provenance-Emu/PVPatchEngine.git",
+      "state" : {
+        "revision" : "bc34403e969977df567954a06bc55d48769f5033",
+        "version" : "1.0.1"
+      }
+    },
+    {
+      "identity" : "pvsystems",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/Provenance-Emu/PVSystems.git",
+      "state" : {
+        "revision" : "da78a58c2125ebb629848e4ffc2b0ae7d6bd3b4a",
+        "version" : "1.0.0"
       }
     },
     {

@@ -63,6 +63,7 @@ let package = Package(
          "Archiving"]
         .map { .package(path: "../PV\($0)") }
         + [
+        .package(url: "https://github.com/Provenance-Emu/PVSystems.git", from: "1.0.0"),
         .package(url: "https://github.com/ReactiveX/RxSwift.git",
                  .upToNextMajor(from: "6.7.1")),
         .package(url: "https://github.com/RxSwiftCommunity/RxRealm.git",
@@ -101,6 +102,7 @@ let package = Package(
         .target(
             name: "PVLibrary",
             dependencies: [
+                .product(name: "PVSystems", package: "PVSystems"),
                 "PVSupport",
                 "PLzmaSDK",
                 "SWCompression",
@@ -140,6 +142,7 @@ let package = Package(
         .target(
             name: "PVRealm",
             dependencies: [
+                .product(name: "PVSystems", package: "PVSystems"),
                 "PVSupport",
                 "PLzmaSDK",
                 "SWCompression",
@@ -181,6 +184,7 @@ let package = Package(
         .target(
             name: "PVFileSystem",
             dependencies: [
+                .product(name: "PVSystems", package: "PVSystems"),
                 "PVSupport",
                 "PVLogging",
                 "PVHashing",
@@ -238,6 +242,7 @@ let package = Package(
         .testTarget(
             name: "PVLibraryTests",
             dependencies: [
+                .product(name: "PVSystems", package: "PVSystems"),
                 "PVLibrary",
                 "PVFeatureFlags",
                 "PVRealm",

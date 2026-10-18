@@ -1,5 +1,5 @@
 {
-  "originHash" : "de2b7bbf2ec12bfb7dfcadd07851ddbc52d2debaa46ff631fdb47354adf82b0c",
+  "originHash" : "d7d06ce5a5e8df412198cb4bf59d5c20d4d6da2c9587a38457ef50ec914b133e",
   "pins" : [
     {
       "identity" : "checksum",
@@ -17,6 +17,15 @@
       "state" : {
         "revision" : "5bfac4928f000fabdbef7e4ed0251399bb0841c9",
         "version" : "9.0.8"
+      }
+    },
+    {
+      "identity" : "pvsystems",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/Provenance-Emu/PVSystems.git",
+      "state" : {
+        "revision" : "da78a58c2125ebb629848e4ffc2b0ae7d6bd3b4a",
+        "version" : "1.0.0"
       }
     },
     {

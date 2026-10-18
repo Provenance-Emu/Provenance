@@ -36,6 +36,7 @@ let package = Package(
     dependencies: [
         .package(path: "../PVLogging"),
         .package(path: "../PVPrimitives"),
+        .package(url: "https://github.com/Provenance-Emu/PVSystems.git", from: "1.0.0"),
         .package(url: "https://github.com/Provenance-Emu/SwiftGenPlugin.git", from: "1.1.3"),
         .package(url: "https://github.com/apple/swift-crypto.git", from: "3.0.0"),
 
@@ -70,6 +71,7 @@ let package = Package(
         .target(
             name: "PVLookup",
             dependencies: [
+                .product(name: "PVSystems", package: "PVSystems"),
                 "PVLogging",
                 "OpenVGDB",
                 "ROMMetadataProvider",
@@ -99,6 +101,7 @@ let package = Package(
          .target(
              name: "TheGamesDB",
              dependencies: [
+                .product(name: "PVSystems", package: "PVSystems"),
                 "PVLogging",
                 "PVSQLiteDatabase",
                 .product(name: "OpenAPIRuntime", package: "swift-openapi-runtime"),
@@ -135,6 +138,7 @@ let package = Package(
         .target(
             name: "libretrodb",
             dependencies: [
+                .product(name: "PVSystems", package: "PVSystems"),
                 "PVLogging",
                 "PVSQLiteDatabase",
                 "PVLookupTypes",
@@ -157,6 +161,7 @@ let package = Package(
         .target(
             name: "OpenVGDB",
             dependencies: [
+                .product(name: "PVSystems", package: "PVSystems"),
                 "PVLogging",
                 "PVSQLiteDatabase",
                 "Lighter",
@@ -181,6 +186,7 @@ let package = Package(
         .target(
             name: "ShiraGame",
             dependencies: [
+                .product(name: "PVSystems", package: "PVSystems"),
                 "PVLogging",
                 "ROMMetadataProvider",
                 "PVSQLiteDatabase",
@@ -202,7 +208,7 @@ let package = Package(
 
         .target(
             name: "ROMMetadataProvider",
-            dependencies: ["PVLookupTypes", "PVLogging"]
+            dependencies: ["PVLookupTypes", "PVLogging", .product(name: "PVSystems", package: "PVSystems")]
         ),
 
 
@@ -211,6 +217,7 @@ let package = Package(
         .target(
             name: "PVLookupTypes",
             dependencies: [
+                .product(name: "PVSystems", package: "PVSystems"),
                 "PVLogging",
                 "PVPrimitives",
             ]
@@ -220,12 +227,12 @@ let package = Package(
 
         .testTarget(
             name: "PVLookupTests",
-            dependencies: ["PVLookup", "PVLogging", "PVPrimitives"]
+            dependencies: ["PVLookup", "PVLogging", "PVPrimitives", .product(name: "PVSystems", package: "PVSystems")]
         ),
         
         .testTarget(
             name: "TheGamesDBTests",
-            dependencies: ["TheGamesDB", "PVLookup", "PVLogging"]
+            dependencies: ["TheGamesDB", "PVLookup", "PVLogging", .product(name: "PVSystems", package: "PVSystems")]
         ),
 
         // MARK: LibretroCheatDB tests

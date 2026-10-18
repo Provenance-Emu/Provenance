@@ -22,6 +22,7 @@ let coreTarget: Target = .target(
         // what its target declares, so these can't ride in on PVEmulatorCore's closure.
         "PVPlists",
         "PVPrimitives",
+        .product(name: "PVSystems", package: "PVSystems"),
         "PVSettings",
         "PVCoreGenesisPlusBridge",
         .product(name: "PVRcheevos", package: "PVRcheevos"),
@@ -120,6 +121,7 @@ let package = Package(
         .package(path: "../../PVObjCUtils"),
         .package(path: "../../PVPlists"),
         .package(name: "PVPrimitives", path: "../../PVPrimitives/"),
+        .package(url: "https://github.com/Provenance-Emu/PVSystems.git", from: "1.0.0"),
         .package(path: "../../PVSettings"),
         .package(path: "../../PVRcheevos"),
         .package(name: "PVRcheevosBridge", path: "../../PVRcheevosBridge"),

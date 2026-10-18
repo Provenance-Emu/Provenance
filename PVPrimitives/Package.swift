@@ -16,7 +16,7 @@ let package = Package(
         // Products define the executables and libraries a package produces, and make them visible to other packages.
         .library(
             name: "PVPrimitives",
-            targets: ["PVPrimitives", "PVSystems"]
+            targets: ["PVPrimitives"]
         )
     ],
     dependencies: [
@@ -32,7 +32,9 @@ let package = Package(
         .package(
             name: "PVHashing",
             path: "../PVHashing"
-        )
+        ),
+        // System identifiers and metadata, shared with iCube and iFly.
+        .package(url: "https://github.com/Provenance-Emu/PVSystems.git", from: "1.0.0")
     ],
 
     targets: [
@@ -40,19 +42,13 @@ let package = Package(
             name: "PVPrimitives",
             dependencies: ["PVSupport", "PVLogging", "PVHashing"]
         ),
-        // MARK: ------------ Systems ------------
-        .target(
-            name: "PVSystems",
-            dependencies: ["PVSupport", "PVLogging", "PVHashing"],
-            resources: [
-                /// Per-game BIOS manifest (see `PerGameBIOSManifest.swift`).
-                .process("Resources")
-            ]
-        ),
         // MARK: ------------ Tests ------------
         .testTarget(
             name: "PVPrimitivesTests",
-            dependencies: ["PVPrimitives", "PVSystems"]
+            dependencies: [
+                "PVPrimitives",
+                .product(name: "PVSystems", package: "PVSystems")
+            ]
         )
     ],
     swiftLanguageModes: [.v5, .v6],

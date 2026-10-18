@@ -25,12 +25,14 @@ let package = Package(
     ],
     dependencies: [
         .package(path: "../PVPrimitives"),
+        .package(url: "https://github.com/Provenance-Emu/PVSystems.git", from: "1.0.0"),
         .package(path: "../PVLogging")
     ],
     targets: [
         .target(
             name: "PVLibrarySharing",
             dependencies: [
+                .product(name: "PVSystems", package: "PVSystems"),
                 .product(name: "PVPrimitives", package: "PVPrimitives"),
                 "PVLogging"
             ]
@@ -39,7 +41,7 @@ let package = Package(
         // MARK: SwiftPM tests
         .testTarget(
             name: "PVLibrarySharingTests",
-            dependencies: ["PVLibrarySharing"],
+            dependencies: ["PVLibrarySharing", .product(name: "PVSystems", package: "PVSystems")],
             resources: [.copy("Fixtures")]
         )
     ],

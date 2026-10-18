@@ -16,6 +16,7 @@ let package = Package(
     ],
     dependencies: [
         .package(path: "../PVPrimitives"),
+        .package(url: "https://github.com/Provenance-Emu/PVSystems.git", from: "1.0.0"),
         .package(path: "../PVCoreBridge"),
         .package(path: "../PVLogging"),
         .package(path: "../PVSettings"),
@@ -25,6 +26,7 @@ let package = Package(
         .target(
             name: "PVTouchOverlay",
             dependencies: [
+                .product(name: "PVSystems", package: "PVSystems"),
                 .product(name: "PVPrimitives", package: "PVPrimitives"),
                 "PVCoreBridge",
                 "PVLogging",
@@ -34,7 +36,7 @@ let package = Package(
         ),
         .testTarget(
             name: "PVTouchOverlayTests",
-            dependencies: ["PVTouchOverlay"]
+            dependencies: ["PVTouchOverlay", .product(name: "PVSystems", package: "PVSystems")]
         )
     ],
     swiftLanguageModes: [.v5, .v6],

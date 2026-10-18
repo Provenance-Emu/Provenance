@@ -38,6 +38,7 @@ let package = Package(
         .package(path: "../PVLibrary"),
         /// Direct dependency so `PVUIBase` can `import PVSystems` (`SystemIdentifier` cheat lookup helpers).
         .package(path: "../PVPrimitives"),
+        .package(url: "https://github.com/Provenance-Emu/PVSystems.git", from: "1.0.0"),
         .package(path: "../PVLogging"),
         .package(path: "../PVPatreon"),
         .package(path: "../PVSupport"),
@@ -124,6 +125,7 @@ let package = Package(
         .target(
             name: "PVUIBase",
             dependencies: [
+                .product(name: "PVSystems", package: "PVSystems"),
                 "ActivityIndicatorView",
                 "AnimatedGradient",
                 "FloatingButton",
@@ -202,6 +204,7 @@ let package = Package(
         .testTarget(
             name: "PVUIBaseTests",
             dependencies: [
+                .product(name: "PVSystems", package: "PVSystems"),
                 "PVUIBase",
                 "PVCoreBridge",
                 "PVLogging",
@@ -270,6 +273,7 @@ let package = Package(
         .target(
             name: "PVSwiftUI",
             dependencies: [
+                .product(name: "PVSystems", package: "PVSystems"),
                 "PVUIBase",
                 "PVUIKit",
                 .product(name: "PVWebServerObjC", package: "PVWebServer"),

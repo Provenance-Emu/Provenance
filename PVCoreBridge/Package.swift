@@ -36,6 +36,7 @@ let package = Package(
         .package(name: "PVPlists", path: "../PVPlists/"),
         .package(name: "PVObjCUtils", path: "../PVObjCUtils/"),
         .package(name: "PVPrimitives", path: "../PVPrimitives/"),
+        .package(url: "https://github.com/Provenance-Emu/PVSystems.git", from: "1.0.0"),
         .package(name: "PVSettings", path: "../PVSettings/"),
         .package(url: "https://github.com/sindresorhus/Defaults.git", from: "9.0.2"),
 
@@ -51,6 +52,7 @@ let package = Package(
         .target(
             name: "PVCoreBridge",
             dependencies: [
+                .product(name: "PVSystems", package: "PVSystems"),
                 "PVAudio",
                 "PVLogging",
                 "PVPlists",
@@ -110,6 +112,7 @@ let package = Package(
         .testTarget(
             name: "PVCoreBridgeTests",
             dependencies: [
+                .product(name: "PVSystems", package: "PVSystems"),
                 "PVCoreBridge",
                 "PVPrimitives",
             ]
