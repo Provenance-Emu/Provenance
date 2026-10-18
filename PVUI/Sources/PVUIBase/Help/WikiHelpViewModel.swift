@@ -10,7 +10,7 @@ public final class WikiHelpViewModel: ObservableObject {
     @Published public var isLoadingPage = false
     @Published public var errorMessage: String?
 
-    private let provider = WikiContentProvider()
+    private let provider = WikiContentProvider(configuration: ProvenanceWiki.configuration)
 
     public init() {}
 

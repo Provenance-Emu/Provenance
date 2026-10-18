@@ -1,23 +1,21 @@
 import Foundation
+import PVHelp
 
-public enum WikiConstants {
-    public static let baseURL = URL(string: "https://raw.githubusercontent.com/Provenance-EMU/wiki/master/")!
-    public static let webBaseURL = URL(string: "https://wiki.provenance-emu.com/")!
-    public static let cacheTTL: TimeInterval = 24 * 60 * 60 // 24 hours
-    public static let cacheDirectoryName = "PVHelp"
-    public static let navigationCacheKey = "PVHelp_NavigationTree"
-    public static let navigationTimestampKey = "PVHelp_NavigationTimestamp"
-    public static let summaryFileName = "SUMMARY.md"
+/// Provenance's wiki: where its pages live, the offline navigation copy, and the
+/// page paths the app links to. The shared PVHelp package is app-neutral.
+public enum ProvenanceWiki {
+    public static let configuration = WikiConfiguration(
+        baseURL: URL(string: "https://raw.githubusercontent.com/Provenance-EMU/wiki/master/")!,
+        webBaseURL: URL(string: "https://wiki.provenance-emu.com/")!,
+        bundledContent: .init(bundle: .module, subdirectory: "WikiContent")
+    )
 
     public static func rawURL(for path: String) -> URL {
-        baseURL.appendingPathComponent(path)
+        configuration.rawURL(for: path)
     }
 
     public static func webURL(for path: String) -> URL {
-        let webPath = path
-            .replacingOccurrences(of: ".md", with: "")
-            .replacingOccurrences(of: "/README", with: "")
-        return webBaseURL.appendingPathComponent(webPath)
+        configuration.webURL(for: path)
     }
 
     /// Well-known wiki page paths. Use `rawURL(for:)` or `webURL(for:)` to turn them into URLs.

@@ -8,7 +8,7 @@
 > repository, copy the contents from that canonical file to
 > `save-states/version-mismatch.md` in the wiki repo and update `SUMMARY.md`
 > accordingly. The path `save-states/version-mismatch.md` matches the
-> `WikiConstants.Paths.saveStateVersionMismatch` constant used for in-app linking.
+> `ProvenanceWiki.Paths.saveStateVersionMismatch` constant used for in-app linking.
 
 ---
 

@@ -29,7 +29,7 @@ public enum BIOSGuideLink {
 
     /// Canonical web URL of the BIOS requirements wiki page.
     public static var url: URL {
-        WikiConstants.webURL(for: WikiConstants.Paths.biosRequirements)
+        ProvenanceWiki.webURL(for: ProvenanceWiki.Paths.biosRequirements)
     }
 
     /// Sentence to append to a missing-BIOS message pointing at the action.

@@ -7,7 +7,7 @@ These markdown files are intended to be added to the [Provenance-EMU/wiki](https
 Copy to: `save-states/version-mismatch.md` in the wiki repo.
 
 > **Note:** The destination path `save-states/version-mismatch.md` matches the
-> `WikiConstants.Paths.saveStateVersionMismatch` constant used by the app for
+> `ProvenanceWiki.Paths.saveStateVersionMismatch` constant used by the app for
 > in-app linking. Keep these in sync if you move the page.
 
 ### Add to SUMMARY.md (in the wiki repo)
@@ -32,8 +32,8 @@ The app links to this page from the version mismatch alert. Use:
 - Raw URL: `https://raw.githubusercontent.com/Provenance-EMU/wiki/master/save-states/version-mismatch.md`
 - Web URL: `https://wiki.provenance-emu.com/save-states/version-mismatch`
 
-These URLs are generated automatically by `WikiConstants`:
+These URLs are generated automatically by `ProvenanceWiki`:
 ```swift
-WikiConstants.rawURL(for: WikiConstants.Paths.saveStateVersionMismatch)
-WikiConstants.webURL(for: WikiConstants.Paths.saveStateVersionMismatch)
+ProvenanceWiki.rawURL(for: ProvenanceWiki.Paths.saveStateVersionMismatch)
+ProvenanceWiki.webURL(for: ProvenanceWiki.Paths.saveStateVersionMismatch)
 ```

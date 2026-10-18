@@ -58,7 +58,6 @@ included:
   - PVEmulatorCore
   - PVFeatureFlags
   - PVHashing
-  - PVHelp
   - PVJIT
   - PVLibrary
   - PVLogging

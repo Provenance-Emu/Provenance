@@ -179,7 +179,7 @@ Add or link to wiki content about save state version mismatches and best practic
 - [ ] Create or update page in `provenance-emu/wiki` (e.g. `save-states/version-mismatches.md`)
 - [ ] Content: what version mismatch means, why it happens, how to avoid (create new save after core update), "Load Anyway" risks
 - [ ] In-app wiki browser can link to this page (e.g. from version mismatch alert or Settings)
-- [ ] Wiki content is built into app via existing script/action (see `PVHelp`, `WikiConstants`)
+- [ ] Wiki content is built into app via existing script/action (see `PVHelp`, `ProvenanceWiki`)
 
 ### Notes
 

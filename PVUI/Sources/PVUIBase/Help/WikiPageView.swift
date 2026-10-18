@@ -59,7 +59,7 @@ public struct WikiPageView: View {
         ScrollView {
             Button(action: {}) {
                 MarkdownView(page.content)
-                    .markdownBaseURL(WikiConstants.baseURL)
+                    .markdownBaseURL(ProvenanceWiki.configuration.baseURL)
                     .font(.custom("Menlo", size: 14), for: .body)
                     .font(.custom("Menlo", size: 24), for: .h1)
                     .font(.custom("Menlo", size: 20), for: .h2)
@@ -86,10 +86,10 @@ public struct WikiPageView: View {
                 Label("View on Web", systemImage: "safari")
             }
             .sheet(isPresented: $showSafari) {
-                SafariWebView(url: WikiConstants.webURL(for: path))
+                SafariWebView(url: ProvenanceWiki.webURL(for: path))
             }
             #else
-            Link(destination: WikiConstants.webURL(for: path)) {
+            Link(destination: ProvenanceWiki.webURL(for: path)) {
                 Label("View on Web", systemImage: "safari")
             }
             #endif
@@ -127,7 +127,7 @@ private struct WikiContentView: View {
                     sectionedContent
                 } else {
                     MarkdownView(page.content)
-                        .markdownBaseURL(WikiConstants.baseURL)
+                        .markdownBaseURL(ProvenanceWiki.configuration.baseURL)
                         .padding()
                 }
             }
@@ -176,7 +176,7 @@ private struct WikiContentView: View {
         return VStack(alignment: .leading, spacing: 0) {
             ForEach(sections) { section in
                 MarkdownView(referenceDefs.isEmpty ? section.content : referenceDefs + "\n\n" + section.content)
-                    .markdownBaseURL(WikiConstants.baseURL)
+                    .markdownBaseURL(ProvenanceWiki.configuration.baseURL)
                 .id(section.anchorID)
             }
         }
@@ -186,7 +186,7 @@ private struct WikiContentView: View {
     /// Returns `true` when the link was handled internally, `false` to let the system handle it.
     @discardableResult
     private func handleLink(_ url: URL) -> Bool {
-        let baseURLString = WikiConstants.baseURL.absoluteString
+        let baseURLString = ProvenanceWiki.configuration.baseURL.absoluteString
 
         // Parse URL components so we can extract the fragment before stripping it
         var components = URLComponents(url: url, resolvingAgainstBaseURL: false)

@@ -181,6 +181,15 @@
       }
     },
     {
+      "identity" : "pvhelp",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/Provenance-Emu/PVHelp.git",
+      "state" : {
+        "revision" : "90efd0a84352c1bf42be10ad581cb02d40cb3222",
+        "version" : "1.0.0"
+      }
+    },
+    {
       "identity" : "pvpatchengine",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Provenance-Emu/PVPatchEngine.git",

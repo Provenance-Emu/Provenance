@@ -67,7 +67,7 @@ The app is split into ~26 `PV*` Swift Package frameworks. Key modules:
 - **PVEmulatorCore** — Base classes for emulator implementations
 - **PVFeatureFlags** — Feature flags manager
 - **PVHashing** — ROM file hashing for identification
-- **PVHelp** — SwiftUI wiki and blog parser
+- **PVHelp** (separate repo, github.com/Provenance-Emu/PVHelp, shared with iCube) — wiki navigation, page fetch/cache and GitBook preprocessing. App-neutral: Provenance's URLs, page paths and offline SUMMARY.md are `ProvenanceWiki` in PVUIBase (`Resources/WikiContent`)
 - **PVJIT** — JIT compilation support for emulator cores
 - **PVLibrary** — Data models, Realm persistence, game database, CloudKit sync
 - **PVLogging** — Logging infrastructure (CocoaLumberjack-based)
