@@ -97,7 +97,6 @@ Release-iphoneos
 /Cores/PPSSPP/lib/Release-appletvos
 Cores/PPSSPP/lib/
 build
-/PVLookup/Sources/ShiraGame/Resources/shiragame.sqlite3
 
 .sentryclirc
 *.code-workspace
