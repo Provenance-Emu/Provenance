@@ -659,7 +659,7 @@ If your source lives in a new Swift package target, add it to `PVLookup/Package.
 ```swift
 .target(
     name: "MyNewDB",
-    dependencies: ["PVLookupTypes", "PVSQLiteDatabase", "PVSystems", "PVLogging"],
+    dependencies: ["PVLookupTypes", "PVSQLiteDatabase", .product(name: "PVSystems", package: "PVSystems"), "PVLogging"],
     path: "Sources/MyNewDB"
 ),
 ```

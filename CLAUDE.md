@@ -77,6 +77,7 @@ The app is split into ~26 `PV*` Swift Package frameworks. Key modules:
 - **PVPatching** — ROM/disc patches (IPS, IPS32, BPS, UPS, PPF, xdelta3): import, matching, cache, Patch Applier, patch creation, online catalog
 - **PVPatchEngine** — the streaming patch engine PVPatching applies through (bounded memory, 64-bit offsets, vendored Apache-2.0 xdelta3). Its own repo, github.com/Provenance-Emu/PVPatchEngine, which iCube and iFly also depend on by URL: change it there, tag a release, bump the version in `PVPatching/Package.swift`. Only `PVPatching/Sources/PVPatching/Engine/EngineBridge.swift` may import it (its `PatchFormat`/`PatchError`/`PatchProgress` clash with PVPatching's)
 - **PVPrimitives** — Base data types shared across modules
+- **PVSystems** (separate repo, github.com/Provenance-Emu/PVSystems) — `SystemIdentifier` and per-system metadata (TheGamesDB/libretrodb/OpenVGDB IDs, RetroAchievements console IDs, per-game BIOS manifest). Shared with iCube and iFly: change it there, tag a release, then bump the pin in `Provenance.xcworkspace`'s `Package.resolved` by hand
 - **PVQuicklookSupport** — iOS and macOS Quicklook api support code
 - **PVRcheevos** — RetroAchievements C client integration
 - **PVSettings** — User preferences
@@ -425,7 +426,7 @@ Agents MUST run these checks before creating a PR. Do NOT skip any step.
 
 5. **No magic numbers** — Extract constants. Don't hardcode values that are used in multiple places.
 
-6. **Use `SystemIdentifier` enum, not raw strings** — Never compare system identifiers using raw string literals like `"com.provenance.n64"`. Use the `SystemIdentifier` enum from `PVPrimitives`:
+6. **Use `SystemIdentifier` enum, not raw strings** — Never compare system identifiers using raw string literals like `"com.provenance.n64"`. Use the `SystemIdentifier` enum from `PVSystems`:
 
    ```swift
    // ❌ WRONG — fragile, typo-prone, no compile-time safety
@@ -458,7 +459,7 @@ Agents MUST run these checks before creating a PR. Do NOT skip any step.
    if ([self.systemIdentifier isEqualToString:PVAtariSTSystemIdentifier]) { ... }
    ```
 
-   The `SystemIdentifier` enum is in `PVPrimitives/Sources/PVSystems/SystemIdentifier.swift`. Import `PVPrimitives` to use it. `systemIdentifier` on the core (`PVEmulatorCore`) is a `String?`.
+   The `SystemIdentifier` enum lives in the PVSystems package (github.com/Provenance-Emu/PVSystems, shared with iCube and iFly). `import PVSystems`, and give the target `.product(name: "PVSystems", package: "PVSystems")`. `systemIdentifier` on the core (`PVEmulatorCore`) is a `String?`.
 
 7. **Type safety** — Check that optional unwrapping is correct (no double-optionals from `?.` chains). Check that enum cases exist before referencing them. Check that function signatures match call sites.
 
