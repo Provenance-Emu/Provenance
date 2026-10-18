@@ -26,7 +26,7 @@
 - Tier 2: `PVSettings`, `PVPrimitives`
 - Tier 3: `PVSupport`, `PVAudio`, `PVCoreAudio`
 - Tier 4: `PVCoreBridge`, `PVEmulatorCore`, `PVShaders`
-- Tier 5: `PVCoreBridgeRetro`, `PVCoreLoader`, `PVLookup`, `PVLibrary`
+- Tier 5: `PVCoreBridgeRetro`, `PVCoreLoader`, `PVLibrary`
 - Tier 6: `PVUI`, app targets
 
 ## Swift and platform conventions

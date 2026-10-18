@@ -441,7 +441,11 @@ The frontend only holds option values in memory, so saved values are replayed on
 
 ## Extending the Artwork Pipeline
 
-The artwork pipeline lives in `PVLookup` (Tier 5). `PVLookup.shared` is the single entry point; it fans out to multiple database back-ends, merges their results, sorts by type priority, and caches the final list.
+The artwork pipeline lives in `PVLookup`, a separate package (github.com/Provenance-Emu/PVLookup, shared with iFly and iCube) that Provenance takes by URL. `PVLookup.shared` is the single entry point; it fans out to multiple database back-ends, merges their results, sorts by type priority, and caches the final list. Paths in this section are in the PVLookup repo; change the code there, tag a release, then bump the `pvlookup` pin in `Provenance.xcworkspace/xcshareddata/swiftpm/Package.resolved` by hand.
+
+The package ships no database bytes. Each database is an asset on a `databases-YYYY-MM-DD` release of the PVLookup repo, pinned by sha256 in `Scripts/lookup/databases.lock.json`. The app targets' "Embed lookup databases" build phase (`Scripts/lookup/embed_lookup_databases.sh`) fetches them into the gitignored `LookupDatabases/` and copies the five zips to the root of the app bundle, where PVLookup looks for `<file name>.zip` in `Bundle.main` by default. `make lookup-databases` runs the fetch by hand. A new or refreshed database means a new release in the PVLookup repo and a lock-file bump here. The cheat database is still generated here (`make update-cheatdb`, output in `build/cheatdb/`) and published as a release asset.
+
+PVLookup logs through `PVLookupLog`; `LoggingBootstrapTask` routes it into PVLogging at launch.
 
 ### Architecture Overview
 
@@ -456,7 +460,7 @@ All three back-ends are queried **in parallel** via `withTaskGroup`. Results are
 
 ### `ArtworkType` OptionSet
 
-`ArtworkType` is a `UInt`-backed `OptionSet` defined in `PVLookup/Sources/PVLookupTypes/ArtworkType.swift`:
+`ArtworkType` is a `UInt`-backed `OptionSet` defined in `Sources/PVLookupTypes/ArtworkType.swift`:
 
 | Case | Raw bit | Display name |
 |------|---------|--------------|
@@ -488,7 +492,7 @@ TheGamesDB maps its `type`/`side` columns via `ArtworkType(fromTheGamesDB:side:)
 
 ### `ArtworkSearchCache` — LRU cache
 
-`ArtworkSearchCache` is a Swift `actor` singleton (`ArtworkSearchCache.shared`) backed by a `[ArtworkSearchKey: [ArtworkMetadata]]` dictionary, defined in `PVLookup/Sources/PVLookupTypes/ArtworkSearchCache.swift`.
+`ArtworkSearchCache` is a Swift `actor` singleton (`ArtworkSearchCache.shared`) backed by a `[ArtworkSearchKey: [ArtworkMetadata]]` dictionary, defined in `Sources/PVLookupTypes/ArtworkSearchCache.swift`.
 
 - **Capacity**: 100 entries (`maxCacheSize = 100`).
 - **Eviction**: Least-recently-used. Access order is tracked in an `accessOrder: [ArtworkSearchKey]` array. On every cache hit the key is moved to the end; on overflow the first (oldest) key is removed.
@@ -537,7 +541,7 @@ This sort is performed by `PVLookup.sortArtworkByType(_:)`, which only compares 
 Create a new type that conforms to `ArtworkLookupService`. If your source also needs to expose a mapping from logical artwork types to its own identifiers (e.g. size or variant codes), additionally conform to `ArtworkLookupOnlineService` and implement `getArtworkMappings()`. The choice of protocol is about capabilities, not whether the source is online or offline:
 
 ```swift
-// PVLookup/Sources/MyNewDB/MyNewDB.swift
+// Sources/MyNewDB/MyNewDB.swift
 import PVLookupTypes
 import PVSystems
 
@@ -570,7 +574,7 @@ For sources that also provide ROM-to-artwork mapping tables, additionally confor
 
 #### 2. Register the source in `PVLookup`
 
-Open `PVLookup/Sources/PVLookup/PVLookup.swift` and make four edits:
+Open `Sources/PVLookup/PVLookup.swift` and make four edits:
 
 **a. Add a case to `LocalDatabases`:**
 
@@ -654,12 +658,12 @@ Alternatively, check the flag inside the `group.addTask` closure so the query is
 
 #### 4. Add the `SPM` module target
 
-If your source lives in a new Swift package target, add it to `PVLookup/Package.swift`:
+If your source lives in a new Swift package target, add it to PVLookup's `Package.swift`:
 
 ```swift
 .target(
     name: "MyNewDB",
-    dependencies: ["PVLookupTypes", "PVSQLiteDatabase", .product(name: "PVSystems", package: "PVSystems"), "PVLogging"],
+    dependencies: ["PVLookupTypes", "PVSQLiteDatabase", "PVSystems", "PVLookupLogging"],
     path: "Sources/MyNewDB"
 ),
 ```

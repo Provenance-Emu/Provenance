@@ -51,7 +51,7 @@ The app is split into ~26 `PV*` Swift Package frameworks. Key modules:
 - **PVPrimitives** — Base data types shared across modules
 - **PVCheevos** — RetroAchievements integration
 - **PVHashing** — ROM file hashing for identification
-- **PVLookup** — Game metadata lookup
+- **PVLookup** — Game metadata lookup (separate repo, github.com/Provenance-Emu/PVLookup; databases fetched at build time via `Scripts/lookup/databases.lock.json`)
 - **PVJIT** — JIT compilation support for emulator cores
 
 ### Emulator Cores (`Cores/`)
@@ -291,7 +291,7 @@ Modules are organized by dependency depth. Scope changes to the lowest tier poss
 | 2 | PVSettings, PVPrimitives | Yes |
 | 3 | PVSupport, PVAudio, PVCoreAudio | Needs Xcode |
 | 4 | PVCoreBridge, PVEmulatorCore, PVShaders | Needs Xcode |
-| 5 | PVCoreBridgeRetro, PVCoreLoader, PVLookup, PVLibrary | Needs Xcode |
+| 5 | PVCoreBridgeRetro, PVCoreLoader, PVLibrary | Needs Xcode |
 | 6 | PVUI, App targets | Full workspace build |
 
 ### Emulator Core Bridge Pattern

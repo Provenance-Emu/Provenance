@@ -71,7 +71,7 @@ The app is split into ~26 `PV*` Swift Package frameworks. Key modules:
 - **PVJIT** — JIT compilation support for emulator cores
 - **PVLibrary** — Data models, Realm persistence, game database, CloudKit sync
 - **PVLogging** — Logging infrastructure (CocoaLumberjack-based)
-- **PVLookup** — Game metadata and artwork and cheats lookup
+- **PVLookup** (separate repo, github.com/Provenance-Emu/PVLookup, shared with iFly and iCube) — game metadata, artwork and cheat lookup over libretrodb, OpenVGDB, TheGamesDB, ShiraGame and the libretro cheat database. Ships no database bytes (see "Lookup databases" below). Change it there, tag a release, then bump the pin in `Provenance.xcworkspace`'s `Package.resolved` by hand
 - **PVNetplay** — Central netplay support code for retroarch and game center
 - **PVPLlists** — Core and System plist processing and other serializer
 - **PVPatching** — ROM/disc patches (IPS, IPS32, BPS, UPS, PPF, xdelta3): import, matching, cache, Patch Applier, patch creation, online catalog
@@ -289,6 +289,14 @@ A second, generated workspace for fast iteration. `Provenance.xcodeproj` still s
 - **Filters draw into the picture rect, not the drawable.** Until a skin reports its screen rect the GPU view is full screen; `RenderGeometry.contentRect` letterboxes the picture inside it. Code that draws over the frame must use the same rect (this was the "VHS covers the whole screen" bug).
 - **`swift test` in PVShaders runs real Metal tests on the host GPU**, but the SwiftPM CLI only copies `.metal` files: the slang runtime compiles its bundled source as a fallback, while native-filter pipelines (package metallib) exist only in Xcode builds, so those tests skip.
 
+### Lookup databases (PVLookup)
+
+- **The databases are fetched at build time, never committed.** `Scripts/lookup/databases.lock.json` pins five assets by sha256 on a `databases-YYYY-MM-DD` release of Provenance-Emu/PVLookup. Every app target (shipping xcodeproj "Script: Embed Lookup Databases", Tuist `DevSettings.embedLookupDatabasesScript`) runs `embed_lookup_databases.sh`, which fetches them into the gitignored `LookupDatabases/` (cache: `~/Library/Caches/PVLookupDatabases`) and copies the zips to the bundle ROOT, where PVLookup's default `LookupDatabases` source looks for `<file name>.zip` in `Bundle.main`. No `LookupDatabases.configure` call is needed. `make lookup-databases` fetches by hand.
+- **`fetch-lookup-databases.sh` is a copy of PVLookup's canonical script**; keep it identical. To bump the databases: publish a new release in the PVLookup repo, then update the lock file.
+- **The cheat database generator still lives here.** `make update-cheatdb` writes `build/cheatdb/libretro_cheats.sqlite.zip` for publishing as a PVLookup release asset; the app never builds from it.
+- **PVLookup logs through `PVLookupLog`**, routed into PVLogging by `LoggingBootstrapTask` on a serial queue: PVLogging's `log()` holds four `Logger` interpolations, and calling it at the bottom of a deep lookup overflowed a 512 KB concurrency stack in a Debug build (iFly).
+- **`PVLookupTypes` and `TheGamesDB` are not products.** Their imports in PVLibrary/PVUI resolve through the `PVLookup` product's transitive modules, as they always did.
+
 ### Debugging emulator cores
 
 - **"Black screen" reports: ask for the `[NO-FRAME]` log line.** Five seconds after a successful boot with nothing presented, `PVEmulatorViewController+FirstFrameWatchdog` logs the presenter, render path, pause state, geometry and the GPU view's frame/visibility. Cores that draw to their own view (native Dolphin, PPSSPP, RetroArch `skipLayout`) trip it by design.
@@ -374,7 +382,7 @@ Modules are organized by dependency depth. Agents should scope changes to the lo
 | 2 | PVSettings, PVPrimitives | Yes |
 | 3 | PVSupport, PVAudio, PVCoreAudio | Needs Xcode |
 | 4 | PVCoreBridge, PVEmulatorCore, PVShaders | Needs Xcode (PVShaders: `swift test` works) |
-| 5 | PVCoreBridgeRetro, PVCoreLoader, PVLookup, PVLibrary | Needs Xcode |
+| 5 | PVCoreBridgeRetro, PVCoreLoader, PVLibrary | Needs Xcode |
 | 6 | PVUI, App targets | Full workspace build |
 
 ### Emulator Core Bridge Pattern
@@ -481,7 +489,7 @@ Agents MUST run these checks before creating a PR. Do NOT skip any step.
    - `.onHover` — not available on tvOS
    - `NavigationSplitView` details differ on tvOS
 
-   **Linux support** — Non-UI SPM modules (Tier 0-2: PVHashing, PVLookup, PVPlists, etc.) should compile and test on Linux. Use `#if canImport(Foundation)` not `#if canImport(UIKit)` for cross-platform code. CI runs `swift test` on Debian runners for these modules.
+   **Linux support** — Non-UI SPM modules (Tier 0-2: PVHashing, PVPlists, etc.) should compile and test on Linux. Use `#if canImport(Foundation)` not `#if canImport(UIKit)` for cross-platform code. CI runs `swift test` on Debian runners for these modules.
 
 ### PR Requirements
 - Target the `develop` branch

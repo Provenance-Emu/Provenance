@@ -15,7 +15,7 @@ Higher tiers may import lower tiers. **Never the reverse.**
 | 2 | PVSettings, PVPrimitives |
 | 3 | PVSupport, PVAudio, PVCoreAudio |
 | 4 | PVCoreBridge, PVEmulatorCore, PVShaders |
-| 5 | PVCoreBridgeRetro, PVCoreLoader, PVLookup, PVLibrary, PVRealm |
+| 5 | PVCoreBridgeRetro, PVCoreLoader, PVLibrary, PVRealm |
 | 6 | PVUI, App targets (Provenance, ProvenanceTV) |
 
 ---
@@ -296,7 +296,7 @@ Higher tiers may import lower tiers. **Never the reverse.**
 | 2 | PVSettings, PVPrimitives |
 | 3 | PVSupport, PVAudio, PVCoreAudio |
 | 4 | PVCoreBridge, PVEmulatorCore, PVShaders |
-| 5 | PVCoreBridgeRetro, PVCoreLoader, PVLookup, PVLibrary, PVRealm, PVPatching |
+| 5 | PVCoreBridgeRetro, PVCoreLoader, PVLibrary, PVRealm, PVPatching |
 | 6 | PVUI (PVSwiftUI, PVUIBase, PVUI_IOS, PVUI_TV), App targets |
 
 Note: `PVPatching` (new module for ROM patching/IPS/BPS) is Tier 5.
