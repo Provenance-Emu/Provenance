@@ -128,3 +128,6 @@ __pycache__
 /Dev/Derived
 /Tuist/.build
 /.package.resolved
+
+# PVLookup databases fetched by Scripts/lookup/embed_lookup_databases.sh
+/LookupDatabases/

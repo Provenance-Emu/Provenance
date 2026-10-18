@@ -3531,6 +3531,7 @@
 				C0C0CAFE0001000000000001 /* Script: Validate Frameworks */,
 				1A3D409217B2DCE4004DFFFC /* Resources */,
 				C0C0CAFE5A4C000000000010 /* Script: Embed Slang Shaders */,
+				C0C0CAFE6DB0000000000010 /* Script: Embed Lookup Databases */,
 				1A44C0AD1D0A1DE80018751A /* Script: Set Build Number */,
 			);
 			buildRules = (
@@ -3662,6 +3663,7 @@
 				930499C72A93073800BF257F /* Code Sign libretro.h Cores */,
 				930499C82A93073800BF257F /* Resources */,
 				C0C0CAFE5A4C000000000060 /* Script: Embed Slang Shaders */,
+				C0C0CAFE6DB0000000000060 /* Script: Embed Lookup Databases */,
 				930499EA2A93073800BF257F /* Script: Set Build Number */,
 			);
 			buildRules = (
@@ -3847,6 +3849,7 @@
 				B35EEFB02C6C6D1A00EBD1A8 /* Frameworks */,
 				B35EEFE22C6C6D1A00EBD1A8 /* Resources */,
 				C0C0CAFE5A4C000000000040 /* Script: Embed Slang Shaders */,
+				C0C0CAFE6DB0000000000040 /* Script: Embed Lookup Databases */,
 				B35EEFFF2C6C6D1A00EBD1A8 /* Script: Set Build Number */,
 				B3DD08002F20031900000000 /* Embed Foundation Extensions */,
 			);
@@ -3925,6 +3928,7 @@
 				C0C0CAFE0001000000000002 /* Script: Validate Frameworks */,
 				B394CDB62BDEE53A006B63E8 /* Resources */,
 				C0C0CAFE5A4C000000000020 /* Script: Embed Slang Shaders */,
+				C0C0CAFE6DB0000000000020 /* Script: Embed Lookup Databases */,
 				B394CDDA2BDEE53A006B63E8 /* Script: Set Build Number */,
 				C0C0CA0100000010 /* Upload Debug Symbols to Sentry */,
 			);
@@ -4142,6 +4146,7 @@
 				B3F7E373297736BE00362B92 /* Frameworks */,
 				B3F7E3C3297736BE00362B92 /* Resources */,
 				C0C0CAFE5A4C000000000050 /* Script: Embed Slang Shaders */,
+				C0C0CAFE6DB0000000000050 /* Script: Embed Lookup Databases */,
 				B3F7E3E6297736BE00362B92 /* Script: Set Build Number */,
 				B3FD98902D615CF000397643 /* Embed Frameworks */,
 			);
@@ -4189,6 +4194,7 @@
 				C0C0CAFE0001000000000003 /* Script: Validate Frameworks */,
 				B3F7E550297736C200362B92 /* Resources */,
 				C0C0CAFE5A4C000000000030 /* Script: Embed Slang Shaders */,
+				C0C0CAFE6DB0000000000030 /* Script: Embed Lookup Databases */,
 				B3F7E573297736C200362B92 /* Script: Set Build Number */,
 			);
 			buildRules = (
@@ -4987,6 +4993,126 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "set -e\n/bin/bash \"${SRCROOT}/Scripts/shaders/embed_slang_shaders.sh\"\n";
+		};
+		C0C0CAFE6DB0000000000010 /* Script: Embed Lookup Databases */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"$(SRCROOT)/Scripts/lookup/databases.lock.json",
+			);
+			name = "Script: Embed Lookup Databases";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "set -e\n/bin/bash \"${SRCROOT}/Scripts/lookup/embed_lookup_databases.sh\"\n";
+		};
+		C0C0CAFE6DB0000000000020 /* Script: Embed Lookup Databases */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"$(SRCROOT)/Scripts/lookup/databases.lock.json",
+			);
+			name = "Script: Embed Lookup Databases";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "set -e\n/bin/bash \"${SRCROOT}/Scripts/lookup/embed_lookup_databases.sh\"\n";
+		};
+		C0C0CAFE6DB0000000000030 /* Script: Embed Lookup Databases */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"$(SRCROOT)/Scripts/lookup/databases.lock.json",
+			);
+			name = "Script: Embed Lookup Databases";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "set -e\n/bin/bash \"${SRCROOT}/Scripts/lookup/embed_lookup_databases.sh\"\n";
+		};
+		C0C0CAFE6DB0000000000040 /* Script: Embed Lookup Databases */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"$(SRCROOT)/Scripts/lookup/databases.lock.json",
+			);
+			name = "Script: Embed Lookup Databases";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "set -e\n/bin/bash \"${SRCROOT}/Scripts/lookup/embed_lookup_databases.sh\"\n";
+		};
+		C0C0CAFE6DB0000000000050 /* Script: Embed Lookup Databases */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"$(SRCROOT)/Scripts/lookup/databases.lock.json",
+			);
+			name = "Script: Embed Lookup Databases";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "set -e\n/bin/bash \"${SRCROOT}/Scripts/lookup/embed_lookup_databases.sh\"\n";
+		};
+		C0C0CAFE6DB0000000000060 /* Script: Embed Lookup Databases */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"$(SRCROOT)/Scripts/lookup/databases.lock.json",
+			);
+			name = "Script: Embed Lookup Databases";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "set -e\n/bin/bash \"${SRCROOT}/Scripts/lookup/embed_lookup_databases.sh\"\n";
 		};
 		1A44C0AD1D0A1DE80018751A /* Script: Set Build Number */ = {
 			isa = PBXShellScriptBuildPhase;

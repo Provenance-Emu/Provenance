@@ -1,0 +1,26 @@
+{
+  "repository": "Provenance-Emu/PVLookup",
+  "release": "databases-2026-10-17",
+  "assets": [
+    {
+      "name": "libretro_cheats.sqlite.zip",
+      "sha256": "1e08babf0c77556eb782fa7dd5b32331e4db8dcefd5a5a670863b22e80de5863"
+    },
+    {
+      "name": "libretrodb.sqlite.zip",
+      "sha256": "ad8bb489394a006e1af880d31bda412a5659dc245779021215004e03e76d5bfe"
+    },
+    {
+      "name": "openvgdb.sqlite.zip",
+      "sha256": "d8d9ea426079806e57127493f92420ae099997fd2110fc69a2a8e462b6e89d56"
+    },
+    {
+      "name": "shiragame.sqlite3.zip",
+      "sha256": "aecb2ba81f51f880733f71d3e6646aeb135b5ef61346cc43a8294c95ed2532bd"
+    },
+    {
+      "name": "thegamesdb.sqlite.zip",
+      "sha256": "74c11497aa1e4d8e9830080c2fc8e76ed3a6ee0f6ffa1e0808c047f5eee200c1"
+    }
+  ]
+}

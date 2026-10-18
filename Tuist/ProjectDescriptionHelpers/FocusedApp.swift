@@ -92,6 +92,7 @@ public struct FocusedApp {
         let coreScripts = allCores.flatMap(\.postScripts)
         let shaders = slangShaders ? [DevSettings.embedSlangShadersScript] : []
         return libretroScripts.pre + embed + coreScripts + libretroScripts.post + shaders
+            + [DevSettings.embedLookupDatabasesScript]
     }
 
     /// Vendored .xcodeproj files the workspace must contain for these apps.

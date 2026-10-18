@@ -61,6 +61,10 @@ paths = [
   "Scripts/shaders/embed_slang_shaders.sh",
   "Scripts/shaders/fetch_slang_shaders.py",
   "Scripts/shaders/tests/test_fetch_slang_shaders.py",
+  # PVLookup database fetch (copy of Provenance-Emu/PVLookup's canonical script), run by the app
+  # targets' "Embed lookup databases" build phase and by CI.
+  "Scripts/lookup/embed_lookup_databases.sh",
+  "Scripts/lookup/fetch-lookup-databases.sh",
   # RetroArch core download and packaging, run by the Xcode build.
   "CoresRetro/RetroArch/scripts/get-modules.sh",
   "CoresRetro/RetroArch/scripts/make_frameworks.sh",

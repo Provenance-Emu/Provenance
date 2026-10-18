@@ -57,6 +57,17 @@ public enum DevSettings {
         basedOnDependencyAnalysis: false
     )
 
+    /// Copies the PVLookup databases pinned in Scripts/lookup/databases.lock.json into the app's
+    /// root, where PVLookup looks for them by default (cached, so only the first build downloads).
+    public static let embedLookupDatabasesScript: TargetScript = .post(
+        script: """
+        set -euo pipefail
+        /bin/bash "${SRCROOT}/../Scripts/lookup/embed_lookup_databases.sh"
+        """,
+        name: "Embed lookup databases",
+        basedOnDependencyAnalysis: false
+    )
+
     /// Base xcconfig for the project and every app target (repo-relative).
     public static let xcconfig: Path = .relativeToRoot("Dev/Config/Dev.xcconfig")
 
