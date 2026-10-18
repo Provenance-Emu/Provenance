@@ -83,7 +83,7 @@ public class PVDolphinCoreOptions: NSObject, CoreOptions {
                         .init(title: "8x", description: "8x", value: 3),
                         .init(title: "16x", description: "16x", value: 4)
                     ],
-                    defaultValue: 0)
+                    defaultValue: 2)
     }()
 
 	static var forceBilinearFilteringOption: CoreOption = {
@@ -167,7 +167,7 @@ public class PVDolphinCoreOptions: NSObject, CoreOptions {
             title: "Defer EFB Copies",
             description: "Defers EFB copies for performance. May cause issues in some games.",
             requiresRestart: false),
-        defaultValue: false)
+        defaultValue: true)
     }()
 
     static var textureCacheAccuracyOption: CoreOption = {
@@ -209,9 +209,9 @@ public class PVDolphinCoreOptions: NSObject, CoreOptions {
     static var gpuTextureDecodingOption: CoreOption = {
         .bool(.init(
             title: "GPU Texture Decoding",
-            description: "Use GPU for texture decoding. Provides better performance on modern devices.",
+            description: "Decode textures on the GPU. Off uses the CPU decoder's NEON path, the default on iOS and tvOS.",
             requiresRestart: false),
-        defaultValue: true)
+        defaultValue: false)
     }()
 
     static var fastDepthCalculationOption: CoreOption = {
@@ -227,7 +227,7 @@ public class PVDolphinCoreOptions: NSObject, CoreOptions {
             title: "Disable Bounding Box",
             description: "Disables bounding box emulation. May improve performance but breaks some games.",
             requiresRestart: false),
-        defaultValue: false)
+        defaultValue: true)
     }()
 
     static var saveTextureCacheToStateOption: CoreOption = {
@@ -235,7 +235,7 @@ public class PVDolphinCoreOptions: NSObject, CoreOptions {
             title: "Save Texture Cache to State",
             description: "Saves texture cache to save states. May improve save state accuracy but increase size.",
             requiresRestart: false),
-        defaultValue: false)
+        defaultValue: true)
     }()
 
     static var vertexRoundingOption: CoreOption = {
@@ -267,7 +267,7 @@ public class PVDolphinCoreOptions: NSObject, CoreOptions {
             title: "Load Custom Textures",
             description: "Load texture packs from Battery Saves/DolphinData/Load/Textures/<Game ID>.",
             requiresRestart: false),
-        defaultValue: false)
+        defaultValue: true)
     }()
 
     static var prefetchCustomTexturesOption: CoreOption = {
@@ -275,7 +275,7 @@ public class PVDolphinCoreOptions: NSObject, CoreOptions {
             title: "Prefetch Custom Textures",
             description: "Load the whole texture pack into memory at boot. Removes texture-pack stutter but large packs need a lot of RAM.",
             requiresRestart: false),
-        defaultValue: false)
+        defaultValue: true)
     }()
 
     static var graphicsModsOption: CoreOption = {
@@ -283,7 +283,7 @@ public class PVDolphinCoreOptions: NSObject, CoreOptions {
             title: "Graphics Mods",
             description: "Load graphics mods from Battery Saves/DolphinData/Load/GraphicsMods.",
             requiresRestart: true),
-        defaultValue: false)
+        defaultValue: true)
     }()
 
     static var osdMessagesOption: CoreOption = {
@@ -366,7 +366,7 @@ public class PVDolphinCoreOptions: NSObject, CoreOptions {
 			.init(title: "JIT Recompiler", description: "JIT (Fastest, auto-fallback if unavailable)", value: 2),
 			.init(title: "Cached Interpreter (IR)", description: "Experimental IR-lowering engine. Falls back to Cached Interpreter on cores without it.", value: 3)
 		  ],
-		  defaultValue: 1)
+		  defaultValue: 2)
 	}()
 
 	static var cpuClockOption: CoreOption = {
@@ -471,7 +471,7 @@ public class PVDolphinCoreOptions: NSObject, CoreOptions {
             title: "Fast FP (Cached Interpreter)",
             description: "Use fast floating-point emulation in the Cached Interpreter. Experimental but can significantly improve performance in interpreter mode.",
             requiresRestart: true),
-        defaultValue: true)
+        defaultValue: false)
     }()
 
     static var dcbzHackOption: CoreOption = {
@@ -479,7 +479,7 @@ public class PVDolphinCoreOptions: NSObject, CoreOptions {
             title: "DCBZ Hack",
             description: "Skip data cache block zero operations for better performance. Safe for most games.",
             requiresRestart: false),
-        defaultValue: true)
+        defaultValue: false)
     }()
 
     static var relaxedIdleDetectionOption: CoreOption = {
@@ -915,7 +915,7 @@ public class PVDolphinCoreOptions: NSObject, CoreOptions {
         PVDolphinCore.valueForOption(PVDolphinCoreOptions.vsyncOption).asBool
     }
     @objc static var anisotropicFiltering: Int{
-        PVDolphinCore.valueForOption(PVDolphinCoreOptions.anisotropicFilteringOption).asInt ?? 0
+        PVDolphinCore.valueForOption(PVDolphinCoreOptions.anisotropicFilteringOption).asInt ?? 2
     }
 	@objc static var bilinearFiltering: Bool {
 		PVDolphinCore.valueForOption(PVDolphinCoreOptions.forceBilinearFilteringOption).asBool
@@ -954,7 +954,7 @@ public class PVDolphinCoreOptions: NSObject, CoreOptions {
         PVDolphinCore.valueForOption(PVDolphinCoreOptions.deferEFBCopiesOption).asBool
     }
     @objc static var textureCacheAccuracy: Int {
-        PVDolphinCore.valueForOption(PVDolphinCoreOptions.textureCacheAccuracyOption).asInt ?? 1
+        PVDolphinCore.valueForOption(PVDolphinCoreOptions.textureCacheAccuracyOption).asInt ?? 2
     }
     @objc static var storeXFBCopiesToTextureOnly: Bool {
         PVDolphinCore.valueForOption(PVDolphinCoreOptions.storeXFBCopiesToTextureOnlyOption).asBool
@@ -1017,7 +1017,7 @@ public class PVDolphinCoreOptions: NSObject, CoreOptions {
     // MARK: - CPU/Emulation Settings
 
 	@objc static var cpu: Int{
-		PVDolphinCore.valueForOption(PVDolphinCoreOptions.cpuOption).asInt ?? 0
+		PVDolphinCore.valueForOption(PVDolphinCoreOptions.cpuOption).asInt ?? 2
 	}
 	@objc static var cpuClock: Int{
 		PVDolphinCore.valueForOption(PVDolphinCoreOptions.cpuClockOption).asInt ?? 0

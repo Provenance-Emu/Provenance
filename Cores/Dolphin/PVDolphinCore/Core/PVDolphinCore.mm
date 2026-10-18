@@ -560,9 +560,12 @@ static void ResetDolphinStaticState() {
     // Defer EFB Copies
     Config::SetBase(Config::GFX_HACK_DEFER_EFB_COPIES, self.deferEFBCopies);
 
-    // Texture Cache Accuracy (note: this may need special handling as it's not a simple bool)
-    // For now, map: 0=Safe (false), 1=Medium (false), 2=Fast (true)
-    Config::SetBase(Config::GFX_HACK_FAST_TEXTURE_SAMPLING, (self.textureCacheAccuracy == 2));
+    // Texture Cache Accuracy: Dolphin's "SafeTextureCacheColorSamples" (0 = Fast, 128 = Medium,
+    // 512 = Safe). This option used to toggle GFX_HACK_FAST_TEXTURE_SAMPLING instead, an unrelated
+    // hack, which left the cache at Medium whatever was picked.
+    static const int kTextureCacheColorSamples[] = {512, 128, 0};
+    const int accuracy = MAX(0, MIN(2, (int)self.textureCacheAccuracy));
+    Config::SetBase(Config::GFX_SAFE_TEXTURE_CACHE_COLOR_SAMPLES, kTextureCacheColorSamples[accuracy]);
 
     // Store XFB Copies to Texture Only (skip copy to RAM)
     Config::SetBase(Config::GFX_HACK_SKIP_XFB_COPY_TO_RAM, self.storeXFBCopiesToTextureOnly);
