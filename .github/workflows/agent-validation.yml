@@ -316,15 +316,6 @@ jobs:
             git clone --depth 1 https://github.com/ZipArchive/ZipArchive.git Dependencies/ZipArchive
           fi
 
-      - name: Cache libretro cheat database
-        uses: actions/cache@v4
-        with:
-          path: PVLookup/Sources/LibretroCheatDB/Resources/libretro_cheats.sqlite.zip
-          key: ${{ runner.os }}-cheatdb-${{ hashFiles('Scripts/generators/generate_cheatdb.py', 'PVLookup/Scripts/generate_cheatdb_if_needed.sh') }}
-
-      - name: Generate libretro cheat database if missing
-        run: ./PVLookup/Scripts/generate_cheatdb_if_needed.sh
-
       - name: Cache DerivedData
         uses: actions/cache@v4
         with:
@@ -434,15 +425,6 @@ jobs:
             rm -rf Dependencies/ZipArchive
             git clone --depth 1 https://github.com/ZipArchive/ZipArchive.git Dependencies/ZipArchive
           fi
-
-      - name: Cache libretro cheat database
-        uses: actions/cache@v4
-        with:
-          path: PVLookup/Sources/LibretroCheatDB/Resources/libretro_cheats.sqlite.zip
-          key: ${{ runner.os }}-cheatdb-${{ hashFiles('Scripts/generators/generate_cheatdb.py', 'PVLookup/Scripts/generate_cheatdb_if_needed.sh') }}
-
-      - name: Generate libretro cheat database if missing
-        run: ./PVLookup/Scripts/generate_cheatdb_if_needed.sh
 
       - name: Cache DerivedData
         uses: actions/cache@v4
@@ -586,42 +568,17 @@ jobs:
             git clone --depth 1 https://github.com/ZipArchive/ZipArchive.git Dependencies/ZipArchive
           fi
 
-      # PVLookup declares .copy("Resources/libretro_cheats.sqlite.zip"), but that file
-      # is gitignored (~33 MB, see Resources/.gitignore) and generated from
-      # libretro-database. Without it the build dies at
-      #   error: lstat(.../libretro_cheats.sqlite.zip): No such file or directory
-      # before compiling anything. generate_cheatdb_if_needed.sh exists precisely as a
-      # pre-build step for CI — it was just never wired in here.
-      #
-      # Cached because generating it means a shallow clone of libretro-database plus a
-      # python pass. The key is the hash of OUR generator, not upstream's contents:
-      # this is a compile smoke test, so it only needs a structurally valid zip, and a
-      # database lagging libretro-database by a few days is fine. Keeping the real one
-      # fresh is update-catalogs.yml's job (weekly, via PR).
-      #
-      # Only the .zip is cached — that is all Package.swift copies. The uncompressed
-      # 138 MB .sqlite is a generation byproduct and is decompressed at runtime.
-      #
-      # No `if: cache-hit` guard on the generate step below. To be precise about what
-      # that does and does not buy: actions/cache does NOT re-save an entry on a hit,
-      # so this cannot repair a bad cache entry — it only guarantees the WORKSPACE has
-      # a usable zip for this run, whatever the cache restored. That is the point; the
-      # script already no-ops in ~0s when a valid zip is present, so it is pure upside.
-      #
-      # Key hashes only the real generation inputs: the python generator and the
-      # wrapper that drives it (the wrapper owns the clone URL and output path, so a
-      # change there can change the output). NOT Scripts/generators/systems.py — despite
-      # update-catalogs.yml gating its cheatdb job on that file, generate_cheatdb.py
-      # neither imports nor invokes it, so including it would only bust the cache and
-      # force a needless regeneration.
-      - name: Cache libretro cheat database
+      # PVLookup's databases (~175 MB, pinned by sha256 in Scripts/lookup/databases.lock.json) are
+      # assets on Provenance-Emu/PVLookup releases. The app targets' "Embed lookup databases" phase
+      # copies them into the bundle; fetching here first fails a bad download as its own step.
+      - name: Cache PVLookup databases
         uses: actions/cache@v4
         with:
-          path: PVLookup/Sources/LibretroCheatDB/Resources/libretro_cheats.sqlite.zip
-          key: ${{ runner.os }}-cheatdb-${{ hashFiles('Scripts/generators/generate_cheatdb.py', 'PVLookup/Scripts/generate_cheatdb_if_needed.sh') }}
+          path: ~/Library/Caches/PVLookupDatabases
+          key: lookup-databases-${{ hashFiles('Scripts/lookup/databases.lock.json') }}
 
-      - name: Generate libretro cheat database if missing
-        run: ./PVLookup/Scripts/generate_cheatdb_if_needed.sh
+      - name: Fetch PVLookup databases
+        run: bash Scripts/lookup/fetch-lookup-databases.sh Scripts/lookup/databases.lock.json LookupDatabases
 
       - name: Cache DerivedData
         uses: actions/cache@v4

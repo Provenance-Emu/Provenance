@@ -3,16 +3,18 @@
 generate_cheatdb.py — Convert libretro .cht cheat files to SQLite database.
 
 Parses the libretro-database cht/ directory structure and produces a
-libretro_cheats.sqlite database for Provenance's cheat code lookup.
+libretro_cheats.sqlite database for Provenance's cheat code lookup. The zip it
+writes is published as an asset on a databases-YYYY-MM-DD release of
+Provenance-Emu/PVLookup; apps pin it in their databases.lock.json.
 
 Usage:
     python3 Scripts/generators/generate_cheatdb.py /path/to/libretro-database/cht/ \
-        --output PVLookup/Sources/LibretroCheatDB/Resources/libretro_cheats.sqlite
+        --output build/cheatdb/libretro_cheats.sqlite
 
     # With MD5 cross-reference (recommended):
     python3 Scripts/generators/generate_cheatdb.py /path/to/libretro-database/cht/ \
         --dat-dir /path/to/libretro-database \
-        --output PVLookup/Sources/LibretroCheatDB/Resources/libretro_cheats.sqlite
+        --output build/cheatdb/libretro_cheats.sqlite
 
 The cht/ directory has the structure:
     cht/

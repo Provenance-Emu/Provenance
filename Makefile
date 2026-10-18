@@ -8,7 +8,7 @@ export
 .PHONY: dev dev-generate dev-ui dev-azahar dev-thin dev-n64 dev-dolphin dev-coreless dev-harness help ios update tvos lite ci maint maint-status maint-run-stale maint-hooks \
 	generate-all generate-cheatdb generate-contributors generate-core-lists \
 	generate-default-skins generate-licenses generate-uti generate-changelog \
-	update-cheatdb update-skin-catalog update-core-versions update-core-licenses \
+	lookup-databases update-cheatdb update-skin-catalog update-core-versions update-core-licenses \
 	test-all test-spm test-cheatdb test-scripts \
 	lint audit-localization bump-build bump-minor bump-major spm-validate \
 	testflight testflight-tvos testflight-all release release-dry release-tag \
@@ -334,22 +334,25 @@ CORE ?=
 dev-harness: | _var_ROM
 	DEV_DERIVED="$(DEV_DERIVED)" Scripts/dev/run_harness.sh "$(ROM)" "$(TARGET)" "$(FRAMES)" "$(CORE)"
 
-## Generate libretro cheat database if missing (for builds/tests)
-ensure-cheatdb:
-	@PVLookup/Scripts/generate_cheatdb_if_needed.sh
+## Fetch the PVLookup databases pinned in Scripts/lookup/databases.lock.json into LookupDatabases/
+lookup-databases:
+	@bash Scripts/lookup/fetch-lookup-databases.sh Scripts/lookup/databases.lock.json LookupDatabases
 
 # Uses MD5 cross-referencing from DAT files for ROM hash lookup support.
 # Note: libretro only ships cheats under a subset of systems in cht/; see
 # Scripts/generators/generate_cheatdb.py (SYSTEM_SHORT_NAMES / upstream comment).
-## Force-regenerate libretro cheat database from libretro-database repo
+# The app no longer builds with this output: it bundles the libretro_cheats.sqlite.zip pinned in
+# Scripts/lookup/databases.lock.json. Publish a new one as an asset on a databases-YYYY-MM-DD
+# release of Provenance-Emu/PVLookup, then update the lock file.
+## Regenerate the libretro cheat database into build/cheatdb/ (a PVLookup release asset)
 update-cheatdb:
 	$(info Generating libretro cheat database…)
-	rm -rf /tmp/libretro-database
-	rm -f PVLookup/Sources/LibretroCheatDB/Resources/libretro_cheats.sqlite.zip
+	rm -rf /tmp/libretro-database build/cheatdb
+	mkdir -p build/cheatdb
 	git clone --depth=1 https://github.com/libretro/libretro-database.git /tmp/libretro-database
 	python3 Scripts/generators/generate_cheatdb.py /tmp/libretro-database/cht/ \
 		--dat-dir /tmp/libretro-database \
-		--output PVLookup/Sources/LibretroCheatDB/Resources/libretro_cheats.sqlite
+		--output build/cheatdb/libretro_cheats.sqlite
 	rm -rf /tmp/libretro-database
 
 ## Scrape community Delta skin sites and generate catalog.json

@@ -86,14 +86,17 @@ jobs:
             git clone --depth 1 https://github.com/ZipArchive/ZipArchive.git Dependencies/ZipArchive
           fi
 
-      - name: Cache libretro cheat database
+      # PVLookup's databases (~175 MB, pinned by sha256 in Scripts/lookup/databases.lock.json) are
+      # assets on Provenance-Emu/PVLookup releases. The app targets' "Embed lookup databases" phase
+      # copies them into the bundle; fetching here first fails a bad download as its own step.
+      - name: Cache PVLookup databases
         uses: actions/cache@v4
         with:
-          path: PVLookup/Sources/LibretroCheatDB/Resources/libretro_cheats.sqlite.zip
-          key: ${{ runner.os }}-cheatdb-${{ hashFiles('Scripts/generators/generate_cheatdb.py', 'PVLookup/Scripts/generate_cheatdb_if_needed.sh') }}
+          path: ~/Library/Caches/PVLookupDatabases
+          key: lookup-databases-${{ hashFiles('Scripts/lookup/databases.lock.json') }}
 
-      - name: Generate libretro cheat database if missing
-        run: ./PVLookup/Scripts/generate_cheatdb_if_needed.sh
+      - name: Fetch PVLookup databases
+        run: bash Scripts/lookup/fetch-lookup-databases.sh Scripts/lookup/databases.lock.json LookupDatabases
 
       - name: Cache slang shader download
         # Scripts/shaders/fetch_slang_shaders.py downloads the pinned library here; unpacking is fast.

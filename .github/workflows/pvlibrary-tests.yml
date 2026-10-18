@@ -55,15 +55,6 @@ jobs:
             git clone --depth 1 https://github.com/ZipArchive/ZipArchive.git Dependencies/ZipArchive
           fi
 
-      - name: Cache libretro cheat database
-        uses: actions/cache@v4
-        with:
-          path: PVLookup/Sources/LibretroCheatDB/Resources/libretro_cheats.sqlite.zip
-          key: ${{ runner.os }}-cheatdb-${{ hashFiles('Scripts/generators/generate_cheatdb.py', 'PVLookup/Scripts/generate_cheatdb_if_needed.sh') }}
-
-      - name: Generate libretro cheat database if missing
-        run: ./PVLookup/Scripts/generate_cheatdb_if_needed.sh
-
       - name: Cache DerivedData
         uses: actions/cache@v4
         with:

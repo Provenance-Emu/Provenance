@@ -238,22 +238,17 @@ jobs:
           command -v xcbeautify >/dev/null 2>&1 || brew install xcbeautify 2>/dev/null || true
           command -v sentry-cli >/dev/null 2>&1 || brew install getsentry/tools/sentry-cli 2>/dev/null || true
 
-      # The archive embeds PVLookup's libretro cheat database. build.yml
-      # generates it before archiving; this workflow did not, so the first run
-      # that got past the git guard died 51 minutes in with
-      #   error: lstat(.../libretro_cheats.sqlite.zip): No such file or directory
-      # Same cache key as build.yml so the two share one entry.
-      - name: Cache libretro cheat database
-        id: cache-cheatdb
+      # PVLookup's databases (~175 MB, pinned by sha256 in Scripts/lookup/databases.lock.json) are
+      # assets on Provenance-Emu/PVLookup releases. The app targets' "Embed lookup databases" phase
+      # copies them into the bundle; fetching here first fails a bad download as its own step.
+      - name: Cache PVLookup databases
         uses: actions/cache@v4
         with:
-          path: PVLookup/Sources/LibretroCheatDB/Resources/libretro_cheats.sqlite.zip
-          key: cheatdb-${{ hashFiles('Scripts/generators/generate_cheatdb.py', 'PVLookup/Scripts/generate_cheatdb_if_needed.sh') }}
+          path: ~/Library/Caches/PVLookupDatabases
+          key: lookup-databases-${{ hashFiles('Scripts/lookup/databases.lock.json') }}
 
-      - name: Generate libretro cheat database
-        if: steps.cache-cheatdb.outputs.cache-hit != 'true'
-        run: |
-          PVLookup/Scripts/generate_cheatdb_if_needed.sh
+      - name: Fetch PVLookup databases
+        run: bash Scripts/lookup/fetch-lookup-databases.sh Scripts/lookup/databases.lock.json LookupDatabases
 
       # Automatic signing needs TWO identities in the keychain, not one. The
       # PROFILES are fetched by -allowProvisioningUpdates using the ASC API key

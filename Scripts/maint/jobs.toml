@@ -198,7 +198,7 @@ run = ["python3", "Scripts/generators/systems.py", "PVLibrary/Sources/PVLibrary/
 [jobs.cheatdb]
 title = "Libretro cheat database"
 category = "Generated files"
-description = "Rebuilds the gitignored cheat database from libretro-database. CI builds make their own."
+description = "Rebuilds the cheat database from libretro-database into build/cheatdb/, for publishing as a PVLookup databases release asset (the app bundles the one pinned in Scripts/lookup/databases.lock.json)."
 run = ["make", "update-cheatdb"]
 files = ["Scripts/generators/generate_cheatdb.py"]
 needs = ["network", "git"]
