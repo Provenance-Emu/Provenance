@@ -1,0 +1,12 @@
+[mcp_servers.sentry-spotlight]
+command = "npx"
+args = [
+    "-y",
+    "--prefer-online",
+    "@spotlightjs/spotlight@latest",
+    "mcp",
+]
+
+[mcp_servers.xcode]
+command = "xcrun"
+args = ["mcpbridge"]

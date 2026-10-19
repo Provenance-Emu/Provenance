@@ -1,0 +1,17 @@
+{
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write|MultiEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash '/Users/jmattiello/Workspace/Provenance/Provenance/.codex/hooks/swiftlint-changed.sh'",
+            "timeout": 30,
+            "statusMessage": "Linting changed Swift…"
+          }
+        ]
+      }
+    ]
+  }
+}
