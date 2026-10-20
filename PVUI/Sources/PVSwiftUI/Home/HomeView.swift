@@ -96,7 +96,6 @@ struct HomeView: SwiftUI.View {
 
     @State private var discSelectionAlert: DiscSelectionAlert?
 
-    @State private var showPatchManager = false
     @State private var patchManagerGame: PVGame?
     @State private var showPatchImportPicker = false
     @State private var patchImportGame: PVGame?
@@ -592,13 +591,9 @@ struct HomeView: SwiftUI.View {
                 }
             }
         )
-        .sheet(isPresented: $showPatchManager) {
+        .sheet(item: $patchManagerGame) { game in
             NavigationStack {
-                if let game = patchManagerGame, !game.isInvalidated {
-                    PatchManagerView(gameMD5: game.md5Hash, gameTitle: game.title)
-                } else {
-                    Text("Game unavailable").padding()
-                }
+                PatchManagerView(gameMD5: game.md5Hash, gameTitle: game.title)
             }
         }
         .sheet(isPresented: $showPatchApplier, onDismiss: {
@@ -1522,7 +1517,6 @@ extension HomeView: GameContextMenuDelegate {
     func gameContextMenu(_ menu: GameContextMenu, didRequestManagePatchesFor game: PVGame) {
         guard !game.isInvalidated else { return }
         patchManagerGame = game.isFrozen ? game : game.freeze()
-        showPatchManager = true
     }
 
     private func presentDiscSelectionAlert(for game: PVGame, rootDelegate: PVRootDelegate?) {
