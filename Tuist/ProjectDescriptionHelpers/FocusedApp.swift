@@ -48,8 +48,13 @@ public struct FocusedApp {
 
     public var name: String { "Provenance-Dev-\(title)" }
 
-    /// `cores` plus the non-core products every app embeds.
-    public var allCores: [CoreProduct] { CoreProduct.nonCore + cores }
+    /// Shared products plus the selected cores. The coreless UI app needs no libretro bridge.
+    public var allCores: [CoreProduct] {
+        let shared = slug == Self.coreless.slug
+            ? CoreProduct.nonCore.filter { $0.id != CoreProduct.coreBridgeRetro.id }
+            : CoreProduct.nonCore
+        return shared + cores
+    }
 
     /// Products of `project` links, in table order, without duplicates.
     var projectProducts: [(product: String, platforms: Set<PlatformFilter>)] {
