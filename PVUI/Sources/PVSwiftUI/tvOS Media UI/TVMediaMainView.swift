@@ -275,6 +275,10 @@ struct TVMediaMainView: View {
                     if !lastSystemIdentifier.isEmpty {
                         libraryModel.selectSystem(identifier: lastSystemIdentifier)
                     }
+                    refreshInitialLibraryFocus()
+                }
+                .onChange(of: libraryModel.gamesBySystemIdentifier.values.contains { !$0.isEmpty }) { hasGames in
+                    if hasGames { refreshInitialLibraryFocus() }
                 }
                 .onChange(of: router.destination) { newValue in
                     lastDestinationRaw = newValue.rawValue
@@ -379,6 +383,28 @@ struct TVMediaMainView: View {
                     }
                     focusCoordinator.toggleSidebar()
                 }
+        }
+
+        private func refreshInitialLibraryFocus() {
+            #if os(tvOS)
+            guard libraryModel.gamesBySystemIdentifier.values.contains(where: { !$0.isEmpty }) else { return }
+            // The initial empty scroll view can keep focus after the lazy game shelves appear.
+            DispatchQueue.main.async {
+                guard router.destination == .home,
+                      !focusCoordinator.isSidebarExpanded,
+                      !focusCoordinator.isModalPresented,
+                      !focusCoordinator.isAlertPresented,
+                      !isRenamePresented else { return }
+                guard let window = UIApplication.shared.connectedScenes
+                    .compactMap({ $0 as? UIWindowScene })
+                    .flatMap(\.windows)
+                    .first(where: \.isKeyWindow),
+                      let focusSystem = UIFocusSystem.focusSystem(for: window) else { return }
+                window.layoutIfNeeded()
+                focusSystem.requestFocusUpdate(to: window)
+                focusSystem.updateFocusIfNeeded()
+            }
+            #endif
         }
 
         private var layoutWithModal: some View {
@@ -565,7 +591,6 @@ struct TVMediaMainView: View {
                 .animation(.easeInOut(duration: 0.25), value: router.destination)
                 .tvMediaFocusSection()
                 .tvMediaFocusScope(mainNamespace)
-                .tvMediaPrefersDefaultFocus(!focusCoordinator.isSidebarExpanded, in: mainNamespace)
         }
 
         @ViewBuilder
@@ -602,7 +627,6 @@ struct TVMediaMainView: View {
                 }
             )
             .tvMediaFocusScope(sidebarNamespace)
-            .tvMediaPrefersDefaultFocus(focusCoordinator.isSidebarExpanded, in: sidebarNamespace)
             .allowsHitTesting(!focusCoordinator.isAlertPresented && !isRenamePresented)
             #if os(tvOS)
             .disabled(!focusCoordinator.isSidebarExpanded || isRenamePresented || focusCoordinator.isAlertPresented)

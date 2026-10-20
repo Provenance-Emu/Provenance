@@ -332,17 +332,15 @@ struct TVMediaFocusAwareContent<Content: View>: View {
     @ObservedObject var focusCoordinator: TVMediaFocusCoordinator
     @ViewBuilder var content: () -> Content
 
-    @FocusState private var isContentFocused: Bool
-
     var body: some View {
         content()
             .tvMediaFocusSection()
-            .focused($isContentFocused)
             .tvMediaOnMoveCommand { direction in
                 handleMoveCommand(direction)
             }
-            .onChange(of: isContentFocused) { focused in
-                if focused && focusCoordinator.activeZone == .sidebar {
+            // Observe the focused child without making the scroll container a focus target.
+            .onFocusedContentChange(of: focusCoordinator) {
+                if focusCoordinator.focusedContentID != nil && focusCoordinator.activeZone == .sidebar {
                     focusCoordinator.sidebarLostFocus()
                 }
             }
