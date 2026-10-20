@@ -27,25 +27,6 @@ public enum DevSettings {
             basedOnDependencyAnalysis: false
         )
     }
-    /// Dolphin's `Sys/` (GameSettings, Wii titles, the Gecko code handler) is shipped as app
-    /// resources, and it lives in the dolphin-ios submodule, which a SwiftPM resource cannot
-    /// reference. PVDolphinCore.mm finds it in the main bundle when the package bundle lacks it.
-    public static let dolphinSysScript: TargetScript = .post(
-        script: """
-        set -euo pipefail
-        src="${SRCROOT}/../Cores/Dolphin/dolphin-ios/Data/Sys"
-        dest="${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/Sys"
-        if [ ! -d "$src" ]; then
-          echo "error: ${src} is missing; initialise the Cores/Dolphin/dolphin-ios submodule"
-          exit 1
-        fi
-        mkdir -p "$dest"
-        /usr/bin/rsync -a --delete "$src/" "$dest/"
-        """,
-        name: "Copy Dolphin Sys resources",
-        basedOnDependencyAnalysis: false
-    )
-
     /// Copies the unpacked slang shader library into the app as `SlangShaders/`
     /// (Scripts/shaders/fetch_slang_shaders.py; cached, so only the first build downloads).
     public static let embedSlangShadersScript: TargetScript = .post(

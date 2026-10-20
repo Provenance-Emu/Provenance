@@ -29,6 +29,7 @@ CORES = {
 
 # cores the shipping app takes from their packages -> their CorePlist.swift
 SHIPPED_AS_PACKAGES = {
+    "Dolphin": "PVDolphinCore/Core/CorePlist.swift",
     "emuThree": "PVEmuThreeCore/Core/CorePlist.swift",
     "ep128emu": "PVEP128EmuCore/CorePlist.swift",
     "snes9x": "PVSNES/SNES/CorePlist.swift",
@@ -85,7 +86,7 @@ class ResourceBundleTests(unittest.TestCase):
 class CorePackageLayoutTests(unittest.TestCase):
     @unittest.skipUnless(shutil.which("swift"), "swift toolchain not installed")
     def test_source_targets_are_libraries_with_separate_languages(self):
-        for relative in ["PVCoreBridgeRetro", "Cores/ep128emu", "Cores/emuThree"]:
+        for relative in ["PVCoreBridgeRetro", "Cores/ep128emu", "Cores/emuThree", "Cores/Dolphin"]:
             with self.subTest(package=relative):
                 result = subprocess.run(
                     ["swift", "package", "describe", "--type", "json"], cwd=ROOT / relative,

@@ -128,8 +128,7 @@ public extension CoreProduct {
     static let dolphin = CoreProduct(
         id: "dolphin",
         link: .package(path: "Cores/Dolphin", product: "PVDolphin-Dynamic"),
-        artefacts: ["Cores/Dolphin/dolphin-ios/build/xcframework/PVlibDolphin.xcframework"],
-        postScripts: [DevSettings.dolphinSysScript]
+        artefacts: ["Cores/Dolphin/dolphin-ios/build/xcframework/PVlibDolphin.xcframework"]
     )
 
     static let emuThree = CoreProduct(id: "emuthree", link: .package(path: "Cores/emuThree", product: "PVEmuThree-Dynamic"), platforms: [.ios])

@@ -45,8 +45,7 @@ typedef UIViewController DolphinVulkanViewController;
 typedef UIViewController DolphinOGLViewController;
 #define PV_DOLPHIN_SWIFT_CLASS(name) NSClassFromString(@"PVDolphin." #name)
 
-/// Sys/ and Config/ live in the SwiftPM resource bundle (Config) or the app bundle (Sys, which
-/// SwiftPM cannot reference from the dolphin-ios submodule; the dev app copies it in).
+/// SwiftPM owns Sys/ and Config/. Keep the main-bundle fallback for existing app layouts.
 static NSString *PVDolphinResourcePath(NSString *name) {
     for (NSBundle *bundle in @[SWIFTPM_MODULE_BUNDLE, [NSBundle mainBundle]]) {
         NSString *path = [bundle pathForResource:name ofType:nil];

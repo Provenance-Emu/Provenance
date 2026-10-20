@@ -297,7 +297,10 @@ do_archive() {
     if ! $NO_BUILD; then
         local core_slice=ios
         case "$destination" in *tvOS*) core_slice=tvos ;; esac
-        run python3 "$PROJECT_DIR/Scripts/cores/build_slice.py" azahar "$core_slice" --xcframework
+        local core
+        for core in azahar dolphin; do
+            run python3 "$PROJECT_DIR/Scripts/cores/build_slice.py" "$core" "$core_slice" --xcframework
+        done
         log "Archiving $label ($scheme)..."
         run mkdir -p "$ARCHIVES_DIR"
         local cmd=(xcodebuild archive

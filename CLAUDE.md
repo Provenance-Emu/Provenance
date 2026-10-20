@@ -34,6 +34,12 @@ SwiftPM owns the wrapper, bridge, Core.plist and migrator test targets. Tuist's 
 the same preparation through `dev-generate`. Native engine changes require preparing again before building.
 Arm64 simulator builds require `ARCHS=arm64` or `EXCLUDED_ARCHS=x86_64` at the build invocation level.
 
+**Dolphin native artifact preparation:** run `make prepare-dolphin DOLPHIN_SLICE=ios`
+(or `tvos` for a tvOS device) before resolving the shipping workspace. `make open`
+prepares both Azahar and Dolphin. Shipping and Tuist share `PVDolphin-Dynamic`;
+SwiftPM owns the bridge, wrapper, Core.plist, Config and Sys resource bundles.
+`make dev-dolphin` prepares its selected slice before generating Tuist.
+
 Build from Xcode: open `Provenance.xcworkspace` and select a scheme. Start with `Provenance-Lite` (fastest build) before moving to `Provenance-Release` or `Provenance-XL (Release)`.
 
 **Note:** Initial builds may fail because some source files are generated lazily at compile time. Retry if Xcode gets the build order wrong on first build.

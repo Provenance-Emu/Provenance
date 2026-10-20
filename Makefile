@@ -5,7 +5,7 @@ SHELL := /bin/bash
 # `export` makes the values visible to recipes (release.sh, fastlane, etc.).
 -include .env
 export
-.PHONY: prepare-azahar dev dev-generate dev-ui dev-azahar dev-thin dev-n64 dev-dolphin dev-coreless dev-harness help ios update tvos lite ci maint maint-status maint-run-stale maint-hooks \
+.PHONY: prepare-azahar prepare-dolphin dev dev-generate dev-ui dev-azahar dev-thin dev-n64 dev-dolphin dev-coreless dev-harness help ios update tvos lite ci maint maint-status maint-run-stale maint-hooks \
 	generate-all generate-cheatdb generate-contributors generate-core-lists \
 	generate-default-skins generate-licenses generate-uti generate-changelog \
 	lookup-databases update-cheatdb update-skin-catalog update-core-versions update-core-licenses \
@@ -212,7 +212,7 @@ test:
 ## Fast CI simulator build (no cores, no code signing). EXCLUDED_ARCHS as an
 ## argument also reaches package targets, which Build.xcconfig cannot.
 lite:
-	$(MAKE) prepare-azahar AZAHAR_SLICE=ios-sim
+	$(MAKE) prepare-azahar prepare-dolphin AZAHAR_SLICE=ios-sim DOLPHIN_SLICE=ios-sim
 	$(info Building Provenance-CI for iOS Simulator…)
 
 	xcodebuild build \
@@ -252,7 +252,7 @@ ios: | update developer_ios
 tvos: | update developer_tvos
 
 ## Open the workspace
-open: prepare-azahar
+open: prepare-azahar prepare-dolphin
 	open Provenance.xcworkspace
 
 ## Dev workspace (Tuist; see docs/superpowers/specs/2026-10-10-dev-workspace-design.md)
@@ -274,6 +274,9 @@ DEV_DESTINATION ?= generic/platform=iOS Simulator
 AZAHAR_SLICE ?= ios
 prepare-azahar:
 	python3 Scripts/cores/build_slice.py azahar $(AZAHAR_SLICE) --xcframework
+
+prepare-dolphin:
+	python3 Scripts/cores/build_slice.py dolphin $(DOLPHIN_SLICE) --xcframework
 
 DEV_PREBUILT_CORES ?= azahar
 DEV_SLICE ?= ios-sim

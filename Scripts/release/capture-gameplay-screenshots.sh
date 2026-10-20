@@ -94,7 +94,9 @@ fi
 # Workspace package resolution requires Azahar even for the UITesting scheme.
 core_slice=ios
 [ -z "$SIMULATOR_UDID" ] || core_slice=ios-sim
-python3 Scripts/cores/build_slice.py azahar "$core_slice" --xcframework
+for core in azahar dolphin; do
+    python3 Scripts/cores/build_slice.py "$core" "$core_slice" --xcframework
+done
 log "Building UITesting scheme..."
 BUILD_DIR="$(mktemp -d)/build"
 

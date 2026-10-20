@@ -8,9 +8,6 @@
       location = "container:"
       name = "Cores">
       <FileRef
-         location = "group:Cores/Dolphin/PVDolphin.xcodeproj">
-      </FileRef>
-      <FileRef
          location = "group:Cores/PPSSPP/PVPPSSPP.xcodeproj">
       </FileRef>
    </Group>

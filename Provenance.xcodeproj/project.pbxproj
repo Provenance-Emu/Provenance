@@ -327,8 +327,6 @@
 		B35F93E52D2F8E560016E633 /* WhatsNewKit in Frameworks */ = {isa = PBXBuildFile; platformFilters = (ios, maccatalyst, ); productRef = B35F93E42D2F8E560016E633 /* WhatsNewKit */; };
 		B362232F2D1A012F003CAD92 /* LaunchScreenTV.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 555454422AC09998006A065F /* LaunchScreenTV.storyboard */; platformFilters = (tvos, ); };
 		B36223302D1A0142003CAD92 /* LaunchImageTV.png in Resources */ = {isa = PBXBuildFile; fileRef = 555454412AC09997006A065F /* LaunchImageTV.png */; platformFilters = (tvos, ); };
-		B3636EF72F087C6500C64AAD /* PVlibDolphin.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = B37113892E70AD14006C1ED7 /* PVlibDolphin.xcframework */; };
-		B3636EF82F087C6500C64AAD /* PVlibDolphin.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B37113892E70AD14006C1ED7 /* PVlibDolphin.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B364D1CE2E2DE6A90038EB2A /* PVEmuThree.framework in Frameworks */ = {isa = PBXBuildFile; productRef = 250508C17610DA6B99F2D80F /* PVEmuThree-Dynamic */; platformFilters = (ios, maccatalyst, ); };
 		B364D1CF2E2DE6A90038EB2A /* PVEmuThree.framework in Embed Frameworks */ = {isa = PBXBuildFile; productRef = 250508C17610DA6B99F2D80F /* PVEmuThree-Dynamic */; platformFilters = (ios, maccatalyst, ); settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B36A16042D90D2CC00420484 /* OpenSSL in Frameworks */ = {isa = PBXBuildFile; productRef = B36A16032D90D2CC00420484 /* OpenSSL */; };
@@ -356,8 +354,8 @@
 		B377ECA82CB33D5600E9B750 /* PVCoreBridgeRetro.framework in Frameworks */ = {isa = PBXBuildFile; productRef = C0C0CAFEC06A3EA641913489 /* PVCoreBridgeRetro */; };
 		B377ECA92CB33D5600E9B750 /* PVCoreBridgeRetro.framework in Embed Frameworks */ = {isa = PBXBuildFile; productRef = C0C0CAFEC06A3EA641913489 /* PVCoreBridgeRetro */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B379CA022F00C7BB00C3D7A7 /* TopShelf.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = BE9FDCB71C210B9E0046DF0E /* TopShelf.appex */; platformFilters = (tvos, ); settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
-		B37CCD312E2FF36A00ABFCF5 /* PVDolphin.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B37CCD302E2FF36A00ABFCF5 /* PVDolphin.framework */; };
-		B37CCD322E2FF36A00ABFCF5 /* PVDolphin.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B37CCD302E2FF36A00ABFCF5 /* PVDolphin.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		B37CCD312E2FF36A00ABFCF5 /* PVDolphin-Dynamic in Frameworks */ = {isa = PBXBuildFile; productRef = C0C0CAFE8027B358B8B8BE11 /* PVDolphin-Dynamic */; };
+		B37CCD322E2FF36A00ABFCF5 /* PVDolphin-Dynamic in Embed Frameworks */ = {isa = PBXBuildFile; productRef = C0C0CAFE8027B358B8B8BE11 /* PVDolphin-Dynamic */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B381A27C292639E400305322 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B381A27B292639E200305322 /* UIKit.framework */; };
 		B382362C2CC4623100DCE080 /* SiriusRating in Frameworks */ = {isa = PBXBuildFile; platformFilters = (ios, maccatalyst, ); productRef = B382362B2CC4623100DCE080 /* SiriusRating */; };
 		B386DD682C8939C60021A7BA /* PVFreeDO-Dynamic in Frameworks */ = {isa = PBXBuildFile; productRef = B386DD672C8939C60021A7BA /* PVFreeDO-Dynamic */; };
@@ -484,8 +482,8 @@
 		B3A610242CB8864F001D99C2 /* PVTGBDual-Dynamic in Embed Frameworks */ = {isa = PBXBuildFile; productRef = B3A610222CB8864F001D99C2 /* PVTGBDual-Dynamic */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		B3AAAAAA00000002BBBBBB01 /* ThumbnailArtworkDriver.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3AAAAAA00000001BBBBBB01 /* ThumbnailArtworkDriver.swift */; };
 		B3AAAAAA00000004BBBBBB01 /* SnapshotThumbnailArtworkDriver.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3AAAAAA00000003BBBBBB01 /* SnapshotThumbnailArtworkDriver.swift */; };
-		B3AAFB562949F9B800CC8234 /* PVDolphin.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3A320392720991B00F338F6 /* PVDolphin.framework */; platformFilters = (ios, tvos, ); };
-		B3AAFB572949F9B800CC8234 /* PVDolphin.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3A320392720991B00F338F6 /* PVDolphin.framework */; platformFilters = (ios, tvos, ); settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		B3AAFB562949F9B800CC8234 /* PVDolphin-Dynamic in Frameworks */ = {isa = PBXBuildFile; productRef = C0C0CAFE6F73B3062AAFD248 /* PVDolphin-Dynamic */; platformFilters = (ios, tvos, ); };
+		B3AAFB572949F9B800CC8234 /* PVDolphin-Dynamic in Embed Frameworks */ = {isa = PBXBuildFile; productRef = C0C0CAFE6F73B3062AAFD248 /* PVDolphin-Dynamic */; platformFilters = (ios, tvos, ); settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3AD74492D2474F3001E5EC3 /* PVCoreBridgeRetro.framework in Frameworks */ = {isa = PBXBuildFile; productRef = C0C0CAFE1F55DEDF43524F34 /* PVCoreBridgeRetro */; };
 		B3AD744A2D2474F3001E5EC3 /* PVCoreBridgeRetro.framework in Embed Frameworks */ = {isa = PBXBuildFile; productRef = C0C0CAFE1F55DEDF43524F34 /* PVCoreBridgeRetro */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3AED2F72BE355B7003A9290 /* LaunchScreenTV.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 555454422AC09998006A065F /* LaunchScreenTV.storyboard */; platformFilters = (tvos, ); };
@@ -631,7 +629,7 @@
 		B3F7E530297736C200362B92 /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A4869D517C8D5450019F6D2 /* CoreData.framework */; };
 		B3F7E535297736C200362B92 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A47C94217BC1BC400C27644 /* AudioToolbox.framework */; };
 		B3F7E53A297736C200362B92 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B381A27B292639E200305322 /* UIKit.framework */; };
-		B3F7E53C297736C200362B92 /* PVDolphin.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3A320392720991B00F338F6 /* PVDolphin.framework */; platformFilters = (ios, maccatalyst, tvos, ); };
+		B3F7E53C297736C200362B92 /* PVDolphin-Dynamic in Frameworks */ = {isa = PBXBuildFile; productRef = C0C0CAFE938967BB49BA38A0 /* PVDolphin-Dynamic */; platformFilters = (ios, maccatalyst, tvos, ); };
 		B3F7E540297736C200362B92 /* SteamController in Frameworks */ = {isa = PBXBuildFile; platformFilters = (ios, tvos, ); productRef = B3F7E42E297736C200362B92 /* SteamController */; settings = {ATTRIBUTES = (Weak, ); }; };
 		B3F7E541297736C200362B92 /* Metal.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B33625FB26EDF88200DC41EA /* Metal.framework */; };
 		B3F7E542297736C200362B92 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A3D431D17B2F01F004DFFFC /* OpenGLES.framework */; platformFilters = (ios, tvos, ); };
@@ -644,7 +642,7 @@
 		B3F7E55A297736C200362B92 /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = B3F43DCE2168075200CDD40A /* Settings.bundle */; };
 		B3F7E566297736C200362B92 /* licenses.html in Resources */ = {isa = PBXBuildFile; fileRef = 1F8D52471D91993000C29F90 /* licenses.html */; };
 		B3F7E587297736C200362B92 /* PVEP128Emu.framework in Embed Frameworks */ = {isa = PBXBuildFile; productRef = C0C0CAFE7A954CBECA7A2E81 /* PVEP128Emu-Dynamic */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		B3F7E590297736C200362B92 /* PVDolphin.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3A320392720991B00F338F6 /* PVDolphin.framework */; platformFilters = (ios, maccatalyst, tvos, ); settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		B3F7E590297736C200362B92 /* PVDolphin-Dynamic in Embed Frameworks */ = {isa = PBXBuildFile; productRef = C0C0CAFE938967BB49BA38A0 /* PVDolphin-Dynamic */; platformFilters = (ios, maccatalyst, tvos, ); settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3F7E5A9297736C200362B92 /* Spotlight.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = B3E21D6B203211BE009939D3 /* Spotlight.appex */; platformFilters = (ios, maccatalyst, macos, ); settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		B3F9049E2C1FE9D8002283B3 /* libbz2.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B3F9049D2C1FE9D8002283B3 /* libbz2.tbd */; };
 		B3F904A72C2002F9002283B3 /* PVCoreBridge in Frameworks */ = {isa = PBXBuildFile; productRef = B3F904A62C2002F9002283B3 /* PVCoreBridge */; };
@@ -1006,7 +1004,7 @@
 				B35AB4492CB6F7DA003273D4 /* PVEmuThree.framework in Embed Frameworks */,
 				C0C0CAFE0A2A000000000002 /* PVAzahar.framework in Embed Frameworks */,
 				B35AB4062CB6DA6A003273D4 /* PVCrabEmu-Dynamic in Embed Frameworks */,
-				B3AAFB572949F9B800CC8234 /* PVDolphin.framework in Embed Frameworks */,
+				B3AAFB572949F9B800CC8234 /* PVDolphin-Dynamic in Embed Frameworks */,
 				B35AB4182CB6DC46003273D4 /* PVStella-Dynamic in Embed Frameworks */,
 				B39FAC472D6014010065B66B /* SDL2.xcframework in Embed Frameworks */,
 				B35AB4282CB6E14D003273D4 /* PVCoreBridgeRetro.framework in Embed Frameworks */,
@@ -1125,7 +1123,7 @@
 				C0C0CAFE75BD42CB8E29E738 /* PVSNES9x-Dynamic in Embed Frameworks */,
 				B33BD1C92C6A6261001E933A /* PVStella-Dynamic in Embed Frameworks */,
 				B386DE862C8974DA0021A7BA /* PVFreeDO-Dynamic in Embed Frameworks */,
-				B37CCD322E2FF36A00ABFCF5 /* PVDolphin.framework in Embed Frameworks */,
+				B37CCD322E2FF36A00ABFCF5 /* PVDolphin-Dynamic in Embed Frameworks */,
 				B33BD1C62C6A622A001E933A /* PVTGBDual-Dynamic in Embed Frameworks */,
 				B33BD1C02C6A6212001E933A /* PVPicoDrive-Dynamic in Embed Frameworks */,
 				B38A68C12CCF031C001C57D0 /* PVVisualBoyAdvance-Dynamic in Embed Frameworks */,
@@ -1134,7 +1132,6 @@
 				B33BD1B62C6A619F001E933A /* PVAtari800-Dynamic in Embed Frameworks */,
 				B318E2962CAB571100D0E599 /* PVBliss-Dynamic in Embed Frameworks */,
 				B30ED0D82CFD3C4200AFCFCE /* PVCoreMednafen-Dynamic in Embed Frameworks */,
-				B3636EF82F087C6500C64AAD /* PVlibDolphin.xcframework in Embed Frameworks */,
 				B3BB79912F6E9D4E00938AB1 /* PVCoreBridgeRetro.framework in Embed Frameworks */,
 				B364D1CF2E2DE6A90038EB2A /* PVEmuThree.framework in Embed Frameworks */,
 				C0C0CAFE0A2A000000000006 /* PVAzahar.framework in Embed Frameworks */,
@@ -1229,7 +1226,7 @@
 				B3A610042CB885BD001D99C2 /* PVCoremGBA-Dynamic in Embed Frameworks */,
 				B3F7E587297736C200362B92 /* PVEP128Emu.framework in Embed Frameworks */,
 				B3A6100D2CB885F2001D99C2 /* PVBliss-Dynamic in Embed Frameworks */,
-				B3F7E590297736C200362B92 /* PVDolphin.framework in Embed Frameworks */,
+				B3F7E590297736C200362B92 /* PVDolphin-Dynamic in Embed Frameworks */,
 				B3A6101B2CB88633001D99C2 /* PVPicoDrive-Dynamic in Embed Frameworks */,
 				B3A610182CB88621001D99C2 /* PVFreeDO-Dynamic in Embed Frameworks */,
 				B3A610152CB88619001D99C2 /* PVCrabEmu-Dynamic in Embed Frameworks */,
@@ -1355,7 +1352,6 @@
 		B305EF2E276B4CB0003AE510 /* PVStella.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVStella.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B305F103276B6BBD003AE510 /* PVCrabEmu.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVCrabEmu.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B30623162CC81A1000B4F954 /* Provenance-UnderDevelopment-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Provenance-UnderDevelopment-Info.plist"; sourceTree = "<group>"; };
-		B3082DB82E274CC2009DFE5D /* PVDolphin.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVDolphin.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3082DBD2E27520E009DFE5D /* libdolphin.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libdolphin.dylib; path = "Cores/Dolphin/dolphin-ios/build-iphoneos-/Source/iOS/Library/libdolphin.dylib"; sourceTree = "<group>"; };
 		B30C6E20271D823F0025DD88 /* PVPPSSPP.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVPPSSPP.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B30E99AE2C6EF79A00C1431E /* PVDebug.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = PVDebug.c; sourceTree = "<group>"; };
@@ -1517,7 +1513,6 @@
 		B36A8D422CCD53DB002357DD /* Provenance-Lite-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Provenance-Lite-Info.plist"; sourceTree = "<group>"; };
 		B36C7D5627AE2CF400715677 /* PVAtari800-tvOS.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = "PVAtari800-tvOS.framework"; sourceTree = BUILT_PRODUCTS_DIR; };
 		B37021F52872538400B3F6DA /* PVFBNeo.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVFBNeo.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		B37113892E70AD14006C1ED7 /* PVlibDolphin.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = PVlibDolphin.xcframework; path = "Cores/Dolphin/dolphin-ios/build/xcframework/PVlibDolphin.xcframework"; sourceTree = "<group>"; };
 		B37228CD2CCDC80B00E6F627 /* AppStoreAssets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = AppStoreAssets.xcassets; sourceTree = "<group>"; };
 		B37263A026EA04E700E95488 /* ProSystem.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = ProSystem.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B372F3502E2CB13E00B6B563 /* libdolphin.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libdolphin.dylib; path = "Cores/Dolphin/dolphin-ios/build-appletvos-/Source/iOS/Library/libdolphin.dylib"; sourceTree = "<group>"; };
@@ -1526,7 +1521,6 @@
 		B379D0472B4FB9A80067325A /* Provenance-JB.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = "Provenance-JB.entitlements"; path = "Provenance/Provenance-JB.entitlements"; sourceTree = SOURCE_ROOT; };
 		B379D0482B4FBF240067325A /* ProvenanceTV-Free.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "ProvenanceTV-Free.entitlements"; sourceTree = "<group>"; };
 		B379D0492B4FBF240067325A /* ProvenanceTV-JB.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "ProvenanceTV-JB.entitlements"; sourceTree = "<group>"; };
-		B37CCD302E2FF36A00ABFCF5 /* PVDolphin.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVDolphin.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B37CCD332E2FFD9400ABFCF5 /* MoltenVK-1.2.8.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = "MoltenVK-1.2.8.xcframework"; path = "MoltenVK/MoltenVK/dynamic/MoltenVK-1.2.8.xcframework"; sourceTree = "<group>"; };
 		B37CE7C3293F29940010B746 /* PVBliss.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVBliss.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3804D032B4E0D3700637102 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -1539,7 +1533,6 @@
 		B38CCD8D2BE70DFB00DDB592 /* ProvenanceTV-AppStore.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "ProvenanceTV-AppStore.entitlements"; sourceTree = "<group>"; };
 		B393420D2CC5760C008AA673 /* libMoltenVK.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libMoltenVK.dylib; path = Cores/emuThree/lib/libMoltenVK.dylib; sourceTree = "<group>"; };
 		B39342102CC5771B008AA673 /* MoltenVK.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = MoltenVK.xcframework; path = Cores/emuThree/cmake/MoltenVK/MoltenVK.xcframework; sourceTree = "<group>"; };
-		B39343952CC5B202008AA673 /* PVDolphin.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVDolphin.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B394CDDF2BDEE53A006B63E8 /* Provenance.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Provenance.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		B394CDE22BDF0BCE006B63E8 /* Provenance-AppStore-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Provenance-AppStore-Info.plist"; sourceTree = "<group>"; };
 		B394CDE32BDF22A2006B63E8 /* Provenance-AppStore.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = "Provenance-AppStore.entitlements"; path = "../Provenance-AppStore.entitlements"; sourceTree = "<group>"; };
@@ -1556,8 +1549,6 @@
 		B39FAC182D5E7E690065B66B /* CONTRIBUTORS.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = CONTRIBUTORS.md; sourceTree = "<group>"; };
 		B39FAC222D5E7F630065B66B /* SYSTEMS.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = SYSTEMS.md; sourceTree = "<group>"; };
 		B39FAC452D6014000065B66B /* SDL2.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = SDL2.xcframework; path = Dependencies/SDL2.xcframework; sourceTree = "<group>"; };
-		B3A320392720991B00F338F6 /* PVDolphin.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVDolphin.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		B3A3203C2720992500F338F6 /* PVDolphin.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVDolphin.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3A450FF2F77854000B6449F /* CLAUDE.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = CLAUDE.md; sourceTree = "<group>"; };
 		B3A60E852CB7707F001D99C2 /* FrameworksRetro */ = {isa = PBXFileReference; lastKnownFileType = folder; name = FrameworksRetro; path = CoresRetro/RetroArch/modules/FrameworksRetro; sourceTree = "<group>"; };
 		B3AAAAAA00000001BBBBBB01 /* ThumbnailArtworkDriver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThumbnailArtworkDriver.swift; sourceTree = "<group>"; };
@@ -1577,12 +1568,10 @@
 		B3B66A7027B872BA00E2236B /* pt-BR */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "pt-BR"; path = "pt-BR.lproj/Strings.strings"; sourceTree = "<group>"; };
 		B3B9239C202D054B00580FFC /* Provenance-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Provenance-Bridging-Header.h"; sourceTree = "<group>"; };
 		B3B9239D202D054B00580FFC /* ProvenanceTV-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "ProvenanceTV-Bridging-Header.h"; sourceTree = "<group>"; };
-		B3BA902129583A1600142E32 /* PVDolphin.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVDolphin.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3BE9FA42C7987B1006D989E /* ROM File Provider.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = "ROM File Provider.appex"; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3BE9FB32C7987B1006D989E /* ROM File ProviderUI.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = "ROM File ProviderUI.appex"; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3BE9FD02C7988BD006D989E /* Provenance Stickers.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = "Provenance Stickers.appex"; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3C2F23E2D711F9400BA7631 /* EmuSkins.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = EmuSkins.xcodeproj; path = EmuSkinsApp/EmuSkins.xcodeproj; sourceTree = "<group>"; };
-		B3C7CCC927DCB0DA0003F9D2 /* PVDolphin.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVDolphin.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3C9D4AD1DEA74390068D057 /* PVGB.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVGB.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3C9D4B01DEA74500068D057 /* PVGB.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVGB.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3C9D5201DEA787D0068D057 /* PVGBA.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVGBA.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -1613,8 +1602,6 @@
 		B3DD05042F20031900000001 /* Views/SystemBadgeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Views/SystemBadgeView.swift; sourceTree = "<group>"; };
 		B3DD07032F20031900000000 /* WidgetLocalizedStrings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetLocalizedStrings.swift; sourceTree = "<group>"; };
 		B3DD07052F20031900000000 /* Localizable.strings */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; name = Localizable.strings; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
-		B3DE9E462E2D7428008E97F6 /* PVDolphin.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = PVDolphin.xcframework; path = Cores/Dolphin/build/xcframework/PVDolphin.xcframework; sourceTree = "<group>"; };
-		B3DE9E4D2E2D7AE9008E97F6 /* PVlibDolphin.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = PVlibDolphin.xcframework; path = Cores/Dolphin/build/xcframework/PVlibDolphin.xcframework; sourceTree = "<group>"; };
 		B3DEEF912942F92C00A6957C /* PVBliss.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVBliss.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3DEEF942942F96900A6957C /* PVBliss.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVBliss.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3DF8ED72CC7AE1F0006F20E /* ColoredIcons.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = ColoredIcons.xcassets; sourceTree = "<group>"; };
@@ -1661,7 +1648,6 @@
 		B3F43DCE2168075200CDD40A /* Settings.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = Settings.bundle; sourceTree = "<group>"; };
 		B3F7E421297736BE00362B92 /* Provenance-Lite.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Provenance-Lite.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3F7E5AE297736C200362B92 /* Provenance-XL.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Provenance-XL.app"; sourceTree = BUILT_PRODUCTS_DIR; };
-		B3F8E12B2CB6098100017D1B /* PVDolphin.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVDolphin.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3F9049D2C1FE9D8002283B3 /* libbz2.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libbz2.tbd; path = usr/lib/libbz2.tbd; sourceTree = SDKROOT; };
 		B3FD98532D614E6400397643 /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
 		B3FD98552D614E6E00397643 /* CoreLocationUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocationUI.framework; path = System/iOSSupport/System/Library/Frameworks/CoreLocationUI.framework; sourceTree = SDKROOT; };
@@ -2178,7 +2164,7 @@
 				B381A27C292639E400305322 /* UIKit.framework in Frameworks */,
 				B3E88CB82977AB4400C90E86 /* Reachability in Frameworks */,
 				B35AB4172CB6DC46003273D4 /* PVStella-Dynamic in Frameworks */,
-				B3AAFB562949F9B800CC8234 /* PVDolphin.framework in Frameworks */,
+				B3AAFB562949F9B800CC8234 /* PVDolphin-Dynamic in Frameworks */,
 				B35AB43F2CB6E795003273D4 /* PVLogging in Frameworks */,
 				B35AB43D2CB6E78C003273D4 /* PVLibrary in Frameworks */,
 				B3061FB12F776FCB000F8839 /* JITManager in Frameworks */,
@@ -2431,7 +2417,7 @@
 				B39343992CC5C432008AA673 /* MoltenVK-Catalyst in Frameworks */,
 				B3EF26EC2BE7F8DD0066D4B6 /* libxml2.tbd in Frameworks */,
 				B3E0CF9F2C054DEB00F45074 /* RxDataSources in Frameworks */,
-				B37CCD312E2FF36A00ABFCF5 /* PVDolphin.framework in Frameworks */,
+				B37CCD312E2FF36A00ABFCF5 /* PVDolphin-Dynamic in Frameworks */,
 				B33BD1BF2C6A6212001E933A /* PVPicoDrive-Dynamic in Frameworks */,
 				B3FD98562D614E6E00397643 /* CoreLocationUI.framework in Frameworks */,
 				B3952F582C698F54000B0308 /* Defaults in Frameworks */,
@@ -2441,7 +2427,6 @@
 				B3A450FE2F77832100B6449F /* PVNetplay in Frameworks */,
 				B3A450DE2F7782F000B6449F /* PVRcheevosCore in Frameworks */,
 				B382362C2CC4623100DCE080 /* SiriusRating in Frameworks */,
-				B3636EF72F087C6500C64AAD /* PVlibDolphin.xcframework in Frameworks */,
 				B318E2A02CAB5A2600D0E599 /* PVProSystem-Dynamic in Frameworks */,
 				B34A20152C62F96100E34059 /* PVPlists in Frameworks */,
 				B3D9A2CA2F78C6F5002F1DCB /* PVLiveActivities in Frameworks */,
@@ -2650,7 +2635,7 @@
 				B3A6101A2CB88633001D99C2 /* PVPicoDrive-Dynamic in Frameworks */,
 				B3F7E535297736C200362B92 /* AudioToolbox.framework in Frameworks */,
 				B3F7E53A297736C200362B92 /* UIKit.framework in Frameworks */,
-				B3F7E53C297736C200362B92 /* PVDolphin.framework in Frameworks */,
+				B3F7E53C297736C200362B92 /* PVDolphin-Dynamic in Frameworks */,
 				B3F7E540297736C200362B92 /* SteamController in Frameworks */,
 				B3F7E541297736C200362B92 /* Metal.framework in Frameworks */,
 				B3F7E542297736C200362B92 /* OpenGLES.framework in Frameworks */,
@@ -2856,20 +2841,14 @@
 		1A3D409617B2DCE4004DFFFC /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				B37113892E70AD14006C1ED7 /* PVlibDolphin.xcframework */,
 				B37CCD332E2FFD9400ABFCF5 /* MoltenVK-1.2.8.xcframework */,
-				B37CCD302E2FF36A00ABFCF5 /* PVDolphin.framework */,
 				B364D1D02E2DEC4A0038EB2A /* glslang.xcframework */,
-				B3DE9E4D2E2D7AE9008E97F6 /* PVlibDolphin.xcframework */,
-				B3DE9E462E2D7428008E97F6 /* PVDolphin.xcframework */,
 				B372F3502E2CB13E00B6B563 /* libdolphin.dylib */,
 				B372F3532E2CB6AD00B6B563 /* libdolphin.dylib */,
 				B3082DBD2E27520E009DFE5D /* libdolphin.dylib */,
-				B3082DB82E274CC2009DFE5D /* PVDolphin.framework */,
 				B3FD98552D614E6E00397643 /* CoreLocationUI.framework */,
 				B3FD98532D614E6400397643 /* CoreLocation.framework */,
 				B39FAC452D6014000065B66B /* SDL2.xcframework */,
-				B39343952CC5B202008AA673 /* PVDolphin.framework */,
 				B39342102CC5771B008AA673 /* MoltenVK.xcframework */,
 				B31553612CC2FD5500C472CA /* PVPPSSPP.framework */,
 				B351E7CB2CBE072D0000E087 /* libavcodec.xcframework */,
@@ -2879,7 +2858,6 @@
 				B351E7CD2CBE072D0000E087 /* libswscale.xcframework */,
 				B393420D2CC5760C008AA673 /* libMoltenVK.dylib */,
 				B3E2A9F92CB60F1200E2636D /* PVPPSSPP.framework */,
-				B3F8E12B2CB6098100017D1B /* PVDolphin.framework */,
 				B318E2732CAB4B1F00D0E599 /* PVPPSSPP.framework */,
 				B3D271B32C96961A004C0A92 /* PVProSystem.framework */,
 				B3E79B272C93C6C4007D86A6 /* PVProSystem.framework */,
@@ -2963,7 +2941,6 @@
 				935BB05829854A8700AA68DC /* PVNP2Kai.framework */,
 				B39C4B652BF09F0400F199BB /* libMoltenVK.dylib */,
 				93F28DC8295E2F3D00E4D464 /* PVPPSSPP.framework */,
-				B3BA902129583A1600142E32 /* PVDolphin.framework */,
 				93C792242954E869001212D2 /* MoltenVK.xcframework */,
 				B3DEEF942942F96900A6957C /* PVBliss.framework */,
 				B3DEEF912942F92C00A6957C /* PVBliss.framework */,
@@ -2990,7 +2967,6 @@
 				B3270F9027DCB2CA00E83180 /* PVTGBDual.framework */,
 				B3270F6E27DCB1DC00E83180 /* PVCrabEmu.framework */,
 				B3270F6227DCB1A700E83180 /* PVPPSSPP.framework */,
-				B3C7CCC927DCB0DA0003F9D2 /* PVDolphin.framework */,
 				B3270FB727DCB62C00E83180 /* libz.dylib */,
 				B36C7D5627AE2CF400715677 /* PVAtari800-tvOS.framework */,
 				B311B1C127A52F1700D1DE41 /* UIKit.framework */,
@@ -3008,8 +2984,6 @@
 				B3D54EF62768308100476241 /* SwiftUI.framework */,
 				B33625FB26EDF88200DC41EA /* Metal.framework */,
 				B33625FA26EDF88200DC41EA /* MetalKit.framework */,
-				B3A3203C2720992500F338F6 /* PVDolphin.framework */,
-				B3A320392720991B00F338F6 /* PVDolphin.framework */,
 				B305436D2720237400F5257D /* PVPPSSPP.framework */,
 				B30C6E20271D823F0025DD88 /* PVPPSSPP.framework */,
 				B37263A026EA04E700E95488 /* ProSystem.framework */,
@@ -3454,6 +3428,7 @@
 			);
 			name = Provenance;
 			packageProductDependencies = (
+				C0C0CAFE6F73B3062AAFD248 /* PVDolphin-Dynamic */,
 				17A82DCA4E172D742B2E011F /* PVEmuThree-Dynamic */,
 				C0C0CAFE46CD31F1070A7385 /* PVAzahar-Dynamic */,
 				C0C0CAFE513FB050FD77CFD4 /* PVCoreBridgeRetro */,
@@ -3866,6 +3841,7 @@
 			);
 			name = "Provenance (AppStore)";
 			packageProductDependencies = (
+				C0C0CAFE8027B358B8B8BE11 /* PVDolphin-Dynamic */,
 				250508C17610DA6B99F2D80F /* PVEmuThree-Dynamic */,
 				C0C0CAFEB507DDDB04AD130B /* PVAzahar-Dynamic */,
 				C0C0CAFE04F920A2D7C514A0 /* PVCoreBridgeRetro */,
@@ -4134,6 +4110,7 @@
 			);
 			name = "Provenance-XL";
 			packageProductDependencies = (
+				C0C0CAFE938967BB49BA38A0 /* PVDolphin-Dynamic */,
 				A7B4C1E7D592F6AFF07C4CEC /* PVEmuThree-Dynamic */,
 				C0C0CAFEEE24EFF43C996355 /* PVAzahar-Dynamic */,
 				C0C0CAFE7A954CBECA7A2E81 /* PVEP128Emu-Dynamic */,
@@ -4437,6 +4414,7 @@
 			mainGroup = 1A3D408B17B2DCE4004DFFFC;
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
+				C0C0CAFECDB5BAF12FEAA90B /* Cores/Dolphin */,
 				3FFB285FA9EA9AB4592DE91C /* Cores/emuThree */,
 				C0C0CAFE019D7EEA174173E9 /* Azahar */,
 				C0C0CAFEF856E7CBFC76F9E3 /* XCLocalSwiftPackageReference "PVCoreBridgeRetro" */,
@@ -11175,6 +11153,7 @@
 		};
 		C0C0CAFE019D7EEA174173E9 /* Azahar */ = {isa = XCLocalSwiftPackageReference; relativePath = Cores/Azahar; };
 		3FFB285FA9EA9AB4592DE91C /* Cores/emuThree */ = {isa = XCLocalSwiftPackageReference; relativePath = Cores/emuThree; };
+		C0C0CAFECDB5BAF12FEAA90B /* Cores/Dolphin */ = {isa = XCLocalSwiftPackageReference; relativePath = Cores/Dolphin; };
 /* End XCLocalSwiftPackageReference section */
 
 /* Begin XCRemoteSwiftPackageReference section */
@@ -12714,6 +12693,9 @@
 		A7B4C1E7D592F6AFF07C4CEC /* PVEmuThree-Dynamic */ = {isa = XCSwiftPackageProductDependency; package = 3FFB285FA9EA9AB4592DE91C /* Cores/emuThree */; productName = "PVEmuThree-Dynamic"; };
 		17A82DCA4E172D742B2E011F /* PVEmuThree-Dynamic */ = {isa = XCSwiftPackageProductDependency; package = 3FFB285FA9EA9AB4592DE91C /* Cores/emuThree */; productName = "PVEmuThree-Dynamic"; };
 		659EEF84B26A38B912BC92DA /* PVEmuThree-Dynamic */ = {isa = XCSwiftPackageProductDependency; package = 3FFB285FA9EA9AB4592DE91C /* Cores/emuThree */; productName = "PVEmuThree-Dynamic"; };
+		C0C0CAFE8027B358B8B8BE11 /* PVDolphin-Dynamic */ = {isa = XCSwiftPackageProductDependency; package = C0C0CAFECDB5BAF12FEAA90B /* Cores/Dolphin */; productName = "PVDolphin-Dynamic"; };
+		C0C0CAFE938967BB49BA38A0 /* PVDolphin-Dynamic */ = {isa = XCSwiftPackageProductDependency; package = C0C0CAFECDB5BAF12FEAA90B /* Cores/Dolphin */; productName = "PVDolphin-Dynamic"; };
+		C0C0CAFE6F73B3062AAFD248 /* PVDolphin-Dynamic */ = {isa = XCSwiftPackageProductDependency; package = C0C0CAFECDB5BAF12FEAA90B /* Cores/Dolphin */; productName = "PVDolphin-Dynamic"; };
 /* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 1A3D408C17B2DCE4004DFFFC /* Project object */;

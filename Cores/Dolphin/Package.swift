@@ -3,8 +3,8 @@
 
 import PackageDescription
 
-// Dolphin as a SwiftPM core. It mirrors the `PVDolphin` target of PVDolphin.xcodeproj, which stays
-// the shipping build path.
+// Dolphin wrapper shared by the shipping project and Tuist. Prepare the native
+// XCFramework with `make prepare-dolphin` before resolving the workspace.
 //
 // Layout
 //   PVlibDolphin     binaryTarget over dolphin-ios/build/xcframework/PVlibDolphin.xcframework, the
@@ -35,10 +35,8 @@ import PackageDescription
 //   - `GCC_PREFIX_HEADER`: PVDolphinCore-Prefix.pch is not referenced by the xcodeproj either.
 //   - `SKIP_INSTALL`/`INSTALL_PATH`/`LD_RUNPATH_SEARCH_PATHS` framework packaging: Xcode wraps the
 //     `-Dynamic` product itself.
-//   - Resources outside the package target: Sys/ lives in the dolphin-ios submodule, which SwiftPM
-//     cannot reference as a resource. The dev app copies it into the app bundle
-//     (CoreProduct.dolphin.postScripts) and PVDolphinCore.mm looks there when it is not in the
-//     SwiftPM bundle. Config/ is a normal resource.
+//   - Sys/ is copied through Resources/Sys, a package-local symlink into the submodule.
+//     Both Config/ and Sys/ belong to the bridge resource bundle.
 
 // MARK: ------- Shared -------
 
@@ -102,7 +100,7 @@ let dolphinCXXSettings: [CXXSetting] = dolphinHeaderPaths.map { CXXSetting.heade
 /// The `-Wl,-unexported_symbol` list of BuildFlags.xcconfig, plus its rpaths. PVlibDolphin and
 /// Azahar both static-link glslang; hiding Dolphin's keeps dyld from coalescing the two.
 let dolphinLinkerFlags: [String] = [
-    "-ObjC",
+    "-Xlinker", "-ObjC",
     "-Wl,-rpath,@loader_path",
     "-Wl,-rpath,@loader_path/../Frameworks/PVlibDolphin.framework",
     "-Wl,-rpath,@executable_path/../Frameworks/PVlibDolphin.framework",
@@ -134,9 +132,6 @@ let dolphinNonTargetPaths: [String] = [
     "dolphin-ios",
     "lib",
     "cmake",
-    "PVDolphin.xcodeproj",
-    "BuildFlags.xcconfig",
-    "LibDolphinConfig.xcconfig",
     "build_dolphin_core.py",
     "build_dolphin_core.sh",
     "convert_to_object_libs.sh",
@@ -201,6 +196,7 @@ let bridgeTarget: Target = .target(
     sources: dolphinBridgeSources,
     resources: [
         .copy("Resources/Config"),
+        .copy("Resources/Sys"),
     ],
     // The public headers are listed by Sources/PVDolphinBridge/include/module.modulemap: three
     // headers in PVDolphinCore/Core are C++ only and must stay out of the module Swift imports.

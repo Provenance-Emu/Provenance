@@ -81,11 +81,11 @@ class CheckShippingVsDevTests(unittest.TestCase):
         self.assertEqual(len(problems), 1)
         self.assertIn("Cores/Azahar", problems[0])
 
-    def test_stale_exception_is_reported(self):
-        pbx = PBXPROJ + '\n\t\tA8 = { isa = XCLocalSwiftPackageReference; relativePath = Cores/Dolphin; };\n'
-        problems = check(CORE_PRODUCT, pbx)
-        self.assertEqual(len(problems), 2)  # Missing dev row and a stale shipping exception.
-        self.assertTrue(any("SHIPPING_EXCEPTIONS" in problem for problem in problems))
+    def test_dolphin_requires_a_shipping_package(self):
+        rows = CORE_PRODUCT + '\n static let dolphin = CoreProduct(id: "dolphin", link: .package(path: "Cores/Dolphin", product: "PVDolphin-Dynamic"))\n'
+        problems = check(rows, PBXPROJ)
+        self.assertEqual(len(problems), 1)
+        self.assertIn("Cores/Dolphin", problems[0])
 
     def test_non_core_rows_are_ignored(self):
         rows = CORE_PRODUCT + '\n    static let y = CoreProduct(id: "y", link: .package(path: "PVSomething", product: "PVSomething"))\n'

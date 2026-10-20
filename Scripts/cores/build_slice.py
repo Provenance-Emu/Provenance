@@ -18,7 +18,7 @@ into the cache, so PVAzahar's PVAZAHAR_ARCHIVE path and PVDolphin's references d
 On a miss the wrapped builder builds that one slice (its per-platform methods, not its main(),
 which would also repack the xcframework), the product moves into the cache and is linked.
 --xcframework repacks <Product>.xcframework for distribution; Dolphin also repacks it when it
-is missing, since PVDolphin.xcodeproj links the xcframework at planning time.
+is missing, since SwiftPM resolves the xcframework at planning time.
 
 Python 3.9 compatible (Dolphin's Xcode phase runs /usr/bin/python3). Azahar's builder needs
 3.10+, so it runs in a separate interpreter (PV_PYTHON3, Homebrew python3, python3.1x).

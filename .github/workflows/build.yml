@@ -417,8 +417,11 @@ jobs:
             fi
           done
 
-      - name: Prepare Azahar SwiftPM native artifact
-        run: python3 Scripts/cores/build_slice.py azahar "${{ steps.core-keys.outputs.slice }}" --xcframework
+      - name: Prepare SwiftPM native artifacts
+        run: |
+          for core in azahar dolphin; do
+            python3 Scripts/cores/build_slice.py "$core" "${{ steps.core-keys.outputs.slice }}" --xcframework
+          done
 
       - name: Build Provenance
         id: build
