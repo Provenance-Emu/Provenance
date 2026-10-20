@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import io
+import importlib.util
 import json
 import os
 import sys
@@ -10,6 +11,7 @@ import tempfile
 import unittest
 from contextlib import redirect_stdout
 from pathlib import Path
+from unittest.mock import patch
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 import build_slice  # noqa: E402
@@ -298,6 +300,59 @@ class CLITests(unittest.TestCase):
     def test_slice_from_platform_name(self):
         self.assertEqual(build_slice.SLICE_FOR_PLATFORM_NAME["appletvsimulator"], "tvos-sim")
         self.assertEqual(build_slice.SLICE_FOR_PLATFORM_NAME["iphoneos"], "ios")
+
+
+class AzaharCMakeCacheTests(unittest.TestCase):
+    """Restored native build trees must belong to the current checkout."""
+
+    @classmethod
+    def setUpClass(cls):
+        script = Path(__file__).resolve().parents[3] / "Cores/Azahar/build_azahar_core.py"
+        spec = importlib.util.spec_from_file_location("azahar_cache_tests", script)
+        cls.azahar = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(cls.azahar)
+
+    def test_configure_discards_relocated_or_incomplete_tree(self):
+        for changed in ("CMAKE_HOME_DIRECTORY", "CMAKE_CACHEFILE_DIR", "missing"):
+            with self.subTest(changed=changed), tempfile.TemporaryDirectory() as tmp:
+                root = Path(tmp)
+                source, out = root / "source", root / "build/TVOS"
+                source.mkdir()
+                out.mkdir(parents=True)
+                entries = {"CMAKE_HOME_DIRECTORY": source, "CMAKE_CACHEFILE_DIR": out}
+                if changed == "missing":
+                    entries.clear()
+                else:
+                    entries[changed] = Path("/old/runner/checkout")
+                write(out / "CMakeCache.txt", "".join(f"{key}:INTERNAL={value}\n" for key, value in entries.items()))
+                write(out / "stale-object.a", "old")
+                sibling = write(root / "build/OS64/keep.a", "other slice")
+                mvk = root / "MoltenVK"
+                write(mvk / self.azahar.PLATFORMS["TVOS"]["mvk"] / "libMoltenVK.a", "stub")
+                builder = object.__new__(self.azahar.AzaharBuilder)
+                builder.verbose = False
+
+                def configured(cmd, cwd, verbose):
+                    self.assertEqual(cwd, out)
+                    self.assertTrue(out.is_dir())
+                    self.assertFalse((out / "CMakeCache.txt").exists())
+                    self.assertFalse((out / "stale-object.a").exists())
+                    self.assertTrue(sibling.exists())
+
+                with patch.object(self.azahar, "SRC", source), patch.object(self.azahar, "MOLTENVK_XCFW", mvk), \
+                     patch.object(self.azahar, "run", side_effect=configured) as run:
+                    builder.configure("TVOS", out)
+                    run.assert_called_once()
+
+    def test_compatible_tree_is_preserved(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            source, out = Path(tmp) / "source", Path(tmp) / "build/TVOS"
+            source.mkdir()
+            write(out / "CMakeCache.txt", f"CMAKE_HOME_DIRECTORY:INTERNAL={source}\nCMAKE_CACHEFILE_DIR:INTERNAL={out}\n")
+            marker = write(out / "keep.a", "valid")
+            with patch.object(self.azahar, "SRC", source):
+                self.azahar.prepare_build_directory(out)
+            self.assertEqual(marker.read_text(), "valid")
 
 
 if __name__ == "__main__":

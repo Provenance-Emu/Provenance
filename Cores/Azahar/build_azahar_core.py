@@ -106,6 +106,23 @@ def run(cmd: list[str], cwd: Path | None = None, verbose: bool = False) -> None:
         raise BuildError(f"`{cmd[0]}` exited with {e.returncode}") from e
 
 
+def prepare_build_directory(out: Path) -> None:
+    """Discard a relocated CMake tree; its generated paths and objects are not portable."""
+    cache = out / "CMakeCache.txt"
+    if cache.exists():
+        entries = {}
+        for line in cache.read_text().splitlines():
+            if line.startswith(("CMAKE_HOME_DIRECTORY:", "CMAKE_CACHEFILE_DIR:")) and "=" in line:
+                key, value = line.split("=", 1)
+                entries[key.split(":", 1)[0]] = value
+        expected = {"CMAKE_HOME_DIRECTORY": SRC, "CMAKE_CACHEFILE_DIR": out}
+        if any(not entries.get(key) or Path(entries[key]).resolve() != path.resolve()
+               for key, path in expected.items()):
+            log(f"Discarding relocated or incomplete CMake tree at {out}", "warning")
+            shutil.rmtree(out)
+    out.mkdir(parents=True, exist_ok=True)
+
+
 class AzaharBuilder:
     """Builds the azahar static libraries per platform and packages the xcframework."""
 
@@ -133,10 +150,10 @@ class AzaharBuilder:
 
     def configure(self, platform: str, out: Path) -> None:
         p = PLATFORMS[platform]
-        out.mkdir(parents=True, exist_ok=True)
         mvk = MOLTENVK_XCFW / p["mvk"] / "libMoltenVK.a"
         if not mvk.exists():
             raise BuildError(f"MoltenVK static slice missing: {mvk}")
+        prepare_build_directory(out)
         cmd = ["cmake", str(SRC), "-GNinja",
                f"-DCMAKE_TOOLCHAIN_FILE={TOOLCHAIN}", f"-DPLATFORM={platform}",
                # arm64 only: the toolchain defaults SIMULATOR_TVOS to x86_64.
