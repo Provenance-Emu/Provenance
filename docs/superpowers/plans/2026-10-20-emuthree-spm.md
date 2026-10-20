@@ -26,3 +26,21 @@ Engine C++ pre-includes its actual network/network.h because the SDK framework s
 shadows the lowercase path on a case-insensitive volume. Local bridge code includes the
 narrow network.h path, while Apple Network/Network.h keeps SDK precedence. Upstream
 sources remain unchanged.
+
+Validated on 2026-10-20:
+
+- `Provenance-Lite (AppStore)` built successfully for generic iOS, arm64, with
+  Xcode 27.1 and code signing disabled. All 382 engine and 202 Crypto++ sources
+  compiled; the 17-file bridge and Swift wrapper compiled and linked successfully.
+- The embedded `PVEmuThree-Dynamic.framework` contains the principal class, bridge
+  and both render controllers, exports no C++ symbols, and is loaded by the app's
+  debug dylib. Its resource bundle contains a byte-identical Core.plist.
+- Package layout/resource tests, the shipping/dev audit (21 package rows), Tuist
+  manifest checks (7 apps, 17 core rows), project plist lint and SwiftLint passed.
+  Focused Tuist generation and package resolution also passed during migration.
+- Updated the existing plist loader to initialize `ReadOptions` with `[]`; the
+  current Swift SDK rejects its previous integer initialization.
+
+This validates an iOS device build. Simulator, tvOS and gameplay were not exercised.
+Azahar and emuThree migrations and this compiler fix are committed separately from
+the concurrent UI and library changes.
