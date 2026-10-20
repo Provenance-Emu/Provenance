@@ -160,6 +160,7 @@ class RetroLinkageTests(unittest.TestCase):
             run(str(t / "client"))
             print("PASS: optimized Swift callbacks exported, linked from C, and executed")
             (t / "headers.mm").write_text(
+                '#include "PVCoreBridgeRetro/Sources/ExternalHeaders/MoltenVK/vulkan/vulkan.h"\n'
                 '#include "PVCoreBridgeRetro/Sources/ExternalHeaders/MoltenVK/vulkan/vk_platform.h"\n'
                 '#include "PVCoreBridgeRetro/Sources/ExternalHeaders/MoltenVK/vk_video/vulkan_video_codecs_common.h"\n'
             )
@@ -185,6 +186,7 @@ class RetroLinkageTests(unittest.TestCase):
                     target,
                     "-I",
                     str(root),
+                    "-I", str(root / "MoltenVK/MoltenVK/include"),
                     str(t / "headers.mm"),
                 )
                 print(f"PASS: Vulkan headers with C++ modules ({sdk})")
