@@ -132,6 +132,8 @@ public extension CoreProduct {
         postScripts: [DevSettings.dolphinSysScript]
     )
 
+    static let emuThree = CoreProduct(id: "emuthree", link: .package(path: "Cores/emuThree", product: "PVEmuThree-Dynamic"), platforms: [.ios])
+
     static let ep128Emu = CoreProduct(id: "ep128emu", link: .package(path: "Cores/ep128emu", product: "PVEP128Emu-Dynamic"))
 
     // MARK: Non-core products every app embeds
@@ -150,6 +152,6 @@ public extension CoreProduct {
     /// Every row, for the manifest checks.
     static let all: [CoreProduct] = [
         .mGBA, .stella, .snes9x, .fceu, .genesis, .mupen64Plus, .mednafen,
-        .proSystem, .picoDrive, .tgbDual, .azahar, .dolphin, .ep128Emu
+        .proSystem, .picoDrive, .tgbDual, .azahar, .dolphin, .emuThree, .ep128Emu
     ] + nonCore
 }

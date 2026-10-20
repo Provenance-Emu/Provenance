@@ -201,6 +201,9 @@ A second, generated workspace for fast iteration. `Provenance.xcodeproj` still s
   - `Provenance-Dev-UI`: mGBA, Stella, snes9x.
   - `Provenance-Dev-Thin`: no native cores; 4 libretro dylibs (mednafen_psx_hw, mupen64plus_next, snes9x, ppsspp).
   - `Provenance-Dev-Azahar`: Azahar.
+- `Provenance-Dev-EmuThree` (opt-in, iOS device): `make dev-emuthree` uses the same
+  `PVEmuThree-Dynamic` SwiftPM product as shipping. The package compiles the legacy engine
+  and bridge sources and links the existing vendor archives; no core Xcode project is needed.
   - `Provenance-Dev-Dolphin` (opt-in, device only): `Cores/Dolphin/Package.swift` wraps
     `PVlibDolphin.xcframework` as a `.binaryTarget`. SwiftPM will not load the package until
     `build_slice.py dolphin <slice>` has produced the xcframework, so `make dev-dolphin` runs it first
