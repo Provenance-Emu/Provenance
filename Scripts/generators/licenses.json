@@ -372,25 +372,6 @@
       ]
     },
     {
-      "name": "fMSX",
-      "identifier": "com.provenance.core.fMSX",
-      "projectURL": "https://fms.komkon.org/fMSX/",
-      "version": "0",
-      "license": "LicenseRef-fMSX",
-      "licenseURL": "https://fms.komkon.org/fMSX/",
-      "copyrightHolder": [
-        "Copyright © 1993-2024 Marat Fayzullin"
-      ],
-      "upstreamProjectURL": null,
-      "forkNotes": null,
-      "appStoreCompatible": null,
-      "isRetroArch": false,
-      "supportedSystems": [
-        "com.provenance.msx",
-        "com.provenance.msx2"
-      ]
-    },
-    {
       "name": "mGBA",
       "identifier": "com.provenance.core.mGBA",
       "projectURL": "https://mgba.io/",
