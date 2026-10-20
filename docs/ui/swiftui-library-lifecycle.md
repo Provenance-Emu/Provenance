@@ -118,14 +118,29 @@ Hardware profiling and a large-library scrolling comparison remain necessary.
 
 ### Remaining checks
 
-The phone's media-layout eligibility now requires a window at least 900 points
-wide and 500 points tall, preventing the observed switch to a cropped media UI on
-phone rotation. The production helper has passing tests, but the final native
-rotation check is pending: the Mac is locked. The alternate Xcode interaction
-connection closed before it could be used; its temporary simulator was removed.
-The original review simulator remains available.
+Native phone rotation was exercised on the rebuilt app in portrait and both
+landscape orientations, with the drawer open and closed. The library keeps its
+phone layout and the toolbar remains visible. This revealed a closed-drawer strip
+in the landscape safe area: the hiding distance now includes the side inset.
+Repeated rotation confirms that the strip is gone on both sides. Returning Home
+also keeps Settings and Add Games visible at the top of the drawer. Native
+accessibility exposes the drawer while hiding the background library.
 
-Still to validate: actual phone rotation and iPad window resizing, current tvOS
+The follow-up UI compilation completed all 201 compiler jobs without errors;
+package aggregation, app relinking, ad-hoc signing and signature verification
+passed. Linked symbols contain the SwiftUI drawer and exclude the legacy root
+controller. Five current drawer-geometry XCTest cases passed, including a new
+landscape safe-area regression case. The cached compiler invocation required a
+fresh, preloaded OpenGLES import cache and removal of its stale SDK stat-cache
+argument; no graphics source or SDK headers were changed.
+
+The UIKit baseline uses the same Realm library but a separate app Documents
+container. Its initially different save preview was fallback artwork because the
+synthetic ROM's screenshot file was missing there. The current app correctly
+loads the actual black test-ROM capture. Visual comparisons must mirror these
+local test files as well as the shared database.
+
+Still to validate: iPad window resizing, current tvOS
 integration, full VoiceOver and Reduce Motion/Transparency interactions, physical
 controller navigation through all presentations, native file imports, deep links,
 shortcuts, Siri/Spotlight, background autosave and CloudKit push delivery.
