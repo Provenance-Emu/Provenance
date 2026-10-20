@@ -25,18 +25,6 @@ import UIKit
 import FreemiumKit
 #endif
 
-// Add at the top of the file, after imports
-extension View {
-    @ViewBuilder
-    func focusableIfAvailable() -> some View {
-        if #available(iOS 17, tvOS 17, *) {
-            self.focusable(true)
-        } else {
-            self
-        }
-    }
-}
-
 @available(iOS 14, tvOS 14, *)
 public struct
 SideMenuView: SwiftUI.View {
