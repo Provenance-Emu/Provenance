@@ -89,11 +89,11 @@
 
 /// Returns true if Provenance has acquired JIT at runtime (bridged from DOLJitManager).
 /// Defined in PVLibRetro+JIT.swift via @_cdecl("pvjit_acquired").
-extern "C" bool pvjit_acquired(void);
+extern "C" bool pvjit_acquired(void) noexcept;
 
 /// Returns true when the thin VFS should memory-map this open (FREQUENT_ACCESS or
 /// read-only disk image). Defined in ThinVFSDiskImagePolicy.swift.
-extern "C" bool pv_thin_vfs_should_memory_map(const char *path, uint32_t mode, uint32_t hints, int64_t fileSize);
+extern "C" bool pv_thin_vfs_should_memory_map(const char *path, uint32_t mode, uint32_t hints, int64_t fileSize) noexcept;
 
 // Peripheral interfaces: sensor (CoreMotion), location (CoreLocation), LED (GameController)
 #if __has_include(<CoreMotion/CoreMotion.h>) && !TARGET_OS_TV && !TARGET_OS_MACCATALYST && !TARGET_OS_OSX

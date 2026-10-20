@@ -109,7 +109,9 @@ class RetroLinkageTests(unittest.TestCase):
         root = ROOT
 
         def run(*args):
-            return subprocess.run(args, check=True, capture_output=True, text=True).stdout
+            result = subprocess.run(args, capture_output=True, text=True)
+            self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+            return result.stdout
 
         with tempfile.TemporaryDirectory() as tmp:
             t = Path(tmp)
@@ -127,11 +129,17 @@ class RetroLinkageTests(unittest.TestCase):
                 "-O",
                 "-whole-module-optimization",
                 "-emit-library",
+                "-emit-objc-header-path", str(t / "support.h"),
                 str(t / "JIT.swift"),
                 str(policy),
                 "-o",
                 str(t / "support.dylib"),
             )
+            frontend = (root / "PVCoreBridgeRetro/Sources/PVLibRetro/PVThinLibretroFrontend.mm").read_text()
+            declarations = re.findall(r'^extern "C" bool pv(?:jit_acquired|_thin_vfs_should_memory_map).*?;', frontend, re.M)
+            self.assertEqual(len(declarations), 2)
+            (t / "declarations.mm").write_text('#include "support.h"\n' + "\n".join(declarations))
+            run("xcrun", "clang++", "-fsyntax-only", "-fmodules", "-fcxx-modules", str(t / "declarations.mm"))
             symbols = run("nm", "-gU", str(t / "support.dylib"))
             for name in ("_pvjit_acquired", "_pv_thin_vfs_should_memory_map"):
                 self.assertIn(name, symbols, f"Callback not exported: {name}")
