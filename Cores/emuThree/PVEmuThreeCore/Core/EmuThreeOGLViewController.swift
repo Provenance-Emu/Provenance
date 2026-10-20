@@ -2,6 +2,7 @@
 //  Copyright © 2023 Provenance Emu. All rights reserved.
 
 import Foundation
+import PVEmuThreeBridge
 import GLKit
 import os
 

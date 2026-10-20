@@ -4,7 +4,14 @@
 #import "PVEmuThreeCoreBridge+Controls.h"
 //#import "PVEmuThreeCoreBridge+Audio.h"
 //#import "PVEmuThreeCoreBridge+Video.h"
-#import <PVEmuThree/PVEmuThree-Swift.h>
+// The Swift target depends on this bridge. Resolve its view classes through the ObjC runtime
+// to avoid a dependency cycle through the generated Swift header.
+@interface PVEmuThreeCoreBridge (SwiftOptions)
+- (void)parseOptions;
+@end
+@protocol EmuThreeRenderViewInitializing
+- (instancetype)initWithResFactor:(int8_t)resFactor videoWidth:(CGFloat)videoWidth videoHeight:(CGFloat)videoHeight core:(PVEmuThreeCoreBridge *)core;
+@end
 
 #import <Foundation/Foundation.h>
 @import PVCoreBridge;
@@ -12,7 +19,7 @@
 #import <PVCoreObjCBridge/PVCoreObjCBridge.h>
 
 /* Citra Includes */
-#import <PVEmuThree/CitraWrapper.h>
+#import "CitraWrapper.h"
 #include "core/savestate.h"
 #include "core/hle/service/am/am.h"
 
@@ -224,7 +231,7 @@ static bool _isOff = false;
 
 - (void)setupView {
     if (self.touchViewController) {
-        m_view_controller=[[EmuThreeVulkanViewController alloc]
+        m_view_controller=[(UIViewController<EmuThreeRenderViewInitializing> *)[NSClassFromString(@"PVEmuThree.EmuThreeVulkanViewController") alloc]
                            initWithResFactor:self.resFactor
                            videoWidth: self.videoWidth
                            videoHeight: self.videoHeight
@@ -255,7 +262,7 @@ static bool _isOff = false;
         UIViewController *gl_view_controller = (UIViewController *)self.renderDelegate;
         if(self.gsPreference == 0)
         {
-            EmuThreeVulkanViewController *cgsh_view_controller=[[EmuThreeVulkanViewController alloc]
+            UIViewController *cgsh_view_controller=[(UIViewController<EmuThreeRenderViewInitializing> *)[NSClassFromString(@"PVEmuThree.EmuThreeVulkanViewController") alloc]
                                                                 initWithResFactor:self.resFactor
                                                                 videoWidth: self.videoWidth
                                                                 videoHeight: self.videoHeight
@@ -267,7 +274,7 @@ static bool _isOff = false;
             [gl_view_controller addChildViewController:cgsh_view_controller];
             [cgsh_view_controller didMoveToParentViewController:gl_view_controller];
         } else if(self.gsPreference == 1) {
-            EmuThreeOGLViewController *cgsh_view_controller=[[EmuThreeOGLViewController alloc]
+            UIViewController *cgsh_view_controller=[(UIViewController<EmuThreeRenderViewInitializing> *)[NSClassFromString(@"PVEmuThree.EmuThreeOGLViewController") alloc]
                                                              initWithResFactor:self.resFactor
                                                              videoWidth: self.videoWidth
                                                              videoHeight: self.videoHeight

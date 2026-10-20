@@ -11,7 +11,7 @@
 #import <Foundation/Foundation.h>
 #import <AudioToolbox/AudioToolbox.h>
 #import <AVFoundation/AVFoundation.h>
-#import <PVEmuThree/CitraWrapper.h>
+#import "CitraWrapper.h"
 #import "InputFactory.h"
 #import <sys/utsname.h>
 #import "../emuThree/Camera/CameraFactory.h"
@@ -33,7 +33,7 @@
 #include "common/zstd_compression.h"
 #include "core/movie.h"
 #include "core/savestate.h"
-#include "network/network.h"
+#include "network.h"
 
 #include "audio_core/dsp_interface.h"
 #include "core/cheats/gateway_cheat.h"
@@ -55,7 +55,7 @@
 #include "video_core/renderer_base.h"
 #include "video_core/video_core.h"
 
-#import <PVEmuThree/InputBridge.h>
+#import "InputBridge.h"
 
 #define IS_IPHONE() ([UIDevice currentDevice].userInterfaceIdiom == UIUserInterfaceIdiomPhone)
 

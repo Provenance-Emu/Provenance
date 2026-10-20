@@ -4,8 +4,8 @@
 #import "PVEmuThreeCoreBridge+Controls.h"
 #import <Foundation/Foundation.h>
 
-#import <PVEmuThree/InputBridge.h>
-#import <PVEmuThree/CitraWrapper.h>
+#import "InputBridge.h"
+#import "CitraWrapper.h"
 
 @import PVCoreBridge;
 

@@ -1,0 +1,5 @@
+module PVEmuThreeBridge {
+    header "../../PVEmuThreeCore/Core/PVEmuThreeCoreBridge.h"
+    header "../../PVEmuThreeCore/emuThree/CitraWrapper.h"
+    export *
+}

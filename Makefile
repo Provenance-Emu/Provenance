@@ -323,6 +323,9 @@ dev-coreless:
 ##   make dev-dolphin DOLPHIN_SLICE=tvos DOLPHIN_DESTINATION=generic/platform=tvOS
 DOLPHIN_SLICE ?= ios
 DOLPHIN_DESTINATION ?= generic/platform=iOS
+dev-emuthree:
+	TUIST_DEV_EMUTHREE=1 $(MAKE) _dev-build DEV_SCHEME=Provenance-Dev-EmuThree DEV_DESTINATION="generic/platform=iOS"
+
 dev-dolphin:
 	TUIST_DEV_DOLPHIN=1 $(MAKE) _dev-build DEV_SCHEME=Provenance-Dev-Dolphin DEV_PREBUILT_CORES="azahar dolphin" \
 		DEV_SLICE=$(DOLPHIN_SLICE) DEV_DESTINATION="$(DOLPHIN_DESTINATION)"

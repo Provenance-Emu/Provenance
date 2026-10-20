@@ -24,10 +24,12 @@ CORES = {
     "Mupen64Plus": "Sources/PVMupen/Resources/Core.plist",
     "Azahar": "PVAzahar/Core.plist",
     "Dolphin": "PVDolphin/Core.plist",
+    "emuThree": "PVEmuThree/Core.plist",
 }
 
 # cores the shipping app takes from their packages -> their CorePlist.swift
 SHIPPED_AS_PACKAGES = {
+    "emuThree": "PVEmuThreeCore/Core/CorePlist.swift",
     "ep128emu": "PVEP128EmuCore/CorePlist.swift",
     "snes9x": "PVSNES/SNES/CorePlist.swift",
     "FCEU": "CorePlist.swift",
@@ -80,10 +82,10 @@ class ResourceBundleTests(unittest.TestCase):
                 self.assertEqual(expr, "Bundle.module")
 
 
-class LibretroPackageLayoutTests(unittest.TestCase):
+class CorePackageLayoutTests(unittest.TestCase):
     @unittest.skipUnless(shutil.which("swift"), "swift toolchain not installed")
-    def test_libretro_targets_are_libraries_with_separate_languages(self):
-        for relative in ["PVCoreBridgeRetro", "Cores/ep128emu"]:
+    def test_source_targets_are_libraries_with_separate_languages(self):
+        for relative in ["PVCoreBridgeRetro", "Cores/ep128emu", "Cores/emuThree"]:
             with self.subTest(package=relative):
                 result = subprocess.run(
                     ["swift", "package", "describe", "--type", "json"], cwd=ROOT / relative,
@@ -91,7 +93,7 @@ class LibretroPackageLayoutTests(unittest.TestCase):
                 )
                 description = json.loads(result.stdout)
                 for target in description["targets"]:
-                    if target["type"] == "test":
+                    if target["type"] in {"test", "binary"}:
                         continue
                     self.assertEqual(target["type"], "library", target["name"])
                     extensions = {Path(source).suffix for source in target.get("sources", [])}

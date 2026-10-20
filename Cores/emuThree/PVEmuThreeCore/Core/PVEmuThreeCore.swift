@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import PVEmuThreeBridge
 import PVCoreBridge
 import PVLogging
 import PVAudio

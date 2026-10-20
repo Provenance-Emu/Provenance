@@ -192,7 +192,10 @@ public extension FocusedApp {
     /// SwiftPM conversion). Games can't launch in it; everything else works.
     static let coreless = FocusedApp(slug: "coreless", title: "Coreless", cores: [], flags: [DevSettings.harnessFlag])
 
-    static let catalog: [FocusedApp] = [.ui, .azahar, .thin, .n64, .dolphin, .coreless]
+    /// Legacy emuThree engine; opt in on an iOS device with TUIST_DEV_EMUTHREE=1.
+    static let emuThree = FocusedApp(slug: "emuthree", title: "EmuThree", cores: [.emuThree], optInVariable: "TUIST_DEV_EMUTHREE")
+
+    static let catalog: [FocusedApp] = [.ui, .azahar, .thin, .n64, .dolphin, .emuThree, .coreless]
 
     /// The apps in the generated project.
     static var all: [FocusedApp] { catalog.filter(\.isEnabled) }
