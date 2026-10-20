@@ -148,7 +148,9 @@ final class RomHackingNetDownloadNamingTests: XCTestCase {
     }
 
     func testSnippetKeepsTextAfterBoldTags() throws {
-        let url = try XCTUnwrap(Bundle.module.url(forResource: "duckduckgo_rhdn_search", withExtension: "html"))
+        let url = try XCTUnwrap(Bundle.module.url(
+            forResource: "duckduckgo_rhdn_search", withExtension: "html", subdirectory: "Resources"
+        ))
         let html = try String(contentsOf: url, encoding: .utf8)
         let zelda = DuckDuckGoHTMLParser.parseSearchResults(html)
             .first(where: { $0.pageURL.absoluteString.contains("/translations/6228") })
