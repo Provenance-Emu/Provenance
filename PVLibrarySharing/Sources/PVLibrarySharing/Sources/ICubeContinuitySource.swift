@@ -53,6 +53,7 @@ public actor ICubeContinuitySource: LibrarySource {
     private let transport: any LibraryHTTPTransport
     private let pollInterval: TimeInterval
     private let approvalTimeout: TimeInterval
+    private let expectedPeerID: String?
 
     private var activeBase: URL?
     private var token: String?
@@ -60,15 +61,17 @@ public actor ICubeContinuitySource: LibrarySource {
     public init(
         baseURLs: [URL],
         identity: PeerIdentity,
-        transport: any LibraryHTTPTransport = URLSessionLibraryTransport(),
+        transport: any LibraryHTTPTransport = URLSessionLibraryTransport(downloadIdleTimeout: ICubeContinuitySource.defaultApprovalTimeout + 15),
         pollInterval: TimeInterval = ICubeContinuitySource.defaultPollInterval,
-        approvalTimeout: TimeInterval = ICubeContinuitySource.defaultApprovalTimeout
+        approvalTimeout: TimeInterval = ICubeContinuitySource.defaultApprovalTimeout,
+        expectedPeerID: String? = nil
     ) {
         self.candidates = baseURLs
         self.identity = identity
         self.transport = transport
         self.pollInterval = pollInterval
         self.approvalTimeout = approvalTimeout
+        self.expectedPeerID = expectedPeerID
     }
 
     // MARK: - LibrarySource
@@ -114,7 +117,7 @@ public actor ICubeContinuitySource: LibrarySource {
         }
         switch response.status {
         case 200:
-            return try JSONDecoder().decode(ContinuityPullManifest.self, from: response.body).remoteManifest(itemId: item.id)
+            return try JSONDecoder().decode(ICubeLibraryManifest.self, from: response.body).value.remoteManifest(itemId: item.id)
         case 404:
             // The owner excluded the game or no longer has it; iCube doesn't say which.
             throw LibrarySharingError.itemUnavailable
@@ -165,6 +168,7 @@ public actor ICubeContinuitySource: LibrarySource {
         activeBase = base
         guard response.status == 200 else { throw Self.error(forStatus: response.status) }
         let started = try JSONDecoder().decode(ICubePairStartResponse.self, from: response.body)
+        try validateServer(started.serverId)
         return ICubePairingHandle(
             pairingId: started.pairingId,
             serverId: started.serverId,
@@ -177,6 +181,7 @@ public actor ICubeContinuitySource: LibrarySource {
     /// device is paired. Throws `.wrongCode` (retryable with the same handle),
     /// `.declined`, `.expired` or `.approvalTimedOut`.
     public func completePairing(_ handle: ICubePairingHandle, code: String) async throws {
+        try validateServer(handle.serverId)
         let transcript = ContinuityAuthMath.pairingTranscript(
             domain: .iCube,
             pairingId: handle.pairingId,
@@ -292,6 +297,7 @@ public actor ICubeContinuitySource: LibrarySource {
         activeBase = base
         guard startResponse.status == 200 else { throw Self.error(forStatus: startResponse.status) }
         let challenge = try JSONDecoder().decode(AuthStartResponse.self, from: startResponse.body)
+        try validateServer(challenge.serverId)
         let signature = try ContinuityAuthMath.signAuth(
             domain: .iCube, nonce: challenge.nonce, peerId: identity.id,
             serverId: challenge.serverId, signingKey: identity.signingKey
@@ -306,6 +312,10 @@ public actor ICubeContinuitySource: LibrarySource {
         return fresh
     }
 
+    private func validateServer(_ serverID: String) throws {
+        guard expectedPeerID == nil || expectedPeerID == serverID else { throw LibrarySharingError.notPaired }
+    }
+
     /// iCube's library status mapping (`ContinuityLibraryClient` + server).
     static func error(forStatus status: Int) -> LibrarySharingError {
         switch status {
@@ -315,5 +325,26 @@ public actor ICubeContinuitySource: LibrarySource {
         case 429: return .tooManyPeers
         default: return .invalidResponse(status: status)
         }
+    }
+}
+
+/// The iCube library route offers one ROM. The shared handoff decoder is
+/// intentionally lenient for other dialects, so validate before it drops state.
+private struct ICubeLibraryManifest: Decodable {
+    let value: ContinuityPullManifest
+    enum CodingKeys: String, CodingKey { case saveState, optionalExtras }
+    enum Invalid: LocalizedError {
+        case nonROM
+        var errorDescription: String? { "The iCube library offered files other than one ROM image." }
+    }
+    init(from decoder: Decoder) throws {
+        value = try ContinuityPullManifest(from: decoder)
+        let fields = try decoder.container(keyedBy: CodingKeys.self)
+        let hasState: Bool
+        if fields.contains(.saveState) { hasState = !(try fields.decodeNil(forKey: .saveState)) }
+        else { hasState = false }
+        let extras = try fields.decodeIfPresent([ContinuityPullManifest.Descriptor].self, forKey: .optionalExtras) ?? []
+        guard value.files.count == 1, value.files.allSatisfy({ $0.kind == RemoteFile.gameFileKind }),
+              (value.bios ?? []).isEmpty, !hasState, extras.isEmpty else { throw Invalid.nonROM }
     }
 }
