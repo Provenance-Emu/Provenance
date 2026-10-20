@@ -50,7 +50,7 @@ extension PVEmuThreeCore: EmulatorCoreInfoPlistProvider {
             fatalError("Could not read Core.plist")
         }
 
-        let options: PropertyListSerialization.ReadOptions = 0
+        let options: PropertyListSerialization.ReadOptions = []
         guard let plistObject = try? PropertyListSerialization.propertyList(from: data, options: options, format: nil) as? [String: Any] else {
             fatalError("Could not generate parse Core.plist")
         }
