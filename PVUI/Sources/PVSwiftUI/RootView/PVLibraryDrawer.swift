@@ -13,6 +13,11 @@ enum LibraryDrawerLayout {
         let preferred = size.width > size.height ? size.width * 0.4 : size.width * 0.78
         return min(available, max(280, min(380, preferred)))
     }
+
+    /// The background extends through side safe areas, including a landscape phone's notch.
+    static func hiddenTravel(width: CGFloat, sideInset: CGFloat) -> CGFloat {
+        width + shadowOverflow + max(0, sideInset)
+    }
 }
 
 /// Keeps the library mounted while animating only a panel transform and scrim opacity.
@@ -40,7 +45,7 @@ struct PVLibraryDrawer<Content: View, Menu: View>: View {
                     .accessibilityElement(children: .contain)
                     .accessibilityHidden(isPresented)
 
-                drawerOverlay(width: width)
+                drawerOverlay(width: width, sideInset: max(geometry.safeAreaInsets.leading, geometry.safeAreaInsets.trailing))
                     .animation(reduceMotion ? nil : LibraryDrawerLayout.animation, value: isPresented)
 
                 #if !os(tvOS)
@@ -60,7 +65,7 @@ struct PVLibraryDrawer<Content: View, Menu: View>: View {
         #endif
     }
 
-    private func drawerOverlay(width: CGFloat) -> some View {
+    private func drawerOverlay(width: CGFloat, sideInset: CGFloat) -> some View {
         ZStack(alignment: .leading) {
             Button {
                 isPresented = false
@@ -94,7 +99,7 @@ struct PVLibraryDrawer<Content: View, Menu: View>: View {
                         .ignoresSafeArea()
                         .allowsHitTesting(false)
                 }
-                .offset(x: panelOffset(width: width))
+                .offset(x: panelOffset(width: width, sideInset: sideInset))
                 .opacity(reduceMotion && !isPresented ? 0 : 1)
                 .allowsHitTesting(isPresented)
                 .accessibilityHidden(!isPresented)
@@ -116,15 +121,15 @@ struct PVLibraryDrawer<Content: View, Menu: View>: View {
         #endif
     }
 
-    private func panelOffset(width: CGFloat) -> CGFloat {
+    private func panelOffset(width: CGFloat, sideInset: CGFloat) -> CGFloat {
         #if !os(tvOS)
         if reduceMotion { return 0 }
         if isPresented {
             return direction * min(0, max(-width, dragTranslation * direction))
         }
-        return -direction * (width + LibraryDrawerLayout.shadowOverflow) * (1 - revealProgress(width: width))
+        return -direction * LibraryDrawerLayout.hiddenTravel(width: width, sideInset: sideInset) * (1 - revealProgress(width: width))
         #else
-        return isPresented ? 0 : direction * (-width - LibraryDrawerLayout.shadowOverflow)
+        return isPresented ? 0 : -direction * LibraryDrawerLayout.hiddenTravel(width: width, sideInset: sideInset)
         #endif
     }
 

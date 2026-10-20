@@ -29,6 +29,14 @@ final class LibraryDrawerLayoutTests: XCTestCase {
         let landscape = LibraryDrawerLayout.width(in: CGSize(width: 852, height: 393))
         XCTAssertNotEqual(portrait, landscape)
     }
+
+    func testHiddenDrawerClearsLandscapeSafeAreaAndShadow() {
+        let width = LibraryDrawerLayout.width(in: CGSize(width: 874, height: 402))
+        for inset in [0.0, 44, 62] {
+            let travel = LibraryDrawerLayout.hiddenTravel(width: width, sideInset: inset)
+            XCTAssertGreaterThanOrEqual(travel - width - inset, LibraryDrawerLayout.shadowOverflow)
+        }
+    }
 }
 
 final class LibraryTabSelectionTests: XCTestCase {
