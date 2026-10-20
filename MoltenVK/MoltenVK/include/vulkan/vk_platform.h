@@ -11,10 +11,6 @@
 #ifndef VK_PLATFORM_H_
 #define VK_PLATFORM_H_
 
-#ifdef __cplusplus
-extern "C"
-{
-#endif // __cplusplus
 
 /*
 ***************************************************************************************************
@@ -77,8 +73,5 @@ extern "C"
     #endif
 #endif // !defined(VK_NO_STDINT_H)
 
-#ifdef __cplusplus
-} // extern "C"
-#endif // __cplusplus
 
 #endif

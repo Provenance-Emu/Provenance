@@ -10,6 +10,8 @@ import plistlib
 import re
 import shutil
 import subprocess
+import sys
+import tempfile
 import unittest
 from pathlib import Path
 
@@ -99,6 +101,85 @@ class LibretroPackageLayoutTests(unittest.TestCase):
                     base = ROOT / relative / target["path"]
                     for source in target.get("sources", []):
                         self.assertTrue((base / source).is_file(), source)
+
+
+class RetroLinkageTests(unittest.TestCase):
+    @unittest.skipUnless(sys.platform == "darwin" and shutil.which("xcrun"), "requires Apple SDKs")
+    def test_c_callbacks_and_vulkan_headers(self):
+        root = ROOT
+
+        def run(*args):
+            return subprocess.run(args, check=True, capture_output=True, text=True).stdout
+
+        with tempfile.TemporaryDirectory() as tmp:
+            t = Path(tmp)
+            # Stub only the JITManager dependency; compile the actual callback implementations with release optimization.
+            jit = (root / "PVCoreBridgeRetro/Sources/PVLibRetro/PVLibRetro+JIT.swift").read_text()
+            jit = jit.replace(
+                "#if !os(tvOS)\nimport JITManager\n#endif", "enum DOLJitManager { static let acquired = false }"
+            )
+            (t / "JIT.swift").write_text(jit)
+            policy = root / "PVCoreBridgeRetro/Sources/PVLibRetro/ThinVFSDiskImagePolicy.swift"
+            run(
+                "xcrun",
+                "swiftc",
+                "-parse-as-library",
+                "-O",
+                "-whole-module-optimization",
+                "-emit-library",
+                str(t / "JIT.swift"),
+                str(policy),
+                "-o",
+                str(t / "support.dylib"),
+            )
+            symbols = run("nm", "-gU", str(t / "support.dylib"))
+            for name in ("_pvjit_acquired", "_pv_thin_vfs_should_memory_map"):
+                self.assertIn(name, symbols, f"Callback not exported: {name}")
+            (t / "client.c").write_text(
+                """#include <stdbool.h>
+        #include <stdint.h>
+        extern bool pvjit_acquired(void);
+        extern bool pv_thin_vfs_should_memory_map(const char *, uint32_t, uint32_t, int64_t);
+        int main(void) {
+         if (pvjit_acquired()) return 1;
+         if (!pv_thin_vfs_should_memory_map("disc.iso", 1, 0, 1024)) return 2;
+         if (pv_thin_vfs_should_memory_map(0, 1, 0, 1024)) return 3;
+         return 0;
+        }
+        """
+            )
+            run("xcrun", "clang", str(t / "client.c"), str(t / "support.dylib"), "-o", str(t / "client"))
+            run(str(t / "client"))
+            print("PASS: optimized Swift callbacks exported, linked from C, and executed")
+            (t / "headers.mm").write_text(
+                '#include "PVCoreBridgeRetro/Sources/ExternalHeaders/MoltenVK/vulkan/vk_platform.h"\n'
+                '#include "PVCoreBridgeRetro/Sources/ExternalHeaders/MoltenVK/vk_video/vulkan_video_codecs_common.h"\n'
+            )
+            for sdk in ("macosx", "iphoneos", "iphonesimulator", "appletvos", "appletvsimulator"):
+                sdkroot = run("xcrun", "--sdk", sdk, "--show-sdk-path").strip()
+                target = {
+                    "macosx": "arm64-apple-macos14",
+                    "iphoneos": "arm64-apple-ios17",
+                    "iphonesimulator": "arm64-apple-ios17-simulator",
+                    "appletvos": "arm64-apple-tvos17",
+                    "appletvsimulator": "arm64-apple-tvos17-simulator",
+                }[sdk]
+                run(
+                    "xcrun",
+                    "clang++",
+                    "-fsyntax-only",
+                    "-fmodules",
+                    "-fcxx-modules",
+                    "-Werror=module-import-in-extern-c",
+                    "-isysroot",
+                    sdkroot,
+                    "-target",
+                    target,
+                    "-I",
+                    str(root),
+                    str(t / "headers.mm"),
+                )
+                print(f"PASS: Vulkan headers with C++ modules ({sdk})")
 
 
 if __name__ == "__main__":
