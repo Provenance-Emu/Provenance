@@ -444,7 +444,11 @@ SideMenuView: SwiftUI.View {
         // Scroll to the focused item with animation
         if let focused = newValue {
             withAnimation {
-                proxy.scrollTo(focused, anchor: .center)
+                if focused == "home" || focused == "settings" {
+                    proxy.scrollTo(menuNamespace, anchor: .top)
+                } else {
+                    proxy.scrollTo(focused, anchor: .center)
+                }
             }
         }
     }
