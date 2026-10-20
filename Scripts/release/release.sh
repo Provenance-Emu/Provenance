@@ -295,6 +295,9 @@ resolve_asc_key() {
 do_archive() {
     local label="$1" scheme="$2" destination="$3" archive="$4"
     if ! $NO_BUILD; then
+        local core_slice=ios
+        case "$destination" in *tvOS*) core_slice=tvos ;; esac
+        run python3 "$PROJECT_DIR/Scripts/cores/build_slice.py" azahar "$core_slice" --xcframework
         log "Archiving $label ($scheme)..."
         run mkdir -p "$ARCHIVES_DIR"
         local cmd=(xcodebuild archive

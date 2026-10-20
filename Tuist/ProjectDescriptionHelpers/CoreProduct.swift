@@ -114,7 +114,7 @@ public extension CoreProduct {
     static let picoDrive = CoreProduct(id: "picodrive", link: .package(path: "Cores/PicoDrive", product: "PVPicoDrive-Dynamic"))
     static let tgbDual = CoreProduct(id: "tgbdual", link: .package(path: "Cores/TGBDual", product: "PVTGBDual-Dynamic"))
     // Swift module PVAzahar + ObjC++ PVAzaharBridge over the PVlibAzahar binary target (slice cache).
-    // PVAzahar.xcodeproj and its BuildPVlibAzahar aggregate stay the shipping build.
+    // The shipping project uses the same product; prepare its native artifact before resolution.
     static let azahar = CoreProduct(
         id: "azahar",
         link: .package(path: "Cores/Azahar", product: "PVAzahar-Dynamic"),

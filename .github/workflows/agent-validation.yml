@@ -384,7 +384,7 @@ jobs:
     needs: spm-changed
     if: needs.spm-changed.outputs.corebridgeretro == 'true'
     runs-on: macos-26
-    timeout-minutes: 60
+    timeout-minutes: 120
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -433,6 +433,11 @@ jobs:
           key: ${{ runner.os }}-pvcbr-deriveddata-${{ hashFiles('PVCoreBridgeRetro/**/project.pbxproj', '**/Package.swift', '**/Package.resolved') }}
           restore-keys: |
             ${{ runner.os }}-pvcbr-deriveddata-
+
+      - name: Prepare Azahar package binary
+        uses: ./.github/actions/prepare-azahar
+        with:
+          slice: ios-sim
 
       - name: Test PVCoreBridgeRetro
         run: |
@@ -487,9 +492,9 @@ jobs:
     # kills the job before "Post Cache DerivedData" runs, so the cache is never
     # saved, so the next run is cold too and times out again — it can never warm
     # itself. The macos-15 -> macos-26 move invalidated the previously warm cache,
-    # which is what exposed this. 60 buys one cold build (measured: cut off at
-    # 27.8 min still building) to seed the cache; warm runs should be far under.
-    timeout-minutes: 60
+    # which is what exposed this. Allow a cold Azahar slice (30–40 min) before the
+    # app build; the native cache is saved immediately after artifact preparation.
+    timeout-minutes: 120
     if: |
       !contains(github.event.pull_request.labels.*.name, 'build-ipa') &&
       github.event.inputs.triggered_by != 'rebase'
@@ -601,6 +606,11 @@ jobs:
           "$HOME/.local/bin/mise" install "tuist@${TUIST_VERSION}"
           "$HOME/.local/bin/mise" exec -- tuist version | tee /dev/stderr | grep -qx "${TUIST_VERSION}" \
             || { echo "::error::tuist ${TUIST_VERSION} not installed"; exit 1; }
+
+      - name: Prepare Azahar package binary
+        uses: ./.github/actions/prepare-azahar
+        with:
+          slice: ios-sim
 
       - name: Generate dev workspace
         env:
