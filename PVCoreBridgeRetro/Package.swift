@@ -1,199 +1,281 @@
 // swift-tools-version:6.0
-// The swift-tools-version declares the minimum version of Swift required to build this package.
 import PackageDescription
 
-let HAVE_VULKAN = true
+// The Swift API depends on the ObjC frontend, which calls independent Swift helpers.
+// Keeping those helpers below the frontend avoids a Swift/ObjC dependency cycle.
+// Keep the legacy C runtime and ObjC bridge on identical feature/struct definitions.
+let libretroFeatures: [CSetting] = [
+    .define("__LIBRETRO__", to: "1"),
+    .define("HAVE_THREADS", to: "1"),
+    .define("HAVE_OPENGL", to: "1"),
+    .define("HAVE_OPENGLES", to: "1"),
+    .define("HAVE_OPENGLES2", to: "1"),
+    .define("HAVE_OPENGLES3", to: "1"),
+    .define("HAVE_VULKAN", to: "1"),
+    .define("HAVE_GLSL", to: "1"),
+    .define("GLES", to: "1"),
+    .define("GLES2", to: "1"),
+    .define("GLES3", to: "1"),
+    .define("GLES31", to: "1"),
+    .define("HAVE_CHEEVOS", to: "1"),
+    .define("HAVE_RCHEEVOS", to: "1"),
+    // Netplay is provided by PVNetplay; the compatibility runtime has no RetroArch netplay driver.
+    .define("HAVE_NETWORK", to: "1"),
+    .define("HAVE_CODEC_HW", to: "1"),
+    .define("HAVE_NETWORKING", to: "1"),
+    .define("HAVE_STDIN_CMD", to: "1"),
+    .define("HAVE_COMMAND"),
+    .define("HAVE_NETWORK_CMD", to: "1"),
+    .define("HAVE_DYNAMIC", to: "1"),
+    .define("HAVE_NETWORKGAMEPAD", to: "1"),
+    .define("HAVE_ZLIB", to: "1"),
+    .define("HAVE_ZARCH", to: "1"),
+    .define("HAVE_GIT_VERSION", to: "1"),
+    .define("HAVE_COMPRESSION", to: "1"),
+    .define("HAVE_COREAUDIO"),
+    .define("HAVE_DYLIB", to: "1"),
+    .define("HAVE_COCOA", to: "1"),
+    .define("HAVE_CORELOCATION"),
+    .define("HAVE_COCOATOUCH"),
+    .define("HAVE_LOCATION", to: "1"),
+    .define("HAVE_CAMERA", to: "1"),
+    .define("HAVE_HID", to: "1"),
+    .define("HAVE_7ZIP"),
+    // Built-in RetroArch media cores are not part of the compatibility runtime.
+    .define("HAVE_LIBRETRODB"),
+    .define("HAVE_CORETEXT"),
+    .define("HAVE_AVFOUNDATION"),
+    .define("HAVE_CDROM"),
+    .define("HAVE_PATCH"),
+    .define("HAVE_RPNG"),
+    .define("HAVE_RBMP"),
+    .define("HAVE_GFX_WIDGETS"),
+    .define("HAVE_OVERLAY"),
+    .define("HAVE_FILTERS_BUILTIN"),
+    .define("NEED_DYNAMIC"),
+    .define("DEBUG", .when(configuration: .debug))
+]
 
 let package = Package(
-    name: "PVLibRetro",
-    platforms: [
-        .iOS(.v17),
-        .tvOS(.v17),
-        .watchOS(.v9),
-        .macOS(.v14),
-        .macCatalyst(.v17),
-        .visionOS(.v1)
-    ],
+    name: "PVCoreBridgeRetro",
+    platforms: [.iOS(.v17), .tvOS(.v17), .macOS(.v14)],
     products: [
-        .library(
-            name: "PVLibRetro",
-            targets: ["PVLibRetro", "libretro"]),
-//        .library(
-//            name: "PVLibRetro-Dynamic",
-//            type: .dynamic,
-//            targets: ["PVLibRetro", "libretro"]),
-//        .library(
-//            name: "PVLibRetro-Static",
-//            type: .static,
-//            targets: ["PVLibRetro", "libretro"])
+        .library(name: "PVCoreBridgeRetro", type: .dynamic, targets: ["PVCoreBridgeRetro"]),
+        .library(name: "PVLibRetro", targets: ["PVCoreBridgeRetro"])
     ],
-
     dependencies: [
         .package(path: "../PVAudio"),
         .package(path: "../PVCoreBridge"),
         .package(path: "../PVCoreObjCBridge"),
         .package(path: "../PVEmulatorCore"),
-        .package(path: "../PVJIT"),
         .package(path: "../PVLogging"),
-        .package(path: "../MoltenVK"),
         .package(path: "../PVNetplay"),
         .package(path: "../PVObjCUtils"),
         .package(path: "../PVPlists"),
         .package(path: "../PVPrimitives"),
-        .package(url: "https://github.com/Provenance-Emu/PVSystems.git", from: "1.0.0"),
         .package(path: "../PVSettings"),
         .package(path: "../PVSupport"),
         .package(path: "../PVArchiving"),
         .package(path: "../PVRcheevos"),
-        .package(url: "https://github.com/Provenance-Emu/SwiftGenPlugin.git", from: "1.1.3"),
+        .package(path: "../PVJIT"),
+        .package(path: "../MoltenVK"),
+        .package(url: "https://github.com/Provenance-Emu/PVSystems.git", from: "1.0.0"),
+        .package(url: "https://github.com/sindresorhus/Defaults.git", from: "9.0.2")
     ],
-
-    // MARK: - Targets
     targets: [
-        // ------------------- PVLibRetro Bridge -------------------
         .target(
-            name: "PVLibRetro",
+            name: "PVCoreBridgeRetro",
             dependencies: [
-                "PVAudio",
-                "PVCoreBridge",
-                "PVCoreObjCBridge",
-                "PVEmulatorCore",
-                .product(name: "JITManager", package: "PVJIT"),
-                "PVLogging",
-                .product(name: "MoltenVK-1.2.8", package: "MoltenVK", condition: .when(platforms: [.iOS, .tvOS, .macOS, .macCatalyst])),
-                "PVNetplay",
-                "PVObjCUtils",
-                "PVPlists",
-                .product(name: "PVSystems", package: "PVSystems"),
-                "PVSettings",
-                "PVSupport",
-                "PVArchiving",
-                "libretro",
-                .product(name: "CRcheevos", package: "PVRcheevos"),
+                "PVLibRetroBridge", "PVLibRetroSupport", "PVCoreBridge", "PVCoreObjCBridge",
+                "PVEmulatorCore", "PVLogging", "PVSettings", "PVSupport", "PVArchiving", "PVNetplay", "PVPrimitives",
+                .product(name: "Defaults", package: "Defaults"),
+                .product(name: "PVSystems", package: "PVSystems")
             ],
-            // Seeded into the Atari ST BIOS folder by PVThinLibretroCore (Hatari).
-            resources: [.copy("Resources/hatari.cfg")],
-            cSettings: [
-                .headerSearchPath("../libretro/include"),
-                .headerSearchPath("../libretro/retro/libretro-common/include"),
-                .headerSearchPath("../libretro/retro/gfx/"),
-                .headerSearchPath("../libretro/retro/"),
-                .headerSearchPath("../../MoltenVK/MoltenVK/include"),
-                // PVThinLibretroFrontend.mm uses quote-form #include "rc_client.h"
-                // which clang resolves against the source file's own include
-                // search paths first. CRcheevos's `publicHeadersPath: "include"`
-                // exposes the headers to Swift modules but quote-form includes
-                // from .mm sources don't always resolve via the SPM dep graph,
-                // especially under Xcode workspace builds. Add the path explicitly.
-                .headerSearchPath("../../../PVRcheevos/rcheevos/include"),
-                // rc_libretro.h is a semi-private header under src/ (not include/).
-                .headerSearchPath("../../../PVRcheevos/rcheevos/src"),
-                .define("DEBUG", .when(configuration: .debug)),
-                .define("HAVE_RCHEEVOS", to: "1"),
-                .define("__LIBRETRO__", to: "1"),
-                .define("HAVE_THREADS", to: "1"),
-                .define("HAVE_OPENGL", to: "1"),
-                .define("HAVE_OPENGLES", to: "1"),
-                .define("HAVE_OPENGLES2", to: "1"),
-                .define("HAVE_OPENGLES3", to: "1"),
-                .define("HAVE_DYNAMIC", to: "1"),
-                .define("HAVE_DYLIB", to: "1"),
-                .define("HAVE_OPENGLES31", to: "1"),
-                .define("HAVE_VULKAN", to: HAVE_VULKAN ? "1" : "0"),
-                .define("GLES", to: "1"),
-                .define("GLES2", to: "1"),
-                .define("GLES3", to: "1"),
-                .define("GLES31", to: "1"),
-                .define("GLES_SILENCE_DEPRECATION", to: "1"),
-                .define("TARGET_IPHONE", to: "1", .when(platforms: [.iOS, .tvOS])),
-                //.define("TARGET_IPHONE_SIMULATOR", .when(platforms: [.iOS, .tvOS])),
-            ],
-            swiftSettings: [
-                .define("HAVE_DYNAMIC")
-            ],
-            linkerSettings: [
-                .linkedFramework("OpenGL", .when(platforms: [.macOS, .macCatalyst])),
-                .linkedFramework("OpenGLES", .when(platforms: [.iOS, .tvOS, .visionOS])),
-                .linkedFramework("Metal"),
-                .linkedFramework("AVFoundation"),
-                .linkedFramework("AudioToolbox"),
-                .linkedFramework("Accelerate"),
-                .linkedFramework("CoreMIDI", .when(platforms: [.iOS, .macOS, .macCatalyst, .visionOS])),
-                .linkedFramework("Network"),
-                // PVRetroArchStateDecoder inflates rzip save states.
-                .linkedLibrary("z")
-            ]
-        ),
-        // ------------------- libretro -------------------
-        .target(
-            name: "libretro",
-            dependencies: [
-                "PVObjCUtils"
+            path: "Sources/PVLibRetro",
+            exclude: [
+                "PVLibRetroCore+Audio.m",
+                "PVLibRetroCore+Cheats.m",
+                "PVLibRetroCore+Controls.m",
+                "PVLibRetroCore+Options.m",
+                "PVLibRetroCore+Saves.m",
+                "PVLibRetroCore+Video.m",
+                "PVLibRetroCore.m",
+                "PVLibRetroGLESCore.m",
+                "PVRetroArchStateDecoder.m",
+                "PVThinCoreCallGate.m",
+                "PVThinLibretroFrontend.mm",
+                "PVRetroArchStateDecoder.h",
+                "PVThinLibretroFrontend.h",
+                "PVThinCoreCallGate.h",
+                "PVLibRetroCore.h",
+                "PVLibRetroGLESCore.h",
+                "PVLibRetro+JIT.swift",
+                "PVLibRetroRumbleHelper.swift",
+                "SystemIdentifier+ObjCBridge.swift",
+                "ThinVFSDiskImagePolicy.swift",
+                "ThinContentArchiveResolver.swift",
+                "include",
+                "PVCoreBridgeRetro.h"
             ],
             sources: [
-                "retro/libretro-common/dynamic/dylib.c",
-                "retro/libretro-common/rthreads/rthreads.c",
-                "retro/cores/dynamic_dummy.c",
-                "retro/input/drivers/nullinput.c",
-                "retro/input/input_driver.c",
-                "retro/input/input_keymaps.c",
-                "retro/input/input_keyboard.c",
-                "retro/msg_hash.c",
-                "retro/performance_counters.c",
-                "retro/retro.m",
-                
-                
-//                "retro/intl/msg_hash_us.c",
-//                "retro/gfx/video_driver.c",
-
-//                "retro/libretro-common/hash/rhash.c",
-//                "retro/libretro-common/streams/file_stream.c",
-
+                "PVThinLibretroCore+Controls.swift",
+                "PVThinLibretroCore+Features.swift",
+                "PVThinLibretroCore+LayoutVariant.swift",
+                "PVThinLibretroCore+MIDI.swift",
+                "PVThinLibretroCore+Netplay.swift",
+                "PVThinLibretroCore+Palette.swift",
+                "PVThinLibretroCore+Scaling.swift",
+                "PVThinLibretroCore+SystemFiles.swift",
+                "PVThinLibretroCore.swift",
+                "RelativeMouseScaler.swift",
+                "ThinSystemFileManifest.swift",
+                "ThinSystemFileProvisioner.swift",
+                "Exports.swift"
             ],
-            cSettings: [
-                .headerSearchPath("./retro/"),
-                .headerSearchPath("./retro/gfx/"),
-                .headerSearchPath("./retro/libretro-common/include/"),
-
-                .headerSearchPath("../../MoltenVK/MoltenVK/include"),
-
-                .define("DEBUG", .when(configuration: .debug)),
-                .define("NDEBUG", .when(configuration: .release)),
-
-                .define("__LIBRETRO__", to: "1"),
-                .define("HAVE_THREADS", to: "1"),
-                .define("HAVE_OPENGL", to: "1"),
-                .define("HAVE_OPENGLES", to: "1"),
-                .define("HAVE_OPENGLES2", to: "1"),
-                .define("HAVE_OPENGLES3", to: "1"),
-                .define("HAVE_DYNAMIC", to: "1"),
-                .define("HAVE_DYLIB", to: "1"),
-                .define("HAVE_OPENGLES31", to: "1"),
-                .define("HAVE_VULKAN", to: HAVE_VULKAN ? "1" : "0"),
-                .define("GLES", to: "1"),
-                .define("GLES2", to: "1"),
-                .define("GLES3", to: "1"),
-                .define("GLES31", to: "1"),
-                .define("GLES_SILENCE_DEPRECATION", to: "1"),
-                .define("TARGET_IPHONE", to: "1", .when(platforms: [.iOS, .tvOS])),
-                .define("TARGET_OS_IPHONE", to: "1", .when(platforms: [.iOS, .tvOS])),
-                .define("IOS", to: "1", .when(platforms: [.iOS, .tvOS])),
+            resources: [.copy("Resources/hatari.cfg")],
+            swiftSettings: [.define("HAVE_DYNAMIC")]
+        ),
+        .target(
+            name: "PVLibRetroSupport",
+            dependencies: [
+                "PVCoreBridge", "PVLogging", "PVArchiving",
+                .product(name: "JITManager", package: "PVJIT", condition: .when(platforms: [.iOS, .macOS])),
+                .product(name: "PVSystems", package: "PVSystems")
             ],
-            linkerSettings: [
-                .linkedLibrary("iconv"),
-                .linkedLibrary("z"),
+            path: "Sources/PVLibRetro",
+            exclude: [
+                "PVLibRetroCore+Audio.m",
+                "PVLibRetroCore+Cheats.m",
+                "PVLibRetroCore+Controls.m",
+                "PVLibRetroCore+Options.m",
+                "PVLibRetroCore+Saves.m",
+                "PVLibRetroCore+Video.m",
+                "PVLibRetroCore.m",
+                "PVLibRetroGLESCore.m",
+                "PVRetroArchStateDecoder.m",
+                "PVThinCoreCallGate.m",
+                "PVThinLibretroFrontend.mm",
+                "PVRetroArchStateDecoder.h",
+                "PVThinLibretroFrontend.h",
+                "PVThinCoreCallGate.h",
+                "PVLibRetroCore.h",
+                "PVLibRetroGLESCore.h",
+                "PVThinLibretroCore+Controls.swift",
+                "PVThinLibretroCore+Features.swift",
+                "PVThinLibretroCore+LayoutVariant.swift",
+                "PVThinLibretroCore+MIDI.swift",
+                "PVThinLibretroCore+Netplay.swift",
+                "PVThinLibretroCore+Palette.swift",
+                "PVThinLibretroCore+Scaling.swift",
+                "PVThinLibretroCore+SystemFiles.swift",
+                "PVThinLibretroCore.swift",
+                "RelativeMouseScaler.swift",
+                "ThinSystemFileManifest.swift",
+                "ThinSystemFileProvisioner.swift",
+                "Exports.swift",
+                "include",
+                "Resources"
+            ],
+            sources: [
+                "PVLibRetro+JIT.swift",
+                "PVLibRetroRumbleHelper.swift",
+                "SystemIdentifier+ObjCBridge.swift",
+                "ThinVFSDiskImagePolicy.swift",
+                "ThinContentArchiveResolver.swift"
             ]
         ),
-        // ------------------- MoltenVK -------------------
-
-//        .binaryTarget(name: "MoltenVK", path: "../MoltenVK/MoltenVK/dynamic/MoltenVK.xcframework")
-        // ------------------- Tests -------------------
-        // Tests/PVLibRetroTests runs as the PVLibRetroTests target of
-        // PVCoreBridgeRetro.xcodeproj, not from here: SwiftPM can't build this
-        // package (Sources/PVLibRetro mixes Swift with ObjC/ObjC++, and the
-        // libretro target has no `path:`). The app builds the xcodeproj.
+        .target(
+            name: "PVLibRetroBridge",
+            dependencies: [
+                "PVLibRetroSupport", "libretro", "PVAudio", "PVCoreBridge", "PVCoreObjCBridge",
+                "PVLogging", "PVSettings", "PVSupport", "PVObjCUtils",
+                .product(name: "CRcheevos", package: "PVRcheevos"),
+                .product(name: "MoltenVK", package: "MoltenVK")
+            ],
+            path: "Sources/PVLibRetro",
+            exclude: [
+                "PVThinLibretroCore+Controls.swift",
+                "PVThinLibretroCore+Features.swift",
+                "PVThinLibretroCore+LayoutVariant.swift",
+                "PVThinLibretroCore+MIDI.swift",
+                "PVThinLibretroCore+Netplay.swift",
+                "PVThinLibretroCore+Palette.swift",
+                "PVThinLibretroCore+Scaling.swift",
+                "PVThinLibretroCore+SystemFiles.swift",
+                "PVThinLibretroCore.swift",
+                "RelativeMouseScaler.swift",
+                "ThinContentArchiveResolver.swift",
+                "ThinSystemFileManifest.swift",
+                "ThinSystemFileProvisioner.swift",
+                "PVLibRetro+JIT.swift",
+                "PVLibRetroRumbleHelper.swift",
+                "SystemIdentifier+ObjCBridge.swift",
+                "ThinVFSDiskImagePolicy.swift",
+                "Exports.swift",
+                "Resources"
+            ],
+            sources: [
+                "PVLibRetroCore+Audio.m",
+                "PVLibRetroCore+Cheats.m",
+                "PVLibRetroCore+Controls.m",
+                "PVLibRetroCore+Options.m",
+                "PVLibRetroCore+Saves.m",
+                "PVLibRetroCore+Video.m",
+                "PVLibRetroCore.m",
+                "PVLibRetroGLESCore.m",
+                "PVRetroArchStateDecoder.m",
+                "PVThinCoreCallGate.m",
+                "PVThinLibretroFrontend.mm"
+            ],
+            publicHeadersPath: "include",
+            cSettings: libretroFeatures + [
+                .headerSearchPath("../retro/libretro-common/include"),
+                .headerSearchPath("../retro"),
+                .headerSearchPath("../retro/gfx"),
+                .headerSearchPath("../ExternalHeaders/MoltenVK")
+            ],
+            cxxSettings: [
+                // The Objective-C++ frontend imports Swift and Clang modules.
+                .unsafeFlags(["-fmodules", "-fcxx-modules"])
+            ],
+            linkerSettings: [
+                // Keep Objective-C categories when this target is linked through the Swift product.
+                .unsafeFlags(["-Xlinker", "-ObjC"]),
+                .linkedFramework("OpenGL", .when(platforms: [.macOS])),
+                .linkedFramework("OpenGLES", .when(platforms: [.iOS, .tvOS])),
+                .linkedFramework("Metal"), .linkedFramework("AVFoundation"),
+                .linkedFramework("AudioToolbox"), .linkedFramework("Accelerate"),
+                .linkedFramework("CoreMIDI", .when(platforms: [.iOS, .macOS])),
+                .linkedFramework("Network"), .linkedLibrary("z")
+            ]
+        ),
+        // Only symbols used by PVLibRetroCoreBridge: threading, dylib loading, keyboard maps and the dummy core.
+        .target(
+            name: "libretro",
+            dependencies: ["PVObjCUtils"],
+            path: "Sources/retro",
+            sources: [
+                "libretro-common/rthreads/rthreads.c",
+                "libretro-common/dynamic/dylib.c",
+                "cores/dynamic_dummy.c",
+                "input/input_keymaps.c"
+            ],
+            publicHeadersPath: "include",
+            cSettings: libretroFeatures + [
+                .headerSearchPath("."),
+                .headerSearchPath("gfx"),
+                .headerSearchPath("libretro-common/include"),
+                .headerSearchPath("../ExternalHeaders/MoltenVK")
+            ],
+            linkerSettings: [.linkedLibrary("iconv"), .linkedLibrary("z")]
+        ),
+        .testTarget(
+            name: "PVLibRetroTests",
+            dependencies: ["PVCoreBridgeRetro", "PVLibRetroSupport", "PVArchiving"],
+            path: "Tests/PVLibRetroTests"
+        )
     ],
-    swiftLanguageModes: [.v5, .v6],
-    cLanguageStandard: .gnu2x,
+    swiftLanguageModes: [.v5],
+    cLanguageStandard: .gnu11,
     cxxLanguageStandard: .gnucxx20
 )

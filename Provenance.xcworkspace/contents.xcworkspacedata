@@ -20,17 +20,4 @@
          location = "group:Cores/PPSSPP/PVPPSSPP.xcodeproj">
       </FileRef>
    </Group>
-   <Group
-      location = "group:"
-      name = "Cores Libretro">
-      <FileRef
-         location = "group:PVCoreBridgeRetro/PVCoreBridgeRetro.xcodeproj">
-      </FileRef>
-      <FileRef
-         location = "group:Cores/ep128emu/PVEP128Emu.xcodeproj">
-      </FileRef>
-      <FileRef
-         location = "group:Cores/fmsx/PVfMSX.xcodeproj">
-      </FileRef>
-   </Group>
 </Workspace>

@@ -243,3 +243,9 @@ struct ThinSystemFileProvisionerTests {
         #expect(onDisk == "USER-WAD", "existing user file must not be overwritten")
     }
 }
+
+@Test("Hatari config is available in the wrapper resource bundle")
+func hatariConfigIsBundled() throws {
+    let url = try #require(PVThinLibretroCore.bundledConfigBundle.url(forResource: "hatari", withExtension: "cfg"))
+    #expect(try String(contentsOf: url, encoding: .utf8).contains("["))
+}

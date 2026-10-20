@@ -174,7 +174,7 @@ RetroArch-based cores live in `CoresRetro/RetroArch/` and use `PVCoreBridgeRetro
 
 ### Build & toolchain gotchas
 
-- **Most workspace `.xcodeproj`s list sources explicitly** (e.g. `PVCoreBridgeRetro.xcodeproj`), so a new file compiles in SwiftPM yet breaks the archive build. `Scripts/audits/check_pbxproj_sources.py` (CI: `xcode-project-sources.yml`) flags a source file sitting beside compiled ones that its project doesn't reference.
+- **Most workspace `.xcodeproj`s list sources explicitly** (e.g. the remaining native core projects), so a new file compiles in SwiftPM yet breaks the archive build. `Scripts/audits/check_pbxproj_sources.py` (CI: `xcode-project-sources.yml`) flags a source file sitting beside compiled ones that its project doesn't reference.
 - **Every script under `Scripts/` or `CoresRetro/RetroArch/scripts/` must be in `Scripts/maint/jobs.toml`** (as a job, or under `[ignore]`); `maint.yml` fails PRs that add an unregistered one. `make maint` (dashboard) / `python3 Scripts/maint/maint.py status` show which generated files are stale. Scripts that find the repo root from their own path sit two levels deep (`Scripts/<category>/`).
 - **PVUI cannot build inside a git worktree.** The PackageBuildInfo plugin reads `.git/HEAD`; a worktree's `.git` is a file. Run PVUI tests from an rsync'd copy with a fake `.git/HEAD` and submodule symlinks (see the Phase 1 overlay plan, Global Constraints).
 - **`gh issue list` has no `--sort` flag.** Use `gh issue list --search "sort:created-desc"` or `gh issue list --json number,title,createdAt --jq '.'` for sorted/filtered queries.
@@ -357,10 +357,10 @@ cd PVLibrary && xcodebuild test -workspace .swiftpm/xcode/package.xcworkspace \
   -collect-test-diagnostics never CODE_SIGNING_ALLOWED=NO \
   -skipPackagePluginValidation -skipMacroValidation
 
-# PVCoreBridgeRetro (thin wrapper) tests: the PVLibRetroTests target of
-# PVCoreBridgeRetro.xcodeproj. SwiftPM can't build that package (mixed
-# Swift/ObjC target). Ad-hoc signing is required — the bundle embeds MoltenVK.
-xcodebuild test -workspace Provenance.xcworkspace -scheme PVCoreBridgeRetro \
+# PVCoreBridgeRetro (thin wrapper) tests: PVLibRetroTests in Package.swift.
+# Open the package in Xcode and select its test scheme, or use its package workspace.
+# Ad-hoc signing is required for MoltenVK.
+xcodebuild test -workspace PVCoreBridgeRetro/.swiftpm/xcode/package.xcworkspace -scheme PVCoreBridgeRetro \
   -destination 'platform=iOS Simulator,name=iPhone 17 Pro' \
   CODE_SIGN_IDENTITY=- CODE_SIGN_STYLE=Manual DEVELOPMENT_TEAM= \
   -skipPackagePluginValidation -skipMacroValidation

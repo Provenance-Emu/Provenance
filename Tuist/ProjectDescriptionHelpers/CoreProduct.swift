@@ -132,6 +132,8 @@ public extension CoreProduct {
         postScripts: [DevSettings.dolphinSysScript]
     )
 
+    static let ep128Emu = CoreProduct(id: "ep128emu", link: .package(path: "Cores/ep128emu", product: "PVEP128Emu-Dynamic"))
+
     // MARK: Non-core products every app embeds
 
     static let cheevos = CoreProduct(id: "pvcheevos", link: .package(path: "PVCheevos", product: "PVCheevos"))
@@ -139,7 +141,7 @@ public extension CoreProduct {
 
     static let coreBridgeRetro = CoreProduct(
         id: "pvcorebridgeretro",
-        link: .project(path: "PVCoreBridgeRetro/PVCoreBridgeRetro.xcodeproj", target: "PVCoreBridgeRetro", product: "PVCoreBridgeRetro")
+        link: .package(path: "PVCoreBridgeRetro", product: "PVCoreBridgeRetro")
     )
 
     /// Linked into every focused app.
@@ -148,6 +150,6 @@ public extension CoreProduct {
     /// Every row, for the manifest checks.
     static let all: [CoreProduct] = [
         .mGBA, .stella, .snes9x, .fceu, .genesis, .mupen64Plus, .mednafen,
-        .proSystem, .picoDrive, .tgbDual, .azahar, .dolphin
+        .proSystem, .picoDrive, .tgbDual, .azahar, .dolphin, .ep128Emu
     ] + nonCore
 }

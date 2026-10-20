@@ -9,7 +9,7 @@
 import Foundation
 import Testing
 import PVArchiving
-@testable import PVCoreBridgeRetro
+@testable import PVLibRetroSupport
 
 struct ThinContentArchiveResolverTests {
 

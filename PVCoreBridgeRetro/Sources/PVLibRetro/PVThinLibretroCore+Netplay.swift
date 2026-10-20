@@ -23,6 +23,11 @@
 
 import Combine
 import Foundation
+import Defaults
+#if SWIFT_PACKAGE
+import PVLibRetroBridge
+import PVLibRetroSupport
+#endif
 import PVCoreBridge
 import PVCoreObjCBridge
 import PVEmulatorCore

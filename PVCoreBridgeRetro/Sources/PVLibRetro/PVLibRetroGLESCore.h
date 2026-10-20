@@ -8,8 +8,12 @@
 
 #import <Foundation/Foundation.h>
 
+#if __has_include(<libretro.h>)
+#import <libretro.h>
+#else
 #import <PVCoreBridgeRetro/libretro.h>
-#import <PVCoreBridgeRetro/PVLibRetroCore.h>
+#endif
+#import "PVLibRetroCore.h"
 
 #if !TARGET_OS_MACCATALYST && !TARGET_OS_OSX
 #import <UIKit/UIKit.h>

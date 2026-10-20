@@ -7,7 +7,7 @@
 //
 
 import Testing
-@testable import PVCoreBridgeRetro
+@testable import PVLibRetroSupport
 
 @Suite("ThinVFSDiskImagePolicy")
 struct ThinVFSDiskImagePolicyTests {

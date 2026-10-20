@@ -35,6 +35,11 @@
 //
 
 import Foundation
+import Defaults
+#if SWIFT_PACKAGE
+import PVLibRetroBridge
+import PVLibRetroSupport
+#endif
 import PVLogging
 import PVSettings   // @_exported re-exports Defaults — gives us Defaults[...] and Defaults.updates(_:)
 

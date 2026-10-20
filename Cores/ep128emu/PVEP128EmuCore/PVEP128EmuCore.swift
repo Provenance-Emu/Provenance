@@ -11,6 +11,12 @@ import PVEmulatorCore
 import PVCoreBridge
 import PVCoreObjCBridge
 import PVCoreBridgeRetro
+#if SWIFT_PACKAGE
+import PVEP128EmuBridge
+#endif
+#if canImport(GameController)
+import GameController
+#endif
 
 @objc
 @objcMembers

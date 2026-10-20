@@ -20,7 +20,11 @@
 #import "PVThinLibretroFrontend.h"
 #import "PVRetroArchStateDecoder.h"
 #import "PVThinCoreCallGate.h"
+#if SWIFT_PACKAGE
+@import PVLibRetroSupport;
+#else
 #import <PVCoreBridgeRetro/PVCoreBridgeRetro-Swift.h>
+#endif
 
 @import Foundation;
 @import QuartzCore;   // CACurrentMediaTime
@@ -115,8 +119,7 @@ extern "C" bool pv_thin_vfs_should_memory_map(const char *path, uint32_t mode, u
 /// Rumble callback matching retro_set_rumble_state_t.
 /// Dispatches to PVLibRetroRumbleHelper (Swift) via ObjC runtime.
 static bool pv_retro_rumble_callback(unsigned port, enum retro_rumble_effect effect, uint16_t strength) {
-    Class helper = NSClassFromString(@"PVLibRetro.PVLibRetroRumbleHelper");
-    if (!helper) helper = NSClassFromString(@"PVLibRetroRumbleHelper");
+    Class helper = [PVLibRetroRumbleHelper class];
     if (!helper) return false;
     BOOL isStrong = (effect == RETRO_RUMBLE_STRONG);
     SEL sel = @selector(rumbleWithPort:isStrong:strength:);

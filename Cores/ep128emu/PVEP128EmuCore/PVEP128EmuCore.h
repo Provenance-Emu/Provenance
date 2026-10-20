@@ -8,7 +8,11 @@
 
 #import <Foundation/Foundation.h>
 
+#if __has_include(<PVLibRetroBridge.h>)
+@import PVLibRetroBridge;
+#else
 #import <PVCoreBridgeRetro/PVCoreBridgeRetro.h>
+#endif
 #import <PVCoreObjCBridge/PVCoreObjCBridge.h>
 
 @protocol PVEP128SystemResponderClient;

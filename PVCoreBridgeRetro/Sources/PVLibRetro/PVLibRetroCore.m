@@ -9,7 +9,11 @@
 #import <Foundation/Foundation.h>
 #import <objc/message.h>
 #import "PVCoreBridgeRetro.h"
+#if SWIFT_PACKAGE
+@import PVLibRetroSupport;
+#else
 #import <PVCoreBridgeRetro/PVCoreBridgeRetro-Swift.h>
+#endif
 
 @import PVLoggingObjC;
 @import PVSettings;
@@ -21,6 +25,9 @@
 
 #include "libretro.h"
 #include "libretro_vulkan.h"
+#ifdef HAVE_THREADS
+#include <rthreads/rthreads.h>
+#endif
 
 /// Returns true if Provenance has acquired JIT at runtime (bridged from DOLJitManager).
 /// Defined in PVLibRetro+JIT.swift via @_cdecl("pvjit_acquired").
@@ -145,8 +152,7 @@ static void pv_legacy_perf_log(void) {
 /// Rumble callback matching retro_set_rumble_state_t.
 /// Dispatches to PVLibRetroRumbleHelper (Swift) via ObjC runtime.
 static bool pv_retro_rumble_callback(unsigned port, enum retro_rumble_effect effect, uint16_t strength) {
-    Class helper = NSClassFromString(@"PVLibRetro.PVLibRetroRumbleHelper");
-    if (!helper) helper = NSClassFromString(@"PVLibRetroRumbleHelper");
+    Class helper = [PVLibRetroRumbleHelper class];
     if (!helper) return false;
     BOOL isStrong = (effect == RETRO_RUMBLE_STRONG);
     SEL sel = @selector(rumbleWithPort:isStrong:strength:);

@@ -13,6 +13,11 @@
 
 import Combine
 import Foundation
+import Defaults
+#if SWIFT_PACKAGE
+import PVLibRetroBridge
+import PVLibRetroSupport
+#endif
 import os
 import PVCoreBridge
 import PVEmulatorCore
@@ -591,6 +596,15 @@ class PVThinLibretroCore: PVEmulatorCore, @unchecked Sendable {
         }
     }
 
+    /// Package resources live in a separate bundle from the dynamic framework.
+    static var bundledConfigBundle: Bundle {
+#if SWIFT_PACKAGE
+        return Bundle.module
+#else
+        return Bundle(for: PVThinLibretroCore.self)
+#endif
+    }
+
     /// Copy a bundled config file to the system/BIOS directory if it doesn't already exist.
     private func copyBundledConfigIfNeeded(resourceName: String, extension ext: String,
                                             toDirectory dir: String?, fileName: String) {
@@ -600,7 +614,7 @@ class PVThinLibretroCore: PVEmulatorCore, @unchecked Sendable {
 
         // This framework's own resources first (hatari.cfg), then the app and
         // any other framework.
-        let bundles = [Bundle(for: PVThinLibretroCore.self), Bundle.main] + Bundle.allFrameworks
+        let bundles = [Self.bundledConfigBundle, Bundle.main] + Bundle.allFrameworks
         for bundle in bundles {
             if let srcURL = bundle.url(forResource: resourceName, withExtension: ext) {
                 do {

@@ -18,6 +18,10 @@
 //
 
 import Foundation
+#if SWIFT_PACKAGE
+import PVLibRetroBridge
+import PVLibRetroSupport
+#endif
 import os
 import PVCoreBridge
 import PVLogging

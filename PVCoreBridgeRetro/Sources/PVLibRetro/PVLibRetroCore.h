@@ -10,7 +10,11 @@
 @import Foundation;
 @import PVCoreObjCBridge;
 
+#if __has_include(<libretro.h>)
+#import <libretro.h>
+#else
 #import <PVCoreBridgeRetro/libretro.h>
+#endif
 
 #if !TARGET_OS_MACCATALYST && !TARGET_OS_OSX
 #import <UIKit/UIKit.h>

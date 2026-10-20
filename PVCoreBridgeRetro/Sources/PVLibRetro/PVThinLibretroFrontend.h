@@ -26,7 +26,11 @@
 #import <AppKit/AppKit.h>
 #endif
 
+#if __has_include(<libretro.h>)
+#import <libretro.h>
+#else
 #import <PVCoreBridgeRetro/libretro.h>
+#endif
 #import <dlfcn.h>
 
 // ---------------------------------------------------------------------------

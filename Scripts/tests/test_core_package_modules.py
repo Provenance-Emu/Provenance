@@ -17,6 +17,7 @@ ROOT = Path(__file__).resolve().parents[2]
 
 # core dir -> Core.plist path (relative to the core dir) of the package's Swift target
 CORES = {
+    "ep128emu": "PVEP128EmuCore/Resources/Core.plist",
     "snes9x": "PVSNES/Core.plist",
     "FCEU": "PVFCEU/Core.plist",
     "Genesis-Plus-GX": "Sources/PVCoreGenesisPlus/Resources/Core.plist",
@@ -27,6 +28,7 @@ CORES = {
 
 # cores the shipping app takes from their packages -> their CorePlist.swift
 SHIPPED_AS_PACKAGES = {
+    "ep128emu": "PVEP128EmuCore/CorePlist.swift",
     "snes9x": "PVSNES/SNES/CorePlist.swift",
     "FCEU": "CorePlist.swift",
     "Genesis-Plus-GX": "Sources/PVCoreGenesisPlus/CorePlist.swift",
@@ -76,6 +78,27 @@ class ResourceBundleTests(unittest.TestCase):
                     self.assertIsNotNone(definition, f"{name} not defined under SWIFT_PACKAGE")
                     expr = definition.group(1).strip()
                 self.assertEqual(expr, "Bundle.module")
+
+
+class LibretroPackageLayoutTests(unittest.TestCase):
+    @unittest.skipUnless(shutil.which("swift"), "swift toolchain not installed")
+    def test_libretro_targets_are_libraries_with_separate_languages(self):
+        for relative in ["PVCoreBridgeRetro", "Cores/ep128emu"]:
+            with self.subTest(package=relative):
+                result = subprocess.run(
+                    ["swift", "package", "describe", "--type", "json"], cwd=ROOT / relative,
+                    check=True, capture_output=True, text=True,
+                )
+                description = json.loads(result.stdout)
+                for target in description["targets"]:
+                    if target["type"] == "test":
+                        continue
+                    self.assertEqual(target["type"], "library", target["name"])
+                    extensions = {Path(source).suffix for source in target.get("sources", [])}
+                    self.assertFalse(".swift" in extensions and extensions & {".m", ".mm", ".c", ".cpp"}, target["name"])
+                    base = ROOT / relative / target["path"]
+                    for source in target.get("sources", []):
+                        self.assertTrue((base / source).is_file(), source)
 
 
 if __name__ == "__main__":
