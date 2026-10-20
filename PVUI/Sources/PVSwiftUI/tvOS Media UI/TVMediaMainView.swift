@@ -102,7 +102,6 @@ final class SystemIconLoader: ObservableObject {
 struct TVMediaMainView: View {
     @EnvironmentObject private var appState: AppState
     @EnvironmentObject private var themeManager: ThemeManager
-    @EnvironmentObject private var appDelegate: PVAppDelegate
 
     @AppStorage("TVMediaUI.lastDestination") private var lastDestinationRaw: String = TVMediaDestination.home.rawValue
     @AppStorage("TVMediaUI.lastSystemIdentifier") private var lastSystemIdentifier: String = ""

@@ -1,4 +1,4 @@
-//  PVAppDelegate.swift
+//  PVApplicationServices.swift
 //  Provenance
 //
 //  Created by James Addyman on 07/08/2013.
@@ -6,12 +6,8 @@
 //
 
 // Import necessary modules for core functionality
-import CoreSpotlight
 import RealmSwift
-import RxSwift
 import UIKit
-import Intents
-import PVUIKit
 // Import custom modules for Provenance-specific functionality
 import PVSupport
 import PVEmulatorCore
@@ -20,7 +16,6 @@ import PVThemes
 import PVSettings
 import PVUIBase
 import PVShaders
-import PVSwiftUI
 import PVLibrary
 import PVLogging
 import Combine
@@ -42,28 +37,47 @@ import JITManager
 import PVAppIntents
 #endif
 
-// Conditionally import SteamController for non-macCatalyst and non-macOS targets
-#if !targetEnvironment(macCatalyst) && !os(macOS)
-#if canImport(SteamController)
-import SteamController
-#endif
-#endif
 #if canImport(FreemiumKit)
 import FreemiumKit
 #endif
 
-//@Observable
-public final class PVAppDelegate: UIResponder, UIApplicationDelegate, ObservableObject {
-    /// This is set by the UIApplicationDelegateAdaptor
-    public var window: UIWindow? = nil
-    private let pauseMenuSettingsDelegate = MockPVMenuDelegate()
+/// Process-wide services. SwiftUI owns the window hierarchy and scene lifecycle.
+@MainActor
+public final class PVApplicationServices: NSObject, ObservableObject {
+    public static let shared = PVApplicationServices()
+    private var hasStarted = false
+    private var previousScenePhase: ScenePhase?
 
-    static func main() {
-        UIApplicationMain(CommandLine.argc, CommandLine.unsafeArgv, NSStringFromClass(PVApplication.self), NSStringFromClass(PVAppDelegate.self))
+    /// Starts services once, before SwiftUI constructs the scene content.
+    public func start() {
+        guard !hasStarted else { return }
+        hasStarted = true
+        appState = AppState.shared
+        launchServices()
     }
 
-    /// This is set by the ContentView
-    public var appState: AppState? {
+    /// Called from the aggregate SwiftUI scene phase, once for all windows.
+    public func handleScenePhaseChange(_ phase: ScenePhase) {
+        defer { previousScenePhase = phase }
+        if ApplicationSceneTransition.shouldSave(from: previousScenePhase, to: phase) {
+            willResignActive()
+        }
+        switch phase {
+        case .active:
+            refreshEntitlements()
+            didBecomeActive()
+        case .inactive:
+            break
+        case .background:
+            didEnterBackground()
+        @unknown default:
+            break
+        }
+    }
+    private let pauseMenuSettingsDelegate = MockPVMenuDelegate()
+
+    /// Shared app state used by background services
+    public private(set) var appState: AppState? {
         didSet {
             ILOG("Did set appstate: currently is: \(appState?.bootupStateManager.currentState)")
         }
@@ -95,8 +109,6 @@ public final class PVAppDelegate: UIResponder, UIApplicationDelegate, Observable
     var cancellation_token = DOLCancellationToken()
     var is_presenting_alert = false
 #endif
-
-    @MainActor weak var rootNavigationVC: UIViewController?
 
     private var cancellables = Set<AnyCancellable>()
     @MainActor private var libraryNotificationHandlersInstalled = false
@@ -180,7 +192,7 @@ public final class PVAppDelegate: UIResponder, UIApplicationDelegate, Observable
                 Future<Void, Error> { promise in
                     Task.detached(priority: .userInitiated) { [weak self] in // Detached task for the whole refresh operation
                         guard let self = self else {
-                            promise(.failure(NSError(domain: "PVAppDelegate", code: 0, userInfo: [NSLocalizedDescriptionKey: "AppDelegate deallocated"])))
+                            promise(.failure(NSError(domain: "PVApplicationServices", code: 0, userInfo: [NSLocalizedDescriptionKey: "Application services deallocated"])))
                             return
                         }
 
@@ -254,7 +266,7 @@ public final class PVAppDelegate: UIResponder, UIApplicationDelegate, Observable
             .flatMap { _ in
                 Future<Void, Error> { promise in
                     do {
-                        ILOG("PVAppDelegate: Completed ResetLibrary, Re-Importing")
+                        ILOG("PVApplicationServices: Completed ResetLibrary, Re-Importing")
                         try RomDatabase.sharedInstance.deleteAllData()
                         Task {
                             await GameImporter.shared.initSystems()
@@ -290,89 +302,13 @@ public final class PVAppDelegate: UIResponder, UIApplicationDelegate, Observable
 #endif
     }
 
-    /// Setup the side navigation
-    fileprivate func setupSideNavigation(mainViewController: UIViewController,
-                                         gameLibrary: PVGameLibrary<RealmDatabaseDriver>,
-                                         viewModel: PVRootViewModel,
-                                         rootViewController: PVRootViewController) -> SideNavigationController {
-        let sideNav = SideNavigationController(mainViewController: mainViewController)
-        let traits = UITraitCollection.current
-        let isIpad = UIDevice.current.userInterfaceIdiom == .pad
-
-        /// Calculate width percentage based on device and size class
-        let widthPercentage: CGFloat = {
-            switch (isIpad, traits.horizontalSizeClass) {
-            case (true, .regular):   return 0.3  // iPad regular
-            case (true, .compact):   return 0.3  // iPad compact (rare but possible)
-            case (true, .unspecified), (true, _): return 0.3  // iPad fallback
-            case (false, .compact):  return 0.7  // iPhone portrait
-            case (false, .regular):  return 0.4  // iPhone landscape
-            case (false, .unspecified), (false, _): return 0.7  // iPhone fallback
-            }
-        }()
-
-        let overlayColor: UIColor = ThemeManager.shared.currentPalette.menuHeaderBackground
-
-        sideNav.leftSide(
-            viewController: SideMenuView.instantiate(gameLibrary: gameLibrary,
-                                                     viewModel: viewModel,
-                                                     delegate: rootViewController,
-                                                     rootDelegate: rootViewController),
-            options: .init(widthPercent: widthPercentage,
-                           animationDuration: 0.18,
-                           overlayColor: overlayColor,
-                           overlayOpacity: 0.1,
-                           shadowOpacity: 0.2)
-        )
-
-        /// Add trait collection observer to update width when orientation changes
-#if !os(tvOS)
-        NotificationCenter.default.addObserver(forName: UIApplication.didChangeStatusBarOrientationNotification, object: nil, queue: .main) { _ in
-            let newWidth: CGFloat = {
-                switch (isIpad, UITraitCollection.current.horizontalSizeClass) {
-                case (true, .regular):   return 0.3  // iPad regular
-                case (true, .compact):   return 0.3  // iPad compact (rare but possible)
-                case (true, .unspecified): return 0.3  // iPad fallback
-                case (false, .compact):  return 0.3  // iPhone portrait
-                case (false, .regular):  return 0.4  // iPhone landscape
-                case (false, .unspecified): return 0.3  // iPhone fallback
-                case (_, _):
-                    return 0.3
-                }
-            }()
-            sideNav.updateSideMenuWidth(percent: newWidth)
-        }
-#endif
-        return sideNav
-    }
-
-    /// Setup JIT wait screen if needed — call after the root view controller is established.
-    ///
-    /// JIT acquisition (attemptToAcquireJitOnStartup) is now called directly from
-    /// application(_:didFinishLaunchingWithOptions:) so it runs as early as possible.
-    /// This helper only handles the wait-screen UI which requires a root view controller.
-    @MainActor
-    private func setupJITIfNeeded() {
-        // JIT acquisition (attemptToAcquireJitOnStartup) is called earlier in
-        // application(_:didFinishLaunchingWithOptions:) so it runs before any core is loaded.
-        // This method only handles the wait-screen UI, which must be called after the
-        // root view controller is established (it presents a modal view controller).
-#if (os(iOS) || os(tvOS)) && !APP_STORE && canImport(PVJIT)
-        // The wait screen suggests third-party JIT tools (AltStore, StikDebug, etc.)
-        // which could trigger App Store review rejections — only show in non-App Store builds.
-        DispatchQueue.main.async { [weak self] in
-            self?.showJITWaitScreen()
-        }
-#endif
-    }
-
     private var autoLockTask: Task<Void, Never>?
 
-    public func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil) -> Bool {
+    private func launchServices() {
         // Establish the launch-timeline origin before any other work, so every
         // `LAUNCH:` log line's `t+` column is measured from the same point.
         PVLaunchProfiler.markProcessStart()
-        ILOG("PVAppDelegate: Application did finish launching")
+        ILOG("PVApplicationServices: Application did finish launching")
 
         // Restore critical user preferences from iCloud KVS (survives reinstalls)
         PVLaunchProfiler.measureSync("launch.iCloudSettingsSync") {
@@ -419,28 +355,13 @@ public final class PVAppDelegate: UIResponder, UIApplicationDelegate, Observable
         Task { @MainActor in
             await initializeAppComponents()
         }
-        configureApplication(application, launchOptions: launchOptions)
+        observeIdleTimerSetting()
 
         // Register BGTaskScheduler handlers at app launch
         // This must be after DB registration
         registerBGTaskSchedulerHandlers()
 
-        return true
     }
-
-    /// Register `PVSceneDelegate` as the scene delegate so iOS routes
-    /// Home Screen Quick Action taps to it rather than SwiftUI's private no-op class.
-    #if os(iOS) || targetEnvironment(macCatalyst)
-    public func application(
-        _ application: UIApplication,
-        configurationForConnecting connectingSceneSession: UISceneSession,
-        options: UIScene.ConnectionOptions
-    ) -> UISceneConfiguration {
-        let config = UISceneConfiguration(name: nil, sessionRole: connectingSceneSession.role)
-        config.delegateClass = PVSceneDelegate.self
-        return config
-    }
-    #endif
 
     /// Register BGTaskScheduler handlers at the earliest possible point in the app lifecycle
     private func registerBGTaskSchedulerHandlers() {
@@ -449,18 +370,23 @@ public final class PVAppDelegate: UIResponder, UIApplicationDelegate, Observable
         // Register background refresh task for CloudKit sync
         BGTaskScheduler.shared.register(forTaskWithIdentifier: "com.provenance-emu.provenance.cloudkit-sync", using: nil) { [weak self] task in
             guard let self = self else {
-                ELOG("AppDelegate deallocated when handling background task")
+                ELOG("Application services deallocated when handling background task")
                 task.setTaskCompleted(success: false)
                 return
             }
 
-            self.handleCloudKitSyncTask(task as! BGProcessingTask)
+            guard let processingTask = task as? BGProcessingTask else {
+                task.setTaskCompleted(success: false)
+                return
+            }
+            Task { @MainActor in
+                self.handleCloudKitSyncTask(processingTask)
+            }
         }
 
         DLOG("BGTaskScheduler handlers registered successfully")
     }
 
-    // TODO: Move to ProvenanceApp
     @MainActor
     private func initializeAppComponents() async {
         loadRocketSimConnect()
@@ -492,8 +418,7 @@ public final class PVAppDelegate: UIResponder, UIApplicationDelegate, Observable
             /// empty environment, so `PaidFeatureView` hit its `EnvironmentObject`
             /// fatalError as soon as settings appeared over a running game.
             ///
-            /// Same set as `PVRootViewController.didTapSettings()`, which is the
-            /// established working path for presenting settings from UIKit.
+            /// Matches the environment supplied by the library's settings sheet.
             return AnyView(
                 NavigationStack {
                     PVSettingsView(
@@ -528,23 +453,13 @@ public final class PVAppDelegate: UIResponder, UIApplicationDelegate, Observable
         registerFileProviderDomain()
     }
 
-    public func configureApplication(_ application: UIApplication,  launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil) {
-        // Note: Shortcuts are handled via scene delegate methods in SwiftUI apps
-        // This is kept for backwards compatibility but shortcuts should come through scene delegate
-        DLOG("configureApplication launchOptions: \(launchOptions?.debugDescription ?? "nil")")
-
-        // Store weak reference to application
-        weak var weakApplication = application
-
-        // Cancel any existing task
+    private func observeIdleTimerSetting() {
         autoLockTask?.cancel()
-
-        // Create new task with weak reference
-        autoLockTask = Task { [weak self] in
-            guard self != nil else { return }
+        autoLockTask = Task { @MainActor in
+            // Keep UIKit access out of the synchronous SwiftUI App initializer.
             for await value in Defaults.updates(.disableAutoLock) {
                 guard !Task.isCancelled else { break }
-                weakApplication?.isIdleTimerDisabled = value
+                UIApplication.shared.isIdleTimerDisabled = value
             }
         }
     }
@@ -552,32 +467,6 @@ public final class PVAppDelegate: UIResponder, UIApplicationDelegate, Observable
     deinit {
         // Cancel the task when the delegate is deallocated
         autoLockTask?.cancel()
-    }
-
-    private func initializeAdditionalComponents() {
-        _initSteamControllers()
-
-#if os(iOS) && !targetEnvironment(macCatalyst) && !APP_STORE
-        ApplicationMonitor.shared.start()
-#endif
-    }
-
-    private func scheduleDelayedTasks() {
-        DispatchQueue.main.asyncAfter(deadline: .now() + 5) { [weak self] in
-            self?.startOptionalWebDavServer()
-#if !os(tvOS)
-            if self?.isAppStore == true {
-                self?._initAppRating()
-            }
-#endif
-        }
-    }
-
-    func _initSteamControllers() {
-#if !targetEnvironment(macCatalyst) && canImport(SteamController) && !targetEnvironment(simulator)
-        // SteamController is built with STEAMCONTROLLER_NO_PRIVATE_API, so we don't call this
-        // SteamControllerManager.listenForConnections()
-#endif
     }
 
     var currentThemeObservation: Any? // AnyCancellable?
@@ -618,11 +507,10 @@ public final class PVAppDelegate: UIResponder, UIApplicationDelegate, Observable
             }
     }
 
-    // TODO: Move to ProvenanceApp
     func saveCoreState() async throws {
         if let core = appState?.emulationUIState.core, core.isOn, let emulator = appState?.emulationUIState.emulator {
             if Defaults[.autoSave], core.supportsSaveStates {
-                ILOG("PVAppDelegate: Saving Core State\n")
+                ILOG("PVApplicationServices: Saving Core State\n")
                 try await emulator.autoSaveState()
             }
         }
@@ -633,10 +521,9 @@ public final class PVAppDelegate: UIResponder, UIApplicationDelegate, Observable
         }
     }
 
-    // TODO: Move to ProvenanceApp
     func pauseCore() {
         if let core = appState?.emulationUIState.core, core.isOn && core.isRunning {
-            ILOG("PVAppDelegate: Pausing Core\n")
+            ILOG("PVApplicationServices: Pausing Core\n")
             core.setPauseEmulation(true)
         }
         if isAppStore {
@@ -646,18 +533,12 @@ public final class PVAppDelegate: UIResponder, UIApplicationDelegate, Observable
         }
     }
 
-    // TODO: Move to ProvenanceApp
-    func stopCore() {
-        if let core = appState?.emulationUIState.core, core.isOn {
-            ILOG("PVAppDelegate: Stopping Core\n")
-            core.stopEmulation()
-        }
-    }
-
-    public func applicationWillResignActive(_ application: UIApplication) {
+    private func willResignActive() {
+        let application = UIApplication.shared
         let emulationState = appState?.emulationUIState
         emulationState?.isInBackground = true
         pauseCore()
+        guard Defaults[.autoSave], let core = emulationState?.core, core.isOn, core.supportsSaveStates else { return }
         // Hold a background-task assertion so the async save chain (serialize -> write ->
         // Realm register) can finish before iOS suspends the app; without it the autosave
         // can be lost. Mirrors the CloudKit pattern. @MainActor keeps bgTaskID race-free.
@@ -679,13 +560,12 @@ public final class PVAppDelegate: UIResponder, UIApplicationDelegate, Observable
         }
     }
 
-    // TODO: Move to ProvenanceApp
-    public func applicationDidEnterBackground(_ application: UIApplication) {
+    private func didEnterBackground() {
         appState?.emulationUIState.isInBackground = true
         pauseCore()
     }
 
-    public func applicationWillEnterForeground(_: UIApplication) {
+    private func refreshEntitlements() {
         // Re-check both directions (a purchase/restore may have happened in
         // either app since launch; FreemiumKit exposes no purchase hook to ride).
         Task { @MainActor in
@@ -694,72 +574,18 @@ public final class PVAppDelegate: UIResponder, UIApplicationDelegate, Observable
         }
     }
 
-    // TODO: Move to ProvenanceApp
-    public func applicationDidBecomeActive(_ application: UIApplication) {
+    private func didBecomeActive() {
         appState?.emulationUIState.isInBackground = false
     }
 
-    // TODO: Move to ProvenanceApp
-    public func applicationWillTerminate(_ application: UIApplication) {
-        stopCore()
-#if !os(tvOS)
-        if #available(iOS 14.0, tvOS 14.0, *) {
-            unregisterMetricKitSubscriber()
+    /// Flushes the running core when the OS delivers a process-termination callback.
+    public func prepareForTermination() {
+        if let core = appState?.emulationUIState.core, core.isOn {
+            core.stopEmulation()
         }
-#endif
-    }
-
-    @MainActor
-    func setupSwiftUIInterface() -> UIViewController {
-        ILOG("PVAppDelegate: Starting SwiftUI interface setup")
-        guard let appState = appState else {
-            ELOG("PVAppDelegate: `appState` was nil. Never set?")
-            return .init()
-        }
-
-        ILOG("PVAppDelegate: AppState is set")
-        let viewModel = PVRootViewModel()
-
-        ILOG("PVAppDelegate: Checking required components")
-        if appState.libraryUpdatesController == nil {
-            ELOG("PVAppDelegate: libraryUpdatesController is nil")
-        }
-        if appState.gameLibrary == nil {
-            ELOG("PVAppDelegate: gameLibrary is nil")
-        }
-        if appState.gameImporter == nil {
-            ELOG("PVAppDelegate: gameImporter is nil")
-        }
-
-        guard let libraryUpdatesController = appState.libraryUpdatesController,
-              let gameLibrary = appState.gameLibrary,
-              let gameImporter = appState.gameImporter else {
-            ELOG("PVAppDelegate: Required components in appState are nil")
-            return .init()
-        }
-
-        // Refresh the library
-        //        Task.detached(priority: .background) {
-        //            await libraryUpdatesController.updateConflicts()
-        //            await libraryUpdatesController.importROMDirectories()
-        //        }
-
-        ILOG("PVAppDelegate: All required components are available")
-        let rootViewController = PVRootViewController.instantiate(
-            updatesController: libraryUpdatesController,
-            gameLibrary: gameLibrary,
-            gameImporter: gameImporter,
-            viewModel: viewModel)
-        self.rootNavigationVC = rootViewController
-        let sideNavHostedNavigationController = PVRootViewNavigationController(rootViewController: rootViewController)
-
-        let sideNav = setupSideNavigation(mainViewController: sideNavHostedNavigationController,
-                                          gameLibrary: gameLibrary,
-                                          viewModel: viewModel,
-                                          rootViewController: rootViewController)
-
-        _initLibraryNotificationHandlers()
-        return sideNav
+        #if !os(tvOS)
+        unregisterMetricKitSubscriber()
+        #endif
     }
 
     private func loadRocketSimConnect() {
@@ -771,20 +597,11 @@ public final class PVAppDelegate: UIResponder, UIApplicationDelegate, Observable
         print("RocketSim Connect successfully linked")
 #endif
     }
-
-    func runDetachedTaskWithCompletion<T>(
-        priority: TaskPriority? = nil,
-        operation: @escaping () async throws -> T,
-        completion: @escaping (Result<T, Error>) -> Void
-    ) {
-        Task.detached(priority: priority) {
-            do {
-                let result = try await operation()
-                completion(.success(result))
-            } catch {
-                completion(.failure(error))
-            }
-        }
-    }
 }
 
+/// Saves once when leaving active, including transitions that skip the inactive phase.
+enum ApplicationSceneTransition {
+    static func shouldSave(from previous: ScenePhase?, to current: ScenePhase) -> Bool {
+        previous == .active && current != .active
+    }
+}

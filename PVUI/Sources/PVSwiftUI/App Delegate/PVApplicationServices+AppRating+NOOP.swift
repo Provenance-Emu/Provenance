@@ -1,5 +1,5 @@
 //
-//  PVAppDelegate+AppRating+NOOP.swift
+//  PVApplicationServices+AppRating+NOOP.swift
 //  Provenance
 //
 //  Created by Joseph Mattiello on 10/26/24.
@@ -9,7 +9,7 @@
 
 /// This is an empty version of this extension for the non-AppStore targets
 #if NOT_APPSTORE
-extension PVAppDelegate {
+extension PVApplicationServices {
     func _initAppRating() {
     }
     

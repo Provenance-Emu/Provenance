@@ -23,10 +23,12 @@ import PVDevHarness
 #endif
 @main
 struct ProvenanceApp: App {
-    @StateObject private var appState = AppState.shared
-    @UIApplicationDelegateAdaptor(PVAppDelegate.self) var appDelegate
+    @ObservedObject private var appState = AppState.shared
+    @UIApplicationDelegateAdaptor(PVSystemEvents.self) private var systemEvents
+    @ObservedObject private var appServices = PVApplicationServices.shared
+    @ObservedObject private var themeManager = ThemeManager.shared
     @Environment(\.scenePhase) private var scenePhase
-    @StateObject private var sceneCoordinator = SceneCoordinator.shared
+    @ObservedObject private var sceneCoordinator = SceneCoordinator.shared
 
 #if !os(tvOS)
     /// A `.log` file opened from another app, shown in the log viewer.
@@ -39,6 +41,10 @@ struct ProvenanceApp: App {
         )
     }
 #endif
+
+    init() {
+        PVApplicationServices.shared.start()
+    }
 
     // NOTE: there used to be a `registerSpotlightBackgroundTask()` here, called from
     // `init()`, that took a `beginBackgroundTask(withName: "SpotlightIndexing")`
@@ -62,7 +68,7 @@ struct ProvenanceApp: App {
                 .netplayJoinHandler()
                 .environmentObject(appState)
                 .environmentObject(PVFeatureFlagsManager.shared)
-                .environmentObject(appDelegate)
+                .environmentObject(appServices)
                 .environmentObject(appState.bootupStateManager)
                 .environmentObject(ThemeManager.shared)
                 .task {
@@ -97,24 +103,17 @@ struct ProvenanceApp: App {
                 )
 #endif
                 .onAppear {
-                    ILOG("ProvenanceApp: onAppear called, setting `appDelegate.appState = appState`")
-                    appDelegate.appState = appState
+                    ILOG("ProvenanceApp: Main scene appeared")
 #if PV_DEV_HARNESS
                     // Tuist focused apps only (-PVHarnessROM …); a no-op without harness arguments.
                     DevHarness.start(appState: appState)
-#endif
-
-                    // Initialize the settings factory and import presenter
-#if os(tvOS)
-                    appState.settingsFactory = SwiftUISettingsViewControllerFactory()
-                    appState.importOptionsPresenter = SwiftUIImportOptionsPresenter()
 #endif
 
 #if canImport(FreemiumKit)
 #if targetEnvironment(simulator) || DEBUG
                     FreemiumKit.shared.overrideForDebug(purchasedTier: 1)
 #else
-                    if !appDelegate.isAppStore {
+                    if !appServices.isAppStore {
                         FreemiumKit.shared.overrideForDebug(purchasedTier: 1)
                     }
 #endif
@@ -143,6 +142,9 @@ struct ProvenanceApp: App {
                 }
                 .onContinueUserActivity("com.provenance.open-game") { userActivity in
                     ILOG("ProvenanceApp: Handling com.provenance.open-game user activity")
+                    handleIntentUserActivity(userActivity)
+                }
+                .onContinueUserActivity("org.provenance-emu.game.play") { userActivity in
                     handleIntentUserActivity(userActivity)
                 }
             #endif
@@ -219,7 +221,7 @@ struct ProvenanceApp: App {
             #if !os(tvOS)
                 .handlesExternalEvents(preferring: ["main"], allowing: ["main"])
             #endif
-                .preferredColorScheme(ThemeManager.shared.currentPalette.dark ? .dark : .light)
+                .preferredColorScheme(themeManager.currentPalette.dark ? .dark : .light)
                 // Add listener for bootup state changes to trigger Spotlight reindexing
                 .onReceive(appState.bootupStateManager.$currentState) { state in
                     if case .completed = state {
@@ -249,7 +251,8 @@ struct ProvenanceApp: App {
                     }
                 }
         }
-        .onChange(of: scenePhase) { newPhase in
+        .onChange(of: scenePhase, initial: true) { _, newPhase in
+            appServices.handleScenePhaseChange(newPhase)
             if newPhase == .active {
 
                 // Start bootup sequence
@@ -289,7 +292,7 @@ struct ProvenanceApp: App {
             LibrarySharingService.handleScenePhase(newPhase)
         }
         // NOTE: no `.commands` here. The menu bar is built in UIKit —
-        // `PVAppDelegate.buildMenu(with:)` → `PVMenuBarBuilder` — so that menu items
+        // `PVSystemEvents.buildMenu(with:)` → `PVMenuBarBuilder` — so that menu items
         // validate against the key window's responder chain (emulator-only items
         // disable themselves in the library) and so ⌘, resolves in EVERY scene
         // rather than only whichever scene SwiftUI decided owned the command.
@@ -349,7 +352,7 @@ extension ProvenanceApp {
                 appState.emulationUIState.currentGame = game
                 #if os(iOS)
                 if #available(iOS 14.0, *) {
-                    appDelegate.donateMediaIntent(for: game)
+                    appServices.donateMediaIntent(for: game)
                 }
                 #endif
             } else {
@@ -360,7 +363,7 @@ extension ProvenanceApp {
             appState.emulationUIState.currentGame = game
             #if os(iOS)
             if #available(iOS 14.0, *) {
-                appDelegate.donateMediaIntent(for: game)
+                appServices.donateMediaIntent(for: game)
             }
             #endif
         case .openSaveStateID(let saveStateID):
@@ -375,7 +378,7 @@ extension ProvenanceApp {
             appState.emulationUIState.currentCore = frozen.core?.freeze()
             #if os(iOS)
             if #available(iOS 14.0, *), let game = frozen.game {
-                appDelegate.donateMediaIntent(for: game)
+                appServices.donateMediaIntent(for: game)
             }
             #endif
         case .openFile(let url):
@@ -419,6 +422,8 @@ extension ProvenanceApp {
     }
 
     func handle(appURL url: URL) -> Bool {
+        if appServices.handleEcosystemCallback(url) { return true }
+
         let components = URLComponents(url: url, resolvingAgainstBaseURL: false)
 
         guard let components = components else {
@@ -788,7 +793,7 @@ extension ProvenanceApp {
             ILOG("[Boot] Pre-CloudKit file status refresh: \(result.upgraded) upgraded, " +
                  "\(result.downgraded) downgraded, \(result.partialPathRepaired) path-repaired " +
                  "out of \(result.totalGames) games")
-            appDelegate.initializeCloudKit()
+            appServices.initializeCloudKit()
         }
 
         // Keep the legacy iCloud document sync code in place but don't use it by default
@@ -902,7 +907,7 @@ extension ProvenanceApp {
         #if os(iOS)
         if #available(iOS 14.0, *) {
             // Delegate to app delegate's intent handler
-            if appDelegate.handleIntentUserActivity(userActivity) {
+            if appServices.handleIntentUserActivity(userActivity) {
                 ILOG("ProvenanceApp: Intent user activity handled successfully")
                 // The app delegate sets appOpenAction, so we just need to wait for bootup
                 openEmulatorSceneWhenReady()

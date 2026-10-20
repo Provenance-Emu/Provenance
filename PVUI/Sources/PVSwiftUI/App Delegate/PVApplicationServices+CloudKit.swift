@@ -1,5 +1,5 @@
 //
-//  PVAppDelegate+CloudKit.swift
+//  PVApplicationServices+CloudKit.swift
 //  PVUI
 //
 //  Created by Joseph Mattiello on 4/22/25.
@@ -15,7 +15,7 @@ import Defaults
 import BackgroundTasks
 
 /// Extension to handle CloudKit remote notifications in the app delegate
-public extension PVAppDelegate {
+public extension PVApplicationServices {
     /// Initialize CloudKit for all platforms
     public func initializeCloudKit() {
         // Register for remote notifications if iCloud sync is enabled
@@ -53,7 +53,7 @@ public extension PVAppDelegate {
                 }
 
                 // Register for remote notifications and setup background tasks
-                self.setupCloudKitBackgroundSync()
+                await self.setupCloudKitBackgroundSync()
 
                 // Start initial sync
                 try? await CloudSyncManager.shared.startSync()

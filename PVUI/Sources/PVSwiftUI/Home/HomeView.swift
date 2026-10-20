@@ -181,7 +181,7 @@ struct HomeView: SwiftUI.View {
     }
 
     var body: some SwiftUI.View {
-        StatusBarProtectionWrapper {
+        Group {
             VStack(spacing: 0) {
                 // `desktopLibraryContentColumn()` is identity off-Mac; on a desktop window it
                 // clamps + centers each band so the toolbar, import panel and scroll content
@@ -661,7 +661,7 @@ struct HomeView: SwiftUI.View {
         gamepadCancellable = GamepadManager.shared.eventPublisher
             .receive(on: DispatchQueue.main)
             .sink { event in
-                guard !viewModel.isMenuVisible else {
+                guard !viewModel.isMenuVisible, !viewModel.isLibraryInputBlocked else {
                     DLOG("🎮 HomeView: Ignoring input - menu visible")
                     return
                 }

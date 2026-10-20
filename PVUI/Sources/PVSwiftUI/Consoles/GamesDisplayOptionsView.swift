@@ -15,7 +15,6 @@ import Defaults
 import PVSettings
 import PVUIBase
 import PVCoreBridge
-import UIKit
 
 @available(iOS 14, tvOS 14, *)
 /// Context for the settings button to determine its behavior
@@ -28,6 +27,16 @@ enum SettingsContext {
 
 @available(iOS 14, tvOS 14, *)
 struct GamesDisplayOptionsView: SwiftUI.View {
+    #if !os(tvOS)
+    private struct CoreOptionsPresentation: Identifiable {
+        let id = UUID()
+        let coreClass: CoreOptional.Type
+        let title: String
+    }
+
+    @State private var coreOptionsPresentation: CoreOptionsPresentation?
+    #endif
+
     @ObservedObject private var themeManager = ThemeManager.shared
     @Default(.libraryGridColumnAdjustment) private var libraryGridColumnAdjustment
     @Default(.showGameTitles) private var showGameTitles
@@ -119,6 +128,23 @@ struct GamesDisplayOptionsView: SwiftUI.View {
         }
         .frame(maxWidth: .infinity, minHeight: stripMinHeight, maxHeight: stripMaxHeight)
         .clipped() // Prevent overflow
+        #if !os(tvOS)
+        .sheet(item: $coreOptionsPresentation, onDismiss: {
+            viewModel.inputOwnership.hasCoreOptionsPresentation = false
+        }) { presentation in
+            NavigationStack {
+                CoreOptionsDetailView(coreClass: presentation.coreClass, title: presentation.title, onClose: {
+                    coreOptionsPresentation = nil
+                })
+                .navigationBarTitleDisplayMode(.inline)
+                .toolbar {
+                    ToolbarItem(placement: .confirmationAction) {
+                        Button("Done") { coreOptionsPresentation = nil }
+                    }
+                }
+            }
+        }
+        #endif
     }
 
     // MARK: - View Components
@@ -402,14 +428,8 @@ struct GamesDisplayOptionsView: SwiftUI.View {
     /// Present core options for a specific core
     private func presentCoreOptions(for coreClass: CoreOptional.Type, title: String) {
         #if !os(tvOS)
-        // Find the nearest UIViewController to present from
-        if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
-           let rootVC = windowScene.windows.first?.rootViewController {
-            let coreOptionsView = CoreOptionsDetailView(coreClass: coreClass, title: title)
-            let hostingController = UIHostingController(rootView: coreOptionsView)
-            let navigationController = UINavigationController(rootViewController: hostingController)
-            rootVC.present(navigationController, animated: true)
-        }
+        viewModel.inputOwnership.hasCoreOptionsPresentation = true
+        coreOptionsPresentation = CoreOptionsPresentation(coreClass: coreClass, title: title)
         #endif
     }
 }

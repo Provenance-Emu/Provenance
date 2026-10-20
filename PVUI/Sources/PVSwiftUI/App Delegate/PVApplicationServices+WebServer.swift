@@ -1,5 +1,5 @@
 //
-//  PVAppDelegate+WebServer.swift
+//  PVApplicationServices+WebServer.swift
 //  PVUI
 //
 //  Created by Joseph Mattiello on 4/24/25.
@@ -13,8 +13,8 @@ import PVPrimitives
 import PVWebServerObjC
 import PVUIBase
 
-/// Extension to PVAppDelegate for web server setup
-extension PVAppDelegate {
+/// Extension to PVApplicationServices for web server setup
+extension PVApplicationServices {
 
     /// Set up web server notifications
     func setupWebServerNotifications() {
