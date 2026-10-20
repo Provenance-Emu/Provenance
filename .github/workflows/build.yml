@@ -139,6 +139,13 @@ jobs:
             DEVELOPER_DIR="$DEV" xcodebuild -downloadComponent MetalToolchain
           fi
 
+      # Cached submodules can carry LFS checkout hooks. Configure the runner's
+      # Git filters before checkout or recursive initialization invokes them.
+      - name: Configure Git LFS
+        run: |
+          git lfs version
+          git lfs install --skip-repo
+
       - name: Checkout code
         uses: actions/checkout@v4
         with:
