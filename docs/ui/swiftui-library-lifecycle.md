@@ -103,18 +103,19 @@ replace the package's complete test suite or a current tvOS integration build.
 
 ### Recorded motion comparison
 
-Four drawer transitions were recorded at 60 encoded frames per second for both the
-UIKit baseline and SwiftUI. During the middle 80% of panel travel, UIKit's longest
-repeated captured position was 33.3 ms in each transition. SwiftUI recorded 33.3 ms
-in three transitions and 16.7 ms in one, with six to eight distinct positions
-versus UIKit's four or five. SwiftUI's travel segment was 116.7–133.3 ms; UIKit's was
-83.3–100 ms. The panel widths and animation curves differ.
+A refreshed comparison recorded four drawer transitions for each app on the same
+iPhone 17 Pro simulator, with matching synthetic-library and save files. Both
+captures encoded approximately 60 frames per second. During the middle 80% of
+travel, SwiftUI showed five to seven distinct positions and a maximum repeated
+position of 16.7–33.3 ms. UIKit showed three to four positions and 33.3–50 ms.
+SwiftUI's travel segment was 83.3–116.6 ms; UIKit's was 83.3–116.6 ms. The open
+panel widths were 312 and 270 points, respectively, and the animation curves differ.
 
-These are measurements of captured panel motion, not display frame times or
-energy usage. The host was heavily loaded. Simulator Animation Hitches recording
-reported that hitches are unsupported. A UIKit Time Profiler trace was collected,
-but it does not establish CPU parity against a different view/data state.
-Hardware profiling and a large-library scrolling comparison remain necessary.
+These measure captured panel motion, not display frame times, CPU or energy.
+The host was compiling tvOS during the recordings. Simulator Animation Hitches
+recording previously reported that hitches are unsupported. The small-fixture
+captures support retaining the current transform/opacity animation; they do not
+establish large-library scrolling or hardware performance parity.
 
 ### Remaining checks
 
