@@ -1,4 +1,5 @@
 import XCTest
+@testable import PVAzaharSupport
 
 final class PVAzaharDataMigratorTests: XCTestCase {
     var tmp: URL!, legacy: URL!, target: URL!

@@ -369,7 +369,7 @@ jobs:
           for tool in ldid xcbeautify; do
             command -v "$tool" >/dev/null 2>&1 || brew install "$tool" 2>/dev/null || true
           done
-          # PVAzahar's pre-build builds PVlibAzahar with cmake + ninja and needs python3 >= 3.10.
+          # Azahar's native artifact preparation needs cmake, ninja and python3 >= 3.10.
           for tool in cmake ninja; do
             command -v "$tool" >/dev/null 2>&1 || brew install "$tool" 2>/dev/null || true
           done
@@ -416,6 +416,9 @@ jobs:
               echo "::warning::expected plist not found: $plist"
             fi
           done
+
+      - name: Prepare Azahar SwiftPM native artifact
+        run: python3 Scripts/cores/build_slice.py azahar "${{ steps.core-keys.outputs.slice }}" --xcframework
 
       - name: Build Provenance
         id: build

@@ -674,16 +674,16 @@
 		C0C0CA0100000003 /* Sentry in Frameworks */ = {isa = PBXBuildFile; productRef = C0C0CA0100000004 /* Sentry */; };
 		C0C0CAFE0000000000005001 /* PVLibrarySnapshot in Frameworks */ = {isa = PBXBuildFile; productRef = C0C0CAFE0000000000005002 /* PVLibrarySnapshot */; };
 		C0C0CAFE0000000000006001 /* QuickLookPreview.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = B3CC22000000000100000001 /* QuickLookPreview.appex */; platformFilters = (ios, maccatalyst, ); settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
-		C0C0CAFE0A2A000000000002 /* PVAzahar.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B364D1C72E2DC8C30038EB2A /* PVAzahar.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		C0C0CAFE0A2A000000000003 /* PVAzahar.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B364D1C72E2DC8C30038EB2A /* PVAzahar.framework */; };
-		C0C0CAFE0A2A000000000004 /* PVAzahar.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3DE9E502E2D7D86008E97F6 /* PVAzahar.framework */; platformFilters = (ios, tvos, ); settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		C0C0CAFE0A2A000000000005 /* PVAzahar.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3DE9E502E2D7D86008E97F6 /* PVAzahar.framework */; platformFilters = (ios, tvos, ); };
-		C0C0CAFE0A2A000000000006 /* PVAzahar.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B376610C2D9208E8000DA2AF /* PVAzahar.framework */; platformFilters = (ios, tvos, ); settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		C0C0CAFE0A2A000000000007 /* PVAzahar.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B376610C2D9208E8000DA2AF /* PVAzahar.framework */; platformFilters = (ios, tvos, ); };
-		C0C0CAFE0A2A000000000008 /* PVAzahar.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3B22AEC2D91F2B700146476 /* PVAzahar.framework */; };
-		C0C0CAFE0A2A000000000009 /* PVAzahar.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3B22AEC2D91F2B700146476 /* PVAzahar.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		C0C0CAFE0A2A00000000000A /* PVAzahar.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = C0C0CAFE0A2A000000000001 /* PVAzahar.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		C0C0CAFE0A2A00000000000B /* PVAzahar.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C0C0CAFE0A2A000000000001 /* PVAzahar.framework */; };
+		C0C0CAFE0A2A000000000002 /* PVAzahar.framework in Embed Frameworks */ = {isa = PBXBuildFile; productRef = C0C0CAFE46CD31F1070A7385 /* PVAzahar-Dynamic */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		C0C0CAFE0A2A000000000003 /* PVAzahar.framework in Frameworks */ = {isa = PBXBuildFile; productRef = C0C0CAFE46CD31F1070A7385 /* PVAzahar-Dynamic */; };
+		C0C0CAFE0A2A000000000004 /* PVAzahar.framework in Embed Frameworks */ = {isa = PBXBuildFile; productRef = C0C0CAFE1B8682282AC7E64E /* PVAzahar-Dynamic */; platformFilters = (ios, tvos, ); settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		C0C0CAFE0A2A000000000005 /* PVAzahar.framework in Frameworks */ = {isa = PBXBuildFile; productRef = C0C0CAFE1B8682282AC7E64E /* PVAzahar-Dynamic */; platformFilters = (ios, tvos, ); };
+		C0C0CAFE0A2A000000000006 /* PVAzahar.framework in Embed Frameworks */ = {isa = PBXBuildFile; productRef = C0C0CAFEB507DDDB04AD130B /* PVAzahar-Dynamic */; platformFilters = (ios, tvos, ); settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		C0C0CAFE0A2A000000000007 /* PVAzahar.framework in Frameworks */ = {isa = PBXBuildFile; productRef = C0C0CAFEB507DDDB04AD130B /* PVAzahar-Dynamic */; platformFilters = (ios, tvos, ); };
+		C0C0CAFE0A2A000000000008 /* PVAzahar.framework in Frameworks */ = {isa = PBXBuildFile; productRef = C0C0CAFE88E53E75572E9FCE /* PVAzahar-Dynamic */; };
+		C0C0CAFE0A2A000000000009 /* PVAzahar.framework in Embed Frameworks */ = {isa = PBXBuildFile; productRef = C0C0CAFE88E53E75572E9FCE /* PVAzahar-Dynamic */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		C0C0CAFE0A2A00000000000A /* PVAzahar.framework in Embed Frameworks */ = {isa = PBXBuildFile; productRef = C0C0CAFEEE24EFF43C996355 /* PVAzahar-Dynamic */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		C0C0CAFE0A2A00000000000B /* PVAzahar.framework in Frameworks */ = {isa = PBXBuildFile; productRef = C0C0CAFEEE24EFF43C996355 /* PVAzahar-Dynamic */; };
 		C0C0DE0100000004 /* ProvenanceOpticalDriveDriver.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0C0DE0100000002 /* ProvenanceOpticalDriveDriver.swift */; };
 		C0C0DE0100000005 /* DriverKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3EEED892920B006008E2603 /* DriverKit.framework */; };
 		C0C0DE010000000F /* ProvenanceOpticalDriveDriver.dext in Embed DriverKit Extensions */ = {isa = PBXBuildFile; fileRef = C0C0DE0100000001 /* ProvenanceOpticalDriveDriver.dext */; platformFilter = maccatalyst; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
@@ -1518,7 +1518,6 @@
 		B35EF0042C6C6D1A00EBD1A8 /* Provenance Lite.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Provenance Lite.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		B35EF0062C6C6DBF00EBD1A8 /* Provenance-Lite (AppStore)-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Provenance-Lite (AppStore)-Info.plist"; sourceTree = "<group>"; };
 		B361938F221FB93B00F73875 /* Provenance-Free.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = "Provenance-Free.entitlements"; path = "Provenance/Provenance-Free.entitlements"; sourceTree = SOURCE_ROOT; };
-		B364D1C72E2DC8C30038EB2A /* PVAzahar.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVAzahar.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B364D1CD2E2DE6A90038EB2A /* PVEmuThree.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVEmuThree.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B364D1D02E2DEC4A0038EB2A /* glslang.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = glslang.xcframework; path = MoltenVK/glslang.xcframework; sourceTree = "<group>"; };
 		B36A8D422CCD53DB002357DD /* Provenance-Lite-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Provenance-Lite-Info.plist"; sourceTree = "<group>"; };
@@ -1529,7 +1528,6 @@
 		B37263A026EA04E700E95488 /* ProSystem.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = ProSystem.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B372F3502E2CB13E00B6B563 /* libdolphin.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libdolphin.dylib; path = "Cores/Dolphin/dolphin-ios/build-appletvos-/Source/iOS/Library/libdolphin.dylib"; sourceTree = "<group>"; };
 		B372F3532E2CB6AD00B6B563 /* libdolphin.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libdolphin.dylib; path = "Cores/Dolphin/dolphin-ios/build-iphoneos-Release/Source/iOS/Library/libdolphin.dylib"; sourceTree = "<group>"; };
-		B376610C2D9208E8000DA2AF /* PVAzahar.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVAzahar.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B37769042CF6D47300A48B35 /* UITesting.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = UITesting.xcodeproj; path = UITesting/UITesting.xcodeproj; sourceTree = "<group>"; };
 		B379D0472B4FB9A80067325A /* Provenance-JB.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = "Provenance-JB.entitlements"; path = "Provenance/Provenance-JB.entitlements"; sourceTree = SOURCE_ROOT; };
 		B379D0482B4FBF240067325A /* ProvenanceTV-Free.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "ProvenanceTV-Free.entitlements"; sourceTree = "<group>"; };
@@ -1582,7 +1580,6 @@
 		B3AF705921916F2F000FA7F9 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS12.1.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
 		B3AF70652191733D000FA7F9 /* GameController.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GameController.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS12.1.sdk/System/Library/Frameworks/GameController.framework; sourceTree = DEVELOPER_DIR; };
 		B3B0C01A2CBE37E100E72CAF /* PVEmuThree.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVEmuThree.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		B3B22AEC2D91F2B700146476 /* PVAzahar.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVAzahar.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3B3DABB28713AEC008A0E2F /* PVFBNeo.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVFBNeo.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3B4C955279E6BAA00505424 /* ProSystem.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = ProSystem.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3B66A7027B872BA00E2236B /* pt-BR */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "pt-BR"; path = "pt-BR.lproj/Strings.strings"; sourceTree = "<group>"; };
@@ -1626,7 +1623,6 @@
 		B3DD07052F20031900000000 /* Localizable.strings */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; name = Localizable.strings; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
 		B3DE9E462E2D7428008E97F6 /* PVDolphin.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = PVDolphin.xcframework; path = Cores/Dolphin/build/xcframework/PVDolphin.xcframework; sourceTree = "<group>"; };
 		B3DE9E4D2E2D7AE9008E97F6 /* PVlibDolphin.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = PVlibDolphin.xcframework; path = Cores/Dolphin/build/xcframework/PVlibDolphin.xcframework; sourceTree = "<group>"; };
-		B3DE9E502E2D7D86008E97F6 /* PVAzahar.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVAzahar.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3DEEF912942F92C00A6957C /* PVBliss.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVBliss.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3DEEF942942F96900A6957C /* PVBliss.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVBliss.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3DF8ED72CC7AE1F0006F20E /* ColoredIcons.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = ColoredIcons.xcassets; sourceTree = "<group>"; };
@@ -1687,7 +1683,6 @@
 		BE9FDCCD1C21194B0046DF0E /* TopShelf.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = TopShelf.entitlements; sourceTree = "<group>"; };
 		C0C0CAFE00000000000000AA /* Provenance Companion.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Provenance Companion.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		C0C0CAFE0501000000000001 /* ProvenanceUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ProvenanceUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		C0C0CAFE0A2A000000000001 /* PVAzahar.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVAzahar.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		C0C0CAFE1000000000000009 /* ProvenanceCompanionTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ProvenanceCompanionTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		C0C0DE0100000001 /* ProvenanceOpticalDriveDriver.dext */ = {isa = PBXFileReference; explicitFileType = "wrapper.driver-extension"; includeInIndex = 0; path = ProvenanceOpticalDriveDriver.dext; sourceTree = BUILT_PRODUCTS_DIR; };
 		C0C0DE0100000002 /* ProvenanceOpticalDriveDriver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ProvenanceOpticalDriveDriver.swift; path = ProvenanceCompanion/DriverKit/ProvenanceOpticalDriveDriver.swift; sourceTree = SOURCE_ROOT; };
@@ -2877,17 +2872,12 @@
 				B37CCD302E2FF36A00ABFCF5 /* PVDolphin.framework */,
 				B364D1D02E2DEC4A0038EB2A /* glslang.xcframework */,
 				B364D1CD2E2DE6A90038EB2A /* PVEmuThree.framework */,
-				B364D1C72E2DC8C30038EB2A /* PVAzahar.framework */,
-				C0C0CAFE0A2A000000000001 /* PVAzahar.framework */,
-				B3DE9E502E2D7D86008E97F6 /* PVAzahar.framework */,
 				B3DE9E4D2E2D7AE9008E97F6 /* PVlibDolphin.xcframework */,
 				B3DE9E462E2D7428008E97F6 /* PVDolphin.xcframework */,
 				B372F3502E2CB13E00B6B563 /* libdolphin.dylib */,
 				B372F3532E2CB6AD00B6B563 /* libdolphin.dylib */,
 				B3082DBD2E27520E009DFE5D /* libdolphin.dylib */,
 				B3082DB82E274CC2009DFE5D /* PVDolphin.framework */,
-				B376610C2D9208E8000DA2AF /* PVAzahar.framework */,
-				B3B22AEC2D91F2B700146476 /* PVAzahar.framework */,
 				B3E8819A2D90C4E500A80D83 /* PVEmuThree.framework */,
 				B3E881952D90C4BA00A80D83 /* PVEmuThree.framework */,
 				B3FD98552D614E6E00397643 /* CoreLocationUI.framework */,
@@ -3486,6 +3476,7 @@
 			);
 			name = Provenance;
 			packageProductDependencies = (
+				C0C0CAFE46CD31F1070A7385 /* PVAzahar-Dynamic */,
 				C0C0CAFE513FB050FD77CFD4 /* PVCoreBridgeRetro */,
 				C0C0CAFE16A25CBEB6DC1586 /* PVMupen64PlusVideoGlideN64-Dynamic */,
 				C0C0CAFEF229C4E655A77E7A /* PVMupen64PlusVideoRice-Dynamic */,
@@ -3809,6 +3800,7 @@
 			);
 			name = "Provenance-Lite (AppStore)";
 			packageProductDependencies = (
+				C0C0CAFE1B8682282AC7E64E /* PVAzahar-Dynamic */,
 				C0C0CAFEC06A3EA641913489 /* PVCoreBridgeRetro */,
 				C0C0CAFE6DF7E00D0E497DF7 /* PVMupen64PlusVideoGlideN64-Dynamic */,
 				C0C0CAFE47D3FA70AE6E1021 /* PVMupen64PlusVideoRice-Dynamic */,
@@ -3894,6 +3886,7 @@
 			);
 			name = "Provenance (AppStore)";
 			packageProductDependencies = (
+				C0C0CAFEB507DDDB04AD130B /* PVAzahar-Dynamic */,
 				C0C0CAFE04F920A2D7C514A0 /* PVCoreBridgeRetro */,
 				C0C0CAFECEE8BDDC4CF0AB02 /* PVMupen64PlusVideoGlideN64-Dynamic */,
 				C0C0CAFEE7CFCEF343D25EF9 /* PVMupen64PlusVideoRice-Dynamic */,
@@ -4106,6 +4099,7 @@
 			);
 			name = "Provenance-Lite";
 			packageProductDependencies = (
+				C0C0CAFE88E53E75572E9FCE /* PVAzahar-Dynamic */,
 				C0C0CAFE1F55DEDF43524F34 /* PVCoreBridgeRetro */,
 				B3F7E2A1297736BE00362B92 /* SteamController */,
 				B3E88CB92977AB5900C90E86 /* Reachability */,
@@ -4158,6 +4152,7 @@
 			);
 			name = "Provenance-XL";
 			packageProductDependencies = (
+				C0C0CAFEEE24EFF43C996355 /* PVAzahar-Dynamic */,
 				C0C0CAFE7A954CBECA7A2E81 /* PVEP128Emu-Dynamic */,
 				C0C0CAFEFD350C4D51E4717A /* PVCoreBridgeRetro */,
 				C0C0CAFE4C3E4DA4BEB91D1C /* PVMupen64PlusVideoGlideN64-Dynamic */,
@@ -4459,6 +4454,7 @@
 			mainGroup = 1A3D408B17B2DCE4004DFFFC;
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
+				C0C0CAFE019D7EEA174173E9 /* Azahar */,
 				C0C0CAFEF856E7CBFC76F9E3 /* XCLocalSwiftPackageReference "PVCoreBridgeRetro" */,
 				C0C0CAFEA782D8680CFC3045 /* XCLocalSwiftPackageReference "Cores/ep128emu" */,
 				C0C0CAFE70A32ACD06CFDE51 /* XCLocalSwiftPackageReference "Cores/Mupen64Plus" */,
@@ -11193,6 +11189,7 @@
 			isa = XCLocalSwiftPackageReference;
 			relativePath = "Cores/ep128emu";
 		};
+		C0C0CAFE019D7EEA174173E9 /* Azahar */ = {isa = XCLocalSwiftPackageReference; relativePath = Cores/Azahar; };
 /* End XCLocalSwiftPackageReference section */
 
 /* Begin XCRemoteSwiftPackageReference section */
@@ -12722,6 +12719,11 @@
 			package = C0C0CAFEF856E7CBFC76F9E3 /* XCLocalSwiftPackageReference "PVCoreBridgeRetro" */;
 			productName = "PVCoreBridgeRetro";
 		};
+		C0C0CAFE88E53E75572E9FCE /* PVAzahar-Dynamic */ = {isa = XCSwiftPackageProductDependency; package = C0C0CAFE019D7EEA174173E9 /* Azahar */; productName = "PVAzahar-Dynamic"; };
+		C0C0CAFEB507DDDB04AD130B /* PVAzahar-Dynamic */ = {isa = XCSwiftPackageProductDependency; package = C0C0CAFE019D7EEA174173E9 /* Azahar */; productName = "PVAzahar-Dynamic"; };
+		C0C0CAFEEE24EFF43C996355 /* PVAzahar-Dynamic */ = {isa = XCSwiftPackageProductDependency; package = C0C0CAFE019D7EEA174173E9 /* Azahar */; productName = "PVAzahar-Dynamic"; };
+		C0C0CAFE46CD31F1070A7385 /* PVAzahar-Dynamic */ = {isa = XCSwiftPackageProductDependency; package = C0C0CAFE019D7EEA174173E9 /* Azahar */; productName = "PVAzahar-Dynamic"; };
+		C0C0CAFE1B8682282AC7E64E /* PVAzahar-Dynamic */ = {isa = XCSwiftPackageProductDependency; package = C0C0CAFE019D7EEA174173E9 /* Azahar */; productName = "PVAzahar-Dynamic"; };
 /* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 1A3D408C17B2DCE4004DFFFC /* Project object */;

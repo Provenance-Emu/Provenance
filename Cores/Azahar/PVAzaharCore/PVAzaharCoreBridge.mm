@@ -23,7 +23,7 @@
 #include "core/core.h"
 #include "core/frontend/applets/default_applets.h"
 #include "core/hle/service/cam/cam.h"
-#include "network.h"   // azahar's network/network.h; see HEADER_SEARCH_PATHS in project.yml
+#include "network.h"   // azahar's network/network.h; see header ordering in Package.swift
 #include "audio_core/sink_details.h"
 #include "core/hle/service/am/am.h"
 #include "core/hle/service/fs/archive.h"

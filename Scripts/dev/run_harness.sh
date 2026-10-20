@@ -33,11 +33,8 @@ fi || { echo "run_harness: boot a simulator first (xcrun simctl boot \"iPhone 17
 
 DERIVED="${DEV_DERIVED:-$ROOT/build/dev-dd}"
 EXTRA_SETTINGS=()
-if [ "$TARGET" = azahar ]; then
-    # PVAzahar's package links PVlibAzahar.xcframework, which must exist before generation.
-    # (Dev apps are arm64-only on simulators via DevSettings, so no ARCHS override is needed.)
-    python3 "$ROOT/Scripts/cores/build_slice.py" azahar ios-sim --xcframework
-fi
+# Every focused app shares the package graph, including Azahar's native binary.
+python3 "$ROOT/Scripts/cores/build_slice.py" azahar ios-sim --xcframework
 (cd "$ROOT" && mise exec -- tuist generate --no-open)
 # Ad-hoc signing for simulator SDKs comes from Dev/Config/Dev.xcconfig.
 xcodebuild build -workspace "$ROOT/Provenance-Dev.xcworkspace" -scheme "$SCHEME" \

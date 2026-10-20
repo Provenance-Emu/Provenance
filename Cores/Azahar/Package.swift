@@ -3,39 +3,16 @@
 import Foundation
 import PackageDescription
 
-// PVAzahar as a SwiftPM package (the Tuist dev workspace consumes PVAzahar-Dynamic).
-// PVAzahar.xcodeproj stays the shipping build; this manifest mirrors its PVAzahar target.
-//
-// Targets:
-//   PVAzahar        Swift; module name = Core.plist's PVPrincipleClass prefix ("PVAzahar.PVAzaharCore").
-//   PVAzaharBridge  ObjC++ bridge + C++ glue. It never imports the Swift module (the render view, user
-//                   directory and mute-switch policy are pushed in by PVAzaharCore), so there is no cycle.
-//   PVlibAzahar     the emulator: a static-framework .xcframework over the slice cache, produced by
-//                   `python3 Scripts/cores/build_slice.py azahar <slice> --xcframework` (make dev-generate).
-//
-// Differences from the xcodeproj that SwiftPM cannot express:
-// - No x86_64 simulator slice. PVlibAzahar is arm64-only and SwiftPM has no arch-conditioned linker flags
-//   (the xcodeproj links x86_64 with `-undefined dynamic_lookup`). Build arm64 only: the focused app
-//   excludes x86_64 for simulator SDKs and `make dev-azahar` passes ARCHS=arm64.
-// - Headers come from one slice of the xcframework, not the slice being built (SwiftPM cannot condition on
-//   device vs simulator). The Headers/ trees of the ios, ios-sim and tvos-sim slices are identical.
-// - The xcframework must exist when the package graph resolves; Xcode resolves binary targets before any
-//   build phase runs, so no build-time aggregate can produce it. Without it the manifest drops the binary
-//   target and the bridge fails with an #error that says how to build it (other focused apps still resolve).
-//   SwiftPM caches manifest evaluation by manifest contents, not by what the manifest reads from disk
-//   (checked with `swift package dump-package`: stale until `--manifest-cache none`). After producing the
-//   xcframework, reset package caches (Xcode: File > Packages > Reset Package Caches) if the bridge still
-//   stops at the "PVlibAzahar.xcframework is missing" #error.
+// Shipping Xcode and Tuist both consume PVAzahar-Dynamic.
+// Run `make prepare-azahar AZAHAR_SLICE=ios` (or ios-sim/tvos/tvos-sim) before resolving.
+// The engine remains a cached CMake-built XCFramework; the Swift/ObjC++ APIs are source targets.
+// All slices are arm64. Header ordering and C++ symbol isolation are required for coexistence
+// with the other native cores (upstream network/network.h collides with Apple's Network headers).
 
 let packageDir = URL(fileURLWithPath: #filePath).deletingLastPathComponent().path
 let xcframework = "build/xcframework/PVlibAzahar.xcframework"
 
-/// The first slice of the xcframework that has azahar's headers (-idirafter, as in the xcodeproj).
-let azaharHeaders: String? = ["ios-arm64", "ios-arm64-simulator", "tvos-arm64", "tvos-arm64-simulator"]
-    .map { "\(packageDir)/\(xcframework)/\($0)/PVlibAzahar.framework/Headers" }
-    .first { FileManager.default.fileExists(atPath: $0) }
-let libraryPresent = azaharHeaders != nil
-    && FileManager.default.fileExists(atPath: "\(packageDir)/\(xcframework)/Info.plist")
+let azaharHeaders = "\(packageDir)/build/headers"
 
 /// GCC_PREPROCESSOR_DEFINITIONS of the xcodeproj, each defined to 1.
 let defines: [String] = [
@@ -45,27 +22,26 @@ let defines: [String] = [
     "VK_NO_PROTOTYPES",
     "VULKAN_HPP_DISPATCH_LOADER_DYNAMIC",
     "VULKAN_HPP_NO_EXCEPTIONS",
-] + (libraryPresent ? [] : ["PVAZAHAR_LIBRARY_MISSING"])
+]
 
 /// azahar headers are searched last: azahar's network/network.h would otherwise satisfy the SDK's
 /// <Network/Network.h> on a case-insensitive volume. Only its network/ dir goes on -I (included as
 /// "network.h"). Never include azahar's core/hle/service/nwm/nwm_uds.h (see CLAUDE.md).
-let headerFlags: [String] = azaharHeaders.map { ["-idirafter", $0, "-I", "\($0)/network"] } ?? []
+let headerFlags: [String] = ["-idirafter", azaharHeaders, "-I", "\(azaharHeaders)/network"]
 
 let bridgeCFlags: [String] = headerFlags
 let bridgeCXXFlags: [String] = [
     "-fmodules",
     "-fcxx-modules",   // the ObjC++ glue does @import PVCoreBridge
-    "-fvisibility=hidden",
-    "-fvisibility-inlines-hidden",
     "-Wno-shorten-64-to-32",
     "-Wno-deprecated-declarations",
 ] + headerFlags
 
-/// Keeps every C++ symbol private to this image: dyld coalesces exported weak definitions across images,
+/// Hide C++ symbols at the final image link: Xcode localizes hidden definitions while combining SwiftPM
+/// bridge objects, before Swift and the engine can resolve them. dyld coalesces exported weak definitions across images,
 /// and PVlibDolphin's glslang/fmt instantiations crashed azahar's shader compiler (unexported_symbols.txt).
 let linkerFlags: [String] = [
-    "-ObjC",
+    "-Xlinker", "-ObjC",
     "-Xlinker", "-unexported_symbols_list",
     "-Xlinker", "\(packageDir)/unexported_symbols.txt",
 ]
@@ -75,22 +51,20 @@ let sharedExcludes: [String] = [
     "azahar",
     "cmake",
     "Tests",
-    "PVAzahar.xcodeproj",
     "PVAzahar/Info.plist",
     "PVAzahar/PVAzahar.h",
     "PATCHES.md",
     "build_azahar_core.py",
-    "project.yml",
     "swiftgen.yml",
     "unexported_symbols.txt",
-] + (FileManager.default.fileExists(atPath: "\(packageDir)/build") ? ["build"] : [])   // gitignored output
+    "build", // prepared native output
+]
 
 let swiftSources: [String] = [
     "PVAzaharCore/CorePlist.swift",
     "PVAzaharCore/CorePlist-Generated.swift",
     "PVAzaharCore/PVAzaharCore.swift",
     "PVAzaharCore/PVAzaharCoreOptions.swift",
-    "PVAzaharCore/PVAzaharDataMigrator.swift",
     "PVAzaharCore/PVAzaharRenderView.swift",
 ]
 
@@ -133,6 +107,8 @@ let systemLinks: [LinkerSetting] = [
 // `map`/`+` expressions made the manifest type-check time out on CI.
 
 let coreDependencies: [Target.Dependency] = [
+    "PVAzaharSupport",
+    .product(name: "Defaults", package: "Defaults"),
     "PVAzaharBridge",
     .product(name: "PVCoreBridge", package: "PVCoreBridge"),
     .product(name: "PVCoreObjCBridge", package: "PVCoreObjCBridge"),
@@ -143,7 +119,7 @@ let coreDependencies: [Target.Dependency] = [
     .product(name: "PVSettings", package: "PVSettings"),
     .product(name: "PVSupport", package: "PVSupport"),
 ]
-let coreExcludes: [String] = sharedExcludes + bridgeSources + bridgeHeaders + ["SwiftPM"]
+let coreExcludes: [String] = sharedExcludes + bridgeSources + bridgeHeaders + ["SwiftPM", "Sources", "PVAzaharCore/PVAzaharDataMigrator.swift"]
 
 // MARK: Core (Swift)
 let coreTarget: Target = .target(
@@ -170,9 +146,9 @@ var bridgeDependencies: [Target.Dependency] = [
     .product(name: "PVObjCUtils", package: "PVObjCUtils"),
     .product(name: "PVSupport", package: "PVSupport"),
 ]
-if libraryPresent { bridgeDependencies.append("PVlibAzahar") }
+bridgeDependencies.append("PVlibAzahar")
 
-let bridgeExcludes: [String] = sharedExcludes + swiftSources + ["PVAzahar/Core.plist"]
+let bridgeExcludes: [String] = sharedExcludes + swiftSources + ["PVAzahar/Core.plist", "Sources", "PVAzaharCore/PVAzaharDataMigrator.swift"]
 let bridgeSourceList: [String] = bridgeSources + bridgeHeaders
 
 var bridgeCSettings: [CSetting] = defines.map { CSetting.define($0, to: "1") }
@@ -196,13 +172,16 @@ let bridgeTarget: Target = .target(
     linkerSettings: bridgeLinkerSettings
 )
 
-var allTargets: [Target] = [coreTarget, bridgeTarget]
-if libraryPresent {
-    // MARK: Emulator (prebuilt, arm64 only)
-    allTargets.append(.binaryTarget(name: "PVlibAzahar", path: xcframework))
-}
+let allTargets: [Target] = [
+    coreTarget,
+    bridgeTarget,
+    .binaryTarget(name: "PVlibAzahar", path: xcframework),
+    .target(name: "PVAzaharSupport", dependencies: ["PVLogging"]),
+    .testTarget(name: "PVAzaharDataMigratorTests", dependencies: ["PVAzaharSupport"], path: "Tests"),
+]
 
 let packageDependencies: [Package.Dependency] = [
+    .package(url: "https://github.com/sindresorhus/Defaults.git", from: "9.0.2"),
     .package(path: "../../PVAudio"),
     .package(path: "../../PVCoreBridge"),
     .package(path: "../../PVCoreObjCBridge"),
