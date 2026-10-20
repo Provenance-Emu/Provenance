@@ -11,7 +11,6 @@ import UniformTypeIdentifiers
 import PVLibrary
 import PVLogging
 import PVPatching
-import PVFileSystem
 import PVRealm
 
 /// Create a BPS or IPS/IPS32 patch from an original + modified ROM pair.
@@ -34,6 +33,7 @@ public struct CreatePatchView: View {
     @State private var showFilePicker = false
     @State private var pickerTarget: PickerTarget = .original
     @State private var games: [PVGame] = []
+    @State private var createdPatchURL: URL?
 
     public init() {}
 
@@ -41,7 +41,8 @@ public struct CreatePatchView: View {
         SwiftUI.Form {
             SwiftUI.Section("Source ROMs") {
 #if os(tvOS)
-                Text("Creating a patch needs two ROM files picked from Files, which tvOS doesn't have. Create the patch on iPhone, iPad or Mac, then send it here through the web server or iCloud Drive.")
+                Text("Creating a patch needs two ROM files picked from Files, which tvOS doesn't have. "
+                    + "Create the patch on iPhone, iPad or Mac, then send it here through the web server or iCloud Drive.")
                     .font(.footnote)
                     .foregroundStyle(.secondary)
 #else
@@ -95,6 +96,16 @@ public struct CreatePatchView: View {
                 }
             }
 
+#if !os(tvOS)
+            if let createdPatchURL {
+                SwiftUI.Section {
+                    ShareLink(item: createdPatchURL) {
+                        Label("Share Patch…", systemImage: "square.and.arrow.up")
+                    }
+                }
+            }
+#endif
+
             SwiftUI.Section {
                 Button {
                     create()
@@ -136,6 +147,7 @@ public struct CreatePatchView: View {
     private func create() {
         guard let originalURL, let modifiedURL else { return }
         isBusy = true
+        createdPatchURL = nil
         statusMessage = "Creating…"
         let format = self.format
         let titleText = self.titleText
@@ -152,19 +164,23 @@ public struct CreatePatchView: View {
             }
 
             do {
-                let patchesDir = Paths.patchesPath
-                try FileManager.default.createDirectory(at: patchesDir, withIntermediateDirectories: true)
+                let scratch = FileManager.default.temporaryDirectory
+                    .appendingPathComponent("CreatePatch-\(UUID().uuidString)", isDirectory: true)
+                try FileManager.default.createDirectory(at: scratch, withIntermediateDirectories: true)
+                defer { try? FileManager.default.removeItem(atPath: scratch.path) }
                 let stem = titleText.isEmpty
                     ? modifiedURL.deletingPathExtension().lastPathComponent
                     : titleText
-                let output = patchesDir.appendingPathComponent("\(stem).\(format.fileExtension)")
+                let safeStem = stem.components(separatedBy: CharacterSet(charactersIn: "/\\:"))
+                    .joined(separator: "-").trimmingCharacters(in: .whitespacesAndNewlines)
+                let output = scratch.appendingPathComponent("\(safeStem.isEmpty ? "Patch" : safeStem).\(format.fileExtension)")
                 let metadata = PatchMetadata(
                     title: titleText.isEmpty ? nil : titleText,
                     author: authorText.isEmpty ? nil : authorText
                 )
 
                 // Encoding can be CPU-heavy — keep it off the main actor.
-                let created = try await Task.detached(priority: .userInitiated) {
+                let staged = try await Task.detached(priority: .userInitiated) {
                     try await PatchCreator().create(
                         originalURL: originalURL,
                         modifiedURL: modifiedURL,
@@ -174,6 +190,9 @@ public struct CreatePatchView: View {
                         verifyRoundTrip: true
                     )
                 }.value
+
+                let created = try PatchRepository.shared.copyIntoPatchesDirectory(staged)
+                createdPatchURL = created
 
                 if importAfterCreate {
                     let preferred: PVGame? = {

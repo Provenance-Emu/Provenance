@@ -5,6 +5,7 @@
 
 import Foundation
 import XCTest
+import Testing
 @testable import PVPatching
 
 final class PatchCreatorTests: XCTestCase {
@@ -183,6 +184,40 @@ final class PatchCreatorTests: XCTestCase {
         XCTAssertEqual(ranked.first?.id, "b")
         XCTAssertEqual(ranked.first?.confidence, .exact)
         XCTAssertNotNil(PatchInspector().unambiguousMatch(from: ranked))
+    }
+}
+
+struct PatchCreatorInputProtectionTests {
+    @Test(arguments: PatchCreator.CreationFormat.allCases, ["original", "modified", "symlink", "hardlink"])
+    func rejectsOutputAliasingAnInput(format: PatchCreator.CreationFormat, destination: String) async throws {
+        let directory = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
+        try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
+        defer { try? FileManager.default.removeItem(at: directory) }
+        let original = Data([1, 2, 3, 4])
+        let modified = Data([1, 9, 3, 4])
+        let originalURL = directory.appendingPathComponent("original.rom")
+        let modifiedURL = directory.appendingPathComponent("modified.rom")
+        try original.write(to: originalURL)
+        try modified.write(to: modifiedURL)
+        let outputURL: URL
+        switch destination {
+        case "original": outputURL = originalURL
+        case "modified": outputURL = modifiedURL
+        case "symlink":
+            outputURL = directory.appendingPathComponent("alias.patch")
+            try FileManager.default.createSymbolicLink(at: outputURL, withDestinationURL: originalURL)
+        default:
+            outputURL = directory.appendingPathComponent("alias.patch")
+            try FileManager.default.linkItem(at: modifiedURL, to: outputURL)
+        }
+
+        await #expect(throws: PatchError.self) {
+            try await PatchCreator().create(
+                originalURL: originalURL, modifiedURL: modifiedURL, outputURL: outputURL, format: format
+            )
+        }
+        #expect(try Data(contentsOf: originalURL) == original)
+        #expect(try Data(contentsOf: modifiedURL) == modified)
     }
 }
 

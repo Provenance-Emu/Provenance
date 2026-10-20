@@ -56,6 +56,10 @@ public struct PatchCreator: Sendable {
         verifyRoundTrip: Bool = true,
         progress: (@Sendable (PatchProgress) -> Void)? = nil
     ) async throws -> URL {
+        guard !Self.refersToSameFile(outputURL, as: originalURL),
+              !Self.refersToSameFile(outputURL, as: modifiedURL) else {
+            throw PatchError.patchApplicationFailed("Save the patch to a different file from either input ROM")
+        }
         progress?(PatchProgress(fractionCompleted: 0.05, status: "Reading ROMs…"))
         let original = try Data(contentsOf: originalURL, options: .mappedIfSafe)
         let modified = try Data(contentsOf: modifiedURL, options: .mappedIfSafe)
@@ -95,9 +99,6 @@ public struct PatchCreator: Sendable {
             at: outputURL.deletingLastPathComponent(),
             withIntermediateDirectories: true
         )
-        if FileManager.default.fileExists(atPath: outputURL.path) {
-            try FileManager.default.removeItem(at: outputURL)
-        }
         try patchData.write(to: outputURL, options: .atomic)
         progress?(PatchProgress(fractionCompleted: 1.0, status: "Done"))
         ILOG("PatchCreator: wrote \(format.displayName) patch to \(outputURL.lastPathComponent)")
@@ -105,6 +106,20 @@ public struct PatchCreator: Sendable {
     }
 
     // MARK: - BPS
+
+    /// Resolve symbolic links and compare file identity so hard links cannot alias an input either.
+    private static func refersToSameFile(_ output: URL, as input: URL) -> Bool {
+        let output = output.resolvingSymlinksInPath().standardizedFileURL
+        let input = input.resolvingSymlinksInPath().standardizedFileURL
+        if output == input { return true }
+        guard let outputAttributes = try? FileManager.default.attributesOfItem(atPath: output.path),
+              let inputAttributes = try? FileManager.default.attributesOfItem(atPath: input.path),
+              let outputDevice = outputAttributes[.systemNumber] as? NSNumber,
+              let inputDevice = inputAttributes[.systemNumber] as? NSNumber,
+              let outputFile = outputAttributes[.systemFileNumber] as? NSNumber,
+              let inputFile = inputAttributes[.systemFileNumber] as? NSNumber else { return false }
+        return outputDevice == inputDevice && outputFile == inputFile
+    }
 
     private func createBPS(original: Data, modified: Data, metadata: PatchMetadata) throws -> Data {
         var body = Data()
