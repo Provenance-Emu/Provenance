@@ -181,11 +181,23 @@ public class ImportQueueItem: Identifiable, ObservableObject, Sendable {
     // Observable status for individual imports
     public var status: ImportStatus = .queued {
         didSet {
+            if case .queued = status { processingClaim.resetForRetry() }
             if case .failure = status {
                 updateSystems()
             }
             publishStatusChange()
         }
+    }
+
+    /// A pending auto-copy may be cancelled without deleting its staged file.
+    /// A worker that has already claimed it keeps ownership and finishes.
+    let processingClaim = ImportQueueClaim()
+
+    @discardableResult
+    func cancelBeforeProcessing() -> Bool {
+        guard processingClaim.cancelPending() else { return false }
+        status = .failure(error: CancellationError())
+        return true
     }
 
     /// Notify SwiftUI observers that `status` changed.

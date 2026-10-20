@@ -227,12 +227,13 @@ enum NearbyCopyState: Equatable {
     case verifying
     /// The importer has the files; the game appears in the library once it's done.
     case importing
+    case completed
     case failed(String)
 
     var isActive: Bool {
         switch self {
         case .preparing, .downloading, .verifying: return true
-        case .importing, .failed: return false
+        case .importing, .completed, .failed: return false
         }
     }
 }
@@ -276,7 +277,7 @@ final class NearbyPeerLibraryModel {
         case .iFly:
             source = IFlyContinuitySource(baseURLs: peer.baseURLs, identity: owner.identity)
         case .iCube:
-            source = ICubeContinuitySource(baseURLs: peer.baseURLs, identity: owner.identity)
+            source = ICubeContinuitySource(baseURLs: peer.baseURLs, identity: owner.identity, expectedPeerID: peer.advertisement.peerId)
         case .pvLibrary:
             // Ask only for what this device plays; the source filters locally too.
             source = PVLibrarySource(baseURLs: peer.baseURLs, identity: owner.identity, systems: owner.playableSystems)
@@ -331,6 +332,7 @@ final class NearbyPeerLibraryModel {
 
     /// Stops polling (consent or approval) when the view goes away.
     func cancel() {
+        if peer.app == .iCube { copyTasks.values.forEach { $0.cancel() } }
         loadTask?.cancel()
         loadTask = nil
         if case .loading = phase { phase = .idle }
@@ -388,6 +390,8 @@ final class NearbyPeerLibraryModel {
         loadTask = Task { [weak self] in
             do {
                 try await iCube.completePairing(handle, code: code)
+                try Task.checkCancellation()
+                try await LibrarySharingService.shared.rememberPairedHost(handle)
                 self?.pairedThisSession = true
                 self?.loadTask = nil
                 self?.load()
@@ -417,6 +421,14 @@ final class NearbyPeerLibraryModel {
         copies[item.id] = .preparing(.connecting)
         copyTasks[item.id] = Task { [weak self] in
             do {
+                if let iCube = source as? ICubeContinuitySource {
+                    _ = try await NearbyLibraryReceiveService.receive(item, source: iCube, peerKey: self?.peer.id ?? "icube", staging: staging) { progress in
+                        Task { @MainActor in self?.update(item.id, with: progress) }
+                    }
+                    self?.copies[item.id] = .completed
+                    self?.copyTasks[item.id] = nil
+                    return
+                }
                 let pulled = try await puller.pull(item, from: source) { progress in
                     Task { @MainActor in self?.update(item.id, with: progress) }
                 }

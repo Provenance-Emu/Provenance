@@ -44,17 +44,34 @@ public struct LibraryStaging: Sendable {
         return root.appendingPathComponent("\(app.rawValue)-\(hex)", isDirectory: true)
     }
 
+    /// Reject a redirected hashed staging folder or files base before even
+    /// writing the manifest. Its parent is the configured staging root.
+    static func hasConfinedBase(_ folder: URL) -> Bool {
+        let normalized = folder.standardizedFileURL
+        let parent = normalized.deletingLastPathComponent().resolvingSymlinksInPath()
+        let expected = parent.appendingPathComponent(normalized.lastPathComponent, isDirectory: true).standardizedFileURL
+        guard normalized.resolvingSymlinksInPath().path == expected.path else { return false }
+        let files = expected.appendingPathComponent(filesFolder, isDirectory: true).standardizedFileURL
+        return files.resolvingSymlinksInPath().path == files.path
+    }
+
     /// `folder/files/<relativePath>`, or nil when the path would land outside
     /// `folder/files` (absolute paths, `..`, empty components).
     public static func containedURL(for relativePath: String, in folder: URL) -> URL? {
+        guard hasConfinedBase(folder) else { return nil }
         let components = relativePath.split(separator: "/", omittingEmptySubsequences: false)
-        guard !relativePath.isEmpty, !relativePath.hasPrefix("/"), !relativePath.contains("\\"),
+        guard !relativePath.isEmpty, !relativePath.hasPrefix("/"), !relativePath.contains("\\"), !relativePath.contains("\0"),
               components.allSatisfy({ !$0.isEmpty && $0 != "." && $0 != ".." }) else {
             return nil
         }
-        let base = folder.appendingPathComponent(filesFolder, isDirectory: true).standardizedFileURL
-        let url = base.appendingPathComponent(relativePath).standardizedFileURL
-        guard url.path.hasPrefix(base.path + "/") else { return nil }
+        let base = folder.appendingPathComponent(filesFolder, isDirectory: true).standardizedFileURL.resolvingSymlinksInPath()
+        // Resolve existing ancestors separately, including when the final file
+        // has not been created. Resolving only a missing leaf can miss a link.
+        var url = base
+        for component in components {
+            url = url.appendingPathComponent(String(component)).resolvingSymlinksInPath()
+            guard url.path.hasPrefix(base.path + "/") else { return nil }
+        }
         return url
     }
 
@@ -63,7 +80,8 @@ public struct LibraryStaging: Sendable {
     /// Marks a folder as handed to the importer, so `sweep` may remove it.
     public func markHandedOff(_ folder: URL, at date: Date = Date()) {
         let marker = folder.appendingPathComponent(Self.handedOffMarker)
-        try? Data(ISO8601DateFormatter().string(from: date).utf8).write(to: marker)
+        guard Self.hasConfinedBase(folder) else { return }
+        try? Data(ISO8601DateFormatter().string(from: date).utf8).write(to: marker, options: .atomic)
     }
 
     /// Deletes one copy's folder (cancelled for good, or failed for good).
