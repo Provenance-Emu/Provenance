@@ -1,5 +1,5 @@
 //
-//  PVAppDelegate+Intents.swift
+//  PVApplicationServices+Intents.swift
 //  Provenance
 //
 //  Created by Joseph Mattiello
@@ -25,7 +25,7 @@ import PVUIBase
 // this file's legacy sections and the Intents/PV* companion files.
 
 #if os(iOS)
-extension PVAppDelegate {
+extension PVApplicationServices {
 
     // MARK: - INPlayMediaIntent donation
 
@@ -57,9 +57,9 @@ extension PVAppDelegate {
         let interaction = INInteraction(intent: intent, response: nil)
         interaction.donate { error in
             if let error = error {
-                ELOG("PVAppDelegate: Failed to donate INPlayMediaIntent for '\(title)': \(error.localizedDescription)")
+                ELOG("PVApplicationServices: Failed to donate INPlayMediaIntent for '\(title)': \(error.localizedDescription)")
             } else {
-                ILOG("PVAppDelegate: Donated INPlayMediaIntent for '\(title)'")
+                ILOG("PVApplicationServices: Donated INPlayMediaIntent for '\(title)'")
             }
         }
     }
@@ -74,7 +74,7 @@ extension PVAppDelegate {
     ///   - intent: The intent to handle
     ///   - completion: Completion handler to call when the intent is handled
     public func application(_ application: UIApplication, handle intent: INIntent, completionHandler: @escaping (INIntentResponse) -> Void) {
-        ILOG("PVAppDelegate: Handling intent: \(intent)")
+        ILOG("PVApplicationServices: Handling intent: \(intent)")
 
         // swiftlint:disable:next deprecated_declaration
         if let openIntent = intent as? PVOpenIntent {
@@ -89,15 +89,15 @@ extension PVAppDelegate {
                 completionHandler(response)
             }
         } else {
-            WLOG("PVAppDelegate: Received unsupported intent type: \(type(of: intent))")
+            WLOG("PVApplicationServices: Received unsupported intent type: \(type(of: intent))")
             completionHandler(INIntentResponse())
         }
     }
 
     /// Update the application(_:continue:restorationHandler:) method to handle intents from user activities
     public func handleIntentUserActivity(_ userActivity: NSUserActivity) -> Bool {
-        ILOG("PVAppDelegate: Handling user activity for intent: \(userActivity.activityType)")
-        ILOG("PVAppDelegate: User activity userInfo: \(userActivity.userInfo ?? [:])")
+        ILOG("PVApplicationServices: Handling user activity for intent: \(userActivity.activityType)")
+        ILOG("PVApplicationServices: User activity userInfo: \(userActivity.userInfo ?? [:])")
 
         // Check if this is an intent-based user activity
         // Handle both activity types: the custom one and the intent definition one
@@ -108,14 +108,14 @@ extension PVAppDelegate {
         if isIntentActivity {
             // Try to get MD5 from userInfo
             if let md5 = userActivity.userInfo?["md5"] as? String {
-                ILOG("PVAppDelegate: Processing intent activity with MD5: \(md5)")
+                ILOG("PVApplicationServices: Processing intent activity with MD5: \(md5)")
 
                 if let matchedGame = fetchGame(byMD5: md5) {
-                    ILOG("PVAppDelegate: Found game for MD5 \(md5), opening")
+                    ILOG("PVApplicationServices: Found game for MD5 \(md5), opening")
                     AppState.shared.appOpenAction = .openGame(matchedGame)
                     return true
                 } else {
-                    WLOG("PVAppDelegate: No game found for MD5 \(md5)")
+                    WLOG("PVApplicationServices: No game found for MD5 \(md5)")
                     // Still set the MD5 action in case the game is found later
                     AppState.shared.appOpenAction = .openMD5(md5)
                     return true
@@ -124,15 +124,15 @@ extension PVAppDelegate {
                 // Check if intent has parameters directly (legacy migration path)
                 // swiftlint:disable:next deprecated_declaration
                 if let intent = userActivity.interaction?.intent as? PVOpenIntent {
-                    ILOG("PVAppDelegate: Found legacy PVOpenIntent in user activity — handling via migration path")
+                    ILOG("PVApplicationServices: Found legacy PVOpenIntent in user activity — handling via migration path")
                     // swiftlint:disable:next deprecated_declaration
                     let intentHandler = PVIntentHandler()
                     intentHandler.handle(intent: intent) { response in
-                        ILOG("PVAppDelegate: Legacy intent handled with response code: \(response.code)")
+                        ILOG("PVApplicationServices: Legacy intent handled with response code: \(response.code)")
                     }
                     return true
                 } else {
-                    WLOG("PVAppDelegate: Intent activity found but no MD5 or intent in userInfo")
+                    WLOG("PVApplicationServices: Intent activity found but no MD5 or intent in userInfo")
                 }
             }
         }
@@ -152,17 +152,17 @@ extension PVAppDelegate {
     public func application(_ application: UIApplication, handlerFor intent: INIntent) -> Any? {
         // swiftlint:disable:next deprecated_declaration
         if intent is PVOpenIntent {
-            ILOG("PVAppDelegate: Providing legacy handler for PVOpenIntent (migration path)")
+            ILOG("PVApplicationServices: Providing legacy handler for PVOpenIntent (migration path)")
             // swiftlint:disable:next deprecated_declaration
             return PVIntentHandler()
         }
 
         if intent is INPlayMediaIntent {
-            ILOG("PVAppDelegate: Providing in-app handler for INPlayMediaIntent")
+            ILOG("PVApplicationServices: Providing in-app handler for INPlayMediaIntent")
             return self
         }
 
-        WLOG("PVAppDelegate: No handler available for intent type: \(type(of: intent))")
+        WLOG("PVApplicationServices: No handler available for intent type: \(type(of: intent))")
         return nil
     }
 }

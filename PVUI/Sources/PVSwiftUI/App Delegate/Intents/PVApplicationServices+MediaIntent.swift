@@ -1,5 +1,5 @@
 //
-//  PVAppDelegate+MediaIntent.swift
+//  PVApplicationServices+MediaIntent.swift
 //  Provenance
 //
 //  Created by Joseph Mattiello
@@ -20,7 +20,7 @@ import PVUIBase
 
 #if os(iOS)
 @available(iOS 14.0, *)
-extension PVAppDelegate: INPlayMediaIntentHandling {
+extension PVApplicationServices: INPlayMediaIntentHandling {
 
     // MARK: - Handle
 
@@ -31,16 +31,16 @@ extension PVAppDelegate: INPlayMediaIntentHandling {
     /// Siri may supply only a `title` from the user's utterance.
     public func handle(intent: INPlayMediaIntent,
                        completion: @escaping (INPlayMediaIntentResponse) -> Void) {
-        ILOG("PVAppDelegate+MediaIntent: handle(intent:) called")
+        ILOG("PVApplicationServices+MediaIntent: handle(intent:) called")
 
         guard let mediaItems = intent.mediaItems, !mediaItems.isEmpty else {
-            WLOG("PVAppDelegate+MediaIntent: no mediaItems in intent")
+            WLOG("PVApplicationServices+MediaIntent: no mediaItems in intent")
             completion(INPlayMediaIntentResponse(code: .failure, userActivity: nil))
             return
         }
 
         let first = mediaItems[0]
-        ILOG("PVAppDelegate+MediaIntent: mediaItem identifier=\(first.identifier ?? "nil") title=\(first.title ?? "nil")")
+        ILOG("PVApplicationServices+MediaIntent: mediaItem identifier=\(first.identifier ?? "nil") title=\(first.title ?? "nil")")
 
         // 1. Prefer identifier (MD5 hash) for an exact match.
         if let md5 = first.identifier, !md5.isEmpty,
@@ -55,7 +55,7 @@ extension PVAppDelegate: INPlayMediaIntentHandling {
             return
         }
 
-        WLOG("PVAppDelegate+MediaIntent: mediaItem has neither identifier nor title")
+        WLOG("PVApplicationServices+MediaIntent: mediaItem has neither identifier nor title")
         completion(INPlayMediaIntentResponse(code: .failure, userActivity: nil))
     }
 
@@ -131,7 +131,7 @@ extension PVAppDelegate: INPlayMediaIntentHandling {
             let realm = try Realm(configuration: RealmConfiguration.realmConfig)
             return realm.object(ofType: PVGame.self, forPrimaryKey: md5.uppercased())?.freeze()
         } catch {
-            ELOG("PVAppDelegate+MediaIntent: Realm error fetching by MD5: \(error)")
+            ELOG("PVApplicationServices+MediaIntent: Realm error fetching by MD5: \(error)")
             return nil
         }
     }
@@ -141,7 +141,7 @@ extension PVAppDelegate: INPlayMediaIntentHandling {
         md5: String,
         completion: @escaping (INPlayMediaIntentResponse) -> Void
     ) {
-        ILOG("PVAppDelegate+MediaIntent: launching '\(game.title)'")
+        ILOG("PVApplicationServices+MediaIntent: launching '\(game.title)'")
         // Pass the MD5 string (Sendable) rather than the Realm object so we don't
         // cross thread boundaries with a live, thread-confined PVGame instance.
         // prepareGameForEmulatorScene() will re-fetch the game on the main thread.
@@ -159,7 +159,7 @@ extension PVAppDelegate: INPlayMediaIntentHandling {
     ) {
         let candidates = searchMediaGames(matchingTitle: title)
         guard let game = candidates.first else {
-            WLOG("PVAppDelegate+MediaIntent: no game found for title '\(title)'")
+            WLOG("PVApplicationServices+MediaIntent: no game found for title '\(title)'")
             completion(INPlayMediaIntentResponse(code: .failure, userActivity: nil))
             return
         }
@@ -180,7 +180,7 @@ extension PVAppDelegate: INPlayMediaIntentHandling {
             // Fuzzy fallback.
             return Array(realm.objects(PVGame.self).filter("title CONTAINS[c] %@", query).map { $0.freeze() })
         } catch {
-            ELOG("PVAppDelegate+MediaIntent: Realm error: \(error)")
+            ELOG("PVApplicationServices+MediaIntent: Realm error: \(error)")
             return []
         }
     }

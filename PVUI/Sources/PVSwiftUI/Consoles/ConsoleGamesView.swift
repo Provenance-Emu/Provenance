@@ -1327,7 +1327,7 @@ struct ConsoleGamesView: SwiftUI.View {
         guard GamepadManager.shared.isNavigationInputAvailable else { return false }
         /// Don't consume input while the side menu or a full-screen retrowave alert
         /// (core picker, save-state picker, …) is presented above the library.
-        guard !viewModel.isMenuVisible else { return false }
+        guard !viewModel.isMenuVisible, !viewModel.isLibraryInputBlocked else { return false }
         guard !GamepadManager.shared.isModalAlertPresented else { return false }
         /// Any sheet we own is modal over the grid.
         guard keyboardMenuState == nil else { return false }
@@ -1780,7 +1780,6 @@ private struct ConditionalSearchModifier: ViewModifier {
 #endif
         } else {
             content
-                .searchable(text: .constant(""), prompt: "")
         }
     }
 }

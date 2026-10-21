@@ -1,4 +1,4 @@
-// PVAppDelegate+MenuBar.swift
+// PVSystemEvents+MenuBar.swift
 // PVSwiftUI
 //
 // Installs Provenance's app-wide menu bar.
@@ -27,7 +27,7 @@ import UIKit
 import PVUIBase
 import PVLogging
 
-extension PVAppDelegate {
+extension PVSystemEvents {
 
     override public func buildMenu(with builder: UIMenuBuilder) {
         super.buildMenu(with: builder)

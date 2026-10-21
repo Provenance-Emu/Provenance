@@ -1,5 +1,5 @@
 //
-//  PVAppDelegate+Helpers.swift
+//  PVApplicationServices+Helpers.swift
 //  Provenance
 //
 //  Created by Joseph Mattiello on 11/12/22.
@@ -14,7 +14,7 @@ import JITManager
 import PVLogging
 
 // MARK: - JIT
-extension PVAppDelegate {
+extension PVApplicationServices {
     public func enableJIT() {
         #if os(iOS) || os(tvOS)
         guard !DOLJitManager.shared.appHasAcquiredJit() else {
@@ -145,14 +145,21 @@ extension PVAppDelegate {
     }
 
     private var jitPresentingViewController: UIViewController? {
-        rootNavigationVC?.presentedViewController ?? rootNavigationVC
+        var presenter = UIApplication.shared.connectedScenes
+            .compactMap { $0 as? UIWindowScene }
+            .first(where: { $0.activationState == .foregroundActive })?
+            .keyWindow?.rootViewController
+        while let presented = presenter?.presentedViewController {
+            presenter = presented
+        }
+        return presenter
     }
     #endif
 }
 
     #if os(iOS) || os(tvOS)
     // MARK: - JIT Screen Delegate
-    extension PVAppDelegate: JitScreenDelegate {
+    extension PVApplicationServices: JitScreenDelegate {
         public func didFinishJitScreen(result: Bool, sender: Any) {
             ILOG("JIT: Result: \(result) Sender: \(String(describing: sender))")
             if let jitWaitScreenVC {

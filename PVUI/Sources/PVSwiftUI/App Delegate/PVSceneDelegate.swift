@@ -2,7 +2,7 @@
 // Provenance
 //
 // Dedicated UIWindowSceneDelegate registered via
-// `application(_:configurationForConnecting:options:)` in PVAppDelegate.
+// `application(_:configurationForConnecting:options:)` in PVApplicationServices.
 //
 // Responsibilities (scope-limited on purpose):
 //  • Capture UIApplicationShortcutItems from cold-launch connection options.
