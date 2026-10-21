@@ -88,6 +88,10 @@ class CorePackageLayoutTests(unittest.TestCase):
     def test_source_targets_are_libraries_with_separate_languages(self):
         for relative in ["PVCoreBridgeRetro", "Cores/ep128emu", "Cores/emuThree", "Cores/Dolphin"]:
             with self.subTest(package=relative):
+                if relative == "Cores/Dolphin" and not (
+                    ROOT / relative / "dolphin-ios/build/xcframework/PVlibDolphin.xcframework"
+                ).is_dir():
+                    self.skipTest("Dolphin source layout requires its prepared native binary")
                 result = subprocess.run(
                     ["swift", "package", "describe", "--type", "json"], cwd=ROOT / relative,
                     check=True, capture_output=True, text=True,

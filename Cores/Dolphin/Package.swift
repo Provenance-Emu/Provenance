@@ -2,6 +2,7 @@
 // The swift-tools-version declares the minimum version of Swift required to build this package.
 
 import PackageDescription
+import Foundation
 
 // Dolphin wrapper shared by the shipping project and Tuist. Prepare the native
 // XCFramework with `make prepare-dolphin` before resolving the workspace.
@@ -97,19 +98,19 @@ let dolphinCXXSettings: [CXXSetting] = dolphinHeaderPaths.map { CXXSetting.heade
     + dolphinDefines.map { CXXSetting.define($0.0, to: $0.1) }
     + [.unsafeFlags(dolphinCompilerFlags)]
 
-/// The `-Wl,-unexported_symbol` list of BuildFlags.xcconfig, plus its rpaths. PVlibDolphin and
+/// Preserve the legacy unexported-symbol list and rpaths through the Swift linker driver. PVlibDolphin and
 /// Azahar both static-link glslang; hiding Dolphin's keeps dyld from coalescing the two.
 let dolphinLinkerFlags: [String] = [
-    "-Xlinker", "-ObjC",
-    "-Wl,-rpath,@loader_path",
-    "-Wl,-rpath,@loader_path/../Frameworks/PVlibDolphin.framework",
-    "-Wl,-rpath,@executable_path/../Frameworks/PVlibDolphin.framework",
-    "-Wl,-unexported_symbol,_glslang*", "-Wl,-unexported_symbol,_SPIRV*",
-    "-Wl,-unexported_symbol,_TBuiltInResource*", "-Wl,-unexported_symbol,_EShLanguage*",
-    "-Wl,-unexported_symbol,__ZN7glslang*", "-Wl,-unexported_symbol,__ZN5SPIRV*",
-    "-Wl,-unexported_symbol,__ZN4spv*", "-Wl,-unexported_symbol,__Z*glslang*",
-    "-Wl,-unexported_symbol,__Z*SPIRV*", "-Wl,-unexported_symbol,__Z*spv*",
-]
+    "-ObjC",
+    "-rpath", "@loader_path",
+    "-rpath", "@loader_path/../Frameworks/PVlibDolphin.framework",
+    "-rpath", "@executable_path/../Frameworks/PVlibDolphin.framework",
+    "-unexported_symbol", "_glslang*", "-unexported_symbol", "_SPIRV*",
+    "-unexported_symbol", "_TBuiltInResource*", "-unexported_symbol", "_EShLanguage*",
+    "-unexported_symbol", "__ZN7glslang*", "-unexported_symbol", "__ZN5SPIRV*",
+    "-unexported_symbol", "__ZN4spv*", "-unexported_symbol", "__Z*glslang*",
+    "-unexported_symbol", "__Z*SPIRV*", "-unexported_symbol", "__Z*spv*",
+].flatMap { ["-Xlinker", $0] }
 
 /// The Frameworks build phase of the PVDolphin target (macOS-only OpenGL.framework omitted).
 let dolphinSystemFrameworks: [String] = [
@@ -128,7 +129,11 @@ let dolphinLinkerSettings: [LinkerSetting] = dolphinSystemFrameworks.map { Linke
 
 /// Directories of the package root that are not part of either target. `dolphin-ios` and `lib`
 /// hold the submodule and its build trees; walking them would take SwiftPM minutes.
-let dolphinNonTargetPaths: [String] = [
+let dolphinLocalBuildPaths = ["build", "venv", "PVDolphin.xcodeproj"].filter {
+    FileManager.default.fileExists(atPath: URL(fileURLWithPath: #filePath)
+        .deletingLastPathComponent().appendingPathComponent($0).path)
+}
+let dolphinNonTargetPaths: [String] = dolphinLocalBuildPaths + [
     "dolphin-ios",
     "lib",
     "cmake",
