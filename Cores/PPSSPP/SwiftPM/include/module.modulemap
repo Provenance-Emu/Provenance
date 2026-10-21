@@ -1,0 +1,36 @@
+// Native targets link implementation objects; their C++ headers stay private.
+// Explicit modules avoid overlapping generated umbrellas for the shared include directory.
+module PVPPSSPPCommon { export * }
+module PVPPSSPPCore { export * }
+module PVPPSSPPGenericCodeGen { export * }
+module PVPPSSPPHLSL { export * }
+module PVPPSSPPMachineIndependent { export * }
+module PVPPSSPPOGLCompiler { export * }
+module PVPPSSPPOSDependent { export * }
+module PVPPSSPPSPIRV { export * }
+module PVPPSSPParmips { export * }
+module PVPPSSPPbasisuniversal { export * }
+module PVPPSSPPcityhash { export * }
+module PVPPSSPPgason { export * }
+module PVPPSSPPglslang { export * }
+module PVPPSSPPglslangdefaultresourcelimits { export * }
+module PVPPSSPPkirk { export * }
+module PVPPSSPPlibzip { export * }
+module PVPPSSPPlibzstdstatic { export * }
+module PVPPSSPPminiupnpc { export * }
+module PVPPSSPPnative { export * }
+module PVPPSSPPpng17 { export * }
+module PVPPSSPPsfmt19937 { export * }
+module PVPPSSPPsnappy { export * }
+module PVPPSSPPspirvcrosscore { export * }
+module PVPPSSPPspirvcrosscpp { export * }
+module PVPPSSPPspirvcrossglsl { export * }
+module PVPPSSPPspirvcrosshlsl { export * }
+module PVPPSSPPspirvcrossmsl { export * }
+module PVPPSSPPudis86 { export * }
+module PVPPSSPPunixbasedhardwaredetection { export * }
+module PVPPSSPPutils { export * }
+module PVPPSSPPvma { export * }
+module PVPPSSPPxbrz { export * }
+module PVPPSSPPxxhash { export * }
+module PVPPSSPPGlslangOverrides { export * }

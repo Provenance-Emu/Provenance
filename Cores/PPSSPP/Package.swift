@@ -1693,7 +1693,16 @@ let ffmpegFlags: [LinkerSetting] = [
         .when(platforms: [.tvOS])
     )
 ]
-let imageFlags = ["-ObjC", "-unexported_symbol", "__ZN7glslang*", "-unexported_symbol", "__ZN5SPIRV*", "-unexported_symbol", "__ZN4spv*"].flatMap { ["-Xlinker", $0] }
+// Keep shader compiler definitions local when Azahar, Dolphin and PPSSPP share an app.
+let imageFlags = [
+    "-ObjC",
+    "-unexported_symbol", "_glslang*", "-unexported_symbol", "_SPIRV*",
+    "-unexported_symbol", "_TBuiltInResource*", "-unexported_symbol", "_EShLanguage*",
+    "-unexported_symbol", "__ZN7glslang*", "-unexported_symbol", "__ZN5SPIRV*",
+    "-unexported_symbol", "__ZN4spv*", "-unexported_symbol", "__Z*glslang*",
+    "-unexported_symbol", "__Z*SPIRV*", "-unexported_symbol", "__Z*spv*"
+].flatMap { ["-Xlinker", $0] }
+
 let frameworks = [
     "GLKit",
     "UIKit",

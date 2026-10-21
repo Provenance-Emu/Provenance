@@ -15,7 +15,7 @@ import PVPlists
 #if SWIFT_PACKAGE
 public extension PVBundleFinder {
     static var PVPPSSPPCoreModule: Bundle { Bundle.module }
-    static var PVPPSSPPCoreBundle: Bundle { Bundle(for: PVPPSSPPCore.self) }
+    static var PVPPSSPPCoreBundle: Bundle { Bundle.module }
 }
 #else
 public extension PVBundleFinder {

@@ -124,6 +124,19 @@ class PPSSPPPackageTests(unittest.TestCase):
         interop = (core / "PVPPSSPPCore/Core/PPSSPPSwiftInterop.h").read_text()
         self.assertIn('NSClassFromString(@"PVPPSSPP." #name)', interop)
 
+    @unittest.skipUnless(shutil.which("xcrun"), "Clang module validation requires Xcode")
+    def test_native_modules_can_be_imported_together(self):
+        module_map = ROOT / "Cores/PPSSPP/SwiftPM/include/module.modulemap"
+        names = re.findall(r"^module (\w+)", module_map.read_text(), re.M)
+        self.assertTrue(names, "native module map is empty")
+        result = subprocess.run(
+            ["xcrun", "clang", "-fmodules", "-x", "objective-c", "-fsyntax-only", "-",
+             f"-fmodule-map-file={module_map}"],
+            input="".join(f"@import {name};\n" for name in names),
+            text=True, capture_output=True,
+        )
+        self.assertEqual(result.returncode, 0, result.stderr)
+
     @unittest.skipUnless(shutil.which("swift"), "swift toolchain not installed")
     def test_native_engine_is_source_built(self):
         package = dump_package("PPSSPP")
