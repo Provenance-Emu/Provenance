@@ -174,6 +174,32 @@ int main() {
                             "-o", str(executable)], check=True, capture_output=True)
             subprocess.run([str(executable)], check=True, capture_output=True)
 
+    @unittest.skipUnless(shutil.which("xcrun") and shutil.which("swift"), "header validation requires Xcode")
+    def test_private_ffmpeg_headers_win_over_app_frameworks(self):
+        package = dump_package("PPSSPP")
+        targets = {target["name"]: target for target in package["targets"]}
+        private = ROOT / "Cores/PPSSPP/cmake/ffmpeg/ios/universal/include"
+        with tempfile.TemporaryDirectory(prefix="ppsspp-ffmpeg-") as temporary:
+            shared = Path(temporary) / "libavcodec.framework/Headers"
+            shared.mkdir(parents=True)
+            (shared / "avcodec.h").write_text("#error Wrong_shared_FFmpeg_header\n")
+            source = '\n'.join([
+                'extern "C" {', '#include "libavcodec/avcodec.h"', '}',
+                'static_assert(sizeof(AVCodecContext)>0, "legacy context required");',
+                'void check() { AVCodec *codec=avcodec_find_decoder(AV_CODEC_ID_H264); (void)codec; }',
+            ])
+            base = ["xcrun", "clang++", "-x", "c++", "-fsyntax-only", "-F", temporary, "-I", str(private)]
+            wrong = subprocess.run(base + ["-"], input=source, text=True, capture_output=True)
+            self.assertNotEqual(wrong.returncode, 0, "fixture must reproduce the shared framework collision")
+            for name in ["PVPPSSPPCore", "PVPPSSPPnative", "PVPPSSPPBridge"]:
+                with self.subTest(target=name):
+                    flags = [flag for setting in targets[name]["settings"] if setting["tool"] == "cxx"
+                             for flag in setting["kind"].get("unsafeFlags", {}).get("_0", [])]
+                    priorities = [argument for index, flag in enumerate(flags) if flag == "-iquote"
+                                  for argument in flags[index:index + 2]]
+                    result = subprocess.run(base + priorities + ["-"], input=source, text=True, capture_output=True)
+                    self.assertEqual(result.returncode, 0, result.stderr)
+
     @unittest.skipUnless(shutil.which("swift"), "swift toolchain not installed")
     def test_native_engine_is_source_built(self):
         package = dump_package("PPSSPP")

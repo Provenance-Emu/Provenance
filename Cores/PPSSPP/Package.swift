@@ -6,6 +6,9 @@ import PackageDescription
 // No generated Xcode project or prebuilt emulator archive participates in the package build.
 let root = URL(fileURLWithPath: #filePath).deletingLastPathComponent().path
 let nativeHeaders = ["PVPPSSPPCore/Core", "libretro_ppsspp", "libretro_ppsspp/ext/vulkan", "cmake/ffmpeg/ios/universal/include"]
+// App framework search paths precede ordinary -I paths. Keep PPSSPP's legacy
+// FFmpeg headers ahead of the shared app's newer FFmpeg framework headers.
+let ffmpegHeaderFlags = ["-iquote", root + "/cmake/ffmpeg/ios/universal/include"]
 let commonFlags = ["-fno-strict-aliasing", "-U__STRICT_ANSI__", "-Wno-nullability-completeness", "-Wno-deprecated-register"]
 
 /// Exclude unselected branches before SwiftPM walks the large upstream test/build trees.
@@ -25,11 +28,12 @@ func exclusions(for sources: [String], resources: [String] = []) -> [String] {
 
 func nativeTarget(_ name: String, sources: [String], defines: [String], headers: [String]) -> Target {
     let flags = (headers + nativeHeaders).flatMap { ["-I", root + "/" + $0] } + commonFlags
+    let privateHeaderFlags = ["PVPPSSPPCore", "PVPPSSPPnative"].contains(name) ? ffmpegHeaderFlags : []
     let definitions = defines.map { "-D" + $0 }
     return .target(name: name, path: ".", exclude: exclusions(for: sources), sources: sources,
                    publicHeadersPath: "SwiftPM/include",
-                   cSettings: [.unsafeFlags(flags + definitions)],
-                   cxxSettings: [.unsafeFlags(flags + definitions)])
+                   cSettings: [.unsafeFlags(privateHeaderFlags + flags + definitions)],
+                   cxxSettings: [.unsafeFlags(privateHeaderFlags + flags + definitions)])
 }
 
 let nativeCommon = nativeTarget("PVPPSSPPCommon", sources: [
@@ -1729,8 +1733,8 @@ let linkerSettings: [LinkerSetting] = frameworks.map { .linkedFramework($0) } + 
 let bridge = Target.target(name: "PVPPSSPPBridge", dependencies: shared + nativeDependencies, path: ".",
                            exclude: exclusions(for: bridgeSources, resources: ["cmake/assets"]), sources: bridgeSources,
                            resources: [.copy("cmake/assets")], publicHeadersPath: "SwiftPM/Bridge/include",
-                           cSettings: [.unsafeFlags(nativeHeaders.flatMap { ["-I", root + "/" + $0] } + commonFlags)],
-                           cxxSettings: [.unsafeFlags(nativeHeaders.flatMap { ["-I", root + "/" + $0] } + commonFlags + ["-fmodules", "-fcxx-modules"])],
+                           cSettings: [.unsafeFlags(ffmpegHeaderFlags + nativeHeaders.flatMap { ["-I", root + "/" + $0] } + commonFlags)],
+                           cxxSettings: [.unsafeFlags(ffmpegHeaderFlags + nativeHeaders.flatMap { ["-I", root + "/" + $0] } + commonFlags + ["-fmodules", "-fcxx-modules"])],
                            linkerSettings: linkerSettings)
 let core = Target.target(name: "PVPPSSPP", dependencies: shared + ["PVPPSSPPBridge", .product(name: "Defaults", package: "Defaults")], path: ".",
                          exclude: exclusions(for: swiftSources, resources: ["PVPPSSPP/Core.plist"]), sources: swiftSources,
