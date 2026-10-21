@@ -1,0 +1,52 @@
+name: Prepare Azahar SwiftPM binary
+description: Restore or build the selected native slice before package resolution.
+inputs:
+  slice:
+    description: ios, ios-sim, tvos or tvos-sim
+    required: true
+runs:
+  using: composite
+  steps:
+    - name: Initialize Azahar native sources
+      shell: bash
+      run: git submodule update --init --recursive --depth 1 Cores/Azahar/azahar
+
+    - name: Set up native builder Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.12'
+
+    - name: Install native build tools
+      shell: bash
+      run: |
+        for tool in cmake ninja; do
+          command -v "$tool" >/dev/null 2>&1 || brew install "$tool"
+        done
+
+    - name: Compute native content key
+      id: key
+      shell: bash
+      env:
+        AZAHAR_SLICE: ${{ inputs.slice }}
+      run: echo "content=$(python3 Scripts/cores/build_slice.py azahar "$AZAHAR_SLICE" --print-key)" >> "$GITHUB_OUTPUT"
+
+    - name: Restore native cache
+      uses: actions/cache/restore@v4
+      id: cache
+      with:
+        path: ~/Library/Caches/Provenance/cores/azahar
+        key: azahar-${{ runner.os }}-${{ runner.arch }}-${{ inputs.slice }}-${{ steps.key.outputs.content }}
+
+    - name: Prepare native artifact and headers
+      shell: bash
+      env:
+        AZAHAR_SLICE: ${{ inputs.slice }}
+      run: python3 Scripts/cores/build_slice.py azahar "$AZAHAR_SLICE" --xcframework
+
+    # Save before the app build, so an unrelated compile failure cannot lose a cold native build.
+    - name: Save native cache
+      if: steps.cache.outputs.cache-hit != 'true'
+      uses: actions/cache/save@v4
+      with:
+        path: ~/Library/Caches/Provenance/cores/azahar
+        key: ${{ steps.cache.outputs.cache-primary-key }}

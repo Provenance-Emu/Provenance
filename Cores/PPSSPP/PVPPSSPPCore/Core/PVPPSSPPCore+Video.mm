@@ -598,7 +598,7 @@ static bool threadStopped = false;
         /// Additional check: if m_view is a PPSSPPVulkanViewController's view, trigger its layout
         if ([m_view.nextResponder isKindOfClass:[UIViewController class]]) {
             UIViewController *vc = (UIViewController *)m_view.nextResponder;
-            if ([vc isKindOfClass:NSClassFromString(@"PPSSPPVulkanViewController")]) {
+            if ([vc isKindOfClass:PV_PPSSPP_SWIFT_CLASS(PPSSPPVulkanViewController)]) {
                 [vc viewDidLayoutSubviews];
                 ILOG(@"PPSSPP: Triggered PPSSPPVulkanViewController.viewDidLayoutSubviews");
             }
@@ -619,7 +619,7 @@ static bool threadStopped = false;
     auto screenBounds = [[UIScreen mainScreen] bounds];
     UIViewController *rootController;
     if(self.gsPreference == 3) {
-        PPSSPPVulkanViewController *cgsh_view_controller=[[PPSSPPVulkanViewController alloc]
+        PPSSPPVulkanViewController *cgsh_view_controller=[[PV_PPSSPP_SWIFT_CLASS(PPSSPPVulkanViewController) alloc]
                                                       initWithResFactor:self.resFactor
                                                       videoWidth: self.videoWidth
                                                       videoHeight: self.videoHeight
@@ -630,7 +630,7 @@ static bool threadStopped = false;
         m_view.contentMode = UIViewContentModeScaleToFill;
         rootController = cgsh_view_controller;
     } else if(self.gsPreference == 0) {
-        PPSSPPOGLViewController *cgsh_view_controller=[[PPSSPPOGLViewController alloc]
+        PPSSPPOGLViewController *cgsh_view_controller=[[PV_PPSSPP_SWIFT_CLASS(PPSSPPOGLViewController) alloc]
                                                        initWithResFactor:self.resFactor
                                                        videoWidth: self.videoWidth
                                                        videoHeight: self.videoHeight

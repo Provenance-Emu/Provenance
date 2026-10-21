@@ -27,6 +27,27 @@ make update        # Pull + update submodules + install gems
 make test          # Run tests via fastlane
 ```
 
+**Azahar native artifact preparation:** before opening or resolving the shipping workspace, run
+`make prepare-azahar AZAHAR_SLICE=ios` (or `ios-sim`, `tvos`, `tvos-sim` for the intended destination).
+`make open` prepares iOS by default. The command reuses the native slice cache and packs its XCFramework;
+SwiftPM owns the wrapper, bridge, Core.plist and migrator test targets. Tuist's `make dev-azahar` performs
+the same preparation through `dev-generate`. Native engine changes require preparing again before building.
+Arm64 simulator builds require `ARCHS=arm64` or `EXCLUDED_ARCHS=x86_64` at the build invocation level.
+
+**Dolphin native artifact preparation:** run `make prepare-dolphin DOLPHIN_SLICE=ios`
+(or `tvos` for a tvOS device) before resolving the shipping workspace. `make open`
+prepares both Azahar and Dolphin. Shipping and Tuist share `PVDolphin-Dynamic`;
+SwiftPM owns the bridge, wrapper, Core.plist, Config and Sys resource bundles.
+`make dev-dolphin` prepares its selected slice before generating Tuist.
+
+**PPSSPP:** shipping and Tuist share `PVPPSSPP-Dynamic`. SwiftPM compiles the native
+engine, its dependencies and the Swift/ObjC++ wrapper, and owns Core.plist and PSP
+assets. No CMake/Xcode project preparation is needed. `make dev-ppsspp` opts into
+the native focused iOS device app; Thin retains the independent libretro core.
+The checked-in FFmpeg XCFramework includes arm64 device and simulator slices for
+iOS and tvOS. Rebuild it with `Scripts/cores/build_ppsspp_ffmpeg.sh`; the legacy
+codec headers stay private to PPSSPP.
+
 Build from Xcode: open `Provenance.xcworkspace` and select a scheme. Start with `Provenance-Lite` (fastest build) before moving to `Provenance-Release` or `Provenance-XL (Release)`.
 
 **Note:** Initial builds may fail because some source files are generated lazily at compile time. Retry if Xcode gets the build order wrong on first build.
@@ -194,6 +215,11 @@ A second, generated workspace for fast iteration. `Provenance.xcodeproj` still s
   - `Provenance-Dev-UI`: mGBA, Stella, snes9x.
   - `Provenance-Dev-Thin`: no native cores; 4 libretro dylibs (mednafen_psx_hw, mupen64plus_next, snes9x, ppsspp).
   - `Provenance-Dev-Azahar`: Azahar.
+- `Provenance-Dev-EmuThree` (opt-in, iOS device): `make dev-emuthree` uses the same
+  `PVEmuThree-Dynamic` SwiftPM product as shipping. The package compiles the legacy engine
+  and bridge sources and selects the arm64 iOS/tvOS device or simulator vendor slice;
+  no core Xcode project is needed. Rebuild those slices with
+  `python3 Scripts/cores/build_emuthree_vendors.py`.
   - `Provenance-Dev-Dolphin` (opt-in, device only): `Cores/Dolphin/Package.swift` wraps
     `PVlibDolphin.xcframework` as a `.binaryTarget`. SwiftPM will not load the package until
     `build_slice.py dolphin <slice>` has produced the xcframework, so `make dev-dolphin` runs it first
@@ -263,16 +289,16 @@ A second, generated workspace for fast iteration. `Provenance.xcodeproj` still s
 
 ### Azahar core build gotchas
 
-- **PVlibAzahar is built by the `BuildPVlibAzahar` aggregate target** (`Cores/Azahar/project.yml` and the hand-edited pbxproj; `PVAzahar` depends on it), which runs `Scripts/cores/build_slice.py azahar <slice>` for the slice matching `$PLATFORM_NAME`. A cold slice takes ~30–40 min. The stamp is the content key (`build_slice.py --print-key`: submodule + externals, script, toolchain, Xcode/SDK, MoltenVK slice), not the gitlink; a hit only symlinks the cached slice. Force a rebuild with `build_slice.py azahar <slice> --force`. Needs cmake, ninja and python3 ≥ 3.10. Dolphin's `Make XCFrameworks` aggregate works the same way (`build_slice.py dolphin <slice>`).
-- **`PVAzahar` links the per-slice archive `build/xcframework/PVlibAzahar-<slice>.framework/PVlibAzahar` by path, not the xcframework** (that path is now a symlink into the slice cache). Xcode resolves an xcframework dependency while planning, before any target runs, so a cold checkout failed with "There is no XCFramework found". Don't add the xcframework back as a dependency. `PVlibAzahar.xcframework` is also the `.binaryTarget` of `Cores/Azahar/Package.swift` (the dev workspace's `PVAzahar-Dynamic`), so it must be packed before `tuist generate`: `make dev-azahar` runs `build_slice.py azahar $(DEV_SLICE) --xcframework` first (device: `DEV_SLICE=ios`). Without it the manifest drops the binary target and the bridge stops at an `#error`; SwiftPM caches manifests, so reset package caches after producing it. The package's ObjC++ bridge (`PVAzaharBridge`) must never import the Swift module (`PVAzahar-Swift.h`): that is a target cycle. The Swift core pushes `renderViewClass` and `userDirectoryPath` into it from `init`, and runs its per-load setup (options, `respectsMuteSwitch`, emuThreeDS import) from the bridge's `willLoadFile` hook. A `loadFile` override on a Swift core never runs: `PVEmulatorViewController.createEmulator` calls `bridge.loadFile` for every `ObjCBridgedCore` (and `PVEmulatorCore.loadFile` only throws), which is how 3.4 TestFlight shipped "Azahar has no user directory".
+- **Shipping Xcode and Tuist consume `PVAzahar-Dynamic` from `Cores/Azahar/Package.swift`.** Prepare its cached CMake-built `PVlibAzahar.xcframework` before package resolution: `make prepare-azahar AZAHAR_SLICE=ios` (or `ios-sim`, `tvos`, `tvos-sim`). `make open`, dev generation, CI and release entry points do this automatically. A cold slice takes ~30–40 min and needs cmake, ninja and python3 ≥ 3.10. The content key includes the submodule/externals, builder, toolchain, Xcode/SDK and MoltenVK slice; a hit reuses native output and refreshes `build/headers`. Force a rebuild with `build_slice.py azahar <slice> --force --xcframework`.
+- **The package graph always declares the native binary.** Missing output must be prepared before resolving; a build phase cannot produce an XCFramework early enough. The package's ObjC++ bridge (`PVAzaharBridge`) must never import the Swift module (`PVAzahar-Swift.h`): that is a target cycle. The Swift core pushes `renderViewClass` and `userDirectoryPath` into it from `init`, and runs its per-load setup (options, `respectsMuteSwitch`, emuThreeDS import) from the bridge's `willLoadFile` hook. A `loadFile` override on a Swift core never runs: `PVEmulatorViewController.createEmulator` calls `bridge.loadFile` for every `ObjCBridgedCore` (and `PVEmulatorCore.loadFile` only throws), which is how 3.4 TestFlight shipped "Azahar has no user directory".
 - **PVlibAzahar is arm64-only, and so is every simulator build.** `PVAzahar` excludes x86_64 simulator slices, as do `Build.xcconfig` (the shipping app) and the dev apps; the old link-only x86_64 stub is gone. Package targets ignore project settings, so generic-simulator builds also pass `EXCLUDED_ARCHS=x86_64` to xcodebuild.
 - **Never include azahar's `core/hle/service/nwm/nwm_uds.h`.** Azahar headers come in with `-idirafter`, so its `#include "network/network.h"` resolves to the SDK's Network framework header instead. The bridge includes azahar's own copy as `"network.h"` via a narrow `HEADER_SEARCH_PATHS` entry.
 - **Emulator changes go on the fork.** Commit them to `Provenance-Emu/azahar` branch `provenance` and list them in `Cores/Azahar/PATCHES.md`. Never edit `Cores/Azahar/azahar` in place.
 - **The tvOS user root is Caches.** `PVAzaharCore.userRootURL` is `Documents/Azahar` on iOS and `Library/Caches/Azahar` on tvOS, where Documents is not writable.
-- **`-fcxx-modules` is on** so the ObjC++ glue can `@import` the PV* Swift modules and `PVAzahar-Swift.h`.
+- **`-fcxx-modules` is on** so the ObjC++ glue can `@import` its PV* dependencies. It must not import `PVAzahar-Swift.h`.
 - **`runOnEmuThreadAndWait:` jobs can outlive their timeout.** Capture only by value or `shared_ptr`, never by reference.
 - **PVAzahar links with `-unexported_symbols_list unexported_symbols.txt` (`__Z*`).** dyld coalesces *exported* weak C++ definitions (template instantiations, inline functions) across every loaded image. PVlibDolphin loads first and exports its own glslang and fmt instantiations from different library versions, and azahar's shader compiler crashed in glslang's parser after calling Dolphin's `addSwizzle`. Keep the C++ surface private; apply the same to any new core framework that static-links glslang, fmt, SPIRV-Cross or similar. PVEmuThree uses the same list. PVlibDolphin cannot (the PVDolphin bridge imports Dolphin's C++ API, including weak `MMU::HostRead<>` instantiations), so dolphin-ios's `BuildiOSXCFramework.py` relinks a second time with a generated list of third-party weak symbols via `-DDOLPHIN_UNEXPORTED_SYMBOLS_LIST`; the global `CMAKE_SHARED_LINKER_FLAGS` never reaches the `dolphin` target. Audit a built app with `nm -m <fw> | grep 'weak external'` per framework and `comm -12` the sorted lists.
-- **Don't regenerate `PVAzahar.xcodeproj` from `project.yml` blindly.** The committed pbxproj has hand-added Defaults/DefaultsMacros package references (18e4cf6946) that the yml doesn't declare; xcodegen drops them. Hand-edit the pbxproj, and mirror the change in the yml.
+- **Keep C++ visibility filtering at the final framework link.** Compile-time hidden visibility lets Xcode's SwiftPM `ld -r` step localize bridge definitions before the Swift module and engine can resolve them. `Package.swift` forwards `-ObjC` with `-Xlinker` for the Swift link driver; `unexported_symbols.txt` hides C++ symbols in the final image.
 
 ### Metal rendering gotchas
 

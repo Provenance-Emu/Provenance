@@ -2,6 +2,7 @@
 //  Copyright © 2023 Provenance Emu. All rights reserved.
 
 import Foundation
+import PVEmuThreeBridge
 import UIKit
 import MetalKit
 import os
@@ -1069,7 +1070,7 @@ extension ControllerButtonPress where Self: TVAlertController {
                 if dir == +1000 && idx < n {idx = idx + n - 1000}
                 if dir == -1000 && idx < n*2 {idx = idx - n + 1000}
             }
-            idx = idx + dir
+            idx += dir
             if actions.indices.contains(idx) {
                 preferredAction = actions[idx]
                 button(for: action)?.isSelected = false

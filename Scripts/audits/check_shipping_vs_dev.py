@@ -37,8 +37,6 @@ PBXPROJ = REPO_ROOT / "Provenance.xcodeproj/project.pbxproj"
 # Dev rows the shipping project consumes some other way. Keep each with a reason
 # and remove the entry when the shipping project switches to the package.
 SHIPPING_EXCEPTIONS: dict[str, str] = {
-    "Cores/Azahar": "shipping links PVAzahar.xcodeproj + BuildPVlibAzahar (2026-10-12 decision)",
-    "Cores/Dolphin": "shipping links PVDolphin.xcodeproj + Make XCFrameworks (2026-10-12 decision)",
 }
 
 # Shipping-only core packages the dev workspace omits on purpose. Deprecated cores

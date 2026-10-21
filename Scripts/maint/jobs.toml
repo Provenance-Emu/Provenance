@@ -35,11 +35,9 @@ paths = [
   # Called by the PVAzahar / PVDolphin Xcode build phases; its tests run directly.
   "Scripts/cores/build_slice.py",
   "Scripts/cores/tests/test_build_slice.py",
-  "Scripts/tests/test_check_shipping_vs_dev.py",
   "Scripts/tests/test_ci_core_manifest.py",
   "Scripts/tests/test_core_package_modules.py",
   "Scripts/tests/test_create_ci_target_patterns.py",
-  "Scripts/tests/test_prune_dead_project_refs.py",
   "Scripts/tests/test_swap_core_to_package.py",
   # Wrapped by Scripts/cores/build_slice.py (outside the scan roots; listed for discoverability).
   "Cores/Azahar/build_azahar_core.py",
@@ -413,4 +411,20 @@ run = ["Scripts/dev/run_harness.sh"]
 args_hint = "<rom> [ui|azahar] [frames] [core id]"
 files = ["Scripts/dev/make_harness_rom.py"]
 needs = ["macos", "mise"]
+cli_only = true
+
+[jobs.ppsspp-ffmpeg]
+title = "Build PPSSPP legacy FFmpeg simulator slices"
+category = "Dev workspace"
+run = ["Scripts/cores/build_ppsspp_ffmpeg.sh"]
+files = ["Scripts/cores/tests/test_ppsspp_ffmpeg.py"]
+needs = ["macos"]
+cli_only = true
+
+[jobs.emuthree-vendors]
+title = "Build emuThree vendor platform slices"
+category = "Dev workspace"
+run = ["python3", "Scripts/cores/build_emuthree_vendors.py"]
+files = ["Scripts/cores/emuthree-vendors/**", "Scripts/cores/tests/test_emuthree_vendors.py"]
+needs = ["macos", "cmake", "ninja", "network"]
 cli_only = true

@@ -114,7 +114,7 @@ public extension CoreProduct {
     static let picoDrive = CoreProduct(id: "picodrive", link: .package(path: "Cores/PicoDrive", product: "PVPicoDrive-Dynamic"))
     static let tgbDual = CoreProduct(id: "tgbdual", link: .package(path: "Cores/TGBDual", product: "PVTGBDual-Dynamic"))
     // Swift module PVAzahar + ObjC++ PVAzaharBridge over the PVlibAzahar binary target (slice cache).
-    // PVAzahar.xcodeproj and its BuildPVlibAzahar aggregate stay the shipping build.
+    // The shipping project uses the same product; prepare its native artifact before resolution.
     static let azahar = CoreProduct(
         id: "azahar",
         link: .package(path: "Cores/Azahar", product: "PVAzahar-Dynamic"),
@@ -128,9 +128,13 @@ public extension CoreProduct {
     static let dolphin = CoreProduct(
         id: "dolphin",
         link: .package(path: "Cores/Dolphin", product: "PVDolphin-Dynamic"),
-        artefacts: ["Cores/Dolphin/dolphin-ios/build/xcframework/PVlibDolphin.xcframework"],
-        postScripts: [DevSettings.dolphinSysScript]
+        artefacts: ["Cores/Dolphin/dolphin-ios/build/xcframework/PVlibDolphin.xcframework"]
     )
+
+    /// Native PSP wrapper and engine compile from sources in both shipping and focused apps.
+    static let ppsspp = CoreProduct(id: "ppsspp", link: .package(path: "Cores/PPSSPP", product: "PVPPSSPP-Dynamic"))
+
+    static let emuThree = CoreProduct(id: "emuthree", link: .package(path: "Cores/emuThree", product: "PVEmuThree-Dynamic"), platforms: [.ios])
 
     static let ep128Emu = CoreProduct(id: "ep128emu", link: .package(path: "Cores/ep128emu", product: "PVEP128Emu-Dynamic"))
 
@@ -150,6 +154,6 @@ public extension CoreProduct {
     /// Every row, for the manifest checks.
     static let all: [CoreProduct] = [
         .mGBA, .stella, .snes9x, .fceu, .genesis, .mupen64Plus, .mednafen,
-        .proSystem, .picoDrive, .tgbDual, .azahar, .dolphin, .ep128Emu
+        .proSystem, .picoDrive, .tgbDual, .azahar, .dolphin, .ppsspp, .emuThree, .ep128Emu
     ] + nonCore
 }
