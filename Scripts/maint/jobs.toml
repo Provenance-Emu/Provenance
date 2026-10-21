@@ -342,11 +342,13 @@ needs = ["macos", "submodules"]
 cli_only = true
 
 [jobs.script-tests]
+files = ["Scripts/ci/package-ipa.sh"]
 title = "Script and maint tests"
 category = "Audits"
 run = """python3 Scripts/tests/test_check_pbxproj_sources.py \
   && python3 Scripts/tests/test_generate_cheatdb_dat.py \
   && python3 Scripts/tests/test_generate_uti_declarations.py \
+  && python3 Scripts/tests/test_ipa_packaging.py \
   && python3 -m unittest discover -s Scripts/maint -p 'test_*.py' \
   && python3 -m unittest discover -s Scripts/cores/tests -p 'test_*.py' \
   && bash Scripts/tests/test-get-modules-validation.sh \
