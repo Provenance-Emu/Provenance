@@ -10,6 +10,7 @@ import plistlib
 import re
 import shutil
 import subprocess
+import tempfile
 import unittest
 from pathlib import Path
 
@@ -137,6 +138,42 @@ class PPSSPPPackageTests(unittest.TestCase):
         )
         self.assertEqual(result.returncode, 0, result.stderr)
 
+    @unittest.skipUnless(shutil.which("xcrun"), "native digest validation requires Xcode")
+    def test_ppsspp_and_cheevos_md5_link_and_hash_independently(self):
+        with tempfile.TemporaryDirectory(prefix="ppsspp-md5-") as temporary:
+            directory = Path(temporary)
+            harness = directory / "main.cpp"
+            harness.write_text("""
+#include <cstring>
+#include "Cores/PPSSPP/SwiftPM/Native/MD5Namespace.h"
+#include "Cores/PPSSPP/libretro_ppsspp/Common/Crypto/md5.h"
+#undef md5_finish
+#include "PVRcheevos/rcheevos/src/rhash/md5.h"
+int main() {
+    unsigned char input[] = "abc";
+    const unsigned char expected[16] = {0x90,0x01,0x50,0x98,0x3c,0xd2,0x4f,0xb0,0xd6,0x96,0x3f,0x7d,0x28,0xe1,0x7f,0x72};
+    unsigned char psp[16], incremental[16], cheevos[16];
+    md5(input, 3, psp);
+    md5_context pspContext;
+    md5_starts(&pspContext);
+    md5_update(&pspContext, input, 3);
+    PVPPSSPP_md5_finish(&pspContext, incremental);
+    md5_state_t cheevosContext;
+    md5_init(&cheevosContext);
+    md5_append(&cheevosContext, input, 3);
+    md5_finish(&cheevosContext, cheevos);
+    return std::memcmp(psp, expected, 16) || std::memcmp(incremental, expected, 16) || std::memcmp(cheevos, expected, 16);
+}
+""")
+            cheevos = directory / "cheevos.o"
+            subprocess.run(["xcrun", "clang", "-c", str(ROOT / "PVRcheevos/rcheevos/src/rhash/md5.c"),
+                            "-o", str(cheevos)], check=True, capture_output=True)
+            executable = directory / "digest-test"
+            subprocess.run(["xcrun", "clang++", "-std=c++17", "-I", str(ROOT), str(harness),
+                            str(ROOT / "Cores/PPSSPP/SwiftPM/Native/MD5.cpp"), str(cheevos),
+                            "-o", str(executable)], check=True, capture_output=True)
+            subprocess.run([str(executable)], check=True, capture_output=True)
+
     @unittest.skipUnless(shutil.which("swift"), "swift toolchain not installed")
     def test_native_engine_is_source_built(self):
         package = dump_package("PPSSPP")
@@ -144,6 +181,8 @@ class PPSSPPPackageTests(unittest.TestCase):
         targets = {target["name"]: target for target in package["targets"]}
         sources = [source for target in package["targets"] for source in target.get("sources", [])]
         self.assertEqual(len(sources), len(set(sources)), "duplicate native archive members")
+        for source in sources:
+            self.assertTrue((ROOT / "Cores/PPSSPP" / source).is_file(), f"declared source is missing: {source}")
         self.assertIn("libretro_ppsspp/Core/System.cpp", sources)
         self.assertIn("PVPPSSPPCore/Core/MemArenaDarwin.cpp", sources)
         self.assertIn("PVPPSSPPCore/Core/iOSCoreAudio.mm", sources)

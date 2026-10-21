@@ -40,7 +40,7 @@ let nativeCommon = nativeTarget("PVPPSSPPCommon", sources: [
     "libretro_ppsspp/Common/Buffer.cpp",
     "libretro_ppsspp/Common/CPUDetect.cpp",
     "libretro_ppsspp/Common/ConsoleListener.cpp",
-    "libretro_ppsspp/Common/Crypto/md5.cpp",
+    "SwiftPM/Native/MD5.cpp",
     "libretro_ppsspp/Common/Crypto/sha1.cpp",
     "libretro_ppsspp/Common/Crypto/sha256.cpp",
     "libretro_ppsspp/Common/Data/Color/RGBAUtil.cpp",
@@ -146,7 +146,7 @@ let nativeCommon = nativeTarget("PVPPSSPPCommon", sources: [
     "libretro_ppsspp/Common/Thread/ParallelLoop.cpp",
     "libretro_ppsspp/Common/Thread/ThreadManager.cpp",
     "libretro_ppsspp/Common/Thread/ThreadUtil.cpp",
-    "libretro_ppsspp/Common/Thunk.cpp",
+    "SwiftPM/Native/Thunk.cpp",
     "libretro_ppsspp/Common/TimeUtil.cpp",
     "libretro_ppsspp/Common/UI/AsyncImageFileView.cpp",
     "libretro_ppsspp/Common/UI/Context.cpp",
@@ -308,7 +308,7 @@ let nativeCore = nativeTarget("PVPPSSPPCore", sources: [
     "libretro_ppsspp/Core/HLE/sceKernelThread.cpp",
     "libretro_ppsspp/Core/HLE/sceKernelTime.cpp",
     "libretro_ppsspp/Core/HLE/sceKernelVTimer.cpp",
-    "libretro_ppsspp/Core/HLE/sceMd5.cpp",
+    "SwiftPM/Native/SceMD5.cpp",
     "libretro_ppsspp/Core/HLE/sceMp3.cpp",
     "libretro_ppsspp/Core/HLE/sceMp4.cpp",
     "libretro_ppsspp/Core/HLE/sceMpeg.cpp",
@@ -1567,26 +1567,26 @@ let nativeGlslangOverrides = nativeTarget("PVPPSSPPGlslangOverrides", sources: [
 let swiftSources = [
     "PVPPSSPPCore/Core/CorePlist-Generated.swift",
     "PVPPSSPPCore/Core/CorePlist.swift",
-    "PVPPSSPPCore/Core/nativeCore.swift",
+    "PVPPSSPPCore/Core/PVPPSSPPCore.swift",
     "PVPPSSPPCore/Core/PPSSPPVulkanViewController.swift",
     "PVPPSSPPCore/Core/CoreOptions.swift",
     "PVPPSSPPCore/Core/PPSSPPOGLViewController.swift",
-    "PVPPSSPPCore/Core/nativeCore+PVNetplayCapable.swift",
-    "PVPPSSPPCore/Core/nativeCore+RetroAchievements.swift"
+    "PVPPSSPPCore/Core/PVPPSSPPCore+PVNetplayCapable.swift",
+    "PVPPSSPPCore/Core/PVPPSSPPCore+RetroAchievements.swift"
 ]
 let bridgeSources = [
     "PVPPSSPPCore/Core/MemArenaDarwin.cpp",
-    "PVPPSSPPCore/Core/nativeCore+Cheats.mm",
-    "PVPPSSPPCore/Core/nativeCore+Controls.mm",
-    "PVPPSSPPCore/Core/nativeCore+Video.mm",
-    "PVPPSSPPCore/Core/nativeCore+Saves.mm",
+    "PVPPSSPPCore/Core/PVPPSSPPCore+Cheats.mm",
+    "PVPPSSPPCore/Core/PVPPSSPPCore+Controls.mm",
+    "PVPPSSPPCore/Core/PVPPSSPPCore+Video.mm",
+    "PVPPSSPPCore/Core/PVPPSSPPCore+Saves.mm",
     "PVPPSSPPCore/Core/iOSCoreAudio.mm",
     "PVPPSSPPCore/PVPPSSPP.mm",
-    "PVPPSSPPCore/Core/nativeCore.mm",
+    "PVPPSSPPCore/Core/PVPPSSPPCore.mm",
     "PVPPSSPPCore/Core/DarwinFileSystemServices.mm",
-    "PVPPSSPPCore/Core/nativeCore+Audio.mm",
-    "PVPPSSPPCore/Core/nativeCore+Netplay.mm",
-    "PVPPSSPPCore/Core/nativeCore+RetroAchievements.mm"
+    "PVPPSSPPCore/Core/PVPPSSPPCore+Audio.mm",
+    "PVPPSSPPCore/Core/PVPPSSPPCore+Netplay.mm",
+    "PVPPSSPPCore/Core/PVPPSSPPCore+RetroAchievements.mm"
 ]
 
 let nativeTargets: [Target] = [
@@ -1696,6 +1696,7 @@ let ffmpegFlags: [LinkerSetting] = [
 // Keep shader compiler definitions local when Azahar, Dolphin and PPSSPP share an app.
 let imageFlags = [
     "-ObjC",
+    "-unexported_symbol", "_PVPPSSPP_md5*",
     "-unexported_symbol", "_glslang*", "-unexported_symbol", "_SPIRV*",
     "-unexported_symbol", "_TBuiltInResource*", "-unexported_symbol", "_EShLanguage*",
     "-unexported_symbol", "__ZN7glslang*", "-unexported_symbol", "__ZN5SPIRV*",
