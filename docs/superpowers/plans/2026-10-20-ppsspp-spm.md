@@ -9,8 +9,9 @@ SwiftPM compiles 799 native implementation sources, twelve ObjC++/platform bridg
 sources and eight Swift sources. Explicit source membership and per-library
 settings replace the wrapper and generated native Xcode projects. Tracked native
 configuration headers remain source inputs; no CMake cache or generated Xcode
-project participates in the build. Existing FFmpeg archives remain device-specific
-inputs, with all arm64 objects verified against their iOS/tvOS platform metadata.
+project participates in the build. The original FFmpeg device archives are repacked
+with real arm64 simulator builds from the matching legacy source in a four-slice
+PPSSPPFFmpeg.xcframework. No Mach-O platform tags are rewritten.
 Private quote-header search priority keeps the app's newer shared FFmpeg framework
 headers from replacing the legacy API that these archives implement.
 
@@ -57,6 +58,45 @@ Validation on 2026-10-20/21:
   with Xcode 27.1 after the final header-isolation fix. The app embeds the exact
   PPSSPP framework and both resource bundles produced by the package.
 
-Simulator and tvOS compilation, signed app launch and gameplay remain unverified.
-The FFmpeg device archives do not provide simulator support. Unrelated UI/library
-changes and submodule revisions remain outside this migration's commits.
+Simulator follow-up validation on 2026-10-21:
+
+- Shipping Provenance-Lite (AppStore) built successfully for both generic iOS
+  Simulator and generic tvOS Simulator, arm64, using Xcode 27.1. Both commands
+  completed with exit 0 and BUILD SUCCEEDED.
+- PPSSPP's drawable proxy now guards the Metal timing/feedback APIs omitted from
+  simulator SDKs. CoreAudioKit and CoreMotion are restricted to the platforms
+  that provide them; SDK link checks cover PPSSPP, emuThree, Dolphin and Azahar.
+- Lite's iOS dependency graph also exposed emuThree's device-only vendor archives
+  and empty OpenAL simulator archives. A separately scoped vendor rebuild supplies
+  real platform slices, including OpenAL Soft's required callback-buffer API.
+  Source pins and public-header checks preserve the legacy interfaces. A local
+  time-stretch translation unit selects signed 16-bit PCM, matching the engine's
+  buffers and the original SoundTouch archive, without modifying upstream source.
+- All 23 regression tests passed. These include actual legacy FFmpeg simulator
+  links, every simulator object's Mach-O platform, Metal proxy typechecking on
+  four SDKs, framework links for four packages on four SDKs, vendor symbols and
+  OpenAL callback API links using the package's declared dependencies.
+- Both Lite apps contain the exact PPSSPP package framework, correct simulator
+  platform metadata, principal-class symbols, source-equivalent Core.plist and
+  all 158 byte-identical PSP runtime assets. Selected FFmpeg archives match their
+  tracked simulator slices. The iOS app's emuThree framework, Core.plist and vendor
+  input were checked too. Existing shipping/Tuist emuThree filters remain iOS-only;
+  its tvOS vendor slices do not change the app's core availability.
+- Shipping/dev graph audit passes for all 22 package rows. Changed manifests pass
+  SwiftLint with no serious violations; existing style warnings remain.
+
+The simulator build commands used:
+
+```sh
+xcodebuild build -workspace Provenance.xcworkspace \
+  -scheme 'Provenance-Lite (AppStore)' \
+  -destination 'generic/platform=iOS Simulator' -jobs 4 \
+  ARCHS=arm64 EXCLUDED_ARCHS=x86_64 CODE_SIGNING_ALLOWED=NO \
+  -skipPackagePluginValidation -skipMacroValidation \
+  -skipPackageUpdates -disableAutomaticPackageResolution
+```
+
+The tvOS command uses `-destination 'generic/platform=tvOS Simulator'` with the same
+settings. These validate compilation and linking; signed launch and gameplay were
+not exercised. Unrelated UI/library changes, root lockfile edits and submodule
+revisions remain outside this work's commits.

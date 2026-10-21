@@ -257,7 +257,7 @@ let engineSources = [
     "emuthree/emuThreeDS/citra_core/audio_core/lle/lle.cpp",
     "emuthree/emuThreeDS/citra_core/audio_core/sink_details.cpp",
     "emuthree/emuThreeDS/citra_core/audio_core/static_input.cpp",
-    "emuthree/emuThreeDS/citra_core/audio_core/time_stretch.cpp",
+    "SwiftPM/Native/TimeStretch.cpp",
     "emuthree/emuThreeDS/citra_core/common/aarch64/cpu_detect.cpp",
     "emuthree/emuThreeDS/citra_core/common/android_storage.cpp",
     "emuthree/emuThreeDS/citra_core/common/apple_authorization.cpp",
@@ -658,27 +658,7 @@ let defines = [
     "CPPHTTPLIB_OPENSSL_SUPPORT", "HAVE_OPENAL", "HAVE_SDL2", "HAVE_COREAUDIO",
     "ENABLE_VULKAN", "CRYPTOPP_DISABLE_ASM", "TARGET_NO_NIXPROF", "NS_BLOCK_ASSERTIONS"
 ]
-let archives = [
-    "GenericCodeGenEmuThree",
-    "HLSLEmuThree",
-    "MachineIndependentEmuThree",
-    "OGLCompilerEmuThree",
-    "OSDependentEmuThree",
-    "SPIRVEmuThree",
-    "SoundTouchEmuThree",
-    "boost_iostreamsEmuThree",
-    "boost_program_optionsEmuThree",
-    "boost_serializationEmuThree",
-    "dynarmicEmuThree",
-    "enetEmuThree",
-    "fmtEmuThree",
-    "glslangEmuThree",
-    "mclEmuThree",
-    "siritEmuThree",
-    "teakraEmuThree",
-    "zstdEmuThree",
-]
-let binaryNames = ["libavcodec", "libavformat", "libavutil", "libswresample", "libswscale", "libopenal", "SDL2"]
+let binaryNames = ["libavcodec", "libavformat", "libavutil", "libswresample", "libswscale", "SDL2"]
 let dependencies: [Package.Dependency] = [
     .package(path: "../../PVAudio"),
     .package(path: "../../PVCoreBridge"),
@@ -707,18 +687,18 @@ let shared: [Target.Dependency] = [
 ]
 let engineDependencies: [Target.Dependency] = [
     "PVEmuThreeCrypto",
+    "PVEmuThreeVendors",
     .product(name: "MoltenVK", package: "MoltenVK"),
     .product(name: "OpenSSL", package: "OpenSSL")
 ] + binaryNames.map { Target.Dependency.target(name: $0) }
 let frameworks = [
     "Metal", "MetalKit", "QuartzCore", "AudioToolbox", "CoreAudio", "AVFoundation",
-    "CoreBluetooth", "CoreImage", "CoreVideo", "CoreGraphics", "Security", "SystemConfiguration", "GLKit", "OpenGLES"
+    "CoreBluetooth", "CoreImage", "CoreVideo", "CoreGraphics", "CoreFoundation", "Security", "SystemConfiguration", "GLKit", "OpenGLES"
 ]
-let vendorLinkFlags = ["-L", "\(root)/lib"] + archives.map { "-l\($0)" }
 let imageLinkFlags = [
     "-Xlinker", "-ObjC", "-Xlinker", "-unexported_symbols_list", "-Xlinker", "\(root)/unexported_symbols.txt"
 ]
-let sourceExcludes = ["cmake", "PVEmuThree.xcodeproj", "PVEmuThree"] + [
+let sourceExcludes = ["cmake", "PVEmuThree.xcodeproj", "PVEmuThree", "SwiftPM/Vendors", "emuthree/emuThreeDS/citra_core/audio_core/time_stretch.cpp"] + [
         "emuthree/emuThreeDS.xcodeproj",
         "emuthree/emuThreeDS/Assets.xcassets",
         "emuthree/emuThreeDS/Preview Content",
@@ -817,7 +797,7 @@ let engine: Target = .target(
             "-include", "\(root)/emuthree/emuThreeDS/citra_core/network/network.h"
         ])
     ],
-    linkerSettings: frameworks.map { .linkedFramework($0) } + [.linkedFramework("CoreMotion", .when(platforms: [.iOS])), .linkedLibrary("z"), .linkedLibrary("bz2"), .linkedLibrary("iconv"), .linkedLibrary("c++"), .unsafeFlags(vendorLinkFlags)]
+    linkerSettings: frameworks.map { .linkedFramework($0) } + [.linkedFramework("CoreMotion", .when(platforms: [.iOS])), .linkedLibrary("z"), .linkedLibrary("bz2"), .linkedLibrary("iconv"), .linkedLibrary("c++")]
 )
 
 // Swift-generated Objective-C headers require C++ modules only in this thin bridge.
@@ -873,12 +853,13 @@ let binaries: [Target] = binaryNames.map { name in
     let path = name.hasPrefix("libav") || name.hasPrefix("libsw") ? "../../Dependencies/FFMpeg/xcframeworks/\(name).xcframework" : "../../Dependencies/\(name).xcframework"
     return .binaryTarget(name: name, path: path)
 }
+let vendors = Target.binaryTarget(name: "PVEmuThreeVendors", path: "SwiftPM/Vendors/PVEmuThreeVendors.xcframework")
 let package = Package(
     name: "PVEmuThree",
     platforms: [.iOS(.v17), .tvOS(.v17)],
     products: [.library(name: "PVEmuThree-Dynamic", type: .dynamic, targets: ["PVEmuThree"])],
     dependencies: dependencies,
-    targets: [core, bridge, engine, crypto] + binaries,
+    targets: [core, bridge, engine, crypto, vendors] + binaries,
     swiftLanguageModes: [.v5],
     cLanguageStandard: .gnu11,
     cxxLanguageStandard: .gnucxx20
