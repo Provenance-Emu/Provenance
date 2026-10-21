@@ -7,8 +7,6 @@
 		<dict>
 			<key>BinaryPath</key>
 			<string>libPVEmuThreeVendors.a</string>
-			<key>HeadersPath</key>
-			<string>Headers</string>
 			<key>LibraryIdentifier</key>
 			<string>ios-arm64-simulator</string>
 			<key>LibraryPath</key>
@@ -25,8 +23,6 @@
 		<dict>
 			<key>BinaryPath</key>
 			<string>libPVEmuThreeVendors.a</string>
-			<key>HeadersPath</key>
-			<string>Headers</string>
 			<key>LibraryIdentifier</key>
 			<string>ios-arm64</string>
 			<key>LibraryPath</key>
@@ -41,8 +37,6 @@
 		<dict>
 			<key>BinaryPath</key>
 			<string>libPVEmuThreeVendors.a</string>
-			<key>HeadersPath</key>
-			<string>Headers</string>
 			<key>LibraryIdentifier</key>
 			<string>tvos-arm64-simulator</string>
 			<key>LibraryPath</key>
@@ -59,8 +53,6 @@
 		<dict>
 			<key>BinaryPath</key>
 			<string>libPVEmuThreeVendors.a</string>
-			<key>HeadersPath</key>
-			<string>Headers</string>
 			<key>LibraryIdentifier</key>
 			<string>tvos-arm64</string>
 			<key>LibraryPath</key>

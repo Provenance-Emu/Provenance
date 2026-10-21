@@ -29,11 +29,13 @@ func exclusions(for sources: [String], resources: [String] = []) -> [String] {
 func nativeTarget(_ name: String, sources: [String], defines: [String], headers: [String]) -> Target {
     let flags = (headers + nativeHeaders).flatMap { ["-I", root + "/" + $0] } + commonFlags
     let privateHeaderFlags = ["PVPPSSPPCore", "PVPPSSPPnative"].contains(name) ? ffmpegHeaderFlags : []
+    // zstd defines its private API before re-including public headers. Module imports freeze that API too early.
+    let moduleFlags = name == "PVPPSSPPlibzstdstatic" ? ["-fno-modules"] : []
     let definitions = defines.map { "-D" + $0 }
     return .target(name: name, path: ".", exclude: exclusions(for: sources), sources: sources,
                    publicHeadersPath: "SwiftPM/include",
-                   cSettings: [.unsafeFlags(privateHeaderFlags + flags + definitions)],
-                   cxxSettings: [.unsafeFlags(privateHeaderFlags + flags + definitions)])
+                   cSettings: [.unsafeFlags(privateHeaderFlags + flags + definitions + moduleFlags)],
+                   cxxSettings: [.unsafeFlags(privateHeaderFlags + flags + definitions + moduleFlags)])
 }
 
 let nativeCommon = nativeTarget("PVPPSSPPCommon", sources: [
