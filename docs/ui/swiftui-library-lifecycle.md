@@ -141,7 +141,26 @@ synthetic ROM's screenshot file was missing there. The current app correctly
 loads the actual black test-ROM capture. Visual comparisons must mirror these
 local test files as well as the shared database.
 
-Still to validate: iPad window resizing, current tvOS
-integration, full VoiceOver and Reduce Motion/Transparency interactions, physical
+The focused tvOS app built successfully, passed strict signature verification and
+ran on the dedicated Apple TV 4K simulator with tvOS 26.5. Linked symbols include
+the SwiftUI root/drawer and exclude the legacy root controller. Remote input
+verified Home → Systems, Settings activation, Menu returning to navigation, and
+Import Status presentation/dismissal back to Systems. The empty Systems page now
+has themed focusable actions: the UIKit baseline had no content focus target and
+Menu exited to the TV Home screen. The new page opens its sidebar and remains in
+the app. Pink/cyan focus glows were inspected in Systems and Settings.
+
+The TV build selected its SDK from the destination, allowing macros to build for
+the Mac host. Its invocation also used
+`OTHER_CPLUSPLUSFLAGS='$(inherited) -Wno-error=module-import-in-extern-c'` for a
+bundled Vulkan header diagnostic. No core source or SDK headers were modified.
+The current lookup package embeds database archives at the app root and launches
+without the obsolete resource bundles required by the stale cached TV app.
+An attempted Time Profiler attachment stalled and was terminated; it does not
+supply CPU evidence. All tracked competing builds paused for this validation
+were resumed afterward.
+
+Still to validate: iPad window resizing, full VoiceOver and Reduce
+Motion/Transparency interactions, physical
 controller navigation through all presentations, native file imports, deep links,
 shortcuts, Siri/Spotlight, background autosave and CloudKit push delivery.

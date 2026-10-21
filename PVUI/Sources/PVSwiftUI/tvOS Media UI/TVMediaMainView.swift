@@ -3108,24 +3108,28 @@ struct TVMediaSystemsView: View {
                 LazyVStack(alignment: .leading, spacing: 28) {
                     TVMediaTopBar(title: "Systems")
 
-                    LazyVGrid(columns: columns, spacing: gridSpacing) {
-                        ForEach(systemsWithGames.indices, id: \.self) { index in
-                            let system = systemsWithGames[index]
-                            let isAtLeftEdge = index % columnsPerRow == 0
-                            TVMediaSystemCard(
-                                system: system,
-                                icon: iconLoader.icon(for: system.identifier),
-                                gameCount: model.gamesBySystemIdentifier[system.identifier]?.count ?? 0,
-                                isAtLeftEdge: isAtLeftEdge,
-                                focusCoordinator: focusCoordinator,
-                                focusedSystemID: $focusedSystemID
-                            ) {
-                                focusCoordinator.closeSidebar()
-                                router.navigateToSystem(system.identifier)
-                            }
-                            .id(system.identifier)
-                            .task {
-                                model.loadGamesIfNeeded(systemIdentifier: system.identifier)
+                    if systemsWithGames.isEmpty {
+                        emptySystemsState
+                    } else {
+                        LazyVGrid(columns: columns, spacing: gridSpacing) {
+                            ForEach(systemsWithGames.indices, id: \.self) { index in
+                                let system = systemsWithGames[index]
+                                let isAtLeftEdge = index % columnsPerRow == 0
+                                TVMediaSystemCard(
+                                    system: system,
+                                    icon: iconLoader.icon(for: system.identifier),
+                                    gameCount: model.gamesBySystemIdentifier[system.identifier]?.count ?? 0,
+                                    isAtLeftEdge: isAtLeftEdge,
+                                    focusCoordinator: focusCoordinator,
+                                    focusedSystemID: $focusedSystemID
+                                ) {
+                                    focusCoordinator.closeSidebar()
+                                    router.navigateToSystem(system.identifier)
+                                }
+                                .id(system.identifier)
+                                .task {
+                                    model.loadGamesIfNeeded(systemIdentifier: system.identifier)
+                                }
                             }
                         }
                     }
@@ -3208,6 +3212,33 @@ struct TVMediaSystemsView: View {
             }
         }
         #endif
+    }
+
+    /// Focusable actions keep the remote's Menu command inside an empty library.
+    private var emptySystemsState: some View {
+        VStack(spacing: 24) {
+            Image(systemName: "square.stack.3d.up")
+                .font(.system(size: 56))
+                .foregroundStyle(LinearGradient(colors: [.retroPink, .retroBlue], startPoint: .top, endPoint: .bottom))
+                .shadow(color: Color.retroPink.opacity(0.35), radius: 16)
+                .accessibilityHidden(true)
+
+            Text("NO SYSTEMS YET")
+                .font(.title2.weight(.semibold))
+                .foregroundStyle(.white)
+
+            Text("Add games to see their systems here.")
+                .foregroundStyle(.white.opacity(0.7))
+                .multilineTextAlignment(.center)
+
+            TVMediaEmptyLibraryActionButtons(
+                onSettings: { router.navigate(to: .settings) },
+                onImportStatus: { router.activeModal = .importStatus }
+            )
+        }
+        .frame(maxWidth: .infinity, minHeight: 360)
+        .padding(.vertical, 40)
+        .tvMediaOnExitCommand { focusCoordinator.openSidebar() }
     }
 
     private func moveFocus(horizontal: Int, vertical: Int) {
