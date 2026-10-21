@@ -14,6 +14,7 @@
 //
 
 import Foundation
+import PVPPSSPPBridge
 import PVCoreBridge
 import PVRcheevos
 import PVRcheevosBridge

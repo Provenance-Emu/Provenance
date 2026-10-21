@@ -6,7 +6,7 @@
 //  Copyright © 2021 Provenance. All rights reserved.
 //
 
-#import <PVPPSSPP/PVPPSSPP.h>
+#import "PVPPSSPPCore.h"
 #import <Foundation/Foundation.h>
 @import PVSupport;
 @import PVEmulatorCore;

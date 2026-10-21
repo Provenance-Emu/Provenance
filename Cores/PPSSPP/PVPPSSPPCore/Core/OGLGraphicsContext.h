@@ -8,7 +8,7 @@
 #import "PVPPSSPPCore+Controls.h"
 #import "PVPPSSPPCore+Audio.h"
 #import "PVPPSSPPCore+Video.h"
-#import <PVPPSSPP/PVPPSSPP-Swift.h>
+#import "PPSSPPSwiftInterop.h"
 #import <Foundation/Foundation.h>
 @import PVSupport;
 @import PVEmulatorCore;

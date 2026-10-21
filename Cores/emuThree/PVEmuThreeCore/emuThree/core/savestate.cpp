@@ -13,7 +13,7 @@
 #include "core/core.h"
 #include "core/movie.h"
 #include "core/savestate.h"
-#include "network/network.h"
+#include "network.h"
 
 #include <boost/iostreams/device/array.hpp>
 #include <boost/iostreams/stream.hpp>

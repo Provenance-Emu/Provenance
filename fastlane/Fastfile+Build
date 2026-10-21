@@ -1,6 +1,16 @@
+# SwiftPM resolves the binary before any Xcode build phase can produce it.
+private_lane :prepare_native_cores do |options|
+  options ||= {}
+  slice = options.fetch(:platform, 'iOS').to_s.downcase.include?('tvos') ? 'tvos' : 'ios'
+  %w[azahar dolphin].each do |core|
+    sh('python3', File.expand_path('../Scripts/cores/build_slice.py', __dir__), core, slice, '--xcframework')
+  end
+end
+
 desc 'Exports a new Developer Build'
 lane :build_developer do |options|
   scheme = options.fetch(:scheme, 'Provenance-Release')
+  prepare_native_cores(platform: scheme.include?('TV') ? 'tvOS' : 'iOS')
   load_keys
 
   build_app(
@@ -26,6 +36,7 @@ end
 
 desc 'Exports a new AppStore Build'
 lane :build_appstore do
+  prepare_native_cores
   load_keys
 
   build_app(
@@ -162,6 +173,7 @@ end
   # activeArchOnly = options.fetch(:activeArchOnly, false)
   ipa_name = options.fetch(:ipa_name, 'Provenance.ipa')
   platform = options.fetch(:platform, 'iOS')
+  prepare_native_cores(platform: platform)
   build_time = Time.now.strftime('%F')
   load_keys
 

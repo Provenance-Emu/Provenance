@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import PVPPSSPPBridge
 import UIKit
 import MetalKit
 import os
@@ -209,8 +210,10 @@ import PVPrimitives
             commandBuffer.present(drawable)
         case .atTime(let time):
             commandBuffer.present(drawable, atTime: time)
+        #if !targetEnvironment(simulator)
         case .afterMinimumDuration(let duration):
             commandBuffer.present(drawable, afterMinimumDuration: duration)
+        #endif
         }
     }
 
@@ -221,8 +224,10 @@ import PVPrimitives
             drawable.present()
         case .atTime(let time):
             drawable.present(at: time)
+        #if !targetEnvironment(simulator)
         case .afterMinimumDuration(let duration):
             drawable.present(afterMinimumDuration: duration)
+        #endif
         }
 	}
 }
@@ -230,7 +235,9 @@ import PVPrimitives
 fileprivate enum PPSSPPFilterPresentationTiming {
     case immediate
     case atTime(CFTimeInterval)
+    #if !targetEnvironment(simulator)
     case afterMinimumDuration(CFTimeInterval)
+    #endif
 }
 
 fileprivate protocol PPSSPPFilterDrawableDelegate: AnyObject {
@@ -262,20 +269,25 @@ fileprivate final class PPSSPPFilterProxyDrawable: NSObject, CAMetalDrawable {
 
     var texture: MTLTexture { baseDrawable.texture }
     var layer: CAMetalLayer { baseDrawable.layer }
+    // Simulator Metal exposes only immediate and host-time presentation.
+    #if !targetEnvironment(simulator)
     var presentedTime: CFTimeInterval { baseDrawable.presentedTime }
     var drawableID: Int { Int(baseDrawable.drawableID) }
 
     func addPresentedHandler(_ block: @escaping MTLDrawablePresentedHandler) {
         baseDrawable.addPresentedHandler(block)
     }
+    #endif
 
     func present() {
         delegate?.filterDrawable(baseDrawable: baseDrawable, timing: .immediate)
     }
 
+    #if !targetEnvironment(simulator)
     func present(afterMinimumDuration duration: CFTimeInterval) {
         delegate?.filterDrawable(baseDrawable: baseDrawable, timing: .afterMinimumDuration(duration))
     }
+    #endif
 
     func present(at presentationTime: CFTimeInterval) {
         delegate?.filterDrawable(baseDrawable: baseDrawable, timing: .atTime(presentationTime))

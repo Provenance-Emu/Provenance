@@ -1,4 +1,5 @@
 import Foundation
+import PVPPSSPPBridge
 import PVEmulatorCore;
 import PVCoreBridge;
 import PVCoreObjCBridge;

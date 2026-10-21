@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import PVPPSSPPBridge
 import PVLogging
 import PVCoreBridge
 import PVEmulatorCore
@@ -14,7 +15,7 @@ import PVPlists
 #if SWIFT_PACKAGE
 public extension PVBundleFinder {
     static var PVPPSSPPCoreModule: Bundle { Bundle.module }
-    static var PVPPSSPPCoreBundle: Bundle { Bundle(for: PVPPSSPPCore.self) }
+    static var PVPPSSPPCoreBundle: Bundle { Bundle.module }
 }
 #else
 public extension PVBundleFinder {
@@ -26,10 +27,10 @@ public extension PVBundleFinder {
 extension PVPPSSPPCore: EmulatorCoreInfoPlistProvider {
 
     @objc
-    public static var resourceBundle: Bundle { Bundle(for: PVPPSSPPCore.self) }
+    public static var resourceBundle: Bundle { Bundle.module }
 
     @objc
-    public override var resourceBundle: Bundle { PVPPSSPPCore.resourceBundle }
+    public override var resourceBundle: Bundle { Bundle.module }
 
     @objc(corePlistFromBundle)
     public static var corePlistFromBundle: EmulatorCoreInfoPlist {

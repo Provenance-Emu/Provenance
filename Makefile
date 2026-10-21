@@ -5,7 +5,7 @@ SHELL := /bin/bash
 # `export` makes the values visible to recipes (release.sh, fastlane, etc.).
 -include .env
 export
-.PHONY: dev dev-generate dev-ui dev-azahar dev-thin dev-n64 dev-dolphin dev-coreless dev-harness help ios update tvos lite ci maint maint-status maint-run-stale maint-hooks \
+.PHONY: prepare-azahar prepare-dolphin dev dev-generate dev-ui dev-azahar dev-thin dev-n64 dev-dolphin dev-ppsspp dev-coreless dev-harness help ios update tvos lite ci maint maint-status maint-run-stale maint-hooks \
 	generate-all generate-cheatdb generate-contributors generate-core-lists \
 	generate-default-skins generate-licenses generate-uti generate-changelog \
 	lookup-databases update-cheatdb update-skin-catalog update-core-versions update-core-licenses \
@@ -212,6 +212,7 @@ test:
 ## Fast CI simulator build (no cores, no code signing). EXCLUDED_ARCHS as an
 ## argument also reaches package targets, which Build.xcconfig cannot.
 lite:
+	$(MAKE) prepare-azahar prepare-dolphin AZAHAR_SLICE=ios-sim DOLPHIN_SLICE=ios-sim
 	$(info Building Provenance-CI for iOS Simulator…)
 
 	xcodebuild build \
@@ -251,7 +252,7 @@ ios: | update developer_ios
 tvos: | update developer_tvos
 
 ## Open the workspace
-open:
+open: prepare-azahar prepare-dolphin
 	open Provenance.xcworkspace
 
 ## Dev workspace (Tuist; see docs/superpowers/specs/2026-10-10-dev-workspace-design.md)
@@ -268,13 +269,21 @@ DEV_DESTINATION ?= generic/platform=iOS Simulator
 # Slice-cache xcframeworks (.prebuilt links, package binary targets such as PVlibAzahar) must exist
 # before `tuist generate`: Tuist and Xcode resolve them before any build phase runs. `--xcframework`
 # packs every slice built so far, so run once per slice you need (device: DEV_SLICE=ios).
-# Not on by default: a cold Azahar slice takes 30-40 minutes. `make dev-azahar` sets it.
-DEV_PREBUILT_CORES ?=
+# Azahar is referenced by the generated workspace, so its binary must exist even for other focused apps.
+# Shipping Xcode needs the native binary before package resolution too.
+AZAHAR_SLICE ?= ios
+prepare-azahar:
+	python3 Scripts/cores/build_slice.py azahar $(AZAHAR_SLICE) --xcframework
+
+prepare-dolphin:
+	python3 Scripts/cores/build_slice.py dolphin $(DOLPHIN_SLICE) --xcframework
+
+DEV_PREBUILT_CORES ?= azahar
 DEV_SLICE ?= ios-sim
 # Extra xcodebuild arguments (build settings) for _dev-build.
 DEV_BUILD_SETTINGS ?=
 dev-generate:
-	@for core in $(DEV_PREBUILT_CORES); do python3 Scripts/cores/build_slice.py $$core $(DEV_SLICE) --xcframework || exit 1; done
+	@for core in $(sort $(DEV_PREBUILT_CORES)); do python3 Scripts/cores/build_slice.py $$core $(DEV_SLICE) --xcframework || exit 1; done
 	$(TUIST) generate --no-open
 
 dev: dev-generate
@@ -317,8 +326,15 @@ dev-coreless:
 ##   make dev-dolphin DOLPHIN_SLICE=tvos DOLPHIN_DESTINATION=generic/platform=tvOS
 DOLPHIN_SLICE ?= ios
 DOLPHIN_DESTINATION ?= generic/platform=iOS
+## Native PPSSPP compiles entirely through SwiftPM; bundled FFmpeg archives are device-only.
+dev-ppsspp:
+	TUIST_DEV_PPSSPP=1 $(MAKE) _dev-build DEV_SCHEME=Provenance-Dev-PPSSPP DEV_DESTINATION="generic/platform=iOS"
+
+dev-emuthree:
+	TUIST_DEV_EMUTHREE=1 $(MAKE) _dev-build DEV_SCHEME=Provenance-Dev-EmuThree DEV_DESTINATION="generic/platform=iOS"
+
 dev-dolphin:
-	TUIST_DEV_DOLPHIN=1 $(MAKE) _dev-build DEV_SCHEME=Provenance-Dev-Dolphin DEV_PREBUILT_CORES=dolphin \
+	TUIST_DEV_DOLPHIN=1 $(MAKE) _dev-build DEV_SCHEME=Provenance-Dev-Dolphin DEV_PREBUILT_CORES="azahar dolphin" \
 		DEV_SLICE=$(DOLPHIN_SLICE) DEV_DESTINATION="$(DOLPHIN_DESTINATION)"
 
 ## Run the dev harness on the booted simulator:

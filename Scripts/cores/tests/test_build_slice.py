@@ -222,6 +222,26 @@ class XCFrameworkTests(unittest.TestCase):
         self.assertTrue(build_slice.needs_xcframework(self.azahar, "ios", False, True))
 
 
+class HeaderTests(unittest.TestCase):
+    def test_prepared_headers_follow_the_selected_slice(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            repo = FakeRepo(Path(tmp))
+            spec = repo.specs["azahar"]
+            ios = write(spec.legacy_dir / "PVlibAzahar-ios.framework/Headers/config.h", "ios")
+            tvos = write(spec.legacy_dir / "PVlibAzahar-tvos.framework/Headers/config.h", "tvos")
+            build_slice.prepare_headers(spec, ios.parent.parent)
+            headers = spec.legacy_dir.parent / "headers"
+            self.assertEqual((headers / "config.h").read_text(), "ios")
+            build_slice.prepare_headers(spec, tvos.parent.parent)
+            self.assertEqual((headers / "config.h").read_text(), "tvos")
+
+    def test_missing_headers_fail_before_package_resolution(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            spec = FakeRepo(Path(tmp)).specs["azahar"]
+            with self.assertRaises(SystemExit):
+                build_slice.prepare_headers(spec, spec.legacy_dir / "missing.framework")
+
+
 class CacheTests(unittest.TestCase):
     def setUp(self):
         self.tmp = tempfile.TemporaryDirectory()

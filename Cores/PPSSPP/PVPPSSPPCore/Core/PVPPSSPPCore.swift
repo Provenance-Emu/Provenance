@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import PVPPSSPPBridge
 import PVCoreBridge
 #if canImport(GameController)
 import GameController

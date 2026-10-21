@@ -2,9 +2,10 @@
 // The swift-tools-version declares the minimum version of Swift required to build this package.
 
 import PackageDescription
+import Foundation
 
-// Dolphin as a SwiftPM core. It mirrors the `PVDolphin` target of PVDolphin.xcodeproj, which stays
-// the shipping build path.
+// Dolphin wrapper shared by the shipping project and Tuist. Prepare the native
+// XCFramework with `make prepare-dolphin` before resolving the workspace.
 //
 // Layout
 //   PVlibDolphin     binaryTarget over dolphin-ios/build/xcframework/PVlibDolphin.xcframework, the
@@ -35,10 +36,8 @@ import PackageDescription
 //   - `GCC_PREFIX_HEADER`: PVDolphinCore-Prefix.pch is not referenced by the xcodeproj either.
 //   - `SKIP_INSTALL`/`INSTALL_PATH`/`LD_RUNPATH_SEARCH_PATHS` framework packaging: Xcode wraps the
 //     `-Dynamic` product itself.
-//   - Resources outside the package target: Sys/ lives in the dolphin-ios submodule, which SwiftPM
-//     cannot reference as a resource. The dev app copies it into the app bundle
-//     (CoreProduct.dolphin.postScripts) and PVDolphinCore.mm looks there when it is not in the
-//     SwiftPM bundle. Config/ is a normal resource.
+//   - Sys/ is copied through Resources/Sys, a package-local symlink into the submodule.
+//     Both Config/ and Sys/ belong to the bridge resource bundle.
 
 // MARK: ------- Shared -------
 
@@ -99,28 +98,30 @@ let dolphinCXXSettings: [CXXSetting] = dolphinHeaderPaths.map { CXXSetting.heade
     + dolphinDefines.map { CXXSetting.define($0.0, to: $0.1) }
     + [.unsafeFlags(dolphinCompilerFlags)]
 
-/// The `-Wl,-unexported_symbol` list of BuildFlags.xcconfig, plus its rpaths. PVlibDolphin and
+/// Preserve the legacy unexported-symbol list and rpaths through the Swift linker driver. PVlibDolphin and
 /// Azahar both static-link glslang; hiding Dolphin's keeps dyld from coalescing the two.
 let dolphinLinkerFlags: [String] = [
     "-ObjC",
-    "-Wl,-rpath,@loader_path",
-    "-Wl,-rpath,@loader_path/../Frameworks/PVlibDolphin.framework",
-    "-Wl,-rpath,@executable_path/../Frameworks/PVlibDolphin.framework",
-    "-Wl,-unexported_symbol,_glslang*", "-Wl,-unexported_symbol,_SPIRV*",
-    "-Wl,-unexported_symbol,_TBuiltInResource*", "-Wl,-unexported_symbol,_EShLanguage*",
-    "-Wl,-unexported_symbol,__ZN7glslang*", "-Wl,-unexported_symbol,__ZN5SPIRV*",
-    "-Wl,-unexported_symbol,__ZN4spv*", "-Wl,-unexported_symbol,__Z*glslang*",
-    "-Wl,-unexported_symbol,__Z*SPIRV*", "-Wl,-unexported_symbol,__Z*spv*",
-]
+    "-rpath", "@loader_path",
+    "-rpath", "@loader_path/../Frameworks/PVlibDolphin.framework",
+    "-rpath", "@executable_path/../Frameworks/PVlibDolphin.framework",
+    "-unexported_symbol", "_glslang*", "-unexported_symbol", "_SPIRV*",
+    "-unexported_symbol", "_TBuiltInResource*", "-unexported_symbol", "_EShLanguage*",
+    "-unexported_symbol", "__ZN7glslang*", "-unexported_symbol", "__ZN5SPIRV*",
+    "-unexported_symbol", "__ZN4spv*", "-unexported_symbol", "__Z*glslang*",
+    "-unexported_symbol", "__Z*SPIRV*", "-unexported_symbol", "__Z*spv*",
+].flatMap { ["-Xlinker", $0] }
 
 /// The Frameworks build phase of the PVDolphin target (macOS-only OpenGL.framework omitted).
 let dolphinSystemFrameworks: [String] = [
     "Security", "GLKit", "QuartzCore", "CoreGraphics", "Foundation", "SystemConfiguration",
-    "OpenGLES", "MetalKit", "Metal", "GameController", "CoreHaptics", "UIKit", "CoreAudioKit",
+    "OpenGLES", "MetalKit", "Metal", "GameController", "CoreHaptics", "UIKit",
     "CoreAudio", "AudioToolbox", "AVFoundation",
 ]
 
-let dolphinLinkerSettings: [LinkerSetting] = dolphinSystemFrameworks.map { LinkerSetting.linkedFramework($0) }
+let dolphinLinkerSettings: [LinkerSetting] = dolphinSystemFrameworks.map { LinkerSetting.linkedFramework($0) } + [
+    .linkedFramework("CoreAudioKit", .when(platforms: [.iOS]))
+]
     + [
         .linkedLibrary("c++"),
         .linkedLibrary("z"),
@@ -130,13 +131,14 @@ let dolphinLinkerSettings: [LinkerSetting] = dolphinSystemFrameworks.map { Linke
 
 /// Directories of the package root that are not part of either target. `dolphin-ios` and `lib`
 /// hold the submodule and its build trees; walking them would take SwiftPM minutes.
-let dolphinNonTargetPaths: [String] = [
+let dolphinLocalBuildPaths = ["build", "venv", "PVDolphin.xcodeproj"].filter {
+    FileManager.default.fileExists(atPath: URL(fileURLWithPath: #filePath)
+        .deletingLastPathComponent().appendingPathComponent($0).path)
+}
+let dolphinNonTargetPaths: [String] = dolphinLocalBuildPaths + [
     "dolphin-ios",
     "lib",
     "cmake",
-    "PVDolphin.xcodeproj",
-    "BuildFlags.xcconfig",
-    "LibDolphinConfig.xcconfig",
     "build_dolphin_core.py",
     "build_dolphin_core.sh",
     "convert_to_object_libs.sh",
@@ -201,6 +203,7 @@ let bridgeTarget: Target = .target(
     sources: dolphinBridgeSources,
     resources: [
         .copy("Resources/Config"),
+        .copy("Resources/Sys"),
     ],
     // The public headers are listed by Sources/PVDolphinBridge/include/module.modulemap: three
     // headers in PVDolphinCore/Core are C++ only and must stay out of the module Swift imports.

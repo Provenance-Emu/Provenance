@@ -23,6 +23,9 @@ on:
       - "Cores/FCEU/**"
       - "Cores/Genesis-Plus-GX/**"
       - "Cores/Mupen64Plus/**"
+      - "Cores/Azahar/**"
+      - "Scripts/cores/**"
+      - ".github/actions/prepare-azahar/**"
       - ".github/workflows/dev-workspace.yml"
   push:
     branches: [develop]
@@ -122,6 +125,11 @@ jobs:
           GITHUB_TOKEN: ${{ github.token }}
           MISE_GITHUB_TOKEN: ${{ github.token }}
         run: Scripts/dev/check_dev_manifest.sh
+
+      - name: Prepare Azahar package binary
+        uses: ./.github/actions/prepare-azahar
+        with:
+          slice: ${{ contains(matrix.destination, 'tvOS') && 'tvos-sim' || 'ios-sim' }}
 
       - name: Generate
         env:

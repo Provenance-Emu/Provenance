@@ -1,7 +1,7 @@
 //  PVEmuThreeCore+Audio.h
 //  Copyright © 2023 Provenance. All rights reserved.
 
-#import <PVEmuThree/PVEmuThreeCoreBridge.h>
+#import "PVEmuThreeCoreBridge.h"
 
 NS_ASSUME_NONNULL_BEGIN
 

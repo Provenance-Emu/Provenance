@@ -2,7 +2,7 @@
 //  Copyright © 2023 Provenance. All rights reserved.
 
 #import "PVEmuThreeCoreBridge+Saves.h"
-#import <PVEmuThree/CitraWrapper.h>
+#import "CitraWrapper.h"
 
 extern bool _isInitialized;
 NSString *autoLoadStatefileName;
