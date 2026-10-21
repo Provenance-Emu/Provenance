@@ -38,7 +38,8 @@ jobs:
   # Job 1: Fast lint on ubuntu (~1 min)
   lint:
     name: SwiftLint
-    runs-on: ubuntu-latest
+    # The release binary needs libxml2.so.2, which ubuntu-26.04 no longer provides.
+    runs-on: ubuntu-24.04
     timeout-minutes: 5
     steps:
       - name: Checkout

@@ -60,6 +60,12 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Prepare PPSSPP source membership inputs
+        run: |
+          git submodule update --init --depth 1 Cores/PPSSPP/libretro_ppsspp
+          git -C Cores/PPSSPP/libretro_ppsspp submodule update --init --depth 1 \
+            ext/SPIRV-Cross ext/armips ext/cpu_features ext/glslang ext/miniupnp ext/zstd
+
       - name: Test the checker
         run: python3 Scripts/tests/test_check_pbxproj_sources.py
 
