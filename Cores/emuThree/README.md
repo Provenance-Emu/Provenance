@@ -11,7 +11,9 @@ the other slices are compiled from pinned historical sources. Device binaries
 are never relabeled as simulator binaries. Intel simulators are unsupported.
 Shared FFmpeg, SDL2, OpenSSL and MoltenVK retain their package dependencies.
 OpenAL Soft is built for each platform, preserving the required callback-buffer extension;
-the former empty simulator archives are not used.
+the former empty simulator archives are not used. OpenAL headers stay private in
+`SwiftPM/Vendors/Headers` so processing the combined archive cannot overwrite the
+app’s separate OpenAL package headers.
 
 Rebuild with `python3 Scripts/cores/build_emuthree_vendors.py` (Xcode, CMake,
 Ninja and network access required). It exports pinned sources into

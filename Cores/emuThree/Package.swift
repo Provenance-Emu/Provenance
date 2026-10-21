@@ -642,7 +642,8 @@ let headers = [
 ]
 // Keep SDK Network/Network.h ahead of the engine's lowercase network/network.h.
 let headerFlags = headers.flatMap { ["-idirafter", "\(root)/\($0)"] } + [
-    "-I", "\(root)/emuthree/emuThreeDS/citra_core/network"
+    "-I", "\(root)/emuthree/emuThreeDS/citra_core/network",
+    "-I", "\(root)/SwiftPM/Vendors/Headers"
 ]
 // Crypto++ uses quoted flat headers named like SDK headers (notably zlib.h).
 // Keep their precedence scoped to this target; engine sources use <cryptopp/...>.
@@ -771,6 +772,39 @@ let sourceExcludes = ["cmake", "PVEmuThree.xcodeproj", "PVEmuThree", "SwiftPM/Ve
 
 let bridgeDependencies = shared + [.target(name: "PVEmuThreeEngine")]
 
+// Explicit types keep manifest overload resolution bounded on Xcode 26.3.
+let coreCSettings: [CSetting] = defines.map { CSetting.define($0, to: "1") } + [
+    .define("MICROPROFILE_ENABLED", to: "1", .when(configuration: .debug)),
+    .define("MICROPROFILE_ENABLED", to: "0", .when(configuration: .release)),
+    .define("NDEBUG", to: "1", .when(configuration: .release)),
+    .define("RELEASE", to: "1", .when(configuration: .release)),
+    .unsafeFlags(["-O3", "-ffast-math"], .when(configuration: .release)),
+    .unsafeFlags(headerFlags)
+]
+let engineCXXSettings: [CXXSetting] = defines.map { CXXSetting.define($0, to: "1") } + [
+    .define("MICROPROFILE_ENABLED", to: "1", .when(configuration: .debug)),
+    .define("MICROPROFILE_ENABLED", to: "0", .when(configuration: .release)),
+    .define("NDEBUG", to: "1", .when(configuration: .release)),
+    .define("RELEASE", to: "1", .when(configuration: .release)),
+    .unsafeFlags(["-O3", "-ffast-math"], .when(configuration: .release)),
+    .unsafeFlags(headerFlags + ["-fmodules", "-fno-cxx-modules", "-fno-strict-aliasing",
+        // Resolve the engine's lowercase include without modifying upstream sources.
+        "-include", "\(root)/emuthree/emuThreeDS/citra_core/network/network.h"
+    ])
+]
+let bridgeCXXSettings: [CXXSetting] = defines.map { CXXSetting.define($0, to: "1") } + [
+    .define("MICROPROFILE_ENABLED", to: "1", .when(configuration: .debug)),
+    .define("MICROPROFILE_ENABLED", to: "0", .when(configuration: .release)),
+    .define("NDEBUG", to: "1", .when(configuration: .release)),
+    .define("RELEASE", to: "1", .when(configuration: .release)),
+    .unsafeFlags(["-O3", "-ffast-math"], .when(configuration: .release)),
+    .unsafeFlags(headerFlags + ["-fmodules", "-fcxx-modules", "-fno-strict-aliasing"])
+]
+let engineLinkerSettings: [LinkerSetting] = frameworks.map { LinkerSetting.linkedFramework($0) } + [
+    .linkedFramework("CoreMotion", .when(platforms: [.iOS])),
+    .linkedLibrary("z"), .linkedLibrary("bz2"), .linkedLibrary("iconv"), .linkedLibrary("c++")
+]
+
 let engine: Target = .target(
     name: "PVEmuThreeEngine",
     dependencies: engineDependencies,
@@ -778,26 +812,9 @@ let engine: Target = .target(
     exclude: sourceExcludes + cryptoSources + bridgeSources,
     sources: engineSources,
     publicHeadersPath: "SwiftPM/PVEmuThreeEngine",
-    cSettings: defines.map { .define($0, to: "1") } + [
-        .define("MICROPROFILE_ENABLED", to: "1", .when(configuration: .debug)),
-        .define("MICROPROFILE_ENABLED", to: "0", .when(configuration: .release)),
-        .define("NDEBUG", to: "1", .when(configuration: .release)),
-        .define("RELEASE", to: "1", .when(configuration: .release)),
-        .unsafeFlags(["-O3", "-ffast-math"], .when(configuration: .release)),
-        .unsafeFlags(headerFlags)
-    ],
-    cxxSettings: defines.map { .define($0, to: "1") } + [
-        .define("MICROPROFILE_ENABLED", to: "1", .when(configuration: .debug)),
-        .define("MICROPROFILE_ENABLED", to: "0", .when(configuration: .release)),
-        .define("NDEBUG", to: "1", .when(configuration: .release)),
-        .define("RELEASE", to: "1", .when(configuration: .release)),
-        .unsafeFlags(["-O3", "-ffast-math"], .when(configuration: .release)),
-        .unsafeFlags(headerFlags + ["-fmodules", "-fno-cxx-modules", "-fno-strict-aliasing",
-            // Resolve the engine's lowercase include without modifying upstream sources.
-            "-include", "\(root)/emuthree/emuThreeDS/citra_core/network/network.h"
-        ])
-    ],
-    linkerSettings: frameworks.map { .linkedFramework($0) } + [.linkedFramework("CoreMotion", .when(platforms: [.iOS])), .linkedLibrary("z"), .linkedLibrary("bz2"), .linkedLibrary("iconv"), .linkedLibrary("c++")]
+    cSettings: coreCSettings,
+    cxxSettings: engineCXXSettings,
+    linkerSettings: engineLinkerSettings
 )
 
 // Swift-generated Objective-C headers require C++ modules only in this thin bridge.
@@ -808,22 +825,8 @@ let bridge: Target = .target(
     exclude: sourceExcludes + cryptoSources + engineSources,
     sources: bridgeSources,
     publicHeadersPath: "SwiftPM/PVEmuThreeBridge",
-    cSettings: defines.map { .define($0, to: "1") } + [
-        .define("MICROPROFILE_ENABLED", to: "1", .when(configuration: .debug)),
-        .define("MICROPROFILE_ENABLED", to: "0", .when(configuration: .release)),
-        .define("NDEBUG", to: "1", .when(configuration: .release)),
-        .define("RELEASE", to: "1", .when(configuration: .release)),
-        .unsafeFlags(["-O3", "-ffast-math"], .when(configuration: .release)),
-        .unsafeFlags(headerFlags)
-    ],
-    cxxSettings: defines.map { .define($0, to: "1") } + [
-        .define("MICROPROFILE_ENABLED", to: "1", .when(configuration: .debug)),
-        .define("MICROPROFILE_ENABLED", to: "0", .when(configuration: .release)),
-        .define("NDEBUG", to: "1", .when(configuration: .release)),
-        .define("RELEASE", to: "1", .when(configuration: .release)),
-        .unsafeFlags(["-O3", "-ffast-math"], .when(configuration: .release)),
-        .unsafeFlags(headerFlags + ["-fmodules", "-fcxx-modules", "-fno-strict-aliasing"])
-    ],
+    cSettings: coreCSettings,
+    cxxSettings: bridgeCXXSettings,
     linkerSettings: [.unsafeFlags(imageLinkFlags)]
 )
 // Crypto++ has no dependency on the emulator, Swift modules or media frameworks.

@@ -238,6 +238,26 @@ class PPSSPPPackageTests(unittest.TestCase):
         interop = (core / "PVPPSSPPCore/Core/PPSSPPSwiftInterop.h").read_text()
         self.assertIn('NSClassFromString(@"PVPPSSPP." #name)', interop)
 
+    @unittest.skipUnless(shutil.which("xcrun"), "native module validation requires Xcode")
+    def test_zstd_private_api_survives_app_module_maps(self):
+        core = ROOT / "Cores/PPSSPP"
+        source = core / "libretro_ppsspp/ext/zstd/lib/compress/zstdmt_compress.c"
+        target = next(t for t in dump_package("PPSSPP")["targets"] if t["name"] == "PVPPSSPPlibzstdstatic")
+        flags = [flag for setting in target["settings"] if setting["tool"] == "c"
+                 for flag in setting["kind"].get("unsafeFlags", {}).get("_0", [])]
+        with tempfile.TemporaryDirectory(prefix="ppsspp-zstd-modules-") as temporary:
+            modulemap = Path(temporary) / "module.modulemap"
+            header = core / "libretro_ppsspp/ext/zstd/lib/zstd.h"
+            modulemap.write_text(f'module libzstd {{ header "{header}" export * }}\n')
+            for sdk, triple in [("iphoneos", "arm64-apple-ios17"), ("iphonesimulator", "arm64-apple-ios17-simulator"),
+                                ("appletvos", "arm64-apple-tvos17"), ("appletvsimulator", "arm64-apple-tvos17-simulator")]:
+                with self.subTest(sdk=sdk):
+                    sdkroot = subprocess.check_output(["xcrun", "--sdk", sdk, "--show-sdk-path"], text=True).strip()
+                    result = subprocess.run(["xcrun", "clang", "-fsyntax-only", "-target", triple, "-isysroot", sdkroot,
+                                             "-fmodules", f"-fmodule-map-file={modulemap}", *flags, str(source)],
+                                            capture_output=True, text=True)
+                    self.assertEqual(result.returncode, 0, result.stderr)
+
     @unittest.skipUnless(shutil.which("xcrun"), "Clang module validation requires Xcode")
     def test_native_modules_can_be_imported_together(self):
         module_map = ROOT / "Cores/PPSSPP/SwiftPM/include/module.modulemap"
