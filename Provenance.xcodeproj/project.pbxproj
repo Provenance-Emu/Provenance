@@ -11240,7 +11240,7 @@
 			repositoryURL = "https://github.com/sindresorhus/Defaults.git";
 			requirement = {
 				kind = exactVersion;
-				version = 9.0.2;
+				version = 9.0.9;
 			};
 		};
 		B35F93DF2D2F71450016E633 /* XCRemoteSwiftPackageReference "WhatsNewKit" */ = {
@@ -11336,7 +11336,7 @@
 			repositoryURL = "https://github.com/sindresorhus/Defaults.git";
 			requirement = {
 				kind = exactVersion;
-				version = 9.0.2;
+				version = 9.0.9;
 			};
 		};
 		B3F7E2A2297736BE00362B92 /* XCRemoteSwiftPackageReference "SteamController" */ = {
