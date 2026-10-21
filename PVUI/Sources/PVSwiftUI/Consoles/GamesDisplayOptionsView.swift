@@ -74,6 +74,9 @@ struct GamesDisplayOptionsView: SwiftUI.View {
     // Context for the settings button
     var settingsContext: SettingsContext = .home
 
+    /// Puts the display controls in one menu when the phone needs room for games.
+    var usesCompactMenu = false
+
     var toggleFilterAction: () -> Void
     var toggleSortAction: () -> Void
     var toggleViewTypeAction: () -> Void
@@ -117,17 +120,23 @@ struct GamesDisplayOptionsView: SwiftUI.View {
     }
 
     var body: some SwiftUI.View {
-        HStack(spacing: spacing) {
-            // Display options menu (consolidated)
-            displayOptionsMenu
+        Group {
+            if usesCompactMenu {
+                compactOptionsMenu
+            } else {
+                HStack(spacing: spacing) {
+                    // Display options menu (consolidated)
+                    displayOptionsMenu
 
-            Spacer()
+                    Spacer()
 
-            // Core controls (kept separate as requested)
-            coreControlsGroup
+                    // Core controls (kept separate as requested)
+                    coreControlsGroup
+                }
+                .frame(maxWidth: .infinity, minHeight: stripMinHeight, maxHeight: stripMaxHeight)
+                .clipped() // Prevent overflow
+            }
         }
-        .frame(maxWidth: .infinity, minHeight: stripMinHeight, maxHeight: stripMaxHeight)
-        .clipped() // Prevent overflow
         #if !os(tvOS)
         .sheet(item: $coreOptionsPresentation, onDismiss: {
             viewModel.inputOwnership.hasCoreOptionsPresentation = false
@@ -145,6 +154,40 @@ struct GamesDisplayOptionsView: SwiftUI.View {
             }
         }
         #endif
+    }
+
+    private var compactOptionsMenu: some View {
+        Menu {
+            Button(action: toggleSortAction) {
+                Label(viewModel.sortGamesAscending ? "Sort Descending" : "Sort Ascending", systemImage: "arrow.up.arrow.down")
+            }
+            Button(action: toggleViewTypeAction) {
+                Label(viewModel.viewGamesAsGrid ? "Show List" : "Show Grid", systemImage: viewModel.viewGamesAsGrid ? "list.bullet" : "square.grid.2x2")
+            }
+            Button(action: zoomIn) {
+                Label("Larger Covers", systemImage: "plus.magnifyingglass")
+            }
+            .disabled(!canZoomIn)
+            Button(action: zoomOut) {
+                Label("Smaller Covers", systemImage: "minus.magnifyingglass")
+            }
+            .disabled(!canZoomOut)
+            Divider()
+            Menu {
+                displayOptionsToggleRows
+            } label: {
+                Label("Display Preferences", systemImage: "eye")
+            }
+            logStatusMenu
+        } label: {
+            Image(systemName: "slider.horizontal.3")
+                .font(.system(size: 17, weight: .medium))
+                .foregroundStyle(iconTint)
+                .shadow(color: iconTint.opacity(0.4), radius: 2)
+                .frame(width: 44, height: 44)
+                .contentShape(Rectangle())
+        }
+        .accessibilityLabel("Library Options")
     }
 
     // MARK: - View Components

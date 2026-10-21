@@ -240,8 +240,16 @@ private struct LibraryHeader: View {
     private var accent: Color { Color(themeManager.currentPalette.defaultTintColor) }
     private var backgroundColor: Color { Color(themeManager.currentPalette.gameLibraryBackground) }
 
+    private var usesCompactChrome: Bool {
+        #if os(iOS)
+        UIDevice.current.userInterfaceIdiom == .phone
+        #else
+        false
+        #endif
+    }
+
     var body: some View {
-        HStack(spacing: 16) {
+        HStack(spacing: usesCompactChrome ? 8 : 16) {
             Button {
                 viewModel.isMenuVisible.toggle()
             } label: {
@@ -267,8 +275,8 @@ private struct LibraryHeader: View {
         .buttonStyle(.plain)
         .font(.system(size: 20, weight: .medium))
         .foregroundStyle(accent)
-        .padding(.horizontal, 8)
-        .padding(.vertical, 4)
+        .padding(.horizontal, usesCompactChrome ? 12 : 8)
+        .padding(.vertical, usesCompactChrome ? 0 : 4)
         .background {
             LibraryHeaderBackground(
                 fillColor: backgroundColor,
@@ -276,8 +284,9 @@ private struct LibraryHeader: View {
                 fillOpacity: reduceTransparency ? 1 : 0.94
             )
         }
-        .padding(.horizontal, 16)
-        .padding(.vertical, 8)
+        .padding(.horizontal, usesCompactChrome ? 8 : 16)
+        .padding(.vertical, usesCompactChrome ? 0 : 8)
+        .padding(.bottom, usesCompactChrome ? 4 : 0)
     }
 }
 

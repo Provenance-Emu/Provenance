@@ -117,6 +117,28 @@ recording previously reported that hitches are unsupported. The small-fixture
 captures support retaining the current transform/opacity animation; they do not
 establish large-library scrolling or hardware performance parity.
 
+### Compact phone layout
+
+The phone header now occupies 48 points including its lower inset, down from 68.
+A Library Options menu beside the first section heading replaces the separate
+62-point toolbar. Its six main rows retain sort, grid/list, cover sizing, grouped
+display preferences and More actions. It remains reachable when saves are hidden
+or absent. Empty save, Favorites and Recently Played sections are hidden; Most
+Played uses the compact shelf height on phones. The full grid has an All Games
+heading to distinguish it from the history shelves.
+
+The phone save preview is 156 points in portrait and 112 in landscape, compared
+with 260 and 130 previously. The header, removed toolbar and portrait save card
+reclaim approximately 186 points before the game shelves, plus the space saved
+by omitting empty sections. Non-phone header spacing and save heights retain
+their existing dimensions.
+
+Final UI compilation passed for iOS and tvOS. The iOS app was aggregated,
+relinked, signed, verified, installed and launched. Native portrait/landscape,
+list/grid switching, grouped display preferences and hiding/restoring save
+previews were exercised. SwiftLint reported no errors, with existing warnings.
+This pass changes presentation and adds no persistence or navigation service.
+
 ### Remaining checks
 
 Native phone rotation was exercised on the rebuilt app in portrait and both
