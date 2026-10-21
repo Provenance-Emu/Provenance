@@ -1,31 +1,61 @@
 # PPSSPP SwiftPM migration
 
 Shipping and Tuist consume PVPPSSPP-Dynamic, preserving the PVPPSSPP Swift module,
-principal class and all four shipping consumers, including Lite. The focused native
-app opts in through TUIST_DEV_PPSSPP; Thin retains its separate libretro core.
+PVPPSSPP.PVPPSSPPCore principal class and all four shipping consumers, including
+Lite. TUIST_DEV_PPSSPP enables the focused native app; make dev-ppsspp builds it on
+an iOS device. Thin retains its separate libretro implementation.
 
-SwiftPM compiles the native engine, third-party source targets, local glslang
-replacements, ObjC++ bridge and Swift wrapper. Source membership follows the former
-wrapper and generated native project, with duplicate archive entries removed.
-The package carries Core.plist and the existing assets; the bridge looks up its
-resource bundle and resolves Swift render controllers by their qualified names.
-The existing platform-specific FFmpeg device archives remain external dependencies.
-Simulator linking requires matching simulator archives; device archives must not
-be relabeled as simulator binaries.
+SwiftPM compiles 799 native implementation sources, twelve ObjC++/platform bridge
+sources and eight Swift sources. Explicit source membership and per-library
+settings replace the wrapper and generated native Xcode projects. Tracked native
+configuration headers remain source inputs; no CMake cache or generated Xcode
+project participates in the build. Existing FFmpeg archives remain device-specific
+inputs, with all arm64 objects verified against their iOS/tvOS platform metadata.
+Private quote-header search priority keeps the app's newer shared FFmpeg framework
+headers from replacing the legacy API that these archives implement.
 
-Validate the package language split/source membership, principal class and resources,
-shipping/Tuist graph agreement, Tuist generation, native package compilation and the
-shipping Lite arm64 iOS build. Keep unrelated UI/library changes and submodule
-revisions outside the migration commits.
+Local translation units preserve upstream source. The x86 thunk matches ABI.cpp's
+architecture guard, avoiding an unused x86 object that the old archive left
+unloaded on ARM. Both PPSSPP incremental-MD5 call sites use a private symbol because
+RetroAchievements exports a different function with an incompatible context layout
+under the same original name. Shader compiler definitions remain private too.
+Explicit implementation module maps avoid overlapping generated umbrellas.
 
-Validation so far:
+Core.plist belongs to the Swift resource bundle. The bridge owns cmake/assets and
+looks up SWIFTPM_MODULE_BUNDLE; flash0 points at its real asset directory. Swift
+render controllers are resolved by their qualified runtime names, avoiding a
+reverse dependency from the bridge. The renderer's existing shared MoltenVK lookup
+and dylib fallback remain unchanged.
 
-- All 819 source entries exist and are unique: 799 native sources, 12 bridge/glue
-  sources and eight Swift sources. Four duplicated native archive entries compile
-  once; the upstream iOS audio file is replaced by the existing local implementation.
-- All arm64 objects in the six iOS and six tvOS FFmpeg archives declare the intended
-  device platform (LC_VERSION_MIN_IPHONEOS / LC_VERSION_MIN_TVOS).
-- The existing shared MoltenVK framework lookup and dylib fallback remain in the
-  renderer. No legacy MoltenVK copy target is required by the source package.
-- Package layout/resource/module tests and shipping/dev graph audit passed.
-- Tuist opt-in manifest evaluation includes Provenance-Dev-PPSSPP.
+A fresh shipping resolution exposed stale exact Defaults 9.0.2 references requiring
+SwiftSyntax 600, conflicting with HexColors' SwiftSyntax 603 requirement. Both
+references and only the Defaults lockfile pin now select 9.0.9, matching the
+validated standalone/Tuist graph. Existing unrelated OpenAPI/zstd lockfile edits
+remain outside the migration commits.
+
+Validation on 2026-10-20/21:
+
+- The native PVPPSSPP-Dynamic package built successfully for generic iOS arm64
+  with Xcode 27.1. Every declared source exists; source entries are unique and
+  Swift/Clang targets remain separate.
+- The framework contains the principal class, ObjC bridge and both render classes.
+  Core.plist and all 158 shipped asset files match their sources, excluding the
+  VCS/Finder metadata that Xcode intentionally omits. Native shader definitions
+  and the private MD5 helper are hidden from exports. Dynamic dependencies are
+  system runtimes/frameworks.
+- Canonical Tuist generation succeeded. The generated native PPSSPP app links and
+  embeds PVPPSSPP-Dynamic. Shipping/dev graph audit, manifest checks and root
+  project plist lint passed.
+- All sixteen package/graph regression tests passed. These include simultaneous
+  Clang imports and an executable digest test linking both MD5 implementations,
+  verifying PPSSPP one-shot/incremental and cheevos against a known digest vector.
+  A shared-framework fixture also verifies private legacy FFmpeg header selection.
+- SwiftLint found no serious violations in changed Swift files; the new package
+  manifest has no lint warnings.
+- Shipping Provenance-Lite (AppStore) built successfully for generic iOS arm64
+  with Xcode 27.1 after the final header-isolation fix. The app embeds the exact
+  PPSSPP framework and both resource bundles produced by the package.
+
+Simulator and tvOS compilation, signed app launch and gameplay remain unverified.
+The FFmpeg device archives do not provide simulator support. Unrelated UI/library
+changes and submodule revisions remain outside this migration's commits.
