@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import PVPPSSPPBridge
 import UIKit
 import MetalKit
 import os

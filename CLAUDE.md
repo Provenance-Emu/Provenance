@@ -40,6 +40,13 @@ prepares both Azahar and Dolphin. Shipping and Tuist share `PVDolphin-Dynamic`;
 SwiftPM owns the bridge, wrapper, Core.plist, Config and Sys resource bundles.
 `make dev-dolphin` prepares its selected slice before generating Tuist.
 
+**PPSSPP:** shipping and Tuist share `PVPPSSPP-Dynamic`. SwiftPM compiles the native
+engine, its dependencies and the Swift/ObjC++ wrapper, and owns Core.plist and PSP
+assets. No CMake/Xcode project preparation is needed. `make dev-ppsspp` opts into
+the native focused iOS device app; Thin retains the independent libretro core.
+The existing FFmpeg archives support device SDKs; simulator builds need matching
+simulator archives.
+
 Build from Xcode: open `Provenance.xcworkspace` and select a scheme. Start with `Provenance-Lite` (fastest build) before moving to `Provenance-Release` or `Provenance-XL (Release)`.
 
 **Note:** Initial builds may fail because some source files are generated lazily at compile time. Retry if Xcode gets the build order wrong on first build.

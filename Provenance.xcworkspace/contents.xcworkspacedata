@@ -4,11 +4,4 @@
    <FileRef
       location = "container:Provenance.xcodeproj">
    </FileRef>
-   <Group
-      location = "container:"
-      name = "Cores">
-      <FileRef
-         location = "group:Cores/PPSSPP/PVPPSSPP.xcodeproj">
-      </FileRef>
-   </Group>
 </Workspace>

@@ -5,7 +5,7 @@ SHELL := /bin/bash
 # `export` makes the values visible to recipes (release.sh, fastlane, etc.).
 -include .env
 export
-.PHONY: prepare-azahar prepare-dolphin dev dev-generate dev-ui dev-azahar dev-thin dev-n64 dev-dolphin dev-coreless dev-harness help ios update tvos lite ci maint maint-status maint-run-stale maint-hooks \
+.PHONY: prepare-azahar prepare-dolphin dev dev-generate dev-ui dev-azahar dev-thin dev-n64 dev-dolphin dev-ppsspp dev-coreless dev-harness help ios update tvos lite ci maint maint-status maint-run-stale maint-hooks \
 	generate-all generate-cheatdb generate-contributors generate-core-lists \
 	generate-default-skins generate-licenses generate-uti generate-changelog \
 	lookup-databases update-cheatdb update-skin-catalog update-core-versions update-core-licenses \
@@ -326,6 +326,10 @@ dev-coreless:
 ##   make dev-dolphin DOLPHIN_SLICE=tvos DOLPHIN_DESTINATION=generic/platform=tvOS
 DOLPHIN_SLICE ?= ios
 DOLPHIN_DESTINATION ?= generic/platform=iOS
+## Native PPSSPP compiles entirely through SwiftPM; bundled FFmpeg archives are device-only.
+dev-ppsspp:
+	TUIST_DEV_PPSSPP=1 $(MAKE) _dev-build DEV_SCHEME=Provenance-Dev-PPSSPP DEV_DESTINATION="generic/platform=iOS"
+
 dev-emuthree:
 	TUIST_DEV_EMUTHREE=1 $(MAKE) _dev-build DEV_SCHEME=Provenance-Dev-EmuThree DEV_DESTINATION="generic/platform=iOS"
 

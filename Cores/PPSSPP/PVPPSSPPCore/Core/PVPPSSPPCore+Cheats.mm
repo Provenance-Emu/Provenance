@@ -1,4 +1,4 @@
-#import <PVPPSSPP/PVPPSSPP.h>
+#import "PVPPSSPPCore.h"
 #import <Foundation/Foundation.h>
 @import PVSupport;
 @import PVEmulatorCore;

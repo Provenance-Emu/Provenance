@@ -195,7 +195,10 @@ public extension FocusedApp {
     /// Legacy emuThree engine; opt in on an iOS device with TUIST_DEV_EMUTHREE=1.
     static let emuThree = FocusedApp(slug: "emuthree", title: "EmuThree", cores: [.emuThree], optInVariable: "TUIST_DEV_EMUTHREE")
 
-    static let catalog: [FocusedApp] = [.ui, .azahar, .thin, .n64, .dolphin, .emuThree, .coreless]
+    /// Native PPSSPP; the Thin app continues to exercise the separate libretro implementation.
+    static let ppsspp = FocusedApp(slug: "ppsspp", title: "PPSSPP", cores: [.ppsspp], optInVariable: "TUIST_DEV_PPSSPP")
+
+    static let catalog: [FocusedApp] = [.ui, .azahar, .thin, .n64, .dolphin, .emuThree, .ppsspp, .coreless]
 
     /// The apps in the generated project.
     static var all: [FocusedApp] { catalog.filter(\.isEnabled) }

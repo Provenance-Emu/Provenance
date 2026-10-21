@@ -5,6 +5,7 @@
 //
 
 import Foundation
+import PVPPSSPPBridge
 import GLKit
 import os
 

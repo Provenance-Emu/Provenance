@@ -6,7 +6,7 @@
 //  Copyright © 2021 Provenance. All rights reserved.
 //
 #import <Foundation/Foundation.h>
-#import <PVPPSSPP/PVPPSSPPCore.h>
+#import "PVPPSSPPCore.h"
 
 NS_ASSUME_NONNULL_BEGIN
 @interface PVPPSSPPCoreBridge (Video)

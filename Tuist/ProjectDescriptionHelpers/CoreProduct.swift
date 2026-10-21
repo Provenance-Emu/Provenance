@@ -131,6 +131,9 @@ public extension CoreProduct {
         artefacts: ["Cores/Dolphin/dolphin-ios/build/xcframework/PVlibDolphin.xcframework"]
     )
 
+    /// Native PSP wrapper and engine compile from sources in both shipping and focused apps.
+    static let ppsspp = CoreProduct(id: "ppsspp", link: .package(path: "Cores/PPSSPP", product: "PVPPSSPP-Dynamic"))
+
     static let emuThree = CoreProduct(id: "emuthree", link: .package(path: "Cores/emuThree", product: "PVEmuThree-Dynamic"), platforms: [.ios])
 
     static let ep128Emu = CoreProduct(id: "ep128emu", link: .package(path: "Cores/ep128emu", product: "PVEP128Emu-Dynamic"))
@@ -151,6 +154,6 @@ public extension CoreProduct {
     /// Every row, for the manifest checks.
     static let all: [CoreProduct] = [
         .mGBA, .stella, .snes9x, .fceu, .genesis, .mupen64Plus, .mednafen,
-        .proSystem, .picoDrive, .tgbDual, .azahar, .dolphin, .emuThree, .ep128Emu
+        .proSystem, .picoDrive, .tgbDual, .azahar, .dolphin, .ppsspp, .emuThree, .ep128Emu
     ] + nonCore
 }

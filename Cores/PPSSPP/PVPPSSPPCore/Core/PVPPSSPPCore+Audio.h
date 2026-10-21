@@ -3,7 +3,7 @@
 //
 
 #import <Foundation/Foundation.h>
-#import <PVPPSSPP/PVPPSSPP.h>
+#import "PVPPSSPPCore.h"
 
 #import <UIKit/UIKit.h>
 #import <MediaPlayer/MediaPlayer.h>

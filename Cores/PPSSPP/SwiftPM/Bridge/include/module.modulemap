@@ -1,0 +1,10 @@
+module PVPPSSPPBridge {
+    header "../../../PVPPSSPPCore/Core/PVPPSSPPCore.h"
+    header "../../../PVPPSSPPCore/Core/PVPPSSPPCore+Audio.h"
+    header "../../../PVPPSSPPCore/Core/PVPPSSPPCore+Controls.h"
+    header "../../../PVPPSSPPCore/Core/PVPPSSPPCore+Video.h"
+    header "../../../PVPPSSPPCore/Core/PVPPSSPPCore+Saves.h"
+    header "../../../PVPPSSPPCore/Core/PVPPSSPPCore+Netplay.h"
+    header "../../../PVPPSSPPCore/Core/PVPPSSPPCore+RetroAchievements.h"
+    export *
+}

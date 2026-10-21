@@ -17,6 +17,7 @@ ROOT = Path(__file__).resolve().parents[2]
 
 # core dir -> Core.plist path (relative to the core dir) of the package's Swift target
 CORES = {
+    "PPSSPP": "PVPPSSPP/Core.plist",
     "ep128emu": "PVEP128EmuCore/Resources/Core.plist",
     "snes9x": "PVSNES/Core.plist",
     "FCEU": "PVFCEU/Core.plist",
@@ -29,6 +30,7 @@ CORES = {
 
 # cores the shipping app takes from their packages -> their CorePlist.swift
 SHIPPED_AS_PACKAGES = {
+    "PPSSPP": "PVPPSSPPCore/Core/CorePlist.swift",
     "Dolphin": "PVDolphinCore/Core/CorePlist.swift",
     "emuThree": "PVEmuThreeCore/Core/CorePlist.swift",
     "ep128emu": "PVEP128EmuCore/CorePlist.swift",
@@ -86,7 +88,7 @@ class ResourceBundleTests(unittest.TestCase):
 class CorePackageLayoutTests(unittest.TestCase):
     @unittest.skipUnless(shutil.which("swift"), "swift toolchain not installed")
     def test_source_targets_are_libraries_with_separate_languages(self):
-        for relative in ["PVCoreBridgeRetro", "Cores/ep128emu", "Cores/emuThree", "Cores/Dolphin"]:
+        for relative in ["PVCoreBridgeRetro", "Cores/ep128emu", "Cores/emuThree", "Cores/Dolphin", "Cores/PPSSPP"]:
             with self.subTest(package=relative):
                 if relative == "Cores/Dolphin" and not (
                     ROOT / relative / "dolphin-ios/build/xcframework/PVlibDolphin.xcframework"
@@ -106,6 +108,36 @@ class CorePackageLayoutTests(unittest.TestCase):
                     base = ROOT / relative / target["path"]
                     for source in target.get("sources", []):
                         self.assertTrue((base / source).is_file(), source)
+
+
+class PPSSPPPackageTests(unittest.TestCase):
+    def test_bridge_resources_and_swift_runtime_lookup(self):
+        core = ROOT / "Cores/PPSSPP"
+        source = (core / "PVPPSSPPCore/Core/PVPPSSPPCore.mm").read_text()
+        self.assertIn("SWIFTPM_MODULE_BUNDLE", source)
+        self.assertNotIn("bundleForClass:", source)
+        self.assertIn('stringByAppendingPathComponent:@"flash0"', source)
+        self.assertTrue((core / "cmake/assets/flash0/font/ltn0.pgf").is_file())
+        video = (core / "PVPPSSPPCore/Core/PVPPSSPPCore+Video.mm").read_text()
+        for controller in ["PPSSPPVulkanViewController", "PPSSPPOGLViewController"]:
+            self.assertIn(f"[PV_PPSSPP_SWIFT_CLASS({controller}) alloc]", video)
+        interop = (core / "PVPPSSPPCore/Core/PPSSPPSwiftInterop.h").read_text()
+        self.assertIn('NSClassFromString(@"PVPPSSPP." #name)', interop)
+
+    @unittest.skipUnless(shutil.which("swift"), "swift toolchain not installed")
+    def test_native_engine_is_source_built(self):
+        package = dump_package("PPSSPP")
+        self.assertFalse(any(target["type"] == "binary" for target in package["targets"]))
+        targets = {target["name"]: target for target in package["targets"]}
+        sources = [source for target in package["targets"] for source in target.get("sources", [])]
+        self.assertEqual(len(sources), len(set(sources)), "duplicate native archive members")
+        self.assertIn("libretro_ppsspp/Core/System.cpp", sources)
+        self.assertIn("PVPPSSPPCore/Core/MemArenaDarwin.cpp", sources)
+        self.assertIn("PVPPSSPPCore/Core/iOSCoreAudio.mm", sources)
+        self.assertNotIn("libretro_ppsspp/ios/iOSCoreAudio.mm", sources)
+        self.assertEqual(len(targets["PVPPSSPP"]["sources"]), 8)
+        self.assertEqual(len(targets["PVPPSSPPBridge"]["sources"]), 12)
+        self.assertEqual(targets["PVPPSSPPBridge"]["resources"][0]["path"], "cmake/assets")
 
 
 if __name__ == "__main__":
