@@ -149,14 +149,18 @@ def main():
         shutil.rmtree(bundle)
     arguments = []
     for sdk in ["iphoneos", "iphonesimulator", "appletvos", "appletvsimulator"]:
-        arguments += ["-library", work / sdk / "libPVEmuThreeVendors.a",
-                      "-headers", ROOT / "Dependencies/libopenal.xcframework/ios-arm64/Headers"]
+        arguments += ["-library", work / sdk / "libPVEmuThreeVendors.a"]
     run("xcodebuild", "-create-xcframework", *arguments, "-output", bundle)
     output = ROOT / "Cores/emuThree/SwiftPM/Vendors/PVEmuThreeVendors.xcframework"
     if output.exists():
         shutil.rmtree(output)
     output.parent.mkdir(parents=True, exist_ok=True)
     shutil.copytree(bundle, output)
+    # Keep OpenAL headers private: the shipping graph also processes libopenal.xcframework.
+    headers = output.parent / "Headers"
+    if headers.exists():
+        shutil.rmtree(headers)
+    shutil.copytree(ROOT / "Dependencies/libopenal.xcframework/ios-arm64/Headers", headers)
     license_output = output.parent / "Licenses"
     license_output.mkdir(exist_ok=True)
     licenses = {"dynarmic": "dynarmic/LICENSE.txt", "mcl": "dynarmic/externals/mcl/LICENSE",

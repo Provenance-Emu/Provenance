@@ -18,6 +18,7 @@ class EmuThreeVendorTests(unittest.TestCase):
                          {("ios", None), ("tvos", None), ("ios", "simulator"), ("tvos", "simulator")})
         for entry in slices:
             self.assertEqual(entry["SupportedArchitectures"], ["arm64"])
+            self.assertNotIn("HeadersPath", entry, "OpenAL headers must not collide with the app OpenAL binary")
 
     @unittest.skipUnless(shutil.which("xcrun"), "requires Xcode")
     def test_openal_callback_api_links_for_all_apple_sdks(self):
@@ -58,7 +59,7 @@ int main() {
                         elif "linkedLibrary" in setting["kind"]:
                             flags += ["-l" + setting["kind"]["linkedLibrary"]["_0"]]
                     result = subprocess.run(["xcrun", "clang++", "-target", triple, "-isysroot", sdk_path,
-                                             "-I", str(directory / entry["HeadersPath"]), str(source),
+                                             "-I", str(BUNDLE.parent / "Headers"), str(source),
                                              str(directory / entry["LibraryPath"]), *flags,
                                              "-o", str(Path(temporary) / sdk)], text=True, capture_output=True)
                     self.assertEqual(result.returncode, 0, result.stderr)
