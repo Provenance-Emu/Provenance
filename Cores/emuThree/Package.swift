@@ -711,7 +711,7 @@ let engineDependencies: [Target.Dependency] = [
     .product(name: "OpenSSL", package: "OpenSSL")
 ] + binaryNames.map { Target.Dependency.target(name: $0) }
 let frameworks = [
-    "Metal", "MetalKit", "QuartzCore", "AudioToolbox", "CoreAudio", "AVFoundation", "CoreMotion",
+    "Metal", "MetalKit", "QuartzCore", "AudioToolbox", "CoreAudio", "AVFoundation",
     "CoreBluetooth", "CoreImage", "CoreVideo", "CoreGraphics", "Security", "SystemConfiguration", "GLKit", "OpenGLES"
 ]
 let vendorLinkFlags = ["-L", "\(root)/lib"] + archives.map { "-l\($0)" }
@@ -817,7 +817,7 @@ let engine: Target = .target(
             "-include", "\(root)/emuthree/emuThreeDS/citra_core/network/network.h"
         ])
     ],
-    linkerSettings: frameworks.map { .linkedFramework($0) } + [.linkedLibrary("z"), .linkedLibrary("bz2"), .linkedLibrary("iconv"), .linkedLibrary("c++"), .unsafeFlags(vendorLinkFlags)]
+    linkerSettings: frameworks.map { .linkedFramework($0) } + [.linkedFramework("CoreMotion", .when(platforms: [.iOS])), .linkedLibrary("z"), .linkedLibrary("bz2"), .linkedLibrary("iconv"), .linkedLibrary("c++"), .unsafeFlags(vendorLinkFlags)]
 )
 
 // Swift-generated Objective-C headers require C++ modules only in this thin bridge.

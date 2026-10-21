@@ -111,6 +111,29 @@ class CorePackageLayoutTests(unittest.TestCase):
                         self.assertTrue((base / source).is_file(), source)
 
 
+class NativeFrameworkTests(unittest.TestCase):
+    @unittest.skipUnless(shutil.which("xcrun") and shutil.which("swift"), "framework validation requires Xcode")
+    def test_frameworks_link_on_both_device_and_simulator_sdks(self):
+        with tempfile.TemporaryDirectory(prefix="core-frameworks-") as temporary:
+            source = Path(temporary) / "main.c"
+            source.write_text("int main(void) { return 0; }\n")
+            for core in ["PPSSPP", "emuThree", "Dolphin", "Azahar"]:
+                settings = [setting for target in dump_package(core)["targets"] for setting in target.get("settings", [])
+                            if setting["tool"] == "linker" and "linkedFramework" in setting["kind"]]
+                for sdk, platform, simulator in [("iphoneos", "ios", False), ("iphonesimulator", "ios", True),
+                                                  ("appletvos", "tvos", False), ("appletvsimulator", "tvos", True)]:
+                    with self.subTest(core=core, sdk=sdk):
+                        flags = []
+                        for setting in settings:
+                            if platform in setting.get("condition", {}).get("platformNames", [platform]):
+                                flags += ["-framework", setting["kind"]["linkedFramework"]["_0"]]
+                        sdk_path = subprocess.check_output(["xcrun", "--sdk", sdk, "--show-sdk-path"], text=True).strip()
+                        triple = f"arm64-apple-{platform}17.0" + ("-simulator" if simulator else "")
+                        result = subprocess.run(["xcrun", "clang", "-target", triple, "-isysroot", sdk_path,
+                                                 str(source), *flags, "-o", str(Path(temporary) / sdk)], text=True, capture_output=True)
+                        self.assertEqual(result.returncode, 0, result.stderr)
+
+
 class PPSSPPPackageTests(unittest.TestCase):
     def test_bridge_resources_and_swift_runtime_lookup(self):
         core = ROOT / "Cores/PPSSPP"

@@ -115,11 +115,13 @@ let dolphinLinkerFlags: [String] = [
 /// The Frameworks build phase of the PVDolphin target (macOS-only OpenGL.framework omitted).
 let dolphinSystemFrameworks: [String] = [
     "Security", "GLKit", "QuartzCore", "CoreGraphics", "Foundation", "SystemConfiguration",
-    "OpenGLES", "MetalKit", "Metal", "GameController", "CoreHaptics", "UIKit", "CoreAudioKit",
+    "OpenGLES", "MetalKit", "Metal", "GameController", "CoreHaptics", "UIKit",
     "CoreAudio", "AudioToolbox", "AVFoundation",
 ]
 
-let dolphinLinkerSettings: [LinkerSetting] = dolphinSystemFrameworks.map { LinkerSetting.linkedFramework($0) }
+let dolphinLinkerSettings: [LinkerSetting] = dolphinSystemFrameworks.map { LinkerSetting.linkedFramework($0) } + [
+    .linkedFramework("CoreAudioKit", .when(platforms: [.iOS]))
+]
     + [
         .linkedLibrary("c++"),
         .linkedLibrary("z"),

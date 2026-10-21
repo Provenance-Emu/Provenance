@@ -1703,7 +1703,6 @@ let frameworks = [
     "QuartzCore",
     "CoreHaptics",
     "AVFoundation",
-    "CoreAudioKit",
     "CoreAudio",
     "AudioToolbox",
     "MetalKit",
@@ -1713,10 +1712,11 @@ let frameworks = [
     "Metal",
     "Security",
     "OpenGLES",
-    "GameController",
-    "CoreMotion"
+    "GameController"
 ]
 let linkerSettings: [LinkerSetting] = frameworks.map { .linkedFramework($0) } + [
+    .linkedFramework("CoreAudioKit", .when(platforms: [.iOS])),
+    .linkedFramework("CoreMotion", .when(platforms: [.iOS])),
     .linkedLibrary("c++"), .linkedLibrary("z"), .linkedLibrary("bz2"), .linkedLibrary("sqlite3"), .linkedLibrary("iconv"), .unsafeFlags(imageFlags)
 ]
 let bridge = Target.target(name: "PVPPSSPPBridge", dependencies: shared + nativeDependencies + ["PPSSPPFFmpeg"], path: ".",
