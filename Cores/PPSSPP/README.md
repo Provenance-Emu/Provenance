@@ -20,8 +20,20 @@ existing dylib fallback.
 
 Build the shipping workspace normally, or run `make dev-ppsspp` for the focused
 iOS device app. To include that target during Tuist generation, set
-`TUIST_DEV_PPSSPP=1`. The existing FFmpeg archives under `cmake/ffmpeg` contain iOS
-and tvOS device slices; simulator linking requires matching simulator archives.
-No device archive should be relabeled or linked as a simulator library. Private
-header search priority keeps the app's newer FFmpeg frameworks from changing
-PPSSPP's legacy codec API/ABI.
+`TUIST_DEV_PPSSPP=1`. FFmpeg is provided by the checked-in
+`SwiftPM/FFmpeg/PPSSPPFFmpeg.xcframework`, with distinct arm64 iOS, tvOS,
+iOS Simulator and tvOS Simulator slices. Intel simulators are unsupported.
+Private header search priority keeps the app's newer FFmpeg frameworks from
+changing PPSSPP's legacy codec API/ABI.
+
+Rebuild the simulator slices and repack the device archives with
+`Scripts/cores/build_ppsspp_ffmpeg.sh` (Xcode required, `JOBS=4` by default).
+It uses the FFmpeg submodule's matching libavcodec 57 source and feature options,
+builds out of tree under `build/ppsspp-ffmpeg`, and leaves upstream source untouched.
+The original device archives under `cmake/ffmpeg` remain packaging inputs.
+No device archive is relabeled as a simulator library. `PV_PPSSPP_FFMPEG_BUILD`
+can select another build directory. The sources and LGPL license are available
+under `libretro_ppsspp/ffmpeg`; no codecs with additional licensing options are enabled.
+
+Validate the slice metadata and legacy API linkage with
+`python3 -m unittest Scripts.cores.tests.test_ppsspp_ffmpeg`.

@@ -412,3 +412,11 @@ args_hint = "<rom> [ui|azahar] [frames] [core id]"
 files = ["Scripts/dev/make_harness_rom.py"]
 needs = ["macos", "mise"]
 cli_only = true
+
+[jobs.ppsspp-ffmpeg]
+title = "Build PPSSPP legacy FFmpeg simulator slices"
+category = "Dev workspace"
+run = ["Scripts/cores/build_ppsspp_ffmpeg.sh"]
+files = ["Scripts/cores/tests/test_ppsspp_ffmpeg.py"]
+needs = ["macos"]
+cli_only = true

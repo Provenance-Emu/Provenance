@@ -1684,19 +1684,8 @@ let dependencies: [Package.Dependency] = modules.map { .package(path: "../../" +
     .package(url: "https://github.com/sindresorhus/Defaults.git", from: "9.0.2")
 ]
 let shared: [Target.Dependency] = modules.map { .product(name: $0, package: $0) }
-// Keep the existing platform-specific FFmpeg archives. Simulator builds require matching
-// simulator archives; device libraries are never substituted for a missing platform slice.
-let ffmpegRoot = root + "/cmake/ffmpeg/"
-let ffmpegFlags: [LinkerSetting] = [
-    .unsafeFlags(
-        ["-L", ffmpegRoot + "ios/universal/lib"] + ["avcodec", "avdevice", "avformat", "avutil", "swresample", "swscale"].map { "-l" + $0 + "PPSSPP" },
-        .when(platforms: [.iOS])
-    ),
-    .unsafeFlags(
-        ["-L", ffmpegRoot + "appletvos/lib"] + ["avcodec", "avdevice", "avformat", "avutil", "swresample", "swscale"].map { "-l" + $0 + "PPSSPPTV" },
-        .when(platforms: [.tvOS])
-    )
-]
+// SwiftPM selects the Mach-O platform slice, including arm64 Apple simulators.
+let ffmpeg = Target.binaryTarget(name: "PPSSPPFFmpeg", path: "SwiftPM/FFmpeg/PPSSPPFFmpeg.xcframework")
 // Keep shader compiler definitions local when Azahar, Dolphin and PPSSPP share an app.
 let imageFlags = [
     "-ObjC",
@@ -1729,8 +1718,8 @@ let frameworks = [
 ]
 let linkerSettings: [LinkerSetting] = frameworks.map { .linkedFramework($0) } + [
     .linkedLibrary("c++"), .linkedLibrary("z"), .linkedLibrary("bz2"), .linkedLibrary("sqlite3"), .linkedLibrary("iconv"), .unsafeFlags(imageFlags)
-] + ffmpegFlags
-let bridge = Target.target(name: "PVPPSSPPBridge", dependencies: shared + nativeDependencies, path: ".",
+]
+let bridge = Target.target(name: "PVPPSSPPBridge", dependencies: shared + nativeDependencies + ["PPSSPPFFmpeg"], path: ".",
                            exclude: exclusions(for: bridgeSources, resources: ["cmake/assets"]), sources: bridgeSources,
                            resources: [.copy("cmake/assets")], publicHeadersPath: "SwiftPM/Bridge/include",
                            cSettings: [.unsafeFlags(ffmpegHeaderFlags + nativeHeaders.flatMap { ["-I", root + "/" + $0] } + commonFlags)],
@@ -1741,4 +1730,4 @@ let core = Target.target(name: "PVPPSSPP", dependencies: shared + ["PVPPSSPPBrid
                          resources: [.process("PVPPSSPP/Core.plist")])
 let package = Package(name: "PVCorePPSSPP", platforms: [.iOS(.v17), .tvOS(.v17)],
                       products: [.library(name: "PVPPSSPP", targets: ["PVPPSSPP"]), .library(name: "PVPPSSPP-Dynamic", type: .dynamic, targets: ["PVPPSSPP"])],
-                      dependencies: dependencies, targets: nativeTargets + [bridge, core], swiftLanguageModes: [.v5], cLanguageStandard: .gnu11, cxxLanguageStandard: .gnucxx17)
+                      dependencies: dependencies, targets: nativeTargets + [ffmpeg, bridge, core], swiftLanguageModes: [.v5], cLanguageStandard: .gnu11, cxxLanguageStandard: .gnucxx17)

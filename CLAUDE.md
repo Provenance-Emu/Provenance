@@ -44,8 +44,9 @@ SwiftPM owns the bridge, wrapper, Core.plist, Config and Sys resource bundles.
 engine, its dependencies and the Swift/ObjC++ wrapper, and owns Core.plist and PSP
 assets. No CMake/Xcode project preparation is needed. `make dev-ppsspp` opts into
 the native focused iOS device app; Thin retains the independent libretro core.
-The existing FFmpeg archives support device SDKs; simulator builds need matching
-simulator archives.
+The checked-in FFmpeg XCFramework includes arm64 device and simulator slices for
+iOS and tvOS. Rebuild it with `Scripts/cores/build_ppsspp_ffmpeg.sh`; the legacy
+codec headers stay private to PPSSPP.
 
 Build from Xcode: open `Provenance.xcworkspace` and select a scheme. Start with `Provenance-Lite` (fastest build) before moving to `Provenance-Release` or `Provenance-XL (Release)`.
 

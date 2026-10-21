@@ -203,7 +203,7 @@ int main() {
     @unittest.skipUnless(shutil.which("swift"), "swift toolchain not installed")
     def test_native_engine_is_source_built(self):
         package = dump_package("PPSSPP")
-        self.assertFalse(any(target["type"] == "binary" for target in package["targets"]))
+        self.assertEqual([target["name"] for target in package["targets"] if target["type"] == "binary"], ["PPSSPPFFmpeg"])
         targets = {target["name"]: target for target in package["targets"]}
         sources = [source for target in package["targets"] for source in target.get("sources", [])]
         self.assertEqual(len(sources), len(set(sources)), "duplicate native archive members")
