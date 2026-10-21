@@ -31,9 +31,9 @@ struct WebServerBootstrapTask: BootstrapTask {
 
     /// Back-reference to the app delegate needed to call
     /// `setupWebServerNotifications()`.
-    private weak var delegate: PVAppDelegate?
+    private weak var delegate: PVApplicationServices?
 
-    init(delegate: PVAppDelegate) {
+    init(delegate: PVApplicationServices) {
         self.delegate = delegate
     }
 

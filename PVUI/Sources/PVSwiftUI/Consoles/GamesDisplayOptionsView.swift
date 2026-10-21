@@ -15,7 +15,6 @@ import Defaults
 import PVSettings
 import PVUIBase
 import PVCoreBridge
-import UIKit
 
 @available(iOS 14, tvOS 14, *)
 /// Context for the settings button to determine its behavior
@@ -28,6 +27,16 @@ enum SettingsContext {
 
 @available(iOS 14, tvOS 14, *)
 struct GamesDisplayOptionsView: SwiftUI.View {
+    #if !os(tvOS)
+    private struct CoreOptionsPresentation: Identifiable {
+        let id = UUID()
+        let coreClass: CoreOptional.Type
+        let title: String
+    }
+
+    @State private var coreOptionsPresentation: CoreOptionsPresentation?
+    #endif
+
     @ObservedObject private var themeManager = ThemeManager.shared
     @Default(.libraryGridColumnAdjustment) private var libraryGridColumnAdjustment
     @Default(.showGameTitles) private var showGameTitles
@@ -64,6 +73,9 @@ struct GamesDisplayOptionsView: SwiftUI.View {
 
     // Context for the settings button
     var settingsContext: SettingsContext = .home
+
+    /// Puts the display controls in one menu when the phone needs room for games.
+    var usesCompactMenu = false
 
     var toggleFilterAction: () -> Void
     var toggleSortAction: () -> Void
@@ -108,17 +120,74 @@ struct GamesDisplayOptionsView: SwiftUI.View {
     }
 
     var body: some SwiftUI.View {
-        HStack(spacing: spacing) {
-            // Display options menu (consolidated)
-            displayOptionsMenu
+        Group {
+            if usesCompactMenu {
+                compactOptionsMenu
+            } else {
+                HStack(spacing: spacing) {
+                    // Display options menu (consolidated)
+                    displayOptionsMenu
 
-            Spacer()
+                    Spacer()
 
-            // Core controls (kept separate as requested)
-            coreControlsGroup
+                    // Core controls (kept separate as requested)
+                    coreControlsGroup
+                }
+                .frame(maxWidth: .infinity, minHeight: stripMinHeight, maxHeight: stripMaxHeight)
+                .clipped() // Prevent overflow
+            }
         }
-        .frame(maxWidth: .infinity, minHeight: stripMinHeight, maxHeight: stripMaxHeight)
-        .clipped() // Prevent overflow
+        #if !os(tvOS)
+        .sheet(item: $coreOptionsPresentation, onDismiss: {
+            viewModel.inputOwnership.hasCoreOptionsPresentation = false
+        }) { presentation in
+            NavigationStack {
+                CoreOptionsDetailView(coreClass: presentation.coreClass, title: presentation.title, onClose: {
+                    coreOptionsPresentation = nil
+                })
+                .navigationBarTitleDisplayMode(.inline)
+                .toolbar {
+                    ToolbarItem(placement: .confirmationAction) {
+                        Button("Done") { coreOptionsPresentation = nil }
+                    }
+                }
+            }
+        }
+        #endif
+    }
+
+    private var compactOptionsMenu: some View {
+        Menu {
+            Button(action: toggleSortAction) {
+                Label(viewModel.sortGamesAscending ? "Sort Descending" : "Sort Ascending", systemImage: "arrow.up.arrow.down")
+            }
+            Button(action: toggleViewTypeAction) {
+                Label(viewModel.viewGamesAsGrid ? "Show List" : "Show Grid", systemImage: viewModel.viewGamesAsGrid ? "list.bullet" : "square.grid.2x2")
+            }
+            Button(action: zoomIn) {
+                Label("Larger Covers", systemImage: "plus.magnifyingglass")
+            }
+            .disabled(!canZoomIn)
+            Button(action: zoomOut) {
+                Label("Smaller Covers", systemImage: "minus.magnifyingglass")
+            }
+            .disabled(!canZoomOut)
+            Divider()
+            Menu {
+                displayOptionsToggleRows
+            } label: {
+                Label("Display Preferences", systemImage: "eye")
+            }
+            logStatusMenu
+        } label: {
+            Image(systemName: "slider.horizontal.3")
+                .font(.system(size: 17, weight: .medium))
+                .foregroundStyle(iconTint)
+                .shadow(color: iconTint.opacity(0.4), radius: 2)
+                .frame(width: 44, height: 44)
+                .contentShape(Rectangle())
+        }
+        .accessibilityLabel("Library Options")
     }
 
     // MARK: - View Components
@@ -402,14 +471,8 @@ struct GamesDisplayOptionsView: SwiftUI.View {
     /// Present core options for a specific core
     private func presentCoreOptions(for coreClass: CoreOptional.Type, title: String) {
         #if !os(tvOS)
-        // Find the nearest UIViewController to present from
-        if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
-           let rootVC = windowScene.windows.first?.rootViewController {
-            let coreOptionsView = CoreOptionsDetailView(coreClass: coreClass, title: title)
-            let hostingController = UIHostingController(rootView: coreOptionsView)
-            let navigationController = UINavigationController(rootViewController: hostingController)
-            rootVC.present(navigationController, animated: true)
-        }
+        viewModel.inputOwnership.hasCoreOptionsPresentation = true
+        coreOptionsPresentation = CoreOptionsPresentation(coreClass: coreClass, title: title)
         #endif
     }
 }

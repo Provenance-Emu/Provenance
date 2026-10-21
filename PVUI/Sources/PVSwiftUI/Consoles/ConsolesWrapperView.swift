@@ -37,10 +37,8 @@ class ConsolesWrapperViewDelegate: ObservableObject {
 
     @Published var selectedTab: String {
         didSet {
-            Task.detached(priority: .low) { [self] in
-                UserDefaults.standard.set(selectedTab, forKey: Self.tabKey)
-                DLOG("Tab saved to UserDefaults: \(selectedTab)")
-            }
+            guard selectedTab != oldValue else { return }
+            UserDefaults.standard.set(selectedTab, forKey: Self.tabKey)
         }
     }
 
@@ -249,8 +247,6 @@ struct ConsolesWrapperView: SwiftUI.View {
             iconLoadTask?.cancel()
             artworkPreloadTask?.cancel()
         }
-        .ignoresSafeArea(edges: .all)
-        .padding(.top, 14)
     }
 
     // MARK: - Helper Methods
@@ -456,7 +452,6 @@ struct ConsolesWrapperView: SwiftUI.View {
                         Label("Debug", systemImage: "bug")
                     }
                     .tag("debug")
-                    .ignoresSafeArea(.all, edges: .bottom)
                     .navigationTitle(Text("Debug"))
 
                 ScrollView {
@@ -472,7 +467,6 @@ struct ConsolesWrapperView: SwiftUI.View {
                     Label("Test", systemImage: "test")
                 }
                 .tag("test")
-                .ignoresSafeArea(.all, edges: .bottom)
             }
             HomeView(
                 gameLibrary: rootDelegate.gameLibrary!,
@@ -484,7 +478,6 @@ struct ConsolesWrapperView: SwiftUI.View {
                 Label("Home", systemImage: "house")
             }
             .tag("home")
-            .ignoresSafeArea(.all, edges: .bottom)
 
             consolesList
         }
