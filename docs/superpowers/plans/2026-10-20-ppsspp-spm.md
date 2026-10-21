@@ -41,8 +41,9 @@ Validation on 2026-10-20/21:
 - The framework contains the principal class, ObjC bridge and both render classes.
   Core.plist and all 158 shipped asset files match their sources, excluding the
   VCS/Finder metadata that Xcode intentionally omits. Native shader definitions
-  and the private MD5 helper are hidden from exports. Dynamic dependencies are
-  system runtimes/frameworks.
+  and the private MD5 helper are hidden from exports. The standalone library uses
+  system runtimes; shipping also uses Xcode's embedded package-product frameworks.
+  Every shipping rpath resolves inside the app, with no shared newer FFmpeg dependency.
 - Canonical Tuist generation succeeded. The generated native PPSSPP app links and
   embeds PVPPSSPP-Dynamic. Shipping/dev graph audit, manifest checks and root
   project plist lint passed.
