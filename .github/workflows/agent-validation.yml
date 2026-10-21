@@ -212,10 +212,9 @@ jobs:
             echo "pvlibrary=false" >> "$GITHUB_OUTPUT"
           fi
 
-          # PVCoreBridgeRetro's tests only build through its xcodeproj (SwiftPM
-          # can't build the package: mixed Swift/ObjC target), so they need the
-          # workspace and run in pvcorebridgeretro-test.
-          if printf '%s\n' "$FILES" | grep -q "^PVCoreBridgeRetro/"; then
+          # PVCoreBridgeRetro uses an Xcode package workspace for simulator tests,
+          # including ad-hoc signing of its embedded dynamic dependencies.
+          if printf '%s\n' "$FILES" | grep -Eq '^(PVCoreBridgeRetro/|\.github/workflows/agent-validation\.yml$)'; then
             echo "corebridgeretro=true" >> "$GITHUB_OUTPUT"
           else
             echo "corebridgeretro=false" >> "$GITHUB_OUTPUT"
@@ -376,10 +375,8 @@ jobs:
     if: needs.spm-changed.outputs.pvlibrary == 'true'
     uses: ./.github/workflows/pvlibrary-tests.yml
 
-  # Job 2d: PVCoreBridgeRetro tests (thin libretro wrapper). They run as the
-  # PVLibRetroTests target of PVCoreBridgeRetro.xcodeproj via the workspace's
-  # PVCoreBridgeRetro scheme, so this job needs smoke-build's workspace setup
-  # (see the comments there for why each submodule is listed).
+  # Job 2d: PVCoreBridgeRetro package tests (thin libretro wrapper).
+  # Use the package workspace so unrelated shipping cores need no native artifacts.
   pvcorebridgeretro-test:
     name: PVCoreBridgeRetro Tests (iOS Simulator)
     needs: spm-changed
@@ -396,53 +393,27 @@ jobs:
       - name: Select Xcode
         run: sudo xcode-select -s /Applications/Xcode_26.3.app
 
-      # Tuist generates one project for every enabled focused app, so the package graph
-      # also pulls in the Dev-UI / Dev-N64 core packages even for the coreless build.
-      # Keep this list in sync with dev-workspace.yml.
-      - name: Init required Core submodules (shallow)
-        run: |
-          git submodule update --init --depth 1 \
-            Cores/4DO \
-            Cores/Bliss \
-            Cores/CrabEMU \
-            Dependencies/HexColors \
-            Dependencies/SWCompression \
-            Cores/Mednafen/ThirdParty/libchdr \
-            PVRcheevos/rcheevos \
-            Cores/mGBA/Sources/libmGBA-embed/mgba \
-            Cores/Stella/Sources/libstella/stella \
-            Cores/snes9x/snes9x-src \
-            Cores/snes9x/libretro-snes9x \
-            Cores/FCEU/fceux \
-            Cores/Genesis-Plus-GX/Sources/libgenesisplus/Genesis-Plus-GX \
-            Cores/Mupen64Plus/Sources/Plugins/Core/Core \
-            Cores/Mupen64Plus/Sources/Plugins/Video/rice/rice \
-            Cores/Mupen64Plus/Sources/Plugins/rsp/hle \
-            Cores/Mupen64Plus/Sources/Plugins/rsp/cxd4
-
-          # ZipArchive: custom commit not available on public remote — clone public instead
-          if ! git submodule update --init --depth 1 Dependencies/ZipArchive 2>/dev/null; then
-            echo "ZipArchive shallow init failed (custom commit). Cloning public remote..."
-            rm -rf Dependencies/ZipArchive
-            git clone --depth 1 https://github.com/ZipArchive/ZipArchive.git Dependencies/ZipArchive
-          fi
+      - name: Init package source dependencies
+        run: git submodule update --init --depth 1 Dependencies/SWCompression PVRcheevos/rcheevos
 
       - name: Cache DerivedData
         uses: actions/cache@v4
         with:
-          path: ~/Library/Developer/Xcode/DerivedData
-          key: ${{ runner.os }}-pvcbr-deriveddata-${{ hashFiles('PVCoreBridgeRetro/**/project.pbxproj', '**/Package.swift', '**/Package.resolved') }}
+          path: ${{ runner.temp }}/pvcbr-package-deriveddata
+          key: ${{ runner.os }}-pvcbr-package-deriveddata-${{ hashFiles('PVCoreBridgeRetro/**/project.pbxproj', '**/Package.swift', '**/Package.resolved') }}
           restore-keys: |
-            ${{ runner.os }}-pvcbr-deriveddata-
-
-      - name: Prepare Azahar package binary
-        uses: ./.github/actions/prepare-azahar
-        with:
-          slice: ios-sim
+            ${{ runner.os }}-pvcbr-package-deriveddata-
 
       - name: Test PVCoreBridgeRetro
+        working-directory: PVCoreBridgeRetro
         run: |
           set -eo pipefail
+          ws=.swiftpm/xcode/package.xcworkspace
+          mkdir -p "$ws"
+          printf '%s\n' '<?xml version="1.0" encoding="UTF-8"?>' \
+            '<Workspace version = "1.0">' \
+            '   <FileRef location = "self:"></FileRef>' \
+            '</Workspace>' > "$ws/contents.xcworkspacedata"
           udid=$(xcrun simctl list devices available -j \
             | jq -r '[.devices | to_entries[] | select(.key | contains("SimRuntime.iOS-")) | .value[]
                 | select(.name | startswith("iPhone"))][0].udid')
@@ -450,29 +421,50 @@ jobs:
             echo "::error::No available iOS simulator"
             exit 1
           fi
-          # Ad-hoc signing, not CODE_SIGNING_ALLOWED=NO: the test bundle embeds
-          # the prebuilt MoltenVK.framework, and the simulator refuses to load
-          # it unsigned. "-" needs no certificate.
-          # Swift Testing reports as "✔/✘ Test …" and "Test run with N tests".
-          xcodebuild test \
-            -workspace Provenance.xcworkspace \
-            -scheme PVCoreBridgeRetro \
-            -destination "id=$udid" \
-            -skipPackagePluginValidation \
-            -skipMacroValidation \
-            CODE_SIGN_IDENTITY=- CODE_SIGN_STYLE=Manual DEVELOPMENT_TEAM= \
+          derived_data="$RUNNER_TEMP/pvcbr-package-deriveddata"
+          flags=(
+            -workspace "$ws"
+            -scheme PVCoreBridgeRetro-Package
+            -destination "id=$udid"
+            -derivedDataPath "$derived_data"
+            -skipPackagePluginValidation
+            -skipMacroValidation
+            CODE_SIGN_IDENTITY=- CODE_SIGN_STYLE=Manual DEVELOPMENT_TEAM=
+          )
+          if ! xcodebuild build-for-testing "${flags[@]}" > /tmp/pvcbr-build.log 2>&1; then
+            tail -80 /tmp/pvcbr-build.log
+            exit 1
+          fi
+          tail -8 /tmp/pvcbr-build.log
+          # Package binary targets are copied unsigned even when source targets use ad-hoc signing.
+          # Sign only processed build products, then avoid rebuilding/replacing them before the test.
+          signed=0
+          while IFS= read -r -d '' framework; do
+            codesign --force --sign - --timestamp=none "$framework"
+            codesign --verify --strict "$framework"
+            signed=$((signed + 1))
+          done < <(find "$derived_data/Build/Products" -type d -name MoltenVK.framework -print0)
+          if [ "$signed" -eq 0 ]; then
+            echo "::error::No processed MoltenVK framework found for simulator signing"
+            exit 1
+          fi
+          xcodebuild test-without-building "${flags[@]}" -collect-test-diagnostics never \
             2>&1 | tee /tmp/pvcbr-test.log | grep -E "(: (fatal )?error:|^Undefined symbols|Test Case .* failed|✘|Suite .* (passed|failed) after|Test run with|TEST (SUCCEEDED|FAILED))" | tail -200
 
       - name: Show PVCoreBridgeRetro test log tail
         if: failure()
-        run: tail -60 /tmp/pvcbr-test.log || true
+        run: |
+          tail -60 /tmp/pvcbr-build.log || true
+          tail -60 /tmp/pvcbr-test.log || true
 
       - name: Upload PVCoreBridgeRetro test log
         if: failure()
         uses: actions/upload-artifact@v4
         with:
           name: pvcbr-test-log
-          path: /tmp/pvcbr-test.log
+          path: |
+            /tmp/pvcbr-build.log
+            /tmp/pvcbr-test.log
           retention-days: 3
 
   # Job 3: Fast CI simulator build — validates that code compiles

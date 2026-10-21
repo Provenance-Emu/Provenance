@@ -1,5 +1,5 @@
 {
-  "originHash" : "0d731bb61597240d1f6ddebb2040881d453bf05a0945c965db16a85c3fb956b7",
+  "originHash" : "e25a3c2f1e51e577c04f9f624f46713fe30d7697a3a1629d3c5f9c7dad20b770",
   "pins" : [
     {
       "identity" : "bitbytedata",
@@ -35,6 +35,15 @@
       "state" : {
         "branch" : "1.2.5",
         "revision" : "ee2666a06aa1f6632d5060d1cf316520ed8aecbd"
+      }
+    },
+    {
+      "identity" : "pvsystems",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/Provenance-Emu/PVSystems.git",
+      "state" : {
+        "revision" : "da78a58c2125ebb629848e4ffc2b0ae7d6bd3b4a",
+        "version" : "1.0.0"
       }
     },
     {
@@ -88,15 +97,6 @@
       "state" : {
         "revision" : "2b59c0c741e9184ab057fd22950b491076d42e91",
         "version" : "603.0.0"
-      }
-    },
-    {
-      "identity" : "swiftgenplugin",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/Provenance-Emu/SwiftGenPlugin.git",
-      "state" : {
-        "revision" : "6c9745d44daf3b9db764433e4ea84c438796a714",
-        "version" : "1.1.3"
       }
     },
     {
