@@ -1,5 +1,5 @@
 //
-//  PVAppDelegate+MetricKit.swift
+//  PVApplicationServices+MetricKit.swift
 //  Provenance
 //
 //  Created by Claude on 2026-03-12.
@@ -20,7 +20,7 @@ import Sentry
 #if canImport(MetricKit) && !os(tvOS)
 import MetricKit
 
-extension PVAppDelegate: MXMetricManagerSubscriber {
+extension PVApplicationServices: MXMetricManagerSubscriber {
 
     /// Dedicated log channel for MetricKit diagnostics.
     /// File output goes to `Documents/Logs/metrickit.log` (Caches on tvOS).

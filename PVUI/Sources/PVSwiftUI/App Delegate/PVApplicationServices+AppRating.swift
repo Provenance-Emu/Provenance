@@ -1,5 +1,5 @@
 //
-//  PVAppDelegate+AppRating.swift
+//  PVApplicationServices+AppRating.swift
 //  Provenance
 //
 //  Created by Joseph Mattiello on 10/19/24.
@@ -10,7 +10,7 @@ import Foundation
 #if canImport(SiriusRating)
 import SiriusRating
 
-extension PVAppDelegate {
+extension PVApplicationServices {
     func _initAppRating() {
 #if DEBUG
     let debug = true
@@ -55,7 +55,7 @@ extension PVAppDelegate {
     }
 }
 #else
-extension PVAppDelegate {
+extension PVApplicationServices {
     func _initAppRating() {
     }
     

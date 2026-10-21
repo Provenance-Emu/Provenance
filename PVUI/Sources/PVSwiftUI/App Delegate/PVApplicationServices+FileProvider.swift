@@ -1,5 +1,5 @@
 //
-//  PVAppDelegate+FileProvider.swift
+//  PVApplicationServices+FileProvider.swift
 //  Provenance
 //
 //  Copyright © 2024 Provenance Emu. All rights reserved.
@@ -22,7 +22,7 @@ import FileProvider
 /// Domain registration helpers for the ROM File Provider extension.
 ///
 /// Call `PVFileProviderDomain.registerIfNeeded()` once at app launch
-/// (e.g. inside `PVAppDelegate.initializeAppComponents()`).
+/// (e.g. inside `PVApplicationServices.initializeAppComponents()`).
 public enum PVFileProviderDomain {
 
     /// Uniquely identifies this file provider domain to the system.
@@ -75,9 +75,9 @@ public enum PVFileProviderDomain {
 
 #endif // canImport(FileProvider) && platforms
 
-// MARK: - PVAppDelegate hook (unconditional — body guards with same #if)
+// MARK: - PVApplicationServices hook (unconditional — body guards with same #if)
 
-extension PVAppDelegate {
+extension PVApplicationServices {
     /// Call from `initializeAppComponents()` to register the file provider domain.
     /// Always defined so the call site never needs a `#if canImport(FileProvider)` guard.
     func registerFileProviderDomain() {

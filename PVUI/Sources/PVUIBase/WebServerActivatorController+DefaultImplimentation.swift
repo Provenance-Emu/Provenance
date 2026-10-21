@@ -6,21 +6,12 @@
 //  Copyright © 2018 Provenance. All rights reserved.
 //
 
-#if canImport(PVWebServer)
 import PVWebServer
-
-import PVLibrary
-import PVSupport
-import Reachability
-
-#if canImport(UIKit)
-import UIKit
-#endif
 
 // MARK: - Wiki / alert message (shared)
 
 /// Builds the standard “wiki + URLs” body used in Web Server Active alerts.
-enum PVWebServerAlertMessageBuilder {
+public enum PVWebServerAlertMessageBuilder {
     static func wikiMessage(http: String, dav: String) -> String {
         """
         Read about how to import ROMs on the Provenance wiki at:
@@ -33,12 +24,23 @@ enum PVWebServerAlertMessageBuilder {
         """
     }
 
-    static func wikiMessageFromManager() async -> String {
+    public static func wikiMessageFromManager() async -> String {
         let http = await PVWebServerManager.shared.serverURL?.absoluteString ?? "null"
         let dav = await PVWebServerManager.shared.webDAVURL?.absoluteString ?? "null"
         return wikiMessage(http: http, dav: dav)
     }
 }
+
+#if canImport(PVWebServer)
+import PVWebServer
+
+import PVLibrary
+import PVSupport
+import Reachability
+
+#if canImport(UIKit)
+import UIKit
+#endif
 
 #if os(iOS)
 import SafariServices

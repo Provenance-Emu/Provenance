@@ -262,12 +262,6 @@ public class AppState: ObservableObject {
     /// Task for observing changes to mainUIMode
     private var mainUIModeObservationTask: Task<Void, Never>?
 
-    /// Settings factory for creating settings view controllers
-    public var settingsFactory: PVSettingsViewControllerFactory?
-
-    /// Import options presenter for showing import UI
-    public var importOptionsPresenter: PVImportOptionsPresenter?
-
     /// Initializer
     private init() {
         ILOG("AppState: Initializing")

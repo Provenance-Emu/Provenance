@@ -1,5 +1,5 @@
 //
-//  PVAppDelegate+ExtensionTerminations.swift
+//  PVApplicationServices+ExtensionTerminations.swift
 //  PVUI
 //
 //  Copyright © 2026 Provenance Emu. All rights reserved.
@@ -30,7 +30,7 @@ import PVSupport
 import Sentry
 #endif
 
-extension PVAppDelegate {
+extension PVApplicationServices {
 
     /// Dedicated log channel for app-extension terminations.
     static let extensionTerminationLog: PVLogChannel = {
