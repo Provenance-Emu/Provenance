@@ -15,7 +15,7 @@
 
 #if canImport(PVAppIntents)
 import PVAppIntents
-import PVLibrarySnapshot
+import PVLibrarySnapshotLegacy
 import PVLibrary
 import PVFileSystem
 import PVSettings

@@ -1,5 +1,5 @@
 import XCTest
-import PVLibrarySnapshot
+import PVLibrarySnapshotLegacy
 @testable import PVQuickLookSupport
 
 final class SnapshotGamePreviewDataSourceTests: XCTestCase {

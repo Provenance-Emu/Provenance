@@ -1,6 +1,6 @@
 //
 //  LibrarySnapshotReader.swift
-//  PVLibrarySnapshot
+//  PVLibrarySnapshotLegacy
 //
 //  Copyright © 2026 Provenance Emu. All rights reserved.
 //

@@ -21,7 +21,7 @@ import Foundation
 // Re-exported so that host-app code importing PVAppIntents (e.g. PVUIBase's
 // `WidgetDataWriter+Realm`) sees the snapshot models and bounds without needing
 // a second import.
-@_exported import PVLibrarySnapshot
+@_exported import PVLibrarySnapshotLegacy
 
 #if canImport(WidgetKit)
 import WidgetKit
@@ -35,7 +35,7 @@ import TVServices
 
 /// Lightweight game info written by the main app and read by extensions.
 ///
-/// The canonical declaration lives in `PVLibrarySnapshot` so that extensions
+/// The canonical declaration lives in `PVLibrarySnapshotLegacy` so that extensions
 /// which cannot (or should not) link the whole of PVAppIntents still share one
 /// definition. This alias preserves the existing call sites.
 public typealias WidgetGameData = LibrarySnapshotGame
@@ -50,7 +50,7 @@ public enum WidgetPlayActivityTimestamp {
 }
 
 /// Now-playing track info written by Music Player (#2654) and read by extensions.
-/// Canonical declaration lives in `PVLibrarySnapshot`.
+/// Canonical declaration lives in `PVLibrarySnapshotLegacy`.
 public typealias WidgetNowPlayingData = LibrarySnapshotNowPlaying
 
 // MARK: - Writer

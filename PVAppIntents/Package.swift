@@ -22,8 +22,8 @@ let package = Package(
         /// Thumbnail, Widgets) can link it and read library data without
         /// opening Realm.
         .library(
-            name: "PVLibrarySnapshot",
-            targets: ["PVLibrarySnapshot"]
+            name: "PVLibrarySnapshotLegacy",
+            targets: ["PVLibrarySnapshotLegacy"]
         )
     ],
     dependencies: [
@@ -34,16 +34,16 @@ let package = Package(
     ],
     targets: [
         .target(
-            name: "PVLibrarySnapshot",
+            name: "PVLibrarySnapshotLegacy",
             dependencies: []
         ),
         .target(
             name: "PVAppIntents",
-            dependencies: ["PVLibrarySnapshot"]
+            dependencies: ["PVLibrarySnapshotLegacy"]
         ),
         .testTarget(
             name: "PVAppIntentsTests",
-            dependencies: ["PVAppIntents", "PVLibrarySnapshot"]
+            dependencies: ["PVAppIntents", "PVLibrarySnapshotLegacy"]
         )
     ],
     swiftLanguageModes: [.v5, .v6],

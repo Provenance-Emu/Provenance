@@ -11,7 +11,7 @@
 
 import Foundation
 import CryptoKit
-import PVLibrarySnapshot
+import PVLibrarySnapshotLegacy
 
 /// Resolves an artwork key to a local file URL or raw image data.
 ///

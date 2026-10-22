@@ -22,12 +22,12 @@ let package = Package(
         .target(
             name: "PVQuickLookSupport",
             dependencies: [
-                .product(name: "PVLibrarySnapshot", package: "PVAppIntents"),
+                .product(name: "PVLibrarySnapshotLegacy", package: "PVAppIntents"),
             ]
         ),
         .testTarget(
             name: "PVQuickLookSupportTests",
-            dependencies: ["PVQuickLookSupport", .product(name: "PVLibrarySnapshot", package: "PVAppIntents")]
+            dependencies: ["PVQuickLookSupport", .product(name: "PVLibrarySnapshotLegacy", package: "PVAppIntents")]
         ),
     ],
     swiftLanguageModes: [.v5],

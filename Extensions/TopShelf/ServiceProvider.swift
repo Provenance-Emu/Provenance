@@ -15,7 +15,7 @@
 //  `LibrarySnapshotReader` cannot trap: every failure path yields empty.
 //
 import Foundation
-import PVLibrarySnapshot
+import PVLibrarySnapshotLegacy
 import TVServices
 
 @objc(ServiceProvider)

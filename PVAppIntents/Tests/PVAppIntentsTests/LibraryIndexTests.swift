@@ -1,5 +1,5 @@
 import XCTest
-@testable import PVLibrarySnapshot
+@testable import PVLibrarySnapshotLegacy
 
 final class LibraryIndexTests: XCTestCase {
     private var container: URL!

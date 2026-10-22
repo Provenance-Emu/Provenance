@@ -9,7 +9,7 @@
 //
 
 import Foundation
-import PVLibrarySnapshot
+import PVLibrarySnapshotLegacy
 
 // MARK: - GamePreviewDataSource protocol
 

@@ -6,7 +6,7 @@
 //
 
 import XCTest
-@testable import PVLibrarySnapshot
+@testable import PVLibrarySnapshotLegacy
 
 /// Exercises the read side of the App Group snapshot against a scratch
 /// `UserDefaults` suite, so no App Group entitlement is required.
