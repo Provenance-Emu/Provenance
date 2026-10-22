@@ -123,7 +123,7 @@ import UIKit
         let source = ICubeContinuitySource(baseURLs: peer.baseURLs, identity: identity, expectedPeerID: id)
         sources[id] = source
         let catalogue = try await source.catalogue { _ in }
-        let realm = try Realm(configuration: RealmConfiguration.realmConfig)
+        let realm = try await Realm(configuration: RealmConfiguration.realmConfig)
         let playable = Set(realm.objects(PVSystem.self).filter { $0.cores.contains { !$0.disabled && $0.hasCoreClass } }.map(\.identifier))
         var offered: [String: RemoteLibraryItem] = [:]
         var fresh: [String: RemoteManifest] = [:]
