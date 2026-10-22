@@ -62,7 +62,8 @@ public struct SystemSkinSelectionView: View {
         self.system = system
         self.game = game
         _selectedOrientation = State(initialValue: preferredOrientation)
-        _selectedScope = State(initialValue: preferredScope ?? (game != nil ? .game : .system))
+        // System by default: a per-game or session pick is an explicit opt-in from the scope chips.
+        _selectedScope = State(initialValue: preferredScope ?? .system)
     }
 
     /// Whether this is a per-game skin selection
