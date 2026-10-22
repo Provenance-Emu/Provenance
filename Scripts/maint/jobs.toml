@@ -456,3 +456,10 @@ run = ["python3", "Scripts/cores/build_emuthree_vendors.py"]
 files = ["Scripts/cores/emuthree-vendors/**", "Scripts/cores/tests/test_emuthree_vendors.py"]
 needs = ["macos", "cmake", "ninja", "network"]
 cli_only = true
+
+[jobs.library-disc-identity-tests]
+title = "Read-only library disc identity tests"
+category = "Audits"
+run = ["python3", "Scripts/tests/test_library_disc_identity.py"]
+files = ["Scripts/tests/fixtures/library_disc_identity/**"]
+needs = ["macos"]

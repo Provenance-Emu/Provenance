@@ -105,6 +105,7 @@ typedef enum PVWSButton : NSInteger PVWSButton;
 
 // MARK: - Feature Protocols
 
+@protocol PVLibraryDiscIdentityReading;
 @protocol DiscSwappable;
 @protocol GameWithCheat;
 

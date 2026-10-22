@@ -7,6 +7,7 @@ module PVDolphinBridge {
     header "../../../PVDolphinCore/Core/PVDolphinCore.h"
     header "../../../PVDolphinCore/Core/PVDolphinCore+Audio.h"
     header "../../../PVDolphinCore/Core/PVDolphinCore+Controls.h"
+    header "../../../PVDolphinCore/Core/PVDolphinCore+LibraryIdentity.h"
     header "../../../PVDolphinCore/Core/PVDolphinCore+Netplay.h"
     header "../../../PVDolphinCore/Core/PVDolphinCore+RetroAchievements.h"
     header "../../../PVDolphinCore/Core/PVDolphinCore+Saves.h"
