@@ -1,0 +1,20 @@
+name = "provenance-cheat-proxy"
+main = "worker.js"
+compatibility_date = "2024-01-01"
+compatibility_flags = ["nodejs_compat"]
+
+# Cloudflare KV namespace for caching cheat results (24h TTL per title+system pair).
+# Create it with: wrangler kv:namespace create CHEAT_CACHE
+# Then replace the id below with the output from that command.
+[[kv_namespaces]]
+binding = "CHEAT_CACHE"
+id = "REPLACE_WITH_YOUR_KV_NAMESPACE_ID"
+
+[vars]
+# Optional: set ALLOWED_ORIGINS to restrict CORS if you deploy to a custom domain.
+# ALLOWED_ORIGINS = "https://provenance-emu.com"
+
+# Route configuration — update with your custom domain if applicable.
+# [[routes]]
+# pattern = "cheats.provenance-emu.com/*"
+# zone_name = "provenance-emu.com"
