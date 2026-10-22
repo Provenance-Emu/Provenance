@@ -76,11 +76,22 @@ void ApplyLayoutSettings(bool skin, bool singleArea, CGRect top, CGRect bottom, 
     UIView *gpuView = gpuController.isViewLoaded ? gpuController.view : nil;
     if (gpuView && gpuView.superview == host) { [host insertSubview:view aboveSubview:gpuView]; }
     else { [host addSubview:view]; [host sendSubviewToBack:view]; }
+    // Without skin frames the core lays both screens out in the whole view. On iOS keep that inside
+    // the safe area, or the top screen sits under the notch / Dynamic Island. tvOS keeps the full
+    // host: its safe area is the overscan margin and the user's layout option fills the TV.
+#if TARGET_OS_TV
+    NSLayoutYAxisAnchor *top = host.topAnchor, *bottom = host.bottomAnchor;
+    NSLayoutXAxisAnchor *leading = host.leadingAnchor, *trailing = host.trailingAnchor;
+#else
+    UILayoutGuide *safe = host.safeAreaLayoutGuide;
+    NSLayoutYAxisAnchor *top = safe.topAnchor, *bottom = safe.bottomAnchor;
+    NSLayoutXAxisAnchor *leading = safe.leadingAnchor, *trailing = safe.trailingAnchor;
+#endif
     _renderViewConstraints = @[
-        [view.topAnchor constraintEqualToAnchor:host.topAnchor],
-        [view.bottomAnchor constraintEqualToAnchor:host.bottomAnchor],
-        [view.leadingAnchor constraintEqualToAnchor:host.leadingAnchor],
-        [view.trailingAnchor constraintEqualToAnchor:host.trailingAnchor]];
+        [view.topAnchor constraintEqualToAnchor:top],
+        [view.bottomAnchor constraintEqualToAnchor:bottom],
+        [view.leadingAnchor constraintEqualToAnchor:leading],
+        [view.trailingAnchor constraintEqualToAnchor:trailing]];
     [NSLayoutConstraint activateConstraints:_renderViewConstraints];
     [host layoutIfNeeded];
 
