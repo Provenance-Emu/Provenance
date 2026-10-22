@@ -93,6 +93,7 @@ The app is split into ~26 `PV*` Swift Package frameworks. Key modules:
 - **PVLibrary** — Data models, Realm persistence, game database, CloudKit sync
 - **PVLogging** — Logging infrastructure (CocoaLumberjack-based)
 - **PVLookup** (separate repo, github.com/Provenance-Emu/PVLookup, shared with iFly and iCube) — game metadata, artwork and cheat lookup over libretrodb, OpenVGDB, TheGamesDB, ShiraGame and the libretro cheat database. Ships no database bytes (see "Lookup databases" below). Change it there, tag a release, then bump the pin in `Provenance.xcworkspace`'s `Package.resolved` by hand
+- **PVLibrarySnapshot** (separate repo, github.com/Provenance-Emu/PVLibrarySnapshot, shared with iCube and iFly) — the App Group snapshot and cover JPEGs the tvOS Top Shelf reads. Provenance's configuration (app group, `provenance://open?md5=` launch URL) is `PVLibrarySnapshotConfig` in PVAppIntents; PVUIBase `LibrarySnapshotWriter` (tvOS only for now) writes it from `WidgetDataWriter.writeFromRealm()`. Widgets and Quick Look still read `PVLibrarySnapshotLegacy` (`widget.*` keys), whose type names collide with the shared package's: no file may import both
 - **PVNetplay** — Central netplay support code for retroarch and game center
 - **PVPLlists** — Core and System plist processing and other serializer
 - **PVPatching** — ROM/disc patches (IPS, IPS32, BPS, UPS, PPF, xdelta3): import, matching, cache, Patch Applier, patch creation, online catalog

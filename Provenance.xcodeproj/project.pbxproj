@@ -670,7 +670,7 @@
 		BF7274B82A9B8A4C7CC1BD86 /* libc.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B3EF26EF2BE7F9690066D4B6 /* libc.tbd */; };
 		C0C0CA0100000001 /* Sentry in Frameworks */ = {isa = PBXBuildFile; productRef = C0C0CA0100000002 /* Sentry */; };
 		C0C0CA0100000003 /* Sentry in Frameworks */ = {isa = PBXBuildFile; productRef = C0C0CA0100000004 /* Sentry */; };
-		C0C0CAFE0000000000005001 /* PVLibrarySnapshotLegacy in Frameworks */ = {isa = PBXBuildFile; productRef = C0C0CAFE0000000000005002 /* PVLibrarySnapshotLegacy */; };
+		C0C0CAFE0000000000005001 /* PVLibrarySnapshotConfig in Frameworks */ = {isa = PBXBuildFile; productRef = C0C0CAFE0000000000005002 /* PVLibrarySnapshotConfig */; };
 		C0C0CAFE0000000000006001 /* QuickLookPreview.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = B3CC22000000000100000001 /* QuickLookPreview.appex */; platformFilters = (ios, maccatalyst, ); settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		C0C0CAFE0A2A000000000002 /* PVAzahar.framework in Embed Frameworks */ = {isa = PBXBuildFile; productRef = C0C0CAFE46CD31F1070A7385 /* PVAzahar-Dynamic */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		C0C0CAFE0A2A000000000003 /* PVAzahar.framework in Frameworks */ = {isa = PBXBuildFile; productRef = C0C0CAFE46CD31F1070A7385 /* PVAzahar-Dynamic */; };
@@ -2702,7 +2702,7 @@
 			files = (
 				B324C314219195E0009F4EDC /* TVServices.framework in Frameworks */,
 				B3AF705A21916F30000FA7F9 /* Foundation.framework in Frameworks */,
-				C0C0CAFE0000000000005001 /* PVLibrarySnapshotLegacy in Frameworks */,
+				C0C0CAFE0000000000005001 /* PVLibrarySnapshotConfig in Frameworks */,
 				B3BDD41A2D349220005F5AF9 /* (null) in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -4150,7 +4150,7 @@
 			);
 			name = TopShelf;
 			packageProductDependencies = (
-				C0C0CAFE0000000000005002 /* PVLibrarySnapshotLegacy */,
+				C0C0CAFE0000000000005002 /* PVLibrarySnapshotConfig */,
 			);
 			productName = TopShelf;
 			productReference = BE9FDCB71C210B9E0046DF0E /* TopShelf.appex */;
@@ -12435,10 +12435,10 @@
 			package = B34969562C4E64AD00D37F79 /* XCLocalSwiftPackageReference "PVThemes" */;
 			productName = PVThemes;
 		};
-		C0C0CAFE0000000000005002 /* PVLibrarySnapshotLegacy */ = {
+		C0C0CAFE0000000000005002 /* PVLibrarySnapshotConfig */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = B3CBD44F2F778106009327EB /* XCLocalSwiftPackageReference "PVAppIntents" */;
-			productName = PVLibrarySnapshotLegacy;
+			productName = PVLibrarySnapshotConfig;
 		};
 		C0C0DE0300000002 /* PVControllerDSU */ = {
 			isa = XCSwiftPackageProductDependency;

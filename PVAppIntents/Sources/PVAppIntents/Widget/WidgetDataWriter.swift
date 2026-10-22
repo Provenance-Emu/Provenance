@@ -27,10 +27,6 @@ import Foundation
 import WidgetKit
 #endif
 
-#if os(tvOS) && canImport(TVServices)
-import TVServices
-#endif
-
 // MARK: - Shared Data Models
 
 /// Lightweight game info written by the main app and read by extensions.
@@ -74,7 +70,7 @@ public final class WidgetDataWriter: Sendable {
     ///   - recentGames: Recently-played games, ordered most-recent first (up to 12).
     ///   - galleryGames: Games chosen for art gallery rotation (up to 12).
     ///   - favoriteGames: Favorite games sorted by title (up to 16 — covers systemExtraLarge 4×4 grid).
-    ///   - recentlyAddedGames: Games ordered by import date descending (up to 16). Top Shelf only.
+    ///   - recentlyAddedGames: Games ordered by import date descending (up to 16).
     ///   - totalCount: Total number of games in the library.
     ///   - systemCount: Number of distinct systems in the library.
     ///   - totalPlayTimeSeconds: Aggregate play time across all games.
@@ -165,18 +161,13 @@ public final class WidgetDataWriter: Sendable {
 
     // MARK: - Private
 
-    /// Tells snapshot consumers that the shared data changed.
-    ///
-    /// iOS: debounced `WidgetCenter.reloadAllTimelines()`.
-    /// tvOS: `TVTopShelfContentProvider.topShelfContentDidChange()` — without
-    /// this, Top Shelf keeps rendering the previous snapshot until the system
-    /// happens to re-query the provider.
+    /// Tells snapshot consumers that the shared data changed: a debounced
+    /// `WidgetCenter.reloadAllTimelines()` on iOS. Top Shelf reads the shared
+    /// PVLibrarySnapshot instead, and its writer (PVUIBase
+    /// `LibrarySnapshotWriter`) reloads it after saving.
     private func notifyExtensionsOfChange() {
 #if canImport(WidgetKit) && os(iOS)
         Task { await WidgetTimelineReloader.shared.requestReload() }
-#endif
-#if os(tvOS) && canImport(TVServices)
-        TVTopShelfContentProvider.topShelfContentDidChange()
 #endif
     }
 }
