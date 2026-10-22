@@ -414,3 +414,15 @@ args_hint = "<rom> [ui|azahar] [frames] [core id]"
 files = ["Scripts/dev/make_harness_rom.py"]
 needs = ["macos", "mise"]
 cli_only = true
+
+[jobs.import-queue-claim-tests]
+title = "Importer queue ownership tests"
+category = "Audits"
+run = ["python3", "Scripts/tests/test_import_queue_claim.py"]
+needs = ["macos"]
+
+[jobs.nearby-import-completion-tests]
+title = "Nearby import completion tests"
+category = "Audits"
+run = ["python3", "Scripts/tests/test_nearby_import_completion.py"]
+needs = ["macos"]
