@@ -9,6 +9,7 @@
 import Foundation
 import GameController
 import PVLogging
+import PVSupport
 
 // MARK: - Controller Notifications
 
@@ -51,6 +52,19 @@ public extension GCController {
     /// interception). `controllerPausedHandler` is set as fallback for legacy controllers.
     func setupPauseHandler(onPause: @escaping () -> Void) {
         let name = vendorName ?? "unknown"
+        #if canImport(UIKit)
+        /// Switch Online pads: the wrapper fires `controllerPausedHandler` from its own
+        /// trigger (Home, or Select + Start on the SNES pad). Their Start and Select are
+        /// game buttons, so neither `buttonOptions` nor `buttonMenu` may pause.
+        if let profileController = self as? PVPhysicalProfileController {
+            ILOG("setupPauseHandler[\(name)]: synthesized pad — pause on \(String(describing: profileController.pauseTrigger))")
+            controllerPausedHandler = { _ in
+                ILOG("setupPauseHandler[\(name)]: pad pause trigger fired — firing pause")
+                onPause()
+            }
+            return
+        }
+        #endif
         #if os(tvOS)
         var hasModernTrigger = false
 
@@ -135,6 +149,9 @@ public extension GCController {
 
     func clearPauseHandler() {
         controllerPausedHandler = nil
+        #if canImport(UIKit)
+        if self is PVPhysicalProfileController { return }
+        #endif
         #if os(tvOS)
         if let gamepad = extendedGamepad {
             gamepad.buttonOptions?.pressedChangedHandler = nil

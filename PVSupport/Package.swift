@@ -71,7 +71,8 @@ let package = Package(
 
         .testTarget(
             name: "PVSupportTests",
-            dependencies: ["PVSupport"]
+            dependencies: ["PVSupport"],
+            resources: [.copy("Fixtures")]
         )
     ],
     swiftLanguageModes: [.v5, .v6],
