@@ -463,3 +463,10 @@ category = "Audits"
 run = ["python3", "Scripts/tests/test_library_disc_identity.py"]
 files = ["Scripts/tests/fixtures/library_disc_identity/**"]
 needs = ["macos"]
+
+[jobs.library-metadata-identity-binding-tests]
+title = "Durable verified library metadata identity binding tests"
+category = "Audits"
+run = ["python3", "Scripts/tests/test_library_metadata_identity_binding.py"]
+files = ["PVLibrary/Sources/PVLibrary/Services/LibraryMetadata/LibraryMetadataIdentityBinding.swift", "PVLibrary/Tests/PVLibraryTests/LibraryMetadata/LibraryMetadataIdentityBindingTests.swift"]
+needs = ["macos", "network"]
