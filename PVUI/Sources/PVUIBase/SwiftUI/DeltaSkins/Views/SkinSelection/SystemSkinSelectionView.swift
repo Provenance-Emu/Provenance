@@ -1244,9 +1244,6 @@ struct SkinSelectionPreviewCell: View {
 
     // MARK: - Loading
 
-    /// Longest side of a stored preview, in points.
-    private static let thumbnailMaxPointSize: CGFloat = 256
-
     private var cacheKey: String {
         let traits = previewTraits
         return "\(skin.identifier)-\(traits.device.rawValue)-\(traits.displayType.rawValue)-\(traits.orientation.rawValue)"
@@ -1257,8 +1254,8 @@ struct SkinSelectionPreviewCell: View {
         let key = cacheKey
         loadFailed = false
 
-        // Fast path: use shared cache
-        if let cached = SkinPreviewThumbnailCache.shared.thumbnail(forKey: key), cached.hasVisibleContent {
+        // Fast path: use shared cache (anything stored is already the best available render)
+        if let cached = SkinPreviewThumbnailCache.shared.thumbnail(forKey: key) {
             thumbnailImage = cached
             isLoading = false
             return
@@ -1268,12 +1265,7 @@ struct SkinSelectionPreviewCell: View {
         isLoading = true
         let skin = self.skin
         let render = Task.detached(priority: .utility) { () throws -> UIImage in
-            if let thumbnail = try? await skin.thumbnail(for: traits, maxDimension: Self.thumbnailMaxPointSize),
-               thumbnail.hasVisibleContent {
-                return thumbnail
-            }
-            // Show a decoded render even when the coarse visibility sample misses thin artwork.
-            return try await skin.image(for: traits)
+            try await SkinPreviewThumbnailCache.preview(of: skin, traits: traits)
         }
         do {
             let thumbnail = try await withTaskCancellationHandler {
@@ -1283,9 +1275,7 @@ struct SkinSelectionPreviewCell: View {
             }
             // A superseded .task(id:) run must not overwrite the current orientation's state.
             try Task.checkCancellation()
-            if thumbnail.hasVisibleContent {
-                SkinPreviewThumbnailCache.shared.store(thumbnail, forKey: key)
-            }
+            SkinPreviewThumbnailCache.shared.store(thumbnail, forKey: key)
             thumbnailImage = thumbnail
             isLoading = false
         } catch is CancellationError {
