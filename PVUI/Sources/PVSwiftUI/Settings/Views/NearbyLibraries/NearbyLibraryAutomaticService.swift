@@ -20,6 +20,8 @@ import UIKit
     private(set) var state: AutomaticLibraryReceiver.State = .disabled
     private(set) var enabledPeerIDs: Set<String> = []
     private(set) var discoveryProblem: String?
+    /// Shared lifecycle invalidation for manual receives, independent of auto subscriptions.
+    @ObservationIgnored let manualEnvironmentDidChange = PassthroughSubject<Void, Never>()
     @ObservationIgnored private var restoredSubscriptions = false
     @ObservationIgnored private var active = true
     @ObservationIgnored private var emulating = false
@@ -88,12 +90,22 @@ import UIKit
         environmentChanged()
     }
 
+    var allowsManualDiscovery: Bool { canRun }
+
+    func canReceiveManually(from peerID: String) -> Bool { canRun && trustedIDs.contains(peerID) }
+
+    func peerWasRevoked(_ peerID: String) {
+        trustedIDs.remove(peerID)
+        environmentChanged()
+    }
+
     func sceneChanged(_ phase: ScenePhase) { active = phase == .active; environmentChanged() }
     func setEnabled(_ value: Bool, peerID: String) { receiver.setEnabled(value, for: peerID); environmentChanged() }
     func retry() { receiver.retry(); environmentChanged() }
     func stopAll() { for id in receiver.enabledPeerIDs { receiver.setEnabled(false, for: id) }; environmentChanged() }
 
     private func environmentChanged() {
+        manualEnvironmentDidChange.send()
         if canRun && !receiver.enabledPeerIDs.isEmpty {
             if browseTask == nil {
                 let stream = browser.snapshots()
@@ -145,7 +157,9 @@ import UIKit
     private func receive(_ id: String, entry: AutomaticLibraryReceiver.Entry) async throws {
         guard canRun, trustedIDs.contains(id), let source = sources[id],
               let item = items[id]?[entry.id], let manifest = manifests[id]?[entry.id] else { throw CancellationError() }
-        let receipt = try await NearbyLibraryReceiveService.receive(item, source: source, peerKey: "icube:" + id, staging: staging, manifest: manifest) { _ in }
+        let receipt = try await NearbyLibraryReceiveService.receive(item, source: source, peerKey: "icube:" + id, staging: staging, manifest: manifest, checkEligibility: { [weak self] in
+            guard let self, self.canRun, self.trustedIDs.contains(id), self.peers[id] != nil else { throw CancellationError() }
+        }) { _ in }
         try Task.checkCancellation()
         receipts[receiptKey(id, entry.id)] = receipt
         try FileManager.default.createDirectory(at: LibrarySharingService.supportFolder, withIntermediateDirectories: true)

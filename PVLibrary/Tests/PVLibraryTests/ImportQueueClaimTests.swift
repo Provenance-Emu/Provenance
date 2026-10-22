@@ -10,6 +10,18 @@ final class ImportQueueClaimTests: XCTestCase {
         XCTAssertFalse(claim.cancelPending())
     }
 
+    func testCancellationLatchedBeforeAdmissionRemainsVisibleUntilExplicitRetry() {
+        let claim = ImportQueueClaim()
+        XCTAssertTrue(claim.cancelPending())
+        XCTAssertTrue(claim.isCancelled)
+        claim.finish()
+        XCTAssertTrue(claim.isCancelled)
+        XCTAssertFalse(claim.claim())
+        claim.resetForRetry()
+        XCTAssertFalse(claim.isCancelled)
+        XCTAssertTrue(claim.claim())
+    }
+
     func testStartedImportCannotBeCancelledOrClaimedTwice() {
         let claim = ImportQueueClaim()
         XCTAssertTrue(claim.claim())

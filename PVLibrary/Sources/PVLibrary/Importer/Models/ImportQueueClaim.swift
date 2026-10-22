@@ -6,6 +6,13 @@ final class ImportQueueClaim: @unchecked Sendable {
     private let lock = NSLock()
     private var state: State = .pending
 
+    var isCancelled: Bool {
+        lock.withLock {
+            if case .cancelled = state { return true }
+            return false
+        }
+    }
+
     func claim() -> Bool {
         lock.withLock {
             guard case .pending = state else { return false }

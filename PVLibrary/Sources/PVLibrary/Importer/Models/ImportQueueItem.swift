@@ -175,6 +175,10 @@ public class ImportQueueItem: Identifiable, ObservableObject, Sendable {
     /// The database ID (e.g., PVGame.id) of the game once it has been successfully imported and created.
     public var gameDatabaseID: String? = nil
 
+    /// Verified external receives must compare ROM identity; a cached basename alone
+    /// cannot reject a distinct image before the collision-safe file mover runs.
+    public var requiresContentBasedDuplicateCheck = false
+
     //this is used when a single import has child items - e.g., m3u, cue, directory
     public var childQueueItems: [ImportQueueItem]
 
@@ -193,9 +197,15 @@ public class ImportQueueItem: Identifiable, ObservableObject, Sendable {
     /// A worker that has already claimed it keeps ownership and finishes.
     let processingClaim = ImportQueueClaim()
 
+    /// Latches cancellation synchronously, including before asynchronous queue admission.
+    /// A worker that already claimed the item retains ownership until completion.
+    public func cancelPendingProcessing() {
+        _ = processingClaim.cancelPending()
+    }
+
     @discardableResult
     func cancelBeforeProcessing() -> Bool {
-        guard processingClaim.cancelPending() else { return false }
+        guard processingClaim.cancelPending() || processingClaim.isCancelled else { return false }
         status = .failure(error: CancellationError())
         return true
     }

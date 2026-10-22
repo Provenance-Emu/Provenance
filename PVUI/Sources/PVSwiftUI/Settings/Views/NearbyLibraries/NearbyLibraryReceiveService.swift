@@ -74,39 +74,65 @@ struct NearbyLibraryReceipt: Codable, Sendable {
 
     static func receive(_ item: RemoteLibraryItem, source: ICubeContinuitySource, peerKey: String,
                         staging: LibraryStaging, manifest: RemoteManifest? = nil,
+                        checkEligibility: @escaping @MainActor @Sendable () throws -> Void = {},
                         progress: @escaping @Sendable (LibraryPullProgress) -> Void) async throws -> NearbyLibraryReceipt {
         try await LibraryReceiveSerialExecutor.shared.withPermit {
-            try await perform(item, source: source, peerKey: peerKey, staging: staging, manifest: manifest, progress: progress)
+            try await perform(item, source: source, peerKey: peerKey, staging: staging, manifest: manifest,
+                              checkEligibility: checkEligibility, progress: progress)
         }
     }
 
     private static func perform(_ item: RemoteLibraryItem, source: ICubeContinuitySource, peerKey: String,
                                 staging: LibraryStaging, manifest: RemoteManifest?,
+                                checkEligibility: @escaping @MainActor @Sendable () throws -> Void,
                                 progress: @escaping @Sendable (LibraryPullProgress) -> Void) async throws -> NearbyLibraryReceipt {
+        try Task.checkCancellation()
+        try checkEligibility()
         let fresh: RemoteManifest
-        if let manifest { fresh = manifest }
-        else { fresh = try await source.pullManifest(for: item) { progress(.preparing($0)) } }
+        if let manifest {
+            fresh = manifest
+        } else {
+            fresh = try await source.pullManifest(for: item) { progress(.preparing($0)) }
+        }
         guard fresh.itemId == item.id, fresh.gameFiles.count == 1,
               let system = item.systemIdentifier else { throw ReceiveError.unsupportedManifest }
         try Task.checkCancellation()
+        try checkEligibility()
         // An already registered identical image is a verified no-op, including after a restart.
         if let md5 = item.md5?.uppercased(),
-           let receipt = try await confirmedReceipt(gameID: md5, system: system, manifest: fresh) { return receipt }
+           let receipt = try await confirmedReceipt(gameID: md5, system: system, manifest: fresh) {
+            try checkEligibility()
+            return receipt
+        }
         let pulled = try await LibraryPuller(staging: staging, peerKey: peerKey).pull(item, from: source, manifest: fresh, progress: progress)
         try Task.checkCancellation()
+        try checkEligibility()
         guard !GameImporter.shared.isPausedForEmulation else { throw CancellationError() }
         let queued = ImportQueueItem(url: pulled.primaryFile)
         queued.userChosenSystem = system
-        await GameImporter.shared.addImport(queued)
-        let accepted = await GameImporter.shared.importQueue.contains { $0.id == queued.id }
-        if accepted {
-            // Install the observer before starting; a fast importer cannot race completion.
-            let completion = NearbyImportCompletion(item: queued)
-            GameImporter.shared.startProcessing()
-            try await completion.wait()
-        } else {
-            // addImport intentionally skips an existing registration. Never await an unqueued item.
-            try Task.checkCancellation()
+        queued.requiresContentBasedDuplicateCheck = true
+        let accepted = try await withTaskCancellationHandler {
+            await GameImporter.shared.addImport(queued)
+            var eligibilityError: Error?
+            do { try checkEligibility() } catch {
+                eligibilityError = error
+                queued.cancelPendingProcessing()
+                await GameImporter.shared.cancelPendingImports(withIDs: [queued.id])
+            }
+            let accepted = await GameImporter.shared.importQueue.contains { $0.id == queued.id }
+            if accepted {
+                // Even after cancellation, keep the lease until a claimed import terminates.
+                let completion = NearbyImportCompletion(item: queued)
+                GameImporter.shared.startProcessing()
+                try await completion.wait()
+            } else {
+                try Task.checkCancellation()
+            }
+            if let eligibilityError { throw eligibilityError }
+            return accepted
+        } onCancel: {
+            // No actor hop: a running worker must see this before it can claim a late admission.
+            queued.cancelPendingProcessing()
         }
         let computedMD5 = await queued.gameMD5Async()
         let identity = queued.gameDatabaseID ?? computedMD5?.uppercased()
@@ -115,6 +141,7 @@ struct NearbyLibraryReceipt: Codable, Sendable {
             throw accepted ? ReceiveError.incompleteImport : ReceiveError.importNotQueued
         }
         try Task.checkCancellation()
+        try checkEligibility()
         staging.markHandedOff(pulled.folder)
         return receipt
     }
@@ -154,6 +181,7 @@ struct NearbyLibraryReceipt: Codable, Sendable {
                 evaluate()
             }
         } onCancel: {
+            item.cancelPendingProcessing()
             Task { @MainActor in self.cancel() }
         }
     }

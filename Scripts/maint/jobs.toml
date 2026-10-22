@@ -429,6 +429,18 @@ category = "Audits"
 run = ["python3", "Scripts/tests/test_nearby_import_completion.py"]
 needs = ["macos"]
 
+[jobs.nearby-manual-lifecycle-tests]
+title = "Nearby manual receive lifecycle tests"
+category = "Audits"
+run = ["python3", "Scripts/tests/test_nearby_manual_lifecycle.py"]
+needs = ["macos"]
+
+[jobs.nearby-duplicate-admission-tests]
+title = "Nearby content-aware duplicate admission tests"
+category = "Audits"
+run = ["python3", "Scripts/tests/test_nearby_duplicate_admission.py"]
+needs = ["macos"]
+
 [jobs.ppsspp-ffmpeg]
 title = "Build PPSSPP legacy FFmpeg simulator slices"
 category = "Dev workspace"

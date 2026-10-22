@@ -176,7 +176,7 @@ public final class LibrarySharingService {
             loaded[peer.id] = await trust.grant(forPeerId: peer.id) ?? .askPerGame
         }
         grants = loaded
-        NearbyLibraryAutomaticService.shared.trustChanged(trustedPeers)
+        NearbyLibraryAutomaticService.shared.trustChanged(trustedPeers.filter { grants[$0.id] != .denied })
     }
 
     /// Persist outbound code pairing only after the host accepted its proof.
@@ -188,6 +188,7 @@ public final class LibrarySharingService {
     }
 
     func setGrant(_ grant: LibraryGrant, for peer: TrustedPeer) {
+        if grant == .denied { NearbyLibraryAutomaticService.shared.peerWasRevoked(peer.id) }
         Task {
             await trust.setGrant(grant, forPeerId: peer.id)
             if grant == .denied {
@@ -199,6 +200,7 @@ public final class LibrarySharingService {
     }
 
     func remove(_ peer: TrustedPeer) {
+        NearbyLibraryAutomaticService.shared.peerWasRevoked(peer.id)
         NearbyLibraryAutomaticService.shared.setEnabled(false, peerID: peer.id)
         Task {
             await trust.remove(peerId: peer.id)

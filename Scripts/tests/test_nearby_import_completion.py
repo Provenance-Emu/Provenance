@@ -10,6 +10,10 @@ service = (root / 'PVUI/Sources/PVSwiftUI/Settings/Views/NearbyLibraries/NearbyL
 bridge = service[service.index('@MainActor final class NearbyImportCompletion'):service.rindex('#endif')]
 receipt = service[service.index('struct NearbyLibraryReceipt'):service.index('/// Shares a physical transfer')]
 importer = (root / 'PVLibrary/Sources/PVLibrary/Importer/Services/GameImporter/GameImporter.swift').read_text()
+admission = service[service.index('        let queued = ImportQueueItem'):service.index('        let computedMD5')]
+claim = (root / 'PVLibrary/Sources/PVLibrary/Importer/Models/ImportQueueClaim.swift').read_text()
+item_source = (root / 'PVLibrary/Sources/PVLibrary/Importer/Models/ImportQueueItem.swift').read_text()
+item_claim = item_source[item_source.index('    let processingClaim ='):item_source.index('    /// Notify SwiftUI observers')]
 method = importer[importer.index('    func addImport(_ item: ImportQueueItem) {'):importer.index('    func addImports(_ items: [ImportQueueItem]) {')]
 stubs = '''import Foundation
 import Darwin
@@ -25,31 +29,120 @@ final class ImportQueueItem: ObservableObject, @unchecked Sendable {
     let url: URL
     var cachedContentMD5: String? = nil
     var status = Status.queued { didSet { objectWillChange.send() } }
-    init(_ path: String) { url = URL(fileURLWithPath: path) }
+    var requiresContentBasedDuplicateCheck = false
+    var userChosenSystem: String?
+    init(url: URL) { self.url = url }
+    convenience init(_ path: String) { self.init(url: URL(fileURLWithPath: path)) }
+''' + item_claim + '''
 }
 @MainActor final class GameImporter {
     static let shared = GameImporter()
     var owned: ImportQueueItem?
     var cleanupCount = 0
+    var barrier: AdmissionBarrier?
+    var workerClaims = 0
+    var suspendAfterInsertion = false
+    var importQueue: [ImportQueueItem] { get async { await queue.items() } }
+    let queue = ImportQueueActor()
+    func addImport(_ item: ImportQueueItem) async {
+        owned = item
+        if let barrier, !suspendAfterInsertion { await barrier.suspendAdmission() }
+        await queue.addImport(item)
+        if let barrier, suspendAfterInsertion { await barrier.suspendAdmission() }
+        // A running worker can take a queue snapshot before addImport returns.
+        if await queue.items().contains(where: { $0.id == item.id }), item.processingClaim.claim() {
+            workerClaims += 1
+            item.status = .success
+            item.processingClaim.finish()
+        }
+    }
+    func startProcessing() {}
     func cancelPendingImports(withIDs ids: Set<UUID>) async {
         cleanupCount += 1
-        if let owned, ids.contains(owned.id), case .queued = owned.status { owned.status = .failure(error: CancellationError()) }
+        if let owned, ids.contains(owned.id), case .queued = owned.status { _ = owned.cancelBeforeProcessing() }
     }
 }
 struct RemoteFile: Codable, Equatable, Sendable { var sha256: String }
 struct RemoteManifest { var gameFiles: [RemoteFile] }
 @MainActor enum NearbyLibraryReceiveService {
     enum ReceiveError: Error { case incompleteImport }
+    static func admit(_ url: URL) async throws {
+        let pulled = (primaryFile: url, ignored: false)
+        let system = "system"
+        let checkEligibility: @MainActor () throws -> Void = {}
+''' + admission + '''
+    }
     static var registration: [URL]?
     static func registeredFiles(gameID: String, system: String) -> [URL]? { registration }
 }
 actor ImportQueueActor {
     var queue: [ImportQueueItem] = []
     func count() -> Int { queue.count }
+    func items() -> [ImportQueueItem] { queue }
+'''
+barrier = '''
+actor AdmissionBarrier {
+    private var arrived = false
+    private var arrival: CheckedContinuation<Void, Never>?
+    private var release: CheckedContinuation<Void, Never>?
+    func suspendAdmission() async {
+        await withCheckedContinuation { continuation in
+            release = continuation
+            arrived = true
+            arrival?.resume(); arrival = nil
+        }
+    }
+    func waitForAdmission() async {
+        if arrived { return }
+        await withCheckedContinuation { arrival = $0 }
+    }
+    func resumeAdmission() { release?.resume(); release = nil }
+}
 '''
 tests = '''import XCTest
 @testable import NearbyImportHarness
 final class NearbyImportCompletionTests: XCTestCase {
+    @MainActor func testCancellationWhileAdmissionSuspendedPreventsRunningWorkerClaim() async {
+        let importer = GameImporter.shared
+        let barrier = AdmissionBarrier()
+        importer.barrier = barrier
+        importer.workerClaims = 0
+        defer { importer.barrier = nil }
+        let task = Task { try await NearbyLibraryReceiveService.admit(URL(fileURLWithPath: "/tmp/barrier.iso")) }
+        await barrier.waitForAdmission()
+        task.cancel()
+        await barrier.resumeAdmission()
+        do { try await task.value; XCTFail("cancelled admission succeeded") } catch { XCTAssertTrue(error is CancellationError) }
+        XCTAssertEqual(importer.workerClaims, 0, "a worker claimed the item after its owner cancelled during admission")
+    }
+    @MainActor func testCancellationAfterInsertionPreventsWorkerClaimAndRemovesPendingItem() async {
+        let importer = GameImporter.shared
+        let barrier = AdmissionBarrier()
+        importer.barrier = barrier
+        importer.suspendAfterInsertion = true
+        importer.workerClaims = 0
+        defer { importer.barrier = nil; importer.suspendAfterInsertion = false }
+        let task = Task { try await NearbyLibraryReceiveService.admit(URL(fileURLWithPath: "/tmp/inserted.iso")) }
+        await barrier.waitForAdmission()
+        task.cancel()
+        await barrier.resumeAdmission()
+        do { try await task.value; XCTFail("cancelled admission succeeded") } catch { XCTAssertTrue(error is CancellationError) }
+        XCTAssertEqual(importer.workerClaims, 0)
+        guard let item = importer.owned else { return XCTFail("no admission") }
+        if case .failure = item.status {} else { XCTFail("pending cancellation did not finish cleanup") }
+    }
+    func testCancelledItemIsRejectedByActualQueueAdmission() async {
+        let queue = ImportQueueActor()
+        let item = ImportQueueItem("/tmp/pre-cancelled.iso")
+        XCTAssertTrue(item.processingClaim.cancelPending())
+        await queue.addImport(item)
+        let count = await queue.count()
+        XCTAssertEqual(count, 0)
+    }
+    @MainActor func testVerifiedReceiveSelectsContentBasedAdmission() async throws {
+        try await NearbyLibraryReceiveService.admit(URL(fileURLWithPath: "/tmp/verified-content.iso"))
+        XCTAssertTrue(GameImporter.shared.owned?.requiresContentBasedDuplicateCheck == true)
+    }
     @MainActor func testActualSuccessWaitsForTerminal() async throws {
         let item = ImportQueueItem("/tmp/a")
         let helper = NearbyImportCompletion(item: item)
@@ -135,7 +228,7 @@ final class NearbyImportCompletionTests: XCTestCase {
 with tempfile.TemporaryDirectory(prefix='provenance-nearby-completion-') as name:
     package = Path(name)
     (package/'Sources').mkdir(); (package/'Tests').mkdir()
-    (package/'Sources/Bridge.swift').write_text(stubs + method + '}\n' + receipt + bridge)
+    (package/'Sources/Bridge.swift').write_text(claim + stubs + method + '}\n' + receipt + bridge + barrier)
     (package/'Tests/BridgeTests.swift').write_text(tests)
     (package/'Package.swift').write_text('''// swift-tools-version:5.9
 import PackageDescription

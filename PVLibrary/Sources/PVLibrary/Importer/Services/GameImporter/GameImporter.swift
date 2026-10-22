@@ -180,6 +180,7 @@ public actor ImportQueueActor {
     }
 
     func addImport(_ item: ImportQueueItem) {
+        guard !item.processingClaim.isCancelled else { return }
         // Check for duplicates before adding to prevent race conditions
         // This is especially important when DirectoryWatcher and extractAndImportArchive both try to add the same file
         let isDuplicate = queue.contains { existing in
@@ -4389,7 +4390,8 @@ public final class GameImporter: GameImporting, ObservableObject {
 
                 /// Check cache for game keys, but query Realm for actual file access to avoid thread issues
                 /// Extract primitive values from cached object before async operation
-                if let cachedGame = gamesCache[partialPath] ?? gamesCache[similarName] {
+                if !item.requiresContentBasedDuplicateCheck,
+                   let cachedGame = gamesCache[partialPath] ?? gamesCache[similarName] {
                     let cachedSystemId = cachedGame.systemIdentifier
                     let cachedGameId = cachedGame.id
 
