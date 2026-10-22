@@ -28,6 +28,14 @@ int main() {
     volume.revision.reset();
     assert(!PVLibraryIdentity::Read(volume)); // unreadable revision must not become zero
     volume.revision = 0;
+    volume.id = "------";
+    assert(!PVLibraryIdentity::Read(volume)); // actual DiscIO sanitized blank/zero ID
+    volume.id = "000000";
+    assert(!PVLibraryIdentity::Read(volume));
+    volume.id = "GTE-T1";
+    assert(!PVLibraryIdentity::Read(volume));
+    volume.id = "GNHE5d";
+    assert(PVLibraryIdentity::Read(volume)); // legitimate lowercase ID
     volume.id.clear();
     assert(!PVLibraryIdentity::Read(volume)); // missing/homebrew ID stays unresolved
     volume.id = "GTEST1";
@@ -40,6 +48,15 @@ int main() {
     volume.revision = 65535;
     auto wad = PVLibraryIdentity::Read(volume);
     assert(wad && wad->discNumber == 0 && wad->revision == 65535);
+    volume.revision = 0;
+    assert(PVLibraryIdentity::Read(volume));
+    volume.id = "0001000148414241";
+    assert(PVLibraryIdentity::Read(volume));
+    volume.id = "0000000000000000";
+    assert(!PVLibraryIdentity::Read(volume));
+    volume.id = "------";
+    assert(!PVLibraryIdentity::Read(volume));
+    volume.id = "GTEST1";
     volume.revision.reset();
     assert(!PVLibraryIdentity::Read(volume));
     volume.revision = 0;

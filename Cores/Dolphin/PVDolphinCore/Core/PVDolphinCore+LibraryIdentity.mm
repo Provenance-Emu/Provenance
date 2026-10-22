@@ -2,6 +2,7 @@
 #import "PVDolphinCore+LibraryIdentity.h"
 #include "LibraryDiscIdentity.h"
 #include "DiscIO/Volume.h"
+#include "DiscIO/Blob.h"
 #include <exception>
 
 namespace {
@@ -26,7 +27,11 @@ NSDictionary<NSString *, id> *UnresolvedIdentity(NSError **error) {
     }
     try {
         // unique_ptr closes the volume/reader on every return and exception path.
-        auto volume = DiscIO::CreateVolume(filePath);
+        auto reader = DiscIO::CreateBlobReader(filePath);
+        if (!reader || !PVLibraryIdentity::HasReadableIdentityBytes(*reader)) {
+            return UnresolvedIdentity(error);
+        }
+        auto volume = DiscIO::CreateVolume(std::move(reader));
         if (!volume) {
             return UnresolvedIdentity(error);
         }

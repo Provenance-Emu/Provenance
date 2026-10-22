@@ -47,7 +47,7 @@ def check_sdk(work, protocol):
         run("xcrun", "clang++", "-fsyntax-only", "-std=c++2b", "-fobjc-arc", "-fmodules", "-fcxx-modules",
             "-Werror=protocol", "-Werror=incomplete-implementation", "-DGLES_SILENCE_DEPRECATION=1",
             "-include", CORE / "DolphinCxxCompat.h", "-isysroot", sdk_path, "-target", target,
-            "-I", directory, "-I", DOLPHIN / "Source/Core", "-I", DOLPHIN / "Externals/fmt/fmt/include",
+            "-I", directory, "-isystem", DOLPHIN / "Source/Core", "-isystem", DOLPHIN / "Externals/fmt/fmt/include",
             CORE / "PVDolphinCore+LibraryIdentity.mm")
         bridge = directory / "PVDolphinBridge"
         bridge.mkdir()
@@ -66,9 +66,12 @@ parser.add_argument("--sdk-check", action="store_true", help="Also check actual 
 options = parser.parse_args()
 with tempfile.TemporaryDirectory(prefix="pv-library-identity-") as directory:
     work = Path(directory)
-    run("xcrun", "clang++", "-std=c++20", "-Wall", "-Wextra", "-Werror", "-I", CORE,
-        "-I", DOLPHIN / "Source/Core", FIXTURES / "validation.cpp", "-o", work / "validation")
+    run("xcrun", "clang++", "-std=c++2b", "-Wall", "-Wextra", "-Werror", "-I", CORE,
+        "-isystem", DOLPHIN / "Source/Core", "-isystem", DOLPHIN / "Externals/fmt/fmt/include", FIXTURES / "validation.cpp", "-o", work / "validation")
     run(work / "validation")
+    run("xcrun", "clang++", "-std=c++2b", "-Wall", "-Wextra", "-Werror", "-I", CORE,
+        "-isystem", DOLPHIN / "Source/Core", "-isystem", DOLPHIN / "Externals/fmt/fmt/include", FIXTURES / "container.cpp", "-o", work / "container")
+    run(work / "container", work)
     protocol = ROOT / "PVCoreBridge/Sources/PVCoreBridge/Features/LibraryDiscIdentityReading.swift"
     run("xcrun", "swiftc", "-emit-library", "-emit-module", "-module-name", "PVCoreBridge",
         "-emit-objc-header-path", work / "PVCoreBridge-Swift.h", protocol,
