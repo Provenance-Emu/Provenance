@@ -41,7 +41,12 @@ public struct VerifiedDiscIdentity: Sendable {
 /// IO failure or cancellation preserves the previously committed binding. Callers
 /// must invalidate before independently reassigning/deleting a collection entry;
 /// a failed bind does not authorize changing its associated file URL.
+/// Stat/traversal equality detects normal filesystem changes, including symlink
+/// replacement. It is not an atomic filesystem snapshot or cryptographic proof
+/// against malicious concurrent path-component substitution or stat rewriting.
 public actor LibraryMetadataIdentityBinding {
+    /// Receives a resolved URL pinned to the admitted traversal, rather than the
+    /// original potentially symlinked URL. It must read that supplied URL.
     public typealias Reader = @Sendable (URL) async throws -> VerifiedDiscIdentity?
     /// Must synchronously replace the whole file atomically, or throw without
     /// changing it. The default writer uses Foundation's atomic replacement.
@@ -52,6 +57,7 @@ public actor LibraryMetadataIdentityBinding {
     public static let maxRecords = 20_000
     private static let maxLocalIDBytes = 1024
     private static let maxPathBytes = 16 * 1024
+    private static let maxSymlinks = 40
 
     public enum BindingError: Error {
         case invalidInput, corruptPersistence, capacityExceeded
@@ -70,6 +76,10 @@ public actor LibraryMetadataIdentityBinding {
             var info = stat()
             guard url.isFileURL, !url.path.utf8.contains(0), stat(url.path, &info) == 0,
                   (info.st_mode & mode_t(S_IFMT)) == mode_t(S_IFREG), info.st_size >= 0 else { return nil }
+            return FileEvidence(info)
+        }
+
+        init(_ info: stat) {
             #if canImport(Darwin)
             let modified = info.st_mtimespec
             let changed = info.st_ctimespec
@@ -77,13 +87,106 @@ public actor LibraryMetadataIdentityBinding {
             let modified = info.st_mtim
             let changed = info.st_ctim
             #endif
-            return FileEvidence(device: UInt64(truncatingIfNeeded: info.st_dev), inode: UInt64(info.st_ino), size: Int64(info.st_size),
-                                modifiedSeconds: Int64(modified.tv_sec), modifiedNanoseconds: Int64(modified.tv_nsec),
-                                changedSeconds: Int64(changed.tv_sec), changedNanoseconds: Int64(changed.tv_nsec))
+            device = UInt64(truncatingIfNeeded: info.st_dev)
+            inode = UInt64(info.st_ino)
+            size = Int64(info.st_size)
+            modifiedSeconds = Int64(modified.tv_sec)
+            modifiedNanoseconds = Int64(modified.tv_nsec)
+            changedSeconds = Int64(changed.tv_sec)
+            changedNanoseconds = Int64(changed.tv_nsec)
         }
 
         var valid: Bool {
             size >= 0 && (0..<1_000_000_000).contains(modifiedNanoseconds) && (0..<1_000_000_000).contains(changedNanoseconds)
+        }
+    }
+
+    private struct SymlinkWitness: Codable, Equatable {
+        let path: String
+        let target: String
+        let evidence: FileEvidence
+    }
+
+    private struct TraversalEvidence: Codable, Equatable {
+        let resolvedPath: String
+        let symlinks: [SymlinkWitness]
+
+        init(resolvedPath: String, symlinks: [SymlinkWitness]) {
+            self.resolvedPath = resolvedPath
+            self.symlinks = symlinks
+        }
+
+        enum CodingKeys: String, CodingKey { case resolvedPath, symlinks }
+        init(from decoder: Decoder) throws {
+            let container = try decoder.container(keyedBy: CodingKeys.self)
+            resolvedPath = try container.decode(String.self, forKey: .resolvedPath)
+            var entries = try container.nestedUnkeyedContainer(forKey: .symlinks)
+            if let count = entries.count, count > LibraryMetadataIdentityBinding.maxSymlinks { throw BindingError.capacityExceeded }
+            var decoded: [SymlinkWitness] = []
+            while !entries.isAtEnd {
+                guard decoded.count < LibraryMetadataIdentityBinding.maxSymlinks else { throw BindingError.capacityExceeded }
+                decoded.append(try entries.decode(SymlinkWitness.self))
+            }
+            symlinks = decoded
+        }
+
+        var valid: Bool {
+            Self.validPath(resolvedPath) && symlinks.count <= LibraryMetadataIdentityBinding.maxSymlinks && symlinks.allSatisfy {
+                Self.validPath($0.path) && !$0.target.isEmpty && $0.target.utf8.count <= LibraryMetadataIdentityBinding.maxPathBytes &&
+                    !$0.target.utf8.contains(0) && $0.evidence.valid
+            }
+        }
+
+        private static func validPath(_ path: String) -> Bool { LibraryMetadataIdentityBinding.validPath(path) }
+    }
+
+    private struct PathSnapshot: Equatable {
+        let evidence: FileEvidence
+        let traversal: TraversalEvidence
+
+        /// Walk and expand symlinks ourselves so links inside another link's
+        /// destination are witnessed too. Ordinary directory timestamps are not
+        /// stored: sibling additions must not invalidate existing bindings.
+        static func read(_ original: URL) -> PathSnapshot? {
+            guard original.isFileURL, LibraryMetadataIdentityBinding.validPath(original.path) else { return nil }
+            var pending = original.path.split(separator: "/").map(String.init).reversed().map { $0 }
+            var resolved: [String] = []
+            var symlinks: [SymlinkWitness] = []
+            while let component = pending.popLast() {
+                if component == "." { continue }
+                if component == ".." {
+                    if !resolved.isEmpty { resolved.removeLast() }
+                    continue
+                }
+                let candidate = "/" + (resolved + [component]).joined(separator: "/")
+                guard LibraryMetadataIdentityBinding.validPath(candidate) else { return nil }
+                var info = stat()
+                guard lstat(candidate, &info) == 0 else { return nil }
+                let mode = info.st_mode & mode_t(S_IFMT)
+                if mode == mode_t(S_IFLNK) {
+                    guard symlinks.count < LibraryMetadataIdentityBinding.maxSymlinks else { return nil }
+                    var buffer = [CChar](repeating: 0, count: LibraryMetadataIdentityBinding.maxPathBytes + 1)
+                    let count = readlink(candidate, &buffer, buffer.count)
+                    guard count > 0, count <= LibraryMetadataIdentityBinding.maxPathBytes,
+                          let target = String(bytes: buffer.prefix(count).map({ UInt8(bitPattern: $0) }), encoding: .utf8),
+                          !target.utf8.contains(0) else { return nil }
+                    let witness = FileEvidence(info)
+                    var after = stat()
+                    guard lstat(candidate, &after) == 0, (after.st_mode & mode_t(S_IFMT)) == mode_t(S_IFLNK),
+                          witness == FileEvidence(after) else { return nil }
+                    symlinks.append(SymlinkWitness(path: candidate, target: target, evidence: witness))
+                    if target.hasPrefix("/") { resolved.removeAll(keepingCapacity: true) }
+                    pending.append(contentsOf: target.split(separator: "/").map(String.init).reversed())
+                    continue
+                }
+                resolved.append(component)
+                if pending.isEmpty {
+                    guard mode == mode_t(S_IFREG), info.st_size >= 0 else { return nil }
+                    return PathSnapshot(evidence: FileEvidence(info), traversal: TraversalEvidence(resolvedPath: candidate, symlinks: symlinks))
+                }
+                guard mode == mode_t(S_IFDIR) else { return nil }
+            }
+            return nil
         }
     }
 
@@ -93,6 +196,9 @@ public actor LibraryMetadataIdentityBinding {
         // Keep the original standardized path, not its resolved symlink target.
         let originalPath: String
         let evidence: FileEvidence
+        // Optional only for the earlier v1 records: without a traversal proof
+        // they remain pending and require a fresh explicit bind.
+        let traversal: TraversalEvidence?
 
         var identity: LibraryMetadataStore.Identity? {
             guard canonicalIdentity.utf8.count <= 128,
@@ -157,13 +263,18 @@ public actor LibraryMetadataIdentityBinding {
         guard fileURL.isFileURL else { throw BindingError.invalidInput }
         let url = fileURL.standardizedFileURL
         guard Self.validPath(url.path) else { throw BindingError.invalidInput }
-        guard let before = FileEvidence.read(url) else {
+        guard let before = PathSnapshot.read(url) else {
+            try remove(localGameID)
+            return nil
+        }
+        let readerURL = URL(fileURLWithPath: before.traversal.resolvedPath)
+        guard before.evidence == FileEvidence.read(readerURL) else {
             try remove(localGameID)
             return nil
         }
         let observed: VerifiedDiscIdentity?
         do {
-            observed = try await reader(url)
+            observed = try await reader(readerURL)
         } catch {
             try Task.checkCancellation()
             guard active[localGameID] == generation else { return nil }
@@ -172,12 +283,14 @@ public actor LibraryMetadataIdentityBinding {
         }
         try Task.checkCancellation()
         guard active[localGameID] == generation else { return nil }
-        guard let identity = observed?.canonical, before == FileEvidence.read(url) else {
+        guard let identity = observed?.canonical, before == PathSnapshot.read(url),
+              before.evidence == FileEvidence.read(URL(fileURLWithPath: before.traversal.resolvedPath)) else {
             try remove(localGameID)
             return nil
         }
         var next = records
-        next[localGameID] = Record(localGameID: localGameID, canonicalIdentity: identity.rawValue, originalPath: url.path, evidence: before)
+        next[localGameID] = Record(localGameID: localGameID, canonicalIdentity: identity.rawValue, originalPath: url.path,
+                                   evidence: before.evidence, traversal: before.traversal)
         try persist(next)
         return identity
     }
@@ -188,7 +301,8 @@ public actor LibraryMetadataIdentityBinding {
         try Task.checkCancellation()
         try load()
         guard active[localGameID] == nil, let record = records[localGameID] else { return nil }
-        guard record.evidence == FileEvidence.read(URL(fileURLWithPath: record.originalPath)) else {
+        guard let traversal = record.traversal, let current = PathSnapshot.read(URL(fileURLWithPath: record.originalPath)),
+              record.evidence == current.evidence, traversal == current.traversal else {
             try remove(localGameID)
             return nil
         }
@@ -233,7 +347,7 @@ public actor LibraryMetadataIdentityBinding {
         var decoded: [String: Record] = [:]
         for record in document.records {
             try Self.validate(record.localGameID)
-            guard Self.validPath(record.originalPath), record.evidence.valid, record.identity != nil,
+            guard Self.validPath(record.originalPath), record.evidence.valid, record.identity != nil, record.traversal?.valid != false,
                   decoded[record.localGameID] == nil else { throw BindingError.corruptPersistence }
             decoded[record.localGameID] = record
         }

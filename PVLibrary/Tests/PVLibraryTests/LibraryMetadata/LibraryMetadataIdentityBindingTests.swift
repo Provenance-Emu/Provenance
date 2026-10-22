@@ -4,6 +4,12 @@ import XCTest
 import PVLibraryMetadata
 @testable import PVLibrary
 
+private func physicalPath(_ url: URL) -> String {
+    guard let path = realpath(url.path, nil) else { return url.path }
+    defer { free(path) }
+    return String(cString: path)
+}
+
 private actor ReaderBarrier {
     private var arrived = false
     private var arrival: CheckedContinuation<Void, Never>?
@@ -81,7 +87,7 @@ final class LibraryMetadataIdentityBindingTests: XCTestCase {
             try Data("disc".utf8).write(to: url)
         }
         let binding = LibraryMetadataIdentityBinding(localPersistURL: persistence, reader: { url in
-            VerifiedDiscIdentity(gameID: url == first ? "GTEST1" : "GTEST2", discNumber: 0, revision: 0)
+            VerifiedDiscIdentity(gameID: url.path == physicalPath(first) ? "GTEST1" : "GTEST2", discNumber: 0, revision: 0)
         })
         let a = try await binding.bind(localGameID: "a", fileURL: first)
         let b = try await binding.bind(localGameID: "b", fileURL: second)
@@ -213,9 +219,10 @@ final class LibraryMetadataIdentityBindingTests: XCTestCase {
         for newerBind in [false, true] {
             let barrier = ReaderBarrier()
             let originalFile = file
+            let originalReaderPath = physicalPath(originalFile)
             let binding = LibraryMetadataIdentityBinding(localPersistURL: persistence, reader: { url in
-                if url == originalFile { await barrier.suspend() }
-                return VerifiedDiscIdentity(gameID: url == originalFile ? "GTEST1" : "GTEST2", discNumber: 0, revision: 0)
+                if url.path == originalReaderPath { await barrier.suspend() }
+                return VerifiedDiscIdentity(gameID: url.path == originalReaderPath ? "GTEST1" : "GTEST2", discNumber: 0, revision: 0)
             })
             let task = Task { try await binding.bind(localGameID: "local", fileURL: originalFile) }
             await barrier.wait()
@@ -249,7 +256,7 @@ final class LibraryMetadataIdentityBindingTests: XCTestCase {
         let value = try verified(1)
         let url = file
         let binding = LibraryMetadataIdentityBinding(localPersistURL: persistence, reader: { source in
-            if source == url { await barrier.suspend() }
+            if source.path == physicalPath(url) { await barrier.suspend() }
             return value
         })
         let task = Task { try await binding.bind(localGameID: "local", fileURL: url) }
@@ -282,5 +289,75 @@ final class LibraryMetadataIdentityBindingTests: XCTestCase {
             let identity = try await binding.identity(forLocalGameID: "local")
             XCTAssertNil(identity)
         }
+    }
+}
+
+extension LibraryMetadataIdentityBindingTests {
+    private func assertTransientRetargetCannotBindDifferentFile(ancestor: Bool) async throws {
+        let first = directory.appendingPathComponent("first", isDirectory: true)
+        let second = directory.appendingPathComponent("second", isDirectory: true)
+        for folder in [first, second] {
+            try FileManager.default.createDirectory(at: folder, withIntermediateDirectories: true)
+        }
+        let firstFile = first.appendingPathComponent("game.iso")
+        let secondFile = second.appendingPathComponent("game.iso")
+        try Data("GTEST1".utf8).write(to: firstFile)
+        try Data("GTEST2".utf8).write(to: secondFile)
+        let link = directory.appendingPathComponent(ancestor ? "linked-directory" : "linked-file.iso")
+        let firstTarget = ancestor ? first : firstFile
+        let secondTarget = ancestor ? second : secondFile
+        let originalURL = ancestor ? link.appendingPathComponent("game.iso") : link
+        try FileManager.default.createSymbolicLink(at: link, withDestinationURL: firstTarget)
+        let binding = LibraryMetadataIdentityBinding(localPersistURL: persistence, reader: { readerURL in
+            XCTAssertEqual(readerURL.path, physicalPath(firstFile), "reader must receive the admitted resolved first-file path")
+            try FileManager.default.removeItem(at: link)
+            try FileManager.default.createSymbolicLink(at: link, withDestinationURL: secondTarget)
+            let actualRead = try String(contentsOf: readerURL, encoding: .utf8)
+            try FileManager.default.removeItem(at: link)
+            try FileManager.default.createSymbolicLink(at: link, withDestinationURL: firstTarget)
+            return VerifiedDiscIdentity(gameID: actualRead, discNumber: 0, revision: 0)
+        })
+        let result = try await binding.bind(localGameID: "local", fileURL: originalURL)
+        let lookup = try await binding.identity(forLocalGameID: "local")
+        let restarted = service(nil)
+        let saved = try await restarted.identity(forLocalGameID: "local")
+        let correct = LibraryMetadataStore.Identity.game(gameID: "GTEST1", discNumber: 0, revision: 0)
+        XCTAssertEqual(try String(contentsOf: originalURL, encoding: .utf8), "GTEST1")
+        XCTAssertTrue(result == nil || result == correct, "must reject uncertainty or bind the pinned first file, never the second file")
+        XCTAssertEqual(lookup, result)
+        XCTAssertEqual(saved, result)
+    }
+    func testTransientFinalSymlinkRetargetCannotPublishWrongFile() async throws {
+        try await assertTransientRetargetCannotBindDifferentFile(ancestor: false)
+    }
+    func testTransientAncestorSymlinkRetargetCannotPublishWrongFile() async throws {
+        try await assertTransientRetargetCannotBindDifferentFile(ancestor: true)
+    }
+    func testLegacyBindingWithoutTraversalProofStaysPending() async throws {
+        let binding = service()
+        _ = try await binding.bind(localGameID: "local", fileURL: file)
+        var document = try XCTUnwrap(JSONSerialization.jsonObject(with: Data(contentsOf: persistence)) as? [String: Any])
+        var records = try XCTUnwrap(document["records"] as? [[String: Any]])
+        records[0].removeValue(forKey: "traversal")
+        document["records"] = records
+        try JSONSerialization.data(withJSONObject: document).write(to: persistence, options: .atomic)
+        let restarted = service(nil)
+        let lookup = try await restarted.identity(forLocalGameID: "local")
+        XCTAssertNil(lookup)
+        let rebound = try await restarted.bind(localGameID: "local", fileURL: file)
+        XCTAssertNil(rebound)
+        let explicit = service()
+        let verified = try await explicit.bind(localGameID: "local", fileURL: file)
+        XCTAssertNotNil(verified)
+    }
+    func testAddingSiblingROMDoesNotInvalidateUnchangedBinding() async throws {
+        let binding = service()
+        let original = try await binding.bind(localGameID: "local", fileURL: file)
+        try Data("new sibling ROM".utf8).write(to: directory.appendingPathComponent("sibling.iso"))
+        let lookup = try await binding.identity(forLocalGameID: "local")
+        let restarted = service(nil)
+        let saved = try await restarted.identity(forLocalGameID: "local")
+        XCTAssertNotNil(original)
+        XCTAssertEqual(lookup, original); XCTAssertEqual(saved, original)
     }
 }
