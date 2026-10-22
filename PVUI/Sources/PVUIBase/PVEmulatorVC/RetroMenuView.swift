@@ -2575,7 +2575,7 @@ struct RetroMenuView: View {
             }
 
             // Set current selection for both orientations - use centralized selection manager
-            let gameId = emulatorVC.game.md5Hash ?? emulatorVC.game.crc
+            let gameId = emulatorVC.game.id
 
             // Load portrait selection - use centralized selection manager
             let portraitSkinId: String?
@@ -2780,7 +2780,8 @@ struct RetroMenuView: View {
             return
         }
 
-        let gameId: String? = emulatorVC.game.md5Hash ?? emulatorVC.game.crc
+        // Launch resolves the skin by `PVGame.id` (like the tile menu's picker); an md5 key was only found on rotation.
+        let gameId: String? = emulatorVC.game.id.isEmpty ? nil : emulatorVC.game.id
         ILOG("skins: applySkinSelection called - skin: \(skinName), identifier: \(identifier ?? "nil"), orientation: \(orientation.rawValue), scope: \(scope.rawValue), systemId: \(systemId.rawValue), gameId: \(gameId ?? "nil")")
 
         do {
@@ -2899,7 +2900,7 @@ struct RetroMenuView: View {
             return
         }
 
-        let gameId = emulatorVC.game.md5Hash ?? emulatorVC.game.crc
+        let gameId = emulatorVC.game.id
 
         // Apply filter changes immediately
         applyFilterImmediately(selectedMetalFilter)
@@ -3047,7 +3048,7 @@ struct RetroMenuView: View {
                 // Update the session skin in DeltaSkinManager for the new orientation
                 DeltaSkinManager.shared.setSessionSkin(skinId, for: systemId, orientation: orientation)
 
-                let gameId = emulatorVC.game.md5Hash ?? emulatorVC.game.crc
+                let gameId = emulatorVC.game.id
                 DeltaSkinManager.shared.setSessionSkin(skinId, for: systemId, gameId: gameId, orientation: orientation)
 
                 // Apply the skin directly without changing preferences
@@ -3071,7 +3072,7 @@ struct RetroMenuView: View {
         #endif
 
         do {
-            let gameId = emulatorVC.game.md5Hash ?? emulatorVC.game.crc
+            let gameId = emulatorVC.game.id
 
             // Use centralized selection manager for effective skin lookup
             let skinId: String? = await MainActor.run {

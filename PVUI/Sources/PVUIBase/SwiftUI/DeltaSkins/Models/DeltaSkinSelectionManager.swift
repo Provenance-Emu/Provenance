@@ -74,6 +74,11 @@ public final class DeltaSkinSelectionManager: ObservableObject {
         case .system:
             // System scope: persist preference on main actor (safe — we are @MainActor)
             preferences.setSelectedSkin(skinIdentifier, for: systemId, orientation: orientation)
+            // A game preference outranks the system one, so an older per-game pick for the game
+            // being played would hide this pick on every launch. Clear that game's override.
+            if let gameId {
+                preferences.setSelectedSkin(nil, for: gameId, orientation: orientation)
+            }
             ILOG("skins: Set system preference: \(skinIdentifier ?? "nil") for system \(systemId.rawValue)")
         }
 

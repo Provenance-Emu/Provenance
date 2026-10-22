@@ -84,14 +84,10 @@ public struct SystemSkinSelectionView: View {
         return selectedScope
     }
 
-    /// Game ID used for writes/reads at the current scope.
+    /// Game ID passed with writes/reads at the current scope. System scope passes it too: a system
+    /// pick then clears that game's own override, which would otherwise outrank it.
     private var scopedGameId: String? {
-        switch effectiveScope {
-        case .system:
-            return nil
-        case .session, .game:
-            return gameId
-        }
+        gameId
     }
 
     /// System short code for skin catalog filter (e.g. "nes", "snes")
