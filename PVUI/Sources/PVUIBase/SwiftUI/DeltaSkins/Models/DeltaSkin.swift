@@ -242,6 +242,11 @@ public struct DeltaSkin: DeltaSkinProtocol {
         repCacheLock.withLock { repCache[key] }
     }
 
+    /// Called when skins are scanned, imported or deleted.
+    static func clearRepresentationCache() {
+        repCacheLock.withLock { repCache.removeAll() }
+    }
+
     private static func storeRepresentation(_ info: DeltaSkin.RepresentationInfo?, forKey key: String) {
         guard let info else { return }
         repCacheLock.withLock {
