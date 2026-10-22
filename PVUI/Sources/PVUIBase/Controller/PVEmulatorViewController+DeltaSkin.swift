@@ -358,6 +358,9 @@ extension PVEmulatorViewController {
         ILOG("🎮 SKIN: core running; re-applying dual-screen frames (overlay frames: \(overlayScreenFrames.count))")
         lastAppliedViewportFrame = nil   // the dropped attempt may have recorded the frame as applied
         applyDualScreenViewport()
+        // Back to front, so a device log shows whether anything opaque sits over the core's view.
+        let stack = view.subviews.map { "\(type(of: $0))\($0.isHidden ? "(hidden)" : "")=\($0.frame.integral)" }
+        ILOG("🎮 SKIN: view stack after start: \(stack.joined(separator: " | "))")
     }
 
     @objc private func handleThinCoreAVInfoForControllerVariant(_ notification: Notification) {
