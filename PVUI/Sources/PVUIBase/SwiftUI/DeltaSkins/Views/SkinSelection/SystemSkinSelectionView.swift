@@ -90,6 +90,18 @@ public struct SystemSkinSelectionView: View {
         gameId
     }
 
+    /// Other keys a game pick may be stored under (the classic menu used md5/crc; rotation reads them).
+    private var otherGameKeys: [String] {
+        guard let game else { return [] }
+        return [game.md5Hash, game.crc]
+    }
+
+    /// Stores a pick at the current scope.
+    private func storeSkin(_ identifier: String?, orientation: SkinOrientation) async {
+        await selectionManager.setSkin(identifier, for: system, gameId: scopedGameId, otherGameKeys: otherGameKeys,
+                                       orientation: orientation, scope: effectiveScope)
+    }
+
     /// System short code for skin catalog filter (e.g. "nes", "snes")
     private var catalogSystemFilter: String? {
         system.skinCatalogSystemCode
@@ -745,8 +757,8 @@ public struct SystemSkinSelectionView: View {
             Button {
                 // Select for both orientations
                 Task {
-                    await selectionManager.setSkin(skin.identifier, for: system, gameId: scopedGameId, orientation: .portrait, scope: effectiveScope)
-                    await selectionManager.setSkin(skin.identifier, for: system, gameId: scopedGameId, orientation: .landscape, scope: effectiveScope)
+                    await storeSkin(skin.identifier, orientation: .portrait)
+                    await storeSkin(skin.identifier, orientation: .landscape)
                     await MainActor.run {
                         self.selectedPortraitSkinId = skin.identifier
                         self.selectedLandscapeSkinId = skin.identifier
@@ -977,7 +989,7 @@ public struct SystemSkinSelectionView: View {
                             return DeltaSkinSelectionManager.builtInSkinPreferenceToken
                         }
                     }()
-                    await selectionManager.setSkin(stored, for: system, gameId: scopedGameId, orientation: orientation, scope: effectiveScope)
+                    await storeSkin(stored, orientation: orientation)
                 }
                 await MainActor.run {
                     let highlight = DeltaSkinSelectionManager.builtInSkinPreferenceToken
@@ -985,13 +997,7 @@ public struct SystemSkinSelectionView: View {
                     self.selectedLandscapeSkinId = highlight
                 }
             } else {
-                await selectionManager.setSkin(
-                    identifier,
-                    for: system,
-                    gameId: scopedGameId,
-                    orientation: selectedOrientation,
-                    scope: effectiveScope
-                )
+                await storeSkin(identifier, orientation: selectedOrientation)
 
                 // Update the appropriate state variable
                 await MainActor.run {
@@ -1018,13 +1024,7 @@ public struct SystemSkinSelectionView: View {
         // Check if the selected skin supports this orientation for the current device
         if !skinSupportsOrientation(selectedSkin, orientation: orientation) {
             // Selection doesn't support this orientation, clear it
-            await selectionManager.setSkin(
-                nil,
-                for: system,
-                gameId: scopedGameId,
-                orientation: orientation,
-                scope: effectiveScope
-            )
+            await storeSkin(nil, orientation: orientation)
 
             // Update UI state
             await MainActor.run {
@@ -1044,11 +1044,11 @@ public struct SystemSkinSelectionView: View {
 
                 // If we deleted a selected skin, reset the appropriate selection(s)
                 if selectedPortraitSkinId == skin.identifier {
-                    await selectionManager.setSkin(nil, for: system, gameId: scopedGameId, orientation: .portrait, scope: effectiveScope)
+                    await storeSkin(nil, orientation: .portrait)
                 }
 
                 if selectedLandscapeSkinId == skin.identifier {
-                    await selectionManager.setSkin(nil, for: system, gameId: scopedGameId, orientation: .landscape, scope: effectiveScope)
+                    await storeSkin(nil, orientation: .landscape)
                 }
 
                 // Reload skins

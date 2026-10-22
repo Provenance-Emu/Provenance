@@ -195,6 +195,19 @@ final class DeltaSkinSelectionManagerTests: XCTestCase {
         XCTAssertEqual(manager.effectiveSkinIdentifier(for: testSystem, gameId: testGameId, orientation: .portrait), "com.example.system-pick")
     }
 
+    /// The classic menu stored game picks under md5; rotation still reads that key.
+    func testSystemPickClearsTheGamesOverrideUnderItsOtherKeys() {
+        let manager = DeltaSkinSelectionManager.shared
+        defer { cleanupSelectionState() }
+
+        manager.setSkin("com.example.md5-game-pick", for: testSystem, gameId: testGameAltId, orientation: .portrait, scope: .game)
+        manager.setSkin("com.example.system-pick", for: testSystem, gameId: testGameId, otherGameKeys: [testGameAltId],
+                        orientation: .portrait, scope: .system)
+
+        XCTAssertEqual(manager.effectiveSkinIdentifier(for: testSystem, gameIds: [testGameId, testGameAltId], orientation: .portrait),
+                       "com.example.system-pick")
+    }
+
     func testSystemPickKeepsOtherGamesOverrides() {
         let manager = DeltaSkinSelectionManager.shared
         defer { cleanupSelectionState() }
