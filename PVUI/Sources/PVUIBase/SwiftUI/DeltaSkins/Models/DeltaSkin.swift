@@ -100,7 +100,8 @@ public struct DeltaSkin: DeltaSkinProtocol {
 
     public func supports(_ traits: DeltaSkinTraits) -> Bool {
         let result = representation(for: traits) != nil
-        ILOG("skins: supports() - device: \(traits.device.rawValue), displayType: \(traits.displayType.rawValue), orientation: \(traits.orientation.rawValue) -> \(result)")
+        // DLOG: SwiftUI bodies and every fallback check call this; ILOG ships in release builds.
+        DLOG("skins: supports() - device: \(traits.device.rawValue), displayType: \(traits.displayType.rawValue), orientation: \(traits.orientation.rawValue) -> \(result)")
         return result
     }
 
@@ -555,8 +556,9 @@ public struct DeltaSkin: DeltaSkinProtocol {
         for name in candidates {
             // Check cache first
             let cacheKey = "\(identifier)-\(traits.device.rawValue)-\(traits.displayType.rawValue)-\(traits.orientation.rawValue)-\(name)"
-            if let cachedImage = Self.imageCache.image(forKey: cacheKey), cachedImage.hasVisibleContent {
-                ILOG("skins: Found cached image: \(name)")
+            // Only renders with visible content are stored, so a hit needs no second full-size sample.
+            if let cachedImage = Self.imageCache.image(forKey: cacheKey) {
+                DLOG("skins: Found cached image: \(name)")
                 return cachedImage
             }
 
@@ -619,7 +621,7 @@ public struct DeltaSkin: DeltaSkinProtocol {
         // Fallback: try the original filename property (legacy behavior)
         let fallbackName = rep.assets.filename
         let fallbackCacheKey = "\(identifier)-\(traits.device.rawValue)-\(traits.displayType.rawValue)-\(traits.orientation.rawValue)-\(fallbackName)"
-        if let cachedImage = Self.imageCache.image(forKey: fallbackCacheKey), cachedImage.hasVisibleContent {
+        if let cachedImage = Self.imageCache.image(forKey: fallbackCacheKey) {
             return cachedImage
         }
 
