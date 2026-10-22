@@ -263,9 +263,7 @@ struct NearbyPeerLibraryView: View {
         #if os(iOS)
         .navigationBarTitleDisplayMode(.inline)
         #endif
-        .onAppear {
-            if model.phase == .idle { model.load() }
-        }
+        .onAppear { model.appear() }
         .onDisappear { model.cancel() }
         .settingsSubpageTracking()
     }

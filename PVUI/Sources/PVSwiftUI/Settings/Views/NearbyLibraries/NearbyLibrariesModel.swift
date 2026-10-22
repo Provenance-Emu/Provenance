@@ -402,8 +402,13 @@ final class NearbyPeerLibraryModel {
 
     // MARK: - Browse
 
-    func load() {
+    /// Reacquires discovery on every appearance, including cached non-idle catalogues.
+    func appear() {
         owner?.peerDidAppear(peer.id)
+        if phase == .idle { load() }
+    }
+
+    func load() {
         guard loadTask == nil else { return }
         phase = .loading(.connecting)
         loadTask = Task { [weak self] in

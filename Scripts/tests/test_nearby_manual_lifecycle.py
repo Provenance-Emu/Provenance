@@ -6,6 +6,29 @@ import tempfile
 root = Path(__file__).resolve().parents[2]
 model = (root / 'PVUI/Sources/PVSwiftUI/Settings/Views/NearbyLibraries/NearbyLibrariesModel.swift').read_text()
 copy = model[model.index('    func copy(_ item:'):model.index('    // MARK: - Art')]
+view = (root / 'PVUI/Sources/PVSwiftUI/Settings/Views/NearbyLibraries/NearbyLibrariesView.swift').read_text()
+peer_view = view[view.index('struct NearbyPeerLibraryView:'):]
+def callback_body(source, marker):
+    start = source.index(marker) + len(marker)
+    depth = 1
+    for end in range(start, len(source)):
+        if source[end] == '{':
+            depth += 1
+        elif source[end] == '}':
+            depth -= 1
+            if depth == 0:
+                return source[start:end]
+    raise ValueError(f"Unterminated callback: {marker}")
+
+view_appearance = callback_body(peer_view, '.onAppear {')
+view_disappearance = callback_body(peer_view, '.onDisappear {')
+browse = model[model.index('    func load()'):model.index('    private func runLoad()')]
+appearance_marker = '    func appear()'
+appearance = model[model.index(appearance_marker):model.index('    func load()')] if appearance_marker in model else ''
+owner_acquire = model[model.index('    func start()'):model.index('    private func startBrowsing()')]
+owner_release = model[model.index('    func stop()'):model.index('    private func stopBrowsing()')]
+appearance_view = '@MainActor struct PeerAppearanceHarness {\n    let model: ManualCopyHarness\n    func appear() {' + view_appearance + '\n    }\n    func disappear() {' + view_disappearance + '\n    }\n}\n'
+
 automatic = (root / 'PVUI/Sources/PVSwiftUI/Settings/Views/NearbyLibraries/NearbyLibraryAutomaticService.swift').read_text()
 can_run = automatic[automatic.index('    private var canRun:'):automatic.index('\n', automatic.index('    private var canRun:'))]
 manual_api = automatic[automatic.index('    func canReceiveManually'):automatic.index('    func setEnabled', automatic.index('    func canReceiveManually'))] if '    func canReceiveManually' in automatic else '''
@@ -43,8 +66,13 @@ struct Staging { func markHandedOff(_ url: URL) {} }
 @MainActor final class Owner {
     var staging = Staging()
     var discovered = true
-    func isDiscovered(_ peer: Peer) -> Bool { discovered }
-}
+    var discoveryLifetime = NearbyDiscoveryLifetime()
+    var browsing = true
+    init(initiallyBrowsing: Bool = true) { browsing = initiallyBrowsing; discovered = initiallyBrowsing }
+    func isDiscovered(_ peer: Peer) -> Bool { discovered && browsing }
+    func startBrowsing() { browsing = true; discovered = true }
+    func stopBrowsing() { browsing = false; discovered = false }
+''' + owner_acquire + owner_release + '''}
 struct Pulled { var skippedKinds: [String] = []; var gameFiles: [URL] = []; var folder = URL(fileURLWithPath: "/tmp") }
 struct LibraryPuller {
     init(staging: Staging, peerKey: String) {}
@@ -65,6 +93,7 @@ struct LibraryPuller {
     var booted = true
     let manualEnvironmentDidChange = PassthroughSubject<Void, Never>()
     func environmentChanged() { manualEnvironmentDidChange.send() }
+    var allowsManualDiscovery: Bool { canRun }
 ''' + can_run + '\n' + manual_api + '''}
 
 actor Barrier {
@@ -98,6 +127,12 @@ actor Barrier {
     var copyTasks: [String: Task<Void, Never>] = [:]
     var copyGenerations: [String: UUID] = [:]
     var receiveEnvironmentObservation: AnyCancellable?
+    enum Phase: Equatable { case idle, loading(LibraryBrowseProgress), loaded, confirmingCode, needsPairing }
+    var phase = Phase.idle
+    var loadTask: Task<Void, Never>?
+    var catalogueLoads = 0
+    func runLoad() async { catalogueLoads += 1; phase = .loaded }
+    func finishLoading() async { await loadTask?.value }
     init(owner: Owner) {
         self.owner = owner
 ''' + subscription + '''
@@ -125,6 +160,47 @@ final class ManualLifecycleTests: XCTestCase {
         await Task.yield()
         XCTAssertNil(model.copies[item.id], "invalidated manual receive published progress or completion")
         XCTAssertTrue(NearbyLibraryReceiveService.eligibilityRejected, "admission eligibility was not rechecked")
+    }
+    @MainActor func testReopeningCachedLoadedPeerReacquiresLeaseWithoutReloadingCatalogue() async {
+        let auto = NearbyLibraryAutomaticService.shared
+        auto.active = true; auto.trusted = true; auto.emulating = false
+        let barrier = Barrier()
+        NearbyLibraryReceiveService.barrier = barrier
+        let owner = Owner(initiallyBrowsing: false)
+        let model = ManualCopyHarness(owner: owner)
+        let view = PeerAppearanceHarness(model: model)
+
+        owner.start()
+        view.appear()
+        await model.finishLoading()
+        XCTAssertEqual(model.phase, .loaded)
+        XCTAssertEqual(model.catalogueLoads, 1)
+        owner.stop() // Initial parent → child navigation.
+        XCTAssertTrue(owner.browsing)
+
+        owner.start() // Back to the parent.
+        view.disappear()
+        XCTAssertTrue(owner.discoveryLifetime.peerIDs.isEmpty)
+        view.appear() // The same cached .loaded model appears again.
+        view.appear() // Repeated appearances must remain idempotent.
+        owner.stop() // Parent disappears while the cached child stays visible.
+        XCTAssertTrue(owner.browsing, "cached peer appearance did not reacquire discovery")
+        XCTAssertEqual(model.catalogueLoads, 1, "cached appearance must not reload the catalogue")
+
+        let item = RemoteLibraryItem(id: "reopened-game")
+        model.copy(item)
+        if let task = model.copyTasks[item.id] {
+            await barrier.wait()
+            await barrier.resume()
+            await task.value
+            XCTAssertEqual(model.copies[item.id], .completed)
+        } else {
+            XCTFail("manual copy from the reopened cached peer is ineligible")
+        }
+
+        view.disappear() // True exit; the parent is already absent.
+        XCTAssertTrue(owner.discoveryLifetime.peerIDs.isEmpty)
+        XCTAssertFalse(owner.browsing, "true peer exit leaked discovery ownership")
     }
     @MainActor func testSceneNotificationInvalidatesSynchronouslyBeforeAdmissionResumes() async {
         let auto = NearbyLibraryAutomaticService.shared
@@ -197,7 +273,7 @@ final class DiscoveryLifetimeTests: XCTestCase {
 with tempfile.TemporaryDirectory(prefix='provenance-nearby-manual-') as name:
     package = Path(name)
     (package/'Sources').mkdir(); (package/'Tests').mkdir()
-    (package/'Sources/Manual.swift').write_text(stubs + hook + copy + '}\n' + state + lifetime)
+    (package/'Sources/Manual.swift').write_text(stubs + hook + appearance + browse + copy + '}\n' + state + lifetime + appearance_view)
     (package/'Tests/ManualTests.swift').write_text(tests)
     (package/'Package.swift').write_text('''// swift-tools-version:5.9
 import PackageDescription
