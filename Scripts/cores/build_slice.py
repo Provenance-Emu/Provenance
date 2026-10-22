@@ -10,12 +10,17 @@ script), Dolphin's DOL_FULL_LTO / DOL_PGO / DOL_PGO_PROFILE and the PGO profile 
 `xcodebuild -version`, the slice SDK version and, for Azahar, the MoltenVK static slice it
 configures against. `--print-key` prints it (CI cache keys).
 
+Dolphin's submodule is also iCube's app repo, whose app code, docs and prebuilt build/ binaries
+change far more often than the engine. So Dolphin keys on the tree hashes of only the paths the
+PVlibDolphin CMake build reads (DOLPHIN_BUILD_PATHS) instead of its HEAD, and its uncommitted
+edits count only under those paths.
+
 Fast path: the full key scans every working tree in the core and its nested submodules for
 uncommitted edits, which took ~10 minutes on a cold disk (all I/O wait). So a normal run first
-compares the cheap inputs (core HEAD, the nested gitlinks that HEAD records, script, toolchain,
-Xcode, SDK, MoltenVK, Dolphin's flags) with what the last preparation of this checkout recorded
-(<cache>/<core>/<slice>/prepared-<checkout>.json). If they match and that cache entry still
-exists, it reuses it without scanning. `--strict` (or PV_CORE_STRICT=1) always scans: use it
+compares the cheap inputs (core HEAD or Dolphin's source trees, the nested gitlinks that HEAD
+records, script, toolchain, Xcode, SDK, MoltenVK, Dolphin's flags) with what the last
+preparation of this checkout recorded (<cache>/<core>/<slice>/prepared-<checkout>.json). If
+they match and that cache entry still exists, it reuses it without scanning. `--strict` (or PV_CORE_STRICT=1) always scans: use it
 after editing engine sources in place. `--force` and `--print-key` always scan too.
 
 Cache: $PV_CORE_CACHE or ~/Library/Caches/Provenance/cores, laid out as
@@ -75,6 +80,20 @@ SLICE_PLATFORMS: Dict[str, Tuple[str, Optional[str]]] = {
     "tvos-sim": ("tvos", "simulator"),
 }
 
+# Everything in dolphin-ios that BuildiOSXCFramework.py's CMake build of PVlibDolphin reads.
+# Source/CMakeLists.txt adds only Core and, for IOS, iOS/Library; every nested submodule lives
+# under Externals, so its gitlinks are in that tree; Core generates AchievementApprovedHash.h
+# from ApprovedInis.json. The builder script, toolchain and PGO profile are hashed on their own.
+DOLPHIN_BUILD_PATHS: Tuple[str, ...] = (
+    "CMakeLists.txt",
+    "CMake",
+    "Externals",
+    "Source/CMakeLists.txt",
+    "Source/Core",
+    "Source/iOS/Library",
+    "Data/Sys/ApprovedInis.json",
+)
+
 Runner = Callable[[List[str], Optional[Path]], str]
 Builder = Callable[["CoreSpec", str], None]
 
@@ -89,6 +108,7 @@ class CoreSpec:
     legacy_dir: Path
     env_flags: Tuple[str, ...]
     moltenvk: Optional[Path]
+    build_paths: Tuple[str, ...] = ()  # empty: the whole submodule is a build input
 
 
 def core_specs(repo: Path) -> Dict[str, CoreSpec]:
@@ -112,6 +132,7 @@ def core_specs(repo: Path) -> Dict[str, CoreSpec]:
             legacy_dir=repo / "Cores/Dolphin/dolphin-ios/build/xcframework",
             env_flags=("DOL_FULL_LTO", "DOL_PGO", "DOL_PGO_PROFILE"),
             moltenvk=None,
+            build_paths=DOLPHIN_BUILD_PATHS,
         ),
     }
 
@@ -159,32 +180,35 @@ def dolphin_pgo(spec: CoreSpec, env: Mapping[str, str]) -> Tuple[str, Optional[P
     return mode, (Path(explicit) if explicit else None)
 
 
-def affects_build(path: str) -> bool:
-    """False for documentation: a repo's top-level docs/ and any Markdown file.
+def affects_build(path: str, build_paths: Tuple[str, ...] = ()) -> bool:
+    """False for documentation (a repo's top-level docs/ and any Markdown file) and, when
+    build_paths is given, for anything outside those paths.
 
     Uncommitted edits there cannot change a built slice, but they used to bust the key: an
     untracked docs/superpowers/baselines/ folder in dolphin-ios forced a Dolphin rebuild and
-    relink. Committed changes still count through the submodule commit.
+    relink. Committed changes still count through the submodule commit or source trees.
     """
     path = path.strip('"')
-    return not (path.startswith("docs/") or path.lower().endswith(".md"))
+    if path.startswith("docs/") or path.lower().endswith(".md"):
+        return False
+    return not build_paths or any(path == p or path.startswith(p + "/") for p in build_paths)
 
 
-def build_relevant_porcelain(porcelain: str) -> str:
+def build_relevant_porcelain(porcelain: str, build_paths: Tuple[str, ...] = ()) -> str:
     kept = []
     for line in porcelain.splitlines():
-        path = line[3:].split(" -> ")[-1]  # renames list "old -> new"
-        if affects_build(path):
+        paths = line[3:].split(" -> ")  # renames list "old -> new"
+        if any(affects_build(path, build_paths) for path in paths):
             kept.append(line)
     return "\n".join(kept)
 
 
-def build_relevant_diff(diff: str) -> str:
+def build_relevant_diff(diff: str, build_paths: Tuple[str, ...] = ()) -> str:
     blocks = re.split(r"(?m)^(?=diff --git )", diff)
     kept = []
     for block in blocks:
-        match = re.match(r"diff --git a/(\S+) b/", block)
-        if match is None or affects_build(match.group(1)):
+        match = re.match(r"diff --git a/(\S+) b/(\S+)", block)
+        if match is None or any(affects_build(path, build_paths) for path in match.groups()):
             kept.append(block)
     return "".join(kept)
 
@@ -200,10 +224,15 @@ def worktree_state(spec: CoreSpec, runner: Runner) -> str:
             repos.append(spec.submodule / parts[1])
     digest = hashlib.sha256()
     for repo in repos:
+        # Nested repos sit under the build paths, so only the core repo itself is narrowed. The
+        # pathspec keeps git from scanning (and diffing whole rewritten dylibs in) the rest.
+        build_paths = spec.build_paths if repo == spec.submodule else ()
+        pathspec = ["--", *build_paths] if build_paths else []
         porcelain = build_relevant_porcelain(runner(
             ["git", "-C", str(repo), "status", "--porcelain=v1", "--untracked-files=all",
-             "--ignore-submodules=none"], None))
-        diff = build_relevant_diff(runner(["git", "-C", str(repo), "diff", "HEAD", "--binary"], None))
+             "--ignore-submodules=none", *pathspec], None), build_paths)
+        diff = build_relevant_diff(runner(
+            ["git", "-C", str(repo), "diff", "HEAD", "--binary", *pathspec], None), build_paths)
         if not porcelain and not diff:
             continue  # clean (or not checked out): contributes nothing, so init state doesn't matter
         rel = repo.relative_to(spec.submodule)
@@ -217,18 +246,34 @@ def worktree_state(spec: CoreSpec, runner: Runner) -> str:
     return digest.hexdigest()
 
 
+def source_trees(spec: CoreSpec, runner: Runner) -> str:
+    """'<path> <object id>' for each build path in the core's HEAD (object reads, no worktree stat)."""
+    revs = [f"HEAD:{path}" for path in spec.build_paths]
+    try:
+        ids = runner(["git", "-C", str(spec.submodule), "rev-parse", *revs], None).splitlines()
+    except subprocess.CalledProcessError as error:
+        raise SystemExit(f"build_slice: {spec.submodule} HEAD lacks one of {', '.join(spec.build_paths)}; "
+                         f"update the {spec.name} build paths in build_slice.py ({error})")
+    if len(ids) != len(revs):
+        raise SystemExit(f"build_slice: expected {len(revs)} object ids from git rev-parse, got {len(ids)}")
+    return "\n".join(f"{path} {oid}" for path, oid in zip(spec.build_paths, ids))
+
+
 def cheap_inputs(spec: CoreSpec, slice_name: str, runner: Runner, env: Mapping[str, str]) -> Dict[str, str]:
     """Key inputs that need no working-tree scan: a few file hashes and git object reads."""
     sl = SLICES[slice_name]
     inputs = {
         "core": spec.name,
         "slice": slice_name,
-        "submodule_head": runner(["git", "-C", str(spec.submodule), "rev-parse", "HEAD"], None),
         "script": file_hash(spec.script),
         "toolchain": file_hash(spec.toolchain),
         "xcode": runner(["xcodebuild", "-version"], None),
         "sdk": runner(["xcrun", "--sdk", sl["sdk"], "--show-sdk-version"], None),
     }
+    if spec.build_paths:
+        inputs["source_trees"] = source_trees(spec, runner)
+    else:
+        inputs["submodule_head"] = runner(["git", "-C", str(spec.submodule), "rev-parse", "HEAD"], None)
     if spec.name == "dolphin":
         inputs["env:DOL_FULL_LTO"] = "1" if env.get("DOL_FULL_LTO") == "1" else ""
         mode, profile = dolphin_pgo(spec, env)

@@ -29,12 +29,16 @@ class FakeRunner:
     def __init__(self, head="aaaa", status=" bbbb externals/x (v1)\n-cccc externals/y", xcode="Xcode 26.3\nBuild version 17C1", sdk="26.2"):
         self.head, self.status, self.xcode, self.sdk = head, status, xcode, sdk
         self.dirty = {}  # repo path -> (porcelain, diff)
+        self.trees = {}  # path in HEAD -> object id (default "tree-<path>")
         self.tree = "160000 commit bbbb\texternals/x\n100644 blob dddd\tsrc/main.cpp"
         self.scans = 0  # working-tree scans (git status --porcelain)
 
     def __call__(self, cmd, cwd=None):
         if cmd[-2:] == ["rev-parse", "HEAD"]:
             return self.head
+        if "rev-parse" in cmd:
+            paths = [arg[len("HEAD:"):] for arg in cmd if arg.startswith("HEAD:")]
+            return "\n".join(self.trees.get(path, f"tree-{path}") for path in paths)
         if "ls-tree" in cmd:
             return self.tree
         if cmd[:1] == ["git"] and "status" in cmd and "--porcelain=v1" in cmd:
@@ -188,6 +192,64 @@ class KeyTests(unittest.TestCase):
                             "diff --git a/README.md b/README.md\n+doc\ndiff --git a/src/a.cpp b/src/a.cpp\n+x\n")
         self.assertNotEqual(self.key(), self.key(runner=source_only))
         self.assertEqual(self.key(runner=source_only), self.key(runner=mixed))
+
+    def test_dolphin_app_commit_does_not_change_key(self):
+        # An iCube commit that touches only app code moves HEAD but none of the build trees.
+        self.assertEqual(self.key(self.dolphin), self.key(self.dolphin, runner=FakeRunner(head="ffff")))
+
+    def test_dolphin_engine_commit_changes_key(self):
+        for path in build_slice.DOLPHIN_BUILD_PATHS:
+            runner = FakeRunner()
+            runner.trees[path] = "changed"
+            self.assertNotEqual(self.key(self.dolphin), self.key(self.dolphin, runner=runner), path)
+
+    def test_dolphin_app_edits_do_not_change_key(self):
+        runner = FakeRunner()
+        runner.dirty[str(self.dolphin.submodule)] = (
+            " M Source/iOS/App/iCube/Views/Library.swift\n M build/xcframework/PVlibDolphin-ios.framework/PVlibDolphin-ios\n"
+            "?? Source/iOS/PVLibrary/New.swift\n M CMakePresets.json\n M Data/Sys/GameSettings/GALE01.ini",
+            "diff --git a/Source/iOS/App/iCube/Views/Library.swift b/Source/iOS/App/iCube/Views/Library.swift\n+x\n"
+            "diff --git a/CMakePresets.json b/CMakePresets.json\n+y\n")
+        self.assertEqual(self.key(self.dolphin), self.key(self.dolphin, runner=runner))
+
+    def test_dolphin_engine_edits_change_key(self):
+        for path in ("Source/Core/Core/Core.cpp", "Source/iOS/Library/Host.mm", "CMake/CCache.cmake",
+                     "CMakeLists.txt", "Data/Sys/ApprovedInis.json"):
+            runner = FakeRunner()
+            runner.dirty[str(self.dolphin.submodule)] = (f" M {path}", f"diff --git a/{path} b/{path}\n+x\n")
+            self.assertNotEqual(self.key(self.dolphin), self.key(self.dolphin, runner=runner), path)
+
+    def test_dolphin_scan_is_limited_to_build_paths(self):
+        calls = []
+        runner = FakeRunner()
+
+        def recording(cmd, cwd=None):
+            calls.append(cmd)
+            return runner(cmd, cwd)
+
+        self.key(self.dolphin, runner=recording)
+        top = str(self.dolphin.submodule)
+        scans = [cmd for cmd in calls if cmd[:3] == ["git", "-C", top] and ("status" in cmd or "diff" in cmd)
+                 and "submodule" not in cmd]
+        self.assertEqual(len(scans), 2)
+        for cmd in scans:
+            self.assertEqual(cmd[cmd.index("--") + 1:], list(build_slice.DOLPHIN_BUILD_PATHS))
+
+    def test_rename_out_of_build_paths_counts(self):
+        runner = FakeRunner()
+        runner.dirty[str(self.dolphin.submodule)] = ("R  Source/Core/a.cpp -> Source/iOS/App/a.cpp", "")
+        self.assertNotEqual(self.key(self.dolphin), self.key(self.dolphin, runner=runner))
+
+    def test_missing_build_path_fails_loudly(self):
+        import subprocess
+
+        def runner(cmd, cwd=None):
+            if "rev-parse" in cmd and any(arg.startswith("HEAD:") for arg in cmd):
+                raise subprocess.CalledProcessError(128, cmd)
+            return FakeRunner()(cmd, cwd)
+
+        with self.assertRaises(SystemExit):
+            self.key(self.dolphin, runner=runner)
 
 
 class XCFrameworkTests(unittest.TestCase):
@@ -346,8 +408,8 @@ class FastPathTests(unittest.TestCase):
         self.builds.append(slice_name)
         write(spec.legacy_dir / f"{spec.product}-{slice_name}.framework/Headers/config.h", "h")
 
-    def prepare(self, *extra, env=None):
-        args = ["azahar", "ios", "--repo-root", str(self.repo_root), "--cache-dir", str(self.cache), *extra]
+    def prepare(self, *extra, env=None, core="azahar"):
+        args = [core, "ios", "--repo-root", str(self.repo_root), "--cache-dir", str(self.cache), *extra]
         return build_slice.main(args, runner=self.runner, env=env or {}, builder=self.builder)
 
     def test_second_run_skips_the_scan(self):
@@ -372,6 +434,22 @@ class FastPathTests(unittest.TestCase):
         scans = self.runner.scans
         self.runner.head = "ffff"
         self.prepare()
+        self.assertGreater(self.runner.scans, scans)
+        self.assertEqual(self.builds, ["ios", "ios"])
+
+    def test_dolphin_app_commit_skips_scan_and_build(self):
+        self.prepare(core="dolphin")
+        scans = self.runner.scans
+        self.runner.head = "ffff"
+        self.prepare(core="dolphin")
+        self.assertEqual(self.runner.scans, scans)
+        self.assertEqual(self.builds, ["ios"])
+
+    def test_dolphin_engine_commit_rescans_and_rebuilds(self):
+        self.prepare(core="dolphin")
+        scans = self.runner.scans
+        self.runner.trees["Source/Core"] = "changed"
+        self.prepare(core="dolphin")
         self.assertGreater(self.runner.scans, scans)
         self.assertEqual(self.builds, ["ios", "ios"])
 

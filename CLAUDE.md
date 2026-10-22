@@ -278,6 +278,10 @@ A second, generated workspace for fast iteration. `Provenance.xcodeproj` still s
   [--print-key|--force|--xcframework|--cache-dir DIR]` builds or links one slice.
   - The key is a content hash: submodule working tree (dirty edits bust the cache; `--force` rebuilds) and
     nested externals, build script and toolchain, flags, Xcode and SDK, and Azahar's MoltenVK slice.
+  - Dolphin keys only on the dolphin-ios paths its CMake build reads (`DOLPHIN_BUILD_PATHS`: top-level
+    CMake files, `Externals`, `Source/Core`, `Source/iOS/Library`, `ApprovedInis.json`), as HEAD tree
+    hashes plus dirty edits under them. iCube app commits and edits there no longer force a rebuild;
+    if the build starts reading a new path, add it to that list.
   - The cache is `$PV_CORE_CACHE` or `~/Library/Caches/Provenance/cores/<core>/<slice>/<key12>/`.
   - On a hit, the legacy `build/xcframework/<Product>-<slice>.framework` path is a symlink into it.
   - Only `--xcframework` repacks the multi-slice xcframework (Dolphin's is repacked after every miss).
