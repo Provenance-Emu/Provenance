@@ -2186,8 +2186,7 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
         // If using a DeltaSkin, ensure game screen view is visible and positioned properly
         if let skinContainerView = view.viewWithTag(9876), let gpuView = gpuViewController.view {
             // Make sure the GPU view is visible on top of the proper layer
-            gpuView.alpha = 1.0
-            gpuView.isHidden = false
+            revealHostGPUView()
 
             // If we have a stored target frame, ensure the GPU view is positioned there.
             // Viewport-positioning cores (PPSSPP, Dolphin) host their render view inside a
@@ -2602,8 +2601,7 @@ extension PVEmulatorViewController {
             }
 
             // Make sure the GPU view is visible
-            gpuView.isHidden = false
-            gpuView.alpha = 1.0
+            revealHostGPUView()
 
             // Force a redraw of the GPU view
             if let metalVC = gpuViewController as? PVMetalViewController {
@@ -2642,8 +2640,7 @@ extension PVEmulatorViewController {
             gpuView.frame = defaultFrame
 
             // Make sure the GPU view is visible
-            gpuView.isHidden = false
-            gpuView.alpha = 1.0
+            revealHostGPUView()
         }
     }
 
