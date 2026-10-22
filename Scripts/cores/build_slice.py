@@ -10,6 +10,14 @@ script), Dolphin's DOL_FULL_LTO / DOL_PGO / DOL_PGO_PROFILE and the PGO profile 
 `xcodebuild -version`, the slice SDK version and, for Azahar, the MoltenVK static slice it
 configures against. `--print-key` prints it (CI cache keys).
 
+Fast path: the full key scans every working tree in the core and its nested submodules for
+uncommitted edits, which took ~10 minutes on a cold disk (all I/O wait). So a normal run first
+compares the cheap inputs (core HEAD, the nested gitlinks that HEAD records, script, toolchain,
+Xcode, SDK, MoltenVK, Dolphin's flags) with what the last preparation of this checkout recorded
+(<cache>/<core>/<slice>/prepared-<checkout>.json). If they match and that cache entry still
+exists, it reuses it without scanning. `--strict` (or PV_CORE_STRICT=1) always scans: use it
+after editing engine sources in place. `--force` and `--print-key` always scan too.
+
 Cache: $PV_CORE_CACHE or ~/Library/Caches/Provenance/cores, laid out as
 <core>/<slice>/<key[:12]>/<Product>-<slice>.framework + stamp.json. On a hit the legacy output
 path (Cores/Azahar/build/xcframework/PVlibAzahar-<slice>.framework,
@@ -35,6 +43,7 @@ import re
 import shutil
 import subprocess
 import sys
+import time
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Callable, Dict, List, Mapping, Optional, Tuple
@@ -56,6 +65,14 @@ SLICE_FOR_PLATFORM_NAME: Dict[str, str] = {
     "iphonesimulator": "ios-sim",
     "appletvos": "tvos",
     "appletvsimulator": "tvos-sim",
+}
+
+# (SupportedPlatform, SupportedPlatformVariant) as an xcframework's Info.plist records them.
+SLICE_PLATFORMS: Dict[str, Tuple[str, Optional[str]]] = {
+    "ios": ("ios", None),
+    "ios-sim": ("ios", "simulator"),
+    "tvos": ("tvos", None),
+    "tvos-sim": ("tvos", "simulator"),
 }
 
 Runner = Callable[[List[str], Optional[Path]], str]
@@ -200,17 +217,15 @@ def worktree_state(spec: CoreSpec, runner: Runner) -> str:
     return digest.hexdigest()
 
 
-def key_inputs(spec: CoreSpec, slice_name: str, runner: Runner, env: Mapping[str, str]) -> Dict[str, str]:
+def cheap_inputs(spec: CoreSpec, slice_name: str, runner: Runner, env: Mapping[str, str]) -> Dict[str, str]:
+    """Key inputs that need no working-tree scan: a few file hashes and git object reads."""
     sl = SLICES[slice_name]
     inputs = {
         "core": spec.name,
         "slice": slice_name,
         "submodule_head": runner(["git", "-C", str(spec.submodule), "rev-parse", "HEAD"], None),
-        "submodule_tree": normalize_submodule_status(
-            runner(["git", "-C", str(spec.submodule), "submodule", "status", "--recursive"], None)),
         "script": file_hash(spec.script),
         "toolchain": file_hash(spec.toolchain),
-        "worktree": worktree_state(spec, runner),
         "xcode": runner(["xcodebuild", "-version"], None),
         "sdk": runner(["xcrun", "--sdk", sl["sdk"], "--show-sdk-version"], None),
     }
@@ -223,6 +238,26 @@ def key_inputs(spec: CoreSpec, slice_name: str, runner: Runner, env: Mapping[str
         inputs["pgo_profile"] = file_hash(profile) if has_profile and profile is not None else ""
     if spec.moltenvk is not None:
         inputs["moltenvk"] = file_hash(spec.moltenvk / sl["mvk"] / "libMoltenVK.a")
+    return inputs
+
+
+def recorded_gitlinks(spec: CoreSpec, runner: Runner) -> str:
+    """Nested submodule commits recorded in the core's HEAD tree (object reads, no worktree stat)."""
+    tree = runner(["git", "-C", str(spec.submodule), "ls-tree", "-r", "HEAD"], None)
+    return "\n".join(sorted(line for line in tree.splitlines() if " commit " in line))
+
+
+def fast_fingerprint(spec: CoreSpec, slice_name: str, runner: Runner, env: Mapping[str, str]) -> str:
+    inputs = cheap_inputs(spec, slice_name, runner, env)
+    inputs["recorded_gitlinks"] = recorded_gitlinks(spec, runner)
+    return hashlib.sha256(json.dumps(inputs, sort_keys=True).encode()).hexdigest()
+
+
+def key_inputs(spec: CoreSpec, slice_name: str, runner: Runner, env: Mapping[str, str]) -> Dict[str, str]:
+    inputs = cheap_inputs(spec, slice_name, runner, env)
+    inputs["submodule_tree"] = normalize_submodule_status(
+        runner(["git", "-C", str(spec.submodule), "submodule", "status", "--recursive"], None))
+    inputs["worktree"] = worktree_state(spec, runner)
     return inputs
 
 
@@ -271,6 +306,25 @@ def prune_entries(slice_dir: Path, keep: int, current: Path) -> None:
         shutil.rmtree(stale)
 
 
+def prepared_record_path(spec: CoreSpec, slice_name: str, cache: Path) -> Path:
+    """One record per checkout: worktrees and clones share the cache but not their sources."""
+    checkout = hashlib.sha256(str(spec.submodule.resolve()).encode()).hexdigest()[:12]
+    return cache / spec.name / slice_name / f"prepared-{checkout}.json"
+
+
+def read_prepared(path: Path) -> Dict[str, str]:
+    try:
+        record = json.loads(path.read_text())
+    except (OSError, ValueError):
+        return {}
+    return record if isinstance(record, dict) else {}
+
+
+def write_prepared(path: Path, record: Mapping[str, str]) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(json.dumps(dict(record), indent=2, sort_keys=True) + "\n")
+
+
 def is_cached(spec: CoreSpec, slice_name: str, cache: Path, key: str) -> bool:
     entry = cache / spec.name / slice_name / key[:12]
     return (entry / framework_name(spec, slice_name)).is_dir() and (entry / "stamp.json").is_file()
@@ -283,7 +337,12 @@ def xcframework_has_slice(spec: CoreSpec, slice_name: str) -> bool:
             libraries = plistlib.load(handle).get("AvailableLibraries", [])
     except (OSError, ValueError, plistlib.InvalidFileException):
         return False
-    return any(lib.get("LibraryPath") == framework_name(spec, slice_name) for lib in libraries)
+    platform, variant = SLICE_PLATFORMS[slice_name]
+    # Dolphin names each library <Product>-<slice>.framework; Azahar's are all <Product>.framework,
+    # so match on the platform the xcframework records as well.
+    return any(lib.get("LibraryPath") == framework_name(spec, slice_name)
+               or (lib.get("SupportedPlatform") == platform and lib.get("SupportedPlatformVariant") == variant)
+               for lib in libraries)
 
 
 def needs_xcframework(spec: CoreSpec, slice_name: str, produced: bool, requested: bool) -> bool:
@@ -389,24 +448,53 @@ def main(argv: Optional[List[str]] = None, runner: Runner = default_runner,
     parser.add_argument("--force", action="store_true", help="rebuild even on a cache hit")
     parser.add_argument("--cache-dir", type=Path, help="cache root (default $PV_CORE_CACHE or ~/Library/Caches/Provenance/cores)")
     parser.add_argument("--xcframework", action="store_true", help="also repack <Product>.xcframework (distribution)")
+    parser.add_argument("--strict", action="store_true",
+                        help="always scan the working trees for uncommitted edits (also PV_CORE_STRICT=1)")
     parser.add_argument("--repo-root", type=Path, default=REPO_ROOT, help=argparse.SUPPRESS)
     args = parser.parse_args(argv)
 
     environment = dict(os.environ) if env is None else dict(env)
     spec = core_specs(args.repo_root.resolve())[args.core]
-    inputs = key_inputs(spec, args.slice, runner, environment)
-    key = hashlib.sha256(json.dumps(inputs, sort_keys=True).encode()).hexdigest()
+    label = f"{spec.name} {args.slice}"
     if args.print_key:
-        print(key)
+        print(compute_key(spec, args.slice, runner, environment))
         return 0
 
     cache = args.cache_dir or Path(environment.get("PV_CORE_CACHE") or DEFAULT_CACHE)
     cache = cache.expanduser()
+    strict = args.strict or args.force or environment.get("PV_CORE_STRICT") == "1"
+    record_path = prepared_record_path(spec, args.slice, cache)
+    record = read_prepared(record_path)
+
+    started = time.monotonic()
+    log(f"{label}: checking whether the native library is up to date")
+    fast = fast_fingerprint(spec, args.slice, runner, environment)
+    key = record.get("key", "")
+    if strict or record.get("fast") != fast or not key or not is_cached(spec, args.slice, cache, key):
+        reason = "--strict" if strict else ("first preparation of this checkout" if not record else "inputs changed")
+        log(f"{label}: scanning the {spec.name} source trees for uncommitted edits ({reason}); "
+            "this can take minutes on a cold disk")
+        inputs = key_inputs(spec, args.slice, runner, environment)
+        key = hashlib.sha256(json.dumps(inputs, sort_keys=True).encode()).hexdigest()
+        log(f"{label}: key {key[:12]} ({time.monotonic() - started:.0f}s)")
+    else:
+        inputs = {}
+        log(f"{label}: unchanged since this checkout last prepared it; key {key[:12]} "
+            f"({time.monotonic() - started:.1f}s; --strict rescans for uncommitted engine edits)")
+
     produced = args.force or not is_cached(spec, args.slice, cache, key)
+    if produced:
+        log(f"{label}: building {spec.product}; a cold build takes 30-60 minutes. Build output follows.")
     framework = ensure_slice(spec, args.slice, cache, key, inputs, args.force, builder)
     prepare_headers(spec, framework)
-    if needs_xcframework(spec, args.slice, produced, args.xcframework):
+    packed = record.get("xcframework") == key and xcframework_has_slice(spec, args.slice)
+    if needs_xcframework(spec, args.slice, produced, args.xcframework) and not (packed and not produced):
         pack_xcframework(spec)
+        packed = True
+    elif packed:
+        log(f"{label}: {spec.product}.xcframework already holds this slice")
+    write_prepared(record_path, {"fast": fast, "key": key, **({"xcframework": key} if packed else {})})
+    log(f"{label}: ready ({time.monotonic() - started:.0f}s)")
     return 0
 
 
