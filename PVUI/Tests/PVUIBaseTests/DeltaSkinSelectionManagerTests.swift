@@ -183,6 +183,29 @@ final class DeltaSkinSelectionManagerTests: XCTestCase {
         XCTAssertEqual(manager.effectiveSkinIdentifier(for: testSystem, gameId: testGameId, orientation: .portrait), "com.example.system-pick")
     }
 
+    /// The pause-menu picker opens on System; a pick there must beat an older pick for the running game.
+    func testSystemPickWithGameReplacesThatGamesOverride() {
+        let manager = DeltaSkinSelectionManager.shared
+        defer { cleanupSelectionState() }
+
+        manager.setSkin("com.example.old-game-pick", for: testSystem, gameId: testGameId, orientation: .portrait, scope: .game)
+        manager.setSkin("com.example.system-pick", for: testSystem, gameId: testGameId, orientation: .portrait, scope: .system)
+
+        XCTAssertNil(manager.storedSkinIdentifier(for: testSystem, gameId: testGameId, orientation: .portrait, scope: .game))
+        XCTAssertEqual(manager.effectiveSkinIdentifier(for: testSystem, gameId: testGameId, orientation: .portrait), "com.example.system-pick")
+    }
+
+    func testSystemPickKeepsOtherGamesOverrides() {
+        let manager = DeltaSkinSelectionManager.shared
+        defer { cleanupSelectionState() }
+
+        manager.setSkin("com.example.other-game-pick", for: testSystem, gameId: testGameAltId, orientation: .portrait, scope: .game)
+        manager.setSkin("com.example.system-pick", for: testSystem, gameId: testGameId, orientation: .portrait, scope: .system)
+
+        XCTAssertEqual(manager.effectiveSkinIdentifier(for: testSystem, gameId: testGameAltId, orientation: .portrait),
+                       "com.example.other-game-pick")
+    }
+
     func testGamePickClearsSessionEntryAndPreferenceIsEffective() {
         let manager = DeltaSkinSelectionManager.shared
         defer { cleanupSelectionState() }
