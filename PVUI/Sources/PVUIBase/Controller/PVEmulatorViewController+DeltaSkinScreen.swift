@@ -1102,7 +1102,15 @@ extension PVEmulatorViewController: PVViewportLayoutDelegate {
     /// touch view, so the host GPU view has nothing to show and, stacked above theirs, blacks them out.
     internal var hostGPUViewDrawsGame: Bool {
         HostGPUViewPolicy.drawsGame(skipLayout: core.skipLayout,
-                                    positionsOwnRenderView: core.bridge is EmulatorCoreViewportPositioning)
+                                    positionsOwnRenderView: core.bridge is EmulatorCoreViewportPositioning,
+                                    rendersInsideHostView: coreManagesOwnHosting && core.touchViewController == nil)
+    }
+
+    /// libretro and PPSSPP are never handed the emulator VC as their host (see `createEmulator`).
+    /// Without a controller overlay native PPSSPP then adds its render view inside the GPU view.
+    internal var coreManagesOwnHosting: Bool {
+        let coreID = core.coreIdentifier ?? ""
+        return coreID.contains("libretro") || coreID.contains("ppsspp")
     }
 
     /// The one way to show the host GPU view. On iOS own-surface cores keep it hidden: skin setup,

@@ -1155,8 +1155,7 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
         ///   constraints that are dormant today. They already get an explicit `self`
         ///   from `addControllerOverlay()` on the path where that is wanted.
         let coreID = core.coreIdentifier ?? ""
-        let managesOwnHosting = coreID.contains("libretro") || coreID.contains("ppsspp")
-        if core.touchViewController == nil, !managesOwnHosting {
+        if core.touchViewController == nil, !coreManagesOwnHosting {
             core.touchViewController = self
             ILOG("No controller-overlay host for \(coreID); hosting core views on the emulator VC")
         }
