@@ -15,7 +15,7 @@
 #include "core/core.h"
 #include "core/hle/service/cfg/cfg.h"
 #include "network/announce_multiplayer_session.h"
-#include "network/network.h"
+#include "network.h"
 #include "network/network_settings.h"
 #include "network/room.h"
 

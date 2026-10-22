@@ -10,13 +10,12 @@ import SwiftUI
 import PVLogging
 import PVLibrary
 import PVUIBase
-import PVSwiftUI
 import PVThemes
 import PVSettings
 
 struct MainView: View {
     @EnvironmentObject private var appState: AppState
-    @EnvironmentObject private var appDelegate: PVAppDelegate
+    @EnvironmentObject private var appServices: PVApplicationServices
     @EnvironmentObject private var sceneCoordinator: SceneCoordinator
 
     // Grabbed directly (not via sceneCoordinator) so this view re-renders on the
@@ -38,9 +37,8 @@ struct MainView: View {
 
     var body: some View {
         GeometryReader { proxy in
-            let isLandscape = proxy.size.width > proxy.size.height
 #if os(iOS)
-            let rawUseTVMedia = shouldUseTVMediaUI(isLandscape: isLandscape)
+            let rawUseTVMedia = shouldUseTVMediaUI(in: proxy.size)
             let useTVMedia = effectiveUseTVMedia
 #endif
             ZStack {
@@ -110,9 +108,8 @@ struct MainView: View {
         }
         .onAppear {
             ILOG("MainView: Appeared")
-            appDelegate.installLibraryNotificationHandlersIfNeeded()
+            appServices.installLibraryNotificationHandlersIfNeeded()
         }
-        .edgesIgnoringSafeArea(.all)
         #if !os(tvOS)
         // The stored library folder could not be opened this launch (D9): offer re-pick or App storage.
         .modifier(LibraryFolderUnavailableAlert())
@@ -173,19 +170,19 @@ struct MainView: View {
         switch appState.mainUIMode {
 #if !os(tvOS)
         case .paged:
-            SwiftUIHostedProvenanceMainView()
-                .environmentObject(appDelegate)
-                .edgesIgnoringSafeArea(.all)
+            if let gameLibrary = appState.gameLibrary,
+               let updatesController = appState.libraryUpdatesController,
+               let gameImporter = appState.gameImporter {
+                PVLibraryRootView(gameLibrary: gameLibrary, updatesController: updatesController, gameImporter: gameImporter)
+            }
 #endif
         case .singlePage:
             RetroMainView()
-                .environmentObject(appDelegate)
                 .environmentObject(ThemeManager.shared)
                 .edgesIgnoringSafeArea(.all)
 #if os(tvOS)
         case .tvosMedia:
             TVMediaMainView()
-                .environmentObject(appDelegate)
                 .environmentObject(ThemeManager.shared)
                 .edgesIgnoringSafeArea(.all)
 #endif
@@ -200,8 +197,7 @@ struct MainView: View {
         Group {
             if useTVMedia, #available(iOS 17.0, *) {
                 TVMediaMainView()
-                    .environmentObject(appDelegate)
-                    .environmentObject(ThemeManager.shared)
+                        .environmentObject(ThemeManager.shared)
                     .edgesIgnoringSafeArea(.all)
                     .transition(.opacity.combined(with: .scale(scale: 0.98)))
             } else {
@@ -226,9 +222,9 @@ struct MainView: View {
         }
     }
 
-    private func shouldUseTVMediaUI(isLandscape: Bool) -> Bool {
-        guard #available(iOS 18.0, *) else { return false }
-        if isLandscape, gamepadManager.isControllerConnected { return true }
+    private func shouldUseTVMediaUI(in size: CGSize) -> Bool {
+        guard #available(iOS 18.0, *), LibrarySceneLayout.supportsMediaNavigation(in: size) else { return false }
+        if size.width > size.height, gamepadManager.isControllerConnected { return true }
         // Keyboard-only desktops (Mac "Designed for iPad", iPad w/ keyboard): opt-in via
         // Settings > Controllers. No landscape requirement — desktop windows are arbitrary.
         if controllerStyleNavigation, gamepadManager.isKeyboardConnected { return true }
@@ -240,4 +236,11 @@ struct MainView: View {
         mainUIForCurrentMode
     }
 #endif
+}
+
+/// The media sidebar and large content shelves need a roomy window, even with a controller.
+enum LibrarySceneLayout {
+    static func supportsMediaNavigation(in size: CGSize) -> Bool {
+        size.width >= 900 && size.height >= 500
+    }
 }

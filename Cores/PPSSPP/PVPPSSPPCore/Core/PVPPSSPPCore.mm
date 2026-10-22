@@ -8,7 +8,7 @@
 #import "PVPPSSPPCore+Controls.h"
 #import "PVPPSSPPCore+Audio.h"
 #import "PVPPSSPPCore+Video.h"
-#import <PVPPSSPP/PVPPSSPP-Swift.h>
+#import "PPSSPPSwiftInterop.h"
 
 #import <UIKit/UIKit.h>
 #import <GLKit/GLKit.h>
@@ -166,7 +166,7 @@
 
 #pragma mark - PVEmulatorCore
 - (BOOL)loadFileAtPath:(NSString *)path error:(NSError**)error {
-	NSBundle *coreBundle = [NSBundle bundleForClass:[self class]];
+	NSBundle *coreBundle = SWIFTPM_MODULE_BUNDLE;
 	const char *dataPath;
 	NSString *configPath = self.saveStatesPath;
 	dataPath = [[coreBundle resourcePath] fileSystemRepresentation];
@@ -197,10 +197,10 @@
 #else
     NSString *documentsPath = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0];
 #endif
-	NSString *resourcePath = [[[NSBundle bundleForClass:[PVPPSSPPCoreBridge class]]  resourcePath] stringByAppendingString:@"/assets/"];
+	NSString *resourcePath = [[SWIFTPM_MODULE_BUNDLE  resourcePath] stringByAppendingString:@"/assets/"];
 	NSLog(@"Bundle Path is at %s\n", [resourcePath UTF8String]);
 	// Copy over font files if needed
-	NSString *fontSourceDirectory = [resourcePath stringByAppendingString:@"/assets/"];
+	NSString *fontSourceDirectory = [resourcePath stringByAppendingPathComponent:@"flash0"];
 	g_Config.flash0Directory = Path([fontSourceDirectory UTF8String]);
 	g_Config.internalDataDirectory = Path([saveDirectory UTF8String]);
 	g_Config.memStickDirectory = g_Config.internalDataDirectory;

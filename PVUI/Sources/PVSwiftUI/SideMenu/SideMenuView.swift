@@ -25,34 +25,24 @@ import UIKit
 import FreemiumKit
 #endif
 
-// Add at the top of the file, after imports
-extension View {
-    @ViewBuilder
-    func focusableIfAvailable() -> some View {
-        if #available(iOS 17, tvOS 17, *) {
-            self.focusable(true)
-        } else {
-            self
-        }
-    }
-}
-
 @available(iOS 14, tvOS 14, *)
 public struct
 SideMenuView: SwiftUI.View {
 
-    weak var delegate: PVMenuDelegate!
+    private weak var delegate: PVMenuDelegate?
 
-	@ObservedObject
-	var viewModel: PVRootViewModel
+    @ObservedObject
+    var viewModel: PVRootViewModel
 
-	weak var rootDelegate: PVRootDelegate!
+    @ObservedObject private var drawerState: LibraryDrawerState
+
+    private weak var rootDelegate: PVRootDelegate?
     var gameLibrary: PVGameLibrary<RealmDatabaseDriver>
 
     @State private var showEmptySystems: Bool
     @ObservedResults(PVSystem.self) private var consoles: Results<PVSystem>
 
-    @ObservedObject var searchBar: SearchBar
+    @State private var searchText = ""
 
     @ObservedObject private var themeManager = ThemeManager.shared
 
@@ -61,19 +51,15 @@ SideMenuView: SwiftUI.View {
     @EnvironmentObject var freemiumKit: FreemiumKit
 #endif
 
-    @State private var gamepadHandler: Any?
 
     @FocusState private var focusedItem: String?
 
     @Namespace private var menuNamespace
 
-    @State private var lastFocusedItem: String?
 
     @State private var gamepadCancellable: AnyCancellable?
 
-    @State private var continuousNavigationTask: Task<Void, Never>?
 
-    @ObservedObject private var gamepadManager = GamepadManager.shared
 
     @ObservedObject private var featureFlags = PVFeatureFlagsManager.shared
 
@@ -92,7 +78,6 @@ SideMenuView: SwiftUI.View {
         #endif
     }
 
-    @State private var delayTask: Task<Void, Never>?
 
     /// The library's netplay lobby (rooms nearby, host a game).
     @State private var showNetplayLobby = false
@@ -101,14 +86,9 @@ SideMenuView: SwiftUI.View {
     public init(gameLibrary: PVGameLibrary<RealmDatabaseDriver>, viewModel: PVRootViewModel, delegate: PVMenuDelegate, rootDelegate: PVRootDelegate) {
         self.gameLibrary = gameLibrary
         self.viewModel = viewModel
+        self.drawerState = viewModel.drawerState
         self.delegate = delegate
         self.rootDelegate = rootDelegate
-
-        #if os(tvOS)
-        searchBar = SearchBar(searchResultsController: rootDelegate as! UIViewController)
-        #else
-        searchBar = SearchBar(searchResultsController: nil)
-        #endif
 
         #if targetEnvironment(simulator)
         _showEmptySystems = State(initialValue: true)
@@ -120,14 +100,6 @@ SideMenuView: SwiftUI.View {
         let filter = showEmptySystems ? nil : NSPredicate(format: "games.@count > 0")
         _consoles = ObservedResults(PVSystem.self, filter: filter)
 
-        setupGamepadHandling()
-    }
-
-    public static func instantiate(gameLibrary: PVGameLibrary<RealmDatabaseDriver>, viewModel: PVRootViewModel, delegate: PVMenuDelegate, rootDelegate: PVRootDelegate) -> UIViewController {
-        let view = SideMenuView(gameLibrary: gameLibrary, viewModel: viewModel, delegate: delegate, rootDelegate: rootDelegate)
-        let hostingView = UIHostingController(rootView: view)
-        let nav = UINavigationController(rootViewController: hostingView)
-        return nav
     }
 
     func versionText() -> String {
@@ -139,7 +111,7 @@ SideMenuView: SwiftUI.View {
     }
 
     func filteredSearchResults() -> Results<PVGame> {
-        return self.gameLibrary.searchResults(for: self.searchBar.text)
+        return self.gameLibrary.searchResults(for: searchText)
     }
 
     private func setupGamepadHandling(proxy: ScrollViewProxy? = nil) {
@@ -149,9 +121,8 @@ SideMenuView: SwiftUI.View {
         gamepadCancellable = GamepadManager.shared.eventPublisher
             .receive(on: DispatchQueue.main)
             .filter { _ in
-                print("viewModel.isMenuVisible: \(viewModel.isMenuVisible)")
                 // The Nearby Libraries sheet owns the controller while it is up.
-                return viewModel.isMenuVisible && !showNearbyLibraries
+                return viewModel.isMenuVisible && !showNearbyLibraries && !showNetplayLobby
             }
             .sink { event in
                 // Suppress while a full-screen retrowave alert is on top.
@@ -163,13 +134,11 @@ SideMenuView: SwiftUI.View {
                     }
                 case .buttonB(let isPressed):
                     if isPressed {
-                        delegate.closeMenu()
+                        delegate?.closeMenu()
                     }
                 case .verticalNavigation(let value, let isPressed):
                     if isPressed {
                         handleVerticalNavigation(value, proxy: proxy)
-                    } else {
-                        continuousNavigationTask?.cancel()
                     }
                 default:
                     break
@@ -179,33 +148,35 @@ SideMenuView: SwiftUI.View {
 
     private func handleButtonPress() {
         guard let focusedItem = focusedItem else { return }
-        print("Handling button press for item: \(focusedItem)")
 
         switch focusedItem {
         case "home":
-            delegate.didTapHome()
+            delegate?.didTapHome()
         case "settings":
-            delegate.didTapSettings()
+            delegate?.didTapSettings()
         case "imports":
-            delegate.didTapImports()
+            delegate?.didTapImports()
+        case "addgames":
+            delegate?.didTapAddGames()
         case Self.nearbyItem:
             showNearbyLibraries = true
         case "netplay":
             showNetplayLobby = true
         default:
             // Handle console selection
-            delegate.didTapConsole(with: focusedItem)
+            delegate?.didTapConsole(with: focusedItem)
         }
     }
 
     private func handleVerticalNavigation(_ value: Float, proxy: ScrollViewProxy? = nil) {
-        var fixedItems = ["home", "settings", "imports"]
+        var fixedItems = ["settings", "addgames", "imports"]
         if showsNearbyLibraries {
             fixedItems.append(Self.nearbyItem)
         }
         if netplayEnabled {
             fixedItems.append("netplay")
         }
+        if !consoles.isEmpty { fixedItems.append("home") }
         let items = fixedItems + sortedConsoles().map(\.identifier)
 
         if let currentIndex = items.firstIndex(of: focusedItem ?? "") {
@@ -228,29 +199,13 @@ SideMenuView: SwiftUI.View {
         }
     }
 
-    private func startContinuousNavigation(value: Float, proxy: ScrollViewProxy? = nil) {
-        continuousNavigationTask?.cancel()
-
-        // Perform initial navigation
-        handleVerticalNavigation(value, proxy: proxy)
-
-        // Start continuous navigation
-        continuousNavigationTask = Task { [self] in
-            try? await Task.sleep(for: .milliseconds(500)) // Initial delay
-            while !Task.isCancelled {
-                self.handleVerticalNavigation(value, proxy: proxy)
-                try? await Task.sleep(for: .milliseconds(150)) // Repeat delay
-            }
-        }
-    }
-
     // MARK: - View Builders
     @ViewBuilder
     private func headerItems() -> some View {
         MenuItemView(icon: .named("prov_settings_gear", PVUIBase.BundleLoader.myBundle), rowTitle: "Settings", isFocused: focusedItem == "settings") {
-            delegate.didTapSettings()
+            delegate?.didTapSettings()
         }
-        .focusableIfAvailable()
+        .focusable()
         .focused($focusedItem, equals: "settings")
     }
 
@@ -264,7 +219,7 @@ SideMenuView: SwiftUI.View {
             MenuItemView(icon: .named("prov_add_games_icon", PVUIBase.BundleLoader.myBundle), rowTitle: "Add Games", isFocused: focusedItem == "addgames") {
                 delegate?.didTapAddGames()
             }
-            .focusableIfAvailable()
+            .focusable()
             .focused($focusedItem, equals: "addgames")
             .id("addgames")
         }
@@ -278,9 +233,9 @@ SideMenuView: SwiftUI.View {
                 .frame(height: 1)
 
             MenuItemView(icon: .sfSymbol("checklist"), rowTitle: "Import Queue", isFocused: focusedItem == "imports") {
-                delegate.didTapImports()
+                delegate?.didTapImports()
             }
-            .focusableIfAvailable()
+            .focusable()
             .focused($focusedItem, equals: "imports")
         }
     }
@@ -297,7 +252,7 @@ SideMenuView: SwiftUI.View {
                              isFocused: focusedItem == Self.nearbyItem) {
                     showNearbyLibraries = true
                 }
-                .focusableIfAvailable()
+                .focusable()
                 .focused($focusedItem, equals: Self.nearbyItem)
             }
         }
@@ -313,7 +268,7 @@ SideMenuView: SwiftUI.View {
             MenuItemView(icon: .sfSymbol("network"), rowTitle: "Network Play", isFocused: focusedItem == "netplay") {
                 showNetplayLobby = true
             }
-            .focusableIfAvailable()
+            .focusable()
             .focused($focusedItem, equals: "netplay")
         }
     }
@@ -321,7 +276,7 @@ SideMenuView: SwiftUI.View {
     @ViewBuilder
     private func consolesSection() -> some View {
         Group {
-            if consoles.count > 0 {
+            if !consoles.isEmpty {
                 MenuSectionHeaderView(sectionTitle: "CONSOLES", sortable: consoles.count > 1, sortAscending: viewModel.sortConsolesAscending) {
                     viewModel.sortConsolesAscending.toggle()
                 }
@@ -333,20 +288,25 @@ SideMenuView: SwiftUI.View {
                 // Home first
 
                 MenuItemView(icon: .named("prov_home_icon", PVUIBase.BundleLoader.myBundle), rowTitle: "Home", isFocused: focusedItem == "home", isActive: viewModel.selectedConsole == nil) {
-                    delegate.didTapHome()
+                    delegate?.didTapHome()
                 }
-                .focusableIfAvailable()
+                .focusable()
                 .focused($focusedItem, equals: "home")
                 .id("home")
 
-                ForEach(sortedConsoles(), id: \.self) { console in
+                ForEach(sortedConsoles(), id: \.identifier) { console in
                     Rectangle()
                         .fill(Color.retroCyan.opacity(0.15))
                         .frame(height: 1)
-                    MenuItemView(icon: .named(console.iconName, PVUIBase.BundleLoader.myBundle), rowTitle: console.name, isFocused: focusedItem == console.identifier, isActive: viewModel.selectedConsole?.identifier == console.identifier) {
-                        delegate.didTapConsole(with: console.identifier)
+                    MenuItemView(
+                        icon: .named(console.iconName, PVUIBase.BundleLoader.myBundle),
+                        rowTitle: console.name,
+                        isFocused: focusedItem == console.identifier,
+                        isActive: viewModel.selectedConsole?.identifier == console.identifier
+                    ) {
+                        delegate?.didTapConsole(with: console.identifier)
                     }
-                    .focusableIfAvailable()
+                    .focusable()
                     .focused($focusedItem, equals: console.identifier)
                     .id(console.identifier)
                 }
@@ -364,14 +324,20 @@ SideMenuView: SwiftUI.View {
 
     @ViewBuilder
     private func searchResultsList() -> some View {
+        let results = filteredSearchResults()
+        if results.isEmpty {
+            ContentUnavailableView.search(text: searchText)
+                .foregroundStyle(themeManager.currentPalette.dark ? Color.white : Color.black)
+                .padding(.vertical, 24)
+        }
         LazyVStack {
-            ForEach(filteredSearchResults(), id: \.self) { game in
+            ForEach(results, id: \.md5Hash) { game in
                 GameItemView(
                     game: game,
                     constrainHeight: false,
                     viewType: .row,
                     sectionContext: .allGames,
-                    isFocused: .constant(false) ,
+                    isFocused: .constant(false),
                     action: {
                         Task.detached { @MainActor in
                             SceneCoordinator.shared.launchGame(game.freeze())
@@ -393,181 +359,147 @@ SideMenuView: SwiftUI.View {
 
     // MARK: - Body
     public var body: some SwiftUI.View {
-        StatusBarProtectionWrapper {
-            GeometryReader { geometry in
-                ScrollViewReader { proxy in
-                    ScrollView {
-                        VStack(spacing: 0) {
-                            LazyVStack(alignment: .leading, spacing: 0) {
-                                headerItems()
-                                addGamesSection()
-                                importQueueSection()
-                                nearbyLibrariesSection()
-                                networkPlaySection()
-
-                                #if canImport(FreemiumKit)
-                                Rectangle()
-                                    .fill(Color.retroCyan.opacity(0.15))
-                                    .frame(height: 1)
-                                PaidStatusView(style: .plain)
-                                    .freemiumKitColorReset()
-                                    .listRowBackground(Color.accentColor)
-                                    .padding(.vertical, 10)
-                                    .padding(.horizontal, 10)
-                                #endif
-
-                                consolesSection()
-                                footerSection()
-                            }
-                        }
-                        .padding(.top, geometry.safeAreaInsets.top)
-                        .onChange(of: focusedItem) { newValue in
-                            handleFocusChange(newValue, proxy: proxy)
-                        }
-                    }
-                    #if !os(tvOS)
-                    .scrollContentBackground(.hidden)
-                    #endif
-                    .onAppear {
-                        setupGamepadHandling(proxy: proxy)
-                    }
+        VStack(spacing: 0) {
+            HStack {
+                Image("provnavicon", bundle: PVUIBase.BundleLoader.myBundle)
+                    .resizable()
+                    .renderingMode(.template)
+                    .scaledToFit()
+                    .foregroundStyle(themeManager.currentPalette.menuHeaderIconTint.swiftUIColor)
+                    .frame(maxWidth: 180, maxHeight: 36)
+                    .accessibilityLabel("Provenance")
+                Spacer(minLength: 8)
+                Button {
+                    delegate?.closeMenu()
+                } label: {
+                    Image(systemName: "xmark")
+                        .frame(width: 44, height: 44)
                 }
+                .buttonStyle(.plain)
+                .accessibilityLabel("Close Library Menu")
             }
-        }
-#if canImport(UIKit)
-        .background(NavigationBarConfigurator(
-            headerBackground: themeManager.currentPalette.menuHeaderBackground,
-            headerText: themeManager.currentPalette.menuHeaderText,
-            headerIconTint: themeManager.currentPalette.menuHeaderIconTint,
-            menuIconTint: themeManager.currentPalette.menuIconTint
-        ))
-        .foregroundStyle(themeManager.currentPalette.menuIconTint.swiftUIColor)
-#endif
-        .background(themeManager.currentPalette.menuBackground.swiftUIColor)
-        .add(self.searchBar)
-        // search results
-        .if(!searchBar.text.isEmpty) { view in
-            view.overlay(
-                StatusBarProtectionWrapper {
-                    ApplyBackgroundWrapper {
-                        ScrollView {
-                            VStack {
-                                searchResultsList()
-                            }
-                            .background(themeManager.currentPalette.menuBackground.swiftUIColor)
-                        }
-                    }
-                }
+            .padding(.horizontal, 16)
+            .padding(.vertical, 8)
+            .background(themeManager.currentPalette.menuHeaderBackground.swiftUIColor)
+
+            LibraryMenuSearchField(
+                text: $searchText,
+                accent: themeManager.currentPalette.menuIconTint.swiftUIColor,
+                background: themeManager.currentPalette.menuBackground.swiftUIColor,
+                foreground: themeManager.currentPalette.dark ? .white : .black,
+                isMenuVisible: drawerState.isPresented
             )
-        }
-        #if os(iOS) || os(tvOS)
-        .sheet(isPresented: $showNearbyLibraries) {
-            NearbyLibrariesSheet()
-        }
-        #endif
-        .sheet(isPresented: $showNetplayLobby) {
-            NetplayLibraryLobbyView()
-        }
-        .onDisappear {
-            delayTask?.cancel()
-            continuousNavigationTask?.cancel()
-            gamepadCancellable?.cancel()
-        }
-        .task {
-            // Set initial focus to home when menu appears
-            focusedItem = "home"
-        }
-        .onChange(of: gamepadManager.isControllerConnected) { isConnected in
-            if isConnected {
-                focusedItem = "home"
+                .padding(.horizontal, 16)
+                .padding(.bottom, 12)
+                .background(themeManager.currentPalette.menuHeaderBackground.swiftUIColor)
+
+            ScrollViewReader { proxy in
+                ScrollView {
+                    if searchText.isEmpty {
+                        LazyVStack(alignment: .leading, spacing: 0) {
+                            headerItems()
+                                .id(menuNamespace)
+                            addGamesSection()
+                            importQueueSection()
+                            nearbyLibrariesSection()
+                            networkPlaySection()
+                            #if canImport(FreemiumKit)
+                            PaidStatusView(style: .plain)
+                                .freemiumKitColorReset()
+                                .padding(10)
+                            #endif
+                            consolesSection()
+                            footerSection()
+                        }
+                    } else {
+                        searchResultsList()
+                    }
+                }
+                .onChange(of: focusedItem) { _, newValue in
+                    handleFocusChange(newValue, proxy: proxy)
+                }
+                .onAppear { setupGamepadHandling(proxy: proxy) }
+                .onChange(of: drawerState.isPresented) { _, visible in
+                    if visible {
+                        focusedItem = consoles.isEmpty ? "settings" : (viewModel.selectedConsole?.identifier ?? "home")
+                    } else {
+                        focusedItem = nil
+                    }
+                }
             }
+        }
+        .foregroundStyle(themeManager.currentPalette.menuIconTint.swiftUIColor)
+        .background(themeManager.currentPalette.menuBackground.swiftUIColor)
+        #if os(iOS) || os(tvOS)
+        .sheet(isPresented: $showNearbyLibraries) { NearbyLibrariesSheet() }
+        #endif
+        .sheet(isPresented: $showNetplayLobby) { NetplayLibraryLobbyView() }
+        .onDisappear {
+            gamepadCancellable?.cancel()
         }
     }
 
     private func handleFocusChange(_ newValue: String?, proxy: ScrollViewProxy) {
-        print("Focus changed from \(String(describing: lastFocusedItem)) to \(String(describing: newValue))")
-        lastFocusedItem = newValue
 
         // Scroll to the focused item with animation
         if let focused = newValue {
             withAnimation {
-                proxy.scrollTo(focused, anchor: .center)
-            }
-        }
-    }
-}
-
-// MARK: - NavigationBarConfigurator
-
-#if canImport(UIKit)
-/// A zero-size UIViewControllerRepresentable that walks up the responder chain
-/// to find the hosting UINavigationController and applies theme customization.
-/// Replaces the old SwiftUI-Introspect dependency.
-private struct NavigationBarConfigurator: UIViewControllerRepresentable {
-    let headerBackground: UIColor
-    let headerText: UIColor
-    let headerIconTint: UIColor
-    let menuIconTint: UIColor
-
-    func makeUIViewController(context: Context) -> UIViewController {
-        let vc = UIViewController()
-        vc.view.isHidden = true
-        vc.view.frame = .zero
-        return vc
-    }
-
-    func updateUIViewController(_ vc: UIViewController, context: Context) {
-        DispatchQueue.main.async {
-            guard let navController = vc.navigationController else { return }
-
-            // Find the hosting view controller whose navigationItem is actually
-            // displayed in the navigation bar (not our hidden helper VC).
-            let hostingVC = navController.viewControllers.first ?? vc
-
-            #if !os(tvOS)
-            let appearance = UINavigationBarAppearance()
-            appearance.configureWithOpaqueBackground()
-            appearance.backgroundColor = headerBackground
-            let retroTitleFont = UIFont.systemFont(ofSize: 16, weight: .semibold)
-            appearance.titleTextAttributes = [
-                .foregroundColor: headerText,
-                .font: retroTitleFont
-            ]
-            appearance.largeTitleTextAttributes = [
-                .foregroundColor: headerText
-            ]
-
-            navController.navigationBar.standardAppearance = appearance
-            navController.navigationBar.scrollEdgeAppearance = appearance
-            navController.navigationBar.compactAppearance = appearance
-            navController.navigationBar.prefersLargeTitles = false
-            #endif
-
-            navController.navigationBar.tintColor = headerIconTint
-
-            let image = UIImage(named: "provnavicon", in: PVUIBase.BundleLoader.myBundle, with: nil)
-            if #available(iOS 26.0, *) {
-                let imageView = UIImageView(image: image)
-                imageView.contentMode = .scaleAspectFit
-                imageView.tintColor = menuIconTint
-                hostingVC.navigationItem.titleView = imageView
-                #if !os(tvOS)
-                hostingVC.navigationItem.preferredSearchBarPlacement = .stacked
-                #endif
-            } else {
-                if menuIconTint != .clear {
-                    image?.applyTintEffectWithColor(menuIconTint)
+                if focused == "home" || focused == "settings" {
+                    proxy.scrollTo(menuNamespace, anchor: .top)
+                } else {
+                    proxy.scrollTo(focused, anchor: .center)
                 }
-                let provenanceLogo = UIBarButtonItem(image: image)
-                provenanceLogo.tintColor = menuIconTint
-                hostingVC.navigationItem.leftBarButtonItem = provenanceLogo
-                hostingVC.navigationItem.leftBarButtonItem?.tintColor = menuIconTint
-                navController.navigationBar.tintColor = menuIconTint
             }
         }
     }
 }
-#endif
+
+private struct LibraryMenuSearchField: View {
+    @Binding var text: String
+    let accent: Color
+    let background: Color
+    let foreground: Color
+    let isMenuVisible: Bool
+    @FocusState private var isFocused: Bool
+
+    var body: some View {
+        HStack(spacing: 10) {
+            Image(systemName: "magnifyingglass")
+                .foregroundStyle(accent)
+                .accessibilityHidden(true)
+            TextField("Search Games", text: $text, prompt: Text("Search Games").foregroundStyle(foreground.opacity(0.6)))
+                .focused($isFocused)
+                .textFieldStyle(.plain)
+                .foregroundStyle(foreground)
+                .submitLabel(.search)
+                .autocorrectionDisabled()
+                #if os(iOS)
+                .textInputAutocapitalization(.never)
+                #endif
+            if !text.isEmpty {
+                Button {
+                    text = ""
+                } label: {
+                    Image(systemName: "xmark.circle.fill")
+                        .foregroundStyle(foreground.opacity(0.65))
+                        .frame(width: 44, height: 44)
+                }
+                .buttonStyle(.plain)
+                .accessibilityLabel("Clear Search")
+            }
+        }
+        .font(.callout)
+        .padding(.horizontal, 12)
+        .frame(minHeight: 44)
+        .background(background, in: RoundedRectangle(cornerRadius: 12))
+        .overlay {
+            RoundedRectangle(cornerRadius: 12)
+                .strokeBorder(accent.opacity(0.4), lineWidth: 1)
+        }
+        .onChange(of: isMenuVisible) { _, visible in
+            if !visible { isFocused = false }
+        }
+    }
+}
 
 #endif
-

@@ -26,23 +26,23 @@ struct MenuItemView: SwiftUI.View {
     @ObservedObject private var gamepadManager = GamepadManager.shared
 
     private var shouldShowFocus: Bool {
-        (isFocused && controllerConnected) || !controllerConnected
+        (isFocused && navigationInputAvailable) || !navigationInputAvailable
     }
     
-    private var controllerConnected: Bool {
-        gamepadManager.isControllerConnected
+    private var navigationInputAvailable: Bool {
+        gamepadManager.isNavigationInputAvailable
     }
     
     private var shouldStroke: Bool {
-        shouldShowFocus && controllerConnected
+        shouldShowFocus && navigationInputAvailable
     }
     
     private var iconTint: Color {
-        shouldShowFocus ? themeManager.currentPalette.menuIconTint.swiftUIColor : themeManager.currentPalette.menuIconTint.swiftUIColor.opacity(controllerConnected ? 0.6 : 1.0)
+        shouldShowFocus ? themeManager.currentPalette.menuIconTint.swiftUIColor : themeManager.currentPalette.menuIconTint.swiftUIColor.opacity(navigationInputAvailable ? 0.6 : 1.0)
     }
     
     private var textTint: Color {
-        shouldShowFocus ? themeManager.currentPalette.menuText.swiftUIColor : themeManager.currentPalette.menuText.swiftUIColor.opacity(controllerConnected ? 0.6 : 1.0)
+        shouldShowFocus ? themeManager.currentPalette.menuText.swiftUIColor : themeManager.currentPalette.menuText.swiftUIColor.opacity(navigationInputAvailable ? 0.6 : 1.0)
     }
 
     /// Whether this row represents the currently active console/tab
@@ -53,14 +53,12 @@ struct MenuItemView: SwiftUI.View {
             action()
         } label: {
             HStack(spacing: 0) {
-                /// Active indicator -- thin accent bar on the leading edge
-                if isActive {
-                    RoundedRectangle(cornerRadius: 1.5)
-                        .fill(iconTint)
-                        .frame(width: 3, height: 24)
-                        .shadow(color: iconTint.opacity(0.5), radius: 4)
-                        .padding(.trailing, 6)
-                }
+                RoundedRectangle(cornerRadius: 1.5)
+                    .fill(iconTint)
+                    .frame(width: 3, height: 24)
+                    .shadow(color: iconTint.opacity(0.5), radius: 4)
+                    .opacity(isActive ? 1 : 0)
+                    .padding(.trailing, 8)
                 /// Icon
                 icon.image
                     .renderingMode(.template)
@@ -69,22 +67,22 @@ struct MenuItemView: SwiftUI.View {
                     .frame(width: 24, height: 24)
                     .cornerRadius(4)
                     .frame(width: 40, height: 40)
-                    .tint(iconTint)
                     .foregroundStyle(iconTint)
-                    .foregroundColor(iconTint)
                 /// Text
                 Text(rowTitle)
-                    .font(.system(size: 15, weight: isActive ? .semibold : .medium))
+                    .font(.callout.weight(isActive ? .semibold : .medium))
                     .tracking(0.3)
                     .foregroundColor(textTint)
                 /// Space
                 Spacer()
             }
-            .frame(height: 40.0)
+            .frame(minHeight: 44)
+            .padding(.vertical, 2)
+            .padding(.horizontal, 10)
             .background(
                 shouldShowFocus ?
                 themeManager.currentPalette.menuBackground.swiftUIColor.opacity(0.8) :
-                themeManager.currentPalette.menuBackground.swiftUIColor.opacity(controllerConnected ? 0.3 : 1.0)
+                themeManager.currentPalette.menuBackground.swiftUIColor.opacity(navigationInputAvailable ? 0.3 : 1.0)
             )
             .overlay(
                 RoundedRectangle(cornerRadius: RetroPauseChrome.radiusSM)
@@ -92,7 +90,7 @@ struct MenuItemView: SwiftUI.View {
             )
         }
         .buttonStyle(.plain)
-        .focusableIfAvailable()
+        .accessibilityAddTraits(isActive ? [.isSelected] : [])
     }
 }
 #endif

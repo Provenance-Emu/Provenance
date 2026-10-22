@@ -1,6 +1,5 @@
 import SwiftUI
 import PVLogging
-import PVSwiftUI
 import PVUIBase
 import PVThemes
 #if canImport(WhatsNewKit)
@@ -14,8 +13,6 @@ public struct ContentView: View {
     @EnvironmentObject var appState: AppState
     /// Use EnvironmentObject for bootup state manager
     @EnvironmentObject var bootupStateManager: AppBootupState
-    /// Use EnvironmentObject for app delegate
-    @EnvironmentObject var appDelegate: PVAppDelegate
 
     public init() { }
     
@@ -55,7 +52,6 @@ public struct ContentView: View {
                 bootupView
             }
         }
-        .edgesIgnoringSafeArea(.all)
         .onAppear {
             ILOG("ContentView: Appeared")
         }

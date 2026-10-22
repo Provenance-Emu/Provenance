@@ -342,11 +342,13 @@ needs = ["macos", "submodules"]
 cli_only = true
 
 [jobs.script-tests]
+files = ["Scripts/ci/package-ipa.sh"]
 title = "Script and maint tests"
 category = "Audits"
 run = """python3 Scripts/tests/test_check_pbxproj_sources.py \
   && python3 Scripts/tests/test_generate_cheatdb_dat.py \
   && python3 Scripts/tests/test_generate_uti_declarations.py \
+  && python3 Scripts/tests/test_ipa_packaging.py \
   && python3 -m unittest discover -s Scripts/maint -p 'test_*.py' \
   && python3 -m unittest discover -s Scripts/cores/tests -p 'test_*.py' \
   && bash Scripts/tests/test-get-modules-validation.sh \
@@ -426,3 +428,19 @@ title = "Nearby import completion tests"
 category = "Audits"
 run = ["python3", "Scripts/tests/test_nearby_import_completion.py"]
 needs = ["macos"]
+
+[jobs.ppsspp-ffmpeg]
+title = "Build PPSSPP legacy FFmpeg simulator slices"
+category = "Dev workspace"
+run = ["Scripts/cores/build_ppsspp_ffmpeg.sh"]
+files = ["Scripts/cores/tests/test_ppsspp_ffmpeg.py"]
+needs = ["macos"]
+cli_only = true
+
+[jobs.emuthree-vendors]
+title = "Build emuThree vendor platform slices"
+category = "Dev workspace"
+run = ["python3", "Scripts/cores/build_emuthree_vendors.py"]
+files = ["Scripts/cores/emuthree-vendors/**", "Scripts/cores/tests/test_emuthree_vendors.py"]
+needs = ["macos", "cmake", "ninja", "network"]
+cli_only = true

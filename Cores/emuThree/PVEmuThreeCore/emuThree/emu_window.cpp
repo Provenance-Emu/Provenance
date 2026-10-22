@@ -7,7 +7,7 @@
 
 #include "emu_window.h"
 
-#include "network/network.h"
+#include "network.h"
 
 #include "video_core/renderer_base.h"
 #include "video_core/video_core.h"

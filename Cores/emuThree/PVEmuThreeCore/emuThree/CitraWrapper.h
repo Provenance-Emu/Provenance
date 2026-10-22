@@ -9,7 +9,7 @@
 #import <MetalKit/MetalKit.h>
 #import <UIKit/UIKit.h>
 
-#import <PVEmuThree/InputBridge.h>
+#import "InputBridge.h"
 
 NS_ASSUME_NONNULL_BEGIN
 

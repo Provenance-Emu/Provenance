@@ -2,7 +2,7 @@
 //  MediaIntentHandlerTests.swift
 //  PVSwiftUITests
 //
-//  Tests for the INPlayMediaIntent in-app handler added in PVAppDelegate+MediaIntent.swift.
+//  Tests for the INPlayMediaIntent in-app handler added in PVApplicationServices+MediaIntent.swift.
 //  These tests exercise the error / guard paths that do not require a live Realm database,
 //  verifying that the handler returns the correct SiriKit response codes when no game
 //  can be resolved from the intent.
@@ -39,7 +39,7 @@ struct MediaIntentHandlerTests {
 
     @Test("handle: nil mediaItems → .failure")
     func handleNilMediaItemsReturnsFailure() async {
-        let delegate = PVAppDelegate()
+        let delegate = PVApplicationServices()
         let intent = makeIntent(items: nil)
 
         let response: INPlayMediaIntentResponse = await withCheckedContinuation { cont in
@@ -51,7 +51,7 @@ struct MediaIntentHandlerTests {
 
     @Test("handle: empty mediaItems → .failure")
     func handleEmptyMediaItemsReturnsFailure() async {
-        let delegate = PVAppDelegate()
+        let delegate = PVApplicationServices()
         let intent = makeIntent(items: [])
 
         let response: INPlayMediaIntentResponse = await withCheckedContinuation { cont in
@@ -63,7 +63,7 @@ struct MediaIntentHandlerTests {
 
     @Test("handle: mediaItem with nil identifier and nil title → .failure")
     func handleBlankMediaItemReturnsFailure() async {
-        let delegate = PVAppDelegate()
+        let delegate = PVApplicationServices()
         let blank = INMediaItem(identifier: nil, title: nil, type: .unknown, artwork: nil)
         let intent = makeIntent(items: [blank])
 
@@ -76,7 +76,7 @@ struct MediaIntentHandlerTests {
 
     @Test("handle: unknown MD5 identifier not in library → .failure")
     func handleUnknownMD5ReturnsFailure() async {
-        let delegate = PVAppDelegate()
+        let delegate = PVApplicationServices()
         let item = INMediaItem(identifier: "DEADBEEFDEADBEEFDEADBEEFDEADBEEF",
                               title: nil,
                               type: .unknown,
@@ -93,7 +93,7 @@ struct MediaIntentHandlerTests {
 
     @Test("handle: title-only item with no matching game → .failure")
     func handleUnknownTitleReturnsFailure() async {
-        let delegate = PVAppDelegate()
+        let delegate = PVApplicationServices()
         let item = INMediaItem(identifier: nil,
                               title: "XYZZY_NONEXISTENT_GAME_12345",
                               type: .unknown,
@@ -111,7 +111,7 @@ struct MediaIntentHandlerTests {
 
     @Test("resolveMediaItems: nil items → single needsValue result")
     func resolveNilMediaItemsReturnsNeedsValue() async {
-        let delegate = PVAppDelegate()
+        let delegate = PVApplicationServices()
         let intent = makeIntent(items: nil)
 
         let results: [INPlayMediaMediaItemResolutionResult] = await withCheckedContinuation { cont in
@@ -124,7 +124,7 @@ struct MediaIntentHandlerTests {
 
     @Test("resolveMediaItems: unknown MD5 → unsupported result")
     func resolveUnknownMD5ReturnsUnsupported() async {
-        let delegate = PVAppDelegate()
+        let delegate = PVApplicationServices()
         let item = INMediaItem(identifier: "00000000000000000000000000000000",
                               title: nil,
                               type: .unknown,
@@ -140,7 +140,7 @@ struct MediaIntentHandlerTests {
 
     @Test("resolveMediaItems: item with no identifier and no title → needsValue result")
     func resolveBlankItemReturnsNeedsValue() async {
-        let delegate = PVAppDelegate()
+        let delegate = PVApplicationServices()
         let blank = INMediaItem(identifier: nil, title: nil, type: .unknown, artwork: nil)
         let intent = makeIntent(items: [blank])
 

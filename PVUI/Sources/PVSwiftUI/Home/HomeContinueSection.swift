@@ -613,7 +613,12 @@ struct HomeContinueSection: SwiftUI.View {
     }
     
     var adjustedHeight: CGFloat {
-        isLandscapePhone ? defaultHeight / 2 : defaultHeight
+        #if os(iOS)
+        if UIDevice.current.userInterfaceIdiom == .phone {
+            return isLandscapePhone ? 112 : 156
+        }
+        #endif
+        return defaultHeight
     }
     
     var columns: Int {

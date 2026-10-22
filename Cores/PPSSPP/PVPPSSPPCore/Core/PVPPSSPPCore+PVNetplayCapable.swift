@@ -24,6 +24,7 @@
 //
 
 import Foundation
+import PVPPSSPPBridge
 import Combine
 import PVNetplay
 import PVSettings

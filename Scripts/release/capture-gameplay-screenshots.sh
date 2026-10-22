@@ -91,6 +91,12 @@ sys.exit(1)
 fi
 
 # ── Build app for screenshots ─────────────────────────────────────────────────
+# Workspace package resolution requires Azahar even for the UITesting scheme.
+core_slice=ios
+[ -z "$SIMULATOR_UDID" ] || core_slice=ios-sim
+for core in azahar dolphin; do
+    python3 Scripts/cores/build_slice.py "$core" "$core_slice" --xcframework
+done
 log "Building UITesting scheme..."
 BUILD_DIR="$(mktemp -d)/build"
 

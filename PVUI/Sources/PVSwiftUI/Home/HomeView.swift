@@ -180,14 +180,24 @@ struct HomeView: SwiftUI.View {
         return true
     }
 
+    private var usesCompactChrome: Bool {
+        #if os(iOS)
+        UIDevice.current.userInterfaceIdiom == .phone
+        #else
+        false
+        #endif
+    }
+
     var body: some SwiftUI.View {
-        StatusBarProtectionWrapper {
+        Group {
             VStack(spacing: 0) {
                 // `desktopLibraryContentColumn()` is identity off-Mac; on a desktop window it
                 // clamps + centers each band so the toolbar, import panel and scroll content
                 // all share one content column instead of stretching edge to edge.
-                displayOptionsView()
-                    .desktopLibraryContentColumn()
+                if !usesCompactChrome {
+                    displayOptionsView()
+                        .desktopLibraryContentColumn()
+                }
 
                 // Import Progress View
                 ImportProgressView(
@@ -204,6 +214,13 @@ struct HomeView: SwiftUI.View {
                 ScrollView {
                     ScrollViewReader { proxy in
                         LazyVStack {
+                            if usesCompactChrome && !(showRecentSaveStates && !recentSaveStateIDs.isEmpty) {
+                                HStack {
+                                    Spacer()
+                                    displayOptionsView()
+                                }
+                                .padding(.horizontal, 10)
+                            }
                             // Search bar inside scroll — no auto-hide, just scrolls with content
                             if allGames.count > 8 && showSearchbar {
                                 PVSearchBar(text: $searchText)
@@ -227,6 +244,14 @@ struct HomeView: SwiftUI.View {
                             recentlyPlayedSection()
                                 .id("section_recent")
                             mostPlayedSection()
+                            if usesCompactChrome && !allGames.isEmpty {
+                                Text(String(localized: "All Games").uppercased())
+                                    .foregroundStyle(themeManager.currentPalette.gameLibraryText.swiftUIColor.opacity(RetroPauseChrome.sectionTitleMutedOpacity))
+                                    .retroPauseSectionHeaderTypography()
+                                    .frame(maxWidth: .infinity, alignment: .leading)
+                                    .padding(.horizontal, 10)
+                                    .padding(.vertical, 8)
+                            }
                             if viewModel.viewGamesAsGrid {
                                 showGamesGrid(allGames)
                                     .id("section_allgames")
@@ -661,7 +686,7 @@ struct HomeView: SwiftUI.View {
         gamepadCancellable = GamepadManager.shared.eventPublisher
             .receive(on: DispatchQueue.main)
             .sink { event in
-                guard !viewModel.isMenuVisible else {
+                guard !viewModel.isMenuVisible, !viewModel.isLibraryInputBlocked else {
                     DLOG("🎮 HomeView: Ignoring input - menu visible")
                     return
                 }
@@ -732,6 +757,7 @@ struct HomeView: SwiftUI.View {
                 NotificationCenter.default.post(name: NSNotification.Name("PVShowSettings"), object: nil)
             },
             settingsContext: .home,
+            usesCompactMenu: usesCompactChrome,
             toggleFilterAction: { self.rootDelegate?.showUnderConstructionAlert() },
             toggleSortAction: {
                 viewModel.sortGamesAscending.toggle()
@@ -739,12 +765,17 @@ struct HomeView: SwiftUI.View {
             },
             toggleViewTypeAction: { viewModel.viewGamesAsGrid.toggle() }
         )
-        .padding(.vertical, 12)
-        .padding(.horizontal, 12)
-        .retroPausePanelBackground(isDark: themeManager.currentPalette.dark)
+        .padding(.vertical, usesCompactChrome ? 0 : 12)
+        .padding(.horizontal, usesCompactChrome ? 0 : 12)
+        .background {
+            if !usesCompactChrome {
+                Color.clear
+                    .retroPausePanelBackground(isDark: themeManager.currentPalette.dark)
+            }
+        }
         .clipShape(RoundedRectangle(cornerRadius: RetroPauseChrome.panelCornerRadius))
-        .padding(.horizontal, 8)
-        .padding(.vertical, 8)
+        .padding(.horizontal, usesCompactChrome ? 0 : 8)
+        .padding(.vertical, usesCompactChrome ? 0 : 8)
     }
 
     @ViewBuilder
@@ -1076,7 +1107,7 @@ struct HomeView: SwiftUI.View {
 
     @ViewBuilder
     private func continuesSection() -> some View {
-        if showRecentSaveStates {
+        if showRecentSaveStates && !recentSaveStateIDs.isEmpty {
             VStack(alignment: .leading, spacing: 0) {
                 // Section header with title and "Show All" button
                 HStack {
@@ -1084,6 +1115,9 @@ struct HomeView: SwiftUI.View {
                         .foregroundColor(themeManager.currentPalette.gameLibraryText.swiftUIColor.opacity(RetroPauseChrome.sectionTitleMutedOpacity))
                         .retroPauseSectionHeaderTypography()
                     Spacer()
+                    if usesCompactChrome {
+                        displayOptionsView()
+                    }
                     if !recentSaveStates.isEmpty {
                         Button {
                             showAllSavesBrowser = true
@@ -1096,8 +1130,8 @@ struct HomeView: SwiftUI.View {
                     }
                 }
                 .padding(.horizontal, 10)
-                .padding(.top, 20)
-                .padding(.bottom, 14)
+                .padding(.top, usesCompactChrome ? 0 : 20)
+                .padding(.bottom, usesCompactChrome ? 2 : 14)
 
                 HomeContinueSection(
                     rootDelegate: rootDelegate,
@@ -1117,7 +1151,7 @@ struct HomeView: SwiftUI.View {
 
     @ViewBuilder
     private func recentlyPlayedSection() -> some View {
-        if showRecentGames {
+        if showRecentGames && !recentlyPlayedGames.isEmpty {
             HomeSection(title: String(localized: "Recently Played")) {
                 ForEach(recentlyPlayedGames, id: \.id) { model in
                     gameItem(model, section: .recentlyPlayedGames, shelfRowHeightScale: PVCompactShelfRowHeightScale)
@@ -1129,7 +1163,7 @@ struct HomeView: SwiftUI.View {
 
     @ViewBuilder
     private func favoritesSection() -> some View {
-        if showFavorites {
+        if showFavorites && !favorites.isEmpty {
             HomeSection(title: String(localized: "Favorites")) {
                 ForEach(favorites, id: \.id) { model in
                     gameItem(model, section: .favorites, shelfRowHeightScale: PVCompactShelfRowHeightScale)
@@ -1141,12 +1175,14 @@ struct HomeView: SwiftUI.View {
 
     @ViewBuilder
     private func mostPlayedSection() -> some View {
-        HomeSection(title: "Most Played") {
-            ForEach(mostPlayed, id: \.id) { model in
-                gameItem(model, section: .mostPlayed)
+        if !mostPlayed.isEmpty {
+            HomeSection(title: "Most Played") {
+                ForEach(mostPlayed, id: \.id) { model in
+                    gameItem(model, section: .mostPlayed, shelfRowHeightScale: usesCompactChrome ? PVCompactShelfRowHeightScale : 1)
+                }
             }
+            HomeDividerView()
         }
-        HomeDividerView()
     }
 
     /// Shared game item builder used by all horizontal carousel sections.

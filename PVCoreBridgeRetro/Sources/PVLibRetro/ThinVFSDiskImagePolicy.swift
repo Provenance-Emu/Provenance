@@ -73,7 +73,7 @@ enum ThinVFSDiskImagePolicy {
 ///
 /// Matches the Swift policy so ObjC++ does not re-implement the extension list.
 @_cdecl("pv_thin_vfs_should_memory_map")
-func pvThinVFSShouldMemoryMap(
+public func pvThinVFSShouldMemoryMap(
     _ path: UnsafePointer<CChar>?,
     mode: UInt32,
     hints: UInt32,

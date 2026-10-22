@@ -22,7 +22,7 @@ import JITManager
 ///
 /// On tvOS, JIT is never available so this always returns `false`.
 @_cdecl("pvjit_acquired")
-func pvjitAcquired() -> Bool {
+public func pvjitAcquired() -> Bool {
     #if os(tvOS)
     return false
     #else

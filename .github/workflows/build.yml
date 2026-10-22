@@ -376,7 +376,7 @@ jobs:
           for tool in ldid xcbeautify; do
             command -v "$tool" >/dev/null 2>&1 || brew install "$tool" 2>/dev/null || true
           done
-          # PVAzahar's pre-build builds PVlibAzahar with cmake + ninja and needs python3 >= 3.10.
+          # Azahar's native artifact preparation needs cmake, ninja and python3 >= 3.10.
           for tool in cmake ninja; do
             command -v "$tool" >/dev/null 2>&1 || brew install "$tool" 2>/dev/null || true
           done
@@ -422,6 +422,12 @@ jobs:
             else
               echo "::warning::expected plist not found: $plist"
             fi
+          done
+
+      - name: Prepare SwiftPM native artifacts
+        run: |
+          for core in azahar dolphin; do
+            python3 Scripts/cores/build_slice.py "$core" "${{ steps.core-keys.outputs.slice }}" --xcframework
           done
 
       - name: Build Provenance
@@ -552,9 +558,10 @@ jobs:
       - name: Convert to IPA
         run: |
           APP_DIR="archive.xcarchive/Products/Applications"
+          APP_PATH="$APP_DIR/${{ matrix.APP_NAME }}.app"
 
           # If the standard path doesn't exist, search the entire archive
-          if [ ! -d "$APP_DIR" ] || [ -z "$(ls -A "$APP_DIR" 2>/dev/null)" ]; then
+          if [ ! -d "$APP_PATH" ]; then
             echo "Standard archive path empty, searching..."
             find archive.xcarchive -name "*.app" -maxdepth 5 2>/dev/null
             APP_PATH=$(find archive.xcarchive -name "${{ matrix.APP_NAME }}.app" -maxdepth 5 2>/dev/null | head -1)
@@ -564,15 +571,10 @@ jobs:
               find archive.xcarchive -type d -maxdepth 4
               exit 1
             fi
-            mkdir -p "$APP_DIR"
-            cp -pR "$APP_PATH" "$APP_DIR/"
             echo "Found app at: $APP_PATH"
           fi
 
-          mkdir Payload
-          ls -la "$APP_DIR"
-          cp -pR "$APP_DIR/${{ matrix.APP_NAME }}.app" "Payload/${{ matrix.IPA_NAME }}.app"
-          zip -r "${{ matrix.IPA_NAME }}.ipa" Payload
+          bash Scripts/ci/package-ipa.sh "$APP_PATH" "${{ matrix.IPA_NAME }}.ipa" "${{ matrix.IPA_NAME }}.app"
 
           # ── Extension-free variant (iOS sideloading) ─────────────────────
           # Every embedded .appex needs its OWN App ID, and a free Apple ID is
@@ -582,12 +584,9 @@ jobs:
           # entire weekly quota and locks the user out. Stripping PlugIns
           # takes that to ONE App ID.
           #
-          # This deliberately REUSES the Payload we just zipped rather than
-          # archiving again -- it is a delete plus a zip, a couple of minutes,
-          # not another 90-minute build. Safe to do after fakesigning because
-          # we only remove files; nothing needs re-signing. These IPAs are
-          # unsigned anyway (ldid), and the real signing happens on-device at
-          # install time, which is exactly when App IDs get consumed.
+          # Reuse the archived app without copying or modifying it. ZIP filtering
+          # omits extension folders for this variant, avoiding another archive build
+          # and a second full app bundle on disk. Real signing happens on-device.
           #
           # iOS only: AltStore and SideStore do not support tvOS, and the tvOS
           # build's only extension is TopShelf (2 App IDs -> 1), so the variant
@@ -599,14 +598,7 @@ jobs:
           if [ "${{ matrix.sdk }}" = "iphoneos" ]; then
             NOEXT="${{ matrix.IPA_NAME }}-NoExtensions"
             echo "Stripping app extensions for $NOEXT.ipa"
-            for d in PlugIns Watch Extensions; do
-              target="Payload/${{ matrix.IPA_NAME }}.app/$d"
-              if [ -d "$target" ]; then
-                echo "  removing $d/: $(ls "$target" | tr '\n' ' ')"
-                rm -rf "$target"
-              fi
-            done
-            zip -qr "$NOEXT.ipa" Payload
+            bash Scripts/ci/package-ipa.sh "$APP_PATH" "$NOEXT.ipa" "${{ matrix.IPA_NAME }}.app" --without-extensions
             echo "Built $NOEXT.ipa ($(du -h "$NOEXT.ipa" | cut -f1)) vs full $(du -h "${{ matrix.IPA_NAME }}.ipa" | cut -f1)"
           fi
 

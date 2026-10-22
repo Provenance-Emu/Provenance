@@ -18,7 +18,7 @@ into the cache, so PVAzahar's PVAZAHAR_ARCHIVE path and PVDolphin's references d
 On a miss the wrapped builder builds that one slice (its per-platform methods, not its main(),
 which would also repack the xcframework), the product moves into the cache and is linked.
 --xcframework repacks <Product>.xcframework for distribution; Dolphin also repacks it when it
-is missing, since PVDolphin.xcodeproj links the xcframework at planning time.
+is missing, since SwiftPM resolves the xcframework at planning time.
 
 Python 3.9 compatible (Dolphin's Xcode phase runs /usr/bin/python3). Azahar's builder needs
 3.10+, so it runs in a separate interpreter (PV_PYTHON3, Homebrew python3, python3.1x).
@@ -250,6 +250,19 @@ def link_legacy(spec: CoreSpec, slice_name: str, target: Path) -> Path:
     return legacy
 
 
+def prepare_headers(spec: CoreSpec, framework: Path) -> None:
+    """Expose the selected Azahar slice's headers at a stable package search path."""
+    if spec.name != "azahar":
+        return
+    source = framework / "Headers"
+    if not source.is_dir():
+        raise SystemExit(f"build_slice: missing native headers: {source}")
+    destination = spec.legacy_dir.parent / "headers"
+    remove_path(destination)
+    destination.parent.mkdir(parents=True, exist_ok=True)
+    os.symlink(str(source.resolve()), str(destination))
+
+
 def prune_entries(slice_dir: Path, keep: int, current: Path) -> None:
     entries = [p for p in slice_dir.iterdir() if p.is_dir() and p != current]
     entries.sort(key=lambda p: p.stat().st_mtime, reverse=True)
@@ -390,7 +403,8 @@ def main(argv: Optional[List[str]] = None, runner: Runner = default_runner,
     cache = args.cache_dir or Path(environment.get("PV_CORE_CACHE") or DEFAULT_CACHE)
     cache = cache.expanduser()
     produced = args.force or not is_cached(spec, args.slice, cache, key)
-    ensure_slice(spec, args.slice, cache, key, inputs, args.force, builder)
+    framework = ensure_slice(spec, args.slice, cache, key, inputs, args.force, builder)
+    prepare_headers(spec, framework)
     if needs_xcframework(spec, args.slice, produced, args.xcframework):
         pack_xcframework(spec)
     return 0

@@ -1,0 +1,73 @@
+{
+  "boost": {
+    "sha256": "71feeed900fbccca04a3b4f2f84a7c217186f28a940ed8b7ed4725986baf99fa",
+    "version": "1.81.0"
+  },
+  "ios_device_inputs": {
+    "libGenericCodeGenEmuThree.a": "daae58738eed89cadebc6060ba0c29ca163cdfd627e156908535cfbfce59cb3c",
+    "libHLSLEmuThree.a": "db78eaecc89aa81856867f236b2a3c51bc5ae2e5d0c13fd98844d149e633f170",
+    "libMachineIndependentEmuThree.a": "1a82ef7759a9386d0d7dc4be97139f6eb987d26aca4a0d0a9695add76d1aab7f",
+    "libOGLCompilerEmuThree.a": "cb48fd769e4d87abad88f36e77bb81d422e933196e288407a9520ecf210ccbe7",
+    "libOSDependentEmuThree.a": "37a1d6014e4cd6993e07814cb047665c0953b43217db3c076188b95f9749ad4d",
+    "libSPIRVEmuThree.a": "f1e8a0c9e8554c15adbfb8efb428b39001da39eb055b75a658876d19363be275",
+    "libSoundTouchEmuThree.a": "96fe958299780c35661ab1616bec0a0f08008b31dfe918f728346f030a4800a2",
+    "libboost_iostreamsEmuThree.a": "8d2536a11f182fd612f6a55229c84e55f787f100e7b7a414745c5cc76646eb87",
+    "libboost_program_optionsEmuThree.a": "8fbed3e6b98711c4f8fb41354f0b5ce01748cb1d28999266fcc3de24f92f9317",
+    "libboost_serializationEmuThree.a": "86c40a8e38cdd0afe9bec5a85481a15dab1b6ff6b20c920cec6c150fa8b05704",
+    "libdynarmicEmuThree.a": "ed277fcfec88b41541da3d550c4e15c4f43fdde736377133a2e8437f95ecc7a3",
+    "libenetEmuThree.a": "b03a670844584991839c73ea69bcd9e49ffdd6028a6efe390b2a15e7d29bdc7e",
+    "libfmtEmuThree.a": "69b577f5b54699e7306bad781d0496599bcc6e0f943bde961454da6c86ee6e0b",
+    "libglslangEmuThree.a": "6d2fea33799da81d66df1ad58d19befffa4f7e6fda03abab9725095f68d7a44f",
+    "libmclEmuThree.a": "1ecbecbe86a6a7def6c7117741df8ea66c446323edb2a016d23ee7899fdaf44a",
+    "libopenal.a": "ea842a6eb8a12710e47466eda5caf8fc2c5670ebd6cf2348039849d855960d25",
+    "libsiritEmuThree.a": "8ab5a3c8141dc0fb0ea284f72b931e13dd1178cf52ac6023b913fe373aec98e1",
+    "libteakraEmuThree.a": "8947af7d292b6ee995e9ae02430fa7810682607e2b8c3e5d228012e986e15b10",
+    "libzstdEmuThree.a": "8296be1b96c7d42f60241a3f9943028196381ed0bf30c3b592fbe4ff2c59a7c3"
+  },
+  "pins": {
+    "dynarmic": [
+      "https://github.com/azahar-emu/dynarmic.git",
+      "a179e2f2bb74e386c353ee2f6af3302e75075c3c"
+    ],
+    "enet": [
+      "https://github.com/lsalzman/enet.git",
+      "4f8e9bdc4ce6d1f61a6274b0e557065a38190952"
+    ],
+    "fmt": [
+      "https://github.com/fmtlib/fmt.git",
+      "c4ee726532178e556d923372f29163bd206d7732"
+    ],
+    "glslang": [
+      "https://github.com/KhronosGroup/glslang.git",
+      "c0cf8ad87627227c7f1d3be6177bbf2832d3fc1b"
+    ],
+    "openal": [
+      "https://github.com/kcat/openal-soft.git",
+      "d3875f333fb6abe2f39d82caca329414871ae53b"
+    ],
+    "sirit": [
+      "https://github.com/GPUCode/sirit.git",
+      "f0b6bbe55b3714f23476634b0105ad246f0819e2"
+    ],
+    "sirit/externals/SPIRV-Headers": [
+      "https://github.com/KhronosGroup/SPIRV-Headers.git",
+      "a3fdfe81465d57efc97cfd28ac6c8190fb31a6c8"
+    ],
+    "teakra": [
+      "https://github.com/wwylele/teakra.git",
+      "01db7cdd00aabcce559a8dddce8798dabb71949b"
+    ]
+  },
+  "slices": {
+    "ios-arm64": "6952acdebd8c4806c28f1b70d9ab46737d38b09467e45048254b854c1e7e8e8c",
+    "ios-arm64-simulator": "107ae3be8784dc07490ac606418f52cd6a1d1938131c31d2680c7b21e388d697",
+    "tvos-arm64": "748e0483b0b9de4bcf5598a652e7b18f47a135b35247f86b4c23b28631d387df",
+    "tvos-arm64-simulator": "4338ac3d097bfd16e753d6d5379e474eeb86f2746df5fa988bf7a1ab299181fb"
+  },
+  "soundtouch": {
+    "samples": "signed 16-bit PCM",
+    "sha256": "3d4161d74ca25c5a98c69dbb8ea10fd2be409ba1a3a0bf81db407c4c261f166b",
+    "version": "1.8.0"
+  },
+  "xcode": "Xcode 27.1\nBuild version 27A9275"
+}

@@ -7,10 +7,10 @@
 
 // Local Changes: Create local buttoninputbridge
 
-#import <PVEmuThree/InputBridge.h>
+#import "InputBridge.h"
 #import "../emuThree/InputFactory.h"
 
-#import <PVEmuThree/CitraWrapper.h>
+#import "CitraWrapper.h"
 #include <thread>
 #import <CoreMotion/CoreMotion.h>
 
