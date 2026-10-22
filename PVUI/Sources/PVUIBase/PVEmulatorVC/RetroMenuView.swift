@@ -1458,7 +1458,7 @@ struct RetroMenuView: View {
     @State internal var showingPalettePicker = false
 
     // Scope to save skin selection under (set once, applies to all picks in the session)
-    @State private var selectedSkinScope: SkinScope = .game
+    @State private var selectedSkinScope: SkinScope = .system
 
     private var skinsMenuButtons: some View {
         VStack(spacing: menuSpacing) {

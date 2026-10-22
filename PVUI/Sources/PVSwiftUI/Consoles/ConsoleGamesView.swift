@@ -674,7 +674,8 @@ struct ConsoleGamesView: SwiftUI.View {
                 // Per-Game Skin Selection Modal
                 .sheet(item: $gameForSkinSelection) { state in
                     NavigationStack {
-                        SystemSkinSelectionView(system: state.game.system?.enumValue ?? console.enumValue, game: state.game.warmUp())
+                        SystemSkinSelectionView(system: state.game.system?.enumValue ?? console.enumValue, game: state.game.warmUp(),
+                                                preferredScope: .game)
                         #if !os(tvOS)
                             .navigationBarTitleDisplayMode(.inline)
                         #endif
