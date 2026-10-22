@@ -1516,7 +1516,7 @@ extension GameLaunchingViewController where Self: UIViewController {
                         /// Create thread safe reference to the save state
                         Task { @MainActor in
                             await self.openSaveState(withID: saveStateID)
-                            emulatorViewController.gpuViewController.view.isHidden = false
+                            emulatorViewController.revealHostGPUView()
                         }
                     }
                 })

@@ -451,8 +451,7 @@ extension PVEmulatorViewController {
             // For GL views, preserve existing settings set by PVGLViewController
             // Only ensure visibility
         }
-        gameScreenView.isHidden = false
-        gameScreenView.alpha = 1.0
+        revealHostGPUView()
 
         // Position the GPU view based on the DeltaSkin screen information
         updateGPUViewPositionForDeltaSkin()
@@ -572,9 +571,8 @@ extension PVEmulatorViewController {
             return
         }
 
-        // Ensure GPU view is visible
-        gameScreenView.isHidden = false
-        gameScreenView.alpha = 1.0
+        // Ensure GPU view is visible (hidden for own-surface cores; see revealHostGPUView)
+        revealHostGPUView()
 
         // Add the Metal view to the main view first (bottom layer) if it exists separately
         if let metalVC = gpuViewController as? PVMetalViewController,
@@ -585,9 +583,6 @@ extension PVEmulatorViewController {
             }
 
             // IMPORTANT: Don't override the frame here, let DeltaSkinScreen handle it
-            // Just ensure it's visible
-            mtlView.isHidden = false
-            mtlView.alpha = 1.0
 
             // Log that we're not setting the frame here
             DLOG("MTLView added to hierarchy but not positioning it here - DeltaSkinScreen will handle that")
@@ -698,18 +693,8 @@ extension PVEmulatorViewController {
 
         applyViewportFromCurrentSkin()
 
-        // Make sure the GPU view is visible
-        if let gameScreenView = gpuViewController.view {
-            gameScreenView.isHidden = false
-            gameScreenView.alpha = 1.0
-        }
-
-        // Ensure Metal view visible
-        if let metalVC = gpuViewController as? PVMetalViewController,
-           let mtlView = metalVC.mtlView {
-            mtlView.isHidden = false
-            mtlView.alpha = 1.0
-        }
+        // Make sure the GPU view (the Metal view itself for Metal cores) is visible
+        revealHostGPUView()
     }
 
     // Add this method to handle showing the menu
