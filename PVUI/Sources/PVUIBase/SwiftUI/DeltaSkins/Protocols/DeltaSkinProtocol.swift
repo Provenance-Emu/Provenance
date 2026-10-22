@@ -21,6 +21,10 @@ public protocol DeltaSkinProtocol: Identifiable, Equatable {
     /// Get a small preview image whose longest side is about `maxDimension` points
     func thumbnail(for traits: DeltaSkinTraits, maxDimension: CGFloat) async throws -> UIImage
 
+    /// Thumbstick or button-art image from the skin's assets. A requirement, not just an extension
+    /// method, so calls through `any DeltaSkinProtocol` reach `DeltaSkin`'s cached implementation.
+    func loadThumbstickImage(named: String) async throws -> UIImage
+
     /// Get screen layouts for the current skin and traits
     func screens(for traits: DeltaSkinTraits) -> [DeltaSkinScreen]?
 
