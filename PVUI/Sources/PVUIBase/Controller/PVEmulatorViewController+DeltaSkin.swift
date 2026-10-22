@@ -345,6 +345,19 @@ extension PVEmulatorViewController {
     @objc private func handleCoreDidStartRunning(_ notification: Notification) {
         guard notification.object as AnyObject === core else { return }
         applyResolvedControllerVariantIfNeeded()
+        reapplyDualScreenViewportAfterStart()
+    }
+
+    /// The skin or overlay usually publishes its screen frames while the core is still booting, and
+    /// those can be dropped: the viewport paths skip a core that isn't running, and before
+    /// `createEmulator` assigns `touchViewController` the frames can't reach the core's own render
+    /// view. The overlay publishes only on change, so Azahar kept its full-screen layout (top screen
+    /// under the notch) until a rotation. Hand the current frames over again now that it runs.
+    private func reapplyDualScreenViewportAfterStart() {
+        guard core.supportsDualScreens, isDeltaSkinEnabled else { return }
+        ILOG("🎮 SKIN: core running; re-applying dual-screen frames (overlay frames: \(overlayScreenFrames.count))")
+        lastAppliedViewportFrame = nil   // the dropped attempt may have recorded the frame as applied
+        applyDualScreenViewport()
     }
 
     @objc private func handleThinCoreAVInfoForControllerVariant(_ notification: Notification) {
