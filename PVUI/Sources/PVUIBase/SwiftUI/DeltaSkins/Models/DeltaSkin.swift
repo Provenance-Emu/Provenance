@@ -683,7 +683,7 @@ public struct DeltaSkin: DeltaSkinProtocol {
     private static let thumbstickCacheQueue = DispatchQueue(label: "com.provenance.deltaskin.thumbstickcache", attributes: .concurrent)
 
     /// Load the thumbstick image
-    func loadThumbstickImage(named: String) async throws -> UIImage {
+    public func loadThumbstickImage(named: String) async throws -> UIImage {
         // Check cache first
         let cacheKey = "\(identifier)-thumbstick-\(named)"
         if let cachedImage = Self.thumbstickCacheQueue.sync(execute: { Self.thumbstickImageCache[cacheKey] }) {
