@@ -100,12 +100,6 @@ extension PVApplicationServices: MXMetricManagerSubscriber {
 
     /// Forward abnormal-exit counts to Sentry as a tagged event so jetsam and
     /// `0xdead10cc` are filterable in the dashboard, not just in a device log file.
-    ///
-    /// `MXMetricManager` delivers on a background queue, and this subscriber is
-    /// registered before `SentryBootstrapTask` runs (debug builds never start
-    /// Sentry at all). Constructing `Event` is what first messages
-    /// `SentryDependencyContainer`, and that class's `+initialize` reads
-    /// `UIApplication.applicationState`, which must happen on the main thread.
     private func reportExitSummaryToSentry(_ summary: AppExitSummary, payload: MXMetricPayload) {
 #if canImport(Sentry)
         let message = "MetricKit app exits: \(summary.dominantClass)"
@@ -114,63 +108,81 @@ extension PVApplicationServices: MXMetricManagerSubscriber {
         let background = summary.background.summaryLine
         let windowBegin = "\(payload.timeStampBegin)"
         let windowEnd = "\(payload.timeStampEnd)"
-        DispatchQueue.main.async {
-            Self.captureExitSummary(
-                message: message,
-                tags: tags,
-                foreground: foreground,
-                background: background,
-                windowBegin: windowBegin,
-                windowEnd: windowEnd,
-                allowRetry: true
-            )
+        Self.whenSentryEnabled {
+            let event = Event(level: .warning)
+            event.message = SentryMessage(formatted: message)
+            event.tags = tags
+            event.context = [
+                "app_exit": [
+                    "foreground": foreground,
+                    "background": background,
+                    "window_begin": windowBegin,
+                    "window_end": windowEnd
+                ]
+            ]
+            SentrySDK.capture(event: event)
+        }
+#endif
+    }
+
+    /// Forward a crash diagnostic to Sentry with its raw call stack attached.
+    /// Nothing else reports crashes there: Sentry's crash handler is off and its
+    /// own MetricKit integration drops crash diagnostics.
+    private func reportCrashToSentry(_ crash: MXCrashDiagnostic) {
+#if canImport(Sentry)
+        let json = crash.callStackTree.jsonRepresentation()
+        let report = MetricKitCrashReport(
+            callStackTreeJSON: json,
+            exceptionType: crash.exceptionType?.intValue,
+            exceptionCode: crash.exceptionCode?.intValue,
+            signal: crash.signal?.intValue,
+            terminationReason: crash.terminationReason,
+            build: crash.metaData.applicationBuildVersion
+        )
+        let vmRegion = crash.virtualMemoryRegionInfo
+        let objcReason = crash.exceptionReason?.composedMessage
+        Self.whenSentryEnabled {
+            let event = Event(level: .fatal)
+            event.message = SentryMessage(formatted: report.title)
+            event.tags = report.sentryTags
+            event.fingerprint = report.fingerprint
+            var details: [String: Any] = ["exception": report.exceptionLabel, "frames": report.contextFrames]
+            details["termination_reason"] = report.terminationReason
+            details["vm_region"] = vmRegion
+            details["objc_reason"] = objcReason
+            event.context = ["metrickit_crash": details]
+            SentrySDK.capture(event: event) { scope in
+                scope.addAttachment(Attachment(data: json, filename: "callStackTree.json", contentType: "application/json"))
+            }
         }
 #endif
     }
 
 #if canImport(Sentry)
-    /// Captures one exit summary. No-ops until `SentrySDK.start` has run, and retries
+    /// How long to wait for `SentrySDK.start` before the single retry.
+    private static let sentryStartRetryDelay: TimeInterval = 5
+
+    /// Runs `capture` on the main thread once `SentrySDK.start` has run, retrying
     /// once: a payload queued at launch can arrive before the bootstrap task.
-    private static func captureExitSummary(
-        message: String,
-        tags: [String: String],
-        foreground: String,
-        background: String,
-        windowBegin: String,
-        windowEnd: String,
-        allowRetry: Bool
-    ) {
-        guard SentrySDK.isEnabled else {
-            guard allowRetry else {
-                metricLog.debug("Skipping exit report; Sentry is not enabled")
+    ///
+    /// `MXMetricManager` delivers on a background queue, and this subscriber is
+    /// registered before `SentryBootstrapTask` runs (debug builds never start
+    /// Sentry at all). Constructing `Event` is what first messages
+    /// `SentryDependencyContainer`, and that class's `+initialize` reads
+    /// `UIApplication.applicationState`, which must happen on the main thread.
+    private static func whenSentryEnabled(allowRetry: Bool = true, _ capture: @escaping () -> Void) {
+        let delay = allowRetry ? 0 : sentryStartRetryDelay
+        DispatchQueue.main.asyncAfter(deadline: .now() + delay) {
+            guard SentrySDK.isEnabled else {
+                if allowRetry {
+                    whenSentryEnabled(allowRetry: false, capture)
+                } else {
+                    metricLog.debug("Skipping Sentry report; Sentry is not enabled")
+                }
                 return
             }
-            DispatchQueue.main.asyncAfter(deadline: .now() + 5) {
-                captureExitSummary(
-                    message: message,
-                    tags: tags,
-                    foreground: foreground,
-                    background: background,
-                    windowBegin: windowBegin,
-                    windowEnd: windowEnd,
-                    allowRetry: false
-                )
-            }
-            return
+            capture()
         }
-
-        let event = Event(level: .warning)
-        event.message = SentryMessage(formatted: message)
-        event.tags = tags
-        event.context = [
-            "app_exit": [
-                "foreground": foreground,
-                "background": background,
-                "window_begin": windowBegin,
-                "window_end": windowEnd
-            ]
-        ]
-        SentrySDK.capture(event: event)
     }
 #endif
 
@@ -203,6 +215,7 @@ extension PVApplicationServices: MXMetricManagerSubscriber {
                        detail: "signal=\(crash.signal) type=\(crash.exceptionType?.intValue ?? -1) code=\(crash.exceptionCode?.intValue ?? -1)")
             logCallStackTree(crash.callStackTree, label: "crash-\(i)", log: log)
             saveRawJSON(crash.callStackTree, type: "crash", index: i)
+            reportCrashToSentry(crash)
         }
     }
 
