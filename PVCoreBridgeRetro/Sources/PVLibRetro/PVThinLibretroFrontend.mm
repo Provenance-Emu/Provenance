@@ -162,9 +162,15 @@ static void pv_perf_ensure_timebase(void) {
     }
 }
 
-/// Registered perf counters from cores.
+/// Registered perf counters from cores. Each points at a static inside the
+/// core's dylib, so entries must be dropped before that dylib is dlclosed
+/// (`pv_perf_unregister_image`); a stale entry is read by the next core's
+/// `perf_log` (virtualjaguar calls it from `retro_deinit`) and faults.
 static struct retro_perf_counter *pv_perf_counters[PV_PERF_MAX_COUNTERS];
 static unsigned pv_perf_counter_count = 0;
+/// Guards the registry: cores register on their own threads while another
+/// frontend's teardown unregisters on its own.
+static os_unfair_lock pv_perf_lock = OS_UNFAIR_LOCK_INIT;
 
 #if DEBUG
 /// Signpost log handle for Instruments profiling of libretro perf counters.
@@ -202,10 +208,41 @@ uint64_t pv_perf_get_cpu_features(void) {
 
 /// Register a performance counter (retro_perf_register_t).
 void pv_perf_register(struct retro_perf_counter *_Nullable counter) {
-    if (!counter || counter->registered || pv_perf_counter_count >= PV_PERF_MAX_COUNTERS)
-        return;
-    pv_perf_counters[pv_perf_counter_count++] = counter;
-    counter->registered = true;
+    if (!counter) return;
+    os_unfair_lock_lock(&pv_perf_lock);
+    if (!counter->registered && pv_perf_counter_count < PV_PERF_MAX_COUNTERS) {
+        pv_perf_counters[pv_perf_counter_count++] = counter;
+        counter->registered = true;
+    }
+    os_unfair_lock_unlock(&pv_perf_lock);
+}
+
+void pv_perf_unregister_image(const void *_Nullable imageHeader) {
+    if (!imageHeader) return;
+    os_unfair_lock_lock(&pv_perf_lock);
+    unsigned kept = 0;
+    for (unsigned i = 0; i < pv_perf_counter_count; i++) {
+        struct retro_perf_counter *c = pv_perf_counters[i];
+        Dl_info info;
+        if (c && dladdr(c, &info) && info.dli_fbase == imageHeader) {
+            // Still mapped here; clear the flag so a reload re-registers.
+            c->registered = false;
+            continue;
+        }
+        pv_perf_counters[kept++] = c;
+    }
+    for (unsigned i = kept; i < pv_perf_counter_count; i++) {
+        pv_perf_counters[i] = NULL;
+    }
+    pv_perf_counter_count = kept;
+    os_unfair_lock_unlock(&pv_perf_lock);
+}
+
+unsigned pv_perf_registered_count(void) {
+    os_unfair_lock_lock(&pv_perf_lock);
+    unsigned count = pv_perf_counter_count;
+    os_unfair_lock_unlock(&pv_perf_lock);
+    return count;
 }
 
 /// Start a registered counter (retro_perf_start_t).
@@ -239,16 +276,19 @@ void pv_perf_stop(struct retro_perf_counter *_Nullable counter) {
 void pv_perf_log(void) {
     pv_perf_ensure_timebase();
     double ns_ratio = pv_perf_timebase_ratio;
-    for (unsigned i = 0; i < pv_perf_counter_count; i++) {
+    os_unfair_lock_lock(&pv_perf_lock);
+    unsigned count = pv_perf_counter_count;
+    for (unsigned i = 0; i < count; i++) {
         struct retro_perf_counter *c = pv_perf_counters[i];
         if (!c) continue;
         double total_ms = (double)c->total * ns_ratio / 1e6;
         ILOG(@"[PERF] %s: %.3f ms (%llu calls)",
              c->ident ? c->ident : "(null)", total_ms, (unsigned long long)c->call_cnt);
     }
+    os_unfair_lock_unlock(&pv_perf_lock);
 #if DEBUG
     os_signpost_event_emit(pv_perf_signpost_log(), OS_SIGNPOST_ID_EXCLUSIVE,
-                           "perf_log", "dumped %u counters", pv_perf_counter_count);
+                           "perf_log", "dumped %u counters", count);
 #endif
 }
 
@@ -3595,6 +3635,10 @@ static bool thin_environment(unsigned cmd, void *data) {
     _loadedCorePath = nil;
     if (_dylibHandle) {
         ILOG(@"ThinFrontend: unloading core dylib");
+        Dl_info coreImage;
+        if (_sym.retro_init && dladdr((const void *)_sym.retro_init, &coreImage)) {
+            pv_perf_unregister_image(coreImage.dli_fbase);
+        }
         dlclose(_dylibHandle);
         _dylibHandle = NULL;
         memset(&_sym, 0, sizeof(_sym));

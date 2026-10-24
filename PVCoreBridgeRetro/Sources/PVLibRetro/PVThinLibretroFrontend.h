@@ -66,6 +66,13 @@ void pv_perf_stop(struct retro_perf_counter *_Nullable counter);
 /// Log all registered counters to the Provenance log.
 void pv_perf_log(void);
 
+/// Drop every registered counter that lives in the image whose Mach-O header is
+/// `imageHeader` (`Dl_info.dli_fbase`). Call before dlclosing a core.
+void pv_perf_unregister_image(const void *_Nullable imageHeader);
+
+/// Number of counters currently registered.
+unsigned pv_perf_registered_count(void);
+
 // MARK: libretro MIDI interface (C functions)
 
 /// The CoreMIDI-backed `retro_midi_interface` handed to cores via
