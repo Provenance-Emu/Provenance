@@ -966,6 +966,10 @@
         } else if (xbox) {
             selectButton = xbox.buttonShare;
             startButton = xbox.buttonMenu;
+        } else if (PVIsPhysicalProfileController(controller)) {
+            // Switch Online SNES pad: Start is buttonMenu, Select is buttonOptions.
+            startButton = gamepad.buttonMenu;
+            selectButton = gamepad.buttonOptions;
         } else {
             startButton = gamepad.buttonOptions ? gamepad.buttonOptions : startButton;
             if (!selectButton) {

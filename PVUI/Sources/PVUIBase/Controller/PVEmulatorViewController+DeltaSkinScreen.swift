@@ -1101,7 +1101,30 @@ extension PVEmulatorViewController: PVViewportLayoutDelegate {
     /// False for own-surface cores (Dolphin, Azahar): they draw into a view of their own inside the
     /// touch view, so the host GPU view has nothing to show and, stacked above theirs, blacks them out.
     internal var hostGPUViewDrawsGame: Bool {
-        !(core.skipLayout && core.bridge is EmulatorCoreViewportPositioning)
+        HostGPUViewPolicy.drawsGame(skipLayout: core.skipLayout,
+                                    positionsOwnRenderView: core.bridge is EmulatorCoreViewportPositioning,
+                                    rendersInsideHostView: coreManagesOwnHosting && core.touchViewController == nil)
+    }
+
+    /// libretro and PPSSPP are never handed the emulator VC as their host (see `createEmulator`).
+    /// Without a controller overlay native PPSSPP then adds its render view inside the GPU view.
+    internal var coreManagesOwnHosting: Bool {
+        let coreID = core.coreIdentifier ?? ""
+        return coreID.contains("libretro") || coreID.contains("ppsspp")
+    }
+
+    /// The one way to show the host GPU view. On iOS own-surface cores keep it hidden: skin setup,
+    /// skin finalize and rotation restack it directly under the skin container, above their render
+    /// view. tvOS has no skins to restack it, and native PPSSPP draws inside it there.
+    /// (`mtlView` is the Metal controller's root view, so this covers it too.)
+    internal func revealHostGPUView() {
+        guard let gameScreenView = gpuViewController.view else { return }
+        #if os(tvOS)
+        gameScreenView.isHidden = false
+        #else
+        gameScreenView.isHidden = !hostGPUViewDrawsGame
+        #endif
+        gameScreenView.alpha = 1.0
     }
 
     /// Ensure GPU view is visible and below skin
@@ -1111,16 +1134,10 @@ extension PVEmulatorViewController: PVViewportLayoutDelegate {
             gameScreenView.isHidden = true
             return
         }
-        gameScreenView.isHidden = false
-        gameScreenView.alpha = 1.0
+        revealHostGPUView()
 
         if let skinContainerView = view.subviews.first(where: { $0 is DeltaSkinContainerView }) {
             view.insertSubview(gameScreenView, belowSubview: skinContainerView)
-        }
-
-        if let metalVC = gpuViewController as? PVMetalViewController, let mtlView = metalVC.mtlView {
-            mtlView.isHidden = false
-            mtlView.alpha = 1.0
         }
     }
 

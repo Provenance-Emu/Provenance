@@ -93,6 +93,7 @@ The app is split into ~26 `PV*` Swift Package frameworks. Key modules:
 - **PVLibrary** — Data models, Realm persistence, game database, CloudKit sync
 - **PVLogging** — Logging infrastructure (CocoaLumberjack-based)
 - **PVLookup** (separate repo, github.com/Provenance-Emu/PVLookup, shared with iFly and iCube) — game metadata, artwork and cheat lookup over libretrodb, OpenVGDB, TheGamesDB, ShiraGame and the libretro cheat database. Ships no database bytes (see "Lookup databases" below). Change it there, tag a release, then bump the pin in `Provenance.xcworkspace`'s `Package.resolved` by hand
+- **PVLibrarySnapshot** (separate repo, github.com/Provenance-Emu/PVLibrarySnapshot, shared with iCube and iFly) — the App Group snapshot and cover JPEGs the tvOS Top Shelf reads. Provenance's configuration (app group, `provenance://open?md5=` launch URL) is `PVLibrarySnapshotConfig` in PVAppIntents; PVUIBase `LibrarySnapshotWriter` (tvOS only for now) writes it from `WidgetDataWriter.writeFromRealm()`. Widgets and Quick Look still read `PVLibrarySnapshotLegacy` (`widget.*` keys), whose type names collide with the shared package's: no file may import both
 - **PVNetplay** — Central netplay support code for retroarch and game center
 - **PVPLlists** — Core and System plist processing and other serializer
 - **PVPatching** — ROM/disc patches (IPS, IPS32, BPS, UPS, PPF, xdelta3): import, matching, cache, Patch Applier, patch creation, online catalog
@@ -277,6 +278,10 @@ A second, generated workspace for fast iteration. `Provenance.xcodeproj` still s
   [--print-key|--force|--xcframework|--cache-dir DIR]` builds or links one slice.
   - The key is a content hash: submodule working tree (dirty edits bust the cache; `--force` rebuilds) and
     nested externals, build script and toolchain, flags, Xcode and SDK, and Azahar's MoltenVK slice.
+  - Dolphin keys only on the dolphin-ios paths its CMake build reads (`DOLPHIN_BUILD_PATHS`: top-level
+    CMake files, `Externals`, `Source/Core`, `Source/iOS/Library`, `ApprovedInis.json`), as HEAD tree
+    hashes plus dirty edits under them. iCube app commits and edits there no longer force a rebuild;
+    if the build starts reading a new path, add it to that list.
   - The cache is `$PV_CORE_CACHE` or `~/Library/Caches/Provenance/cores/<core>/<slice>/<key12>/`.
   - On a hit, the legacy `build/xcframework/<Product>-<slice>.framework` path is a symlink into it.
   - Only `--xcframework` repacks the multi-slice xcframework (Dolphin's is repacked after every miss).

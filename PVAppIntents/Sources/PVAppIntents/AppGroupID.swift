@@ -18,7 +18,7 @@
 //
 
 import Foundation
-import PVLibrarySnapshot
+import PVLibrarySnapshotLegacy
 
 /// The App Group identifier for this build.
 ///

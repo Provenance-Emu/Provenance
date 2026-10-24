@@ -53,6 +53,7 @@ public final class DeltaSkinSelectionManager: ObservableObject {
         _ skinIdentifier: String?,
         for systemId: SystemIdentifier,
         gameId: String? = nil,
+        otherGameKeys: [String] = [],
         orientation: SkinOrientation,
         scope: SkinScope
     ) {
@@ -74,6 +75,12 @@ public final class DeltaSkinSelectionManager: ObservableObject {
         case .system:
             // System scope: persist preference on main actor (safe — we are @MainActor)
             preferences.setSelectedSkin(skinIdentifier, for: systemId, orientation: orientation)
+            // A game preference outranks the system one, so an older per-game pick for the game
+            // being played would hide this pick on every launch. Clear that game's override under
+            // every key it may be stored by (rotation reads id, md5 and crc).
+            for key in ([gameId].compactMap { $0 } + otherGameKeys) where !key.isEmpty {
+                preferences.setSelectedSkin(nil, for: key, orientation: orientation)
+            }
             ILOG("skins: Set system preference: \(skinIdentifier ?? "nil") for system \(systemId.rawValue)")
         }
 

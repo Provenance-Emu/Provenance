@@ -62,7 +62,8 @@ public struct SystemSkinSelectionView: View {
         self.system = system
         self.game = game
         _selectedOrientation = State(initialValue: preferredOrientation)
-        _selectedScope = State(initialValue: preferredScope ?? (game != nil ? .game : .system))
+        // System by default: a per-game or session pick is an explicit opt-in from the scope chips.
+        _selectedScope = State(initialValue: preferredScope ?? .system)
     }
 
     /// Whether this is a per-game skin selection
@@ -83,14 +84,22 @@ public struct SystemSkinSelectionView: View {
         return selectedScope
     }
 
-    /// Game ID used for writes/reads at the current scope.
+    /// Game ID passed with writes/reads at the current scope. System scope passes it too: a system
+    /// pick then clears that game's own override, which would otherwise outrank it.
     private var scopedGameId: String? {
-        switch effectiveScope {
-        case .system:
-            return nil
-        case .session, .game:
-            return gameId
-        }
+        gameId
+    }
+
+    /// Other keys a game pick may be stored under (the classic menu used md5/crc; rotation reads them).
+    private var otherGameKeys: [String] {
+        guard let game else { return [] }
+        return [game.md5Hash, game.crc]
+    }
+
+    /// Stores a pick at the current scope.
+    private func storeSkin(_ identifier: String?, orientation: SkinOrientation) async {
+        await selectionManager.setSkin(identifier, for: system, gameId: scopedGameId, otherGameKeys: otherGameKeys,
+                                       orientation: orientation, scope: effectiveScope)
     }
 
     /// System short code for skin catalog filter (e.g. "nes", "snes")
@@ -748,8 +757,8 @@ public struct SystemSkinSelectionView: View {
             Button {
                 // Select for both orientations
                 Task {
-                    await selectionManager.setSkin(skin.identifier, for: system, gameId: scopedGameId, orientation: .portrait, scope: effectiveScope)
-                    await selectionManager.setSkin(skin.identifier, for: system, gameId: scopedGameId, orientation: .landscape, scope: effectiveScope)
+                    await storeSkin(skin.identifier, orientation: .portrait)
+                    await storeSkin(skin.identifier, orientation: .landscape)
                     await MainActor.run {
                         self.selectedPortraitSkinId = skin.identifier
                         self.selectedLandscapeSkinId = skin.identifier
@@ -980,7 +989,7 @@ public struct SystemSkinSelectionView: View {
                             return DeltaSkinSelectionManager.builtInSkinPreferenceToken
                         }
                     }()
-                    await selectionManager.setSkin(stored, for: system, gameId: scopedGameId, orientation: orientation, scope: effectiveScope)
+                    await storeSkin(stored, orientation: orientation)
                 }
                 await MainActor.run {
                     let highlight = DeltaSkinSelectionManager.builtInSkinPreferenceToken
@@ -988,13 +997,7 @@ public struct SystemSkinSelectionView: View {
                     self.selectedLandscapeSkinId = highlight
                 }
             } else {
-                await selectionManager.setSkin(
-                    identifier,
-                    for: system,
-                    gameId: scopedGameId,
-                    orientation: selectedOrientation,
-                    scope: effectiveScope
-                )
+                await storeSkin(identifier, orientation: selectedOrientation)
 
                 // Update the appropriate state variable
                 await MainActor.run {
@@ -1021,13 +1024,7 @@ public struct SystemSkinSelectionView: View {
         // Check if the selected skin supports this orientation for the current device
         if !skinSupportsOrientation(selectedSkin, orientation: orientation) {
             // Selection doesn't support this orientation, clear it
-            await selectionManager.setSkin(
-                nil,
-                for: system,
-                gameId: scopedGameId,
-                orientation: orientation,
-                scope: effectiveScope
-            )
+            await storeSkin(nil, orientation: orientation)
 
             // Update UI state
             await MainActor.run {
@@ -1047,11 +1044,11 @@ public struct SystemSkinSelectionView: View {
 
                 // If we deleted a selected skin, reset the appropriate selection(s)
                 if selectedPortraitSkinId == skin.identifier {
-                    await selectionManager.setSkin(nil, for: system, gameId: scopedGameId, orientation: .portrait, scope: effectiveScope)
+                    await storeSkin(nil, orientation: .portrait)
                 }
 
                 if selectedLandscapeSkinId == skin.identifier {
-                    await selectionManager.setSkin(nil, for: system, gameId: scopedGameId, orientation: .landscape, scope: effectiveScope)
+                    await storeSkin(nil, orientation: .landscape)
                 }
 
                 // Reload skins
@@ -1247,9 +1244,6 @@ struct SkinSelectionPreviewCell: View {
 
     // MARK: - Loading
 
-    /// Longest side of a stored preview, in points.
-    private static let thumbnailMaxPointSize: CGFloat = 256
-
     private var cacheKey: String {
         let traits = previewTraits
         return "\(skin.identifier)-\(traits.device.rawValue)-\(traits.displayType.rawValue)-\(traits.orientation.rawValue)"
@@ -1260,8 +1254,8 @@ struct SkinSelectionPreviewCell: View {
         let key = cacheKey
         loadFailed = false
 
-        // Fast path: use shared cache
-        if let cached = SkinPreviewThumbnailCache.shared.thumbnail(forKey: key), cached.hasVisibleContent {
+        // Fast path: use shared cache (anything stored is already the best available render)
+        if let cached = SkinPreviewThumbnailCache.shared.thumbnail(forKey: key) {
             thumbnailImage = cached
             isLoading = false
             return
@@ -1271,12 +1265,7 @@ struct SkinSelectionPreviewCell: View {
         isLoading = true
         let skin = self.skin
         let render = Task.detached(priority: .utility) { () throws -> UIImage in
-            if let thumbnail = try? await skin.thumbnail(for: traits, maxDimension: Self.thumbnailMaxPointSize),
-               thumbnail.hasVisibleContent {
-                return thumbnail
-            }
-            // Show a decoded render even when the coarse visibility sample misses thin artwork.
-            return try await skin.image(for: traits)
+            try await SkinPreviewThumbnailCache.preview(of: skin, traits: traits)
         }
         do {
             let thumbnail = try await withTaskCancellationHandler {
@@ -1286,9 +1275,7 @@ struct SkinSelectionPreviewCell: View {
             }
             // A superseded .task(id:) run must not overwrite the current orientation's state.
             try Task.checkCancellation()
-            if thumbnail.hasVisibleContent {
-                SkinPreviewThumbnailCache.shared.store(thumbnail, forKey: key)
-            }
+            SkinPreviewThumbnailCache.shared.store(thumbnail, forKey: key)
             thumbnailImage = thumbnail
             isLoading = false
         } catch is CancellationError {

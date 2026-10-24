@@ -398,6 +398,7 @@ public final class PVApplicationServices: NSObject, ObservableObject {
             .with(SettingsBundleBootstrapTask())
             .with(ThemeBootstrapTask())
             .with(iCloudBootstrapTask())
+            .with(SkinIndexPrewarmBootstrapTask())
             .with(WebServerBootstrapTask(delegate: self))
 
         await PVLaunchProfiler.measure("launch.bootstrapOrchestrator") {

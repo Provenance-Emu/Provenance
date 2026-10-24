@@ -6,7 +6,7 @@
 //
 
 import XCTest
-@testable import PVLibrarySnapshot
+@testable import PVLibrarySnapshotLegacy
 
 /// Exercises the read side of the App Group snapshot against a scratch
 /// `UserDefaults` suite, so no App Group entitlement is required.
@@ -214,26 +214,5 @@ final class LibrarySnapshotTests: XCTestCase {
         XCTAssertEqual(decoded?.trackTitle, "Aquatic Ambiance")
         XCTAssertEqual(decoded?.artistName, "David Wise")
         XCTAssertNil(decoded?.albumTitle)
-    }
-}
-
-/// Guards the shape table used by Top Shelf to pick `ImageShape`.
-final class LibraryArtworkShapeTests: XCTestCase {
-    func testWideSystemsResolveToWide() {
-        XCTAssertEqual(LibraryArtworkShape.shape(forSystemIdentifier: "com.provenance.snes"), .wide)
-        XCTAssertEqual(LibraryArtworkShape.shape(forSystemIdentifier: "com.provenance.psx"), .wide)
-    }
-
-    func testHandheldsAndUnknownsResolveToSquare() {
-        XCTAssertEqual(LibraryArtworkShape.shape(forSystemIdentifier: "com.provenance.gb"), .square)
-        XCTAssertEqual(LibraryArtworkShape.shape(forSystemIdentifier: "com.example.unknown"), .square)
-        XCTAssertEqual(LibraryArtworkShape.shape(forSystemIdentifier: nil), .square)
-    }
-
-    func testEveryWideIdentifierUsesTheProvenanceReverseDNSPrefix() {
-        // Cheap guard against a typo'd entry silently never matching.
-        for identifier in ["com.provenance.snes", "com.provenance.wii"] {
-            XCTAssertEqual(LibraryArtworkShape.shape(forSystemIdentifier: identifier), .wide)
-        }
     }
 }

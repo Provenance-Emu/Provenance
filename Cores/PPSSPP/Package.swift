@@ -26,16 +26,31 @@ func exclusions(for sources: [String], resources: [String] = []) -> [String] {
     return walk("")
 }
 
+// Built with explicit types and appends, not chained `+`: a loaded CI runner hit "unable to
+// type-check this expression in reasonable time" on the chained version.
 func nativeTarget(_ name: String, sources: [String], defines: [String], headers: [String]) -> Target {
-    let flags = (headers + nativeHeaders).flatMap { ["-I", root + "/" + $0] } + commonFlags
-    let privateHeaderFlags = ["PVPPSSPPCore", "PVPPSSPPnative"].contains(name) ? ffmpegHeaderFlags : []
+    var flags: [String] = []
+    if name == "PVPPSSPPCore" || name == "PVPPSSPPnative" {
+        flags.append(contentsOf: ffmpegHeaderFlags)
+    }
+    for header in headers + nativeHeaders {
+        flags.append("-I")
+        flags.append(root + "/" + header)
+    }
+    flags.append(contentsOf: commonFlags)
+    for define in defines {
+        flags.append("-D" + define)
+    }
     // zstd defines its private API before re-including public headers. Module imports freeze that API too early.
-    let moduleFlags = name == "PVPPSSPPlibzstdstatic" ? ["-fno-modules"] : []
-    let definitions = defines.map { "-D" + $0 }
+    if name == "PVPPSSPPlibzstdstatic" {
+        flags.append("-fno-modules")
+    }
+    let cFlags: CSetting = .unsafeFlags(flags)
+    let cxxFlags: CXXSetting = .unsafeFlags(flags)
     return .target(name: name, path: ".", exclude: exclusions(for: sources), sources: sources,
                    publicHeadersPath: "SwiftPM/include",
-                   cSettings: [.unsafeFlags(privateHeaderFlags + flags + definitions + moduleFlags)],
-                   cxxSettings: [.unsafeFlags(privateHeaderFlags + flags + definitions + moduleFlags)])
+                   cSettings: [cFlags],
+                   cxxSettings: [cxxFlags])
 }
 
 let nativeCommon = nativeTarget("PVPPSSPPCommon", sources: [

@@ -131,6 +131,29 @@ PVTouchpadButtonForController(GCController * _Nonnull controller) {
     return nil;
 }
 
+#pragma mark - Synthesized Pads
+
+/**
+ Whether `controller` is the PVSupport wrapper that synthesizes an extended gamepad
+ from a pad's physical input profile (the Nintendo Switch Online N64, SNES and
+ Mega Drive pads, which the system exposes without one).
+
+ On such a pad `buttonMenu` is the real Start button and `buttonOptions` the real
+ Select, and there may be no triggers at all (the SNES pad has no ZL/ZR in Apple's
+ profile), so cores that read Start/Select from triggers or from `buttonOptions`
+ must use `buttonMenu`/`buttonOptions` instead. The wrapper keeps both out of the
+ pause binding, so reading them never also opens the pause menu.
+ */
+static inline BOOL
+PVIsPhysicalProfileController(GCController * _Nullable controller) {
+    static Class profileControllerClass = Nil;
+    static dispatch_once_t once;
+    dispatch_once(&once, ^{
+        profileControllerClass = NSClassFromString(@"PVPhysicalProfileController");
+    });
+    return controller != nil && profileControllerClass != Nil && [controller isKindOfClass:profileControllerClass];
+}
+
 #pragma mark - Start / Select Resolution
 
 /**

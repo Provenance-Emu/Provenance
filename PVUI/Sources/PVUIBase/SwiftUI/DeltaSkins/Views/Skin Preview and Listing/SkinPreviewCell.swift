@@ -186,8 +186,9 @@ struct SkinPreviewCell: View {
         let traits = previewTraits
         let cacheKey = "\(skin.identifier)-\(traits.device.rawValue)-\(traits.displayType.rawValue)-\(traits.orientation.rawValue)"
 
-        // Fast path: use SkinSelectionPreviewCell's shared cache
-        if let cached = SkinPreviewThumbnailCache.shared.thumbnail(forKey: cacheKey), cached.hasVisibleContent {
+        // Fast path: use SkinSelectionPreviewCell's shared cache. Whatever was stored is the best
+        // render there is; re-checking it for visible content only re-rendered thin artwork forever.
+        if let cached = SkinPreviewThumbnailCache.shared.thumbnail(forKey: cacheKey) {
             thumbnailImage = cached
             isLoadingThumbnail = false
             return
@@ -195,10 +196,8 @@ struct SkinPreviewCell: View {
 
         Task.detached(priority: .utility) {
             do {
-                let image = try await skin.image(for: traits)
-                if image.hasVisibleContent {
-                    SkinPreviewThumbnailCache.shared.store(image, forKey: cacheKey)
-                }
+                let image = try await SkinPreviewThumbnailCache.preview(of: skin, traits: traits)
+                SkinPreviewThumbnailCache.shared.store(image, forKey: cacheKey)
                 await MainActor.run {
                     self.thumbnailImage = image
                     self.isLoadingThumbnail = false
@@ -311,5 +310,32 @@ final class SkinPreviewThumbnailCache: @unchecked Sendable {
 
     func store(_ image: UIImage, forKey key: String) {
         cache.setImage(image, forKey: key)
+    }
+
+    /// Longest side of a stored preview, in points.
+    static let maxPointSize: CGFloat = 256
+
+    /// The image both skin grids show: the skin's small `thumbnail` render, which the skin also keeps
+    /// on disk. Never the full-size image: at 3x one is ~14 MB, so the library grid kept evicting
+    /// every other preview from this cache's budget and re-rendering skins on each appearance.
+    /// A full render stands in only when the thumbnail fails or samples blank, scaled down first.
+    static func preview(of skin: any DeltaSkinProtocol, traits: DeltaSkinTraits) async throws -> UIImage {
+        if let thumbnail = try? await skin.thumbnail(for: traits, maxDimension: maxPointSize),
+           thumbnail.hasVisibleContent {
+            return thumbnail
+        }
+        return scaledDown(try await skin.image(for: traits))
+    }
+
+    private static func scaledDown(_ image: UIImage) -> UIImage {
+        let longest = max(image.size.width, image.size.height)
+        guard longest > maxPointSize else { return image }
+        let factor = maxPointSize / longest
+        let size = CGSize(width: image.size.width * factor, height: image.size.height * factor)
+        let format = UIGraphicsImageRendererFormat.preferred()
+        format.opaque = false
+        return UIGraphicsImageRenderer(size: size, format: format).image { _ in
+            image.draw(in: CGRect(origin: .zero, size: size))
+        }
     }
 }

@@ -10,12 +10,13 @@
 //
 //  Single source of truth for "read library → write widget data".
 //  Call `WidgetDataWriter.shared.writeFromRealm()` from any mutation site
-//  instead of duplicating the Realm queries inline.
+//  instead of duplicating the Realm queries inline. It also writes the Top
+//  Shelf snapshot (`LibrarySnapshotWriter`).
 //
 
 #if canImport(PVAppIntents)
 import PVAppIntents
-import PVLibrarySnapshot
+import PVLibrarySnapshotLegacy
 import PVLibrary
 import PVFileSystem
 import PVSettings
@@ -38,6 +39,12 @@ public extension WidgetDataWriter {
     ///   bypass its 30s throttle (e.g. right after an import finishes).
     @MainActor
     func writeFromRealm(forceIndex: Bool = false) {
+#if os(tvOS)
+        // Top Shelf's snapshot (shared PVLibrarySnapshot package). Written even
+        // when the library is empty, so the shelf empties too.
+        LibrarySnapshotWriter.writeFromRealm()
+#endif
+
         let database = RomDatabase.sharedInstance
         let allGames = database.all(PVGame.self)
         /// Exclude contentless pseudo-games (cores with no ROM) from widget data
@@ -59,9 +66,8 @@ public extension WidgetDataWriter {
             return game.asSnapshotGame(lastPlayedOverride: recent.lastPlayedDate)
         }
 
-        // Fall back to recently imported games when no games have been played yet.
-        // NOTE: this makes "Recently Played" and "Recently Added" identical on a
-        // fresh library — Top Shelf de-duplicates across sections for that reason.
+        // Fall back to recently imported games when no games have been played yet,
+        // so the recents widget is not empty on a fresh library.
         if recentGames.isEmpty {
             recentGames = Array(
                 realGames.sorted(byKeyPath: "importDate", ascending: false)
@@ -76,7 +82,8 @@ public extension WidgetDataWriter {
                 .prefix(LibrarySnapshotSchema.maxFavoriteGames)
         ).map { $0.asSnapshotGame }
 
-        // Recently added: import-date order, consumed by the tvOS Top Shelf.
+        // Recently added: import-date order. No current reader (Top Shelf reads
+        // the shared snapshot); kept so schema-1 data stays complete.
         let recentlyAdded: [WidgetGameData] = Array(
             realGames.sorted(byKeyPath: "importDate", ascending: false)
                 .prefix(LibrarySnapshotSchema.maxRecentlyAddedGames)
@@ -229,7 +236,7 @@ private extension PVGame {
         )
     }
 
-    /// The http(s) artwork URL, used by Top Shelf when nothing is cached in the
+    /// The http(s) artwork URL, a fallback for when nothing is cached in the
     /// App Group container.  Empty local-cache keys (`PVMediaCache` hashes) are
     /// not URLs, so only absolute web URLs are surfaced.
     var remoteArtworkURLString: String? {

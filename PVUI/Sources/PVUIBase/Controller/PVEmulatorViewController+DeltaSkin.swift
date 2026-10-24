@@ -345,6 +345,22 @@ extension PVEmulatorViewController {
     @objc private func handleCoreDidStartRunning(_ notification: Notification) {
         guard notification.object as AnyObject === core else { return }
         applyResolvedControllerVariantIfNeeded()
+        reapplyDualScreenViewportAfterStart()
+    }
+
+    /// The skin or overlay usually publishes its screen frames while the core is still booting, and
+    /// those can be dropped: the viewport paths skip a core that isn't running, and before
+    /// `createEmulator` assigns `touchViewController` the frames can't reach the core's own render
+    /// view. The overlay publishes only on change, so Azahar kept its full-screen layout (top screen
+    /// under the notch) until a rotation. Hand the current frames over again now that it runs.
+    private func reapplyDualScreenViewportAfterStart() {
+        guard core.supportsDualScreens, isDeltaSkinEnabled else { return }
+        ILOG("🎮 SKIN: core running; re-applying dual-screen frames (overlay frames: \(overlayScreenFrames.count))")
+        lastAppliedViewportFrame = nil   // the dropped attempt may have recorded the frame as applied
+        applyDualScreenViewport()
+        // Back to front, so a device log shows whether anything opaque sits over the core's view.
+        let stack = view.subviews.map { "\(type(of: $0))\($0.isHidden ? "(hidden)" : "")=\($0.frame.integral)" }
+        ILOG("🎮 SKIN: view stack after start: \(stack.joined(separator: " | "))")
     }
 
     @objc private func handleThinCoreAVInfoForControllerVariant(_ notification: Notification) {
@@ -451,8 +467,7 @@ extension PVEmulatorViewController {
             // For GL views, preserve existing settings set by PVGLViewController
             // Only ensure visibility
         }
-        gameScreenView.isHidden = false
-        gameScreenView.alpha = 1.0
+        revealHostGPUView()
 
         // Position the GPU view based on the DeltaSkin screen information
         updateGPUViewPositionForDeltaSkin()
@@ -572,9 +587,8 @@ extension PVEmulatorViewController {
             return
         }
 
-        // Ensure GPU view is visible
-        gameScreenView.isHidden = false
-        gameScreenView.alpha = 1.0
+        // Ensure GPU view is visible (hidden for own-surface cores; see revealHostGPUView)
+        revealHostGPUView()
 
         // Add the Metal view to the main view first (bottom layer) if it exists separately
         if let metalVC = gpuViewController as? PVMetalViewController,
@@ -585,9 +599,6 @@ extension PVEmulatorViewController {
             }
 
             // IMPORTANT: Don't override the frame here, let DeltaSkinScreen handle it
-            // Just ensure it's visible
-            mtlView.isHidden = false
-            mtlView.alpha = 1.0
 
             // Log that we're not setting the frame here
             DLOG("MTLView added to hierarchy but not positioning it here - DeltaSkinScreen will handle that")
@@ -698,18 +709,8 @@ extension PVEmulatorViewController {
 
         applyViewportFromCurrentSkin()
 
-        // Make sure the GPU view is visible
-        if let gameScreenView = gpuViewController.view {
-            gameScreenView.isHidden = false
-            gameScreenView.alpha = 1.0
-        }
-
-        // Ensure Metal view visible
-        if let metalVC = gpuViewController as? PVMetalViewController,
-           let mtlView = metalVC.mtlView {
-            mtlView.isHidden = false
-            mtlView.alpha = 1.0
-        }
+        // Make sure the GPU view (the Metal view itself for Metal cores) is visible
+        revealHostGPUView()
     }
 
     // Add this method to handle showing the menu

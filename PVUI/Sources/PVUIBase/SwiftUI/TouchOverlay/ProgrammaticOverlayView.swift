@@ -10,6 +10,7 @@ import SwiftUI
 import Defaults
 import PVCoreBridge
 import PVEmulatorCore
+import PVLogging
 import PVSettings
 import PVSystems
 import PVTouchOverlay
@@ -94,12 +95,16 @@ struct ProgrammaticOverlayView: View {
                     sink = adapter
                 }
                 viewport.attach(to: coreInstance)
+                Self.log(layout, on: canvas, reason: "appear")
                 publish(layout.screenFrames)
             }
             .onChange(of: layout.screenFrames) { _, frames in publish(frames) }
             // The editor edits one orientation's layout against a fixed canvas; on rotation it
             // ends (edits stay saved) and the player re-enters it in the new orientation.
-            .onChange(of: canvas.size) { _, _ in endEditingForCanvasChange() }
+            .onChange(of: canvas.size) { _, _ in
+                Self.log(layout, on: canvas, reason: "canvas")
+                endEditingForCanvasChange()
+            }
             .onChange(of: editController != nil) { _, editing in
                 postEditing(editing)
                 if !editing { refreshPadKind() } // catch up on a change made while editing
@@ -135,6 +140,14 @@ struct ProgrammaticOverlayView: View {
             viewport.detach(from: coreInstance)
             onScreenFrames([])
         }
+    }
+
+    /// Where every group landed, so a device log shows controls resolved off screen or an
+    /// unsettled canvas (no safe area yet) behind a missing pad or a misplaced picture.
+    private static func log(_ layout: OverlayLayout, on canvas: OverlayCanvas, reason: String) {
+        let groups = layout.groups.map { "\($0.group.id)=\($0.frame.integral)" }.joined(separator: " ")
+        ILOG("Overlay[\(reason)]: \(layout.orientation) canvas=\(canvas.size) safe=\(canvas.safeArea) "
+             + "screens=\(layout.screenFrames) groups: \(groups)")
     }
 
     private static func canvas(for geo: GeometryProxy) -> OverlayCanvas {

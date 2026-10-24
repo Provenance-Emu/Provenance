@@ -207,6 +207,8 @@ public final class DeltaSkinManager: ObservableObject, DeltaSkinManagerProtocol 
     /// Must always be called from within a `queue.async` / `queue.asyncResult` block.
     private func scanForSkins() throws {
         dispatchPrecondition(condition: .onQueue(queue))
+        // A re-imported skin can keep its identifier and path with a new info.json.
+        DeltaSkin.clearRepresentationCache()
 
         // Prevent concurrent scans
         guard !isScanning else {
@@ -520,6 +522,7 @@ public final class DeltaSkinManager: ObservableObject, DeltaSkinManagerProtocol 
     /// newly imported skin (the MainActor update is awaited, not fire-and-forget).
     public func importSkin(from url: URL) async throws {
         ILOG("skins: Starting skin import from: \(url.path)")
+        defer { DeltaSkin.clearRepresentationCache() }
 
         let scannedSkins: [DeltaSkinProtocol] = try await queue.asyncResult { [self] in
             // Get destination in Documents directory
@@ -569,6 +572,7 @@ public final class DeltaSkinManager: ObservableObject, DeltaSkinManagerProtocol 
     /// Delete a skin by its identifier.
     /// After this method returns, `loadedSkins` is guaranteed to reflect the deletion.
     public func deleteSkin(_ identifier: String) async throws {
+        defer { DeltaSkin.clearRepresentationCache() }
         /// Captured outside the queue closure so we can drop the catalog sidecar
         /// after the queue work completes (the registry is an actor).
         var deletedSkinURL: URL?

@@ -10,6 +10,19 @@ script), Dolphin's DOL_FULL_LTO / DOL_PGO / DOL_PGO_PROFILE and the PGO profile 
 `xcodebuild -version`, the slice SDK version and, for Azahar, the MoltenVK static slice it
 configures against. `--print-key` prints it (CI cache keys).
 
+Dolphin's submodule is also iCube's app repo, whose app code, docs and prebuilt build/ binaries
+change far more often than the engine. So Dolphin keys on the tree hashes of only the paths the
+PVlibDolphin CMake build reads (DOLPHIN_BUILD_PATHS) instead of its HEAD, and its uncommitted
+edits count only under those paths.
+
+Fast path: the full key scans every working tree in the core and its nested submodules for
+uncommitted edits, which took ~10 minutes on a cold disk (all I/O wait). So a normal run first
+compares the cheap inputs (core HEAD or Dolphin's source trees, the nested gitlinks that HEAD
+records, script, toolchain, Xcode, SDK, MoltenVK, Dolphin's flags) with what the last
+preparation of this checkout recorded (<cache>/<core>/<slice>/prepared-<checkout>.json). If
+they match and that cache entry still exists, it reuses it without scanning. `--strict` (or PV_CORE_STRICT=1) always scans: use it
+after editing engine sources in place. `--force` and `--print-key` always scan too.
+
 Cache: $PV_CORE_CACHE or ~/Library/Caches/Provenance/cores, laid out as
 <core>/<slice>/<key[:12]>/<Product>-<slice>.framework + stamp.json. On a hit the legacy output
 path (Cores/Azahar/build/xcframework/PVlibAzahar-<slice>.framework,
@@ -35,6 +48,7 @@ import re
 import shutil
 import subprocess
 import sys
+import time
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Callable, Dict, List, Mapping, Optional, Tuple
@@ -58,6 +72,28 @@ SLICE_FOR_PLATFORM_NAME: Dict[str, str] = {
     "appletvsimulator": "tvos-sim",
 }
 
+# (SupportedPlatform, SupportedPlatformVariant) as an xcframework's Info.plist records them.
+SLICE_PLATFORMS: Dict[str, Tuple[str, Optional[str]]] = {
+    "ios": ("ios", None),
+    "ios-sim": ("ios", "simulator"),
+    "tvos": ("tvos", None),
+    "tvos-sim": ("tvos", "simulator"),
+}
+
+# Everything in dolphin-ios that BuildiOSXCFramework.py's CMake build of PVlibDolphin reads.
+# Source/CMakeLists.txt adds only Core and, for IOS, iOS/Library; every nested submodule lives
+# under Externals, so its gitlinks are in that tree; Core generates AchievementApprovedHash.h
+# from ApprovedInis.json. The builder script, toolchain and PGO profile are hashed on their own.
+DOLPHIN_BUILD_PATHS: Tuple[str, ...] = (
+    "CMakeLists.txt",
+    "CMake",
+    "Externals",
+    "Source/CMakeLists.txt",
+    "Source/Core",
+    "Source/iOS/Library",
+    "Data/Sys/ApprovedInis.json",
+)
+
 Runner = Callable[[List[str], Optional[Path]], str]
 Builder = Callable[["CoreSpec", str], None]
 
@@ -72,6 +108,7 @@ class CoreSpec:
     legacy_dir: Path
     env_flags: Tuple[str, ...]
     moltenvk: Optional[Path]
+    build_paths: Tuple[str, ...] = ()  # empty: the whole submodule is a build input
 
 
 def core_specs(repo: Path) -> Dict[str, CoreSpec]:
@@ -95,6 +132,7 @@ def core_specs(repo: Path) -> Dict[str, CoreSpec]:
             legacy_dir=repo / "Cores/Dolphin/dolphin-ios/build/xcframework",
             env_flags=("DOL_FULL_LTO", "DOL_PGO", "DOL_PGO_PROFILE"),
             moltenvk=None,
+            build_paths=DOLPHIN_BUILD_PATHS,
         ),
     }
 
@@ -142,32 +180,35 @@ def dolphin_pgo(spec: CoreSpec, env: Mapping[str, str]) -> Tuple[str, Optional[P
     return mode, (Path(explicit) if explicit else None)
 
 
-def affects_build(path: str) -> bool:
-    """False for documentation: a repo's top-level docs/ and any Markdown file.
+def affects_build(path: str, build_paths: Tuple[str, ...] = ()) -> bool:
+    """False for documentation (a repo's top-level docs/ and any Markdown file) and, when
+    build_paths is given, for anything outside those paths.
 
     Uncommitted edits there cannot change a built slice, but they used to bust the key: an
     untracked docs/superpowers/baselines/ folder in dolphin-ios forced a Dolphin rebuild and
-    relink. Committed changes still count through the submodule commit.
+    relink. Committed changes still count through the submodule commit or source trees.
     """
     path = path.strip('"')
-    return not (path.startswith("docs/") or path.lower().endswith(".md"))
+    if path.startswith("docs/") or path.lower().endswith(".md"):
+        return False
+    return not build_paths or any(path == p or path.startswith(p + "/") for p in build_paths)
 
 
-def build_relevant_porcelain(porcelain: str) -> str:
+def build_relevant_porcelain(porcelain: str, build_paths: Tuple[str, ...] = ()) -> str:
     kept = []
     for line in porcelain.splitlines():
-        path = line[3:].split(" -> ")[-1]  # renames list "old -> new"
-        if affects_build(path):
+        paths = line[3:].split(" -> ")  # renames list "old -> new"
+        if any(affects_build(path, build_paths) for path in paths):
             kept.append(line)
     return "\n".join(kept)
 
 
-def build_relevant_diff(diff: str) -> str:
+def build_relevant_diff(diff: str, build_paths: Tuple[str, ...] = ()) -> str:
     blocks = re.split(r"(?m)^(?=diff --git )", diff)
     kept = []
     for block in blocks:
-        match = re.match(r"diff --git a/(\S+) b/", block)
-        if match is None or affects_build(match.group(1)):
+        match = re.match(r"diff --git a/(\S+) b/(\S+)", block)
+        if match is None or any(affects_build(path, build_paths) for path in match.groups()):
             kept.append(block)
     return "".join(kept)
 
@@ -183,10 +224,15 @@ def worktree_state(spec: CoreSpec, runner: Runner) -> str:
             repos.append(spec.submodule / parts[1])
     digest = hashlib.sha256()
     for repo in repos:
+        # Nested repos sit under the build paths, so only the core repo itself is narrowed. The
+        # pathspec keeps git from scanning (and diffing whole rewritten dylibs in) the rest.
+        build_paths = spec.build_paths if repo == spec.submodule else ()
+        pathspec = ["--", *build_paths] if build_paths else []
         porcelain = build_relevant_porcelain(runner(
             ["git", "-C", str(repo), "status", "--porcelain=v1", "--untracked-files=all",
-             "--ignore-submodules=none"], None))
-        diff = build_relevant_diff(runner(["git", "-C", str(repo), "diff", "HEAD", "--binary"], None))
+             "--ignore-submodules=none", *pathspec], None), build_paths)
+        diff = build_relevant_diff(runner(
+            ["git", "-C", str(repo), "diff", "HEAD", "--binary", *pathspec], None), build_paths)
         if not porcelain and not diff:
             continue  # clean (or not checked out): contributes nothing, so init state doesn't matter
         rel = repo.relative_to(spec.submodule)
@@ -200,20 +246,34 @@ def worktree_state(spec: CoreSpec, runner: Runner) -> str:
     return digest.hexdigest()
 
 
-def key_inputs(spec: CoreSpec, slice_name: str, runner: Runner, env: Mapping[str, str]) -> Dict[str, str]:
+def source_trees(spec: CoreSpec, runner: Runner) -> str:
+    """'<path> <object id>' for each build path in the core's HEAD (object reads, no worktree stat)."""
+    revs = [f"HEAD:{path}" for path in spec.build_paths]
+    try:
+        ids = runner(["git", "-C", str(spec.submodule), "rev-parse", *revs], None).splitlines()
+    except subprocess.CalledProcessError as error:
+        raise SystemExit(f"build_slice: {spec.submodule} HEAD lacks one of {', '.join(spec.build_paths)}; "
+                         f"update the {spec.name} build paths in build_slice.py ({error})")
+    if len(ids) != len(revs):
+        raise SystemExit(f"build_slice: expected {len(revs)} object ids from git rev-parse, got {len(ids)}")
+    return "\n".join(f"{path} {oid}" for path, oid in zip(spec.build_paths, ids))
+
+
+def cheap_inputs(spec: CoreSpec, slice_name: str, runner: Runner, env: Mapping[str, str]) -> Dict[str, str]:
+    """Key inputs that need no working-tree scan: a few file hashes and git object reads."""
     sl = SLICES[slice_name]
     inputs = {
         "core": spec.name,
         "slice": slice_name,
-        "submodule_head": runner(["git", "-C", str(spec.submodule), "rev-parse", "HEAD"], None),
-        "submodule_tree": normalize_submodule_status(
-            runner(["git", "-C", str(spec.submodule), "submodule", "status", "--recursive"], None)),
         "script": file_hash(spec.script),
         "toolchain": file_hash(spec.toolchain),
-        "worktree": worktree_state(spec, runner),
         "xcode": runner(["xcodebuild", "-version"], None),
         "sdk": runner(["xcrun", "--sdk", sl["sdk"], "--show-sdk-version"], None),
     }
+    if spec.build_paths:
+        inputs["source_trees"] = source_trees(spec, runner)
+    else:
+        inputs["submodule_head"] = runner(["git", "-C", str(spec.submodule), "rev-parse", "HEAD"], None)
     if spec.name == "dolphin":
         inputs["env:DOL_FULL_LTO"] = "1" if env.get("DOL_FULL_LTO") == "1" else ""
         mode, profile = dolphin_pgo(spec, env)
@@ -223,6 +283,26 @@ def key_inputs(spec: CoreSpec, slice_name: str, runner: Runner, env: Mapping[str
         inputs["pgo_profile"] = file_hash(profile) if has_profile and profile is not None else ""
     if spec.moltenvk is not None:
         inputs["moltenvk"] = file_hash(spec.moltenvk / sl["mvk"] / "libMoltenVK.a")
+    return inputs
+
+
+def recorded_gitlinks(spec: CoreSpec, runner: Runner) -> str:
+    """Nested submodule commits recorded in the core's HEAD tree (object reads, no worktree stat)."""
+    tree = runner(["git", "-C", str(spec.submodule), "ls-tree", "-r", "HEAD"], None)
+    return "\n".join(sorted(line for line in tree.splitlines() if " commit " in line))
+
+
+def fast_fingerprint(spec: CoreSpec, slice_name: str, runner: Runner, env: Mapping[str, str]) -> str:
+    inputs = cheap_inputs(spec, slice_name, runner, env)
+    inputs["recorded_gitlinks"] = recorded_gitlinks(spec, runner)
+    return hashlib.sha256(json.dumps(inputs, sort_keys=True).encode()).hexdigest()
+
+
+def key_inputs(spec: CoreSpec, slice_name: str, runner: Runner, env: Mapping[str, str]) -> Dict[str, str]:
+    inputs = cheap_inputs(spec, slice_name, runner, env)
+    inputs["submodule_tree"] = normalize_submodule_status(
+        runner(["git", "-C", str(spec.submodule), "submodule", "status", "--recursive"], None))
+    inputs["worktree"] = worktree_state(spec, runner)
     return inputs
 
 
@@ -271,6 +351,25 @@ def prune_entries(slice_dir: Path, keep: int, current: Path) -> None:
         shutil.rmtree(stale)
 
 
+def prepared_record_path(spec: CoreSpec, slice_name: str, cache: Path) -> Path:
+    """One record per checkout: worktrees and clones share the cache but not their sources."""
+    checkout = hashlib.sha256(str(spec.submodule.resolve()).encode()).hexdigest()[:12]
+    return cache / spec.name / slice_name / f"prepared-{checkout}.json"
+
+
+def read_prepared(path: Path) -> Dict[str, str]:
+    try:
+        record = json.loads(path.read_text())
+    except (OSError, ValueError):
+        return {}
+    return record if isinstance(record, dict) else {}
+
+
+def write_prepared(path: Path, record: Mapping[str, str]) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(json.dumps(dict(record), indent=2, sort_keys=True) + "\n")
+
+
 def is_cached(spec: CoreSpec, slice_name: str, cache: Path, key: str) -> bool:
     entry = cache / spec.name / slice_name / key[:12]
     return (entry / framework_name(spec, slice_name)).is_dir() and (entry / "stamp.json").is_file()
@@ -283,7 +382,12 @@ def xcframework_has_slice(spec: CoreSpec, slice_name: str) -> bool:
             libraries = plistlib.load(handle).get("AvailableLibraries", [])
     except (OSError, ValueError, plistlib.InvalidFileException):
         return False
-    return any(lib.get("LibraryPath") == framework_name(spec, slice_name) for lib in libraries)
+    platform, variant = SLICE_PLATFORMS[slice_name]
+    # Dolphin names each library <Product>-<slice>.framework; Azahar's are all <Product>.framework,
+    # so match on the platform the xcframework records as well.
+    return any(lib.get("LibraryPath") == framework_name(spec, slice_name)
+               or (lib.get("SupportedPlatform") == platform and lib.get("SupportedPlatformVariant") == variant)
+               for lib in libraries)
 
 
 def needs_xcframework(spec: CoreSpec, slice_name: str, produced: bool, requested: bool) -> bool:
@@ -389,24 +493,53 @@ def main(argv: Optional[List[str]] = None, runner: Runner = default_runner,
     parser.add_argument("--force", action="store_true", help="rebuild even on a cache hit")
     parser.add_argument("--cache-dir", type=Path, help="cache root (default $PV_CORE_CACHE or ~/Library/Caches/Provenance/cores)")
     parser.add_argument("--xcframework", action="store_true", help="also repack <Product>.xcframework (distribution)")
+    parser.add_argument("--strict", action="store_true",
+                        help="always scan the working trees for uncommitted edits (also PV_CORE_STRICT=1)")
     parser.add_argument("--repo-root", type=Path, default=REPO_ROOT, help=argparse.SUPPRESS)
     args = parser.parse_args(argv)
 
     environment = dict(os.environ) if env is None else dict(env)
     spec = core_specs(args.repo_root.resolve())[args.core]
-    inputs = key_inputs(spec, args.slice, runner, environment)
-    key = hashlib.sha256(json.dumps(inputs, sort_keys=True).encode()).hexdigest()
+    label = f"{spec.name} {args.slice}"
     if args.print_key:
-        print(key)
+        print(compute_key(spec, args.slice, runner, environment))
         return 0
 
     cache = args.cache_dir or Path(environment.get("PV_CORE_CACHE") or DEFAULT_CACHE)
     cache = cache.expanduser()
+    strict = args.strict or args.force or environment.get("PV_CORE_STRICT") == "1"
+    record_path = prepared_record_path(spec, args.slice, cache)
+    record = read_prepared(record_path)
+
+    started = time.monotonic()
+    log(f"{label}: checking whether the native library is up to date")
+    fast = fast_fingerprint(spec, args.slice, runner, environment)
+    key = record.get("key", "")
+    if strict or record.get("fast") != fast or not key or not is_cached(spec, args.slice, cache, key):
+        reason = "--strict" if strict else ("first preparation of this checkout" if not record else "inputs changed")
+        log(f"{label}: scanning the {spec.name} source trees for uncommitted edits ({reason}); "
+            "this can take minutes on a cold disk")
+        inputs = key_inputs(spec, args.slice, runner, environment)
+        key = hashlib.sha256(json.dumps(inputs, sort_keys=True).encode()).hexdigest()
+        log(f"{label}: key {key[:12]} ({time.monotonic() - started:.0f}s)")
+    else:
+        inputs = {}
+        log(f"{label}: unchanged since this checkout last prepared it; key {key[:12]} "
+            f"({time.monotonic() - started:.1f}s; --strict rescans for uncommitted engine edits)")
+
     produced = args.force or not is_cached(spec, args.slice, cache, key)
+    if produced:
+        log(f"{label}: building {spec.product}; a cold build takes 30-60 minutes. Build output follows.")
     framework = ensure_slice(spec, args.slice, cache, key, inputs, args.force, builder)
     prepare_headers(spec, framework)
-    if needs_xcframework(spec, args.slice, produced, args.xcframework):
+    packed = record.get("xcframework") == key and xcframework_has_slice(spec, args.slice)
+    if needs_xcframework(spec, args.slice, produced, args.xcframework) and not (packed and not produced):
         pack_xcframework(spec)
+        packed = True
+    elif packed:
+        log(f"{label}: {spec.product}.xcframework already holds this slice")
+    write_prepared(record_path, {"fast": fast, "key": key, **({"xcframework": key} if packed else {})})
+    log(f"{label}: ready ({time.monotonic() - started:.0f}s)")
     return 0
 
 

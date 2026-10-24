@@ -1,6 +1,6 @@
 //
 //  LibraryArtworkShape.swift
-//  PVLibrarySnapshot
+//  PVLibrarySnapshotConfig
 //
 //  Copyright © 2026 Provenance Emu. All rights reserved.
 //
@@ -22,11 +22,10 @@ public enum LibraryArtworkShape: String, Sendable, CaseIterable {
 public extension LibraryArtworkShape {
     /// Systems whose box art is landscape rather than square.
     ///
-    /// These strings mirror `SystemIdentifier.rawValue` in
-    /// `PVPrimitives/Sources/PVSystems/SystemIdentifier.swift`.  They are
-    /// duplicated here **on purpose**: PVLibrarySnapshot must stay
-    /// dependency-free so app extensions can link it without pulling in
-    /// PVPrimitives (and, transitively, PVLibrary and Realm).  Keep this set in
+    /// These strings mirror `SystemIdentifier.rawValue` in the PVSystems
+    /// package.  They are duplicated here **on purpose**: PVLibrarySnapshotConfig
+    /// must stay light so app extensions can link it without pulling in
+    /// PVSystems, PVLibrary or Realm.  Keep this set in
     /// sync when system identifiers change — `LibraryArtworkShapeTests` guards
     /// the format, not the membership.
     private static let wideSystemIdentifiers: Set<String> = [

@@ -100,7 +100,8 @@ public struct DeltaSkin: DeltaSkinProtocol {
 
     public func supports(_ traits: DeltaSkinTraits) -> Bool {
         let result = representation(for: traits) != nil
-        ILOG("skins: supports() - device: \(traits.device.rawValue), displayType: \(traits.displayType.rawValue), orientation: \(traits.orientation.rawValue) -> \(result)")
+        // DLOG: SwiftUI bodies and every fallback check call this; ILOG ships in release builds.
+        DLOG("skins: supports() - device: \(traits.device.rawValue), displayType: \(traits.displayType.rawValue), orientation: \(traits.orientation.rawValue) -> \(result)")
         return result
     }
 
@@ -229,10 +230,30 @@ public struct DeltaSkin: DeltaSkinProtocol {
         return orientationRepresentations(for: traits)?.backgroundAnimation
     }
 
-    /// Cached last representation lookup to avoid repeated work/log spam.
-    /// Shared by every skin, so the key must name the skin as well as the traits.
-    private static var lastRepCacheKey: String?
-    private static var lastRepCacheValue: DeltaSkin.RepresentationInfo?
+    /// Representation lookups by skin + traits. SwiftUI bodies, the skin pickers' cells and their
+    /// detached preview renders all call `representation(for:)`, from several threads at once. The
+    /// old single key/value pair was written unlocked, so a reader could pair one skin's key with
+    /// another skin's value, and alternating cells evicted each other on every call.
+    private static let repCacheLock = NSLock()
+    private static var repCache: [String: DeltaSkin.RepresentationInfo] = [:]
+    private static let repCacheLimit = 256
+
+    private static func cachedRepresentation(forKey key: String) -> DeltaSkin.RepresentationInfo? {
+        repCacheLock.withLock { repCache[key] }
+    }
+
+    /// Called when skins are scanned, imported or deleted.
+    static func clearRepresentationCache() {
+        repCacheLock.withLock { repCache.removeAll() }
+    }
+
+    private static func storeRepresentation(_ info: DeltaSkin.RepresentationInfo?, forKey key: String) {
+        guard let info else { return }
+        repCacheLock.withLock {
+            if repCache.count >= repCacheLimit { repCache.removeAll(keepingCapacity: true) }
+            repCache[key] = info
+        }
+    }
 
     /// Look up an `OrientationRepresentations` from a `DeviceRepresentations` for the given traits,
     /// including standard/edgeToEdge fallback logic.
@@ -299,7 +320,7 @@ public struct DeltaSkin: DeltaSkinProtocol {
         // representation another skin had just resolved for the same traits (its items and mappingSize).
         let gameKey = traits.gameIdentifier ?? ""
         let cacheKey = "\(identifier)|\(fileURL.path)|\(traits.device.rawValue)-\(traits.displayType.rawValue)-\(traits.orientation.rawValue)-\(gameKey)"
-        if Self.lastRepCacheKey == cacheKey, let cached = Self.lastRepCacheValue {
+        if let cached = Self.cachedRepresentation(forKey: cacheKey) {
             return cached
         }
 
@@ -310,8 +331,7 @@ public struct DeltaSkin: DeltaSkinProtocol {
         // Check per-game overrides first
         if let gameOverride = gameOverrideRepresentation(for: traits) {
             let result = gameOverride.toRepresentationInfo()
-            Self.lastRepCacheKey = cacheKey
-            Self.lastRepCacheValue = result
+            Self.storeRepresentation(result, forKey: cacheKey)
             return result
         }
 
@@ -338,9 +358,7 @@ public struct DeltaSkin: DeltaSkinProtocol {
         }
 
         let result = orientationReps?.toRepresentationInfo()
-        // Store cache
-        Self.lastRepCacheKey = cacheKey
-        Self.lastRepCacheValue = result
+        Self.storeRepresentation(result, forKey: cacheKey)
         return result
     }
 
@@ -543,8 +561,9 @@ public struct DeltaSkin: DeltaSkinProtocol {
         for name in candidates {
             // Check cache first
             let cacheKey = "\(identifier)-\(traits.device.rawValue)-\(traits.displayType.rawValue)-\(traits.orientation.rawValue)-\(name)"
-            if let cachedImage = Self.imageCache.image(forKey: cacheKey), cachedImage.hasVisibleContent {
-                ILOG("skins: Found cached image: \(name)")
+            // Only renders with visible content are stored, so a hit needs no second full-size sample.
+            if let cachedImage = Self.imageCache.image(forKey: cacheKey) {
+                DLOG("skins: Found cached image: \(name)")
                 return cachedImage
             }
 
@@ -607,7 +626,7 @@ public struct DeltaSkin: DeltaSkinProtocol {
         // Fallback: try the original filename property (legacy behavior)
         let fallbackName = rep.assets.filename
         let fallbackCacheKey = "\(identifier)-\(traits.device.rawValue)-\(traits.displayType.rawValue)-\(traits.orientation.rawValue)-\(fallbackName)"
-        if let cachedImage = Self.imageCache.image(forKey: fallbackCacheKey), cachedImage.hasVisibleContent {
+        if let cachedImage = Self.imageCache.image(forKey: fallbackCacheKey) {
             return cachedImage
         }
 
@@ -671,7 +690,7 @@ public struct DeltaSkin: DeltaSkinProtocol {
     private static let thumbstickCacheQueue = DispatchQueue(label: "com.provenance.deltaskin.thumbstickcache", attributes: .concurrent)
 
     /// Load the thumbstick image
-    func loadThumbstickImage(named: String) async throws -> UIImage {
+    public func loadThumbstickImage(named: String) async throws -> UIImage {
         // Check cache first
         let cacheKey = "\(identifier)-thumbstick-\(named)"
         if let cachedImage = Self.thumbstickCacheQueue.sync(execute: { Self.thumbstickImageCache[cacheKey] }) {

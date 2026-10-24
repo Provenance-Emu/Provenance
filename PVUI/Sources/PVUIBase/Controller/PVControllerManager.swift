@@ -135,8 +135,8 @@ public final class PVControllerManager: NSObject, ObservableObject {
 #if canImport(UIKit) && canImport(GameController)
     public private(set) var iCadeController: PViCadeController?
 
-    /// Wrappers for pads the system exposes with no extended or micro profile (the
-    /// Nintendo Switch Online N64 controller on tvOS). Keyed by the real controller;
+    /// Wrappers for pads the system exposes with no extended profile (the Nintendo
+    /// Switch Online N64/SNES/Mega Drive controllers). Keyed by the real controller;
     /// everything downstream (slots, cores, pause binding) sees only the wrapper.
     private var physicalProfileWrappers: [ObjectIdentifier: PVPhysicalProfileController] = [:]
 
@@ -148,7 +148,7 @@ public final class PVControllerManager: NSObject, ObservableObject {
         guard PVPhysicalProfileController.isNeeded(for: controller) else { return controller }
         let wrapper = PVPhysicalProfileController(wrapping: controller)
         physicalProfileWrappers[id] = wrapper
-        ILOG("[INPUT-DIAG] synthesized extended gamepad for \(controller.vendorName ?? "?") (no extended/micro profile)")
+        ILOG("[INPUT-DIAG] synthesized extended gamepad for \(controller.vendorName ?? "?") (no extended profile)")
         return wrapper
     }
 #endif
@@ -352,6 +352,7 @@ public final class PVControllerManager: NSObject, ObservableObject {
             return
         }
 
+        let rawController = controller
         let controller = physicalProfileWrapper(for: controller)
 
         objectWillChange.send()
@@ -378,8 +379,9 @@ public final class PVControllerManager: NSObject, ObservableObject {
         // extended profile (reported for the Nintendo Switch Online N64 controller)
         // reaches no game input at all while its Start button opens the pause menu.
         // The element keys show what the system actually exposes for such a pad.
-        let elementKeys = controller.physicalInputProfile.elements.keys.sorted().joined(separator: ",")
-        ILOG("[INPUT-DIAG] controller profile: vendor=\(controller.vendorName ?? "nil") category=\(controller.productCategory) extended=\(controller.extendedGamepad != nil) micro=\(controller.microGamepad != nil) options=\(controller.extendedGamepad?.buttonOptions != nil) home=\(controller.extendedGamepad?.buttonHome != nil) elements=[\(elementKeys)]")
+        // `raw` is what the system reports; `synthesized` says whether a wrapper stands in for it.
+        let elementKeys = rawController.physicalInputProfile.elements.keys.sorted().joined(separator: ",")
+        ILOG("[INPUT-DIAG] controller profile: vendor=\(rawController.vendorName ?? "nil") category=\(rawController.productCategory) raw extended=\(rawController.extendedGamepad != nil) micro=\(rawController.microGamepad != nil) synthesized=\(controller !== rawController) options=\(controller.extendedGamepad?.buttonOptions != nil) home=\(controller.extendedGamepad?.buttonHome != nil) elements=[\(elementKeys)]")
 
         // Detect physical case controllers and post the appropriate notification.
         // Smart cases (GameSir Pocket Taco, Soolra) show up as GCControllers;

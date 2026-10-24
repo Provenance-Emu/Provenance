@@ -5,7 +5,7 @@ SHELL := /bin/bash
 # `export` makes the values visible to recipes (release.sh, fastlane, etc.).
 -include .env
 export
-.PHONY: prepare-azahar prepare-dolphin dev dev-generate dev-ui dev-azahar dev-thin dev-n64 dev-dolphin dev-ppsspp dev-coreless dev-harness help ios update tvos lite ci maint maint-status maint-run-stale maint-hooks \
+.PHONY: prepare-azahar prepare-dolphin core-git-fsmonitor dev dev-generate dev-ui dev-azahar dev-thin dev-n64 dev-dolphin dev-ppsspp dev-coreless dev-harness help ios update tvos lite ci maint maint-status maint-run-stale maint-hooks \
 	generate-all generate-cheatdb generate-contributors generate-core-lists \
 	generate-default-skins generate-licenses generate-uti generate-changelog \
 	lookup-databases update-cheatdb update-skin-catalog update-core-versions update-core-licenses \
@@ -271,12 +271,28 @@ DEV_DESTINATION ?= generic/platform=iOS Simulator
 # packs every slice built so far, so run once per slice you need (device: DEV_SLICE=ios).
 # Azahar is referenced by the generated workspace, so its binary must exist even for other focused apps.
 # Shipping Xcode needs the native binary before package resolution too.
+# A repeat run compares cheap inputs with this checkout's last preparation and skips the
+# working-tree scan (minutes on a cold disk). STRICT=1 rescans: use it after editing engine
+# sources in place, since uncommitted edits are only seen by the scan.
 AZAHAR_SLICE ?= ios
+CORE_PREPARE_FLAGS = --xcframework $(if $(STRICT),--strict,)
 prepare-azahar:
-	python3 Scripts/cores/build_slice.py azahar $(AZAHAR_SLICE) --xcframework
+	$(info Preparing the Azahar native library ($(AZAHAR_SLICE))…)
+	python3 Scripts/cores/build_slice.py azahar $(AZAHAR_SLICE) $(CORE_PREPARE_FLAGS)
 
 prepare-dolphin:
-	python3 Scripts/cores/build_slice.py dolphin $(DOLPHIN_SLICE) --xcframework
+	$(info Preparing the Dolphin native library ($(DOLPHIN_SLICE))…)
+	python3 Scripts/cores/build_slice.py dolphin $(DOLPHIN_SLICE) $(CORE_PREPARE_FLAGS)
+
+## Per machine: git file-system monitor + untracked cache in the Azahar and Dolphin
+## submodules, so `git status` (and STRICT=1 preparation) stops walking their trees
+core-git-fsmonitor:
+	@for repo in Cores/Azahar/azahar Cores/Dolphin/dolphin-ios; do \
+		echo "core-git-fsmonitor: $$repo"; \
+		git -C $$repo config core.untrackedCache true && git -C $$repo config core.fsmonitor true && \
+		git -C $$repo submodule foreach --quiet --recursive \
+			'git config core.untrackedCache true && git config core.fsmonitor true' || exit 1; \
+	done
 
 DEV_PREBUILT_CORES ?= azahar
 DEV_SLICE ?= ios-sim

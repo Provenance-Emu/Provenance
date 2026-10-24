@@ -190,6 +190,15 @@
       }
     },
     {
+      "identity" : "pvlibrarysnapshot",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/Provenance-Emu/PVLibrarySnapshot.git",
+      "state" : {
+        "revision" : "3ad05b4c32b8aedf74cec895d4cfdacfcf171e6f",
+        "version" : "1.0.0"
+      }
+    },
+    {
       "identity" : "pvlookup",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Provenance-Emu/PVLookup.git",
