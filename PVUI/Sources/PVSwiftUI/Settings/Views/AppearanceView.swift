@@ -10,6 +10,7 @@ import Combine
 import Defaults
 import PVSettings
 import PVThemes
+import PVUIBase
 #if canImport(FreemiumKit)
 import FreemiumKit
 #endif
@@ -58,18 +59,7 @@ struct AppearanceView: View {
 
                     // Display Options section with retrowave styling
                     VStack(alignment: .leading, spacing: 16) {
-                        // Section header
-                        Text("DISPLAY OPTIONS")
-                            .font(.system(size: 18, weight: .bold))
-                            .foregroundStyle(
-                                LinearGradient(
-                                    gradient: Gradient(colors: [.retroBlue, .retroPurple]),
-                                    startPoint: .leading,
-                                    endPoint: .trailing
-                                )
-                            )
-                            .padding(.bottom, 8)
-                            .padding(.leading, 8)
+                        RetroSettingsSectionHeader(icon: "eye", title: "Display Options")
 
                         // Toggle options
                         VStack(spacing: 12) {
@@ -146,7 +136,9 @@ struct AppearanceView: View {
 #endif
                         }
 
-                        Section(header: Text("Missing Artwork")) {
+                        VStack(alignment: .leading, spacing: 16) {
+                            RetroSettingsSectionHeader(icon: "photo.artframe", title: "Missing Artwork")
+
                             // Add the new navigation link wrapped in PaidFeatureView
                             PaidFeatureView {
                                 NavigationLink(destination: MissingArtworkStyleView()) {
@@ -190,8 +182,8 @@ struct AppearanceView: View {
                     }
                     .navigationTitle("Appearance")
                 }
+                .tvOSSettingsHorizontalPadding()
                 #if os(tvOS)
-                .padding(.horizontal, 80)
                 .focusSection()
                 .onExitCommand { dismiss() }
                 #endif
@@ -201,89 +193,8 @@ struct AppearanceView: View {
     }
 }
 
-internal struct AppearanceSection: View {
-    @Default(.showGameTitles) var showGameTitles
-    @Default(.scrollLongGameTitles) var scrollLongGameTitles
-    @Default(.showRecentGames) var showRecentGames
-    @Default(.showSearchbar) var showSearchbar
-    @Default(.showRecentSaveStates) var showRecentSaveStates
-    @Default(.showAutoSavesInRecents) var showAutoSavesInRecents
-    @Default(.showGameBadges) var showGameBadges
-    @Default(.showFavorites) var showFavorites
-
-    internal var body: some View {
-        Section(header: Text("Appearance")) {
-            ThemedToggle(isOn: $showGameTitles) {
-                SettingsRow(title: "Show Game Titles",
-                            subtitle: "Display game titles under artwork.",
-                            icon: .sfSymbol("text.below.photo"),
-                            showChevron: false)
-            }
-            ThemedToggle(isOn: $showSearchbar) {
-                SettingsRow(title: "Show Search Bar",
-                            subtitle: "Show search bar for quick game searching.",
-                            icon: .sfSymbol("magnifyingglass"),
-                            showChevron: false)
-            }
-            ThemedToggle(isOn: $scrollLongGameTitles) {
-                SettingsRow(title: "Scroll Long Titles",
-                            subtitle: "Animate long game titles in the library; off uses a single line with ellipsis.",
-                            icon: .sfSymbol("text.line.first.and.arrowtriangle.forward"),
-                            showChevron: false)
-            }
-            ThemedToggle(isOn: $showRecentGames) {
-                SettingsRow(title: "Show Recent Games",
-                            subtitle: "Display recently played games section.",
-                            icon: .sfSymbol("clock"),
-                            showChevron: false)
-            }
-            ThemedToggle(isOn: $showRecentSaveStates) {
-                SettingsRow(title: "Show Recent Saves",
-                            subtitle: "Display recent save states section.",
-                            icon: .sfSymbol("clock.badge.checkmark"),
-                            showChevron: false)
-            }
-            ThemedToggle(isOn: $showAutoSavesInRecents) {
-                SettingsRow(title: "Show All Auto-Saves in Recent Saves",
-                            subtitle: "When off, only the latest auto-save per game is shown.",
-                            icon: .sfSymbol("clock.arrow.circlepath"),
-                            showChevron: false)
-            }
-            ThemedToggle(isOn: $showGameBadges) {
-                SettingsRow(title: "Show Game Badges",
-                            subtitle: "Display badges for favorite and recent games.",
-                            icon: .sfSymbol("star.circle"),
-                            showChevron: false)
-            }
-            ThemedToggle(isOn: $showFavorites) {
-                SettingsRow(title: "Show Favorites",
-                            subtitle: "Display favorites section.",
-                            icon: .sfSymbol("star"),
-                            showChevron: false)
-            }
-
-            // Add the new navigation link wrapped in PaidFeatureView
-            PaidFeatureView {
-                NavigationLink(destination: MissingArtworkStyleView()) {
-                    SettingsRow(title: "Missing Artwork Style",
-                                subtitle: "Choose style for games without artwork.",
-                                icon: .sfSymbol("photo.artframe"))
-                }
-            } lockedView: {
-                SettingsRow(title: "Missing Artwork Style",
-                            subtitle: "Unlock to customize missing artwork style.",
-                            icon: .sfSymbol("lock.fill"),
-                            showChevron: false)
-            }
-            .freemiumKitColorReset()
-        }
-    }
-}
-
-
-// Add the new view for selecting missing artwork style
-fileprivate struct MissingArtworkStyleView: View {
-    @ObservedObject private var themeManager = ThemeManager.shared
+/// Lets the user pick the style of the placeholder shown for games without cover artwork.
+private struct MissingArtworkStyleView: View {
     @Default(.missingArtworkStyle) private var selectedStyle
     @Environment(\.dismiss) private var dismiss
 
@@ -291,91 +202,30 @@ fileprivate struct MissingArtworkStyleView: View {
     @State private var selectedPreviewScale: CGFloat = 1.0
     @State private var previewRotation: Double = 0
     @State private var showingFullScreenPreview = false
-    @State private var animatingSelection = false
 
     private let previewTitle = "PRESS START!"
 
+    private static let selectionAnimation = Animation.spring(response: 0.3, dampingFraction: 0.6)
+    private static let selectionAnimationDuration: TimeInterval = 0.3
+    private static let sectionSpacing: CGFloat = 24
+    private static let rowSpacing: CGFloat = 12
+    private static let previewCornerRadius: CGFloat = 12
+
     var body: some View {
-        List {
-            Section {
-                // Interactive preview of current style
-                Button {
-                    withAnimation(.spring(response: 0.3, dampingFraction: 0.6)) {
-                        showingFullScreenPreview.toggle()
-                    }
-                } label: {
-                    VStack(spacing: 12) {
-                        Image(uiImage: UIImage.missingArtworkImage(
-                            gameTitle: previewTitle,
-                            ratio: 1.6,
-                            pattern: selectedStyle
-                        ))
-                        .resizable()
-                        .aspectRatio(contentMode: .fit)
-                        .frame(maxHeight: 160)
-                        .cornerRadius(12)
-                        .rotation3DEffect(.degrees(previewRotation), axis: (x: 0, y: 1, z: 0))
-                        .scaleEffect(selectedPreviewScale)
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 12)
-                                .strokeBorder(
-                                    themeManager.currentPalette.defaultTintColor.swiftUIColor ?? .accentColor,
-                                    lineWidth: 3
-                                )
-                        )
-                        .shadow(
-                            color: (themeManager.currentPalette.defaultTintColor.swiftUIColor ?? .accentColor).opacity(0.5),
-                            radius: 10,
-                            x: 0,
-                            y: 5
-                        )
+        ZStack {
+            RetroSettingsBackground()
 
-                        Text("Tap to preview full screen")
-                            .font(.caption)
-                            .foregroundColor(.secondary)
-                    }
+            ScrollView {
+                VStack(alignment: .leading, spacing: Self.sectionSpacing) {
+                    currentStyleSection
+                    availableStylesSection
                 }
-                .listRowInsets(EdgeInsets(top: 16, leading: 0, bottom: 16, trailing: 0))
-                .padding(.horizontal)
-            } header: {
-                Text("Current Style")
-            } footer: {
-                Text("These retro-styled placeholders appear when a game is missing its cover artwork.")
-                    .padding(.horizontal)
-            }
-
-            Section(header: Text("Available Styles")) {
-                ForEach(RetroTestPattern.allCases, id: \.self) { style in
-                    StyleOptionRow(
-                        style: style,
-                        isSelected: selectedStyle == style,
-                        onSelect: {
-                            withAnimation(.spring(response: 0.3, dampingFraction: 0.6)) {
-                                selectedStyle = style
-                                // Trigger preview animations
-                                selectedPreviewScale = 1.1
-                                previewRotation = 360
-                                animatingSelection = true
-
-                                // Reset animations
-                                DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-                                    withAnimation(.spring(response: 0.3, dampingFraction: 0.6)) {
-                                        selectedPreviewScale = 1.0
-                                        previewRotation = 0
-                                        animatingSelection = false
-                                    }
-                                }
-
-                                // Haptic feedback
-#if !os(tvOS)
-                                let generator = UIImpactFeedbackGenerator(style: .medium)
-                                generator.prepare()
-                                generator.impactOccurred()
-#endif
-                            }
-                        }
-                    )
-                }
+                .tvOSSettingsHorizontalPadding()
+                #if os(tvOS)
+                .padding(.vertical, 24)
+                #else
+                .padding()
+                #endif
             }
         }
         .navigationTitle("Missing Artwork Style")
@@ -391,16 +241,112 @@ fileprivate struct MissingArtworkStyleView: View {
                 #endif
         }
     }
+
+    // MARK: - Sections
+
+    private var currentStyleSection: some View {
+        VStack(alignment: .leading, spacing: Self.rowSpacing) {
+            RetroSettingsSectionHeader(icon: "photo", title: "Current Style")
+
+            // Interactive preview of current style
+            Button {
+                showingFullScreenPreview = true
+            } label: {
+                VStack(spacing: Self.rowSpacing) {
+                    Image(uiImage: UIImage.missingArtworkImage(
+                        gameTitle: previewTitle,
+                        ratio: 1.6,
+                        pattern: selectedStyle
+                    ))
+                    .resizable()
+                    .scaledToFit()
+                    .frame(maxHeight: 160)
+                    .cornerRadius(Self.previewCornerRadius)
+                    .rotation3DEffect(.degrees(previewRotation), axis: (x: 0, y: 1, z: 0))
+                    .scaleEffect(selectedPreviewScale)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: Self.previewCornerRadius)
+                            .strokeBorder(Color.white.opacity(0.08), lineWidth: 1)
+                    )
+                    .shadow(color: Color.retroPink.opacity(0.4), radius: 10, x: 0, y: 5)
+
+                    #if os(tvOS)
+                    Text("Select to preview full screen")
+                        .font(.retroSettingsRowSubtitle)
+                        .foregroundColor(.secondary)
+                    #else
+                    Text("Tap to preview full screen")
+                        .font(.retroSettingsRowSubtitle)
+                        .foregroundColor(.secondary)
+                    #endif
+                }
+                .frame(maxWidth: .infinity)
+                .padding(Self.rowSpacing)
+            }
+            .retroFocusButtonStyle(focusScale: 1.04, focusBorderWidth: 2.5, cornerRadius: Self.previewCornerRadius)
+
+            Text("These retro-styled placeholders appear when a game is missing its cover artwork.")
+                .font(.retroSettingsRowSubtitle)
+                .foregroundColor(.secondary)
+        }
+    }
+
+    private var availableStylesSection: some View {
+        VStack(alignment: .leading, spacing: Self.rowSpacing) {
+            RetroSettingsSectionHeader(icon: "square.grid.2x2", title: "Available Styles")
+
+            ForEach(RetroTestPattern.allCases, id: \.self) { style in
+                StyleOptionRow(
+                    style: style,
+                    isSelected: selectedStyle == style,
+                    onSelect: { select(style) }
+                )
+            }
+        }
+    }
+
+    // MARK: - Selection
+
+    private func select(_ style: RetroTestPattern) {
+        withAnimation(Self.selectionAnimation) {
+            selectedStyle = style
+            // Trigger preview animations
+            selectedPreviewScale = 1.1
+            previewRotation = 360
+
+            // Reset animations
+            DispatchQueue.main.asyncAfter(deadline: .now() + Self.selectionAnimationDuration) {
+                withAnimation(Self.selectionAnimation) {
+                    selectedPreviewScale = 1.0
+                    previewRotation = 0
+                }
+            }
+
+            // Haptic feedback
+#if !os(tvOS)
+            let generator = UIImpactFeedbackGenerator(style: .medium)
+            generator.prepare()
+            generator.impactOccurred()
+#endif
+        }
+    }
 }
 
-/// Row view for each style option
+/// Row view for each style option, drawn like `RetroSettingsPickerRow` with a thumbnail.
 private struct StyleOptionRow: View {
     let style: RetroTestPattern
     let isSelected: Bool
     let onSelect: () -> Void
 
     @ObservedObject private var themeManager = ThemeManager.shared
-    @State private var isPressed = false
+
+    #if os(tvOS)
+    private static let thumbnailSize: CGFloat = 100
+    #else
+    private static let thumbnailSize: CGFloat = 80
+    #endif
+    private static let rowCornerRadius: CGFloat = 10
+    private static let thumbnailCornerRadius: CGFloat = 8
 
     var body: some View {
         Button(action: onSelect) {
@@ -412,25 +358,22 @@ private struct StyleOptionRow: View {
                     pattern: style
                 ))
                 .resizable()
-                .aspectRatio(contentMode: .fit)
-                .frame(width: 80, height: 80)
-                .cornerRadius(8)
+                .scaledToFit()
+                .frame(width: Self.thumbnailSize, height: Self.thumbnailSize)
+                .cornerRadius(Self.thumbnailCornerRadius)
                 .overlay(
-                    RoundedRectangle(cornerRadius: 8)
-                        .strokeBorder(
-                            isSelected ?
-                            (themeManager.currentPalette.defaultTintColor.swiftUIColor ?? .accentColor) :
-                                Color.clear,
-                            lineWidth: 2
-                        )
+                    RoundedRectangle(cornerRadius: Self.thumbnailCornerRadius)
+                        .strokeBorder(isSelected ? Color.retroPink : Color.clear, lineWidth: 2)
                 )
 
                 // Style description
                 VStack(alignment: .leading, spacing: 4) {
                     Text(style.description)
-                        .font(.headline)
+                        .font(.retroSettingsLabel)
+                        .foregroundColor(themeManager.currentPalette.settingsCellText?.swiftUIColor
+                            ?? themeManager.currentPalette.gameLibraryText.swiftUIColor)
                     Text(style.subtitle)
-                        .font(.caption)
+                        .font(.retroSettingsRowSubtitle)
                         .foregroundColor(.secondary)
                 }
 
@@ -439,29 +382,24 @@ private struct StyleOptionRow: View {
                 // Selection indicator
                 if isSelected {
                     Image(systemName: "checkmark.circle.fill")
-                        .foregroundColor(themeManager.currentPalette.defaultTintColor.swiftUIColor ?? .accentColor)
+                        .foregroundColor(.retroBlue)
                         .imageScale(.large)
                 }
             }
-        }
-        .buttonStyle(StyleOptionButtonStyle(isSelected: isSelected))
-        .padding(.vertical, 4)
-    }
-}
-
-/// Custom button style for style options
-private struct StyleOptionButtonStyle: ButtonStyle {
-    let isSelected: Bool
-
-    @ViewBuilder
-    func makeBody(configuration: Configuration) -> some View {
-        configuration.label
+            .padding(12)
             .background(
-                RoundedRectangle(cornerRadius: 8)
-                    .fill(configuration.isPressed ? Color.gray.opacity(0.1) : Color.clear)
+                RoundedRectangle(cornerRadius: Self.rowCornerRadius)
+                    .fill(isSelected ? Color.retroBlue.opacity(0.12) : Color.clear)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: Self.rowCornerRadius)
+                            .strokeBorder(
+                                isSelected ? Color.retroBlue.opacity(0.5) : Color.white.opacity(0.08),
+                                lineWidth: 1
+                            )
+                    )
             )
-            .scaleEffect(configuration.isPressed ? 0.98 : 1.0)
-            .animation(.easeOut(duration: 0.2), value: configuration.isPressed)
+        }
+        .retroFocusButtonStyle(focusScale: 1.04, focusBorderWidth: 2.5, cornerRadius: Self.rowCornerRadius)
     }
 }
 
@@ -470,32 +408,51 @@ private struct FullScreenPreview: View {
     let style: RetroTestPattern
     let previewTitle: String
     @Environment(\.dismiss) private var dismiss
-    @ObservedObject private var themeManager = ThemeManager.shared
+
+    #if os(tvOS)
+    private static let doneButtonWidth: CGFloat = 400
+    #endif
 
     var body: some View {
+        #if os(tvOS)
+        previewContent
+            .onExitCommand { dismiss() }
+        #else
         NavigationStack {
-            ZStack {
-                Color.black.edgesIgnoringSafeArea(.all)
+            previewContent
+                .navigationTitle("Preview")
+                .navigationBarTitleDisplayMode(.inline)
+                .toolbar {
+                    ToolbarItem(placement: .topBarTrailing) {
+                        Button("Done") {
+                            dismiss()
+                        }
+                    }
+                }
+        }
+        #endif
+    }
 
+    private var previewContent: some View {
+        ZStack {
+            Color.black.edgesIgnoringSafeArea(.all)
+
+            VStack(spacing: 40) {
                 Image(uiImage: UIImage.missingArtworkImage(
                     gameTitle: previewTitle,
                     ratio: 1.6,
                     pattern: style
                 ))
                 .resizable()
-                .aspectRatio(contentMode: .fit)
+                .scaledToFit()
                 .shadow(color: .black.opacity(0.3), radius: 20)
-            }
-            .navigationTitle("Preview")
-#if !os(tvOS)
-            .navigationBarTitleDisplayMode(.inline)
-#endif
-            .toolbar {
-                ToolbarItem(placement: .topBarTrailing) {
-                    Button("Done") {
-                        dismiss()
-                    }
+
+                #if os(tvOS)
+                RetroSettingsActionButton(title: "Done", icon: "checkmark", color: .retroBlue) {
+                    dismiss()
                 }
+                .frame(width: Self.doneButtonWidth)
+                #endif
             }
         }
     }

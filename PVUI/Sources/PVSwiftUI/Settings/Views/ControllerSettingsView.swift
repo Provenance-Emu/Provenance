@@ -21,6 +21,18 @@ import PVUI_IOS
 import PVUI_TV
 #endif
 
+extension View {
+    /// Insets a settings row's content on tvOS so the retro focus border sits clear of the text; no-op elsewhere.
+    @ViewBuilder
+    func tvOSRowInset() -> some View {
+        #if os(tvOS)
+        self.padding(.vertical, 8).padding(.horizontal, 12)
+        #else
+        self
+        #endif
+    }
+}
+
 /// A SwiftUI view for managing controller assignments to players
 struct ControllerSettingsView: View {
     @Environment(\.dismiss) private var dismiss
@@ -396,6 +408,7 @@ struct ControllerSettingsView: View {
                         Text("Reset All Slot Preferences")
                     }
                     .foregroundColor(.red)
+                    .tvOSRowInset()
                 }
                 #if os(tvOS)
                 .retroFocusButtonStyle(focusScale: 1.04, focusBorderWidth: 2.5, cornerRadius: 10, primaryColor: .red, secondaryColor: .retroPink)
@@ -420,13 +433,25 @@ struct ControllerSettingsView: View {
             Section {
                 NavigationLink(destination: KeyboardControlsGuideView(keyboardMappingDocs: keyboardMappingDocs, accentColor: accentColor)) {
                     Label("Keyboard Controls", systemImage: "keyboard")
+                        .tvOSRowInset()
                 }
+                #if os(tvOS)
+                .retroFocusButtonStyle(focusScale: 1.04, focusBorderWidth: 2.5, cornerRadius: 12)
+                #endif
                 NavigationLink(destination: ControllerGuideView()) {
                     Label("Controller Guide", systemImage: "gamecontroller.fill")
+                        .tvOSRowInset()
                 }
+                #if os(tvOS)
+                .retroFocusButtonStyle(focusScale: 1.04, focusBorderWidth: 2.5, cornerRadius: 12)
+                #endif
                 NavigationLink(destination: WikiPageView(path: "info/controllers-and-controls/README.md", title: "Controllers & Controls").settingsSubpageTracking()) {
                     Label("Full Controller Wiki", systemImage: "books.vertical.fill")
+                        .tvOSRowInset()
                 }
+                #if os(tvOS)
+                .retroFocusButtonStyle(focusScale: 1.04, focusBorderWidth: 2.5, cornerRadius: 12)
+                #endif
             } header: {
                 #if os(tvOS)
                 RetroSettingsSectionHeader(icon: "questionmark.circle", title: "Help & Guides")
@@ -539,13 +564,70 @@ private enum SlotModeCategory: String, CaseIterable, Identifiable {
     var id: String { rawValue }
 }
 
-/// Shared segmented pickers for mode + player-slot selection.
+#if os(tvOS)
+private extension SlotModeCategory {
+    /// SF Symbol shown on the tvOS radio row.
+    var symbolName: String {
+        switch self {
+        case .auto: return "wand.and.stars"
+        case .preferred: return "star"
+        case .always: return "lock.fill"
+        }
+    }
+
+    /// One-line explanation shown under the tvOS radio row title.
+    var summary: String {
+        switch self {
+        case .auto: return "First available slot"
+        case .preferred: return "Use the chosen slot if it is free"
+        case .always: return "Claim the chosen slot, bumping others"
+        }
+    }
+}
+#endif
+
+/// Shared pickers for mode + player-slot selection: segmented on iOS, retro radio rows on tvOS
+/// (the system segmented control has no retrowave focus styling).
 /// Used by both `ControllerSlotModeRow` and `DisconnectedControllerSlotModeRow`.
 private struct SlotModePickerSection: View {
     @Binding var category: SlotModeCategory
     @Binding var slot: Int
 
+    #if os(tvOS)
+    private static let slotColumnCount = 4
+    private static let slotColumns = Array(repeating: GridItem(.flexible(), spacing: 8), count: slotColumnCount)
+    #endif
+
     var body: some View {
+        #if os(tvOS)
+        VStack(alignment: .leading, spacing: 8) {
+            ForEach(SlotModeCategory.allCases) { cat in
+                RetroSettingsPickerRow(
+                    symbolName: cat.symbolName,
+                    title: cat.rawValue,
+                    subtitle: cat.summary,
+                    isSelected: category == cat
+                ) {
+                    category = cat
+                }
+            }
+
+            if category != .auto {
+                LazyVGrid(columns: Self.slotColumns, spacing: 8) {
+                    ForEach(1...8, id: \.self) { s in
+                        RetroSettingsPickerRow(
+                            symbolName: "person.fill",
+                            title: "P\(s)",
+                            subtitle: "",
+                            isSelected: slot == s
+                        ) {
+                            slot = s
+                        }
+                    }
+                }
+            }
+        }
+        #else
         Picker("Mode", selection: $category) {
             ForEach(SlotModeCategory.allCases) { cat in
                 Text(cat.rawValue).tag(cat)
@@ -561,6 +643,29 @@ private struct SlotModePickerSection: View {
             }
             .pickerStyle(.segmented)
         }
+        #endif
+    }
+}
+
+/// The small destructive "Reset" button on a slot-mode row: borderless on iOS, retro-focused on tvOS.
+private struct SlotModeResetButton: View {
+    let action: () -> Void
+
+    var body: some View {
+        #if os(tvOS)
+        Button(role: .destructive, action: action) {
+            Text("Reset")
+                .font(.retroSettingsRowSubtitle)
+                .foregroundColor(.red)
+                .padding(.horizontal, 14)
+                .padding(.vertical, 6)
+        }
+        .retroFocusButtonStyle(focusScale: 1.08, focusBorderWidth: 2, cornerRadius: 8, primaryColor: .red, secondaryColor: .retroPink)
+        #else
+        Button("Reset", role: .destructive, action: action)
+            .font(.caption)
+            .buttonStyle(.borderless)
+        #endif
     }
 }
 
@@ -648,11 +753,9 @@ private struct ControllerSlotModeRow: View {
                 }
 
                 if currentMode != .auto {
-                    Button("Reset", role: .destructive) {
+                    SlotModeResetButton {
                         controllerManager.clearSlotMode(for: controller)
                     }
-                    .font(.caption)
-                    .buttonStyle(.borderless)
                 }
             }
 
@@ -734,11 +837,9 @@ private struct DisconnectedControllerSlotModeRow: View {
 
                 Spacer()
 
-                Button("Reset", role: .destructive) {
+                SlotModeResetButton {
                     controllerManager.clearSlotMode(forId: id)
                 }
-                .font(.caption)
-                .buttonStyle(.borderless)
             }
 
             SlotModePickerSection(category: categoryBinding, slot: slotBinding)
@@ -791,12 +892,32 @@ struct ButtonRemappingView: View {
         .menu, .options
     ]
 
+    /// Row text colour: the theme's cell text on tvOS (the retro background is always dark), `.primary` elsewhere.
+    private var rowTextColor: Color {
+        #if os(tvOS)
+        themeManager.currentPalette.settingsCellText?.swiftUIColor
+            ?? themeManager.currentPalette.gameLibraryText.swiftUIColor
+        #else
+        .primary
+        #endif
+    }
+
+    @ViewBuilder
+    private func sectionHeader(_ title: String, icon: String) -> some View {
+        #if os(tvOS)
+        RetroSettingsSectionHeader(icon: icon, title: title)
+        #else
+        Text(title)
+        #endif
+    }
+
     var body: some View {
         List {
             // MARK: Profiles section
             Section {
                 HStack {
                     Label("Active Profile", systemImage: "person.crop.rectangle")
+                        .foregroundColor(rowTextColor)
                     Spacer()
                     Text(activeProfileName ?? "None")
                         .font(.subheadline)
@@ -808,14 +929,22 @@ struct ButtonRemappingView: View {
                 ) {
                     Label("Manage Profiles", systemImage: "list.bullet.rectangle.portrait")
                         .foregroundColor(accentColor)
+                        .tvOSRowInset()
                 }
+                #if os(tvOS)
+                .retroFocusButtonStyle(focusScale: 1.04, focusBorderWidth: 2.5, cornerRadius: 12)
+                #endif
 
                 Button(action: { showSaveProfileAlert = true }) {
                     Label("Save Current Mappings\u{2026}", systemImage: "square.and.arrow.down")
                         .foregroundColor(accentColor)
+                        .tvOSRowInset()
                 }
+                #if os(tvOS)
+                .retroFocusButtonStyle(focusScale: 1.04, focusBorderWidth: 2.5, cornerRadius: 12)
+                #endif
             } header: {
-                Text("Profiles")
+                sectionHeader("Profiles", icon: "person.crop.rectangle.stack")
             } footer: {
                 Text("Profiles let you save and switch between different button layouts.")
                     .font(.caption)
@@ -833,7 +962,7 @@ struct ButtonRemappingView: View {
                     }) {
                         HStack {
                             Text(buttonDisplayName(button))
-                                .foregroundColor(.primary)
+                                .foregroundColor(rowTextColor)
                             Spacer()
                             if let mappedTo = currentMappings[button] {
                                 Text("→ \(buttonDisplayName(mappedTo))")
@@ -848,19 +977,28 @@ struct ButtonRemappingView: View {
                                 .font(.caption)
                                 .foregroundColor(tapToRemapMode ? accentColor : .secondary)
                         }
+                        .tvOSRowInset()
                     }
+                    #if os(tvOS)
+                    .retroFocusButtonStyle(focusScale: 1.03, focusBorderWidth: 2.5, cornerRadius: 12)
+                    #endif
                 }
             } header: {
                 HStack {
-                    Text("Button Mappings")
+                    sectionHeader("Button Mappings", icon: "slider.horizontal.3")
                     Spacer()
                     Button(action: { tapToRemapMode.toggle() }) {
                         Label(tapToRemapMode ? "Press Mode" : "List Mode",
                               systemImage: tapToRemapMode ? "gamecontroller.fill" : "list.bullet")
                             .font(.caption)
                             .foregroundColor(tapToRemapMode ? accentColor : .secondary)
+                            .tvOSRowInset()
                     }
+                    #if os(tvOS)
+                    .retroFocusButtonStyle(focusScale: 1.08, focusBorderWidth: 2, cornerRadius: 8)
+                    #else
                     .buttonStyle(.plain)
+                    #endif
                 }
             } footer: {
                 if tapToRemapMode {
@@ -879,7 +1017,11 @@ struct ButtonRemappingView: View {
                         Text("Reset All Mappings")
                     }
                     .foregroundColor(.red)
+                    .tvOSRowInset()
                 }
+                #if os(tvOS)
+                .retroFocusButtonStyle(focusScale: 1.04, focusBorderWidth: 2.5, cornerRadius: 10, primaryColor: .red, secondaryColor: .retroPink)
+                #endif
 
                 Button(action: {
                     swapABButtons()
@@ -889,7 +1031,11 @@ struct ButtonRemappingView: View {
                         Text("Swap A ↔ B")
                     }
                     .foregroundColor(accentColor)
+                    .tvOSRowInset()
                 }
+                #if os(tvOS)
+                .retroFocusButtonStyle(focusScale: 1.04, focusBorderWidth: 2.5, cornerRadius: 12)
+                #endif
 
                 Button(action: {
                     swapXYButtons()
@@ -899,11 +1045,20 @@ struct ButtonRemappingView: View {
                         Text("Swap X ↔ Y")
                     }
                     .foregroundColor(accentColor)
+                    .tvOSRowInset()
                 }
+                #if os(tvOS)
+                .retroFocusButtonStyle(focusScale: 1.04, focusBorderWidth: 2.5, cornerRadius: 12)
+                #endif
             } header: {
-                Text("Quick Actions")
+                sectionHeader("Quick Actions", icon: "bolt.fill")
             }
         }
+        #if os(tvOS)
+        .listStyle(.plain)
+        .background { RetroSettingsBackground() }
+        .tvOSSettingsHorizontalPadding()
+        #endif
         .navigationTitle(controller.vendorName ?? "Remap Buttons")
         #if os(tvOS)
         .focusSection()
@@ -1059,35 +1214,45 @@ private struct KeyboardControlsGuideView: View {
     @Environment(\.dismiss) private var dismiss
 
     var body: some View {
-        ScrollView {
+        ZStack {
             #if os(tvOS)
-            MarkdownView(keyboardMappingDocs)
-                .font(.custom("Menlo", size: 14), for: .body)
-                .font(.custom("Menlo", size: 24), for: .h1)
-                .font(.custom("Menlo", size: 20), for: .h2)
-                .font(.custom("Menlo", size: 16), for: .h3)
-                .font(.custom("Menlo", size: 14), for: .codeBlock)
-                .tint(accentColor)
-                .padding()
-                .background(
-                    RoundedRectangle(cornerRadius: 16, style: .continuous)
-                        .fill(Color.gray.opacity(0.15))
-                )
-                .overlay(
-                    RoundedRectangle(cornerRadius: 16, style: .continuous)
-                        .stroke(Color.gray.opacity(0.3), lineWidth: 1)
-                )
-                .focusable()
-            #else
-            MarkdownView(keyboardMappingDocs)
-                .font(.custom("Menlo", size: 14), for: .body)
-                .font(.custom("Menlo", size: 24), for: .h1)
-                .font(.custom("Menlo", size: 20), for: .h2)
-                .font(.custom("Menlo", size: 16), for: .h3)
-                .font(.custom("Menlo", size: 14), for: .codeBlock)
-                .tint(accentColor)
-                .padding()
+            RetroSettingsBackground()
             #endif
+
+            ScrollView {
+                #if os(tvOS)
+                MarkdownView(keyboardMappingDocs)
+                    .font(.custom("Menlo", size: 14), for: .body)
+                    .font(.custom("Menlo", size: 24), for: .h1)
+                    .font(.custom("Menlo", size: 20), for: .h2)
+                    .font(.custom("Menlo", size: 16), for: .h3)
+                    .font(.custom("Menlo", size: 14), for: .codeBlock)
+                    .tint(accentColor)
+                    .padding()
+                    .background(
+                        RoundedRectangle(cornerRadius: 16, style: .continuous)
+                            .fill(Color.gray.opacity(0.15))
+                    )
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 16, style: .continuous)
+                            .stroke(Color.gray.opacity(0.3), lineWidth: 1)
+                    )
+                    // Focusable so the Siri Remote can scroll the page; the retro border shows it has focus.
+                    .focusable()
+                    .retroFocusEffect(focusScale: 1.0, focusBorderWidth: 3, cornerRadius: 16)
+                    .tvOSSettingsHorizontalPadding()
+                    .padding(.vertical, 24)
+                #else
+                MarkdownView(keyboardMappingDocs)
+                    .font(.custom("Menlo", size: 14), for: .body)
+                    .font(.custom("Menlo", size: 24), for: .h1)
+                    .font(.custom("Menlo", size: 20), for: .h2)
+                    .font(.custom("Menlo", size: 16), for: .h3)
+                    .font(.custom("Menlo", size: 14), for: .codeBlock)
+                    .tint(accentColor)
+                    .padding()
+                #endif
+            }
         }
         .navigationTitle("Keyboard Controls")
         #if os(tvOS)

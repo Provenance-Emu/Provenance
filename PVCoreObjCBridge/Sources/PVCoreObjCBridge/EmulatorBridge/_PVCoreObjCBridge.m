@@ -273,8 +273,6 @@ static NSString *_systemName;
     [self.emulationLoopThreadLock lock];
 
     //Become a real-time thread:
-    //@ 9:40 iMakeCurrentThreadRealTime();
-
     // Calculate parameters based on self.frameInterval
     double period = 1.0 / self.frameInterval;
     double computation = period * 0.8;  // 80% of period
@@ -288,7 +286,7 @@ static NSString *_systemName;
         ILOG(@"Thread is now real-time at %.1f FPS (period=%.5fs, computation=%.5fs, constraint=%.5fs)",
              self.frameInterval, period, computation, constraint);
     } else {
-        ELOG(@"Failed to make thread real-time, emulation may experience timing issues");
+        WLOG(@"Thread is not real-time; running at user-interactive QoS");
     }
 
     //Emulation loop
@@ -883,20 +881,16 @@ BOOL iMakeCurrentThreadRealTime(double period, double computation, double constr
     // Get the current thread
     thread_t thread = mach_thread_self();
 
-    // Set up the time constraints for real-time behavior
-    thread_time_constraint_policy_data_t policy;
-    mach_msg_type_number_t count = THREAD_TIME_CONSTRAINT_POLICY_COUNT;
-    boolean_t get_default = FALSE;
-
-    // Convert seconds to absolute time units
-    uint32_t absoluteTimeFrequency = 0; // unused but kept for clarity
-
-    // Get the timebase info to convert seconds to absolute time
+    // Mach absolute time ticks per second. ns = ticks * numer / denom, so
+    // ticks = seconds * 1e9 * denom / numer (24 MHz on Apple Silicon, where
+    // numer/denom is 125/3; dividing by the inverse made every value ~1736x
+    // too large and the kernel rejected the policy).
     mach_timebase_info_data_t timebaseInfo;
-    mach_timebase_info(&timebaseInfo);
-
-    // Calculate the conversion factor from seconds to absolute time
-    double absoluteTimeToSecondsRatio = ((double)timebaseInfo.denom / (double)timebaseInfo.numer) * 1e-9;
+    if (mach_timebase_info(&timebaseInfo) != KERN_SUCCESS || timebaseInfo.numer == 0) {
+        mach_port_deallocate(mach_task_self(), thread);
+        return NO;
+    }
+    double ticksPerSecond = 1e9 * (double)timebaseInfo.denom / (double)timebaseInfo.numer;
 
     // Clamp to avoid invalid relationships
     if (computation > constraint) computation = constraint * 0.8;
@@ -904,9 +898,10 @@ BOOL iMakeCurrentThreadRealTime(double period, double computation, double constr
     if (computation <= 0) computation = period * 0.5;
     if (constraint <= 0) constraint = period * 0.75;
 
-    policy.period = (uint32_t)(period / absoluteTimeToSecondsRatio);
-    policy.computation = (uint32_t)(computation / absoluteTimeToSecondsRatio);
-    policy.constraint = (uint32_t)(constraint / absoluteTimeToSecondsRatio);
+    thread_time_constraint_policy_data_t policy;
+    policy.period = (uint32_t)(period * ticksPerSecond);
+    policy.computation = (uint32_t)(computation * ticksPerSecond);
+    policy.constraint = (uint32_t)(constraint * ticksPerSecond);
     policy.preemptible = preemptible;
 
     // Set the thread policy
@@ -919,19 +914,16 @@ BOOL iMakeCurrentThreadRealTime(double period, double computation, double constr
 
     // If hard real-time fails, try a relaxed profile once
     if (result != KERN_SUCCESS) {
-        double rperiod = period;
-        double rcomp = period * 0.5;
-        double rconst = period * 0.75;
-        policy.period = (uint32_t)(rperiod / absoluteTimeToSecondsRatio);
-        policy.computation = (uint32_t)(rcomp / absoluteTimeToSecondsRatio);
-        policy.constraint = (uint32_t)(rconst / absoluteTimeToSecondsRatio);
+        policy.period = (uint32_t)(period * ticksPerSecond);
+        policy.computation = (uint32_t)(period * 0.5 * ticksPerSecond);
+        policy.constraint = (uint32_t)(period * 0.75 * ticksPerSecond);
         policy.preemptible = TRUE;
         result = thread_policy_set(thread, THREAD_TIME_CONSTRAINT_POLICY, (thread_policy_t)&policy, THREAD_TIME_CONSTRAINT_POLICY_COUNT);
     }
 
     // Fallback: elevate QoS to userInteractive if still failing
     if (result != KERN_SUCCESS) {
-        pthread_t pt = pthread_self();
+        WLOG(@"thread_policy_set failed (%s); falling back to QOS_CLASS_USER_INTERACTIVE", mach_error_string(result));
         pthread_set_qos_class_self_np(QOS_CLASS_USER_INTERACTIVE, 0);
     }
 

@@ -15,6 +15,7 @@ import PVPatching
 import PVFileSystem
 import UniformTypeIdentifiers
 import PVSettings
+import PVThemes
 import Defaults
 
 /// Global ROM Tools screen for unmatched / pending patches and patch creation entry.
@@ -29,6 +30,9 @@ public struct PendingPatchesView: View {
     @State private var showImporter = false
     @State private var isBusy = false
     @Default(.showPatchedVersionsAsSeparateItems) private var showPatchedSeparately
+    #if os(tvOS)
+    @Environment(\.dismiss) private var dismiss
+    #endif
 
     public init() {}
 
@@ -43,34 +47,42 @@ public struct PendingPatchesView: View {
             }
 
             SwiftUI.Section {
-                Toggle("Show patched versions as separate library items", isOn: $showPatchedSeparately)
+                ThemedToggle(isOn: $showPatchedSeparately) {
+                    Text("Show patched versions as separate library items")
+                }
             } header: {
-                Text("Library")
+                sectionHeader("Library", icon: "books.vertical")
             } footer: {
                 Text("Off: patched versions are hidden from the library and listed under their game's Patches & Mods menu.")
             }
 
-            SwiftUI.Section("ROM Tools") {
+            SwiftUI.Section {
                 NavigationLink {
                     PatchApplierView()
                 } label: {
                     Label("Patch Applier", systemImage: "bandage")
                 }
+                .retroRowFocus()
                 NavigationLink {
                     BatchPatchApplierView()
                 } label: {
                     Label("Batch Apply Folder…", systemImage: "folder.badge.gearshape")
                 }
+                .retroRowFocus()
                 NavigationLink {
                     OnlinePatchDatabaseView()
                 } label: {
                     Label("Browse Online Patches…", systemImage: "globe")
                 }
+                .retroRowFocus()
                 NavigationLink {
                     CreatePatchView()
                 } label: {
                     Label("Create Patch (BPS / IPS)…", systemImage: "doc.badge.plus")
                 }
+                .retroRowFocus()
+            } header: {
+                sectionHeader("ROM Tools", icon: "wrench.and.screwdriver")
             }
 
             SwiftUI.Section {
@@ -90,10 +102,11 @@ public struct PendingPatchesView: View {
                 } label: {
                     Label("Retry Auto-Match", systemImage: "arrow.triangle.2.circlepath")
                 }
+                .retroRowFocus()
                 .disabled(isBusy || pending.isEmpty)
             }
 
-            SwiftUI.Section("Pending / Unmatched") {
+            SwiftUI.Section {
                 if pending.isEmpty {
                     Text("No pending patches.")
                         .foregroundStyle(.secondary)
@@ -106,23 +119,23 @@ public struct PendingPatchesView: View {
                                 .font(.caption)
                                 .foregroundStyle(.secondary)
                             HStack {
-                                Button("Link to Game…") {
+                                patchActionButton("Link to Game…", icon: "link", color: .retroBlue) {
                                     selectedPatch = patch
                                     showGamePicker = true
                                 }
-                                .buttonStyle(.bordered)
-                                Button("Delete", role: .destructive) {
+                                patchActionButton("Delete", icon: "trash", color: .retroPink, role: .destructive) {
                                     patchPendingDeletion = patch
                                 }
-                                .buttonStyle(.bordered)
                             }
                         }
                         .padding(.vertical, 4)
                     }
                 }
+            } header: {
+                sectionHeader("Pending / Unmatched", icon: "exclamationmark.triangle")
             }
 
-            SwiftUI.Section("All Patches") {
+            SwiftUI.Section {
                 if allPatches.isEmpty {
                     Text("No patches imported yet.")
                         .foregroundStyle(.secondary)
@@ -145,10 +158,20 @@ public struct PendingPatchesView: View {
                                     .foregroundStyle(.secondary)
                             }
                         }
+                        .retroRowFocus()
                     }
                 }
+            } header: {
+                sectionHeader("All Patches", icon: "doc.on.doc")
             }
         }
+        #if os(tvOS)
+        .listStyle(.plain)
+        .tvOSSettingsHorizontalPadding()
+        .background { RetroSettingsBackground() }
+        .focusSection()
+        .onExitCommand { dismiss() }
+        #endif
         .navigationTitle("Patches / ROM Tools")
         .confirmationDialog(
             "Delete this patch?",
@@ -183,6 +206,33 @@ public struct PendingPatchesView: View {
             }
         }
         .onAppear(perform: reload)
+    }
+
+    /// Retrowave header on tvOS; the stock section title elsewhere.
+    @ViewBuilder
+    private func sectionHeader(_ title: String, icon: String) -> some View {
+        #if os(tvOS)
+        RetroSettingsSectionHeader(icon: icon, title: title)
+        #else
+        Text(title)
+        #endif
+    }
+
+    /// Row-level action button: retrowave action button on tvOS, bordered system button elsewhere.
+    @ViewBuilder
+    private func patchActionButton(
+        _ title: String,
+        icon: String,
+        color: Color,
+        role: ButtonRole? = nil,
+        action: @escaping () -> Void
+    ) -> some View {
+        #if os(tvOS)
+        RetroSettingsActionButton(title: title, icon: icon, color: color, action: action)
+        #else
+        Button(title, role: role, action: action)
+            .buttonStyle(.bordered)
+        #endif
     }
 
     private static var patchTypes: [UTType] {
@@ -307,7 +357,13 @@ private struct PatchGamePickerView: View {
                             .foregroundStyle(.secondary)
                     }
                 }
+                .retroRowFocus()
             }
+            #if os(tvOS)
+            .listStyle(.plain)
+            .tvOSSettingsHorizontalPadding()
+            .background { RetroSettingsBackground() }
+            #endif
             .navigationTitle("Choose Base Game")
 #if !os(tvOS)
             .searchable(text: $query)
@@ -323,5 +379,17 @@ private struct PatchGamePickerView: View {
     private var filtered: [PVGame] {
         guard !query.isEmpty else { return games }
         return games.filter { $0.title.localizedCaseInsensitiveContains(query) }
+    }
+}
+
+private extension View {
+    /// Retrowave focus feedback for list-row buttons on tvOS; unchanged elsewhere.
+    @ViewBuilder
+    func retroRowFocus() -> some View {
+        #if os(tvOS)
+        retroFocusButtonStyle(focusScale: 1.02)
+        #else
+        self
+        #endif
     }
 }

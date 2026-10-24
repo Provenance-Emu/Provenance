@@ -44,6 +44,11 @@ public struct RetroLogView: View {
     /// Focus states for header buttons
     @FocusState private var focusedButton: HeaderButton?
 
+    /// Controls presentation of the log level picker
+    @State private var showingLogLevelPicker = false
+
+    private static let logLevelIcon = "line.3.horizontal.decrease"
+
     private enum HeaderButton: Hashable {
         case logLevel
         case autoScroll
@@ -136,6 +141,11 @@ public struct RetroLogView: View {
         .sheet(isPresented: $showingExportSheet) {
             LogExportSheet(viewModel: viewModel)
         }
+        #if os(tvOS)
+        .sheet(isPresented: $showingLogLevelPicker) {
+            LogLevelPickerSheet(selection: $viewModel.minLogLevel, icon: Self.logLevelIcon)
+        }
+        #endif
         #if !os(tvOS)
         .fileImporter(
             isPresented: $showingImporter,
@@ -188,25 +198,14 @@ public struct RetroLogView: View {
 
                 #if os(tvOS)
                 // Log level picker
-                Menu {
-                    Picker("Log Level", selection: $viewModel.minLogLevel) {
-                        Text("Verbose").tag(LogLevel.verbose)
-                        Text("Debug").tag(LogLevel.debug)
-                        Text("Info").tag(LogLevel.info)
-                        Text("Warning").tag(LogLevel.warning)
-                        Text("Error").tag(LogLevel.error)
-                    }
-                } label: {
-                    headerButtonContent(
-                        icon: "line.3.horizontal.decrease",
-                        label: "Level: \(viewModel.minLogLevel.name)",
-                        accentColor: RetroTheme.retroBlue,
-                        isFocused: focusedButton == .logLevel
-                    )
+                headerButton(
+                    button: .logLevel,
+                    icon: Self.logLevelIcon,
+                    label: "Level: \(viewModel.minLogLevel.name)",
+                    accentColor: RetroTheme.retroBlue
+                ) {
+                    showingLogLevelPicker = true
                 }
-                .buttonStyle(TVMediaCardButtonStyle())
-                .tvOSDisableFocusEffect()
-                .focused($focusedButton, equals: .logLevel)
 
                 // Auto-scroll toggle
                 headerButton(
@@ -821,6 +820,49 @@ extension RetroLogView {
             .padding(.vertical, 1)
     }
 }
+
+// MARK: - Log Level Picker (tvOS)
+
+#if os(tvOS)
+/// Radio list of log levels; picking one applies it and closes the sheet.
+private struct LogLevelPickerSheet: View {
+    @Binding var selection: LogLevel
+    let icon: String
+    @Environment(\.dismiss) private var dismiss
+
+    private static let levels: [LogLevel] = [.verbose, .debug, .info, .warning, .error]
+    private static let rowSpacing: CGFloat = 12
+    private static let verticalPadding: CGFloat = 24
+
+    var body: some View {
+        ZStack {
+            RetroSettingsBackground()
+
+            ScrollView {
+                VStack(alignment: .leading, spacing: Self.rowSpacing) {
+                    RetroSettingsSectionHeader(icon: icon, title: "Log Level")
+
+                    ForEach(Self.levels, id: \.self) { level in
+                        RetroSettingsPickerRow(
+                            symbolName: icon,
+                            title: level.name,
+                            subtitle: "",
+                            isSelected: selection == level
+                        ) {
+                            selection = level
+                            dismiss()
+                        }
+                    }
+                }
+                .tvOSSettingsHorizontalPadding()
+                .padding(.vertical, Self.verticalPadding)
+            }
+        }
+        .focusSection()
+        .onExitCommand { dismiss() }
+    }
+}
+#endif
 
 // MARK: - Preview
 

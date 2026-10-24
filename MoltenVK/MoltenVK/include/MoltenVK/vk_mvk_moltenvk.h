@@ -1,7 +1,7 @@
 /*
  * vk_mvk_moltenvk.h
  *
- * Copyright (c) 2015-2024 The Brenwill Workshop Ltd. (http://www.brenwill.com)
+ * Copyright (c) 2015-2026 The Brenwill Workshop Ltd. (http://www.brenwill.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,8 +33,7 @@
  *   - Build settings at MoltenVK build time.
  *
  * If you require access to private structures and functions to query MoltenVK about MoltenVK
- * version and configuration, runtime performance information, and available Metal capabilities,
- * use the following header file:
+ * version, configuration, or runtime performance information, use the following header file:
  *
  *     #include <MoltenVK/mvk_private_api.h>
  *

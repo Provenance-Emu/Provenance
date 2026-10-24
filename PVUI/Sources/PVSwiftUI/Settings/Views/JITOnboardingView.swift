@@ -12,6 +12,7 @@
 import SwiftUI
 import PVThemes
 import PVSettings
+import PVUIBase
 
 /// Apple-safe JIT onboarding view that explains "Performance Mode" to users
 /// without using words like "jailbreak" or implying App Store policy circumvention.
@@ -275,7 +276,7 @@ public struct JITOnboardingView: View {
                         .shadow(color: RetroTheme.retroPink.opacity(0.4), radius: 8, x: 0, y: 4)
                 )
             }
-            .buttonStyle(PlainButtonStyle())
+            .retroFocusButtonStyle(cornerRadius: 14)
 
             // Continue in Compatibility Mode button
             Button(action: {
@@ -297,7 +298,7 @@ public struct JITOnboardingView: View {
                             )
                     )
             }
-            .buttonStyle(PlainButtonStyle())
+            .retroFocusButtonStyle(cornerRadius: 14)
         }
     }
 
@@ -329,7 +330,7 @@ public struct JITOnboardingView: View {
                     Spacer()
                 }
             }
-            .buttonStyle(PlainButtonStyle())
+            .retroFocusButtonStyle(focusScale: 1.03, cornerRadius: 8)
             .padding(.horizontal, 4)
 
             // Learn More link
@@ -348,7 +349,7 @@ public struct JITOnboardingView: View {
                 }
                 .foregroundColor(RetroTheme.retroBlue.opacity(0.8))
             }
-            .buttonStyle(PlainButtonStyle())
+            .retroFocusButtonStyle(cornerRadius: 8)
         }
         .padding(.top, 8)
     }

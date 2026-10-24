@@ -30,7 +30,7 @@ import PVPrimitives
     private var shaderLibraryObserver: NSObjectProtocol?
     /// Read on PPSSPP's present thread; written on the main thread.
     private let smoothingLock = NSLock()
-    private var _smoothingEnabled: Bool = Defaults[.imageSmoothing]
+    private var _smoothingEnabled: Bool = Defaults[.imageSmoothingMode].usesLinearFiltering
     private var smoothingEnabled: Bool {
         get { smoothingLock.withLock { _smoothingEnabled } }
         set { smoothingLock.withLock { _smoothingEnabled = newValue } }
@@ -137,7 +137,7 @@ import PVPrimitives
     private func startFilterPreferenceObservation() {
         if #available(iOS 15.0, tvOS 15.0, *) {
             filterObservationTask = Task { [weak self] in
-                for await _ in Defaults.updates([.metalFilterMode, .imageSmoothing]) {
+                for await _ in Defaults.updates([.metalFilterMode, .imageSmoothingMode]) {
                     await MainActor.run {
                         self?.reloadFilterPreferences()
                     }
@@ -155,7 +155,7 @@ import PVPrimitives
     /// Publishes the filter in effect for this game to the present thread.
     @MainActor
     private func reloadFilterPreferences() {
-        smoothingEnabled = Defaults[.imageSmoothing]
+        smoothingEnabled = Defaults[.imageSmoothingMode].usesLinearFiltering
         let resolved = ShaderLibraryStore.shared.resolvedShader(gameMD5: core?.romMD5,
                                                                 systemID: core?.systemIdentifier,
                                                                 screenType: Self.screenType)

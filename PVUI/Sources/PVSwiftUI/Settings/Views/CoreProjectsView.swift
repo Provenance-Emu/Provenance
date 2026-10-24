@@ -10,6 +10,7 @@ import PVThemes
 import PVLibrary
 import Defaults
 import PVSettings
+import PVUIBase
 
 struct CoreProjectsView: View {
     private let cores: [PVCore]
@@ -46,12 +47,22 @@ struct CoreProjectsView: View {
     }
 
     var body: some View {
-        List {
-            ForEach(filteredCores, id: \.self) { core in
-                CoreSection(core: core, systems: Array(core.supportedSystems))
+        ZStack {
+            #if os(tvOS)
+            RetroSettingsBackground()
+            #endif
+
+            List {
+                ForEach(filteredCores, id: \.self) { core in
+                    CoreSection(core: core, systems: Array(core.supportedSystems))
+                }
             }
+            #if os(tvOS)
+            .listStyle(.plain)
+            .tvOSSettingsHorizontalPadding()
+            #endif
+            .searchable(text: $searchText, prompt: "Search cores or systems")
         }
-        .searchable(text: $searchText, prompt: "Search cores or systems")
         .navigationTitle("Emulator Cores")
         .tvOSNavigationSupport(title: "Emulator Cores")
         #if os(tvOS)

@@ -12,6 +12,7 @@ import PVLibrary
 import PVLogging
 import PVRealm
 import PVThemes
+import PVUIBase
 #if canImport(UIKit)
 import UIKit
 #endif
@@ -54,44 +55,94 @@ struct ControllerProfileLightBarEditorView: View {
         ("Off", .off)
     ]
 
+    private static let customColorFooter = String(localized: "When off, this profile does not override color; Settings and the current system decide.")
+
     var body: some View {
+        content
+            .navigationTitle("Light Bar")
+            #if os(tvOS)
+            .focusSection()
+            .onExitCommand { dismiss() }
+            #else
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .confirmationAction) {
+                    Button("Save") { save() }
+                        .foregroundColor(accentColor)
+                }
+            }
+            #endif
+            .onAppear(perform: loadFromRealm)
+            #if os(tvOS)
+            .settingsSubpageTracking()
+            #endif
+            .onChange(of: useCustomColor) { _, isOn in
+                if isOn, ControllerLightBarManager.LightBarColor(hex: selectedHex) == nil {
+                    selectedHex = ControllerLightBarManager.LightBarColor.default.hexString
+                    syncPickerFromHex()
+                }
+            }
+    }
+
+    #if os(tvOS)
+    private var content: some View {
+        ZStack {
+            RetroSettingsBackground()
+
+            ScrollView {
+                VStack(alignment: .leading, spacing: 16) {
+                    ThemedToggle(isOn: $useCustomColor) {
+                        SettingsRow(
+                            title: "Custom light bar color",
+                            subtitle: Self.customColorFooter,
+                            icon: .sfSymbol("light.max"),
+                            showChevron: false
+                        )
+                    }
+
+                    if useCustomColor {
+                        RetroSettingsDivider()
+
+                        RetroSettingsSectionHeader(icon: "paintpalette", title: "Presets")
+
+                        ForEach(Array(Self.presets.enumerated()), id: \.offset) { _, item in
+                            RetroSettingsPickerRow(
+                                symbolName: "circle.fill",
+                                title: item.label,
+                                subtitle: "",
+                                isSelected: selectedHex.caseInsensitiveCompare(item.color.hexString) == .orderedSame
+                            ) {
+                                selectedHex = item.color.hexString
+                                syncPickerFromHex()
+                            }
+                        }
+                    }
+
+                    RetroSettingsDivider()
+
+                    RetroSettingsActionButton(title: "Save", icon: "checkmark.circle", color: accentColor, action: save)
+                }
+                .tvOSSettingsHorizontalPadding()
+                .padding(.vertical, 24)
+            }
+        }
+    }
+    #else
+    private var content: some View {
         Form {
             Section {
                 Toggle("Custom light bar color", isOn: $useCustomColor)
             } footer: {
-                Text("When off, this profile does not override color; Settings and the current system decide.")
+                Text(Self.customColorFooter)
             }
 
             if useCustomColor {
                 presetSection
-                #if !os(tvOS)
                 colorPickerSection
-                #endif
-            }
-        }
-        .navigationTitle("Light Bar")
-        #if !os(tvOS)
-        .navigationBarTitleDisplayMode(.inline)
-        #endif
-        .toolbar {
-            ToolbarItem(placement: .confirmationAction) {
-                Button("Save") { save() }
-                    .foregroundColor(accentColor)
-            }
-        }
-        .onAppear(perform: loadFromRealm)
-        #if os(tvOS)
-        .settingsSubpageTracking()
-        #endif
-        .onChange(of: useCustomColor) { _, isOn in
-            if isOn, ControllerLightBarManager.LightBarColor(hex: selectedHex) == nil {
-                selectedHex = ControllerLightBarManager.LightBarColor.default.hexString
-                syncPickerFromHex()
             }
         }
     }
 
-    @ViewBuilder
     private var presetSection: some View {
         Section("Presets") {
             ForEach(Array(Self.presets.enumerated()), id: \.offset) { _, item in
@@ -103,6 +154,7 @@ struct ControllerProfileLightBarEditorView: View {
             }
         }
     }
+    #endif
 
     #if !os(tvOS)
     private var colorPickerSection: some View {

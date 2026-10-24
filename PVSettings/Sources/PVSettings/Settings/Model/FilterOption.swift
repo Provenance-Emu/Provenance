@@ -8,27 +8,6 @@
 import Foundation
 import Defaults
 
-public enum OpenGLFilterModeOption: String, CustomStringConvertible, CaseIterable, UserDefaultsRepresentable, Defaults.Serializable {
-    case none
-    case CRT
-
-    public static var defaultValue: Self { .none }
-
-    public var description: String { rawValue.capitalized }
-}
-
-extension OpenGLFilterModeOption: Hashable {
-    public func hash(into hasher: inout Hasher) {
-        hasher.combine(rawValue)
-    }
-}
-
-extension OpenGLFilterModeOption: Equatable {
-    public static func == (lhs: OpenGLFilterModeOption, rhs: OpenGLFilterModeOption) -> Bool {
-        lhs.rawValue == rhs.rawValue
-    }
-}
-
 public enum MetalFilterModeOption: RawRepresentable, CustomStringConvertible, CaseIterable, UserDefaultsRepresentable, Defaults.Serializable {
 
     case none
@@ -180,7 +159,6 @@ extension MetalFilterSelectionOption: Equatable {
 }
 
 public extension Defaults.Keys {
-    static let openGLFilterMode = Key<OpenGLFilterModeOption>("openGLFilterMode", default: .none)
     static let metalFilterMode = Key<MetalFilterModeOption>("metalFilterMode", default: .none)
     /// Handheld-LCD look (pixel grid, ghosting, muted colour) on DS and 3DS skin screens,
     /// which the Metal filters never reach. 3DS gets the grid only.

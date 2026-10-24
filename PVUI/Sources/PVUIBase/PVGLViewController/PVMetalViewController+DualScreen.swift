@@ -71,15 +71,9 @@ extension PVMetalViewController {
 
     // MARK: Inline Metal source
 
-    /// Metal source for the dual-screen sub-rectangle blit shaders.
-    ///
-    /// The canonical source lives in
-    /// `PVShaders/Sources/PVShaders/Resources/Metal/Blitters/dual_screen_blit.metal`.
-    /// That file is compiled into the PVShaders bundle's metallib during the Xcode
-    /// build, but loading it at runtime requires explicit bundle access across the
-    /// module boundary.  To avoid that coupling (and to match the pattern used by
-    /// every other shader in PVMetalViewController) we embed an identical copy here
-    /// and compile it at runtime via `device.makeLibrary(source:)`.
+    /// Metal source for the dual-screen sub-rectangle blit shaders, compiled at
+    /// runtime via `device.makeLibrary(source:)`. Samples through the same
+    /// `pv_sample_picture` as the fullscreen blit so Image Smoothing applies.
     static let dualScreenShaderSource = """
     #include <metal_stdlib>
     using namespace metal;
@@ -100,15 +94,17 @@ extension PVMetalViewController {
         return out;
     }
 
-    fragment half4 dual_screen_ps(
-        DSVSOut         in     [[stage_in]],
-        texture2d<half> source [[texture(0)]])
+    \(pictureSamplingSource)
+
+    // sampler(0) / buffer(0): the user's Image Smoothing mode (see encodePictureSampling).
+    fragment float4 dual_screen_ps(
+        DSVSOut          in            [[stage_in]],
+        texture2d<float> source        [[texture(0)]],
+        sampler          s             [[sampler(0)]],
+        constant uint   &sharpBilinear [[buffer(0)]])
     {
-        constexpr sampler s(coord::normalized,
-                            address::clamp_to_edge,
-                            filter::linear);
-        half4 c = source.sample(s, in.texCoord);
-        c.a = 1.0h;
+        float4 c = pv_sample_picture(source, s, in.texCoord, sharpBilinear);
+        c.a = 1.0;
         return c;
     }
     """
@@ -194,8 +190,10 @@ extension PVMetalViewController {
             return .textureMismatch
         }
 
+        guard let sampler = pictureSampler(for: renderSettings.smoothingMode) else { return .unavailable }
         encoder.setRenderPipelineState(pipeline)
         encoder.setFragmentTexture(sourceTexture, index: 0)
+        encodePictureSampling(renderSettings.smoothingMode, sampler: sampler, encoder: encoder)
 
         let dw = Float(drawableSize.width)
         let dh = Float(drawableSize.height)

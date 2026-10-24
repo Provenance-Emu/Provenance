@@ -207,11 +207,7 @@ struct CoreSection: View {
                             RoundedRectangle(cornerRadius: 6)
                                 .fill(Color.black.opacity(0.4))
                         )
-                        #if os(tvOS)
-                        .buttonStyle(CardButtonStyle())
-                        #else
                         .buttonStyle(PlainButtonStyle())
-                        #endif
 
                         if isExpanded {
                             VStack(alignment: .leading, spacing: 6) {

@@ -21,16 +21,10 @@ struct DefaultsKeysTests {
         #expect(Defaults[.askToAutoLoad] == true)
     }
 
-    @Test("imageSmoothing default is false")
-    func imageSmoothingDefault() {
-        Defaults.reset(.imageSmoothing)
-        #expect(Defaults[.imageSmoothing] == false)
-    }
-
-    @Test("vsyncEnabled default is true")
-    func vsyncEnabledDefault() {
-        Defaults.reset(.vsyncEnabled)
-        #expect(Defaults[.vsyncEnabled] == true)
+    @Test("imageSmoothingMode default is bilinear")
+    func imageSmoothingModeDefault() {
+        Defaults.reset(.imageSmoothingMode)
+        #expect(Defaults[.imageSmoothingMode] == .bilinear)
     }
 
     @Test("volume default is 1.0")
@@ -47,11 +41,11 @@ struct DefaultsKeysTests {
 
     @Test("Boolean setting can be toggled")
     func booleanSettingToggle() {
-        Defaults[.imageSmoothing] = false
-        #expect(Defaults[.imageSmoothing] == false)
-        Defaults[.imageSmoothing].toggle()
-        #expect(Defaults[.imageSmoothing] == true)
-        Defaults.reset(.imageSmoothing)
+        Defaults[.showFPSCount] = false
+        #expect(Defaults[.showFPSCount] == false)
+        Defaults[.showFPSCount].toggle()
+        #expect(Defaults[.showFPSCount] == true)
+        Defaults.reset(.showFPSCount)
     }
 
     @Test("Setting persists to UserDefaults")
@@ -703,34 +697,6 @@ struct MetalFilterSelectionOptionTests {
     @Test("Default value is none")
     func defaultValue() {
         #expect(MetalFilterSelectionOption.defaultValue == .none)
-    }
-}
-
-// MARK: - OpenGLFilterModeOption Tests
-
-@Suite("OpenGLFilterModeOption", .serialized)
-struct OpenGLFilterModeOptionTests {
-
-    @Test("All cases present")
-    func allCasesCount() {
-        #expect(OpenGLFilterModeOption.allCases.count == 2)
-    }
-
-    @Test("Default value is none")
-    func defaultValue() {
-        #expect(OpenGLFilterModeOption.defaultValue == .none)
-    }
-
-    @Test("Description equals capitalized rawValue")
-    func description() {
-        #expect(OpenGLFilterModeOption.none.description == "None")
-        #expect(OpenGLFilterModeOption.CRT.description == "Crt")
-    }
-
-    @Test("Equality works")
-    func equality() {
-        #expect(OpenGLFilterModeOption.none == .none)
-        #expect(OpenGLFilterModeOption.none != .CRT)
     }
 }
 
@@ -1896,6 +1862,65 @@ struct ScalingModeTests {
         ud.set(false, forKey: "nativeScaleEnabled")
         migrateScalingModeIfNeeded(userDefaults: ud, domainName: suite)
         #expect(ud.persistentDomain(forName: suite)?["scalingMode"] == nil)
+        ud.removePersistentDomain(forName: suite)
+    }
+}
+
+// MARK: - Image Smoothing Mode Tests
+
+@Suite("ImageSmoothingMode")
+struct ImageSmoothingModeTests {
+
+    @Test("only nearest samples without linear filtering")
+    func usesLinearFiltering() {
+        #expect(ImageSmoothingMode.nearest.usesLinearFiltering == false)
+        #expect(ImageSmoothingMode.bilinear.usesLinearFiltering == true)
+        #expect(ImageSmoothingMode.sharpBilinear.usesLinearFiltering == true)
+    }
+
+    @Test("legacy boolean maps true to bilinear and false to nearest")
+    func fromLegacy() {
+        #expect(ImageSmoothingMode.fromLegacy(imageSmoothing: true) == .bilinear)
+        #expect(ImageSmoothingMode.fromLegacy(imageSmoothing: false) == .nearest)
+    }
+
+    @Test("migration — stored imageSmoothing=false becomes nearest")
+    func migrationExplicitFalse() {
+        let suite = "test.imagesmoothing.false"
+        let ud = UserDefaults(suiteName: suite)!
+        ud.set(false, forKey: "imageSmoothing")
+        migrateImageSmoothingModeIfNeeded(userDefaults: ud, domainName: suite)
+        #expect(ud.persistentDomain(forName: suite)?["imageSmoothingMode"] as? String == ImageSmoothingMode.nearest.rawValue)
+        ud.removePersistentDomain(forName: suite)
+    }
+
+    @Test("migration — stored imageSmoothing=true becomes bilinear")
+    func migrationExplicitTrue() {
+        let suite = "test.imagesmoothing.true"
+        let ud = UserDefaults(suiteName: suite)!
+        ud.set(true, forKey: "imageSmoothing")
+        migrateImageSmoothingModeIfNeeded(userDefaults: ud, domainName: suite)
+        #expect(ud.persistentDomain(forName: suite)?["imageSmoothingMode"] as? String == ImageSmoothingMode.bilinear.rawValue)
+        ud.removePersistentDomain(forName: suite)
+    }
+
+    @Test("migration — nothing stored leaves the default in place")
+    func migrationNothingStored() {
+        let suite = "test.imagesmoothing.none"
+        let ud = UserDefaults(suiteName: suite)!
+        migrateImageSmoothingModeIfNeeded(userDefaults: ud, domainName: suite)
+        #expect(ud.persistentDomain(forName: suite)?["imageSmoothingMode"] == nil)
+        ud.removePersistentDomain(forName: suite)
+    }
+
+    @Test("migration — an existing mode is not overwritten")
+    func migrationNoOpWhenAlreadySet() {
+        let suite = "test.imagesmoothing.noop"
+        let ud = UserDefaults(suiteName: suite)!
+        ud.set(ImageSmoothingMode.sharpBilinear.rawValue, forKey: "imageSmoothingMode")
+        ud.set(false, forKey: "imageSmoothing")
+        migrateImageSmoothingModeIfNeeded(userDefaults: ud, domainName: suite)
+        #expect(ud.persistentDomain(forName: suite)?["imageSmoothingMode"] as? String == ImageSmoothingMode.sharpBilinear.rawValue)
         ud.removePersistentDomain(forName: suite)
     }
 }

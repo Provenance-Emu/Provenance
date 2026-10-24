@@ -1738,48 +1738,56 @@ private struct AudioSection: View {
 }
 
 private struct VideoSection: View {
-    @Default(.multiThreadedGL) var multiThreadedGL
-    @Default(.multiSampling) var multiSampling
-    @Default(.imageSmoothing) var imageSmoothing
+    @Default(.imageSmoothingMode) var imageSmoothingMode
     @Default(.showFPSCount) var showFPSCount
     @Default(.scalingMode) var scalingMode
     @Default(.nonLinearStretchAmount) var nonLinearStretchAmount
-    @Default(.vsyncEnabled) var vsyncEnabled
     @Default(.systemRegion) var systemRegion
+
+    private static let stretchShapeSubtitle = "How much the centre keeps its true shape"
+    private static let systemRegionSubtitle = "Force a console region for region-aware cores (Sega Saturn). Auto detects from the disc; set a region so multi-region games don't default to Japan."
+
+    /// Wraps `scalingMode` so that the moment the user picks anything we flip
+    /// `userExplicitlySetScalingMode` to true. After that, per-system defaults
+    /// (e.g. `.stretch` for DS on tvOS) stop substituting and the user's choice
+    /// wins everywhere.
+    private var scalingModeSelection: Binding<ScalingMode> {
+        Binding(
+            get: { scalingMode },
+            set: { newValue in
+                scalingMode = newValue
+                if !Defaults[.userExplicitlySetScalingMode] {
+                    Defaults[.userExplicitlySetScalingMode] = true
+                }
+            }
+        )
+    }
 
     var body: some View {
         Section {
-            ThemedToggle(isOn: $vsyncEnabled) {
-                SettingsRow(title: "V-Sync",
-                            subtitle: "Synchronizes the rendering frame rate with the monitor refresh rate.",
-                            icon: vsyncEnabled ? .sfSymbol("tv.fill") : .sfSymbol("tv"),
-                            showChevron: false)
+            #if os(tvOS)
+            SettingsMenuPickerRow(title: "Scaling Mode",
+                                  subtitle: scalingMode.subtitle,
+                                  symbol: scalingMode.symbolName,
+                                  choices: ScalingMode.allCases,
+                                  selection: scalingModeSelection,
+                                  label: { $0.displayName })
+            if scalingMode == .nonLinearStretch {
+                SettingsMenuPickerRow(title: "Stretch Shape",
+                                      subtitle: Self.stretchShapeSubtitle,
+                                      symbol: "arrow.left.and.right",
+                                      choices: NonLinearStretchStrength.allCases.map(\.amount),
+                                      selection: $nonLinearStretchAmount,
+                                      label: NonLinearStretchStrength.title(forAmount:))
             }
-            ThemedToggle(isOn: $multiThreadedGL) {
-                SettingsRow(title: "Multi-threaded Rendering",
-                            subtitle: "Improves performance but may cause graphical glitches.",
-                            icon: .sfSymbol("cpu"),
-                            showChevron: false)
-            }
-            ThemedToggle(isOn: $multiSampling) {
-                SettingsRow(title: "4X Multisampling GL",
-                            subtitle: "Smoother graphics at the cost of performance.",
-                            icon: .sfSymbol("square.stack.3d.up"),
-                            showChevron: false)
-            }
-            // Wrap `scalingMode` so that the moment the user picks anything
-            // we flip `userExplicitlySetScalingMode` to true. After that,
-            // per-system defaults (e.g. `.stretch` for DS on tvOS) stop
-            // substituting and the user's choice wins everywhere.
-            Picker(selection: Binding(
-                get: { scalingMode },
-                set: { newValue in
-                    scalingMode = newValue
-                    if !Defaults[.userExplicitlySetScalingMode] {
-                        Defaults[.userExplicitlySetScalingMode] = true
-                    }
-                }
-            )) {
+            SettingsMenuPickerRow(title: "System Region",
+                                  subtitle: Self.systemRegionSubtitle,
+                                  symbol: systemRegion.symbolName,
+                                  choices: SystemRegionPreference.allCases,
+                                  selection: $systemRegion,
+                                  label: { $0.displayName })
+            #else
+            Picker(selection: scalingModeSelection) {
                 ForEach(ScalingMode.allCases, id: \.self) { mode in
                     Label(mode.displayName, systemImage: mode.symbolName)
                         .tag(mode)
@@ -1790,11 +1798,7 @@ private struct VideoSection: View {
                             icon: .sfSymbol(scalingMode.symbolName),
                             showChevron: false)
             }
-            #if os(tvOS)
-            .pickerStyle(.automatic)
-            #else
             .pickerStyle(.navigationLink)
-            #endif
             if scalingMode == .nonLinearStretch {
                 Picker(selection: $nonLinearStretchAmount) {
                     ForEach(NonLinearStretchStrength.allCases) { strength in
@@ -1802,15 +1806,11 @@ private struct VideoSection: View {
                     }
                 } label: {
                     SettingsRow(title: "Stretch Shape",
-                                subtitle: "How much the centre keeps its true shape",
+                                subtitle: Self.stretchShapeSubtitle,
                                 icon: .sfSymbol("arrow.left.and.right"),
                                 showChevron: false)
                 }
-                #if os(tvOS)
-                .pickerStyle(.automatic)
-                #else
                 .pickerStyle(.menu)
-                #endif
             }
             Picker(selection: $systemRegion) {
                 ForEach(SystemRegionPreference.allCases, id: \.self) { region in
@@ -1819,21 +1819,18 @@ private struct VideoSection: View {
                 }
             } label: {
                 SettingsRow(title: "System Region",
-                            subtitle: "Force a console region for region-aware cores (Sega Saturn). Auto detects from the disc; set a region so multi-region games don't default to Japan.",
+                            subtitle: Self.systemRegionSubtitle,
                             icon: .sfSymbol(systemRegion.symbolName),
                             showChevron: false)
             }
-            #if os(tvOS)
-            .pickerStyle(.automatic)
-            #else
             .pickerStyle(.navigationLink)
             #endif
-            ThemedToggle(isOn: $imageSmoothing) {
-                SettingsRow(title: "Image Smoothing",
-                            subtitle: "Smooth scaled graphics. Off for sharp pixels.",
-                            icon: .sfSymbol("paintbrush.pointed"),
-                            showChevron: false)
-            }
+            SettingsMenuPickerRow(title: "Image Smoothing",
+                                  subtitle: imageSmoothingMode.subtitle,
+                                  symbol: imageSmoothingMode.symbolName,
+                                  choices: ImageSmoothingMode.allCases,
+                                  selection: $imageSmoothingMode,
+                                  label: { $0.displayName })
             ThemedToggle(isOn: $showFPSCount) {
                 SettingsRow(title: "FPS Counter",
                             subtitle: "Show frames per second counter.",
@@ -3192,5 +3189,10 @@ private enum NonLinearStretchStrength: CaseIterable, Identifiable {
         case .balanced: return "Balanced"
         case .full: return "Full"
         }
+    }
+
+    /// Title for a stored amount; a value no preset uses is shown as a percentage.
+    static func title(forAmount amount: Float) -> String {
+        allCases.first { $0.amount == amount }?.title ?? "\(Int((amount * 100).rounded()))%"
     }
 }

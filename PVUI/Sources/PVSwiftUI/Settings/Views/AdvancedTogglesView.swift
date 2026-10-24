@@ -15,7 +15,6 @@ import PVSettings
 internal struct AdvancedTogglesView: View {
     @Default(.autoJIT) var autoJIT
     @Default(.disableAutoLock) var disableAutoLock
-    @Default(.useMetal) var useMetalRenderer
     @Default(.mainUIMode) var mainUIMode
     @Default(.useModernWebServer) var useModernWebServer
 
@@ -46,16 +45,6 @@ internal struct AdvancedTogglesView: View {
                                 showChevron: false)
                 }
                 .padding(.vertical, 4)
-                
-                PremiumThemedToggle(isOn: Binding(
-                    get: { !useMetalRenderer },
-                    set: { useMetalRenderer = !$0 }
-                )) {
-                    SettingsRow(title: "OpenGL Renderer",
-                                subtitle: "Native cores only: present through OpenGL instead of Metal for the legacy graphics filters. libretro cores always use Metal.",
-                                icon: .sfSymbol("cpu"),
-                                showChevron: false)
-                }
                 
                 PremiumThemedPicker(selection: $mainUIMode) {
                     SettingsRow(title: "UI Mode",

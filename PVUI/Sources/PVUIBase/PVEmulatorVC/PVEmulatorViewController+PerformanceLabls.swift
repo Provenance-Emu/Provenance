@@ -57,9 +57,7 @@ extension PVEmulatorViewController {
             var drawTime = self.gpuViewController.timeSinceLastDraw * 1000
             if drawTime <= 0 {
                 let gpuFPS: Double = {
-                    if let glVC = self.gpuViewController as? PVGLViewController {
-                        return glVC.calculatedFramesPerSecond
-                    } else if let metalVC = self.gpuViewController as? PVMetalViewController {
+                    if let metalVC = self.gpuViewController as? PVMetalViewController {
                         return Double(metalVC.framesPerSecond)
                     } else {
                         return 0.0
@@ -94,18 +92,9 @@ extension PVEmulatorViewController {
     }
 
     @objc func updateFPSLabel() {
-        #if os(iOS) && !USE_METAL
-        if let glVC = gpuViewController as? PVGLViewController {
-            let fps = glVC.calculatedFramesPerSecond
-            VLOG("FPS: \(fps)")
-        } else if let metalVC = gpuViewController as? PVMetalViewController {
-            VLOG("FPS: \(metalVC.framesPerSecond)")
-        }
-        #else
         if let metalVC = gpuViewController as? PVMetalViewController {
             VLOG("FPS: \(metalVC.framesPerSecond)")
         }
-        #endif
         fpsLabel.text = String(format: "%2.02f", core.emulationFPS)
     }
 

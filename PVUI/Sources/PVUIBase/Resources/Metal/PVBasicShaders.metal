@@ -14,6 +14,24 @@
 #include <metal_stdlib>
 using namespace metal;
 
+// MARK: - Picture sampling
+
+// Must stay identical to PVMetalViewController.pictureSamplingSource.
+// Sharp bilinear draws each source texel as a flat block and blends only a
+// one-output-pixel band at its edges; fwidth gives texels per output pixel.
+static inline float4 pv_sample_picture(texture2d<float> tex, sampler s, float2 uv, uint sharpBilinear) {
+    float2 texSize = float2(tex.get_width(), tex.get_height());
+    float2 texel = uv * texSize;
+    float2 scale = max(1.0 / max(fwidth(texel), float2(1e-5)), float2(1.0));
+    if (sharpBilinear == 0) {
+        return tex.sample(s, uv);
+    }
+    float2 regionRange = 0.5 - 0.5 / scale;
+    float2 centerDist = fract(texel) - 0.5;
+    float2 f = (centerDist - clamp(centerDist, -regionRange, regionRange)) * scale + 0.5;
+    return tex.sample(s, (floor(texel) + f) / texSize);
+}
+
 // MARK: - Vertex / fragment used by createBasicShaders()
 
 struct PVBasicVertexOut {
@@ -51,9 +69,10 @@ vertex PVBasicVertexOut basic_vertex(uint vertexID [[vertex_id]],
 }
 
 fragment float4 basic_fragment(PVBasicVertexOut in [[stage_in]],
-                               texture2d<float> texture [[texture(0)]]) {
-    constexpr sampler textureSampler(mag_filter::linear, min_filter::linear);
-    return texture.sample(textureSampler, in.texCoord);
+                               texture2d<float> texture [[texture(0)]],
+                               sampler textureSampler [[sampler(0)]],
+                               constant uint &sharpBilinear [[buffer(0)]]) {
+    return pv_sample_picture(texture, textureSampler, in.texCoord, sharpBilinear);
 }
 
 // MARK: - Vertex / fragment used by createBasicShadersWithDefaultLibrary()
@@ -80,7 +99,8 @@ vertex PVBasicVertexOut vertexShader(uint vid [[vertex_id]]) {
 }
 
 fragment float4 fragmentShader(PVBasicVertexOut in [[stage_in]],
-                               texture2d<float> tex [[texture(0)]]) {
-    constexpr sampler s(address::clamp_to_edge, filter::linear);
-    return tex.sample(s, in.texCoord);
+                               texture2d<float> tex [[texture(0)]],
+                               sampler s [[sampler(0)]],
+                               constant uint &sharpBilinear [[buffer(0)]]) {
+    return pv_sample_picture(tex, s, in.texCoord, sharpBilinear);
 }

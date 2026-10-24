@@ -195,7 +195,6 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
 
     var  device: MTLDevice?
     var  commandQueue: MTLCommandQueue?
-    var  blitPipeline: MTLRenderPipelineState?
 
     var  pointSampler: MTLSamplerState?
     var  linearSampler: MTLSamplerState?
@@ -332,9 +331,6 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
     /// Native-size frame the skin filters render into.
     var skinFilterTexture: MTLTexture?
 
-    /// Controls whether VSync is enabled (synchronizes rendering with display refresh rate)
-    public var vsyncEnabled: Bool = true
-
     // Track recovery attempts to prevent infinite loops
     private var recoveryAttempts: Int = 0
     private let maxRecoveryAttempts: Int = 3
@@ -369,21 +365,19 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
         emulatorCore.renderDelegate = self
 
         renderSettings.metalFilterMode = Defaults[.metalFilterMode]
-        renderSettings.openGLFilterMode = Defaults[.openGLFilterMode]
-        renderSettings.smoothingEnabled = Defaults[.imageSmoothing]
+        renderSettings.smoothingMode = Defaults[.imageSmoothingMode]
         renderSettings.dualScreenLCDLook = Defaults[.dualScreenLCDLook]
         renderSettings.scalingMode = effectiveScalingMode()
 
         filterObservationTask = Task { [weak self] in
-            for await _ in Defaults.updates([.metalFilterMode, .openGLFilterMode, .imageSmoothing, .dualScreenLCDLook,
+            for await _ in Defaults.updates([.metalFilterMode, .imageSmoothingMode, .dualScreenLCDLook,
                                              .scalingMode, .userExplicitlySetScalingMode]) {
                 await MainActor.run {
                     guard let self else { return }
                     let oldScaling = self.renderSettings.scalingMode
                     let oldLCDLook = self.renderSettings.dualScreenLCDLook
                     self.renderSettings.metalFilterMode = Defaults[.metalFilterMode]
-                    self.renderSettings.openGLFilterMode = Defaults[.openGLFilterMode]
-                    self.renderSettings.smoothingEnabled = Defaults[.imageSmoothing]
+                    self.renderSettings.smoothingMode = Defaults[.imageSmoothingMode]
                     self.renderSettings.dualScreenLCDLook = Defaults[.dualScreenLCDLook]
                     self.renderSettings.scalingMode = self.effectiveScalingMode()
                     if oldLCDLook != self.renderSettings.dualScreenLCDLook, self.dualScreenLayout != nil {
@@ -488,11 +482,6 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
         // Create a Metal device
         device = MTLCreateSystemDefaultDevice()
 
-        // Load VSync setting from user defaults
-        // Note: On iOS, VSync is always enabled at the system level.
-        // This setting only affects frame rate hints, not actual VSync behavior.
-        vsyncEnabled = Defaults[.vsyncEnabled]
-
         if device == nil {
             ELOG("Failed to create Metal device")
             // No recovery here since we're in initialization
@@ -523,8 +512,9 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
         mtlView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
         configureMetalLayer(for: mtlView)
 
-        // Configure VSync settings
-        updateVsyncSettings()
+        // iOS/tvOS always present on vsync; the core's frame rate is only a hint.
+        mtlView.isPaused = false
+        updatePreferredFPS()
 
         // Compile shaders + build the render pipeline off the main thread.
         // `MTLDevice.makeLibrary(source:)` and `makeRenderPipelineState(...)` are
@@ -537,7 +527,7 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
         DispatchQueue.global(qos: .userInitiated).async { [weak self] in
             guard let self = self else { return }
             self.createBasicShaders()
-            if self.customPipeline == nil && self.blitPipeline == nil {
+            if self.customPipeline == nil {
                 self.createBasicShadersWithDefaultLibrary()
             }
             DispatchQueue.main.async {
@@ -862,8 +852,8 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
             return
         }
 
-        // Configure multi-threading support if enabled in settings
-        glContext.isMultiThreaded = Defaults[.multiThreadedGL]
+        // Serialize GL calls made from the core's threads on this context.
+        glContext.isMultiThreaded = true
 
         // Set the current context
         EAGLContext.setCurrent(glContext)
@@ -899,7 +889,7 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
         mtlView.preferredFramesPerSecond = fpsToSet
         lastPreferredFPS = fpsToSet
 
-        ILOG("Set MTKView preferred FPS to \(mtlView.preferredFramesPerSecond) (VSync: \(vsyncEnabled))")
+        ILOG("Set MTKView preferred FPS to \(mtlView.preferredFramesPerSecond)")
     }
 
 #if !(targetEnvironment(macCatalyst) || os(macOS))
@@ -1277,41 +1267,44 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
 
         try updateInputTexture()
 
-        // Create point sampler
-        let pointDesc = MTLSamplerDescriptor()
-        pointDesc.minFilter = .nearest
-        pointDesc.magFilter = .nearest
-        pointDesc.mipFilter = .nearest
-        pointDesc.sAddressMode = .clampToZero
-        pointDesc.tAddressMode = .clampToZero
-        pointDesc.rAddressMode = .clampToZero
-        pointDesc.label = "Point Sampler"
-
-        pointSampler = device.makeSamplerState(descriptor: pointDesc)
-
-        if pointSampler == nil {
-            throw MetalViewControllerError.failedToCreateSamplerState("point sampler")
+        guard makePictureSamplers(device: device) else {
+            throw MetalViewControllerError.failedToCreateSamplerState("picture samplers")
         }
+    }
 
-        DLOG("Created point sampler: \(String(describing: pointSampler))")
-
-        // Create linear sampler
-        let linearDesc = MTLSamplerDescriptor()
-        linearDesc.minFilter = .linear
-        linearDesc.magFilter = .linear
-        linearDesc.mipFilter = .linear // .nearest
-        linearDesc.sAddressMode = .clampToZero
-        linearDesc.tAddressMode = .clampToZero
-        linearDesc.rAddressMode = .clampToZero
-        linearDesc.label = "Linear Sampler"
-
-        linearSampler = device.makeSamplerState(descriptor: linearDesc)
-
-        if linearSampler == nil {
-            throw MetalViewControllerError.failedToCreateSamplerState("linear sampler")
+    /// Builds the nearest and linear samplers the picture blit chooses between.
+    /// Clamp-to-edge keeps bilinear from blending the picture's border with black.
+    @discardableResult
+    private func makePictureSamplers(device: MTLDevice) -> Bool {
+        func makeSampler(_ filter: MTLSamplerMinMagFilter, label: String) -> MTLSamplerState? {
+            let descriptor = MTLSamplerDescriptor()
+            descriptor.minFilter = filter
+            descriptor.magFilter = filter
+            descriptor.sAddressMode = .clampToEdge
+            descriptor.tAddressMode = .clampToEdge
+            descriptor.label = label
+            return device.makeSamplerState(descriptor: descriptor)
         }
+        pointSampler = makeSampler(.nearest, label: "Point Sampler")
+        linearSampler = makeSampler(.linear, label: "Linear Sampler")
+        return pointSampler != nil && linearSampler != nil
+    }
 
-        DLOG("Created linear sampler: \(String(describing: linearSampler))")
+    /// The sampler for `mode`, building the pair first if a GPU recovery cleared them.
+    func pictureSampler(for mode: ImageSmoothingMode) -> MTLSamplerState? {
+        if pointSampler == nil || linearSampler == nil, let device {
+            makePictureSamplers(device: device)
+        }
+        return mode.usesLinearFiltering ? linearSampler : pointSampler
+    }
+
+    /// Binds the sampler and the sharp-bilinear flag read by `pv_sample_picture`
+    /// (fragment `sampler(0)` and `buffer(0)`).
+    func encodePictureSampling(_ mode: ImageSmoothingMode, sampler: MTLSamplerState,
+                               encoder: MTLRenderCommandEncoder) {
+        encoder.setFragmentSamplerState(sampler, index: 0)
+        var sharpBilinear: UInt32 = mode == .sharpBilinear ? 1 : 0
+        encoder.setFragmentBytes(&sharpBilinear, length: MemoryLayout<UInt32>.size, index: 0)
     }
 
     func getByteWidth(for pixelFormat: Int32, type pixelType: Int32) -> UInt {
@@ -1550,137 +1543,6 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
         return .invalid
     }
 
-    private func setupBlitShader() throws {
-        guard let device = device else {
-            throw MetalViewControllerError.deviceIsNil
-        }
-
-        // Create a simple vertex shader that accepts a flipY parameter
-        let vertexShaderSource = """
-        #include <metal_stdlib>
-        using namespace metal;
-
-        struct VertexOut {
-            float4 position [[position]];
-            float2 texCoord;
-        };
-
-        vertex VertexOut blit_vertex(uint vertexID [[vertex_id]], constant bool &flipY [[buffer(1)]]) {
-            // Define positions for a fullscreen quad
-            const float2 positions[4] = {
-                float2(-1.0, -1.0),
-                float2(1.0, -1.0),
-                float2(-1.0, 1.0),
-                float2(1.0, 1.0)
-            };
-
-            // Define standard texture coordinates
-            float2 texCoords[4] = {
-                float2(0.0, 0.0),
-                float2(1.0, 0.0),
-                float2(0.0, 1.0),
-                float2(1.0, 1.0)
-            };
-
-            VertexOut out;
-            out.position = float4(positions[vertexID], 0.0, 1.0);
-
-            // Apply Y-flip if needed (for OpenGL textures)
-            if (flipY) {
-                // Flip the Y coordinate
-                texCoords[0].y = 1.0 - texCoords[0].y;
-                texCoords[1].y = 1.0 - texCoords[1].y;
-                texCoords[2].y = 1.0 - texCoords[2].y;
-                texCoords[3].y = 1.0 - texCoords[3].y;
-            }
-
-            out.texCoord = texCoords[vertexID];
-            return out;
-        }
-        """
-
-        // Create a simple fragment shader
-        let fragmentShaderSource = """
-        #include <metal_stdlib>
-        using namespace metal;
-
-        struct VertexOut {
-            float4 position [[position]];
-            float2 texCoord;
-        };
-
-        fragment float4 blit_fragment(VertexOut in [[stage_in]],
-                                     texture2d<float> texture [[texture(0)]],
-                                     sampler textureSampler [[sampler(0)]]) {
-            return texture.sample(textureSampler, in.texCoord);
-        }
-        """
-
-        // Create a Metal library from the shader source
-        let library: MTLLibrary
-        do {
-            library = try device.makeLibrary(source: vertexShaderSource + fragmentShaderSource, options: nil)
-            DLOG("Successfully created Metal library")
-        } catch {
-            ELOG("Error creating Metal library: \(error)")
-            throw error
-        }
-
-        // Get the vertex and fragment functions
-        guard let vertexFunction = library.makeFunction(name: "blit_vertex") else {
-            ELOG("Failed to create vertex function")
-            throw EffectFilterShaderError.noBlitterShaderFound
-        }
-
-        guard let fragmentFunction = library.makeFunction(name: "blit_fragment") else {
-            ELOG("Failed to create fragment function")
-            throw EffectFilterShaderError.noBlitterShaderFound
-        }
-
-        // Create a render pipeline descriptor
-        let pipelineDescriptor = MTLRenderPipelineDescriptor()
-        pipelineDescriptor.vertexFunction = vertexFunction
-        pipelineDescriptor.fragmentFunction = fragmentFunction
-        pipelineDescriptor.colorAttachments[0].pixelFormat = mtlView.colorPixelFormat
-
-        // Create the render pipeline state
-        do {
-            blitPipeline = try device.makeRenderPipelineState(descriptor: pipelineDescriptor)
-            DLOG("Successfully created blit pipeline state")
-        } catch {
-            ELOG("Failed to create blit pipeline state: \(error)")
-            throw error
-        }
-
-        // Create a sampler descriptor
-        let samplerDescriptor = MTLSamplerDescriptor()
-        samplerDescriptor.minFilter = .nearest
-        samplerDescriptor.magFilter = .nearest
-
-        // Create the sampler state
-        pointSampler = device.makeSamplerState(descriptor: samplerDescriptor)
-
-        if pointSampler == nil {
-            ELOG("Failed to create point sampler state")
-            throw MetalViewControllerError.failedToCreateSamplerState("point sampler")
-        }
-
-        // Create a linear sampler descriptor
-        let linearSamplerDescriptor = MTLSamplerDescriptor()
-        linearSamplerDescriptor.minFilter = .linear
-        linearSamplerDescriptor.magFilter = .linear
-
-        // Create the linear sampler state
-        linearSampler = device.makeSamplerState(descriptor: linearSamplerDescriptor)
-
-        if linearSampler == nil {
-            ELOG("Failed to create linear sampler state")
-            throw MetalViewControllerError.failedToCreateSamplerState("linear sampler")
-        }
-
-        DLOG("Successfully set up blit shader and samplers")
-    }
-
     private func configureFilterRenderer(reason: String, force: Bool = false, pixelFormat override: MTLPixelFormat? = nil) {
         guard let device = device else {
             DLOG("configureFilterRenderer skipped (\(reason)) - device nil")
@@ -1761,7 +1623,7 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
                                target: target,
                                contentRect: pictureRect(drawableSize: drawableSize, emulatorCore: emulatorCore),
                                flipVertically: sourceIsBottomUp,
-                               linear: renderSettings.smoothingEnabled)
+                               linear: renderSettings.smoothingMode.usesLinearFiltering)
     }
 
     /// The intermediate texture for `ScalingMode.nonLinearStretch`, or `nil` when it is off.
@@ -1840,7 +1702,7 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
                                           drawableSize: outputSize,
                                           sourceSize: sourceSize,
                                           screenType: emulatorCore.screenType,
-                                          smoothingEnabled: renderSettings.smoothingEnabled,
+                                          smoothingEnabled: renderSettings.smoothingMode.usesLinearFiltering,
                                           setViewport: false,
                                           filter: option)
     }
@@ -2004,7 +1866,7 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
         }
 
         // Check if we have a valid pipeline
-        if customPipeline == nil && blitPipeline == nil {
+        if customPipeline == nil {
             // Async build kicked off in viewDidLoad is still running — let MTKView
             // paint its clearColor for the next frame instead of double-compiling.
             if isPreparingShaders {
@@ -2014,7 +1876,7 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
             createBasicShaders()
 
             // If that didn't work, try the default library approach
-            if customPipeline == nil && blitPipeline == nil {
+            if customPipeline == nil {
                 createBasicShadersWithDefaultLibrary()
             }
         }
@@ -2525,110 +2387,6 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
         DLOG("Fallback rendering completed")
     }
 
-    // Add this method to create a custom shader that doesn't require a sampler
-    private func setupCustomShader() throws {
-        guard let device = device else {
-            throw MetalViewControllerError.deviceIsNil
-        }
-
-        // Create a simple vertex shader
-        let vertexShaderSource = """
-        #include <metal_stdlib>
-        using namespace metal;
-
-        struct VertexOut {
-            float4 position [[position]];
-            float2 texCoord;
-        };
-
-        vertex VertexOut custom_vertex(uint vertexID [[vertex_id]], constant bool &flipY [[buffer(1)]]) {
-            // Define positions for a fullscreen quad
-            const float2 positions[4] = {
-                float2(-1.0, -1.0),
-                float2(1.0, -1.0),
-                float2(-1.0, 1.0),
-                float2(1.0, 1.0)
-            };
-
-            // Define standard texture coordinates
-            float2 texCoords[4] = {
-                float2(0.0, 0.0),
-                float2(1.0, 0.0),
-                float2(0.0, 1.0),
-                float2(1.0, 1.0)
-            };
-
-            VertexOut out;
-            out.position = float4(positions[vertexID], 0.0, 1.0);
-
-            // Apply Y-flip if needed (for OpenGL textures)
-            if (flipY) {
-                // Flip the Y coordinate
-                texCoords[0].y = 1.0 - texCoords[0].y;
-                texCoords[1].y = 1.0 - texCoords[1].y;
-                texCoords[2].y = 1.0 - texCoords[2].y;
-                texCoords[3].y = 1.0 - texCoords[3].y;
-            }
-
-            out.texCoord = texCoords[vertexID];
-            return out;
-        }
-        """
-
-        // Create a simple fragment shader with built-in sampler
-        let fragmentShaderSource = """
-        #include <metal_stdlib>
-        using namespace metal;
-
-        struct VertexOut {
-            float4 position [[position]];
-            float2 texCoord;
-        };
-
-        fragment float4 custom_fragment(VertexOut in [[stage_in]],
-                                      texture2d<float> texture [[texture(0)]]) {
-            constexpr sampler textureSampler(mag_filter::linear, min_filter::linear);
-            return texture.sample(textureSampler, in.texCoord);
-        }
-        """
-
-        // Create a Metal library from the shader source
-        let library: MTLLibrary
-        do {
-            library = try device.makeLibrary(source: vertexShaderSource + fragmentShaderSource, options: nil)
-            DLOG("Successfully created custom Metal library")
-        } catch {
-            ELOG("Error creating custom Metal library: \(error)")
-            throw error
-        }
-
-        // Get the vertex and fragment functions
-        guard let vertexFunction = library.makeFunction(name: "custom_vertex") else {
-            ELOG("Failed to create custom vertex function")
-            throw EffectFilterShaderError.noBlitterShaderFound
-        }
-
-        guard let fragmentFunction = library.makeFunction(name: "custom_fragment") else {
-            ELOG("Failed to create custom fragment function")
-            throw EffectFilterShaderError.noBlitterShaderFound
-        }
-
-        // Create a render pipeline descriptor
-        let pipelineDescriptor = MTLRenderPipelineDescriptor()
-        pipelineDescriptor.vertexFunction = vertexFunction
-        pipelineDescriptor.fragmentFunction = fragmentFunction
-        pipelineDescriptor.colorAttachments[0].pixelFormat = mtlView.colorPixelFormat
-
-        // Create the render pipeline state
-        do {
-            customPipeline = try device.makeRenderPipelineState(descriptor: pipelineDescriptor)
-            DLOG("Successfully created custom pipeline state")
-        } catch {
-            ELOG("Failed to create custom pipeline state: \(error)")
-            throw error
-        }
-    }
-
     private func directRender(in view: MTKView) {
         // During the brief resume settle window, skip drawing entirely so the
         // first post-resume frame never calls `currentDrawable` while the layer's
@@ -2733,12 +2491,12 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
 //            """)
 
         // Check if we have a valid pipeline
-        if customPipeline == nil && blitPipeline == nil {
+        if customPipeline == nil {
             WLOG("No valid pipeline available in directRender, trying to set up shaders directly")
             createBasicShaders()
 
             // If we still don't have a pipeline, attempt recovery
-            if customPipeline == nil && blitPipeline == nil {
+            if customPipeline == nil {
                 ELOG("Failed to create a pipeline, cannot render")
                 recoverFromGPUError()
                 return
@@ -2923,16 +2681,11 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
 
             if filterApplied {
                 // Metal filter renderer handled drawing
-            } else if let customPipeline = customPipeline {
+            } else if let customPipeline = customPipeline,
+                      let sampler = pictureSampler(for: renderSettings.smoothingMode) {
                 renderEncoder.setRenderPipelineState(customPipeline)
                 renderEncoder.setVertexBuffer(flipYBuffer, offset: 0, index: 1)
-            } else if let blitPipeline = blitPipeline {
-                renderEncoder.setRenderPipelineState(blitPipeline)
-                renderEncoder.setVertexBuffer(flipYBuffer, offset: 0, index: 1)
-                let sampler = renderSettings.smoothingEnabled ? linearSampler : pointSampler
-                if let sampler = sampler {
-                    renderEncoder.setFragmentSamplerState(sampler, index: 0)
-                }
+                encodePictureSampling(renderSettings.smoothingMode, sampler: sampler, encoder: renderEncoder)
             } else {
                 ELOG("No pipeline available")
                 return
@@ -3297,57 +3050,27 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
         }
     }
 
-    private func setupShaders() {
-        DLOG("Setting up shaders...")
-
-        // Set up the blit shader
-        do {
-            try setupBlitShader()
-            DLOG("Successfully set up blit shader")
-        } catch {
-            ELOG("Failed to set up blit shader: \(error)")
+    /// Picture sampling shared by every basic fragment shader, including the dual-screen
+    /// blit. Must stay identical to `pv_sample_picture` in `PVBasicShaders.metal`.
+    ///
+    /// Sharp bilinear: each source texel is drawn as a flat block and only a one-
+    /// output-pixel band at its edges is blended, so pixels stay crisp and even at
+    /// non-integer scales. `fwidth` gives texels per output pixel, so no output size
+    /// needs passing in.
+    static let pictureSamplingSource = """
+    static inline float4 pv_sample_picture(texture2d<float> tex, sampler s, float2 uv, uint sharpBilinear) {
+        float2 texSize = float2(tex.get_width(), tex.get_height());
+        float2 texel = uv * texSize;
+        float2 scale = max(1.0 / max(fwidth(texel), float2(1e-5)), float2(1.0));
+        if (sharpBilinear == 0) {
+            return tex.sample(s, uv);
         }
-
-        // Set up the custom shader
-        do {
-            try setupCustomShader()
-            DLOG("Successfully set up custom shader")
-        } catch {
-            ELOG("Failed to set up custom shader: \(error)")
-        }
+        float2 regionRange = 0.5 - 0.5 / scale;
+        float2 centerDist = fract(texel) - 0.5;
+        float2 f = (centerDist - clamp(centerDist, -regionRange, regionRange)) * scale + 0.5;
+        return tex.sample(s, (floor(texel) + f) / texSize);
     }
-
-    /// Updates the VSync settings for the Metal renderer
-    /// Note: On iOS, VSync is always enabled at the system level. We can only hint the preferred frame rate.
-    /// Setting preferredFramesPerSecond to 0 will stop the render loop, causing blank video.
-    private func updateVsyncSettings() {
-        guard let mtlView = mtlView else { return }
-
-        // In Metal, VSync is controlled through the preferredFramesPerSecond property
-        mtlView.isPaused = false
-
-        // Reset lastPreferredFPS to force update when VSync changes
-        lastPreferredFPS = 0
-
-        #if os(iOS) || os(tvOS)
-        // On iOS/tvOS, VSync is always enabled at the system level - we can't truly disable it.
-        // Setting preferredFramesPerSecond to 0 stops the render loop entirely, causing blank video.
-        // Instead, always use updatePreferredFPS which calculates a valid frame rate.
-        // When "VSync disabled", we just render at the maximum display refresh rate.
-        updatePreferredFPS()
-        ILOG("VSync setting updated (iOS always uses system VSync, preference affects frame rate hint)")
-        #else
-        // For other platforms, update preferred FPS
-        updatePreferredFPS()
-        #endif
-    }
-
-    /// Toggle VSync on/off
-    public func toggleVSync() {
-        vsyncEnabled.toggle()
-        ILOG("VSync \(vsyncEnabled ? "enabled" : "disabled")")
-        updateVsyncSettings()
-    }
+    """
 
     /// Builds the standard render pipeline + linear/point samplers from a pre-resolved
     /// vertex/fragment pair. Used by both the precompiled `.metallib` path and the
@@ -3365,16 +3088,7 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
         do {
             customPipeline = try device.makeRenderPipelineState(descriptor: pipelineDescriptor)
             DLOG("Successfully created custom pipeline state (\(label))")
-
-            let linearSamplerDescriptor = MTLSamplerDescriptor()
-            linearSamplerDescriptor.minFilter = .linear
-            linearSamplerDescriptor.magFilter = .linear
-            linearSampler = device.makeSamplerState(descriptor: linearSamplerDescriptor)
-
-            let pointSamplerDescriptor = MTLSamplerDescriptor()
-            pointSamplerDescriptor.minFilter = .nearest
-            pointSamplerDescriptor.magFilter = .nearest
-            pointSampler = device.makeSamplerState(descriptor: pointSamplerDescriptor)
+            makePictureSamplers(device: device)
         } catch {
             ELOG("Failed to create pipeline state (\(label)): \(error)")
             recoverFromGPUError()
@@ -3461,10 +3175,13 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
             float2 texCoord;
         };
 
+        \(Self.pictureSamplingSource)
+
         fragment float4 basic_fragment(VertexOut in [[stage_in]],
-                                     texture2d<float> texture [[texture(0)]]) {
-            constexpr sampler textureSampler(mag_filter::linear, min_filter::linear);
-            return texture.sample(textureSampler, in.texCoord);
+                                       texture2d<float> texture [[texture(0)]],
+                                       sampler textureSampler [[sampler(0)]],
+                                       constant uint &sharpBilinear [[buffer(0)]]) {
+            return pv_sample_picture(texture, textureSampler, in.texCoord, sharpBilinear);
         }
         """
 
@@ -3515,24 +3232,7 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
                 do {
                     customPipeline = try device.makeRenderPipelineState(descriptor: pipelineDescriptor)
                     DLOG("Successfully created custom pipeline state")
-
-                    // Create a sampler descriptor for linear filtering
-                    let linearSamplerDescriptor = MTLSamplerDescriptor()
-                    linearSamplerDescriptor.minFilter = .linear
-                    linearSamplerDescriptor.magFilter = .linear
-
-                    // Create the linear sampler state
-                    linearSampler = device.makeSamplerState(descriptor: linearSamplerDescriptor)
-
-                    // Create a sampler descriptor for point filtering
-                    let pointSamplerDescriptor = MTLSamplerDescriptor()
-                    pointSamplerDescriptor.minFilter = .nearest
-                    pointSamplerDescriptor.magFilter = .nearest
-
-                    // Create the point sampler state
-                    pointSampler = device.makeSamplerState(descriptor: pointSamplerDescriptor)
-
-                    DLOG("Successfully created sampler states")
+                    makePictureSamplers(device: device)
                 } catch {
                     ELOG("Failed to create pipeline state: \(error)")
                     // Recovery might be needed here
@@ -3601,10 +3301,13 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
             return out;
         }
 
+        \(Self.pictureSamplingSource)
+
         fragment float4 fragmentShader(VertexOut in [[stage_in]],
-                                      texture2d<float> tex [[texture(0)]]) {
-            constexpr sampler s(address::clamp_to_edge, filter::linear);
-            return tex.sample(s, in.texCoord);
+                                       texture2d<float> tex [[texture(0)]],
+                                       sampler s [[sampler(0)]],
+                                       constant uint &sharpBilinear [[buffer(0)]]) {
+            return pv_sample_picture(tex, s, in.texCoord, sharpBilinear);
         }
         """
 
@@ -3630,6 +3333,7 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
             do {
                 customPipeline = try device.makeRenderPipelineState(descriptor: pipelineDescriptor)
                 DLOG("Successfully created custom pipeline state with default library")
+                makePictureSamplers(device: device)
             } catch {
                 ELOG("Failed to create pipeline state with default library: \(error)")
                 recoverFromGPUError()
@@ -3723,8 +3427,7 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
             inputTexture = nil
         }
 
-        // Reset the pipelines
-        blitPipeline = nil
+        // Reset the pipeline
         customPipeline = nil
         // Reset samplers
         pointSampler = nil
@@ -3743,7 +3446,7 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
                 // Recreate the shaders
                 self.createBasicShaders()
 
-                if self.customPipeline == nil && self.blitPipeline == nil {
+                if self.customPipeline == nil {
                     self.createBasicShadersWithDefaultLibrary()
                 }
 

@@ -885,7 +885,7 @@ final class PauseTileMenuViewModel: ObservableObject {
 
     /// Build a tile per `ScalingMode` case, marking the currently-active one
     /// with a green accent + ★ badge. The renderer reads `Defaults[.scalingMode]`
-    /// live (observed in PVMetalViewController / PVGLViewController), so the tap
+    /// live (observed in PVMetalViewController), so the tap
     /// handler only needs to write the default + flip the explicit-set gate.
     static func scalingModeTile() -> PauseMenuTile {
         let current = Defaults[.scalingMode]

@@ -365,7 +365,7 @@ private struct LicenseRowView: View {
                     )
             )
         }
-        .buttonStyle(.plain)
+        .retroFocusButtonStyle(focusScale: 1.1, cornerRadius: 6)
     }
 }
 
