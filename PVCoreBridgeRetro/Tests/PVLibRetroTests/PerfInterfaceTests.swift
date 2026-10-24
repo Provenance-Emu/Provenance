@@ -13,6 +13,7 @@
 //  to avoid dangling pointers.
 //
 
+import Darwin
 import Testing
 @testable import PVCoreBridgeRetro
 
@@ -170,5 +171,68 @@ struct PerfLogTests {
         pv_perf_start(counter)
         pv_perf_stop(counter)
         pv_perf_log()
+    }
+}
+
+// MARK: - Core unload tests
+
+/// Lives in this test bundle's image, the way a core's counters are statics in
+/// its dylib, so `dladdr` attributes it to that image.
+private var imageResidentCounter = retro_perf_counter()
+
+/// Another static in the same image; tests that only need the image's header
+/// use it so they never overlap an access to `imageResidentCounter`.
+private var imageAnchor: UInt8 = 0
+
+/// Mach-O header of the image that holds `pointer`.
+private func imageHeader(of pointer: UnsafeRawPointer) -> UnsafeRawPointer? {
+    var info = Dl_info()
+    guard dladdr(pointer, &info) != 0, let base = info.dli_fbase else { return nil }
+    return UnsafeRawPointer(base)
+}
+
+/// Serialized: both tests unregister this image, which would race.
+@Suite(.serialized)
+struct PerfUnloadTests {
+
+    /// Unloading a core must drop its counters, or the next core's `perf_log`
+    /// reads them after `dlclose` unmapped the dylib (SIGSEGV in `pv_perf_log`).
+    @Test func unregisterImage_dropsThatImagesCounters() throws {
+        try withUnsafeMutablePointer(to: &imageResidentCounter) { counter in
+            pv_perf_register(counter)
+            #expect(counter.pointee.registered == true)
+
+            let header = try #require(imageHeader(of: counter))
+            pv_perf_unregister_image(header)
+
+            #expect(counter.pointee.registered == false,
+                    "An unregistered counter must re-register when its core loads again")
+            pv_perf_register(counter)
+            #expect(counter.pointee.registered == true)
+            pv_perf_unregister_image(header)
+        }
+        pv_perf_log()
+    }
+
+    /// Counters outside the unloaded image belong to another core and stay.
+    @Test func unregisterImage_keepsOtherCounters() throws {
+        let heapCounter = makeCounter("test_other_image")
+        pv_perf_register(heapCounter)
+
+        let header = try withUnsafePointer(to: &imageAnchor) { anchor in
+            try #require(imageHeader(of: anchor))
+        }
+        pv_perf_unregister_image(header)
+
+        #expect(heapCounter.pointee.registered == true)
+        #expect(pv_perf_registered_count() > 0)
+    }
+
+    /// A nil image must not touch the registry.
+    @Test func unregisterImage_withNilHeader_isNoOp() {
+        let counter = makeCounter("test_nil_image")
+        pv_perf_register(counter)
+        pv_perf_unregister_image(nil)
+        #expect(counter.pointee.registered == true)
     }
 }

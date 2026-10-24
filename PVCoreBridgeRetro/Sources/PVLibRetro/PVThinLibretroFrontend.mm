@@ -162,9 +162,15 @@ static void pv_perf_ensure_timebase(void) {
     }
 }
 
-/// Registered perf counters from cores.
+/// Registered perf counters from cores. Each points at a static inside the
+/// core's dylib, so entries must be dropped before that dylib is dlclosed
+/// (`pv_perf_unregister_image`); a stale entry is read by the next core's
+/// `perf_log` (virtualjaguar calls it from `retro_deinit`) and faults.
 static struct retro_perf_counter *pv_perf_counters[PV_PERF_MAX_COUNTERS];
 static unsigned pv_perf_counter_count = 0;
+/// Guards the registry: cores register on their own threads while another
+/// frontend's teardown unregisters on its own.
+static os_unfair_lock pv_perf_lock = OS_UNFAIR_LOCK_INIT;
 
 #if DEBUG
 /// Signpost log handle for Instruments profiling of libretro perf counters.
@@ -202,10 +208,41 @@ uint64_t pv_perf_get_cpu_features(void) {
 
 /// Register a performance counter (retro_perf_register_t).
 void pv_perf_register(struct retro_perf_counter *_Nullable counter) {
-    if (!counter || counter->registered || pv_perf_counter_count >= PV_PERF_MAX_COUNTERS)
-        return;
-    pv_perf_counters[pv_perf_counter_count++] = counter;
-    counter->registered = true;
+    if (!counter) return;
+    os_unfair_lock_lock(&pv_perf_lock);
+    if (!counter->registered && pv_perf_counter_count < PV_PERF_MAX_COUNTERS) {
+        pv_perf_counters[pv_perf_counter_count++] = counter;
+        counter->registered = true;
+    }
+    os_unfair_lock_unlock(&pv_perf_lock);
+}
+
+void pv_perf_unregister_image(const void *_Nullable imageHeader) {
+    if (!imageHeader) return;
+    os_unfair_lock_lock(&pv_perf_lock);
+    unsigned kept = 0;
+    for (unsigned i = 0; i < pv_perf_counter_count; i++) {
+        struct retro_perf_counter *c = pv_perf_counters[i];
+        Dl_info info;
+        if (c && dladdr(c, &info) && info.dli_fbase == imageHeader) {
+            // Still mapped here; clear the flag so a reload re-registers.
+            c->registered = false;
+            continue;
+        }
+        pv_perf_counters[kept++] = c;
+    }
+    for (unsigned i = kept; i < pv_perf_counter_count; i++) {
+        pv_perf_counters[i] = NULL;
+    }
+    pv_perf_counter_count = kept;
+    os_unfair_lock_unlock(&pv_perf_lock);
+}
+
+unsigned pv_perf_registered_count(void) {
+    os_unfair_lock_lock(&pv_perf_lock);
+    unsigned count = pv_perf_counter_count;
+    os_unfair_lock_unlock(&pv_perf_lock);
+    return count;
 }
 
 /// Start a registered counter (retro_perf_start_t).
@@ -239,16 +276,19 @@ void pv_perf_stop(struct retro_perf_counter *_Nullable counter) {
 void pv_perf_log(void) {
     pv_perf_ensure_timebase();
     double ns_ratio = pv_perf_timebase_ratio;
-    for (unsigned i = 0; i < pv_perf_counter_count; i++) {
+    os_unfair_lock_lock(&pv_perf_lock);
+    unsigned count = pv_perf_counter_count;
+    for (unsigned i = 0; i < count; i++) {
         struct retro_perf_counter *c = pv_perf_counters[i];
         if (!c) continue;
         double total_ms = (double)c->total * ns_ratio / 1e6;
         ILOG(@"[PERF] %s: %.3f ms (%llu calls)",
              c->ident ? c->ident : "(null)", total_ms, (unsigned long long)c->call_cnt);
     }
+    os_unfair_lock_unlock(&pv_perf_lock);
 #if DEBUG
     os_signpost_event_emit(pv_perf_signpost_log(), OS_SIGNPOST_ID_EXCLUSIVE,
-                           "perf_log", "dumped %u counters", pv_perf_counter_count);
+                           "perf_log", "dumped %u counters", count);
 #endif
 }
 
@@ -567,6 +607,15 @@ static const size_t kThinNetpacketQueueLimitBytes = 32 * 1024 * 1024;
     struct retro_frame_time_callback _frameTimeCallback;
     BOOL _hasFrameTimeCallback;
     int64_t _lastFrameTimeUs;
+
+    // Frame-pace diagnostics, emulation thread only: one `[PACE]` log line per
+    // window (see `_thinRecordFramePace:`).
+    double _paceWindowStart;
+    uint32_t _paceFrames;
+    uint32_t _paceOverBudget;
+    double _paceRunTotal;
+    double _paceRunMax;
+    NSUInteger _paceAudioOverflowBytes;
 
     // Audio callback (RETRO_ENVIRONMENT_SET_AUDIO_CALLBACK)
     struct retro_audio_callback _audioCallback;
@@ -1021,6 +1070,8 @@ static const size_t kThinNetpacketQueueLimitBytes = 32 * 1024 * 1024;
 - (void)_thinVideoRefresh:(const void *)data width:(unsigned)w height:(unsigned)h pitch:(size_t)pitch;
 - (void)_thinAudioSample:(int16_t)left right:(int16_t)right;
 - (size_t)_thinAudioSampleBatch:(const int16_t *)data frames:(size_t)frames;
+- (void)_thinWriteAudio:(const void *)data bytes:(NSUInteger)bytes;
+- (void)_thinRecordFramePace:(double)runSeconds;
 - (void)_thinInputPoll;
 - (int16_t)_thinInputStatePort:(unsigned)port device:(unsigned)dev index:(unsigned)idx id:(unsigned)bid;
 - (void)_thinNetpacketSendWithFlags:(int)flags buf:(const void *)buf len:(size_t)len clientID:(uint16_t)clientID;
@@ -3584,6 +3635,10 @@ static bool thin_environment(unsigned cmd, void *data) {
     _loadedCorePath = nil;
     if (_dylibHandle) {
         ILOG(@"ThinFrontend: unloading core dylib");
+        Dl_info coreImage;
+        if (_sym.retro_init && dladdr((const void *)_sym.retro_init, &coreImage)) {
+            pv_perf_unregister_image(coreImage.dli_fbase);
+        }
         dlclose(_dylibHandle);
         _dylibHandle = NULL;
         memset(&_sym, 0, sizeof(_sym));
@@ -4828,6 +4883,7 @@ static NSString * const kThinArchiveExtractionDirectory = @"ThinLibretroContent"
     // library" UI, and return without invoking the rest of the frame
     // pipeline. Without this, ONE bad frame inside the core terminates
     // the entire app.
+    const double runStart = CACurrentMediaTime();
     @try {
         try {
             _sym.retro_run();
@@ -4849,6 +4905,7 @@ static NSString * const kThinArchiveExtractionDirectory = @"ThinLibretroContent"
     }
 
     if (!_coreDidThrow) {
+        [self _thinRecordFramePace:CACurrentMediaTime() - runStart];
         [self performPendingResetAfterCoreOptionsApplied];
     }
 }
@@ -5312,6 +5369,10 @@ NSNotificationName const PVEmulatorCoreDidFailToStartNotification =
 
 - (void)_testRegisterNetpacketCallback:(const struct retro_netpacket_callback *)callback {
     [self handleEnvironmentCommand:RETRO_ENVIRONMENT_SET_NETPACKET_INTERFACE data:(void *)callback];
+}
+
+- (BOOL)_testHandleEnvironmentCommand:(unsigned)cmd data:(void *)data {
+    return [self handleEnvironmentCommand:cmd data:data];
 }
 
 - (void)_testRunNetpacketFrame {
@@ -5930,7 +5991,7 @@ NSNotificationName const PVEmulatorCoreDidFailToStartNotification =
         return;
     }
     int16_t buf[2] = {left, right};
-    [[self ringBufferAtIndex:0] write:buf size:4];
+    [self _thinWriteAudio:buf bytes:sizeof(buf)];
 }
 
 - (size_t)_thinAudioSampleBatch:(const int16_t *)data frames:(size_t)frames {
@@ -5938,8 +5999,66 @@ NSNotificationName const PVEmulatorCoreDidFailToStartNotification =
     if (self.frontendDelegate) {
         return [self.frontendDelegate libretroFrontend:self didEmitAudioBatch:data frames:frames];
     }
-    [[self ringBufferAtIndex:0] write:data size:frames * 2 * sizeof(int16_t)];
+    [self _thinWriteAudio:data bytes:frames * 2 * sizeof(int16_t)];
     return frames;
+}
+
+/// Writes core audio to the output ring, counting what doesn't fit: the
+/// ring either drops the write or overwrites unplayed audio, and both are heard
+/// as a gap.
+- (void)_thinWriteAudio:(const void *)data bytes:(NSUInteger)bytes {
+    id<RingBufferProtocol> ring = [self ringBufferAtIndex:0];
+    if (!ring) return;
+    const NSInteger room = ring.availableBytesForWriting;
+    if ((NSInteger)bytes > room) {
+        _paceAudioOverflowBytes += bytes - (NSUInteger)MAX(room, 0);
+    }
+    [ring write:data size:bytes];
+}
+
+/// Seconds of emulation per `[PACE]` log line.
+static const double kThinPaceLogWindow = 10.0;
+
+/// Accumulates one frame's retro_run time and logs a `[PACE]` summary once per
+/// `kThinPaceLogWindow`. A core that runs slower than real time shows retro_run
+/// over budget and fewer frames per second than the loop's rate. A loop paced at
+/// a different rate than the core reports shows a "core" and "loop" mismatch and
+/// audio overflow while retro_run stays under budget.
+- (void)_thinRecordFramePace:(double)runSeconds {
+    const double now = CACurrentMediaTime();
+    if (_paceWindowStart == 0) {
+        _paceWindowStart = now;
+    }
+    const NSTimeInterval budget = self.emulationFrameDuration;
+    _paceFrames++;
+    _paceRunTotal += runSeconds;
+    _paceRunMax = MAX(_paceRunMax, runSeconds);
+    if (budget > 0 && runSeconds > budget) {
+        _paceOverBudget++;
+    }
+
+    const double elapsed = now - _paceWindowStart;
+    if (elapsed < kThinPaceLogWindow) {
+        return;
+    }
+    // A window that spans a pause would understate frames per second.
+    const BOOL spansPause = elapsed > kThinPaceLogWindow * 2;
+    const double audioBytesPerSecond = _rawAVInfo.timing.sample_rate * 2 * sizeof(int16_t);
+    const double overflowMs = audioBytesPerSecond > 0
+        ? (double)_paceAudioOverflowBytes / audioBytesPerSecond * 1000.0 : 0;
+    if (!spansPause) {
+        ILOG(@"[PACE] %@: core %.3f fps, loop %.3f Hz, ran %.2f frames/s | retro_run avg %.2f ms, max %.2f ms, "
+             @"%u/%u over the %.2f ms budget | audio overflow %.0f ms",
+             self.coreIdentifier, _rawAVInfo.timing.fps, budget > 0 ? 1.0 / budget : 0.0, _paceFrames / elapsed,
+             _paceRunTotal / _paceFrames * 1000.0, _paceRunMax * 1000.0,
+             _paceOverBudget, _paceFrames, budget * 1000.0, overflowMs);
+    }
+    _paceWindowStart = now;
+    _paceFrames = 0;
+    _paceOverBudget = 0;
+    _paceRunTotal = 0;
+    _paceRunMax = 0;
+    _paceAudioOverflowBytes = 0;
 }
 
 - (void)_thinInputPoll {
@@ -6811,11 +6930,24 @@ NSNotificationName const PVEmulatorCoreDidFailToStartNotification =
         case RETRO_ENVIRONMENT_SET_SYSTEM_AV_INFO: {
             const struct retro_system_av_info *info = (const struct retro_system_av_info *)data;
             if (!info) return false;
+            const double previousFPS = _rawAVInfo.timing.fps;
             _rawAVInfo = *info;
             ILOG(@"ThinEnv SET_SYSTEM_AV_INFO %ux%u (max %ux%u) @ %.2f fps, sample_rate=%.1f",
                  info->geometry.base_width, info->geometry.base_height,
                  info->geometry.max_width, info->geometry.max_height,
                  info->timing.fps, info->timing.sample_rate);
+            // Re-pace the emulation loop. One loop tick is one retro_run, i.e. one
+            // emulated frame, and the tick was fixed when the loop started. libretro
+            // MAME reports its default 60 fps at load and the emulated screen's real
+            // refresh after the first frame (57 Hz on Midway Seattle); at a stale
+            // 60 Hz tick it emits ~5% more audio than the device plays, the ring
+            // overflows and drops whole frames of sound several times a second (#3761).
+            if (info->timing.fps > 0.0 && info->timing.fps != previousFPS) {
+                _frameInterval = info->timing.fps;
+                [self frameIntervalDidChange];
+                ILOG(@"ThinEnv SET_SYSTEM_AV_INFO: frame rate %.3f → %.3f fps, loop tick %.3f ms",
+                     previousFPS, info->timing.fps, self.emulationFrameDuration * 1000.0);
+            }
             // Reallocate video buffer since geometry may have changed
             [self _allocateVideoBuffer];
 #if !TARGET_OS_MACCATALYST && !TARGET_OS_OSX

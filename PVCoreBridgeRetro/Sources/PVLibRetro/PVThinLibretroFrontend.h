@@ -66,6 +66,13 @@ void pv_perf_stop(struct retro_perf_counter *_Nullable counter);
 /// Log all registered counters to the Provenance log.
 void pv_perf_log(void);
 
+/// Drop every registered counter that lives in the image whose Mach-O header is
+/// `imageHeader` (`Dl_info.dli_fbase`). Call before dlclosing a core.
+void pv_perf_unregister_image(const void *_Nullable imageHeader);
+
+/// Number of counters currently registered.
+unsigned pv_perf_registered_count(void);
+
 // MARK: libretro MIDI interface (C functions)
 
 /// The CoreMIDI-backed `retro_midi_interface` handed to cores via
@@ -419,6 +426,9 @@ FOUNDATION_EXPORT NSNotificationName const PVEmulatorCoreDidFailToStartNotificat
 
 /// Testing: run one frame's netpacket work on the calling thread.
 - (void)_testRunNetpacketFrame;
+
+/// Testing: deliver an environment command as the core would from inside retro_run.
+- (BOOL)_testHandleEnvironmentCommand:(unsigned)cmd data:(void *)data;
 
 // MARK: Utility
 
