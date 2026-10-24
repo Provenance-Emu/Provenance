@@ -59,6 +59,22 @@ struct MetricKitCrashReportTests {
         #expect(names == ["libsystem_platform.dylib", "PVCoreBridgeRetro", "virtualjaguar.libretro"])
     }
 
+    @Test("Reads the documented shape with a callStackTree wrapper")
+    func flattensWrappedTree() throws {
+        let tree = try JSONSerialization.jsonObject(with: segfaultJSON)
+        let wrapped = try JSONSerialization.data(withJSONObject: ["callStackTree": tree])
+        let report = MetricKitCrashReport(
+            callStackTreeJSON: wrapped,
+            exceptionType: 1,
+            exceptionCode: 1,
+            signal: 11,
+            terminationReason: nil,
+            build: nil
+        )
+        #expect(report.frames == segfault().frames)
+        #expect(report.culprit?.binaryName == "PVCoreBridgeRetro")
+    }
+
     @Test("Culprit is the innermost frame in Provenance's own code")
     func culpritSkipsSystemFrames() {
         let report = segfault()

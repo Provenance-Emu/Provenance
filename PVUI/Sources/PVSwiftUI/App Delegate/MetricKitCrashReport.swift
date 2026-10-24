@@ -96,9 +96,14 @@ public struct MetricKitCrashReport: Equatable, Sendable {
     // MARK: - Parsing
 
     /// The attributed thread's frames, or the first thread's when none is marked.
+    ///
+    /// `jsonRepresentation()` puts `callStacks` at the top level (sentry-cocoa
+    /// decodes it that way), but Apple documents it inside a `callStackTree`
+    /// object, so both shapes are accepted.
     static func attributedFrames(in json: Data) -> [MetricKitCrashFrame] {
-        guard let object = try? JSONSerialization.jsonObject(with: json) as? [String: Any],
-              let stacks = object["callStacks"] as? [[String: Any]] else { return [] }
+        guard let object = try? JSONSerialization.jsonObject(with: json) as? [String: Any] else { return [] }
+        let tree = object["callStackTree"] as? [String: Any] ?? object
+        guard let stacks = tree["callStacks"] as? [[String: Any]] else { return [] }
         let stack = stacks.first { $0["threadAttributed"] as? Bool == true } ?? stacks.first
         guard let roots = stack?["callStackRootFrames"] as? [[String: Any]] else { return [] }
         var frames: [MetricKitCrashFrame] = []
