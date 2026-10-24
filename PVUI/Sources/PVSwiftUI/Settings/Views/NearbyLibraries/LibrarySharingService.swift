@@ -107,6 +107,7 @@ public final class LibrarySharingService {
     /// alert that the first listener start raises, and Control Center, and
     /// stopping there would churn the host.
     public static func handleScenePhase(_ phase: ScenePhase) {
+        NearbyLibraryAutomaticService.shared.sceneChanged(phase)
         switch phase {
         case .active:
             shared.appActive = true
@@ -175,17 +176,32 @@ public final class LibrarySharingService {
             loaded[peer.id] = await trust.grant(forPeerId: peer.id) ?? .askPerGame
         }
         grants = loaded
+        NearbyLibraryAutomaticService.shared.trustChanged(trustedPeers.filter { grants[$0.id] != .denied })
+    }
+
+    /// Persist outbound code pairing only after the host accepted its proof.
+    func rememberPairedHost(_ handle: ICubePairingHandle) async throws {
+        let peer = TrustedPeer(id: handle.serverId, name: handle.serverName, publicKey: handle.serverPublicKey, app: PeerApp.iCube.rawValue)
+        await trust.add(peer)
+        guard await trust.peer(withId: peer.id)?.publicKey == peer.publicKey else { throw LibrarySharingError.notPaired }
+        await refreshTrust()
     }
 
     func setGrant(_ grant: LibraryGrant, for peer: TrustedPeer) {
+        if grant == .denied { NearbyLibraryAutomaticService.shared.peerWasRevoked(peer.id) }
         Task {
             await trust.setGrant(grant, forPeerId: peer.id)
-            if grant == .denied { await host?.revoke(peerId: peer.id) }
+            if grant == .denied {
+                NearbyLibraryAutomaticService.shared.setEnabled(false, peerID: peer.id)
+                await host?.revoke(peerId: peer.id)
+            }
             await refreshTrust()
         }
     }
 
     func remove(_ peer: TrustedPeer) {
+        NearbyLibraryAutomaticService.shared.peerWasRevoked(peer.id)
+        NearbyLibraryAutomaticService.shared.setEnabled(false, peerID: peer.id)
         Task {
             await trust.remove(peerId: peer.id)
             await host?.revoke(peerId: peer.id)

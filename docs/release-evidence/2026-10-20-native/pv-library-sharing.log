@@ -1,0 +1,393 @@
+Building for debugging...
+[Computing dependencies]
+[Provisioning 3 / 14]
+[Using on-disk description]
+[1 / 5]
+[1 / 6] PVLibrarySharing
+[2 / 6] PVLibrarySharing
+[3 / 7] PVLibrarySharing
+[6 / 9] PVLibrarySharing
+[7 / 10] PVLibrarySharing
+[9 / 11] PVLibrarySharing
+[9 / 11] PVLibrarySharingTests-product
+[9 / 13] PVLibrarySharingTests-product
+[10 / 13] PVLibrarySharingTests-product
+[13 / 26] PVLibrarySharingTests-product
+[14 / 26] PVLibrarySharingTests-product
+[15 / 26] PVLibrarySharingTests-product
+[16 / 26] PVLibrarySharingTests-product
+[17 / 26] PVLibrarySharingTests-product
+[18 / 26] PVLibrarySharingTests-product
+[19 / 26] PVLibrarySharingTests-product
+[20 / 26] PVLibrarySharingTests-product
+[21 / 26] PVLibrarySharingTests-product
+[22 / 26] PVLibrarySharingTests-product
+[23 / 26] PVLibrarySharingTests-product
+[25 / 26] PVLibrarySharingTests-product
+[28 / 29] PVLibrarySharingTests-product
+[29 / 29] PVLibrarySharingTests-product
+[30 / 30] PVLibrarySharing-product
+Build complete! (84.84 sec)
+Test Suite 'All tests' started at 2026-10-20 03:19:39.156.
+Test Suite 'PVLibrarySharingTests.xctest' started at 2026-10-20 03:19:39.160.
+Test Suite 'AdvertExtensionTests' started at 2026-10-20 03:19:39.160.
+Test Case '-[PVLibrarySharingTests.AdvertExtensionTests testAnotherProvenanceIsVisibleAndThisOneIsNot]' started.
+Test Case '-[PVLibrarySharingTests.AdvertExtensionTests testAnotherProvenanceIsVisibleAndThisOneIsNot]' passed (0.010 seconds).
+Test Case '-[PVLibrarySharingTests.AdvertExtensionTests testLegacyPeersAreVisibleByTheirAppsSystems]' started.
+Test Case '-[PVLibrarySharingTests.AdvertExtensionTests testLegacyPeersAreVisibleByTheirAppsSystems]' passed (0.001 seconds).
+Test Case '-[PVLibrarySharingTests.AdvertExtensionTests testOneDeviceOnSeveralTypesIsListedOnceAsPVLibrary]' started.
+Test Case '-[PVLibrarySharingTests.AdvertExtensionTests testOneDeviceOnSeveralTypesIsListedOnceAsPVLibrary]' passed (0.001 seconds).
+Test Case '-[PVLibrarySharingTests.AdvertExtensionTests testSharedIdentityAcrossAppsKeepsBothRows]' started.
+Test Case '-[PVLibrarySharingTests.AdvertExtensionTests testSharedIdentityAcrossAppsKeepsBothRows]' passed (0.001 seconds).
+Test Case '-[PVLibrarySharingTests.AdvertExtensionTests testSystemsSplitAcrossKeysAndRoundTrip]' started.
+Test Case '-[PVLibrarySharingTests.AdvertExtensionTests testSystemsSplitAcrossKeysAndRoundTrip]' passed (0.002 seconds).
+Test Case '-[PVLibrarySharingTests.AdvertExtensionTests testUnspecifiedEmptyAndLegacyAdverts]' started.
+Test Case '-[PVLibrarySharingTests.AdvertExtensionTests testUnspecifiedEmptyAndLegacyAdverts]' passed (0.001 seconds).
+Test Suite 'AdvertExtensionTests' passed at 2026-10-20 03:19:39.176.
+	 Executed 6 tests, with 0 failures (0 unexpected) in 0.014 (0.016) seconds
+Test Suite 'ApprovalTimeoutTests' started at 2026-10-20 03:19:39.176.
+Test Case '-[PVLibrarySharingTests.ApprovalTimeoutTests testAnswerBeforeTheDeadlineWins]' started.
+Test Case '-[PVLibrarySharingTests.ApprovalTimeoutTests testAnswerBeforeTheDeadlineWins]' passed (0.010 seconds).
+Test Case '-[PVLibrarySharingTests.ApprovalTimeoutTests testTimeoutWinsAgainstAPromptThatNeverAnswers]' started.
+SWIFT TASK CONTINUATION MISUSE: testTimeoutWinsAgainstAPromptThatNeverAnswers() leaked its continuation without resuming it. This may cause tasks waiting on it to remain suspended forever.
+Test Case '-[PVLibrarySharingTests.ApprovalTimeoutTests testTimeoutWinsAgainstAPromptThatNeverAnswers]' passed (0.306 seconds).
+Test Suite 'ApprovalTimeoutTests' passed at 2026-10-20 03:19:39.493.
+	 Executed 2 tests, with 0 failures (0 unexpected) in 0.316 (0.317) seconds
+Test Suite 'AuthMathTests' started at 2026-10-20 03:19:39.493.
+Test Case '-[PVLibrarySharingTests.AuthMathTests testICubeAuthTranscriptBytes]' started.
+Test Case '-[PVLibrarySharingTests.AuthMathTests testICubeAuthTranscriptBytes]' passed (0.013 seconds).
+Test Case '-[PVLibrarySharingTests.AuthMathTests testIdentityStoreKeepsIdAndKeyAcrossLoads]' started.
+Test Case '-[PVLibrarySharingTests.AuthMathTests testIdentityStoreKeepsIdAndKeyAcrossLoads]' passed (0.009 seconds).
+Test Case '-[PVLibrarySharingTests.AuthMathTests testIFlyAuthTranscriptBytes]' started.
+Test Case '-[PVLibrarySharingTests.AuthMathTests testIFlyAuthTranscriptBytes]' passed (0.001 seconds).
+Test Case '-[PVLibrarySharingTests.AuthMathTests testPairingProofMatchesIndependentHMAC]' started.
+Test Case '-[PVLibrarySharingTests.AuthMathTests testPairingProofMatchesIndependentHMAC]' passed (0.008 seconds).
+Test Case '-[PVLibrarySharingTests.AuthMathTests testPairingTranscriptBytes]' started.
+Test Case '-[PVLibrarySharingTests.AuthMathTests testPairingTranscriptBytes]' passed (0.022 seconds).
+Test Case '-[PVLibrarySharingTests.AuthMathTests testPrefixes]' started.
+Test Case '-[PVLibrarySharingTests.AuthMathTests testPrefixes]' passed (0.000 seconds).
+Test Case '-[PVLibrarySharingTests.AuthMathTests testSignatureVerifiesOnlyInItsOwnDomain]' started.
+Test Case '-[PVLibrarySharingTests.AuthMathTests testSignatureVerifiesOnlyInItsOwnDomain]' passed (0.006 seconds).
+Test Suite 'AuthMathTests' passed at 2026-10-20 03:19:39.560.
+	 Executed 7 tests, with 0 failures (0 unexpected) in 0.059 (0.067) seconds
+Test Suite 'AutomaticLibraryReceiverTests' started at 2026-10-20 03:19:39.560.
+Test Case '-[PVLibrarySharingTests.AutomaticLibraryReceiverTests testBackgroundAndEmulationPreventWorkUntilForegroundLibraryReturns]' started.
+Test Case '-[PVLibrarySharingTests.AutomaticLibraryReceiverTests testBackgroundAndEmulationPreventWorkUntilForegroundLibraryReturns]' passed (0.507 seconds).
+Test Case '-[PVLibrarySharingTests.AutomaticLibraryReceiverTests testBlockedEntryDoesNotPreventOtherGamesFromCopying]' started.
+Test Case '-[PVLibrarySharingTests.AutomaticLibraryReceiverTests testBlockedEntryDoesNotPreventOtherGamesFromCopying]' passed (0.020 seconds).
+Test Case '-[PVLibrarySharingTests.AutomaticLibraryReceiverTests testDisableCancelsWithoutStartingReplacementBeforeDelegateReturns]' started.
+Test Case '-[PVLibrarySharingTests.AutomaticLibraryReceiverTests testDisableCancelsWithoutStartingReplacementBeforeDelegateReturns]' passed (0.204 seconds).
+Test Case '-[PVLibrarySharingTests.AutomaticLibraryReceiverTests testEnabledPeerCopiesMissingEntriesAndSkipsVerifiedLocalEntries]' started.
+Test Case '-[PVLibrarySharingTests.AutomaticLibraryReceiverTests testEnabledPeerCopiesMissingEntriesAndSkipsVerifiedLocalEntries]' passed (0.038 seconds).
+Test Case '-[PVLibrarySharingTests.AutomaticLibraryReceiverTests testOptInRequiresTrustAndDoesNotPairUnknownPeers]' started.
+Test Case '-[PVLibrarySharingTests.AutomaticLibraryReceiverTests testOptInRequiresTrustAndDoesNotPairUnknownPeers]' passed (0.164 seconds).
+Test Case '-[PVLibrarySharingTests.AutomaticLibraryReceiverTests testRemovedRemoteEntryNeverRemovesLocalCopy]' started.
+Test Case '-[PVLibrarySharingTests.AutomaticLibraryReceiverTests testRemovedRemoteEntryNeverRemovesLocalCopy]' passed (0.034 seconds).
+Test Case '-[PVLibrarySharingTests.AutomaticLibraryReceiverTests testRevocationClearsOptInAndCancelsActiveWork]' started.
+Test Case '-[PVLibrarySharingTests.AutomaticLibraryReceiverTests testRevocationClearsOptInAndCancelsActiveWork]' passed (0.043 seconds).
+Test Suite 'AutomaticLibraryReceiverTests' passed at 2026-10-20 03:19:40.582.
+	 Executed 7 tests, with 0 failures (0 unexpected) in 1.009 (1.021) seconds
+Test Suite 'BackCompatTests' started at 2026-10-20 03:19:40.582.
+Test Case '-[PVLibrarySharingTests.BackCompatTests testCatalogueVersionTwoIsRejectedOnPVLibraryToo]' started.
+Test Case '-[PVLibrarySharingTests.BackCompatTests testCatalogueVersionTwoIsRejectedOnPVLibraryToo]' passed (0.427 seconds).
+Test Case '-[PVLibrarySharingTests.BackCompatTests testLegacyICubeCatalogHonoursFilterAndPaging]' started.
+Test Case '-[PVLibrarySharingTests.BackCompatTests testLegacyICubeCatalogHonoursFilterAndPaging]' passed (0.167 seconds).
+Test Case '-[PVLibrarySharingTests.BackCompatTests testLegacyIFlyCatalogueIsUnpagedWithoutLimit]' started.
+Test Case '-[PVLibrarySharingTests.BackCompatTests testLegacyIFlyCatalogueIsUnpagedWithoutLimit]' passed (0.351 seconds).
+Test Case '-[PVLibrarySharingTests.BackCompatTests testV11ClientFiltersLocallyWhenTheServerIgnoresTheFilter]' started.
+Test Case '-[PVLibrarySharingTests.BackCompatTests testV11ClientFiltersLocallyWhenTheServerIgnoresTheFilter]' passed (0.153 seconds).
+Test Suite 'BackCompatTests' passed at 2026-10-20 03:19:41.681.
+	 Executed 4 tests, with 0 failures (0 unexpected) in 1.098 (1.100) seconds
+Test Suite 'CatalogueQueryTests' started at 2026-10-20 03:19:41.681.
+Test Case '-[PVLibrarySharingTests.CatalogueQueryTests testPagesAndRefusesAStaleCursor]' started.
+Test Case '-[PVLibrarySharingTests.CatalogueQueryTests testPagesAndRefusesAStaleCursor]' passed (0.006 seconds).
+Test Case '-[PVLibrarySharingTests.CatalogueQueryTests testParsesFilterAndClampsLimit]' started.
+Test Case '-[PVLibrarySharingTests.CatalogueQueryTests testParsesFilterAndClampsLimit]' passed (0.001 seconds).
+Test Suite 'CatalogueQueryTests' passed at 2026-10-20 03:19:41.688.
+	 Executed 2 tests, with 0 failures (0 unexpected) in 0.007 (0.007) seconds
+Test Suite 'ECSSourceTests' started at 2026-10-20 03:19:41.688.
+Test Case '-[PVLibrarySharingTests.ECSSourceTests testContentPathOnAnotherHostIsRefused]' started.
+Test Case '-[PVLibrarySharingTests.ECSSourceTests testContentPathOnAnotherHostIsRefused]' passed (0.035 seconds).
+Test Case '-[PVLibrarySharingTests.ECSSourceTests testCopiesTheROMResumingWithRangeAndLeavesBIOS]' started.
+Test Case '-[PVLibrarySharingTests.ECSSourceTests testCopiesTheROMResumingWithRangeAndLeavesBIOS]' passed (0.059 seconds).
+Test Case '-[PVLibrarySharingTests.ECSSourceTests testExpiredTokenSignsInAgainOnce]' started.
+Test Case '-[PVLibrarySharingTests.ECSSourceTests testExpiredTokenSignsInAgainOnce]' passed (0.126 seconds).
+Test Case '-[PVLibrarySharingTests.ECSSourceTests testListsEveryPageAndFiltersLocally]' started.
+Test Case '-[PVLibrarySharingTests.ECSSourceTests testListsEveryPageAndFiltersLocally]' passed (0.271 seconds).
+Test Case '-[PVLibrarySharingTests.ECSSourceTests testMintsADeviceTokenAndReusesIt]' started.
+Test Case '-[PVLibrarySharingTests.ECSSourceTests testMintsADeviceTokenAndReusesIt]' passed (0.046 seconds).
+Test Case '-[PVLibrarySharingTests.ECSSourceTests testRangeIgnoredRestartsFromZero]' started.
+Test Case '-[PVLibrarySharingTests.ECSSourceTests testRangeIgnoredRestartsFromZero]' passed (0.088 seconds).
+Test Case '-[PVLibrarySharingTests.ECSSourceTests testReaderWithoutAdminScopeFallsBackToTheSessionToken]' started.
+Test Case '-[PVLibrarySharingTests.ECSSourceTests testReaderWithoutAdminScopeFallsBackToTheSessionToken]' passed (0.146 seconds).
+Test Case '-[PVLibrarySharingTests.ECSSourceTests testWrongPasswordAndNewerProtocolFailClearly]' started.
+Test Case '-[PVLibrarySharingTests.ECSSourceTests testWrongPasswordAndNewerProtocolFailClearly]' passed (0.132 seconds).
+Test Suite 'ECSSourceTests' passed at 2026-10-20 03:19:42.597.
+	 Executed 8 tests, with 0 failures (0 unexpected) in 0.903 (0.909) seconds
+Test Suite 'HTTPFramingTests' started at 2026-10-20 03:19:42.597.
+Test Case '-[PVLibrarySharingTests.HTTPFramingTests testByteRanges]' started.
+Test Case '-[PVLibrarySharingTests.HTTPFramingTests testByteRanges]' passed (0.001 seconds).
+Test Case '-[PVLibrarySharingTests.HTTPFramingTests testParsesHeadPathQueryAndKeepAlive]' started.
+Test Case '-[PVLibrarySharingTests.HTTPFramingTests testParsesHeadPathQueryAndKeepAlive]' passed (0.001 seconds).
+Test Case '-[PVLibrarySharingTests.HTTPFramingTests testRefusesMalformedChunkedAndHugeBodies]' started.
+Test Case '-[PVLibrarySharingTests.HTTPFramingTests testRefusesMalformedChunkedAndHugeBodies]' passed (0.001 seconds).
+Test Case '-[PVLibrarySharingTests.HTTPFramingTests testResponseHeadCarriesLengthAndConnection]' started.
+Test Case '-[PVLibrarySharingTests.HTTPFramingTests testResponseHeadCarriesLengthAndConnection]' passed (0.003 seconds).
+Test Case '-[PVLibrarySharingTests.HTTPFramingTests testRoutesJoinWithOneSlash]' started.
+Test Case '-[PVLibrarySharingTests.HTTPFramingTests testRoutesJoinWithOneSlash]' passed (0.002 seconds).
+Test Suite 'HTTPFramingTests' passed at 2026-10-20 03:19:42.607.
+	 Executed 5 tests, with 0 failures (0 unexpected) in 0.008 (0.010) seconds
+Test Suite 'ICubeContinuitySourceTests' started at 2026-10-20 03:19:42.607.
+Test Case '-[PVLibrarySharingTests.ICubeContinuitySourceTests testAuthChallengeMustMatchSelectedPairedHost]' started.
+Test Case '-[PVLibrarySharingTests.ICubeContinuitySourceTests testAuthChallengeMustMatchSelectedPairedHost]' passed (0.011 seconds).
+Test Case '-[PVLibrarySharingTests.ICubeContinuitySourceTests testAuthThenCatalogWithBearer]' started.
+Test Case '-[PVLibrarySharingTests.ICubeContinuitySourceTests testAuthThenCatalogWithBearer]' passed (0.014 seconds).
+Test Case '-[PVLibrarySharingTests.ICubeContinuitySourceTests testCatalogFixtureDecodesAndMaps]' started.
+Test Case '-[PVLibrarySharingTests.ICubeContinuitySourceTests testCatalogFixtureDecodesAndMaps]' passed (0.001 seconds).
+Test Case '-[PVLibrarySharingTests.ICubeContinuitySourceTests testCatalogOutsideVersionOneIsRejected]' started.
+Test Case '-[PVLibrarySharingTests.ICubeContinuitySourceTests testCatalogOutsideVersionOneIsRejected]' passed (0.001 seconds).
+Test Case '-[PVLibrarySharingTests.ICubeContinuitySourceTests testICubeLibraryRejectsUserDataBeforeNormalization]' started.
+Test Case '-[PVLibrarySharingTests.ICubeContinuitySourceTests testICubeLibraryRejectsUserDataBeforeNormalization]' passed (0.011 seconds).
+Test Case '-[PVLibrarySharingTests.ICubeContinuitySourceTests testMissingArtIsNilNotAnError]' started.
+Test Case '-[PVLibrarySharingTests.ICubeContinuitySourceTests testMissingArtIsNilNotAnError]' passed (0.012 seconds).
+Test Case '-[PVLibrarySharingTests.ICubeContinuitySourceTests testPairingHandleMustMatchDiscoveredHost]' started.
+Test Case '-[PVLibrarySharingTests.ICubeContinuitySourceTests testPairingHandleMustMatchDiscoveredHost]' passed (0.005 seconds).
+Test Case '-[PVLibrarySharingTests.ICubeContinuitySourceTests testPairingOutcomes]' started.
+Test Case '-[PVLibrarySharingTests.ICubeContinuitySourceTests testPairingOutcomes]' passed (0.000 seconds).
+Test Case '-[PVLibrarySharingTests.ICubeContinuitySourceTests testPairingPollsThen404MeansPaired]' started.
+Test Case '-[PVLibrarySharingTests.ICubeContinuitySourceTests testPairingPollsThen404MeansPaired]' passed (0.024 seconds).
+Test Case '-[PVLibrarySharingTests.ICubeContinuitySourceTests testUnpairedPeerIsTold]' started.
+Test Case '-[PVLibrarySharingTests.ICubeContinuitySourceTests testUnpairedPeerIsTold]' passed (0.004 seconds).
+Test Case '-[PVLibrarySharingTests.ICubeContinuitySourceTests testWrongCodeIsRetryable]' started.
+Test Case '-[PVLibrarySharingTests.ICubeContinuitySourceTests testWrongCodeIsRetryable]' passed (0.006 seconds).
+Test Suite 'ICubeContinuitySourceTests' passed at 2026-10-20 03:19:42.700.
+	 Executed 11 tests, with 0 failures (0 unexpected) in 0.089 (0.093) seconds
+Test Suite 'ICubeDialectServerTests' started at 2026-10-20 03:19:42.701.
+Test Case '-[PVLibrarySharingTests.ICubeDialectServerTests testCatalogAndManifestDecodeWithICubesOwnDecoders]' started.
+Test Case '-[PVLibrarySharingTests.ICubeDialectServerTests testCatalogAndManifestDecodeWithICubesOwnDecoders]' passed (0.372 seconds).
+Test Case '-[PVLibrarySharingTests.ICubeDialectServerTests testOnlyARealDiscIDBecomesTheGameID]' started.
+Test Case '-[PVLibrarySharingTests.ICubeDialectServerTests testOnlyARealDiscIDBecomesTheGameID]' passed (0.346 seconds).
+Test Case '-[PVLibrarySharingTests.ICubeDialectServerTests testPairingThenBrowseListsOnlyGameCubeAndWii]' started.
+Test Case '-[PVLibrarySharingTests.ICubeDialectServerTests testPairingThenBrowseListsOnlyGameCubeAndWii]' passed (0.440 seconds).
+Test Case '-[PVLibrarySharingTests.ICubeDialectServerTests testSharingOffRefusesLibraryButPairingStillAnswers]' started.
+Test Case '-[PVLibrarySharingTests.ICubeDialectServerTests testSharingOffRefusesLibraryButPairingStillAnswers]' passed (0.286 seconds).
+Test Case '-[PVLibrarySharingTests.ICubeDialectServerTests testUnpairedPeerIsToldToPair]' started.
+Test Case '-[PVLibrarySharingTests.ICubeDialectServerTests testUnpairedPeerIsToldToPair]' passed (0.148 seconds).
+Test Case '-[PVLibrarySharingTests.ICubeDialectServerTests testWrongCodeIsRetryableThenExpires]' started.
+Test Case '-[PVLibrarySharingTests.ICubeDialectServerTests testWrongCodeIsRetryableThenExpires]' passed (0.245 seconds).
+Test Suite 'ICubeDialectServerTests' passed at 2026-10-20 03:19:44.550.
+	 Executed 6 tests, with 0 failures (0 unexpected) in 1.837 (1.849) seconds
+Test Suite 'IFlyContinuitySourceTests' started at 2026-10-20 03:19:44.550.
+Test Case '-[PVLibrarySharingTests.IFlyContinuitySourceTests testArtURLEscapesOpaqueKey]' started.
+Test Case '-[PVLibrarySharingTests.IFlyContinuitySourceTests testArtURLEscapesOpaqueKey]' passed (0.011 seconds).
+Test Case '-[PVLibrarySharingTests.IFlyContinuitySourceTests testConsentAuthPollsThenFetchesManifestWithBearer]' started.
+Test Case '-[PVLibrarySharingTests.IFlyContinuitySourceTests testConsentAuthPollsThenFetchesManifestWithBearer]' passed (0.045 seconds).
+Test Case '-[PVLibrarySharingTests.IFlyContinuitySourceTests testDontShareIsDeclined]' started.
+Test Case '-[PVLibrarySharingTests.IFlyContinuitySourceTests testDontShareIsDeclined]' passed (0.002 seconds).
+Test Case '-[PVLibrarySharingTests.IFlyContinuitySourceTests testExpiredTokenReauthenticatesOnce]' started.
+Test Case '-[PVLibrarySharingTests.IFlyContinuitySourceTests testExpiredTokenReauthenticatesOnce]' passed (0.033 seconds).
+Test Case '-[PVLibrarySharingTests.IFlyContinuitySourceTests testFallsBackToNextAdvertisedURL]' started.
+Test Case '-[PVLibrarySharingTests.IFlyContinuitySourceTests testFallsBackToNextAdvertisedURL]' passed (0.021 seconds).
+Test Case '-[PVLibrarySharingTests.IFlyContinuitySourceTests testGameIdFallsBackToTitlePlatformSize]' started.
+Test Case '-[PVLibrarySharingTests.IFlyContinuitySourceTests testGameIdFallsBackToTitlePlatformSize]' passed (0.001 seconds).
+Test Case '-[PVLibrarySharingTests.IFlyContinuitySourceTests testManifestFixtureDecodesAndMaps]' started.
+Test Case '-[PVLibrarySharingTests.IFlyContinuitySourceTests testManifestFixtureDecodesAndMaps]' passed (0.002 seconds).
+Test Case '-[PVLibrarySharingTests.IFlyContinuitySourceTests testRepeatFetchSendsETagAndReusesCacheOn304]' started.
+Test Case '-[PVLibrarySharingTests.IFlyContinuitySourceTests testRepeatFetchSendsETagAndReusesCacheOn304]' passed (0.013 seconds).
+Test Case '-[PVLibrarySharingTests.IFlyContinuitySourceTests testSharingOffIsUnavailable]' started.
+Test Case '-[PVLibrarySharingTests.IFlyContinuitySourceTests testSharingOffIsUnavailable]' passed (0.013 seconds).
+Test Case '-[PVLibrarySharingTests.IFlyContinuitySourceTests testUnansweredConsentTimesOut]' started.
+Test Case '-[PVLibrarySharingTests.IFlyContinuitySourceTests testUnansweredConsentTimesOut]' passed (0.007 seconds).
+Test Suite 'IFlyContinuitySourceTests' passed at 2026-10-20 03:19:44.765.
+	 Executed 10 tests, with 0 failures (0 unexpected) in 0.146 (0.216) seconds
+Test Suite 'IFlyDialectServerTests' started at 2026-10-20 03:19:44.765.
+Test Case '-[PVLibrarySharingTests.IFlyDialectServerTests testArtKeyRejectsTraversalAndServesBytes]' started.
+Test Case '-[PVLibrarySharingTests.IFlyDialectServerTests testArtKeyRejectsTraversalAndServesBytes]' passed (0.242 seconds).
+Test Case '-[PVLibrarySharingTests.IFlyDialectServerTests testAskPerGamePromptsPerPullAndDenyDeclines]' started.
+Test Case '-[PVLibrarySharingTests.IFlyDialectServerTests testAskPerGamePromptsPerPullAndDenyDeclines]' passed (0.425 seconds).
+Test Case '-[PVLibrarySharingTests.IFlyDialectServerTests testCopiesAGDISetPrimaryFirstWithNoBIOSOrSaves]' started.
+Test Case '-[PVLibrarySharingTests.IFlyDialectServerTests testCopiesAGDISetPrimaryFirstWithNoBIOSOrSaves]' passed (0.486 seconds).
+Test Case '-[PVLibrarySharingTests.IFlyDialectServerTests testDontShareDeniesAndRemembers]' started.
+Test Case '-[PVLibrarySharingTests.IFlyDialectServerTests testDontShareDeniesAndRemembers]' passed (0.420 seconds).
+Test Case '-[PVLibrarySharingTests.IFlyDialectServerTests testFileRouteServesOnlyGrantedPathsWithRange]' started.
+Test Case '-[PVLibrarySharingTests.IFlyDialectServerTests testFileRouteServesOnlyGrantedPathsWithRange]' passed (0.247 seconds).
+Test Case '-[PVLibrarySharingTests.IFlyDialectServerTests testLibraryManifestDecodesWithIFlysOwnFields]' started.
+Test Case '-[PVLibrarySharingTests.IFlyDialectServerTests testLibraryManifestDecodesWithIFlysOwnFields]' passed (0.503 seconds).
+Test Case '-[PVLibrarySharingTests.IFlyDialectServerTests testListsOnlyDreamcastFamilyGames]' started.
+Test Case '-[PVLibrarySharingTests.IFlyDialectServerTests testListsOnlyDreamcastFamilyGames]' passed (0.425 seconds).
+Test Case '-[PVLibrarySharingTests.IFlyDialectServerTests testSharingOffAnswers404]' started.
+Test Case '-[PVLibrarySharingTests.IFlyDialectServerTests testSharingOffAnswers404]' passed (0.205 seconds).
+Test Case '-[PVLibrarySharingTests.IFlyDialectServerTests testSingleFileGameIsServedFlatUnderROMs]' started.
+Test Case '-[PVLibrarySharingTests.IFlyDialectServerTests testSingleFileGameIsServedFlatUnderROMs]' passed (0.649 seconds).
+Test Suite 'IFlyDialectServerTests' passed at 2026-10-20 03:19:48.375.
+	 Executed 9 tests, with 0 failures (0 unexpected) in 3.602 (3.610) seconds
+Test Suite 'LANFilterTests' started at 2026-10-20 03:19:48.375.
+Test Case '-[PVLibrarySharingTests.LANFilterTests testAdvertTXTMatchesTheContinuityCodec]' started.
+Test Case '-[PVLibrarySharingTests.LANFilterTests testAdvertTXTMatchesTheContinuityCodec]' passed (0.004 seconds).
+Test Case '-[PVLibrarySharingTests.LANFilterTests testAllowsLoopbackLinkLocalAndOnLinkPrefixes]' started.
+Test Case '-[PVLibrarySharingTests.LANFilterTests testAllowsLoopbackLinkLocalAndOnLinkPrefixes]' passed (0.001 seconds).
+Test Case '-[PVLibrarySharingTests.LANFilterTests testBaseURLsPreferWiFiIPv4]' started.
+Test Case '-[PVLibrarySharingTests.LANFilterTests testBaseURLsPreferWiFiIPv4]' passed (0.000 seconds).
+Test Case '-[PVLibrarySharingTests.LANFilterTests testRefusesAddressesFromOutsideTheLAN]' started.
+Test Case '-[PVLibrarySharingTests.LANFilterTests testRefusesAddressesFromOutsideTheLAN]' passed (0.004 seconds).
+Test Suite 'LANFilterTests' passed at 2026-10-20 03:19:48.386.
+	 Executed 4 tests, with 0 failures (0 unexpected) in 0.009 (0.011) seconds
+Test Suite 'LibraryReceiveSerialExecutorTests' started at 2026-10-20 03:19:48.386.
+Test Case '-[PVLibrarySharingTests.LibraryReceiveSerialExecutorTests testCancelledOwnerHoldsLeaseUntilDelegateReturns]' started.
+Test Case '-[PVLibrarySharingTests.LibraryReceiveSerialExecutorTests testCancelledOwnerHoldsLeaseUntilDelegateReturns]' passed (0.019 seconds).
+Test Case '-[PVLibrarySharingTests.LibraryReceiveSerialExecutorTests testQueuedCancellationCompletesBeforeActiveDelegate]' started.
+Test Case '-[PVLibrarySharingTests.LibraryReceiveSerialExecutorTests testQueuedCancellationCompletesBeforeActiveDelegate]' passed (0.013 seconds).
+Test Suite 'LibraryReceiveSerialExecutorTests' passed at 2026-10-20 03:19:48.423.
+	 Executed 2 tests, with 0 failures (0 unexpected) in 0.032 (0.036) seconds
+Test Suite 'ListenerLoopbackTests' started at 2026-10-20 03:19:48.423.
+Test Case '-[PVLibrarySharingTests.ListenerLoopbackTests testIFlyCopyOverRealHTTP]' started.
+Test Case '-[PVLibrarySharingTests.ListenerLoopbackTests testIFlyCopyOverRealHTTP]' passed (0.510 seconds).
+Test Case '-[PVLibrarySharingTests.ListenerLoopbackTests testServesJSONBodiesKeepAliveAndRangedFilesOverRealSockets]' started.
+Test Case '-[PVLibrarySharingTests.ListenerLoopbackTests testServesJSONBodiesKeepAliveAndRangedFilesOverRealSockets]' passed (0.628 seconds).
+Test Suite 'ListenerLoopbackTests' passed at 2026-10-20 03:19:49.562.
+	 Executed 2 tests, with 0 failures (0 unexpected) in 1.138 (1.139) seconds
+Test Suite 'LocalLibraryIndexTests' started at 2026-10-20 03:19:49.562.
+Test Case '-[PVLibrarySharingTests.LocalLibraryIndexTests testMatchesUpperCaseLocalMD5]' started.
+Test Case '-[PVLibrarySharingTests.LocalLibraryIndexTests testMatchesUpperCaseLocalMD5]' passed (0.002 seconds).
+Test Case '-[PVLibrarySharingTests.LocalLibraryIndexTests testMultiFileImagesNeverMatch]' started.
+Test Case '-[PVLibrarySharingTests.LocalLibraryIndexTests testMultiFileImagesNeverMatch]' passed (0.001 seconds).
+Test Case '-[PVLibrarySharingTests.LocalLibraryIndexTests testUnknownSizeOnEitherSideStillMatches]' started.
+Test Case '-[PVLibrarySharingTests.LocalLibraryIndexTests testUnknownSizeOnEitherSideStillMatches]' passed (0.001 seconds).
+Test Suite 'LocalLibraryIndexTests' passed at 2026-10-20 03:19:49.566.
+	 Executed 3 tests, with 0 failures (0 unexpected) in 0.004 (0.005) seconds
+Test Suite 'PVLibraryDialectTests' started at 2026-10-20 03:19:49.566.
+Test Case '-[PVLibrarySharingTests.PVLibraryDialectTests testAskPerGamePollsTheManifestThenDeclines]' started.
+Test Case '-[PVLibrarySharingTests.PVLibraryDialectTests testAskPerGamePollsTheManifestThenDeclines]' passed (0.250 seconds).
+Test Case '-[PVLibrarySharingTests.PVLibraryDialectTests testBrowsesEverySharedSystemAndCopiesASet]' started.
+Test Case '-[PVLibrarySharingTests.PVLibraryDialectTests testBrowsesEverySharedSystemAndCopiesASet]' passed (0.331 seconds).
+Test Case '-[PVLibrarySharingTests.PVLibraryDialectTests testCatalogueChangingBetweenPagesStartsOver]' started.
+Test Case '-[PVLibrarySharingTests.PVLibraryDialectTests testCatalogueChangingBetweenPagesStartsOver]' passed (1.030 seconds).
+Test Case '-[PVLibrarySharingTests.PVLibraryDialectTests testFilesNeedAGrantedManifest]' started.
+Test Case '-[PVLibrarySharingTests.PVLibraryDialectTests testFilesNeedAGrantedManifest]' passed (0.123 seconds).
+Test Case '-[PVLibrarySharingTests.PVLibraryDialectTests testFilterIsSentAndAppliedLocallyToo]' started.
+Test Case '-[PVLibrarySharingTests.PVLibraryDialectTests testFilterIsSentAndAppliedLocallyToo]' passed (0.186 seconds).
+Test Case '-[PVLibrarySharingTests.PVLibraryDialectTests testFiveThousandGamesInPagesOfTwoHundred]' started.
+Test Case '-[PVLibrarySharingTests.PVLibraryDialectTests testFiveThousandGamesInPagesOfTwoHundred]' passed (7.246 seconds).
+Test Case '-[PVLibrarySharingTests.PVLibraryDialectTests testOtherDomainsSignaturesAreRefused]' started.
+Test Case '-[PVLibrarySharingTests.PVLibraryDialectTests testOtherDomainsSignaturesAreRefused]' passed (0.608 seconds).
+Test Case '-[PVLibrarySharingTests.PVLibraryDialectTests testPairingAnswers200Paired]' started.
+Test Case '-[PVLibrarySharingTests.PVLibraryDialectTests testPairingAnswers200Paired]' passed (0.819 seconds).
+Test Suite 'PVLibraryDialectTests' passed at 2026-10-20 03:20:00.168.
+	 Executed 8 tests, with 0 failures (0 unexpected) in 10.592 (10.602) seconds
+Test Suite 'PVLibraryFixtureTests' started at 2026-10-20 03:20:00.168.
+Test Case '-[PVLibrarySharingTests.PVLibraryFixtureTests testCatalogFixtureDecodesAndMaps]' started.
+Test Case '-[PVLibrarySharingTests.PVLibraryFixtureTests testCatalogFixtureDecodesAndMaps]' passed (0.028 seconds).
+Test Case '-[PVLibrarySharingTests.PVLibraryFixtureTests testManifestFixtureDecodesWithBothDecoders]' started.
+Test Case '-[PVLibrarySharingTests.PVLibraryFixtureTests testManifestFixtureDecodesWithBothDecoders]' passed (0.017 seconds).
+Test Suite 'PVLibraryFixtureTests' passed at 2026-10-20 03:20:00.223.
+	 Executed 2 tests, with 0 failures (0 unexpected) in 0.044 (0.055) seconds
+Test Suite 'PullManifestTests' started at 2026-10-20 03:20:00.223.
+Test Case '-[PVLibrarySharingTests.PullManifestTests testICubeManifestFixtureHasNoBIOSKey]' started.
+Test Case '-[PVLibrarySharingTests.PullManifestTests testICubeManifestFixtureHasNoBIOSKey]' passed (0.010 seconds).
+Test Case '-[PVLibrarySharingTests.PullManifestTests testIFlyPullFixtureKeepsGameFilesAndSkipsBIOSAndSaves]' started.
+Test Case '-[PVLibrarySharingTests.PullManifestTests testIFlyPullFixtureKeepsGameFilesAndSkipsBIOSAndSaves]' passed (0.012 seconds).
+Test Case '-[PVLibrarySharingTests.PullManifestTests testPrimaryFilePrefersPlaylistThenIndexThenFirst]' started.
+Test Case '-[PVLibrarySharingTests.PullManifestTests testPrimaryFilePrefersPlaylistThenIndexThenFirst]' passed (0.001 seconds).
+Test Case '-[PVLibrarySharingTests.PullManifestTests testPullManifestVersionOutsideOneIsRejected]' started.
+Test Case '-[PVLibrarySharingTests.PullManifestTests testPullManifestVersionOutsideOneIsRejected]' passed (0.054 seconds).
+Test Suite 'PullManifestTests' passed at 2026-10-20 03:20:00.333.
+	 Executed 4 tests, with 0 failures (0 unexpected) in 0.077 (0.110) seconds
+Test Suite 'PullTests' started at 2026-10-20 03:20:00.333.
+Test Case '-[PVLibrarySharingTests.PullTests testCopiesGameFilesSmallestFirstAndSkipsBIOSAndSaves]' started.
+Test Case '-[PVLibrarySharingTests.PullTests testCopiesGameFilesSmallestFirstAndSkipsBIOSAndSaves]' passed (0.138 seconds).
+Test Case '-[PVLibrarySharingTests.PullTests testFile401ReauthenticatesAndResumes]' started.
+Test Case '-[PVLibrarySharingTests.PullTests testFile401ReauthenticatesAndResumes]' passed (0.350 seconds).
+Test Case '-[PVLibrarySharingTests.PullTests testFile404WithCachedManifestPullsAgainOnce]' started.
+Test Case '-[PVLibrarySharingTests.PullTests testFile404WithCachedManifestPullsAgainOnce]' passed (0.131 seconds).
+Test Case '-[PVLibrarySharingTests.PullTests testICubeManifest404IsItemUnavailable]' started.
+Test Case '-[PVLibrarySharingTests.PullTests testICubeManifest404IsItemUnavailable]' passed (0.021 seconds).
+Test Case '-[PVLibrarySharingTests.PullTests testICubeManifestUsesKeyAndFileURLCarriesKeyAndPath]' started.
+Test Case '-[PVLibrarySharingTests.PullTests testICubeManifestUsesKeyAndFileURLCarriesKeyAndPath]' passed (0.048 seconds).
+Test Case '-[PVLibrarySharingTests.PullTests testIFlyPullPollsThroughApprovalAndSendsGameId]' started.
+Test Case '-[PVLibrarySharingTests.PullTests testIFlyPullPollsThroughApprovalAndSendsGameId]' passed (0.232 seconds).
+Test Case '-[PVLibrarySharingTests.PullTests testIFlyPullReauthenticatesOnceOn401]' started.
+Test Case '-[PVLibrarySharingTests.PullTests testIFlyPullReauthenticatesOnceOn401]' passed (0.030 seconds).
+Test Case '-[PVLibrarySharingTests.PullTests testIFlyPullStatusesMapToCopyErrors]' started.
+Test Case '-[PVLibrarySharingTests.PullTests testIFlyPullStatusesMapToCopyErrors]' passed (0.006 seconds).
+Test Case '-[PVLibrarySharingTests.PullTests testNoGameFilesIsNothingToCopy]' started.
+Test Case '-[PVLibrarySharingTests.PullTests testNoGameFilesIsNothingToCopy]' passed (0.011 seconds).
+Test Case '-[PVLibrarySharingTests.PullTests testProgressReportsBytesAndVerification]' started.
+Test Case '-[PVLibrarySharingTests.PullTests testProgressReportsBytesAndVerification]' passed (0.074 seconds).
+Test Case '-[PVLibrarySharingTests.PullTests testRangeIgnoredByServerRestartsFromZero]' started.
+Test Case '-[PVLibrarySharingTests.PullTests testRangeIgnoredByServerRestartsFromZero]' passed (0.036 seconds).
+Test Case '-[PVLibrarySharingTests.PullTests testResumeReusesCachedManifestWithoutAnotherPull]' started.
+Test Case '-[PVLibrarySharingTests.PullTests testResumeReusesCachedManifestWithoutAnotherPull]' passed (0.135 seconds).
+Test Case '-[PVLibrarySharingTests.PullTests testResumesFromPartialFileWithRange]' started.
+Test Case '-[PVLibrarySharingTests.PullTests testResumesFromPartialFileWithRange]' passed (0.134 seconds).
+Test Case '-[PVLibrarySharingTests.PullTests testShortBodyResumesWhereItStopped]' started.
+Test Case '-[PVLibrarySharingTests.PullTests testShortBodyResumesWhereItStopped]' passed (0.189 seconds).
+Test Case '-[PVLibrarySharingTests.PullTests testTamperedByteFailsAndDeletesThePartialFile]' started.
+Test Case '-[PVLibrarySharingTests.PullTests testTamperedByteFailsAndDeletesThePartialFile]' passed (0.117 seconds).
+Test Case '-[PVLibrarySharingTests.PullTests testTraversalPathIsRefusedBeforeAnyDownload]' started.
+Test Case '-[PVLibrarySharingTests.PullTests testTraversalPathIsRefusedBeforeAnyDownload]' passed (0.052 seconds).
+Test Case '-[PVLibrarySharingTests.PullTests testUnsatisfiableRangeStartsTheFileOver]' started.
+Test Case '-[PVLibrarySharingTests.PullTests testUnsatisfiableRangeStartsTheFileOver]' passed (0.204 seconds).
+Test Suite 'PullTests' passed at 2026-10-20 03:20:02.259.
+	 Executed 17 tests, with 0 failures (0 unexpected) in 1.907 (1.926) seconds
+Test Suite 'ReceiveSafetyTests' started at 2026-10-20 03:20:02.259.
+Test Case '-[PVLibrarySharingTests.ReceiveSafetyTests testCancellationAfterSuccessfulDelegateDoesNotFinalize]' started.
+Test Case '-[PVLibrarySharingTests.ReceiveSafetyTests testCancellationAfterSuccessfulDelegateDoesNotFinalize]' passed (0.032 seconds).
+Test Case '-[PVLibrarySharingTests.ReceiveSafetyTests testExistingSameSizeStagingFileIsHashedBeforeReuse]' started.
+Test Case '-[PVLibrarySharingTests.ReceiveSafetyTests testExistingSameSizeStagingFileIsHashedBeforeReuse]' passed (0.059 seconds).
+Test Case '-[PVLibrarySharingTests.ReceiveSafetyTests testHashedStagingFolderSymlinkIsRejectedBeforeManifestWrite]' started.
+Test Case '-[PVLibrarySharingTests.ReceiveSafetyTests testHashedStagingFolderSymlinkIsRejectedBeforeManifestWrite]' passed (0.012 seconds).
+Test Case '-[PVLibrarySharingTests.ReceiveSafetyTests testStagingFilesBaseSymlinkIsRejectedBeforeDownload]' started.
+Test Case '-[PVLibrarySharingTests.ReceiveSafetyTests testStagingFilesBaseSymlinkIsRejectedBeforeDownload]' passed (0.009 seconds).
+Test Case '-[PVLibrarySharingTests.ReceiveSafetyTests testStagingRejectsSymlinkAncestorWhenLeafDoesNotExist]' started.
+Test Case '-[PVLibrarySharingTests.ReceiveSafetyTests testStagingRejectsSymlinkAncestorWhenLeafDoesNotExist]' passed (0.006 seconds).
+Test Suite 'ReceiveSafetyTests' passed at 2026-10-20 03:20:02.381.
+	 Executed 5 tests, with 0 failures (0 unexpected) in 0.118 (0.122) seconds
+Test Suite 'StagingTests' started at 2026-10-20 03:20:02.381.
+Test Case '-[PVLibrarySharingTests.StagingTests testContainedURLRejectsEscapes]' started.
+Test Case '-[PVLibrarySharingTests.StagingTests testContainedURLRejectsEscapes]' passed (0.004 seconds).
+Test Case '-[PVLibrarySharingTests.StagingTests testContentRangeStartParses]' started.
+Test Case '-[PVLibrarySharingTests.StagingTests testContentRangeStartParses]' passed (0.003 seconds).
+Test Case '-[PVLibrarySharingTests.StagingTests testFolderNamesAreHashedPerPeerAndItem]' started.
+Test Case '-[PVLibrarySharingTests.StagingTests testFolderNamesAreHashedPerPeerAndItem]' passed (0.004 seconds).
+Test Case '-[PVLibrarySharingTests.StagingTests testSinkWritesNothingForAWrongRange]' started.
+Test Case '-[PVLibrarySharingTests.StagingTests testSinkWritesNothingForAWrongRange]' passed (0.004 seconds).
+Test Case '-[PVLibrarySharingTests.StagingTests testSweepRemovesHandedOffAndAbandonedFolders]' started.
+Test Case '-[PVLibrarySharingTests.StagingTests testSweepRemovesHandedOffAndAbandonedFolders]' passed (0.023 seconds).
+Test Suite 'StagingTests' passed at 2026-10-20 03:20:02.421.
+	 Executed 5 tests, with 0 failures (0 unexpected) in 0.039 (0.040) seconds
+Test Suite 'SystemMapTests' started at 2026-10-20 03:20:02.421.
+Test Case '-[PVLibrarySharingTests.SystemMapTests testCatalogueFiltersToPlayableSystems]' started.
+Test Case '-[PVLibrarySharingTests.SystemMapTests testCatalogueFiltersToPlayableSystems]' passed (0.001 seconds).
+Test Case '-[PVLibrarySharingTests.SystemMapTests testICubePlatforms]' started.
+Test Case '-[PVLibrarySharingTests.SystemMapTests testICubePlatforms]' passed (0.000 seconds).
+Test Case '-[PVLibrarySharingTests.SystemMapTests testIFlyPlatforms]' started.
+Test Case '-[PVLibrarySharingTests.SystemMapTests testIFlyPlatforms]' passed (0.000 seconds).
+Test Case '-[PVLibrarySharingTests.SystemMapTests testSystemsServed]' started.
+Test Case '-[PVLibrarySharingTests.SystemMapTests testSystemsServed]' passed (0.000 seconds).
+Test Suite 'SystemMapTests' passed at 2026-10-20 03:20:02.424.
+	 Executed 4 tests, with 0 failures (0 unexpected) in 0.002 (0.003) seconds
+Test Suite 'TXTRecordTests' started at 2026-10-20 03:20:02.424.
+Test Case '-[PVLibrarySharingTests.TXTRecordTests testDecodesLibraryAdvert]' started.
+Test Case '-[PVLibrarySharingTests.TXTRecordTests testDecodesLibraryAdvert]' passed (0.000 seconds).
+Test Case '-[PVLibrarySharingTests.TXTRecordTests testHandoffOnlyAdvertIsNotALibrary]' started.
+Test Case '-[PVLibrarySharingTests.TXTRecordTests testHandoffOnlyAdvertIsNotALibrary]' passed (0.000 seconds).
+Test Case '-[PVLibrarySharingTests.TXTRecordTests testPeerIdentityIsAppAndPid]' started.
+Test Case '-[PVLibrarySharingTests.TXTRecordTests testPeerIdentityIsAppAndPid]' passed (0.000 seconds).
+Test Case '-[PVLibrarySharingTests.TXTRecordTests testRequiresVersionAndSession]' started.
+Test Case '-[PVLibrarySharingTests.TXTRecordTests testRequiresVersionAndSession]' passed (0.000 seconds).
+Test Case '-[PVLibrarySharingTests.TXTRecordTests testServiceTypes]' started.
+Test Case '-[PVLibrarySharingTests.TXTRecordTests testServiceTypes]' passed (0.000 seconds).
+Test Case '-[PVLibrarySharingTests.TXTRecordTests testUnknownServiceTypeIsIgnored]' started.
+Test Case '-[PVLibrarySharingTests.TXTRecordTests testUnknownServiceTypeIsIgnored]' passed (0.000 seconds).
+Test Case '-[PVLibrarySharingTests.TXTRecordTests testURLCandidatesStopAtFirstGap]' started.
+Test Case '-[PVLibrarySharingTests.TXTRecordTests testURLCandidatesStopAtFirstGap]' passed (0.001 seconds).
+Test Suite 'TXTRecordTests' passed at 2026-10-20 03:20:02.429.
+	 Executed 7 tests, with 0 failures (0 unexpected) in 0.003 (0.005) seconds
+Test Suite 'PVLibrarySharingTests.xctest' passed at 2026-10-20 03:20:02.429.
+	 Executed 140 tests, with 0 failures (0 unexpected) in 23.052 (23.269) seconds
+Test Suite 'All tests' passed at 2026-10-20 03:20:02.429.
+	 Executed 140 tests, with 0 failures (0 unexpected) in 23.052 (23.273) seconds
+􀟈  Test run started.
+􀄵  Testing Library Version: 2084
+􀄵  Target Platform: arm64e-apple-macos14.0
+􁁛  Test run with 0 tests in 0 suites passed after 0.001 seconds.

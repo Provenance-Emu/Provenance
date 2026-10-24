@@ -1,0 +1,99 @@
+Building for debugging...
+[Computing dependencies]
+[Constructing description]
+[Pre-planning 1 / 66]
+[Planning 1 / 66]
+[Planning deferred tasks]
+[Finalizing plan]
+[Starting]
+[9 / 50]
+[13 / 50] NearbyImportHarness
+[22 / 50] BridgeTests-product
+[27 / 50]
+[28 / 51] NearbyImportHarness
+[28 / 53] NearbyImportHarness
+[33 / 87]
+[34 / 87]
+[36 / 87]
+[37 / 87]
+[38 / 87]
+[40 / 87]
+[43 / 87]
+[45 / 87]
+[46 / 87]
+[47 / 87]
+[50 / 87]
+[51 / 87]
+[52 / 87]
+[53 / 87]
+[54 / 87]
+[56 / 87]
+[59 / 87]
+[60 / 87]
+[61 / 87]
+[62 / 87]
+[64 / 87] NearbyImportHarness
+[72 / 87] NearbyImportHarness
+[74 / 87] NearbyImportHarness
+[75 / 87]
+[77 / 88] BridgeTests-product
+[82 / 126]
+[83 / 126]
+[85 / 126]
+[87 / 126]
+[88 / 126]
+[89 / 126]
+[90 / 126]
+[91 / 126]
+[92 / 126]
+[93 / 126]
+[95 / 126]
+[96 / 126]
+[97 / 126]
+[98 / 126]
+[99 / 126]
+[100 / 126]
+[101 / 126]
+[103 / 126]
+[104 / 126]
+[105 / 126]
+[106 / 126]
+[107 / 126]
+[108 / 126]
+[109 / 126]
+[110 / 126]
+[111 / 126]
+[112 / 126]
+[115 / 126] BridgeTests-product
+[120 / 126] BridgeTests-product
+[122 / 126] BridgeTests-product
+[123 / 126] BridgeTests-product
+[125 / 126] BridgeTests-product
+Build complete! (229.03 sec)
+Test Suite 'All tests' started at 2026-10-20 03:17:36.959.
+Test Suite 'BridgeTests.xctest' started at 2026-10-20 03:17:36.963.
+Test Suite 'NearbyImportCompletionTests' started at 2026-10-20 03:17:36.963.
+Test Case '-[BridgeTests.NearbyImportCompletionTests testActualSuccessWaitsForTerminal]' started.
+Test Case '-[BridgeTests.NearbyImportCompletionTests testActualSuccessWaitsForTerminal]' passed (0.008 seconds).
+Test Case '-[BridgeTests.NearbyImportCompletionTests testCancelledPendingCompletesAndLateAnswerIsHarmless]' started.
+Test Case '-[BridgeTests.NearbyImportCompletionTests testCancelledPendingCompletesAndLateAnswerIsHarmless]' passed (0.006 seconds).
+Test Case '-[BridgeTests.NearbyImportCompletionTests testCancelledProcessingRetainsOwnerUntilActualTerminal]' started.
+Test Case '-[BridgeTests.NearbyImportCompletionTests testCancelledProcessingRetainsOwnerUntilActualTerminal]' passed (0.002 seconds).
+Test Case '-[BridgeTests.NearbyImportCompletionTests testLiveDuplicateRemainsBlocked]' started.
+Test Case '-[BridgeTests.NearbyImportCompletionTests testLiveDuplicateRemainsBlocked]' passed (0.005 seconds).
+Test Case '-[BridgeTests.NearbyImportCompletionTests testReceiptRejectsChangedBytesWithSameSizeAndRestoredMtime]' started.
+Test Case '-[BridgeTests.NearbyImportCompletionTests testReceiptRejectsChangedBytesWithSameSizeAndRestoredMtime]' passed (0.009 seconds).
+Test Case '-[BridgeTests.NearbyImportCompletionTests testReceiptRequiresAllRegisteredFilesAndFreshSource]' started.
+Test Case '-[BridgeTests.NearbyImportCompletionTests testReceiptRequiresAllRegisteredFilesAndFreshSource]' passed (0.020 seconds).
+Test Case '-[BridgeTests.NearbyImportCompletionTests testTerminalHistoryDoesNotBlockRestoringPurgedROM]' started.
+Test Case '-[BridgeTests.NearbyImportCompletionTests testTerminalHistoryDoesNotBlockRestoringPurgedROM]' passed (0.002 seconds).
+Test Suite 'NearbyImportCompletionTests' passed at 2026-10-20 03:17:37.020.
+	 Executed 7 tests, with 0 failures (0 unexpected) in 0.052 (0.057) seconds
+Test Suite 'BridgeTests.xctest' passed at 2026-10-20 03:17:37.020.
+	 Executed 7 tests, with 0 failures (0 unexpected) in 0.052 (0.058) seconds
+Test Suite 'All tests' passed at 2026-10-20 03:17:37.020.
+	 Executed 7 tests, with 0 failures (0 unexpected) in 0.052 (0.061) seconds
+􀟈  Test run started.
+􀄵  Testing Library Version: 2084
+􀄵  Target Platform: arm64e-apple-macos14.0
+􁁛  Test run with 0 tests in 0 suites passed after 0.001 seconds.

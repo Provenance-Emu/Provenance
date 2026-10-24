@@ -26,6 +26,11 @@ struct NearbyLibrariesView: View {
                 } label: {
                     Label("Share This Library", systemImage: "square.and.arrow.up.on.square")
                 }
+                NavigationLink {
+                    AutomaticLibraryCopySettingsView()
+                } label: {
+                    Label("Automatic Game Copies", systemImage: "arrow.down.circle")
+                }
             }
 
             SwiftUI.Section {
@@ -258,9 +263,7 @@ struct NearbyPeerLibraryView: View {
         #if os(iOS)
         .navigationBarTitleDisplayMode(.inline)
         #endif
-        .onAppear {
-            if model.phase == .idle { model.load() }
-        }
+        .onAppear { model.appear() }
         .onDisappear { model.cancel() }
         .settingsSubpageTracking()
     }
@@ -400,6 +403,8 @@ private struct NearbyItemRow: View {
             return "Copying… \(Int(fraction * 100))% of \(size)"
         case .verifying:
             return "Checking the copy…"
+        case .completed:
+            return "Imported into your library."
         case .importing:
             return "Copied. Importing into your library…"
         case .failed(let message):
@@ -416,7 +421,7 @@ private struct NearbyItemRow: View {
         } else if copyState == .importing {
             Image(systemName: "tray.and.arrow.down.fill")
                 .foregroundStyle(.secondary)
-        } else if inLibrary {
+        } else if inLibrary || copyState == .completed {
             Label("In your library", systemImage: "checkmark.circle.fill")
                 .labelStyle(.titleAndIcon)
                 .font(.caption)

@@ -180,9 +180,13 @@ public actor ImportQueueActor {
     }
 
     func addImport(_ item: ImportQueueItem) {
+        guard !item.processingClaim.isCancelled else { return }
         // Check for duplicates before adding to prevent race conditions
         // This is especially important when DirectoryWatcher and extractAndImportArchive both try to add the same file
         let isDuplicate = queue.contains { existing in
+            // Terminal history must not block retrying a failed copy or restoring
+            // an evicted ROM from the same stable staging URL.
+            guard existing.status.blocksDuplicateProcessing else { return false }
             // Check if the URL is the same
             if existing.url == item.url {
                 return true
@@ -1032,6 +1036,21 @@ public final class GameImporter: GameImporting, ObservableObject {
 
         // Remove from queue
         await importQueueActor.removeImports(at: offsets)
+    }
+
+    /// Cancels only still-queued items owned by the caller. Stable IDs avoid
+    /// shifted queue indices; staged and library files are never deleted.
+    /// A processing snapshot must claim the same item before touching files.
+    public func cancelPendingImports(withIDs ids: Set<UUID>) async {
+        let queue = await importQueueActor.getQueue()
+        let cancelled = await MainActor.run {
+            queue.compactMap { item -> UUID? in
+                guard ids.contains(item.id), case .queued = item.status,
+                      item.cancelBeforeProcessing() else { return nil }
+                return item.id
+            }
+        }
+        for id in cancelled { await importQueueActor.removeImport(byID: id) }
     }
 
     // Public method to manually start processing if needed.
@@ -2370,6 +2389,8 @@ public final class GameImporter: GameImporting, ObservableObject {
 
     // Process a single ImportItem and update its status
     public func processItem(_ item: ImportQueueItem) async {
+        guard item.processingClaim.claim() else { return }
+        defer { item.processingClaim.finish() }
         let itemName = item.url.lastPathComponent
         ILOG("GameImportQueue - processing item in queue: \(itemName)")
 
@@ -4369,7 +4390,8 @@ public final class GameImporter: GameImporting, ObservableObject {
 
                 /// Check cache for game keys, but query Realm for actual file access to avoid thread issues
                 /// Extract primitive values from cached object before async operation
-                if let cachedGame = gamesCache[partialPath] ?? gamesCache[similarName] {
+                if !item.requiresContentBasedDuplicateCheck,
+                   let cachedGame = gamesCache[partialPath] ?? gamesCache[similarName] {
                     let cachedSystemId = cachedGame.systemIdentifier
                     let cachedGameId = cachedGame.id
 

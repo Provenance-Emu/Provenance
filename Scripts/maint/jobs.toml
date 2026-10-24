@@ -417,6 +417,30 @@ files = ["Scripts/dev/make_harness_rom.py"]
 needs = ["macos", "mise"]
 cli_only = true
 
+[jobs.import-queue-claim-tests]
+title = "Importer queue ownership tests"
+category = "Audits"
+run = ["python3", "Scripts/tests/test_import_queue_claim.py"]
+needs = ["macos"]
+
+[jobs.nearby-import-completion-tests]
+title = "Nearby import completion tests"
+category = "Audits"
+run = ["python3", "Scripts/tests/test_nearby_import_completion.py"]
+needs = ["macos"]
+
+[jobs.nearby-manual-lifecycle-tests]
+title = "Nearby manual receive lifecycle tests"
+category = "Audits"
+run = ["python3", "Scripts/tests/test_nearby_manual_lifecycle.py"]
+needs = ["macos"]
+
+[jobs.nearby-duplicate-admission-tests]
+title = "Nearby content-aware duplicate admission tests"
+category = "Audits"
+run = ["python3", "Scripts/tests/test_nearby_duplicate_admission.py"]
+needs = ["macos"]
+
 [jobs.ppsspp-ffmpeg]
 title = "Build PPSSPP legacy FFmpeg simulator slices"
 category = "Dev workspace"

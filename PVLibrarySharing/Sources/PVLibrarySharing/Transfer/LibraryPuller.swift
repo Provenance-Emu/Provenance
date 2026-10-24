@@ -65,10 +65,25 @@ public struct LibraryPuller: Sendable {
     public func pull(
         _ item: RemoteLibraryItem,
         from source: any LibrarySource,
+        manifest freshManifest: RemoteManifest? = nil,
         progress: @escaping @Sendable (LibraryPullProgress) -> Void
     ) async throws -> PulledGame {
+        try Task.checkCancellation()
         let folder = folder(for: item, from: source.app)
+        guard LibraryStaging.hasConfinedBase(folder) else { throw LibrarySharingError.unsafePath(folder.lastPathComponent) }
         try FileManager.default.createDirectory(at: folder, withIntermediateDirectories: true)
+        guard LibraryStaging.hasConfinedBase(folder) else { throw LibrarySharingError.unsafePath(folder.lastPathComponent) }
+        if let freshManifest {
+            guard freshManifest.itemId == item.id else { throw LibrarySharingError.itemUnavailable }
+            if let old = Self.cachedManifest(in: folder), old != freshManifest {
+                for file in old.gameFiles where !freshManifest.gameFiles.contains(file) {
+                    if let partial = LibraryStaging.containedURL(for: file.relativePath + ".part", in: folder) {
+                        try? FileManager.default.removeItem(at: partial)
+                    }
+                }
+            }
+            try Self.cache(freshManifest, in: folder)
+        }
         do {
             return try await pull(item, from: source, folder: folder, progress: progress)
         } catch LibrarySharingError.fileUnavailable where Self.cachedManifest(in: folder) != nil {
@@ -91,6 +106,7 @@ public struct LibraryPuller: Sendable {
             manifest = cached
         } else {
             manifest = try await source.pullManifest(for: item) { progress(.preparing($0)) }
+            try Task.checkCancellation()
             try Self.cache(manifest, in: folder)
         }
 
@@ -98,7 +114,8 @@ public struct LibraryPuller: Sendable {
         guard !games.isEmpty, let primary = manifest.primaryGameFile else { throw LibrarySharingError.nothingToCopy }
         var destinations: [String: URL] = [:]
         for file in games {
-            guard let url = LibraryStaging.containedURL(for: file.relativePath, in: folder) else {
+            guard let url = LibraryStaging.containedURL(for: file.relativePath, in: folder),
+                  LibraryStaging.containedURL(for: file.relativePath + ".part", in: folder) != nil else {
                 throw LibrarySharingError.unsafePath(file.relativePath)
             }
             destinations[file.relativePath] = url
@@ -125,6 +142,7 @@ public struct LibraryPuller: Sendable {
             bytesBefore += file.size
         }
 
+        try Task.checkCancellation()
         return PulledGame(
             folder: folder,
             gameFiles: games.compactMap { destinations[$0.relativePath] },
@@ -149,7 +167,8 @@ public struct LibraryPuller: Sendable {
     ) async throws {
         let manager = FileManager.default
         // A file in place was renamed there only after its hash matched.
-        if Self.size(of: destination) == file.size {
+        if Self.size(of: destination) == file.size,
+           (try? FileSHA256.hex(of: destination).lowercased()) == file.sha256.lowercased() {
             events(.bytesOnDisk(file.size))
             return
         }
@@ -170,6 +189,7 @@ public struct LibraryPuller: Sendable {
             let response = try await source.download(
                 file, of: manifest, to: partial, resumeOffset: offset
             ) { events(.bytesOnDisk($0)) }
+            try Task.checkCancellation()
             if response.status == 416 || response.writtenFrom == nil {
                 // Unsatisfiable or wrong range: start this file over.
                 try? manager.removeItem(at: partial)
@@ -187,6 +207,7 @@ public struct LibraryPuller: Sendable {
 
         events(.verifying)
         let actual = try FileSHA256.hex(of: partial)
+        try Task.checkCancellation()
         guard actual.caseInsensitiveCompare(file.sha256) == .orderedSame, Self.size(of: partial) == file.size else {
             try? manager.removeItem(at: partial)
             throw LibrarySharingError.checksumMismatch(file.fileName)
