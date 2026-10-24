@@ -111,7 +111,65 @@ struct MetricKitCrashReportTests {
         #expect(report.frames.isEmpty)
         #expect(report.culprit == nil)
         #expect(report.exceptionLabel == "no signal / exception 99")
-        #expect(report.fingerprint.last == "no-frames")
+        #expect(report.parseError?.hasPrefix("JSON unreadable") == true)
+        #expect(report.fingerprint.last == "unparsed-frames")
+        #expect(report.sentryTags["crash.frames"] == "unparsed")
         #expect(report.sentryTags["crash.build"] == nil)
+    }
+
+    /// MetricKit's nesting for a `depth`-frame stack, built as text: Swift
+    /// dictionaries this deep overflow the stack when serialized or freed.
+    private func nestedStackJSON(depth: Int) -> Data {
+        var frames = ""
+        for level in 0..<depth {
+            frames += "{\"binaryName\":\"PVFrame\",\"offsetIntoBinaryTextSegment\":\(level)"
+            frames += level < depth - 1 ? ",\"subFrames\":[" : "}"
+        }
+        frames += String(repeating: "]}", count: depth - 1)
+        return Data("{\"callStacks\":[{\"threadAttributed\":true,\"callStackRootFrames\":[\(frames)]}]}".utf8)
+    }
+
+    private func report(callStackTreeJSON json: Data) -> MetricKitCrashReport {
+        MetricKitCrashReport(
+            callStackTreeJSON: json,
+            exceptionType: 1,
+            exceptionCode: nil,
+            signal: 11,
+            terminationReason: nil,
+            build: nil
+        )
+    }
+
+    @Test("A deep stack flattens in caller order")
+    func flattensDeepStack() {
+        let depth = 200
+        let report = report(callStackTreeJSON: nestedStackJSON(depth: depth))
+        #expect(report.parseError == nil)
+        #expect(report.frames.map(\.offset) == (0..<UInt64(depth)).map { $0 })
+    }
+
+    /// `JSONSerialization` stops at 512 levels, about 250 frames: a
+    /// stack-overflow crash must come out tagged, not as a frameless crash.
+    @Test("A stack too deep for JSONSerialization is reported as unparsed")
+    func reportsTooDeepStack() {
+        let report = report(callStackTreeJSON: nestedStackJSON(depth: 2_000))
+        #expect(report.frames.isEmpty)
+        #expect(report.parseError?.hasPrefix("JSON unreadable") == true)
+        #expect(report.sentryTags["crash.frames"] == "unparsed")
+        #expect(report.fingerprint.last == "unparsed-frames")
+    }
+
+    @Test("A payload without call stacks says so")
+    func reportsMissingCallStacks() {
+        let report = MetricKitCrashReport(
+            callStackTreeJSON: Data("{}".utf8),
+            exceptionType: nil,
+            exceptionCode: nil,
+            signal: nil,
+            terminationReason: nil,
+            build: nil
+        )
+        #expect(report.parseError == "no callStacks")
+        #expect(report.frames.isEmpty)
     }
 }

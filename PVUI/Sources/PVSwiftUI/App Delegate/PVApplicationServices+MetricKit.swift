@@ -139,6 +139,9 @@ extension PVApplicationServices: MXMetricManagerSubscriber {
             terminationReason: crash.terminationReason,
             build: crash.metaData.applicationBuildVersion
         )
+        if let parseError = report.parseError {
+            Self.metricLog.warning("Crash call stack unparsed (\(parseError)); forwarding raw JSON only")
+        }
         let vmRegion = crash.virtualMemoryRegionInfo
         let objcReason = crash.exceptionReason?.composedMessage
         Self.whenSentryEnabled {
@@ -150,6 +153,7 @@ extension PVApplicationServices: MXMetricManagerSubscriber {
             details["termination_reason"] = report.terminationReason
             details["vm_region"] = vmRegion
             details["objc_reason"] = objcReason
+            details["parse_error"] = report.parseError
             event.context = ["metrickit_crash": details]
             SentrySDK.capture(event: event) { scope in
                 scope.addAttachment(Attachment(data: json, filename: "callStackTree.json", contentType: "application/json"))
