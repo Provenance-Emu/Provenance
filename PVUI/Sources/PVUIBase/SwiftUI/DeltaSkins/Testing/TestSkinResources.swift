@@ -1,5 +1,7 @@
 import Foundation
 import UIKit
+import SkinKitCore
+import SkinKitUI
 
 /// Resources for testing DeltaSkin functionality
 public enum TestSkinResources {

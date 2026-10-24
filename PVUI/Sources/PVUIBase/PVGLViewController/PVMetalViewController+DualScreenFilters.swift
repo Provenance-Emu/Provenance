@@ -15,6 +15,7 @@ import Metal
 import QuartzCore
 import simd
 import PVShaders
+import SkinKitCore
 
 extension PVMetalViewController {
 

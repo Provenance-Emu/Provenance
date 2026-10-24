@@ -7,6 +7,8 @@
 
 import SwiftUI
 import PVUIBase
+import SkinKitManager
+import SkinKitUI
 
 /// A view that displays a list of Delta emulator skins
 struct ContentView: View {

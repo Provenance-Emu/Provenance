@@ -1,53 +1,26 @@
 import Foundation
 import PVPrimitives
 import PVSystems
+import SkinKitCore
+import SkinKitManager
 
+extension SystemIdentifier {
+    /// The id SkinKit stores per-system skin picks under (the raw value, as before).
+    public var skinSystemID: SkinSystemID { SkinSystemID(rawValue) }
+}
+
+/// `SystemIdentifier` overloads of SkinKitManager's game-type queries. SkinKit takes the game type
+/// and catalog codes; these compute them from the system, as Provenance's queries did.
 public extension DeltaSkinManager {
     /// Get all skins for a specific system identifier
     /// - Parameter system: The system identifier
     /// - Returns: Array of skins compatible with the system
     func skins(for system: SystemIdentifier) async throws -> [any DeltaSkinProtocol] {
-        ILOG("skins: skins(for: \(system.rawValue)) called")
-        // Convert SystemIdentifier to DeltaSkinGameType
         guard let gameType = DeltaSkinGameType(systemIdentifier: system) else {
             WLOG("skins: No game type found for system \(system.rawValue)")
             return []
         }
-
-        // Get all skins and filter by game type
-        let allSkins = try await availableSkins()
-        ILOG("skins: Filtering \(allSkins.count) total skins for system \(system.rawValue)")
-
-        let requestedGroup = gameType.skinLayoutGroup
-        let requestedCodes = Set(system.relatedSkinCatalogSystemCodes)
-        /// Override codes from sidecars / catalog cache, keyed by skin identifier.
-        /// Lets us include skins whose `info.json.gameTypeIdentifier` is wrong but
-        /// whose catalog metadata says they belong to this system family.
-        let overrideCodes = await SkinSystemOverrideRegistry.shared.overrideCodesByIdentifier(for: allSkins)
-
-        let filtered = allSkins.filter { skin in
-            // Exact match
-            if skin.gameType == gameType {
-                return true
-            }
-
-            // Group-based match: skins in the same layout group are compatible
-            // (e.g. a Genesis skin works for Sega CD and 32X; a GBC skin works for GB)
-            if skin.gameType.skinLayoutGroup == requestedGroup {
-                return true
-            }
-
-            /// Authoritative override path: catalog metadata wins over a misconfigured
-            /// `gameTypeIdentifier` so SG-1000 skins that were saved with the wrong
-            /// game type still surface for the correct system family.
-            if let codes = overrideCodes[skin.identifier], !codes.isDisjoint(with: requestedCodes) {
-                return true
-            }
-
-            return false
-        }
-        ILOG("skins: Found \(filtered.count) skins for system \(system.rawValue)")
-        return filtered
+        return try await skins(for: gameType, catalogSystemCodes: Set(system.relatedSkinCatalogSystemCodes))
     }
 
     /// Get the currently selected skin for a system
@@ -55,83 +28,31 @@ public extension DeltaSkinManager {
     /// - Returns: The selected skin, or nil if none selected (also returns nil when the
     ///   selected skin is a case-companion skin that shouldn't be auto-loaded right now)
     func selectedSkin(for system: SystemIdentifier) async throws -> (any DeltaSkinProtocol)? {
-        ILOG("skins: selectedSkin(for: \(system.rawValue)) called")
-        // Get the selected skin identifier from centralized manager (includes session overrides)
-        let orientation: SkinOrientation = .portrait // Default to portrait, could be made dynamic
-        guard let selectedIdentifier = DeltaSkinSelectionManager.shared.effectiveSkinIdentifier(
-            for: system,
-            gameId: nil,
-            orientation: orientation
-        ) else {
-            ILOG("skins: No selected skin identifier found for system \(system.rawValue)")
+        guard let gameType = DeltaSkinGameType(systemIdentifier: system) else {
+            WLOG("skins: No game type found for system \(system.rawValue)")
             return nil
         }
-        ILOG("skins: Selected skin identifier for \(system.rawValue): \(selectedIdentifier)")
-
-        // If the saved preference is a companion skin and it shouldn't be auto-loaded
-        // (flag off or no case controller connected), skip it instead of showing the wrong skin
-        if !CaseControllerDetector.isAllowedInAutomaticSkinSelection(selectedIdentifier) {
-            ILOG("skins: Selected skin '\(selectedIdentifier)' is a companion skin not allowed for auto-selection, skipping")
-            return nil
-        }
-
-        // Find the skin with this identifier
-        let systemSkins = try await skins(for: system)
-        if let skin = systemSkins.first(where: { $0.identifier == selectedIdentifier }) {
-            ILOG("skins: Found selected skin '\(skin.name)' for system \(system.rawValue)")
-            return skin
-        } else {
-            WLOG("skins: Selected skin identifier '\(selectedIdentifier)' not found in available skins for system \(system.rawValue)")
-            return nil
-        }
+        return try await selectedSkin(for: system.skinSystemID, gameType: gameType,
+                                      catalogSystemCodes: Set(system.relatedSkinCatalogSystemCodes))
     }
 
     /// Get the default skin for a system (first available, sorted deterministically).
-    /// - Parameter system: The system identifier
-    /// - Returns: The default skin, or nil if none available
-    ///
-    /// `skins(for:)` ordering varies because the underlying availableSkins cache is
-    /// merged concurrently with SkinCatalogService refreshes — that meant the
-    /// "default" silently shifted every relaunch/resume when the user hadn't
-    /// explicitly chosen a skin. Sort by name (case-insensitive, locale-aware)
-    /// then by identifier so the fallback is stable across sessions.
     func defaultSkin(for system: SystemIdentifier) async throws -> (any DeltaSkinProtocol)? {
-        ILOG("skins: defaultSkin(for: \(system.rawValue)) called")
-        let systemSkins = try await skins(for: system)
-        let sorted = systemSkins.sorted { lhs, rhs in
-            let lhsName = lhs.name.lowercased()
-            let rhsName = rhs.name.lowercased()
-            if lhsName != rhsName { return lhsName < rhsName }
-            return lhs.identifier < rhs.identifier
-        }
-        if let skin = sorted.first(where: { CaseControllerDetector.isAllowedInAutomaticSkinSelection($0.identifier) }) {
-            ILOG("skins: Found default skin '\(skin.name)' for system \(system.rawValue)")
-            return skin
-        } else {
-            WLOG("skins: No default skin available for system \(system.rawValue)")
+        guard let gameType = DeltaSkinGameType(systemIdentifier: system) else {
+            WLOG("skins: No game type found for system \(system.rawValue)")
             return nil
         }
+        return try await defaultSkin(for: gameType, catalogSystemCodes: Set(system.relatedSkinCatalogSystemCodes))
     }
 
     /// Get the skin to use for a system (selected or default)
-    /// - Parameter system: The system identifier
-    /// - Returns: The skin to use, or nil if none available
     func skinToUse(for system: SystemIdentifier) async throws -> (any DeltaSkinProtocol)? {
-        ILOG("skins: skinToUse(for: \(system.rawValue)) called")
-        // Try to get selected skin first
-        if let selected = try await selectedSkin(for: system) {
-            ILOG("skins: Using selected skin '\(selected.name)' for system \(system.rawValue)")
-            return selected
+        guard let gameType = DeltaSkinGameType(systemIdentifier: system) else {
+            WLOG("skins: No game type found for system \(system.rawValue)")
+            return nil
         }
-
-        // Fall back to default skin
-        if let defaultSkin = try await defaultSkin(for: system) {
-            ILOG("skins: Using default skin '\(defaultSkin.name)' for system \(system.rawValue)")
-            return defaultSkin
-        }
-
-        WLOG("skins: No skin available for system \(system.rawValue)")
-        return nil
+        return try await skinToUse(for: system.skinSystemID, gameType: gameType,
+                                   catalogSystemCodes: Set(system.relatedSkinCatalogSystemCodes))
     }
 
     /// Get a skin for a specific system identifier (synchronous version)
@@ -142,7 +63,7 @@ public extension DeltaSkinManager {
         print("Looking for skin with identifier: \(skinIdentifier) for system: \(systemIdentifier)")
 
         // Get all available skins synchronously
-        let allSkins = try! await availableSkins()
+        guard let allSkins = try? await availableSkins() else { return nil }
 
         // Find a skin that matches the identifier
         let matchingSkin = allSkins.first { skin in
@@ -253,18 +174,8 @@ public extension DeltaSkinManager {
         return filteredSkins.compactMap { $0 as? DeltaSkin }
     }
 
-
     /// Get the default skin for a system
-    public func defaultSkin(for systemIdentifier: String) -> (any DeltaSkinProtocol)? {
-        return loadedSkins.first { skin in
-            let candidates = [skin.gameType.deltaIdentifierString, skin.gameType.manicIdentifierString].compactMap { $0?.lowercased() }
-            guard candidates.contains(systemIdentifier.lowercased()) else { return false }
-            return CaseControllerDetector.isAllowedInAutomaticSkinSelection(skin.identifier)
-        }
-    }
-
-    /// Get the default skin for a system
-    public func defaultSkin(for systemIdentifier: SystemIdentifier) -> (any DeltaSkinProtocol)? {
+    func defaultSkin(for systemIdentifier: SystemIdentifier) -> (any DeltaSkinProtocol)? {
         if let exactMatch = loadedSkins.first(where: {
             $0.gameType.systemIdentifier == systemIdentifier && CaseControllerDetector.isAllowedInAutomaticSkinSelection($0.identifier)
         }) {

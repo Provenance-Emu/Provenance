@@ -2,6 +2,7 @@ import Foundation
 import Testing
 import PVSystems
 @testable import PVTouchOverlay
+import SkinKitUI
 
 @Suite("Touch input classifier")
 struct TouchInputClassifierTests {

@@ -43,6 +43,8 @@ struct ProvenanceApp: App {
 #endif
 
     init() {
+        // SkinKit's hooks (storage, case skins, theme, settings) before anything touches a skin.
+        SkinKitSetup.configure()
         PVApplicationServices.shared.start()
     }
 
@@ -805,6 +807,7 @@ extension ProvenanceApp {
 }
 
 import CoreSpotlight
+import SkinKitManager
 extension ProvenanceApp {
     /// Force a reindexing of all Spotlight items
     func forceSpotlightReindexing() {

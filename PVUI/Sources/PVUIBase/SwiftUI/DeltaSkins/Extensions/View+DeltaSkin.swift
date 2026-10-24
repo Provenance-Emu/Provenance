@@ -1,5 +1,8 @@
 import SwiftUI
 import PVPrimitives
+import SkinKitCore
+import SkinKitManager
+import SkinKitUI
 
 public extension View {
     /// Apply a Delta skin controller overlay to this view
@@ -27,7 +30,7 @@ struct DeltaSkinControllerModifier: ViewModifier {
     let traits: DeltaSkinTraits
     let onButtonPress: (String) -> Void
 
-    @State private var skin: DeltaSkinProtocol?
+    @State private var skin: (any DeltaSkinProtocol)?
     @State private var isLoading = true
     @State private var error: Error?
 
@@ -37,7 +40,7 @@ struct DeltaSkinControllerModifier: ViewModifier {
             content
 
             // Controller overlay
-            if let skin = skin {
+            if let skin = skin?.renderable {
                 DeltaSkinButtonsView(
                     skin: skin,
                     traits: traits,

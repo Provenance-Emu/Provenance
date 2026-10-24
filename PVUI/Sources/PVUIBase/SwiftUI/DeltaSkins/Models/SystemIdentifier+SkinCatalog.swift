@@ -8,6 +8,7 @@
 import Foundation
 import PVPrimitives
 import PVSystems
+import SkinKitCore
 
 // MARK: - SystemIdentifier Skin Catalog Mapping
 

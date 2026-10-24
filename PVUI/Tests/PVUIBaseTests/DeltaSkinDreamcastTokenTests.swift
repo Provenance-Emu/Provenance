@@ -14,6 +14,7 @@ import UIKit
 import PVCoreBridge
 import PVSystems
 @testable import PVUIBase
+import SkinKitCore
 
 @Suite("Dreamcast skin tokens") @MainActor
 struct DeltaSkinDreamcastTokenTests {

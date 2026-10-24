@@ -1,109 +1,40 @@
-# DeltaSkins Implementation
+# DeltaSkins
 
-This folder contains the implementation of the DeltaSkins specification from [Delta-Docs](https://github.com/noah978/Delta-Docs/blob/master/skins/README.md).
+Provenance's controller skins follow the DeltaSkins specification from [Delta-Docs](https://github.com/noah978/Delta-Docs/blob/master/skins/README.md).
 
-## Key Features
+The skin code itself lives in [SkinKit](https://github.com/Provenance-Emu/SkinKit), which iFly and iCube share:
 
-- Full support for both PDF and PNG assets
-- Screen groups for multi-screen systems (DS)
-- Button mapping with directional inputs
-- Debug overlay for skin development
-- Asset size validation
-- Screen and button configuration validation
-- Support for all iOS devices and orientations
+| SkinKit product | What it holds |
+|---|---|
+| `SkinKitCore` | `info.json` model, decoding, trait and layout resolution |
+| `SkinCatalogKit` | Skin catalog models, catalog service, store sections |
+| `SkinKitManager` | Import, scan, storage, per-game and per-system skin selection |
+| `SkinKitUI` | Skin rendering, `DeltaSkinView`, skin pickers, catalog store views |
 
-## Components
+Change skin behavior in SkinKit, then bump the revision in `PVUI/Package.swift`, `PVTouchOverlay/Package.swift` and `Provenance.xcworkspace`'s `Package.resolved`.
 
-- `Models/` - Core data structures and parsing
-- `Views/` - SwiftUI views for displaying skins
-- `Protocols/` - Interface definitions
-- `Resources/` - Test skins and assets
+## What stays in Provenance
+
+This folder keeps the code that touches emulator internals or app-only types:
+
+- `SkinKitSetup.swift`: wires SkinKit's hooks (storage location, case-controller skins, settings, systems, theme, catalog seed). Every app calls `SkinKitSetup.configure()` at launch, before anything touches a skin.
+- `Models/DeltaSkinInputHandler.swift`: forwards skin input to the emulator core. It conforms to SkinKitUI's `DeltaSkinInputHandling`.
+- `SystemIdentifier` mappings (`DeltaSkinGameType+SystemIdentifier`, `SystemIdentifier+SkinCatalog`, the `+SystemIdentifier` overloads of the manager and selection queries).
+- Emulator views: `Views/Display/`, `Views/Components/` (container, light gun, hardware switches, viewport bridge), `Views/Deprecated/`.
+- `CaseControllerSkinCoordinator`, `DeltaSkinDefaults`, the GameCube / Wii token tables, the skin preview cache (`PVMediaCache`), and the AI enhancer.
 
 ## Usage
 
-### Displaying a Skin
-
-To display a skin in your view:
-
-```
-DeltaSkinScreensView(
-    skin: skin,
-    traits: DeltaSkinTraits(
-        device: .iphone,
-        displayType: .standard,
-        orientation: .portrait
-    ),
-    containerSize: view.bounds.size
+```swift
+DeltaSkinView(
+    skin: skin,                      // any DeltaSkinRenderable
+    traits: DeltaSkinTraits(device: .iphone, displayType: .standard, orientation: .portrait),
+    inputHandler: inputHandler,      // any DeltaSkinInputHandling
+    onViewportFrameChange: { frame in core.viewportLayoutDelegate?.viewportFrameDidUpdate(frame) }
 )
+.deltaSkinInputHandler(inputHandler)  // for DeltaSkinScreensView inside it
 ```
 
-### Listing Available Skins
+Pickers take SkinKit values built from Provenance's types: `SystemSkinSelectionView(system: systemIdentifier.deltaSkinSystem, game: game.deltaSkinGameContext)`.
 
-To show a grid of available skins:
-
-```
-DeltaSkinListView(
-    traits: DeltaSkinTraits(
-        device: .iphone,
-        displayType: .standard,
-        orientation: .portrait
-    ),
-    gameType: "com.rileytestut.delta.game.gbc"
-)
-```
-
-### Debug Mode
-
-Enable debug mode to show button mappings and screen frames:
-
-```
-DeltaSkinScreensView(skin: skin, traits: traits, containerSize: size)
-    .environment(\.debugSkinMappings, true)
-```
-
-
-## Testing
-
-The UITesting app provides two main testing interfaces:
-
-1. DeltaSkinTestView
-   - Test individual skins
-   - Try different device configurations
-   - Validate skin layouts
-   - Debug button mappings
-   - View screen configurations
-
-2. DeltaSkinListView
-   - Browse all available skins
-   - Filter by game type
-   - Test different device configurations
-   - Preview skins in a grid layout
-
-## Validation
-
-The implementation includes validation for:
-- Asset sizes for different devices
-- Screen configurations
-- Button mappings
-- Input configurations
-- Extended edges
-- Game screen frames
-
-## Advanced Features
-
-When `FeatureFlag.advancedSkinFeatures` is enabled:
-- CoreImage filters for screens
-- Debug overlays
-- Screen group translucency
-- Extended touch areas
-
-## Supported Systems
-
-- Game Boy Color (GBC)
-- Game Boy Advance (GBA)
-- Nintendo DS (NDS)
-- Super Nintendo (SNES)
-- Sega Genesis
-- Nintendo 64 (N64)
-
-Each system has specific screen configurations and default sizes handled by the implementation.
+Enable the debug overlay with `.environment(\.debugSkinMappings, true)`.

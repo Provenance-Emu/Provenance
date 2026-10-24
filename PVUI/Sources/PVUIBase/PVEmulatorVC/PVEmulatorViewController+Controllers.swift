@@ -4,6 +4,7 @@ import GameController
 import PVCoreBridge
 import PVSupport
 import PVSettings
+import SkinKitCore
 #if canImport(SteamController)
 import SteamController
 #endif

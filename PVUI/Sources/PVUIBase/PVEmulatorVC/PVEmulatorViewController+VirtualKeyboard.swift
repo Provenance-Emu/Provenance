@@ -1,3 +1,4 @@
+import SkinKitCore
 // PVEmulatorViewController+VirtualKeyboard.swift
 // PVUI
 //

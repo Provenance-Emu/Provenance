@@ -40,6 +40,9 @@ let package = Package(
         .package(path: "../PVPrimitives"),
         .package(url: "https://github.com/Provenance-Emu/PVSystems.git", from: "1.0.0"),
         .package(url: "https://github.com/Provenance-Emu/PVLookup.git", from: "1.0.0"),
+        /// Skin model, manager, catalog and skin views, shared with iFly and iCube.
+        /// SkinKit has no tags yet, so it is pinned by revision.
+        .package(url: "https://github.com/Provenance-Emu/SkinKit", revision: "bdd638d5fe7a18362abef0b068e67f9b4ca103a0"),
         .package(path: "../PVLogging"),
         .package(path: "../PVPatreon"),
         .package(path: "../PVSupport"),
@@ -128,6 +131,10 @@ let package = Package(
             dependencies: [
                 .product(name: "PVSystems", package: "PVSystems"),
                 .product(name: "PVLookup", package: "PVLookup"),
+                .product(name: "SkinKitCore", package: "SkinKit"),
+                .product(name: "SkinCatalogKit", package: "SkinKit"),
+                .product(name: "SkinKitManager", package: "SkinKit"),
+                .product(name: "SkinKitUI", package: "SkinKit"),
                 "ActivityIndicatorView",
                 "AnimatedGradient",
                 "FloatingButton",
@@ -176,7 +183,6 @@ let package = Package(
                 .process("Resources/Assets.xcassets"),
                 .copy("Resources/PrivacyInfo.xcprivacy"),
                 .copy("Resources/catalog_seed.json"),
-                .copy("Resources/system-native-resolutions.json"),
                 .copy("Resources/DefaultSkins"),
                 // Offline wiki navigation (SUMMARY.md); see ProvenanceWiki.
                 .copy("Resources/WikiContent"),
@@ -208,6 +214,10 @@ let package = Package(
             name: "PVUIBaseTests",
             dependencies: [
                 .product(name: "PVSystems", package: "PVSystems"),
+                .product(name: "SkinKitCore", package: "SkinKit"),
+                .product(name: "SkinCatalogKit", package: "SkinKit"),
+                .product(name: "SkinKitManager", package: "SkinKit"),
+                .product(name: "SkinKitUI", package: "SkinKit"),
                 "PVUIBase",
                 "PVCoreBridge",
                 "PVLogging",
@@ -278,6 +288,10 @@ let package = Package(
             dependencies: [
                 .product(name: "PVSystems", package: "PVSystems"),
                 .product(name: "PVLookup", package: "PVLookup"),
+                .product(name: "SkinKitCore", package: "SkinKit"),
+                .product(name: "SkinCatalogKit", package: "SkinKit"),
+                .product(name: "SkinKitManager", package: "SkinKit"),
+                .product(name: "SkinKitUI", package: "SkinKit"),
                 "PVUIBase",
                 "PVUIKit",
                 .product(name: "PVWebServerObjC", package: "PVWebServer"),

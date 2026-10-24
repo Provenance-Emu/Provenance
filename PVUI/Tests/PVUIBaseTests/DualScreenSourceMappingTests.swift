@@ -12,6 +12,7 @@ import PVShaders
 import CoreGraphics
 import CoreImage
 import XCTest
+import SkinKitCore
 
 final class DualScreenSourceMappingTests: XCTestCase {
 

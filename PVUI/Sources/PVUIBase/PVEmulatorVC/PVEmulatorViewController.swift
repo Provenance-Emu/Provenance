@@ -28,6 +28,9 @@ import PVThemes
 import SwiftUI
 import PVArchiving
 import PVFileSystem
+import SkinKitCore
+import SkinKitManager
+import SkinKitUI
 #if canImport(PVJIT)
 import JITManager
 #endif
