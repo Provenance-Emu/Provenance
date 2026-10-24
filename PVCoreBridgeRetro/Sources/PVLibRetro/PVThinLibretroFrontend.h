@@ -420,6 +420,9 @@ FOUNDATION_EXPORT NSNotificationName const PVEmulatorCoreDidFailToStartNotificat
 /// Testing: run one frame's netpacket work on the calling thread.
 - (void)_testRunNetpacketFrame;
 
+/// Testing: deliver an environment command as the core would from inside retro_run.
+- (BOOL)_testHandleEnvironmentCommand:(unsigned)cmd data:(void *)data;
+
 // MARK: Utility
 
 /// Probe a core dylib without fully loading it — reads retro_get_system_info.
