@@ -143,6 +143,17 @@ public struct BatchArtworkMatchingView: View {
 
     // MARK: - UI Components
 
+    /// A filter switch: the retro toggle on tvOS, a `retroPink` system switch elsewhere.
+    @ViewBuilder
+    private func filterToggle<Label: View>(isOn: Binding<Bool>, @ViewBuilder label: @escaping () -> Label) -> some View {
+        #if os(tvOS)
+        ThemedToggle(isOn: isOn, label: label)
+        #else
+        Toggle(isOn: isOn, label: label)
+            .toggleStyle(SwitchToggleStyle(tint: .retroPink))
+        #endif
+    }
+
     /// Filter controls for the view
     private var filterControls: some View {
         VStack(alignment: .leading, spacing: 12) {
@@ -154,13 +165,10 @@ public struct BatchArtworkMatchingView: View {
                 .padding(.bottom, 4)
 
             // Include games with original artwork toggle
-            Toggle(isOn: $includeGamesWithOriginalArtwork) {
+            filterToggle(isOn: $includeGamesWithOriginalArtwork) {
                 Text("Include games with original artwork")
                     .foregroundColor(.white)
             }
-            #if !os(tvOS)
-            .toggleStyle(SwitchToggleStyle(tint: .retroPink))
-            #endif
             .onChange(of: includeGamesWithOriginalArtwork) { _, _ in
                 Task {
                     await loadGamesNeedingArtwork()
@@ -175,7 +183,7 @@ public struct BatchArtworkMatchingView: View {
                     .foregroundColor(.retroBlue)
 
                 ForEach(ArtworkSource.allCases) { source in
-                    Toggle(isOn: Binding(
+                    filterToggle(isOn: Binding(
                         get: { enabledSources.contains(source) },
                         set: { enabled in setSourceEnabled(source, enabled) }
                     )) {
@@ -183,9 +191,6 @@ public struct BatchArtworkMatchingView: View {
                             .font(.system(size: 14))
                             .foregroundColor(.white)
                     }
-                    #if !os(tvOS)
-                    .toggleStyle(SwitchToggleStyle(tint: .retroPink))
-                    #endif
                     // Prevent disabling the last remaining source — keep Toggle greyed out so
                     // the user understands it can't be deselected rather than seeing a snap-back.
                     .disabled(enabledSources.contains(source) && enabledSources.count == 1)
@@ -698,7 +703,11 @@ struct GameArtworkRow: View {
                         .foregroundColor(isSelected ? .retroPink : .gray)
                         .font(.system(size: 20))
                 }
+                #if os(tvOS)
+                .retroFocusButtonStyle(focusScale: 1.1, focusBorderWidth: 2.5, cornerRadius: 6)
+                #else
                 .buttonStyle(PlainButtonStyle())
+                #endif
             }
 
             // Game info

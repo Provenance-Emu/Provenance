@@ -85,7 +85,7 @@ public struct PVLogSessionBrowserView: View {
 
     public var body: some View {
         ZStack {
-            Color.black.ignoresSafeArea()
+            LogBackground()
 
             VStack(spacing: 0) {
                 // Status bar
@@ -158,14 +158,31 @@ public struct PVLogSessionBrowserView: View {
                             .strokeBorder(viewModel.isLoggingEnabled ? RetroTheme.retroPink : RetroTheme.retroBlue, lineWidth: 1)
                     )
             }
-            .buttonStyle(.plain)
+            .retroFocusButtonStyle(cornerRadius: 4, showBorder: false)
         }
         .padding(.horizontal, 16)
+        .tvOSSettingsHorizontalPadding()
         .padding(.vertical, 10)
         .background(Color.white.opacity(0.03))
     }
 
+    @ViewBuilder
     private var fileList: some View {
+        #if os(tvOS)
+        ScrollView {
+            LazyVStack(spacing: 12) {
+                ForEach(viewModel.logFiles) { entry in
+                    Button { selectedEntry = entry } label: {
+                        fileRow(entry)
+                    }
+                    .retroFocusButtonStyle(focusScale: 1.02, cornerRadius: 12)
+                }
+            }
+            .tvOSSettingsHorizontalPadding()
+            .padding(.vertical, 24)
+        }
+        .focusSection()
+        #else
         List {
             ForEach(viewModel.logFiles) { entry in
                 fileRow(entry)
@@ -174,11 +191,10 @@ public struct PVLogSessionBrowserView: View {
                 for i in offsets { viewModel.deleteFile(viewModel.logFiles[i]) }
             }
         }
-        #if !os(tvOS)
         .scrollContentBackground(.hidden)
-        #endif
         .background(Color.black)
         .listStyle(.plain)
+        #endif
     }
 
     private func fileRow(_ entry: PVLogSessionViewModel.SessionLogEntry) -> some View {
@@ -207,15 +223,19 @@ public struct PVLogSessionBrowserView: View {
 
             Spacer()
 
+            #if os(tvOS)
+            // The whole row is the button on tvOS; a nested button would take focus away from it.
+            Image(systemName: "doc.text.magnifyingglass")
+                .foregroundColor(RetroTheme.retroPink)
+                .font(.system(size: 14))
+            #else
             HStack(spacing: 12) {
-#if !os(tvOS)
                 ShareLink(item: entry.url) {
                     Image(systemName: "square.and.arrow.up")
                         .foregroundColor(RetroTheme.retroBlue)
                         .font(.system(size: 14))
                 }
                 .buttonStyle(.plain)
-#endif
                 Button { selectedEntry = entry } label: {
                     Image(systemName: "doc.text.magnifyingglass")
                         .foregroundColor(RetroTheme.retroPink)
@@ -223,12 +243,15 @@ public struct PVLogSessionBrowserView: View {
                 }
                 .buttonStyle(.plain)
             }
+            #endif
         }
         .padding(.vertical, 8)
+        #if os(tvOS)
+        .padding(.horizontal, 16)
+        .background(RoundedRectangle(cornerRadius: 12).fill(Color.white.opacity(0.04)))
+        #else
         .listRowBackground(Color.black.opacity(0.01))
-#if os(tvOS)
-        .onTapGesture { selectedEntry = entry }
-#endif
+        #endif
     }
 
     @ToolbarContentBuilder
@@ -266,6 +289,19 @@ public struct PVLogSessionBrowserView: View {
     }
 }
 
+// MARK: - Background
+
+/// Retrowave grid on tvOS, plain black elsewhere.
+private struct LogBackground: View {
+    var body: some View {
+        #if os(tvOS)
+        RetroSettingsBackground()
+        #else
+        Color.black.ignoresSafeArea()
+        #endif
+    }
+}
+
 // MARK: - Log File Viewer Sheet
 
 private struct LogFileViewerSheet: View {
@@ -277,7 +313,7 @@ private struct LogFileViewerSheet: View {
     var body: some View {
         NavigationStack {
             ZStack {
-                Color.black.ignoresSafeArea()
+                LogBackground()
                 if isLoading {
                     ProgressView().tint(RetroTheme.retroPink)
                 } else {

@@ -13,6 +13,7 @@ import PVLibrary
 import PVRealm
 import PVLogging
 import PVThemes
+import PVUIBase
 
 /// Manages controller mapping profiles for a given `GCController`.
 ///
@@ -58,10 +59,92 @@ struct ControllerProfilesView: View {
     // MARK: - Body
 
     var body: some View {
+        content
+            .navigationTitle(controller.vendorName ?? "Controller Profiles")
+            #if os(tvOS)
+            .onExitCommand { dismiss() }
+            #else
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
+                    EditButton()
+                }
+            }
+            #endif
+            .onAppear(perform: reloadProfiles)
+            .alert("New Profile", isPresented: $showNewProfileAlert) {
+                TextField("Profile name", text: $newProfileName)
+                Button("Save", action: saveNewProfile)
+                Button("Cancel", role: .cancel) { newProfileName = "" }
+            } message: {
+                Text("Enter a name for this button mapping profile.")
+            }
+            .alert("Rename Profile", isPresented: $showRenameAlert) {
+                TextField("Profile name", text: $renameText)
+                Button("Rename", action: commitRename)
+                Button("Cancel", role: .cancel) { profileToRename = nil }
+            } message: {
+                Text("Enter a new name.")
+            }
+            .alert("Error", isPresented: $showError) {
+                Button("OK", role: .cancel) {}
+            } message: {
+                Text(errorMessage ?? "An unknown error occurred.")
+            }
+            .settingsSubpageTracking()
+    }
+
+    // MARK: - Content
+
+    private var emptyStateText: some View {
+        Text("No saved profiles yet. Use the button below to save your current button mappings as a named profile.")
+    }
+
+    #if os(tvOS)
+    private var content: some View {
+        ZStack {
+            RetroSettingsBackground()
+
+            ScrollView {
+                VStack(alignment: .leading, spacing: 16) {
+                    if profiles.isEmpty {
+                        emptyStateText
+                            .font(.retroSettingsRowSubtitle)
+                            .foregroundColor(.secondary)
+                    } else {
+                        RetroSettingsSectionHeader(icon: "person.crop.rectangle.stack", title: "Saved Profiles")
+
+                        ForEach(profiles, id: \.id) { profile in
+                            profileRow(profile)
+                        }
+
+                        Text("Select a profile to activate it. Only one profile can be active per scope.")
+                            .font(.retroSettingsRowSubtitle)
+                            .foregroundColor(.secondary)
+                    }
+
+                    RetroSettingsDivider()
+
+                    RetroSettingsActionButton(
+                        title: "Save Current Mappings as Profile\u{2026}",
+                        icon: "plus.circle",
+                        color: accentColor
+                    ) {
+                        showNewProfileAlert = true
+                    }
+                }
+                .tvOSSettingsHorizontalPadding()
+                .padding(.vertical, 24)
+            }
+        }
+        .focusSection()
+    }
+    #else
+    private var content: some View {
         List {
             if profiles.isEmpty {
                 Section {
-                    Text("No saved profiles yet. Use the button below to save your current button mappings as a named profile.")
+                    emptyStateText
                         .font(.subheadline)
                         .foregroundColor(.secondary)
                         .padding(.vertical, 8)
@@ -88,42 +171,43 @@ struct ControllerProfilesView: View {
                 }
             }
         }
-        .navigationTitle(controller.vendorName ?? "Controller Profiles")
-        #if os(tvOS)
-        .onExitCommand { dismiss() }
-        #endif
-        #if !os(tvOS)
-        .navigationBarTitleDisplayMode(.inline)
-        .toolbar {
-            ToolbarItem(placement: .topBarTrailing) {
-                EditButton()
-            }
-        }
-        #endif
-        .onAppear(perform: reloadProfiles)
-        .alert("New Profile", isPresented: $showNewProfileAlert) {
-            TextField("Profile name", text: $newProfileName)
-            Button("Save", action: saveNewProfile)
-            Button("Cancel", role: .cancel) { newProfileName = "" }
-        } message: {
-            Text("Enter a name for this button mapping profile.")
-        }
-        .alert("Rename Profile", isPresented: $showRenameAlert) {
-            TextField("Profile name", text: $renameText)
-            Button("Rename", action: commitRename)
-            Button("Cancel", role: .cancel) { profileToRename = nil }
-        } message: {
-            Text("Enter a new name.")
-        }
-        .alert("Error", isPresented: $showError) {
-            Button("OK", role: .cancel) {}
-        } message: {
-            Text(errorMessage ?? "An unknown error occurred.")
-        }
-        .settingsSubpageTracking()
     }
+    #endif
 
     // MARK: - Row
+
+    private var primaryTextColor: Color {
+        #if os(tvOS)
+        themeManager.currentPalette.settingsCellText?.swiftUIColor
+            ?? themeManager.currentPalette.gameLibraryText.swiftUIColor
+        #else
+        .primary
+        #endif
+    }
+
+    private var rowTitleFont: Font {
+        #if os(tvOS)
+        .retroSettingsRowTitle
+        #else
+        .body
+        #endif
+    }
+
+    private var rowDetailFont: Font {
+        #if os(tvOS)
+        .retroSettingsRowSubtitle
+        #else
+        .caption
+        #endif
+    }
+
+    private var rowMetaFont: Font {
+        #if os(tvOS)
+        .retroSettingsRowSubtitle
+        #else
+        .caption2
+        #endif
+    }
 
     @ViewBuilder
     private func profileRow(_ profile: PVControllerProfile) -> some View {
@@ -136,20 +220,20 @@ struct ControllerProfilesView: View {
 
                     VStack(alignment: .leading, spacing: 4) {
                         Text(profile.name)
-                            .font(.body)
-                            .foregroundColor(.primary)
+                            .font(rowTitleFont)
+                            .foregroundColor(primaryTextColor)
 
                         Text(scopeLabel(for: profile))
-                            .font(.caption)
+                            .font(rowDetailFont)
                             .foregroundColor(.secondary)
 
                         Text("\(profile.mappings.count) mapping\(profile.mappings.count == 1 ? "" : "s")")
-                            .font(.caption2)
+                            .font(rowMetaFont)
                             .foregroundColor(.secondary)
 
                         if let hex = profile.lightBarColorHex?.trimmingCharacters(in: .whitespacesAndNewlines), !hex.isEmpty {
                             Text("Light: \(hex)")
-                                .font(.caption2)
+                                .font(rowMetaFont)
                                 .foregroundColor(.secondary)
                         }
                     }
@@ -157,12 +241,19 @@ struct ControllerProfilesView: View {
                     Spacer(minLength: 8)
 
                     Text(profile.lastModifiedDate, style: .relative)
-                        .font(.caption2)
+                        .font(rowMetaFont)
                         .foregroundColor(.secondary)
                 }
+                .tvOSRowInset()
                 .contentShape(Rectangle())
             }
-            .buttonStyle(.plain)
+            .retroFocusButtonStyle(focusScale: 1.03, focusBorderWidth: 2.5, cornerRadius: 12)
+            #if os(tvOS)
+            .contextMenu {
+                Button("Rename") { startRename(profile) }
+                Button("Delete", role: .destructive) { delete(profile) }
+            }
+            #endif
 
             if controllerSupportsLightBar {
                 NavigationLink {
@@ -171,11 +262,17 @@ struct ControllerProfilesView: View {
                     Image(systemName: "light.max")
                         .foregroundColor(accentColor)
                         .accessibilityLabel(String(localized: "Light bar color"))
+                        .tvOSRowInset()
                 }
-                .buttonStyle(.plain)
+                .retroFocusButtonStyle(focusScale: 1.08, focusBorderWidth: 2.5, cornerRadius: 12)
             }
         }
-        #if !os(tvOS)
+        #if os(tvOS)
+        .background(
+            RoundedRectangle(cornerRadius: 12)
+                .fill(Color.black.opacity(0.3))
+        )
+        #else
         .swipeActions(edge: .leading) {
             Button("Rename") { startRename(profile) }
                 .tint(accentColor)
@@ -226,6 +323,13 @@ struct ControllerProfilesView: View {
             showProfileError(error)
         }
     }
+
+    #if os(tvOS)
+    private func delete(_ profile: PVControllerProfile) {
+        guard let index = profiles.firstIndex(where: { $0.id == profile.id }) else { return }
+        deleteProfiles(at: IndexSet(integer: index))
+    }
+    #endif
 
     private func deleteProfiles(at offsets: IndexSet) {
         let db = RomDatabase.sharedInstance

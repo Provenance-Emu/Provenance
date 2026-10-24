@@ -24,6 +24,7 @@ public struct WikiHelpView: View {
         }
         .navigationTitle("Help & Wiki")
         #if os(tvOS)
+        .background { RetroSettingsBackground() }
         .focusSection()
         .onExitCommand { dismiss() }
         #endif
@@ -50,15 +51,43 @@ public struct WikiHelpView: View {
             Text(message)
                 .foregroundStyle(.secondary)
                 .multilineTextAlignment(.center)
-            Button("Retry") {
-                Task { await viewModel.loadNavigationTree() }
-            }
+            retryButton
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .padding()
     }
 
+    @ViewBuilder
+    private var retryButton: some View {
+        #if os(tvOS)
+        RetroSettingsActionButton(title: "Retry", icon: "arrow.clockwise") {
+            Task { await viewModel.loadNavigationTree() }
+        }
+        .frame(maxWidth: 480)
+        #else
+        Button("Retry") {
+            Task { await viewModel.loadNavigationTree() }
+        }
+        #endif
+    }
+
+    @ViewBuilder
     private func navigationList(tree: WikiNavigationTree) -> some View {
+        #if os(tvOS)
+        ScrollView {
+            tvOSRows {
+                ForEach(tree.sections) { section in
+                    if !section.title.isEmpty {
+                        RetroSettingsSectionHeader(icon: "book", title: section.title)
+                            .padding(.top, 12)
+                    }
+                    ForEach(section.items) { item in
+                        tvOSNavItemRow(item)
+                    }
+                }
+            }
+        }
+        #else
         List {
             ForEach(tree.sections) { section in
                 if section.title.isEmpty {
@@ -75,11 +104,10 @@ public struct WikiHelpView: View {
                 }
             }
         }
-        #if os(tvOS)
-        .listStyle(.grouped)
         #endif
     }
 
+    #if !os(tvOS)
     private func navItemRow(_ item: WikiNavItem) -> AnyView {
         if item.children.isEmpty {
             return AnyView(
@@ -88,14 +116,6 @@ public struct WikiHelpView: View {
                 }
             )
         } else {
-            #if os(tvOS)
-            // tvOS: navigate to an intermediate list for items with children
-            return AnyView(
-                NavigationLink(destination: wikiSubList(item: item)) {
-                    Label(item.title, systemImage: iconForPath(item.path))
-                }
-            )
-            #else
             return AnyView(
                 DisclosureGroup {
                     ForEach(item.children) { child in
@@ -107,33 +127,57 @@ public struct WikiHelpView: View {
                     }
                 }
             )
-            #endif
+        }
+    }
+    #endif
+
+    #if os(tvOS)
+    /// Retrowave row stack shared by the root list and the intermediate sub-lists.
+    private func tvOSRows<Content: View>(@ViewBuilder content: () -> Content) -> some View {
+        VStack(alignment: .leading, spacing: 12) {
+            content()
+        }
+        .tvOSSettingsHorizontalPadding()
+        .padding(.vertical, 24)
+    }
+
+    private func tvOSRow<Destination: View>(title: String, icon: String, destination: Destination) -> some View {
+        NavigationLink(destination: destination) {
+            SettingsRow(title: title, icon: .sfSymbol(icon))
+        }
+        .retroFocusButtonStyle(showBorder: false)
+    }
+
+    /// Items with children open an intermediate list; leaf items open the page.
+    @ViewBuilder
+    private func tvOSNavItemRow(_ item: WikiNavItem) -> some View {
+        if item.children.isEmpty {
+            tvOSRow(title: item.title, icon: iconForPath(item.path),
+                    destination: WikiPageView(path: item.path, title: item.title))
+        } else {
+            tvOSRow(title: item.title, icon: iconForPath(item.path),
+                    destination: wikiSubList(item: item))
         }
     }
 
-    #if os(tvOS)
     private func wikiSubList(item: WikiNavItem) -> AnyView {
         AnyView(
-            List {
-                // Parent page link
-                NavigationLink(destination: WikiPageView(path: item.path, title: item.title)) {
-                    Label(item.title, systemImage: "doc.text")
-                }
-                // Children
-                ForEach(item.children) { child in
-                    if child.children.isEmpty {
-                        NavigationLink(destination: WikiPageView(path: child.path, title: child.title)) {
-                            Label(child.title, systemImage: iconForPath(child.path))
-                        }
-                    } else {
-                        NavigationLink(destination: wikiSubList(item: child)) {
-                            Label(child.title, systemImage: iconForPath(child.path))
+            ZStack {
+                RetroSettingsBackground()
+                ScrollView {
+                    tvOSRows {
+                        // Parent page link
+                        tvOSRow(title: item.title, icon: "doc.text",
+                                destination: WikiPageView(path: item.path, title: item.title))
+                        // Children
+                        ForEach(item.children) { child in
+                            tvOSNavItemRow(child)
                         }
                     }
                 }
             }
+            .focusSection()
             .navigationTitle(item.title)
-            .listStyle(.grouped)
         )
     }
     #endif

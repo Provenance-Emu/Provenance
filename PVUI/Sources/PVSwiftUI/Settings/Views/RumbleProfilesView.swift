@@ -13,6 +13,7 @@ import PVSettings
 import Defaults
 import PVThemes
 import PVLogging
+import PVUIBase
 #if canImport(UIKit)
 import UIKit
 #endif
@@ -76,6 +77,8 @@ struct RumbleProfilesView: View {
         }
         #if os(tvOS)
         .listStyle(.plain)
+        .background { RetroSettingsBackground() }
+        .tvOSSettingsHorizontalPadding()
         #else
         .listStyle(.insetGrouped)
         #endif
@@ -137,6 +140,16 @@ struct RumbleProfilesView: View {
 
     // MARK: - Sections
 
+    @ViewBuilder
+    private func sectionHeader(_ title: String, icon: String) -> some View {
+        #if os(tvOS)
+        RetroSettingsSectionHeader(icon: icon, title: title)
+        #else
+        Label(title, systemImage: icon)
+            .font(.headline)
+        #endif
+    }
+
     /// Section listing every built-in system that supports rumble with a profile picker.
     @ViewBuilder
     private var systemProfilesSection: some View {
@@ -149,17 +162,9 @@ struct RumbleProfilesView: View {
                     customPresets: customPresets,
                     accentColor: accentColor
                 )
-                #if os(tvOS)
-                .buttonStyle(.card)
-                .retroThemedFocus(cornerRadius: 12)
-                #endif
             }
         } header: {
-            Label("System Profiles", systemImage: "gamecontroller.fill")
-                .font(.headline)
-                #if os(tvOS)
-                .foregroundColor(.retroPink)
-                #endif
+            sectionHeader("System Profiles", icon: "gamecontroller.fill")
         } footer: {
             Text("Override the default haptic profile used for each system. Custom presets appear alongside the built-in options.")
                 .font(.caption)
@@ -178,17 +183,9 @@ struct RumbleProfilesView: View {
                     customPresets: customPresets,
                     accentColor: accentColor
                 )
-                #if os(tvOS)
-                .buttonStyle(.card)
-                .retroThemedFocus(cornerRadius: 12)
-                #endif
             }
         } header: {
-            Label("Controller Type Overrides", systemImage: "waveform.path")
-                .font(.headline)
-                #if os(tvOS)
-                .foregroundColor(.retroPink)
-                #endif
+            sectionHeader("Controller Type Overrides", icon: "waveform.path")
         } footer: {
             Text("These overrides apply for a specific controller type regardless of system, and take priority over system overrides.")
                 .font(.caption)
@@ -212,6 +209,9 @@ struct RumbleProfilesView: View {
                         }
                     )
                 ) {
+                    #if os(tvOS)
+                    SettingsRow(title: preset.name, subtitle: presetSummary(preset))
+                    #else
                     HStack {
                         VStack(alignment: .leading, spacing: 2) {
                             Text(preset.name)
@@ -221,7 +221,6 @@ struct RumbleProfilesView: View {
                                 .foregroundColor(.secondary)
                         }
                         Spacer()
-                        #if !os(tvOS)
                         Button {
                             presetToExport = preset
                             showExportSheet = true
@@ -230,10 +229,18 @@ struct RumbleProfilesView: View {
                                 .foregroundColor(accentColor)
                         }
                         .buttonStyle(.borderless)
-                        #endif
+                    }
+                    #endif
+                }
+                #if os(tvOS)
+                .retroFocusButtonStyle(showBorder: false)
+                .contextMenu {
+                    Button("Delete", role: .destructive) {
+                        presetToDelete = preset
+                        showDeleteConfirm = true
                     }
                 }
-                #if !os(tvOS)
+                #else
                 .swipeActions(edge: .trailing, allowsFullSwipe: false) {
                     Button(role: .destructive) {
                         presetToDelete = preset
@@ -243,32 +250,32 @@ struct RumbleProfilesView: View {
                     }
                 }
                 #endif
-                #if os(tvOS)
-                .buttonStyle(.card)
-                .retroThemedFocus(cornerRadius: 12)
-                #endif
             }
 
+            #if os(tvOS)
+            RetroSettingsActionButton(title: "New Custom Preset", icon: "plus.circle", color: accentColor) {
+                showNewPresetAlert = true
+            }
+            #else
             Button {
                 showNewPresetAlert = true
             } label: {
                 Label("New Custom Preset", systemImage: "plus.circle")
                     .foregroundColor(accentColor)
             }
-            #if os(tvOS)
-            .buttonStyle(.card)
-            .retroThemedFocus(cornerRadius: 12)
             #endif
         } header: {
-            Label("Custom Presets", systemImage: "slider.horizontal.3")
-                .font(.headline)
-                #if os(tvOS)
-                .foregroundColor(.retroPink)
-                #endif
+            sectionHeader("Custom Presets", icon: "slider.horizontal.3")
         } footer: {
+            #if os(tvOS)
+            Text("Custom presets can be applied to any system or controller. Long-press a preset to delete it.")
+                .font(.caption)
+                .foregroundColor(.secondary)
+            #else
             Text("Custom presets can be applied to any system or controller. Swipe left to delete.")
                 .font(.caption)
                 .foregroundColor(.secondary)
+            #endif
         }
     }
 
@@ -284,22 +291,20 @@ struct RumbleProfilesView: View {
                     .foregroundColor(accentColor)
             }
             #endif
+            #if os(tvOS)
+            RetroSettingsActionButton(title: "Reset All Overrides to Defaults", icon: "arrow.counterclockwise", color: .red) {
+                resetAllOverrides()
+            }
+            #else
             Button {
                 resetAllOverrides()
             } label: {
                 Label("Reset All Overrides to Defaults", systemImage: "arrow.counterclockwise")
                     .foregroundColor(.red)
             }
-            #if os(tvOS)
-            .buttonStyle(.card)
-            .retroThemedFocus(cornerRadius: 12)
             #endif
         } header: {
-            Label("Import / Export", systemImage: "arrow.up.arrow.down.circle")
-                .font(.headline)
-                #if os(tvOS)
-                .foregroundColor(.retroPink)
-                #endif
+            sectionHeader("Import / Export", icon: "arrow.up.arrow.down.circle")
         } footer: {
             Text("Presets are exported as .rumble.json files and can be shared with other users.")
                 .font(.caption)
@@ -399,6 +404,51 @@ struct RumbleProfilesView: View {
     }
 }
 
+// MARK: - RumblePresetChoiceView (tvOS)
+
+#if os(tvOS)
+/// Retro single-choice page for picking a rumble profile: the system Picker is clipped and unstyled on tvOS.
+/// Picking a row stores it and pops back.
+private struct RumblePresetChoiceView: View {
+    let title: String
+    let icon: String
+    let options: [(id: String, label: String)]
+    @Binding var selection: String
+
+    @Environment(\.dismiss) private var dismiss
+
+    var body: some View {
+        ZStack {
+            RetroSettingsBackground()
+
+            ScrollView {
+                VStack(alignment: .leading, spacing: 12) {
+                    RetroSettingsSectionHeader(icon: icon, title: title)
+
+                    ForEach(options, id: \.id) { option in
+                        RetroSettingsPickerRow(
+                            symbolName: "waveform.path",
+                            title: option.label,
+                            subtitle: "",
+                            isSelected: selection == option.id
+                        ) {
+                            selection = option.id
+                            dismiss()
+                        }
+                    }
+                }
+                .tvOSSettingsHorizontalPadding()
+                .padding(.vertical, 24)
+            }
+        }
+        .navigationTitle(title)
+        .focusSection()
+        .onExitCommand { dismiss() }
+        .settingsSubpageTracking()
+    }
+}
+#endif
+
 // MARK: - SystemProfileRow
 
 private struct SystemProfileRow: View {
@@ -440,14 +490,12 @@ private struct SystemProfileRow: View {
 
     var body: some View {
         #if os(tvOS)
-        Picker(selection: pickerBinding) {
-            ForEach(allOptions, id: \.id) { option in
-                Text(option.label).tag(option.id)
-            }
+        NavigationLink {
+            RumblePresetChoiceView(title: row.displayName, icon: row.icon, options: allOptions, selection: pickerBinding)
         } label: {
-            Label(row.displayName, systemImage: row.icon)
+            SettingsRow(title: row.displayName, value: currentLabel, icon: .sfSymbol(row.icon))
         }
-        .padding(.vertical, 2)
+        .retroFocusButtonStyle(showBorder: false)
         #else
         HStack {
             Image(systemName: row.icon)
@@ -533,14 +581,12 @@ private struct ControllerOverrideRow: View {
 
     var body: some View {
         #if os(tvOS)
-        Picker(selection: pickerBinding) {
-            ForEach(allOptions, id: \.id) { option in
-                Text(option.label).tag(option.id)
-            }
+        NavigationLink {
+            RumblePresetChoiceView(title: row.displayName, icon: row.icon, options: allOptions, selection: pickerBinding)
         } label: {
-            Label(row.displayName, systemImage: row.icon)
+            SettingsRow(title: row.displayName, value: currentLabel, icon: .sfSymbol(row.icon))
         }
-        .padding(.vertical, 2)
+        .retroFocusButtonStyle(showBorder: false)
         #else
         HStack {
             Image(systemName: row.icon)
@@ -636,7 +682,7 @@ struct RumblePresetEditorView: View {
                         .onSubmit { save() }
                 }
             } header: {
-                Text("Preset Name")
+                sectionHeader("Preset Name", icon: "textformat")
             }
 
             Section {
@@ -673,7 +719,7 @@ struct RumblePresetEditorView: View {
                     displayMultiplier: 1
                 )
             } header: {
-                Text("Parameters")
+                sectionHeader("Parameters", icon: "slider.horizontal.3")
             } footer: {
                 Text("Changes are saved automatically when you leave this screen.")
                     .font(.caption)
@@ -687,11 +733,13 @@ struct RumblePresetEditorView: View {
                 }
                 .listRowBackground(Color.clear)
             } header: {
-                Text("Preview")
+                sectionHeader("Preview", icon: "eye")
             }
         }
         #if os(tvOS)
         .listStyle(.plain)
+        .background { RetroSettingsBackground() }
+        .tvOSSettingsHorizontalPadding()
         #else
         .listStyle(.insetGrouped)
         #endif
@@ -705,6 +753,15 @@ struct RumblePresetEditorView: View {
         .navigationBarTitleDisplayMode(.inline)
         #endif
         .onDisappear { save() }
+    }
+
+    @ViewBuilder
+    private func sectionHeader(_ title: String, icon: String) -> some View {
+        #if os(tvOS)
+        RetroSettingsSectionHeader(icon: icon, title: title)
+        #else
+        Text(title)
+        #endif
     }
 
     @ViewBuilder

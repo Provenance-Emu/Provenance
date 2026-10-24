@@ -119,8 +119,8 @@ public struct ControllerGuideView: View {
                 wikiSection
             }
             .listStyle(.plain)
-            // Indent from left edge to account for the tvOS side-menu bar
-            .padding(.leading, 60)
+            // Indent from the edges to account for the tvOS side-menu bar
+            .tvOSSettingsHorizontalPadding()
         }
         .navigationTitle("Controller Guide")
         .focusSection()
@@ -562,13 +562,25 @@ public struct ControllerGuideView: View {
         Section {
             NavigationLink(destination: WikiPageView(path: "info/controllers-and-controls/README.md", title: "Controllers & Controls").settingsSubpageTracking()) {
                 Label("Controllers & Controls", systemImage: "books.vertical.fill")
+                    .tvOSRowInset()
             }
+            #if os(tvOS)
+            .retroFocusButtonStyle(focusScale: 1.03, focusBorderWidth: 2.5, cornerRadius: 12)
+            #endif
             NavigationLink(destination: WikiPageView(path: "info/controllers-and-controls/bluetooth-controllers.md", title: "Bluetooth Controllers").settingsSubpageTracking()) {
                 Label("Bluetooth Controller Setup", systemImage: "dot.radiowaves.left.and.right")
+                    .tvOSRowInset()
             }
+            #if os(tvOS)
+            .retroFocusButtonStyle(focusScale: 1.03, focusBorderWidth: 2.5, cornerRadius: 12)
+            #endif
             NavigationLink(destination: WikiPageView(path: "info/controllers-and-controls/icade-controllers.md", title: "iCade Controllers").settingsSubpageTracking()) {
                 Label("iCade / 8Bitdo Setup", systemImage: "keyboard")
+                    .tvOSRowInset()
             }
+            #if os(tvOS)
+            .retroFocusButtonStyle(focusScale: 1.03, focusBorderWidth: 2.5, cornerRadius: 12)
+            #endif
         } header: {
             sectionHeader(icon: "questionmark.circle", title: "Help & Wiki")
         } footer: {
@@ -579,14 +591,16 @@ public struct ControllerGuideView: View {
 
     // MARK: Helpers
 
+    @ViewBuilder
     private func sectionHeader(icon: String, title: String) -> some View {
+        #if os(tvOS)
+        RetroSettingsSectionHeader(icon: icon, title: title)
+        #else
         HStack(spacing: 6) {
             Image(systemName: icon)
             Text(title)
         }
         .font(.headline)
-        #if os(tvOS)
-        .foregroundColor(.retroPink)
         #endif
     }
 }

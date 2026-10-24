@@ -308,9 +308,7 @@ private struct FeatureFlagRow: View {
             Spacer(minLength: 4)
 
             // Right: toggle
-            Toggle("", isOn: $isEnabled)
-                .labelsHidden()
-                .tint(RetroTheme.retroPurple)
+            ThemedToggle(isOn: $isEnabled) { EmptyView() }
         }
     }
 
@@ -670,9 +668,7 @@ private struct UserDefaultRow: View {
             }
             Spacer(minLength: 4)
 #if os(tvOS)
-            Toggle("", isOn: $isOn)
-                .labelsHidden()
-                .tint(RetroTheme.retroPurple)
+            ThemedToggle(isOn: $isOn) { EmptyView() }
 #else
             Toggle("", isOn: $isOn)
                 .toggleStyle(RetroTheme.RetroToggleStyle())

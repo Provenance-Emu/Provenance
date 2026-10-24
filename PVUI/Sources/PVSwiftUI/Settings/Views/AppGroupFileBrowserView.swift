@@ -13,23 +13,6 @@ import PVLogging
 import PVSettings
 import Defaults
 
-/// A view modifier that applies the appropriate picker style based on OS version
-struct PickerStyleModifier: ViewModifier {
-    func body(content: Content) -> some View {
-        #if os(tvOS)
-            if #available(tvOS 17.0, *) {
-                content.pickerStyle(MenuPickerStyle())
-            } else {
-                // Fallback for older tvOS versions
-                content.pickerStyle(DefaultPickerStyle())
-            }
-        #else
-            // On iOS, MenuPickerStyle is available on all supported versions
-            content.pickerStyle(MenuPickerStyle())
-        #endif
-    }
-}
-
 /// A view that allows browsing the App Group container files, local app storage, and iCloud directory
 public struct AppGroupFileBrowserView: View {
     @Environment(\.dismiss) private var dismiss
@@ -43,6 +26,17 @@ public struct AppGroupFileBrowserView: View {
         case iCloudStorage = "iCloud"
 
         var id: String { self.rawValue }
+
+        #if os(tvOS)
+        /// SF Symbol shown in the tvOS source picker
+        var symbolName: String {
+            switch self {
+            case .appGroup: return "externaldrive"
+            case .localAppStorage: return "internaldrive"
+            case .iCloudStorage: return "icloud"
+            }
+        }
+        #endif
 
         /// Get the root URL for this directory source
         func getRootURL() -> URL? {
@@ -91,6 +85,10 @@ public struct AppGroupFileBrowserView: View {
     /// iCloud availability
     @State private var iCloudAvailable = false
 
+    #if os(tvOS)
+    private static let sourceRowSpacing: CGFloat = 12
+    #endif
+
     // MARK: - Initialization
 
     public init() {
@@ -125,22 +123,19 @@ public struct AppGroupFileBrowserView: View {
 
                     Spacer()
 
+                    #if !os(tvOS)
                     // Directory source picker
                     Picker("Source", selection: $directorySource) {
-                        ForEach(DirectorySource.allCases) { source in
-                            if source != .iCloudStorage || iCloudAvailable {
-                                Text(source.rawValue).tag(source)
-                            }
+                        ForEach(availableSources) { source in
+                            Text(source.rawValue).tag(source)
                         }
                     }
-                    .modifier(PickerStyleModifier())
-                    .onChange(of: directorySource) { newSource in
-                        switchDirectorySource(to: newSource)
-                    }
+                    .pickerStyle(.menu)
                     .foregroundColor(.retroPink)
                     .padding(8)
                     .background(Color.retroPurple.opacity(0.3))
                     .cornerRadius(8)
+                    #endif
 
                     // Go up button - larger for tvOS
                     Button(action: navigateUp) {
@@ -155,12 +150,28 @@ public struct AppGroupFileBrowserView: View {
                     }
                     .disabled(isRootDirectory)
                     #if os(tvOS)
-                    .buttonStyle(CardButtonStyle())
-                    .retroThemedFocus(cornerRadius: 8)
+                    .retroFocusButtonStyle(focusScale: 1.04, cornerRadius: 8)
                     .padding(.horizontal)
                     #endif
                 }
                 .padding(.horizontal)
+
+                #if os(tvOS)
+                // Directory source picker
+                HStack(spacing: Self.sourceRowSpacing) {
+                    ForEach(availableSources) { source in
+                        RetroSettingsPickerRow(
+                            symbolName: source.symbolName,
+                            title: source.rawValue,
+                            subtitle: "",
+                            isSelected: directorySource == source
+                        ) {
+                            directorySource = source
+                        }
+                    }
+                }
+                .padding(.horizontal)
+                #endif
 
                 // Current path
                 #if os(tvOS)
@@ -179,8 +190,7 @@ public struct AppGroupFileBrowserView: View {
                                     .background(Color.retroPurple.opacity(0.3))
                                     .cornerRadius(4)
                             }
-                            .buttonStyle(PlainButtonStyle())
-                            .retroThemedFocus(focusScale: 1.05, cornerRadius: 4)
+                            .retroFocusButtonStyle(focusScale: 1.05, focusBorderWidth: 2.5, cornerRadius: 4)
 
                             if component != pathComponents.last {
                                 Image(systemName: "chevron.right")
@@ -216,8 +226,7 @@ public struct AppGroupFileBrowserView: View {
                                     .background(Color.black.opacity(0.5))
                                     .cornerRadius(10)
                             }
-                            .buttonStyle(CardButtonStyle())
-                            .retroThemedFocus(cornerRadius: 10)
+                            .retroFocusButtonStyle(focusScale: 1.04, focusBorderWidth: 2.5, cornerRadius: 10)
                         }
                     }
                     .padding()
@@ -261,6 +270,9 @@ public struct AppGroupFileBrowserView: View {
             checkICloudAvailability()
             loadDirectoryContents()
         }
+        .onChange(of: directorySource) { _, newSource in
+            switchDirectorySource(to: newSource)
+        }
         .navigationTitle("App Group Files")
         #if os(tvOS)
         .focusSection()
@@ -273,6 +285,11 @@ public struct AppGroupFileBrowserView: View {
                 .settingsSheetDetachedFromSubpageDepth()
                 #endif
         }
+    }
+
+    /// Directory sources offered to the user (iCloud only when available)
+    private var availableSources: [DirectorySource] {
+        DirectorySource.allCases.filter { $0 != .iCloudStorage || iCloudAvailable }
     }
 
     // MARK: - Helper Methods
@@ -535,26 +552,6 @@ struct DirectoryItemRow: View {
     }
 }
 
-#if os(tvOS)
-// Custom button style for tvOS
-struct CardButtonStyle: ButtonStyle {
-    func makeBody(configuration: Configuration) -> some View {
-        configuration.label
-            .scaleEffect(configuration.isPressed ? 1.1 : 1.0)
-            .brightness(configuration.isPressed ? 0.1 : 0)
-            .animation(.easeInOut(duration: 0.2), value: configuration.isPressed)
-            .background(
-                RoundedRectangle(cornerRadius: 10)
-                    .fill(Color.clear)
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 10)
-                            .stroke(Color.retroPink.opacity(configuration.isPressed ? 0.8 : 0.3), lineWidth: 3)
-                    )
-            )
-    }
-}
-#endif
-
 // MARK: - File Contents View
 
 /// A view for displaying file contents
@@ -588,7 +585,7 @@ struct FileContentsView: View {
                         .foregroundColor(.retroPink)
                     }
                     #if os(tvOS)
-                    .buttonStyle(CardButtonStyle())
+                    .retroFocusButtonStyle(focusScale: 1.04, cornerRadius: 8)
                     .padding(.horizontal)
                     #endif
                 }

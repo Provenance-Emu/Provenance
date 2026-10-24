@@ -104,6 +104,7 @@ public struct ExternalEmulatorMigrationView: View {
                     #endif
                 }
                 .padding(.horizontal, 16)
+                .tvOSSettingsHorizontalPadding()
                 .padding(.vertical, 24)
             }
         }
@@ -320,7 +321,7 @@ public struct ExternalEmulatorMigrationView: View {
                         .stroke(Color.blue.opacity(0.2), lineWidth: 1)
                 )
             }
-            .buttonStyle(.plain)
+            .retroFocusButtonStyle(focusScale: 1.03)
         }
     }
 
@@ -434,7 +435,7 @@ private struct EmulatorRowView: View {
                     .stroke(Color.retroBlue.opacity(0.2), lineWidth: 1)
             )
         }
-        .buttonStyle(.plain)
+        .retroFocusButtonStyle(focusScale: 1.03)
     }
 }
 
@@ -486,6 +487,7 @@ struct EmulatorMigrationGuideView: View {
                     saveFormatNote
                 }
                 .padding(.horizontal, 20)
+                .tvOSSettingsHorizontalPadding()
                 .padding(.vertical, 24)
             }
         }
@@ -706,6 +708,7 @@ struct ManualFileImportGuideView: View {
                     namingTipBox
                 }
                 .padding(.horizontal, 20)
+                .tvOSSettingsHorizontalPadding()
                 .padding(.vertical, 24)
             }
         }

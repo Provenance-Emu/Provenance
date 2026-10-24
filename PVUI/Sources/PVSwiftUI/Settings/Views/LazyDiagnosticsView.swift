@@ -42,7 +42,7 @@ public struct LazyDiagnosticsView: View {
                         .foregroundColor(.retroPink)
                 }
             }
-            .buttonStyle(PlainButtonStyle())
+            .retroFocusButtonStyle(focusScale: 1.02, cornerRadius: 8)
 
             if isExpanded {
                 // Container info

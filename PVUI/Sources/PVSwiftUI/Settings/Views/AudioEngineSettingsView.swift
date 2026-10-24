@@ -1,6 +1,7 @@
 import SwiftUI
 import PVUIBase
 import Defaults
+import PVThemes
 import PVCoreAudio
 import PVAudio
 
@@ -15,31 +16,34 @@ struct AudioEngineSettingsView: View {
     @Default(.auEffectsChain) var auEffectsChain
     @Default(.auFiltersEnabled) var auFiltersEnabled
 
+    private static let sectionSpacing: CGFloat = 24
+
     var audioLatencySubLabelText: String {
         "Increase latency to improve performance on slower devices. (\(Int(audioLatency)) ms)"
     }
 
     var body: some View {
         ZStack {
-            #if os(tvOS)
             RetroSettingsBackground()
-            #endif
 
-            List {
-                engineSection
-                #if !os(tvOS)
-                latencySection
-                effectsSection
-                #endif
-                #if DEBUG
-                debugSection
+            ScrollView {
+                VStack(alignment: .leading, spacing: Self.sectionSpacing) {
+                    engineSection
+                    #if !os(tvOS)
+                    latencySection
+                    effectsSection
+                    #endif
+                    #if DEBUG
+                    debugSection
+                    #endif
+                }
+                .tvOSSettingsHorizontalPadding()
+                #if os(tvOS)
+                .padding(.vertical, 24)
+                #else
+                .padding()
                 #endif
             }
-            #if os(tvOS)
-            .listStyle(.plain)
-            #else
-            .scrollContentBackground(.hidden)
-            #endif
         }
         .navigationTitle("Audio Engine")
         #if os(tvOS)
@@ -53,43 +57,39 @@ struct AudioEngineSettingsView: View {
 
     @ViewBuilder
     private var engineSection: some View {
-        Section {
-            Picker("Audio Engine", selection: $audioEngine) {
-                ForEach(AudioEngines.allCases, id: \.self) { engine in
-                    Text(engine.description).tag(engine)
-                }
-            }
-            .pickerStyle(.automatic)
-
-            Text("Select which audio engine to use for game audio playback")
-                .font(.caption)
-                .foregroundColor(.secondary)
+        SettingsPageSection(icon: "waveform", title: "Audio Engine") {
+            SettingsChoiceGroup(
+                title: "Audio Engine",
+                caption: "Select which audio engine to use for game audio playback",
+                icon: "waveform",
+                options: AudioEngines.allCases,
+                optionTitle: { $0.description },
+                selection: $audioEngine
+            )
 
             if audioEngine == .dspGameAudioEngine {
-                Picker("DSP Algorithm", selection: $dspAlgorithm) {
-                    ForEach(DSPAudioEngineAlgorithms.allCases, id: \.self) { algorithm in
-                        Text(algorithm.description).tag(algorithm)
-                    }
-                }
-                .pickerStyle(.automatic)
+                RetroSettingsDivider()
 
-                Text("Select which DSP algorithm to use for audio processing")
-                    .font(.caption)
-                    .foregroundColor(.secondary)
+                SettingsChoiceGroup(
+                    title: "DSP Algorithm",
+                    caption: "Select which DSP algorithm to use for audio processing",
+                    icon: "function",
+                    options: DSPAudioEngineAlgorithms.allCases,
+                    optionTitle: { $0.description },
+                    selection: $dspAlgorithm
+                )
             }
 
-            Picker("Ring Buffer Type", selection: $ringBufferType) {
-                ForEach(RingBufferType.allCases, id: \.self) { type in
-                    Text(type.description).tag(type)
-                }
-            }
-            .pickerStyle(.automatic)
+            RetroSettingsDivider()
 
-            Text("Select which ring buffer implementation to use")
-                .font(.caption)
-                .foregroundColor(.secondary)
-        } header: {
-            RetroSettingsSectionHeader(icon: "waveform", title: "Audio Engine")
+            SettingsChoiceGroup(
+                title: "Ring Buffer Type",
+                caption: "Select which ring buffer implementation to use",
+                icon: "memorychip",
+                options: RingBufferType.allCases,
+                optionTitle: { $0.description },
+                selection: $ringBufferType
+            )
         }
     }
 
@@ -98,7 +98,7 @@ struct AudioEngineSettingsView: View {
     #if !os(tvOS)
     @ViewBuilder
     private var latencySection: some View {
-        Section {
+        SettingsPageSection(icon: "timer", title: "Latency") {
             HStack {
                 Text("Audio Latency")
                 RetroWaveSlider(value: $audioLatency, in: 5.0...25.0, step: 0.5) {
@@ -110,17 +110,15 @@ struct AudioEngineSettingsView: View {
                 }
             }
             Text(audioLatencySubLabelText)
-                .font(.caption)
+                .font(.retroSettingsRowSubtitle)
                 .foregroundColor(.secondary)
-        } header: {
-            RetroSettingsSectionHeader(icon: "timer", title: "Latency")
         }
     }
 
     @ViewBuilder
     private var effectsSection: some View {
         if audioEngine == .avAudioEngineGameAudioEngine {
-            Section {
+            SettingsPageSection(icon: "waveform.badge.plus", title: "Effects") {
                 NavigationLink(destination: AUFilterSettingsView()) {
                     HStack {
                         let effectsActive = auFiltersEnabled && auEffectsChain.nodes.contains(where: { $0.isEnabled })
@@ -139,8 +137,7 @@ struct AudioEngineSettingsView: View {
                         }
                     }
                 }
-            } header: {
-                RetroSettingsSectionHeader(icon: "waveform.badge.plus", title: "Effects")
+                .buttonStyle(.plain)
             }
         }
     }
@@ -151,16 +148,103 @@ struct AudioEngineSettingsView: View {
     #if DEBUG
     @ViewBuilder
     private var debugSection: some View {
-        Section {
+        SettingsPageSection(icon: "ant", title: "Debug Options") {
             ThemedToggle(isOn: $monoAudio) {
                 SettingsRow(title: "Mono Audio",
                            subtitle: "Combine left and right audio channels.",
                            icon: .sfSymbol("speaker.wave.1"),
                            showChevron: false)
             }
-        } header: {
-            RetroSettingsSectionHeader(icon: "ant", title: "Debug Options")
         }
     }
     #endif
+}
+
+// MARK: - Shared page building blocks
+
+/// Spacing shared by `SettingsPageSection`. Generic types cannot hold static stored properties, hence the namespace.
+enum SettingsPageLayout {
+    static let rowSpacing: CGFloat = 12
+}
+
+/// A retrowave section: icon header above a stack of rows, with an optional footnote below.
+/// Replaces a stock `List` `Section` in settings pages built on `ScrollView`.
+struct SettingsPageSection<Content: View>: View {
+    let icon: String
+    let title: String
+    var footer: String?
+    @ViewBuilder let content: () -> Content
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: SettingsPageLayout.rowSpacing) {
+            RetroSettingsSectionHeader(icon: icon, title: title)
+            content()
+            if let footer {
+                Text(footer)
+                    .font(.retroSettingsRowSubtitle)
+                    .foregroundColor(.secondary)
+            }
+        }
+    }
+}
+
+/// A titled single-choice setting. tvOS shows radio rows (`RetroSettingsPickerRow`); other platforms show a menu `Picker`.
+struct SettingsChoiceGroup<Value: Hashable>: View {
+    let title: String
+    let caption: String
+    let icon: String
+    let options: [Value]
+    let optionTitle: (Value) -> String
+    @Binding var selection: Value
+
+    @ObservedObject private var themeManager = ThemeManager.shared
+
+    private var titleColor: Color {
+        themeManager.currentPalette.settingsCellText?.swiftUIColor
+            ?? themeManager.currentPalette.gameLibraryText.swiftUIColor
+    }
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            #if os(tvOS)
+            Label(title, systemImage: icon)
+                .font(.retroSettingsLabel)
+                .foregroundColor(titleColor)
+
+            Text(caption)
+                .font(.retroSettingsRowSubtitle)
+                .foregroundColor(.secondary)
+
+            ForEach(options, id: \.self) { option in
+                RetroSettingsPickerRow(
+                    symbolName: icon,
+                    title: optionTitle(option),
+                    subtitle: "",
+                    isSelected: selection == option
+                ) {
+                    selection = option
+                }
+            }
+            #else
+            HStack {
+                Label(title, systemImage: icon)
+                    .font(.retroSettingsLabel)
+                    .foregroundColor(titleColor)
+                Spacer()
+                Picker(title, selection: $selection) {
+                    ForEach(options, id: \.self) { option in
+                        Text(optionTitle(option)).tag(option)
+                    }
+                }
+                .pickerStyle(.menu)
+                .labelsHidden()
+                .tint(.retroBlue)
+            }
+
+            Text(caption)
+                .font(.retroSettingsRowSubtitle)
+                .foregroundColor(.secondary)
+            #endif
+        }
+    }
 }
