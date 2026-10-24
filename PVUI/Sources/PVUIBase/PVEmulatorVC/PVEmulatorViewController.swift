@@ -212,8 +212,7 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
     // RTL: do not flip — the emulator screen renders pixel-accurate game content.
     // Mirroring the GPU viewport would produce a horizontally inverted image, breaking gameplay.
     private(set) lazy var gpuViewController: PVGPUViewController = {
-        let useMetal = (use_metal && !core.alwaysUseGL) || core.alwaysUseMetal
-        let vc: PVGPUViewController = useMetal ? PVMetalViewController(withEmulatorCore: core) : PVGLViewController(withEmulatorCore: core)
+        let vc: PVGPUViewController = PVMetalViewController(withEmulatorCore: core)
         vc.resetFirstFrameTracking()
         return vc
     }()

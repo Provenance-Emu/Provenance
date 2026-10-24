@@ -153,8 +153,6 @@ public extension PVEmualatorControllerProtocol {
 
         core.initialize()
     }
-
-    var use_metal: Bool { Defaults[.useMetal] }
 }
 
 // MARK: Controllers

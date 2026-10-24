@@ -3338,10 +3338,7 @@ static bool thin_environment(unsigned cmd, void *data) {
         // `ThinContentArchiveResolver`.
         self.extractArchive = NO;
         // Frames from this frontend are only ever presented through
-        // PVMetalViewController. PVGLViewController has no Vulkan presenter, so
-        // with the legacy "Use Metal" setting off a Vulkan core (PSP, Dreamcast)
-        // ran with sound and a black screen — and no thin core was brought up
-        // against the GL presenter. That setting must not select it here.
+        // PVMetalViewController.
         self.alwaysUseMetal = YES;
         _dylibHandle = NULL;
         memset(&_sym, 0, sizeof(_sym));

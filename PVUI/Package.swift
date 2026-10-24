@@ -171,8 +171,6 @@ let package = Package(
 //                .product(name: "Dependencies", package: "swift-dependencies")
             ],
             resources: [
-                .copy("Resources/Shaders/fsh"),
-                .copy("Resources/Shaders/GLES"),
                 .copy("Resources/Sounds"),
                 .process("Resources/SystemIcons.xcassets"),
                 .process("Resources/Assets.xcassets"),

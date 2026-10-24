@@ -459,13 +459,9 @@ extension PVEmulatorViewController {
         }
 
         // Configure basic properties of the GPU view
-        // For GL views, don't override opacity/background as it can interfere with GL context
         if gpuViewController is PVMetalViewController {
             gameScreenView.backgroundColor = .black
             gameScreenView.isOpaque = true
-        } else {
-            // For GL views, preserve existing settings set by PVGLViewController
-            // Only ensure visibility
         }
         revealHostGPUView()
 
@@ -602,14 +598,6 @@ extension PVEmulatorViewController {
 
             // Log that we're not setting the frame here
             DLOG("MTLView added to hierarchy but not positioning it here - DeltaSkinScreen will handle that")
-        }
-
-        // For GL views, ensure the view is properly set up
-        // GL views use GLKView which is the main view, no separate subview needed
-        if gpuViewController is PVGLViewController {
-            DLOG("GL view controller detected - ensuring proper setup")
-            // GL view setup is handled by PVGLViewController itself
-            // Just ensure it's visible and in the hierarchy
         }
 
         // Store reference to skin container view for z-order management
@@ -1208,17 +1196,9 @@ extension PVEmulatorViewController {
 #endif
         // Get FPS if available
         var fpsInfo = "FPS: N/A"
-        #if USE_METAL
         if let metalVC = gpuViewController as? PVMetalViewController {
-            let fps = metalVC.framesPerSecond
-            fpsInfo = "FPS: \(Int(fps))"
+            fpsInfo = "FPS: \(Int(metalVC.framesPerSecond))"
         }
-        #else
-        if let glVC = gpuViewController as? PVGLViewController {
-            let fps = glVC.calculatedFramesPerSecond
-            fpsInfo = "FPS: \(Int(fps))"
-        }
-        #endif
 
         // Combine all info
         let infoText = """

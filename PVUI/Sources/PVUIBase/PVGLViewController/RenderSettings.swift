@@ -10,10 +10,9 @@ import PVSettings
 @frozen
 @usableFromInline
 struct RenderSettings: Sendable {
-    var openGLFilterMode: OpenGLFilterModeOption = .none
     var metalFilterMode: MetalFilterModeOption = .none
 
-    var smoothingEnabled = false
+    var smoothingMode: ImageSmoothingMode = .bilinear
     /// `Defaults[.dualScreenLCDLook]`: LCD look on dual-screen (DS skin) layouts.
     var dualScreenLCDLook = false
     var scalingMode: ScalingMode = .aspectFit

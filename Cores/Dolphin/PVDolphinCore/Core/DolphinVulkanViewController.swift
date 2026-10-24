@@ -375,7 +375,7 @@ import PVDolphinBridge
 
     private func startFilterPreferenceObservation() {
         filterObservationTask = Task { [weak self] in
-            for await _ in Defaults.updates([.metalFilterMode, .imageSmoothing]) {
+            for await _ in Defaults.updates([.metalFilterMode, .imageSmoothingMode]) {
                 await MainActor.run {
                     self?.syncShaderPostProcessing()
                 }
@@ -397,7 +397,7 @@ import PVDolphinBridge
         let resolved = ShaderLibraryStore.shared.resolvedShader(gameMD5: core.romMD5,
                                                                 systemID: core.systemIdentifier,
                                                                 screenType: DolphinShaderPostProcessor.screenType)
-        DolphinShaderPostProcessor.shared.update(resolved, smoothing: Defaults[.imageSmoothing])
+        DolphinShaderPostProcessor.shared.update(resolved, smoothing: Defaults[.imageSmoothingMode].usesLinearFiltering)
         let enabled = isMetalBackend && DolphinShaderPostProcessor.hasShaderToApply
         UserDefaults.standard.set(enabled, forKey: DolphinShaderPostProcessor.enabledDefaultsKey)
         ILOG("Dolphin shader post-processing \(enabled ? "enabled" : "disabled")")
@@ -620,7 +620,7 @@ final class DolphinShaderPostProcessor: NSObject {
         let drawn = blitter?.encode(commandBuffer: commandBuffer,
                                     destinationTexture: target,
                                     sourceTexture: source,
-                                    smoothing: Defaults[.imageSmoothing],
+                                    smoothing: Defaults[.imageSmoothingMode].usesLinearFiltering,
                                     flipY: false) ?? false
         if !drawn {
             ELOG("Dolphin shader post-process: failed to copy frame into drawable")

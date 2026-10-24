@@ -36,7 +36,13 @@ extension Defaults.Keys {
     @available(*, deprecated, renamed: "scalingMode", message: "Use Defaults[.scalingMode] == .nativeResolution")
     static let nativeScaleEnabled = Key<Bool>("nativeScaleEnabled", default: false)
 
-    static let imageSmoothing = Key<Bool>("imageSmoothing", default: false)
+    /// How the game picture is sampled when scaled. On first read the value is
+    /// migrated from the legacy `imageSmoothing` boolean; with nothing stored it
+    /// is `.bilinear`, which is what the unfiltered Metal blit always drew.
+    static let imageSmoothingMode: Key<ImageSmoothingMode> = {
+        migrateImageSmoothingModeIfNeeded()
+        return Key<ImageSmoothingMode>("imageSmoothingMode", default: .bilinear)
+    }()
 
     /// Legacy: use `scalingMode` instead.
     /// Kept for backwards-compatibility; the renderers read `scalingMode` directly.
@@ -76,8 +82,6 @@ extension Defaults.Keys {
 
     /// Show persistent HUD status indicator dots (JIT, netplay, etc.) in the emulator overlay
     static let showStatusIndicators = Key<Bool>("showStatusIndicators", default: true)
-
-    static let vsyncEnabled = Key<Bool>("vsyncEnabled", default: true)
 }
 
 public
@@ -926,6 +930,25 @@ internal func makeMigratingBoolKey(_ primaryKey: String, legacyKey: String, defa
 /// domain name from `Bundle.main.bundleIdentifier` risked querying the wrong (or empty)
 /// domain, which would report "user has not chosen" and let the migration overwrite a
 /// real preference.
+/// Moves an explicitly stored legacy `imageSmoothing` boolean onto
+/// `imageSmoothingMode` (true → bilinear, false → nearest). Does nothing once
+/// `imageSmoothingMode` is stored or when the legacy key was never set.
+internal func migrateImageSmoothingModeIfNeeded(userDefaults: UserDefaults = .standard,
+                                                domainName: String? = nil) {
+    let modeKey = "imageSmoothingMode"
+    let legacyKey = "imageSmoothing"
+    // Read stored values only: object(forKey:) also resolves the registration
+    // domain, where Defaults registers key defaults.
+    func stored(_ key: String) -> Any? {
+        if let domainName {
+            return userDefaults.persistentDomain(forName: domainName)?[key]
+        }
+        return userDefaults.object(forKey: key)
+    }
+    guard stored(modeKey) == nil, let legacy = stored(legacyKey) as? Bool else { return }
+    userDefaults.set(ImageSmoothingMode.fromLegacy(imageSmoothing: legacy).rawValue, forKey: modeKey)
+}
+
 internal func migrateScalingModeIfNeeded(userDefaults: UserDefaults = .standard,
                                          domainName: String? = nil) {
     let scalingKey = "scalingMode"
@@ -947,11 +970,6 @@ internal func migrateScalingModeIfNeeded(userDefaults: UserDefaults = .standard,
 
 // MARK: Beta Options
 public extension Defaults.Keys {
-#if os(macOS) || targetEnvironment(macCatalyst) || os(visionOS)
-    static let useMetal = Key<Bool>("useMetal", default: true)
-#else
-    static let useMetal = Key<Bool>("useMetal", default: true)
-#endif
     static let autoJIT = Key<Bool>("autoJIT", default: false)
 #if os(tvOS)
     static let mainUIMode = Key<MainUIMode>("mainUIMode", default: .tvosMedia)
@@ -1080,12 +1098,6 @@ public extension Defaults.Keys {
     #endif
 }
 
-// MARK: Video Options
-public extension Defaults.Keys {
-    static let multiThreadedGL = Key<Bool>("multiThreadedGL", default: true)
-    static let multiSampling = Key<Bool>("multiSampling", default: true)
-}
-
 // MARK: Objective-C Helper
 
 @objc
@@ -1137,16 +1149,6 @@ public final class PVSettingsWrapper: NSObject {
     public static var useNativeResolution: Bool {
         Defaults[.scalingMode] == .nativeResolution
     }
-
-    @objc
-    public static var vsyncEnabled: Bool {
-        get { Defaults[.vsyncEnabled] }
-        set { Defaults[.vsyncEnabled] = newValue }}
-
-    @objc
-    public static var imageSmoothing: Bool {
-        get { Defaults[.imageSmoothing] }
-        set { Defaults[.imageSmoothing] = newValue }}
 
     @objc
     public static var volume: Float {
