@@ -1,6 +1,6 @@
 import Foundation
 import PVSettings
-import ZIPFoundation
+import SkinKitCore
 
 /// Default screen configurations for different console types
 enum DeltaSkinDefaults {
@@ -238,54 +238,6 @@ enum DeltaSkinDefaults {
             return CGSize(width: 820, height: 1180)  // iPad Air dimensions
         case .tv:
             return CGSize(width: 1920, height: 1080)
-        }
-    }
-}
-
-public extension DeltaSkinProtocol {
-    /// Load asset data from either directory or archive
-    func loadAssetData(_ filename: String) throws -> Data {
-        DLOG("Loading asset: \(filename)")
-
-        let isDirectory = (try? fileURL.resourceValues(forKeys: [.isDirectoryKey]))?.isDirectory ?? false
-
-        if isDirectory {
-            // Load from directory
-            let assetURL = fileURL.appendingPathComponent(filename)
-            guard let data = try? Data(contentsOf: assetURL) else {
-                ELOG("Failed to load asset from directory: \(filename)")
-                throw DeltaSkinError.missingAsset
-            }
-            return data
-        } else {
-            // Load from archive. info.json names are often the file stem while the zip
-            // entry lives in a folder or differs only by case.
-            guard let archive = Archive(url: fileURL, accessMode: .read),
-                  let assetEntry = archive.entry(matchingAssetNamed: filename),
-                  let data = archive.extractData(assetEntry) else {
-                ELOG("Failed to extract asset from archive: \(filename)")
-                throw DeltaSkinError.missingAsset
-            }
-            return data
-        }
-    }
-
-    /// Read the thumbstick image
-    func loadThumbstickImage(named: String) async throws -> UIImage {
-        // Load the asset data
-        let assetData = try loadAssetData(named)
-
-        // Create image from PDF data since thumbsticks are PDFs
-        if named.hasSuffix(".pdf") {
-            guard let image = UIImage(pdfData: assetData) else {
-                throw DeltaSkinError.invalidPDF
-            }
-            return image
-        } else {
-            guard let image = UIImage(data: assetData) else {
-                throw DeltaSkinError.invalidPNG
-            }
-            return image
         }
     }
 }

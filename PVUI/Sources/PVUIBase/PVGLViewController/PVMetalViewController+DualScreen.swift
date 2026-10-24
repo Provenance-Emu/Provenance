@@ -22,6 +22,7 @@ import MetalKit
 import simd
 import CoreGraphics
 import PVLogging
+import SkinKitCore
 
 // MARK: - DualScreenRenderInfo
 

@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import SkinKitUI
 
 #if canImport(SwiftUI)
 import SwiftUI
@@ -640,7 +641,7 @@ struct ConsoleGamesView: SwiftUI.View {
                 // System Skin Selection Modal
                 .sheet(isPresented: $showSystemSkinSelection) {
                     NavigationStack {
-                        SystemSkinSelectionView(system: console.enumValue)
+                        SystemSkinSelectionView(system: console.enumValue.deltaSkinSystem)
                         #if !os(tvOS)
                             .navigationBarTitleDisplayMode(.inline)
                         #endif
@@ -674,7 +675,8 @@ struct ConsoleGamesView: SwiftUI.View {
                 // Per-Game Skin Selection Modal
                 .sheet(item: $gameForSkinSelection) { state in
                     NavigationStack {
-                        SystemSkinSelectionView(system: state.game.system?.enumValue ?? console.enumValue, game: state.game.warmUp(),
+                        SystemSkinSelectionView(system: (state.game.system?.enumValue ?? console.enumValue).deltaSkinSystem,
+                                                game: state.game.warmUp().deltaSkinGameContext,
                                                 preferredScope: .game)
                         #if !os(tvOS)
                             .navigationBarTitleDisplayMode(.inline)

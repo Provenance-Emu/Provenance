@@ -52,6 +52,7 @@ private struct LCDFilterUniformsData {
 }
 import PVUIObjC
 import PVUIBase
+import SkinKitCore
 
 #if os(macOS) || targetEnvironment(macCatalyst)
 import OpenGL

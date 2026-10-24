@@ -305,6 +305,14 @@
       }
     },
     {
+      "identity" : "skinkit",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/Provenance-Emu/SkinKit",
+      "state" : {
+        "revision" : "bdd638d5fe7a18362abef0b068e67f9b4ca103a0"
+      }
+    },
+    {
       "identity" : "sqlite.swift",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/stephencelis/SQLite.swift.git",

@@ -8,6 +8,7 @@
 import CoreImage
 import Metal
 import PVShaders
+import SkinKitCore
 
 extension PVMetalViewController {
 

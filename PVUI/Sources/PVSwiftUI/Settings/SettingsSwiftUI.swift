@@ -17,6 +17,8 @@ import PVFeatureFlags
 import Defaults
 import AudioToolbox
 import PVCheevos
+import SkinKitManager
+import SkinKitUI
 
 #if canImport(GameController)
 import GameController

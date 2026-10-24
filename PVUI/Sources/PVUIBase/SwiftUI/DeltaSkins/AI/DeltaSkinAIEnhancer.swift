@@ -2,6 +2,7 @@ import SwiftUI
 import Vision
 import CoreML
 import PVPrimitives
+import SkinKitCore
 
 /// AI-powered enhancements for Delta skins
 public final class DeltaSkinAIEnhancer: ObservableObject {

@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import SkinKitManager
 
 /// The layout editor that applies to the controls on screen.
 ///

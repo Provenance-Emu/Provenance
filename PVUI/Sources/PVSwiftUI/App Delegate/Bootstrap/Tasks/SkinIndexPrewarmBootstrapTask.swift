@@ -8,6 +8,7 @@
 import Foundation
 import PVLogging
 import PVUIBase
+import SkinKitManager
 
 /// Starts the skin scan in the background at launch.
 ///

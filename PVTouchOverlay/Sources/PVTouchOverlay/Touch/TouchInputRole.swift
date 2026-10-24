@@ -1,16 +1,8 @@
 import Foundation
+import SkinKitUI
 
-/// Whether a touch control is a gameplay input or a frontend / console-system control.
-///
-/// Gameplay controls take part in drag-across (a finger sliding onto them presses them) and in
-/// multi-button touch. System controls never do: they fire only for a touch that begins on them, and a
-/// touch that began on one never slides onto anything else.
-public enum TouchInputRole: Sendable, Hashable {
-    case gameplay
-    case system
-
-    public var isGameplay: Bool { self == .gameplay }
-}
+// `TouchInputRole` (gameplay vs frontend / console-system control) lives in SkinKitUI, which the
+// skin view shares; the token classifier and the overlay-control roles stay here.
 
 /// Classifies skin / overlay input tokens.
 ///

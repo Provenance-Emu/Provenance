@@ -2,8 +2,9 @@
 //  DeltaSkinNintendoHomeConsoleTests.swift
 //  PVUIBaseTests
 //
-//  Manic EMU GameCube / Wii skin support: game-type identifier parsing, the
-//  skin-token -> Dolphin button tables, and thumbstick side resolution.
+//  Manic EMU GameCube / Wii skin support: game-type identifier parsing and the
+//  skin-token -> Dolphin button tables. Thumbstick side resolution moved to
+//  SkinKitUI (`DeltaSkinThumbstickSide`) with its tests.
 //
 
 import Foundation
@@ -11,6 +12,7 @@ import Testing
 import PVCoreBridge
 import PVPrimitives
 @testable import PVUIBase
+import SkinKitCore
 
 @Suite("Manic GameCube / Wii identifiers")
 struct ManicGameCubeWiiIdentifierTests {
@@ -150,44 +152,5 @@ struct WiiSkinTokenTests {
         for token in ["l3", "bogus", "quicksave", "classicx", "classiczr"] {
             #expect(DeltaSkinNintendoHomeConsoleMapping.wiiButton(forSkinToken: token) == nil)
         }
-    }
-}
-
-@Suite("Thumbstick side resolution")
-struct ThumbstickSideTests {
-
-    private let skinId = "starvingartist.ngc.gcpocket-indigo-button-1"
-
-    @Test("Manic leftThumbstick* mapping resolves left")
-    func left() {
-        let input = DeltaSkinInput.directional([
-            "up": "leftThumbstickUp", "down": "leftThumbstickDown",
-            "left": "leftThumbstickLeft", "right": "leftThumbstickRight"
-        ])
-        #expect(DeltaSkinNintendoHomeConsoleMapping.stickSide(for: input, buttonId: skinId) == .left)
-    }
-
-    @Test("Manic rightThumbstick* mapping resolves right even though the id never says so")
-    func right() {
-        let input = DeltaSkinInput.directional([
-            "up": "rightThumbstickUp", "down": "rightThumbstickDown",
-            "left": "rightThumbstickLeft", "right": "rightThumbstickRight"
-        ])
-        let side = DeltaSkinNintendoHomeConsoleMapping.stickSide(for: input, buttonId: skinId)
-        #expect(side == .right)
-        #expect(side.analogStickId == "rightAnalog")
-    }
-
-    @Test("A plain D-pad mapping is not mistaken for a right stick")
-    func dpadIsNotRight() {
-        let input = DeltaSkinInput.directional(["up": "up", "down": "down", "left": "left", "right": "right"])
-        #expect(DeltaSkinNintendoHomeConsoleMapping.stickSide(for: input, buttonId: skinId) == .left)
-    }
-
-    @Test("Falls back to the button id when the mapping carries no stick name")
-    func idFallback() {
-        let input = DeltaSkinInput.single("a")
-        #expect(DeltaSkinNintendoHomeConsoleMapping.stickSide(for: input, buttonId: "rightstick") == .right)
-        #expect(DeltaSkinNintendoHomeConsoleMapping.stickSide(for: input, buttonId: "leftstick") == .left)
     }
 }
