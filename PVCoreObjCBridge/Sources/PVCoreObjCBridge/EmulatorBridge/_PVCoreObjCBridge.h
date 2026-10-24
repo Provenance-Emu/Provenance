@@ -228,6 +228,13 @@ typedef NS_ENUM(NSInteger, GameSpeed) {
 /// YES when the core renders via Vulkan HW context (MoltenVK → Metal interop).
 @property (nonatomic, readonly) BOOL rendersToVulkan;
 @property (nonatomic, readonly) NSTimeInterval frameInterval;
+/// Seconds between emulation-loop ticks: 1 / (frameInterval × game-speed multiplier).
+/// Zero until `startEmulation` sets the game speed.
+@property (nonatomic, readonly) NSTimeInterval emulationFrameDuration;
+/// Re-derive the emulation loop's tick from `frameInterval`. Call it when a core
+/// reports a new frame rate after the loop started; otherwise the loop keeps
+/// running at the rate it was started with.
+- (void)frameIntervalDidChange;
 
 @property (nonatomic, readonly, nullable) const void *videoBuffer;
 - (void)swapBuffers;

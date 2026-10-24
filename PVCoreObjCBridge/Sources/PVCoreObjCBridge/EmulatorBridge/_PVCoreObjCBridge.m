@@ -154,6 +154,19 @@ NSString *const PVEmulatorCoreErrorDomain = @"org.provenance-emu.EmulatorCore.Er
     gameInterval = 1.0 / ([self frameInterval] * framerateMultiplier);
 }
 
+- (NSTimeInterval)emulationFrameDuration {
+    return gameInterval;
+}
+
+- (void)frameIntervalDidChange {
+    // Before `startEmulation` sets the game speed there is no multiplier yet,
+    // and `startEmulation` reads the current frame rate itself.
+    if (self.framerateMultiplier <= 0) {
+        return;
+    }
+    [self setFramerateMultiplier:self.framerateMultiplier];
+}
+
 #if !TARGET_OS_TV && !TARGET_OS_OSX && !TARGET_OS_WATCH
 - (Float64) getSampleRate {
     return [[AVAudioSession sharedInstance] sampleRate];

@@ -568,6 +568,15 @@ static const size_t kThinNetpacketQueueLimitBytes = 32 * 1024 * 1024;
     BOOL _hasFrameTimeCallback;
     int64_t _lastFrameTimeUs;
 
+    // Frame-pace diagnostics, emulation thread only: one `[PACE]` log line per
+    // window (see `_thinRecordFramePace:`).
+    double _paceWindowStart;
+    uint32_t _paceFrames;
+    uint32_t _paceOverBudget;
+    double _paceRunTotal;
+    double _paceRunMax;
+    NSUInteger _paceAudioOverflowBytes;
+
     // Audio callback (RETRO_ENVIRONMENT_SET_AUDIO_CALLBACK)
     struct retro_audio_callback _audioCallback;
     BOOL _hasAudioCallback;
@@ -1021,6 +1030,8 @@ static const size_t kThinNetpacketQueueLimitBytes = 32 * 1024 * 1024;
 - (void)_thinVideoRefresh:(const void *)data width:(unsigned)w height:(unsigned)h pitch:(size_t)pitch;
 - (void)_thinAudioSample:(int16_t)left right:(int16_t)right;
 - (size_t)_thinAudioSampleBatch:(const int16_t *)data frames:(size_t)frames;
+- (void)_thinWriteAudio:(const void *)data bytes:(NSUInteger)bytes;
+- (void)_thinRecordFramePace:(double)runSeconds;
 - (void)_thinInputPoll;
 - (int16_t)_thinInputStatePort:(unsigned)port device:(unsigned)dev index:(unsigned)idx id:(unsigned)bid;
 - (void)_thinNetpacketSendWithFlags:(int)flags buf:(const void *)buf len:(size_t)len clientID:(uint16_t)clientID;
@@ -4828,6 +4839,7 @@ static NSString * const kThinArchiveExtractionDirectory = @"ThinLibretroContent"
     // library" UI, and return without invoking the rest of the frame
     // pipeline. Without this, ONE bad frame inside the core terminates
     // the entire app.
+    const double runStart = CACurrentMediaTime();
     @try {
         try {
             _sym.retro_run();
@@ -4849,6 +4861,7 @@ static NSString * const kThinArchiveExtractionDirectory = @"ThinLibretroContent"
     }
 
     if (!_coreDidThrow) {
+        [self _thinRecordFramePace:CACurrentMediaTime() - runStart];
         [self performPendingResetAfterCoreOptionsApplied];
     }
 }
@@ -5312,6 +5325,10 @@ NSNotificationName const PVEmulatorCoreDidFailToStartNotification =
 
 - (void)_testRegisterNetpacketCallback:(const struct retro_netpacket_callback *)callback {
     [self handleEnvironmentCommand:RETRO_ENVIRONMENT_SET_NETPACKET_INTERFACE data:(void *)callback];
+}
+
+- (BOOL)_testHandleEnvironmentCommand:(unsigned)cmd data:(void *)data {
+    return [self handleEnvironmentCommand:cmd data:data];
 }
 
 - (void)_testRunNetpacketFrame {
@@ -5930,7 +5947,7 @@ NSNotificationName const PVEmulatorCoreDidFailToStartNotification =
         return;
     }
     int16_t buf[2] = {left, right};
-    [[self ringBufferAtIndex:0] write:buf size:4];
+    [self _thinWriteAudio:buf bytes:sizeof(buf)];
 }
 
 - (size_t)_thinAudioSampleBatch:(const int16_t *)data frames:(size_t)frames {
@@ -5938,8 +5955,66 @@ NSNotificationName const PVEmulatorCoreDidFailToStartNotification =
     if (self.frontendDelegate) {
         return [self.frontendDelegate libretroFrontend:self didEmitAudioBatch:data frames:frames];
     }
-    [[self ringBufferAtIndex:0] write:data size:frames * 2 * sizeof(int16_t)];
+    [self _thinWriteAudio:data bytes:frames * 2 * sizeof(int16_t)];
     return frames;
+}
+
+/// Writes core audio to the output ring, counting what doesn't fit: the
+/// ring either drops the write or overwrites unplayed audio, and both are heard
+/// as a gap.
+- (void)_thinWriteAudio:(const void *)data bytes:(NSUInteger)bytes {
+    id<RingBufferProtocol> ring = [self ringBufferAtIndex:0];
+    if (!ring) return;
+    const NSInteger room = ring.availableBytesForWriting;
+    if ((NSInteger)bytes > room) {
+        _paceAudioOverflowBytes += bytes - (NSUInteger)MAX(room, 0);
+    }
+    [ring write:data size:bytes];
+}
+
+/// Seconds of emulation per `[PACE]` log line.
+static const double kThinPaceLogWindow = 10.0;
+
+/// Accumulates one frame's retro_run time and logs a `[PACE]` summary once per
+/// `kThinPaceLogWindow`. A core that runs slower than real time shows retro_run
+/// over budget and fewer frames per second than the loop's rate. A loop paced at
+/// a different rate than the core reports shows a "core" and "loop" mismatch and
+/// audio overflow while retro_run stays under budget.
+- (void)_thinRecordFramePace:(double)runSeconds {
+    const double now = CACurrentMediaTime();
+    if (_paceWindowStart == 0) {
+        _paceWindowStart = now;
+    }
+    const NSTimeInterval budget = self.emulationFrameDuration;
+    _paceFrames++;
+    _paceRunTotal += runSeconds;
+    _paceRunMax = MAX(_paceRunMax, runSeconds);
+    if (budget > 0 && runSeconds > budget) {
+        _paceOverBudget++;
+    }
+
+    const double elapsed = now - _paceWindowStart;
+    if (elapsed < kThinPaceLogWindow) {
+        return;
+    }
+    // A window that spans a pause would understate frames per second.
+    const BOOL spansPause = elapsed > kThinPaceLogWindow * 2;
+    const double audioBytesPerSecond = _rawAVInfo.timing.sample_rate * 2 * sizeof(int16_t);
+    const double overflowMs = audioBytesPerSecond > 0
+        ? (double)_paceAudioOverflowBytes / audioBytesPerSecond * 1000.0 : 0;
+    if (!spansPause) {
+        ILOG(@"[PACE] %@: core %.3f fps, loop %.3f Hz, ran %.2f frames/s | retro_run avg %.2f ms, max %.2f ms, "
+             @"%u/%u over the %.2f ms budget | audio overflow %.0f ms",
+             self.coreIdentifier, _rawAVInfo.timing.fps, budget > 0 ? 1.0 / budget : 0.0, _paceFrames / elapsed,
+             _paceRunTotal / _paceFrames * 1000.0, _paceRunMax * 1000.0,
+             _paceOverBudget, _paceFrames, budget * 1000.0, overflowMs);
+    }
+    _paceWindowStart = now;
+    _paceFrames = 0;
+    _paceOverBudget = 0;
+    _paceRunTotal = 0;
+    _paceRunMax = 0;
+    _paceAudioOverflowBytes = 0;
 }
 
 - (void)_thinInputPoll {
@@ -6811,11 +6886,24 @@ NSNotificationName const PVEmulatorCoreDidFailToStartNotification =
         case RETRO_ENVIRONMENT_SET_SYSTEM_AV_INFO: {
             const struct retro_system_av_info *info = (const struct retro_system_av_info *)data;
             if (!info) return false;
+            const double previousFPS = _rawAVInfo.timing.fps;
             _rawAVInfo = *info;
             ILOG(@"ThinEnv SET_SYSTEM_AV_INFO %ux%u (max %ux%u) @ %.2f fps, sample_rate=%.1f",
                  info->geometry.base_width, info->geometry.base_height,
                  info->geometry.max_width, info->geometry.max_height,
                  info->timing.fps, info->timing.sample_rate);
+            // Re-pace the emulation loop. One loop tick is one retro_run, i.e. one
+            // emulated frame, and the tick was fixed when the loop started. libretro
+            // MAME reports its default 60 fps at load and the emulated screen's real
+            // refresh after the first frame (57 Hz on Midway Seattle); at a stale
+            // 60 Hz tick it emits ~5% more audio than the device plays, the ring
+            // overflows and drops whole frames of sound several times a second (#3761).
+            if (info->timing.fps > 0.0 && info->timing.fps != previousFPS) {
+                _frameInterval = info->timing.fps;
+                [self frameIntervalDidChange];
+                ILOG(@"ThinEnv SET_SYSTEM_AV_INFO: frame rate %.3f → %.3f fps, loop tick %.3f ms",
+                     previousFPS, info->timing.fps, self.emulationFrameDuration * 1000.0);
+            }
             // Reallocate video buffer since geometry may have changed
             [self _allocateVideoBuffer];
 #if !TARGET_OS_MACCATALYST && !TARGET_OS_OSX
