@@ -5,6 +5,7 @@ import Observation
 import PVFeatureFlags
 import PVLibrary
 import PVLibrarySharing
+import PVLogging
 import PVRealm
 import PVSystems
 import PVUIBase
@@ -141,7 +142,14 @@ import UIKit
         var fresh: [String: RemoteManifest] = [:]
         for item in catalogue.items where item.systemIdentifier.map({ playable.contains($0.rawValue) }) == true {
             try Task.checkCancellation()
-            let manifest = try await source.pullManifest(for: item) { _ in }
+            let manifest: RemoteManifest
+            do {
+                manifest = try await source.pullManifest(for: item) { _ in }
+            } catch where ICubeContinuitySource.isItemSpecificManifestFailure(error) {
+                // One excluded or unsupported game must not stop mirroring the rest.
+                WLOG("Nearby automatic copy: skipping \(item.id): \(error.localizedDescription)")
+                continue
+            }
             guard manifest.itemId == item.id, manifest.gameFiles.count == 1 else { continue }
             offered[item.id] = item; fresh[item.id] = manifest
         }

@@ -105,6 +105,20 @@ public actor ICubeContinuitySource: LibrarySource {
 
     // MARK: - Pull
 
+    /// Whether a `pullManifest(for:)` failure concerns only that one game (excluded,
+    /// gone, or an unsupported manifest), so a whole-library caller can skip it and
+    /// keep the rest. Transport, auth and cancellation failures affect every item.
+    public static func isItemSpecificManifestFailure(_ error: Error) -> Bool {
+        switch error {
+        case LibrarySharingError.itemUnavailable, LibrarySharingError.nothingToCopy, LibrarySharingError.unsafePath:
+            return true
+        case is DecodingError, is ICubeLibraryManifest.Invalid:
+            return true
+        default:
+            return false
+        }
+    }
+
     public func pullManifest(
         for item: RemoteLibraryItem,
         progress: @escaping @Sendable (LibraryBrowseProgress) -> Void

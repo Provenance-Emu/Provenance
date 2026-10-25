@@ -191,7 +191,38 @@ final class ICubeContinuitySourceTests: XCTestCase {
             transport.script(TestPaths.iCubeManifest, LibraryHTTPResponse(status: 200, body: try JSONSerialization.data(withJSONObject: json)))
             let item = RemoteLibraryItem(id: "game", title: "Game", platform: "gc", systemIdentifier: .GameCube,
                                          md5: nil, sizeBytes: 3, artKey: nil, source: .iCube)
-            do { _ = try await makeSource(transport).pullManifest(for: item) { _ in }; XCTFail("accepted userdata field \(field)") } catch {}
+            do {
+                _ = try await makeSource(transport).pullManifest(for: item) { _ in }
+                XCTFail("accepted userdata field \(field)")
+            } catch {
+                XCTAssertTrue(ICubeContinuitySource.isItemSpecificManifestFailure(error), "\(field): \(error)")
+            }
+        }
+    }
+
+    func testExcludedGameManifestIsItemSpecific() async throws {
+        let transport = MockTransport()
+        transport.script(TestPaths.authStart, .json(AuthStartResponse(authId: "a", serverId: "s", nonce: nonce)))
+        transport.script(TestPaths.authComplete, .json(LibraryTokenResponse(libraryToken: "t")))
+        transport.script(TestPaths.iCubeManifest, .status(404))
+        let item = RemoteLibraryItem(id: "game", title: "Game", platform: "gc", systemIdentifier: .GameCube,
+                                     md5: nil, sizeBytes: 3, artKey: nil, source: .iCube)
+        do {
+            _ = try await makeSource(transport).pullManifest(for: item) { _ in }
+            XCTFail("an excluded game returned a manifest")
+        } catch {
+            XCTAssertEqual(error as? LibrarySharingError, .itemUnavailable)
+            XCTAssertTrue(ICubeContinuitySource.isItemSpecificManifestFailure(error))
+        }
+    }
+
+    func testSessionFailuresAreNotItemSpecific() {
+        let sessionWide: [Error] = [
+            LibrarySharingError.unreachable, LibrarySharingError.declined,
+            CancellationError(), URLError(.timedOut)
+        ]
+        for error in sessionWide {
+            XCTAssertFalse(ICubeContinuitySource.isItemSpecificManifestFailure(error), "\(error)")
         }
     }
 

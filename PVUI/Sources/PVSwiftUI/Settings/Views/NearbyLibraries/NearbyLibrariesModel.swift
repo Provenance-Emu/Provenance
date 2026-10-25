@@ -435,6 +435,13 @@ final class NearbyPeerLibraryModel {
                     self.phase = .loading(progress)
                 }
             }
+            if peer.app == .iCube, let peerID = peer.advertisement.peerId,
+               await LibrarySharingService.shared.trust.peer(withId: peerID) == nil {
+                // Paired by a build that kept no record of the host's key, so copies
+                // can't be bound to it. Pairing again records the key.
+                phase = .needsPairing
+                return
+            }
             catalogue = loaded
             phase = .loaded
             owner?.didLoad(loaded, for: peer)
