@@ -439,9 +439,9 @@ public class CloudKitSubscriptionManager {
         // Post notification for database changes
         NotificationCenter.default.post(name: .CloudKitDatabaseChanged, object: nil)
 
-        // Trigger fetch of remote changes (more focused than full sync)
-        Task {
-            await CloudSyncManager.shared.fetchRemoteChangesOnly()
+        // Fetch remote changes now, or with the next sync if the frequency is an interval
+        Task { @MainActor in
+            CloudSyncManager.shared.requestAutomaticSync(.push)
         }
     }
 

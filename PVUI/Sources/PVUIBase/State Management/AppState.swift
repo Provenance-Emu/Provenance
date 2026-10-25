@@ -635,26 +635,32 @@ public class AppState: ObservableObject {
         }
 
         #if os(iOS) || os(macOS) || targetEnvironment(macCatalyst)
-        ILOG("AppState: Starting detached task to add imported games to CSSearchableIndex")
-        Task.detached(priority: .utility) { [weak self] in
-            guard let self = self else { return }
-            do {
-                /// Use a generous timeout — large libraries (1000+ games) need time
-                /// to build thumbnails and index. Per-game indexing on import (#2980)
-                /// ensures newly imported games surface immediately regardless.
-                try await withTimeout(seconds: 120) {
-                    await self.libraryUpdatesController?.addImportedGames(
-                        to: CSSearchableIndex.default(),
-                        database: RomDatabase.sharedInstance
-                    )
+        // A full reindex every launch is bulk disk and CPU work. Per-game indexing on import keeps
+        // new games searchable, so in Low Power Mode the full pass waits for a later launch.
+        if let deferral = BackgroundWorkPolicy.deferral(for: .bulkLocal, in: DeviceConditionsMonitor.shared.current) {
+            ILOG("AppState: Skipping launch Spotlight reindex (\(deferral.rawValue))")
+        } else {
+            ILOG("AppState: Starting detached task to add imported games to CSSearchableIndex")
+            Task.detached(priority: .utility) { [weak self] in
+                guard let self = self else { return }
+                do {
+                    /// Use a generous timeout — large libraries (1000+ games) need time
+                    /// to build thumbnails and index. Per-game indexing on import (#2980)
+                    /// ensures newly imported games surface immediately regardless.
+                    try await withTimeout(seconds: 120) {
+                        await self.libraryUpdatesController?.addImportedGames(
+                            to: CSSearchableIndex.default(),
+                            database: RomDatabase.sharedInstance
+                        )
+                    }
+                    ILOG("AppState: Finished adding imported games to CSSearchableIndex")
+                } catch let error as TimeoutError {
+                    ELOG("AppState: Timeout while adding imported games to CSSearchableIndex: \(error)")
+                    /// Continue app initialization despite timeout
+                    ILOG("AppState: Continuing bootup despite Spotlight indexing timeout")
+                } catch {
+                    ELOG("AppState: Error adding imported games to CSSearchableIndex: \(error)")
                 }
-                ILOG("AppState: Finished adding imported games to CSSearchableIndex")
-            } catch let error as TimeoutError {
-                ELOG("AppState: Timeout while adding imported games to CSSearchableIndex: \(error)")
-                /// Continue app initialization despite timeout
-                ILOG("AppState: Continuing bootup despite Spotlight indexing timeout")
-            } catch {
-                ELOG("AppState: Error adding imported games to CSSearchableIndex: \(error)")
             }
         }
         #endif

@@ -31,6 +31,7 @@ import Foundation
 /// A view that displays unified cloud sync settings with tabs for CloudKit and iCloud Drive.
 /// This view combines functionality from both CloudKit and iCloud Drive sync views into a single
 /// tabbed interface for better user experience and code organization.
+// swiftlint:disable:next type_body_length
 public struct CloudSyncSettingsView: View {
     @Default(.iCloudSync) internal var iCloudSyncEnabled
     @Default(.autoSyncNewContent) private var autoSyncNewContent
@@ -1346,7 +1347,9 @@ public struct CloudSyncSettingsView: View {
                 .foregroundColor(.white)
 
             VStack(spacing: 4) {
-                ForEach(CloudKitSyncFrequency.allCases, id: \.self) { frequency in
+                // Apple TV is always on mains power, so Automatic would always mean Immediate.
+                ForEach(CloudKitSyncFrequency.allCases.filter { $0 != .automatic || currentCloudKitSyncFrequency == .automatic },
+                        id: \.self) { frequency in
                     CloudSyncSelectionRow(
                         title: frequency.description,
                         subtitle: frequency.subtitle,
