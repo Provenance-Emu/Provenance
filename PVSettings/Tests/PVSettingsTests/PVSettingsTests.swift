@@ -449,12 +449,17 @@ struct CloudKitSyncFrequencyTests {
 
     @Test("All cases present")
     func allCasesCount() {
-        #expect(CloudKitSyncFrequency.allCases.count == 5)
+        #expect(CloudKitSyncFrequency.allCases.count == 6)
     }
 
     @Test("Immediate timeInterval is nil")
     func immediateTimeIntervalIsNil() {
         #expect(CloudKitSyncFrequency.immediate.timeInterval == nil)
+    }
+
+    @Test("Automatic timeInterval is nil (resolved per conditions)")
+    func automaticTimeIntervalIsNil() {
+        #expect(CloudKitSyncFrequency.automatic.timeInterval == nil)
     }
 
     @Test("Manual timeInterval is nil")
@@ -479,6 +484,7 @@ struct CloudKitSyncFrequencyTests {
 
     @Test("Descriptions are correct")
     func descriptions() {
+        #expect(CloudKitSyncFrequency.automatic.description == "Automatic")
         #expect(CloudKitSyncFrequency.immediate.description == "Immediate")
         #expect(CloudKitSyncFrequency.fiveMinutes.description == "Every 5 Minutes")
         #expect(CloudKitSyncFrequency.fifteenMinutes.description == "Every 15 Minutes")

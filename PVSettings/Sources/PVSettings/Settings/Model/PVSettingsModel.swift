@@ -539,6 +539,9 @@ public enum CloudKitSyncNetworkMode: String, Codable, Equatable, UserDefaultsRep
 
 /// CloudKit sync frequency options
 public enum CloudKitSyncFrequency: String, Codable, Equatable, UserDefaultsRepresentable, Defaults.Serializable, CaseIterable {
+    /// Picks immediate, every 15 minutes or hourly from power and network conditions.
+    /// See `cadence(in:)`.
+    case automatic = "automatic"
     /// Sync immediately when changes occur
     case immediate = "immediate"
     /// Sync every 5 minutes
@@ -552,6 +555,8 @@ public enum CloudKitSyncFrequency: String, Codable, Equatable, UserDefaultsRepre
 
     public var description: String {
         switch self {
+        case .automatic:
+            return "Automatic"
         case .immediate:
             return "Immediate"
         case .fiveMinutes:
@@ -567,30 +572,39 @@ public enum CloudKitSyncFrequency: String, Codable, Equatable, UserDefaultsRepre
 
     public var subtitle: String {
         switch self {
+        case .automatic:
+            return "Immediate while charging, slower on battery, Low Power Mode or cellular (recommended)"
         case .immediate:
             return "Sync changes as soon as they occur (uses more battery)"
         case .fiveMinutes:
-            return "Check for changes every 5 minutes"
+            return "Check for changes at most every 5 minutes"
         case .fifteenMinutes:
-            return "Check for changes every 15 minutes (recommended)"
+            return "Check for changes at most every 15 minutes"
         case .hourly:
-            return "Check for changes every hour (battery efficient)"
+            return "Check for changes at most every hour (battery efficient)"
         case .manual:
-            return "Only sync when manually triggered"
+            return "Sync at launch and when you tap Sync"
         }
     }
 
-    /// Time interval in seconds for the sync frequency
+    static let fiveMinutesInterval: TimeInterval = 5 * 60
+    static let fifteenMinutesInterval: TimeInterval = 15 * 60
+    static let hourlyInterval: TimeInterval = 60 * 60
+
+    /// Time interval in seconds for the sync frequency.
+    /// `nil` for `.automatic`, which resolves an interval per conditions with `cadence(in:)`.
     public var timeInterval: TimeInterval? {
         switch self {
+        case .automatic:
+            return nil
         case .immediate:
             return nil // No delay for immediate
         case .fiveMinutes:
-            return 300
+            return Self.fiveMinutesInterval
         case .fifteenMinutes:
-            return 900
+            return Self.fifteenMinutesInterval
         case .hourly:
-            return 3600
+            return Self.hourlyInterval
         case .manual:
             return nil // No automatic sync
         }
@@ -643,8 +657,14 @@ public extension Defaults.Keys {
     /// Don't sync when device is in low power mode
     static let cloudKitRespectLowPowerMode = Key<Bool>("cloudKitRespectLowPowerMode", default: true)
 
-    /// Sync frequency
-    static let cloudKitSyncFrequency = Key<CloudKitSyncFrequency>("cloudKitSyncFrequency", default: .fifteenMinutes)
+    /// Sync frequency. Apple TV is always on mains power, so it syncs immediately; iOS picks a
+    /// cadence from power and network conditions. Defaults stores only values the user picked,
+    /// so changing the default never overrides a choice (the old default was every 15 minutes).
+    #if os(tvOS)
+    static let cloudKitSyncFrequency = Key<CloudKitSyncFrequency>("cloudKitSyncFrequency", default: .immediate)
+    #else
+    static let cloudKitSyncFrequency = Key<CloudKitSyncFrequency>("cloudKitSyncFrequency", default: .automatic)
+    #endif
 
     /// Content types to sync
     /// tvOS defaults to metadataOnly — limited storage means ROMs download on-demand when launched.
