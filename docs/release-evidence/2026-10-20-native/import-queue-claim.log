@@ -1,0 +1,77 @@
+Building for debugging...
+[Computing dependencies]
+[Pre-planning 1 / 66]
+[Planning deferred tasks]
+[5 / 50]
+[27 / 50]
+[28 / 51] PVLibrary
+[33 / 87]
+[37 / 87]
+[38 / 87]
+[40 / 87]
+[43 / 87]
+[45 / 87]
+[46 / 87]
+[47 / 87]
+[50 / 87]
+[51 / 87]
+[52 / 87]
+[53 / 87]
+[54 / 87]
+[56 / 87]
+[59 / 87]
+[60 / 87]
+[61 / 87]
+[62 / 87]
+[64 / 87] PVLibrary
+[72 / 87] PVLibrary
+[77 / 88] ClaimTests-product
+[82 / 126]
+[84 / 126]
+[85 / 126]
+[87 / 126]
+[88 / 126]
+[89 / 126]
+[91 / 126]
+[93 / 126]
+[94 / 126]
+[96 / 126]
+[97 / 126]
+[99 / 126]
+[100 / 126]
+[103 / 126]
+[104 / 126]
+[105 / 126]
+[106 / 126]
+[107 / 126]
+[108 / 126]
+[109 / 126]
+[110 / 126]
+[111 / 126]
+[112 / 126]
+[115 / 126] ClaimTests-product
+[120 / 126] ClaimTests-product
+[122 / 126] ClaimTests-product
+[125 / 126] ClaimTests-product
+Build complete! (50.43 sec)
+Test Suite 'All tests' started at 2026-10-20 02:27:04.436.
+Test Suite 'ClaimTests.xctest' started at 2026-10-20 02:27:04.438.
+Test Suite 'ImportQueueClaimTests' started at 2026-10-20 02:27:04.438.
+Test Case '-[ClaimTests.ImportQueueClaimTests testCancellationAndProcessingRaceHasExactlyOneWinner]' started.
+Test Case '-[ClaimTests.ImportQueueClaimTests testCancellationAndProcessingRaceHasExactlyOneWinner]' passed (0.008 seconds).
+Test Case '-[ClaimTests.ImportQueueClaimTests testExplicitRetryResetsFinishedItemWithoutResettingActiveImport]' started.
+Test Case '-[ClaimTests.ImportQueueClaimTests testExplicitRetryResetsFinishedItemWithoutResettingActiveImport]' passed (0.000 seconds).
+Test Case '-[ClaimTests.ImportQueueClaimTests testQueuedCancellationPreventsWorkerClaim]' started.
+Test Case '-[ClaimTests.ImportQueueClaimTests testQueuedCancellationPreventsWorkerClaim]' passed (0.000 seconds).
+Test Case '-[ClaimTests.ImportQueueClaimTests testStartedImportCannotBeCancelledOrClaimedTwice]' started.
+Test Case '-[ClaimTests.ImportQueueClaimTests testStartedImportCannotBeCancelledOrClaimedTwice]' passed (0.000 seconds).
+Test Suite 'ImportQueueClaimTests' passed at 2026-10-20 02:27:04.447.
+	 Executed 4 tests, with 0 failures (0 unexpected) in 0.009 (0.009) seconds
+Test Suite 'ClaimTests.xctest' passed at 2026-10-20 02:27:04.447.
+	 Executed 4 tests, with 0 failures (0 unexpected) in 0.009 (0.010) seconds
+Test Suite 'All tests' passed at 2026-10-20 02:27:04.447.
+	 Executed 4 tests, with 0 failures (0 unexpected) in 0.009 (0.011) seconds
+􀟈  Test run started.
+􀄵  Testing Library Version: 2084
+􀄵  Target Platform: arm64e-apple-macos14.0
+􁁛  Test run with 0 tests in 0 suites passed after 0.001 seconds.

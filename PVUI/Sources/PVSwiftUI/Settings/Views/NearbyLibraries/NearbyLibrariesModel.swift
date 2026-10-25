@@ -9,6 +9,7 @@
 //
 
 #if os(iOS) || os(tvOS)
+import Combine
 import Foundation
 import Observation
 import PVLibrary
@@ -19,11 +20,23 @@ import PVSystems
 import RealmSwift
 import UIKit
 
+/// Parent navigation and peer screens each own discovery while visible.
+struct NearbyDiscoveryLifetime {
+    var libraryVisible = false
+    var peerIDs: Set<String> = []
+
+    func shouldBrowse(environmentEligible: Bool) -> Bool {
+        environmentEligible && (libraryVisible || !peerIDs.isEmpty)
+    }
+}
+
 /// Discovery plus the shared pieces every peer browse needs.
 @MainActor
 @Observable
 final class NearbyLibrariesModel {
-    private(set) var snapshot = PeerBrowserSnapshot()
+    private(set) var snapshot = PeerBrowserSnapshot() {
+        didSet { peerModels.values.forEach { $0.receiveEnvironmentChanged() } }
+    }
     /// Systems Provenance has a core for; peers and items outside it are hidden.
     private(set) var playableSystems: Set<SystemIdentifier> = []
     private(set) var localIndex = LocalLibraryIndex(entries: [])
@@ -38,6 +51,8 @@ final class NearbyLibrariesModel {
             .appendingPathComponent("LibrarySharing/Incoming", isDirectory: true)
     )
     @ObservationIgnored private var browseTask: Task<Void, Never>?
+    @ObservationIgnored private var discoveryLifetime = NearbyDiscoveryLifetime()
+    @ObservationIgnored private var browseEnvironmentObservation: AnyCancellable?
     @ObservationIgnored private var peerModels: [String: NearbyPeerLibraryModel] = [:]
     /// Loaded on first use, not in `init`: the Keychain is only touched when a peer is opened.
     @ObservationIgnored private var loadedIdentity: PeerIdentity?
@@ -65,7 +80,11 @@ final class NearbyLibrariesModel {
     }()
     @ObservationIgnored private var pendingPasswords: [URL: String] = [:]
 
-    init() {}
+    init() {
+        browseEnvironmentObservation = NearbyLibraryAutomaticService.shared.manualEnvironmentDidChange.sink { [weak self] in
+            self?.refreshBrowsing()
+        }
+    }
 
     func addContentServer(url: URL, username: String, password: String) {
         let server = ContentServer(url: url, username: username)
@@ -139,6 +158,21 @@ final class NearbyLibrariesModel {
     }
 
     func start() {
+        discoveryLifetime.libraryVisible = true
+        refreshBrowsing()
+    }
+
+    func peerDidAppear(_ peerID: String) {
+        discoveryLifetime.peerIDs.insert(peerID)
+        refreshBrowsing()
+    }
+
+    func peerDidDisappear(_ peerID: String) {
+        discoveryLifetime.peerIDs.remove(peerID)
+        refreshBrowsing()
+    }
+
+    private func startBrowsing() {
         guard browseTask == nil else { return }
         ownPeerId = identity.id
         loadLocalLibrary()
@@ -147,15 +181,30 @@ final class NearbyLibrariesModel {
         let stream = browser.snapshots()
         browseTask = Task { [weak self] in
             for await snapshot in stream {
+                guard !Task.isCancelled else { return }
                 self?.snapshot = snapshot
             }
         }
     }
 
     func stop() {
+        discoveryLifetime.libraryVisible = false
+        refreshBrowsing()
+    }
+
+    private func refreshBrowsing() {
+        if discoveryLifetime.shouldBrowse(environmentEligible: NearbyLibraryAutomaticService.shared.allowsManualDiscovery) {
+            startBrowsing()
+        } else {
+            stopBrowsing()
+        }
+    }
+
+    private func stopBrowsing() {
         browseTask?.cancel()
         browseTask = nil
         browser.stop()
+        snapshot = PeerBrowserSnapshot()
     }
 
     /// One browse model per peer, kept so returning to a peer reuses its
@@ -175,6 +224,10 @@ final class NearbyLibrariesModel {
 
     func isInLibrary(_ item: RemoteLibraryItem) -> Bool {
         localIndex.contains(item)
+    }
+
+    func isDiscovered(_ peer: DiscoveredPeer) -> Bool {
+        snapshot.peers.contains { $0.id == peer.id && $0.advertisement.peerId == peer.advertisement.peerId }
     }
 
     // MARK: - Local library
@@ -227,12 +280,13 @@ enum NearbyCopyState: Equatable {
     case verifying
     /// The importer has the files; the game appears in the library once it's done.
     case importing
+    case completed
     case failed(String)
 
     var isActive: Bool {
         switch self {
         case .preparing, .downloading, .verifying: return true
-        case .importing, .failed: return false
+        case .importing, .completed, .failed: return false
         }
     }
 }
@@ -264,6 +318,8 @@ final class NearbyPeerLibraryModel {
 
     @ObservationIgnored private weak var owner: NearbyLibrariesModel?
     @ObservationIgnored private var copyTasks: [String: Task<Void, Never>] = [:]
+    @ObservationIgnored private var copyGenerations: [String: UUID] = [:]
+    @ObservationIgnored private var receiveEnvironmentObservation: AnyCancellable?
     @ObservationIgnored private let source: any LibrarySource
     @ObservationIgnored private var loadTask: Task<Void, Never>?
     @ObservationIgnored private var pairedThisSession = false
@@ -276,13 +332,16 @@ final class NearbyPeerLibraryModel {
         case .iFly:
             source = IFlyContinuitySource(baseURLs: peer.baseURLs, identity: owner.identity)
         case .iCube:
-            source = ICubeContinuitySource(baseURLs: peer.baseURLs, identity: owner.identity)
+            source = ICubeContinuitySource(baseURLs: peer.baseURLs, identity: owner.identity, expectedPeerID: peer.advertisement.peerId)
         case .pvLibrary:
             // Ask only for what this device plays; the source filters locally too.
             source = PVLibrarySource(baseURLs: peer.baseURLs, identity: owner.identity, systems: owner.playableSystems)
         case .contentServer:
             source = owner.contentServerSource(for: peer)
                 ?? PVLibrarySource(baseURLs: peer.baseURLs, identity: owner.identity, systems: owner.playableSystems)
+        }
+        receiveEnvironmentObservation = NearbyLibraryAutomaticService.shared.manualEnvironmentDidChange.sink { [weak self] in
+            self?.receiveEnvironmentChanged()
         }
     }
 
@@ -318,7 +377,36 @@ final class NearbyPeerLibraryModel {
         owner?.isInLibrary(item) ?? false
     }
 
+    /// A generation becomes permanently stale on foreground, trust, discovery or emulation loss.
+    func receiveEnvironmentChanged() {
+        guard peer.app == .iCube, !manualReceiveEligible else { return }
+        cancelManualCopies()
+    }
+
+    private var manualReceiveEligible: Bool {
+        guard let owner, let peerID = peer.advertisement.peerId else { return false }
+        return NearbyLibraryAutomaticService.shared.canReceiveManually(from: peerID) && owner.isDiscovered(peer)
+    }
+
+    private func isCurrentCopy(_ itemID: String, generation: UUID) -> Bool {
+        copyGenerations[itemID] == generation && (peer.app != .iCube || manualReceiveEligible)
+    }
+
+    private func cancelManualCopies() {
+        for id in copyTasks.keys {
+            copyGenerations[id] = nil
+            copies[id] = nil
+            copyTasks[id]?.cancel()
+        }
+    }
+
     // MARK: - Browse
+
+    /// Reacquires discovery on every appearance, including cached non-idle catalogues.
+    func appear() {
+        owner?.peerDidAppear(peer.id)
+        if phase == .idle { load() }
+    }
 
     func load() {
         guard loadTask == nil else { return }
@@ -331,6 +419,8 @@ final class NearbyPeerLibraryModel {
 
     /// Stops polling (consent or approval) when the view goes away.
     func cancel() {
+        if peer.app == .iCube { cancelManualCopies() }
+        owner?.peerDidDisappear(peer.id)
         loadTask?.cancel()
         loadTask = nil
         if case .loading = phase { phase = .idle }
@@ -344,6 +434,13 @@ final class NearbyPeerLibraryModel {
                     guard let self, case .loading = self.phase else { return }
                     self.phase = .loading(progress)
                 }
+            }
+            if peer.app == .iCube, let peerID = peer.advertisement.peerId,
+               await LibrarySharingService.shared.trust.peer(withId: peerID) == nil {
+                // Paired by a build that kept no record of the host's key, so copies
+                // can't be bound to it. Pairing again records the key.
+                phase = .needsPairing
+                return
             }
             catalogue = loaded
             phase = .loaded
@@ -388,6 +485,8 @@ final class NearbyPeerLibraryModel {
         loadTask = Task { [weak self] in
             do {
                 try await iCube.completePairing(handle, code: code)
+                try Task.checkCancellation()
+                try await LibrarySharingService.shared.rememberPairedHost(handle)
                 self?.pairedThisSession = true
                 self?.loadTask = nil
                 self?.load()
@@ -411,12 +510,32 @@ final class NearbyPeerLibraryModel {
     /// from the partial files and the cached pull manifest.
     func copy(_ item: RemoteLibraryItem) {
         guard copyTasks[item.id] == nil, let owner, let system = item.systemIdentifier else { return }
+        guard peer.app != .iCube || manualReceiveEligible else { return }
+        let generation = UUID()
+        copyGenerations[item.id] = generation
         let puller = LibraryPuller(staging: owner.staging, peerKey: peer.id)
         let staging = owner.staging
         let source = source
         copies[item.id] = .preparing(.connecting)
         copyTasks[item.id] = Task { [weak self] in
             do {
+                if let iCube = source as? ICubeContinuitySource {
+                    _ = try await NearbyLibraryReceiveService.receive(
+                        item, source: iCube, peerKey: self?.peer.id ?? "icube", staging: staging, checkEligibility: { [weak self] in
+                        guard self?.isCurrentCopy(item.id, generation: generation) == true else { throw CancellationError() }
+                    }) { progress in
+                        Task { @MainActor in
+                            guard self?.isCurrentCopy(item.id, generation: generation) == true else { return }
+                            self?.update(item.id, with: progress)
+                        }
+                    }
+                    try Task.checkCancellation()
+                    guard self?.isCurrentCopy(item.id, generation: generation) == true else { throw CancellationError() }
+                    self?.copies[item.id] = .completed
+                    self?.copyTasks[item.id] = nil
+                    self?.copyGenerations[item.id] = nil
+                    return
+                }
                 let pulled = try await puller.pull(item, from: source) { progress in
                     Task { @MainActor in self?.update(item.id, with: progress) }
                 }
@@ -430,15 +549,24 @@ final class NearbyPeerLibraryModel {
             } catch is CancellationError {
                 self?.copies[item.id] = nil
             } catch {
+                guard self?.isCurrentCopy(item.id, generation: generation) == true else {
+                    self?.copyTasks[item.id] = nil
+                    return
+                }
                 WLOG("Nearby Libraries: copying \(item.title) from \(self?.peer.serviceName ?? "?") failed: \(error)")
                 self?.copies[item.id] = .failed(error.localizedDescription)
             }
             self?.copyTasks[item.id] = nil
+            self?.copyGenerations[item.id] = nil
         }
     }
 
     /// Stops a copy. Its partial files stay, so copying again resumes.
     func cancelCopy(_ item: RemoteLibraryItem) {
+        if peer.app == .iCube {
+            copyGenerations[item.id] = nil
+            copies[item.id] = nil
+        }
         copyTasks[item.id]?.cancel()
     }
 
