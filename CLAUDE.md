@@ -283,6 +283,9 @@ A second, generated workspace for fast iteration. `Provenance.xcodeproj` still s
     hashes plus dirty edits under them. iCube app commits and edits there no longer force a rebuild;
     if the build starts reading a new path, add it to that list.
   - The cache is `$PV_CORE_CACHE` or `~/Library/Caches/Provenance/cores/<core>/<slice>/<key12>/`.
+  - `--remote[=HOST]` (`make prepare-<core> REMOTE=1`, or `PV_CORE_REMOTE`) builds a miss on the Studio
+    (`studio-cable`, then `studio-runner`): the build inputs rsync to `~/Builds/pv-slices/<core>` there and
+    the framework comes back. Dolphin syncs only `DOLPHIN_BUILD_PATHS`, so iCube's 31 GB app tree stays home.
   - On a hit, the legacy `build/xcframework/<Product>-<slice>.framework` path is a symlink into it.
   - Only `--xcframework` repacks the multi-slice xcframework (Dolphin's is repacked after every miss).
     If its hard links fail, set `PV_CORE_CACHE` to a folder on the repo's volume.

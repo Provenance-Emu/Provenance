@@ -565,5 +565,88 @@ class AzaharCMakeCacheTests(unittest.TestCase):
             self.assertEqual(marker.read_text(), "valid")
 
 
+class RemoteTests(unittest.TestCase):
+    """--remote: sync the build inputs to the host, build there, fetch the framework back."""
+
+    def setUp(self):
+        self.tmp = tempfile.TemporaryDirectory()
+        self.root = Path(self.tmp.name)
+        self.repo = FakeRepo(self.root)
+        self.azahar = self.repo.specs["azahar"]
+        self.dolphin = self.repo.specs["dolphin"]
+
+    def tearDown(self):
+        self.tmp.cleanup()
+
+    def test_picks_first_reachable_default_host(self):
+        tried = []
+        host = build_slice.pick_remote_host(None, lambda h: tried.append(h) or h == "studio-runner")
+        self.assertEqual(host, "studio-runner")
+        self.assertEqual(tried, ["studio-cable", "studio-runner"])
+
+    def test_named_host_is_the_only_candidate(self):
+        self.assertEqual(build_slice.pick_remote_host("mini", lambda h: True), "mini")
+        with self.assertRaises(SystemExit):
+            build_slice.pick_remote_host("mini", lambda h: False)
+
+    def test_unreachable_hosts_fail_instead_of_building_here(self):
+        with self.assertRaises(SystemExit):
+            build_slice.pick_remote_host(None, lambda h: False)
+
+    def test_dolphin_syncs_only_build_paths(self):
+        paths = build_slice.remote_sync_paths(self.dolphin, "ios", self.root)
+        self.assertIn("Cores/Dolphin/dolphin-ios/Source/Core", paths)
+        self.assertIn("Cores/Dolphin/dolphin-ios/Externals", paths)
+        self.assertIn("Cores/Dolphin/dolphin-ios/BuildiOSXCFramework.py", paths)
+        self.assertFalse(any(path.startswith("Cores/Dolphin/dolphin-ios/Source/iOS/App") for path in paths))
+        self.assertFalse(any("/build" in path for path in paths))
+
+    def test_azahar_syncs_its_moltenvk_slice_only(self):
+        paths = build_slice.remote_sync_paths(self.azahar, "tvos", self.root)
+        self.assertIn("Cores/Azahar/azahar", paths)
+        self.assertIn("Cores/Azahar/build_azahar_core.py", paths)
+        self.assertIn("MoltenVK/MoltenVK/static/MoltenVK.xcframework/tvos-arm64_arm64e", paths)
+        self.assertNotIn("MoltenVK/MoltenVK/static/MoltenVK.xcframework/ios-arm64", paths)
+
+    def test_build_command_expands_home_on_the_host(self):
+        command = build_slice.remote_build_command(self.dolphin, "ios", self.root, "$HOME/Builds/pv-slices/dolphin")
+        self.assertIn('cd "$HOME/Builds/pv-slices/dolphin/Cores/Dolphin/dolphin-ios"', command)
+        self.assertTrue(command.endswith(" OS64"))
+        self.assertIn(build_slice.REMOTE_PYTHON, command)
+
+    def test_builder_syncs_builds_and_fetches(self):
+        calls = []
+        builder = build_slice.make_remote_builder(None, self.root, probe=lambda h: h == "studio-runner",
+                                                  run=lambda cmd, **kwargs: calls.append(cmd))
+        with patch.object(build_slice, "default_runner", return_value="Xcode 27.1"):
+            builder(self.dolphin, "ios")
+        self.assertEqual(calls[0][0], "ssh")
+        self.assertIn("mkdir -p", calls[0][-1])
+        syncs = [cmd for cmd in calls if cmd[0] == "rsync" and cmd[-1].startswith("studio-runner:")]
+        self.assertTrue(syncs)
+        self.assertTrue(all("--exclude" in cmd and ".git" in cmd for cmd in syncs))
+        build = [cmd for cmd in calls if cmd[0] == "ssh" and "-c" in cmd[-1]]
+        self.assertEqual(len(build), 1)
+        fetch = calls[-1]
+        self.assertEqual(fetch[0], "rsync")
+        self.assertTrue(fetch[-2].startswith("studio-runner:Builds/pv-slices/dolphin/"))
+        self.assertTrue(fetch[-1].endswith("PVlibDolphin-ios.framework/"))
+
+    def test_main_uses_remote_builder_from_environment(self):
+        made = []
+
+        def fake_make(preference, repo, **kwargs):
+            made.append(preference)
+            return lambda spec, slice_name: None
+
+        with patch.object(build_slice, "make_remote_builder", side_effect=fake_make), \
+             patch.object(build_slice, "ensure_slice", return_value=self.root / "fw"), \
+             patch.object(build_slice, "prepare_headers"), patch.object(build_slice, "pack_xcframework"), \
+             redirect_stdout(io.StringIO()):
+            build_slice.main(["azahar", "ios", "--repo-root", str(self.root), "--cache-dir", str(self.root / "cache")],
+                             runner=FakeRunner(), env={"PV_CORE_REMOTE": "mini"})
+        self.assertEqual(made, ["mini"])
+
+
 if __name__ == "__main__":
     unittest.main()

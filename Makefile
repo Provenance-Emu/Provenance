@@ -275,7 +275,8 @@ DEV_DESTINATION ?= generic/platform=iOS Simulator
 # working-tree scan (minutes on a cold disk). STRICT=1 rescans: use it after editing engine
 # sources in place, since uncommitted edits are only seen by the scan.
 AZAHAR_SLICE ?= ios
-CORE_PREPARE_FLAGS = --xcframework $(if $(STRICT),--strict,)
+# REMOTE=1 builds a missing slice on the Studio (studio-cable, then studio-runner); REMOTE=<host> picks one.
+CORE_PREPARE_FLAGS = --xcframework $(if $(STRICT),--strict,) $(if $(filter 1,$(REMOTE)),--remote,$(if $(REMOTE),--remote=$(REMOTE),))
 prepare-azahar:
 	$(info Preparing the Azahar native library ($(AZAHAR_SLICE))…)
 	python3 Scripts/cores/build_slice.py azahar $(AZAHAR_SLICE) $(CORE_PREPARE_FLAGS)

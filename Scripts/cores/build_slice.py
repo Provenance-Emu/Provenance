@@ -2,7 +2,7 @@
 """Build one Azahar or Dolphin core slice outside the app, cached by a content key.
 
   build_slice.py <azahar|dolphin> <ios|ios-sim|tvos|tvos-sim> [--print-key] [--force]
-                 [--cache-dir DIR] [--xcframework]
+                 [--cache-dir DIR] [--xcframework] [--remote[=HOST]]
 
 Key: sha256 over the core submodule HEAD and `git submodule status --recursive` inside it,
 the wrapped build script and CMake toolchain contents (Azahar's CMAKE_OPTIONS live in its
@@ -33,6 +33,11 @@ which would also repack the xcframework), the product moves into the cache and i
 --xcframework repacks <Product>.xcframework for distribution; Dolphin also repacks it when it
 is missing, since SwiftPM resolves the xcframework at planning time.
 
+Remote: `--remote` (or PV_CORE_REMOTE=1|HOST, `make prepare-dolphin REMOTE=1`) builds a cache
+miss on the Studio instead: the build inputs are rsynced to ~/Builds/pv-slices/<core> there, the
+same wrapped builder runs over ssh, and the framework comes back to the legacy path. The key is
+still computed here, so hits never reach the network.
+
 Python 3.9 compatible (Dolphin's Xcode phase runs /usr/bin/python3). Azahar's builder needs
 3.10+, so it runs in a separate interpreter (PV_PYTHON3, Homebrew python3, python3.1x).
 """
@@ -45,6 +50,7 @@ import json
 import os
 import plistlib
 import re
+import shlex
 import shutil
 import subprocess
 import sys
@@ -484,6 +490,110 @@ def pack_xcframework(spec: CoreSpec) -> None:
     subprocess.run(cmd, check=True, env=build_env(), cwd=str(spec.script.parent))
 
 
+# MARK: - Remote builds
+#
+# `--remote` builds a missing slice on a faster Mac (the Studio) instead of here. The key is
+# still computed locally, so a cache hit never touches the network. On a miss the core's build
+# inputs are rsynced into a mirror on the host, the same wrapped builder runs there over ssh, and
+# the framework is rsynced back to the legacy output path for ensure_slice to cache and link.
+# The mirror keeps the builders' CMake build directories, so repeat remote builds are incremental.
+
+REMOTE_HOSTS: Tuple[str, ...] = ("studio-cable", "studio-runner")  # Thunderbolt link, then LAN
+REMOTE_ROOT = "Builds/pv-slices"  # under the host's home, on its internal disk
+REMOTE_PYTHON = HOMEBREW_BIN + "/python3"
+REMOTE_SSH_OPTIONS: Tuple[str, ...] = ("-o", "BatchMode=yes", "-o", "ConnectTimeout=6",
+                                       "-o", "ServerAliveInterval=30", "-o", "ServerAliveCountMax=6")
+# Dolphin's mirror also gets these beside DOLPHIN_BUILD_PATHS: the builder script and the small
+# data trees the CMake install steps may read.
+DOLPHIN_REMOTE_EXTRAS: Tuple[str, ...] = ("BuildiOSXCFramework.py", "Data", "Languages")
+
+# Azahar's slice build without write_gitlink_stamps: the mirror has no .git, so the stamp is
+# written locally once the framework is back.
+AZAHAR_REMOTE_BUILD = (
+    "import sys; sys.path.insert(0, sys.argv[1]); import build_azahar_core as b; "
+    "b.AzaharBuilder(verbose=True).build_platform(sys.argv[2])"
+)
+AZAHAR_STAMP = (
+    "import sys; sys.path.insert(0, sys.argv[1]); import build_azahar_core as b; "
+    "b.BUILD.joinpath(sys.argv[2]).mkdir(parents=True, exist_ok=True); b.write_gitlink_stamps([sys.argv[2]])"
+)
+
+Probe = Callable[[str], bool]
+
+
+def ssh_reachable(host: str) -> bool:
+    result = subprocess.run(["ssh", *REMOTE_SSH_OPTIONS, host, "true"], capture_output=True)
+    return result.returncode == 0
+
+
+def pick_remote_host(preference: Optional[str], probe: Probe = ssh_reachable) -> str:
+    """The named host, or the first reachable default."""
+    candidates = [preference] if preference else list(REMOTE_HOSTS)
+    for host in candidates:
+        if probe(host):
+            return host
+    raise SystemExit(f"build_slice: no remote build host reachable ({', '.join(candidates)}); "
+                     "drop --remote to build here")
+
+
+def remote_sync_paths(spec: CoreSpec, slice_name: str, repo: Path) -> List[str]:
+    """Repo-relative paths the slice build reads, which is all the mirror needs."""
+    if spec.name == "dolphin":
+        submodule = spec.submodule.relative_to(repo).as_posix()
+        return [f"{submodule}/{path}" for path in (*spec.build_paths, *DOLPHIN_REMOTE_EXTRAS)]
+    root = spec.script.parent.relative_to(repo).as_posix()
+    paths = [f"{root}/{spec.script.name}", spec.toolchain.relative_to(repo).as_posix(),
+             spec.submodule.relative_to(repo).as_posix()]
+    if spec.moltenvk is not None:
+        paths.append(f"{spec.moltenvk.relative_to(repo).as_posix()}/{SLICES[slice_name]['mvk']}")
+    return paths
+
+
+def remote_build_command(spec: CoreSpec, slice_name: str, repo: Path, mirror: str) -> str:
+    """The shell command run on the host: the wrapped builder, inside the mirror."""
+    script_dir = f"{mirror}/{spec.script.parent.relative_to(repo).as_posix()}"
+    snippet = AZAHAR_REMOTE_BUILD if spec.name == "azahar" else DOLPHIN_BUILD
+    flags = " ".join(f"{flag}={shlex.quote(os.environ[flag])}" for flag in spec.env_flags if flag in os.environ)
+    # Double quotes, not shlex.quote: the mirror path starts with $HOME, expanded on the host.
+    return (f'cd "{script_dir}" && PATH={HOMEBREW_BIN}:$PATH {flags} '
+            f'nice -n 5 {REMOTE_PYTHON} -c {shlex.quote(snippet)} "{script_dir}" '
+            f"{SLICES[slice_name]['cmake']}")
+
+
+def make_remote_builder(preference: Optional[str], repo: Path, probe: Probe = ssh_reachable,
+                        run: Callable[..., object] = subprocess.run) -> Builder:
+    def build(spec: CoreSpec, slice_name: str) -> None:
+        host = pick_remote_host(preference, probe)
+        mirror_rel = f"{REMOTE_ROOT}/{spec.name}"  # rsync paths are relative to the host's home
+        mirror = f"$HOME/{mirror_rel}"
+        paths = remote_sync_paths(spec, slice_name, repo)
+        local_xcode = default_runner(["xcodebuild", "-version"]).splitlines()[:1]
+        log(f"{spec.name} {slice_name}: building on {host} (Xcode here: {' '.join(local_xcode)})")
+        parents = sorted({f"{mirror}/{Path(path).parent.as_posix()}" for path in paths})
+        run(["ssh", *REMOTE_SSH_OPTIONS, host, "mkdir -p " + " ".join(f'"{p}"' for p in parents)
+             + " && xcodebuild -version | head -1"], check=True)
+        for path in paths:
+            source = repo / path
+            if not source.exists():
+                continue
+            trailing = "/" if source.is_dir() else ""
+            log(f"{spec.name} {slice_name}: syncing {path}")
+            run(["rsync", "-a", "--delete", "--exclude", ".git", "-e", "ssh " + " ".join(REMOTE_SSH_OPTIONS),
+                 f"{source}{trailing}", f"{host}:{mirror_rel}/{path}{trailing}"], check=True)
+        run(["ssh", *REMOTE_SSH_OPTIONS, host, remote_build_command(spec, slice_name, repo, mirror)], check=True)
+
+        legacy = spec.legacy_dir / framework_name(spec, slice_name)
+        remote_legacy = f"{mirror_rel}/{legacy.relative_to(repo).as_posix()}/"
+        legacy.mkdir(parents=True, exist_ok=True)
+        log(f"{spec.name} {slice_name}: fetching {legacy.name} from {host}")
+        run(["rsync", "-a", "--delete", "-e", "ssh " + " ".join(REMOTE_SSH_OPTIONS),
+             f"{host}:{remote_legacy}", f"{legacy}/"], check=True)
+        if spec.name == "azahar":
+            run([python_for(spec), "-c", AZAHAR_STAMP, str(spec.script.parent), SLICES[slice_name]["cmake"]],
+                check=True, cwd=str(spec.script.parent))
+    return build
+
+
 def main(argv: Optional[List[str]] = None, runner: Runner = default_runner,
          env: Optional[Mapping[str, str]] = None, builder: Builder = run_wrapped_build) -> int:
     parser = argparse.ArgumentParser(description="Build or link one cached Azahar/Dolphin core slice.")
@@ -495,6 +605,9 @@ def main(argv: Optional[List[str]] = None, runner: Runner = default_runner,
     parser.add_argument("--xcframework", action="store_true", help="also repack <Product>.xcframework (distribution)")
     parser.add_argument("--strict", action="store_true",
                         help="always scan the working trees for uncommitted edits (also PV_CORE_STRICT=1)")
+    parser.add_argument("--remote", nargs="?", const="", default=None, metavar="HOST",
+                        help="build a missing slice on a remote Mac over ssh (default host: the first "
+                             f"reachable of {', '.join(REMOTE_HOSTS)}; also PV_CORE_REMOTE=1|HOST)")
     parser.add_argument("--repo-root", type=Path, default=REPO_ROOT, help=argparse.SUPPRESS)
     args = parser.parse_args(argv)
 
@@ -526,6 +639,10 @@ def main(argv: Optional[List[str]] = None, runner: Runner = default_runner,
         inputs = {}
         log(f"{label}: unchanged since this checkout last prepared it; key {key[:12]} "
             f"({time.monotonic() - started:.1f}s; --strict rescans for uncommitted engine edits)")
+
+    remote = args.remote if args.remote is not None else environment.get("PV_CORE_REMOTE")
+    if remote is not None and remote != "0":
+        builder = make_remote_builder(None if remote in ("", "1") else remote, args.repo_root.resolve())
 
     produced = args.force or not is_cached(spec, args.slice, cache, key)
     if produced:
