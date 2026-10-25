@@ -1346,7 +1346,9 @@ public struct CloudSyncSettingsView: View {
                 .foregroundColor(.white)
 
             VStack(spacing: 4) {
-                ForEach(CloudKitSyncFrequency.allCases, id: \.self) { frequency in
+                // Apple TV is always on mains power, so Automatic would always mean Immediate.
+                ForEach(CloudKitSyncFrequency.allCases.filter { $0 != .automatic || currentCloudKitSyncFrequency == .automatic },
+                        id: \.self) { frequency in
                     CloudSyncSelectionRow(
                         title: frequency.description,
                         subtitle: frequency.subtitle,

@@ -206,6 +206,17 @@ public class CloudSyncManager { // swiftlint:disable:this type_body_length
     /// Observes local PVGame changes to forward metadata edits to CloudKit.
     private var localGameSyncMonitor: LocalGameSyncMonitor?
 
+    // MARK: Cadence (see CloudSyncManager+Cadence.swift)
+
+    /// When the last automatic sync (push, foreground or scheduled) ran.
+    @MainActor var lastAutomaticSync: Date = .distantPast
+    /// The one sync waiting for its interval to elapse.
+    @MainActor var deferredAutomaticSync: Task<Void, Never>?
+    /// A local change skipped its upload; the next scheduled sync uploads it.
+    @MainActor var hasDeferredUploads = false
+    /// Setting and device-condition subscriptions that reschedule a deferred sync.
+    @MainActor var cadenceCancellables = Set<AnyCancellable>()
+
     // MARK: - Initialization
 
     /// No-op initializer used when CloudKit entitlement is not present (e.g. sideloaded builds).
@@ -316,21 +327,17 @@ public class CloudSyncManager { // swiftlint:disable:this type_body_length
 
     /// Check if the current network connection is suitable for sync based on user settings
     private func isNetworkAvailableForSync() async -> Bool {
-        let networkMode = Defaults[.cloudKitSyncNetworkMode]
+        let conditions = DeviceConditionsMonitor.shared.current
+        guard conditions.isNetworkAvailable else { return false }
 
-        // For now, we'll assume network is available if any mode is selected
-        // In a real implementation, you would check actual network type (WiFi/Cellular)
-        switch networkMode {
+        switch Defaults[.cloudKitSyncNetworkMode] {
         case .wifiAndCellular:
-            return true // Allow both
+            return true
         case .wifiOnly:
-            // Would need to check if current connection is WiFi
-            // For now, assume true - implement actual WiFi detection as needed
-            return true
+            // Expensive covers cellular and a personal hotspot joined over Wi-Fi.
+            return !conditions.isExpensiveNetwork
         case .cellularOnly:
-            // Would need to check if current connection is cellular
-            // For now, assume true - implement actual cellular detection as needed
-            return true
+            return conditions.isCellular
         }
     }
 
@@ -343,14 +350,8 @@ public class CloudSyncManager { // swiftlint:disable:this type_body_length
 
     /// Check if the device is currently charging
     private func isDeviceCharging() async -> Bool {
-#if os(tvOS)
-        return true
-#else
-
-        return await MainActor.run {
-            UIDevice.current.batteryState == .charging || UIDevice.current.batteryState == .full
-        }
-#endif
+        // UIDevice.batteryState is .unknown unless battery monitoring is on; the monitor turns it on.
+        DeviceConditionsMonitor.shared.current.isOnExternalPower
     }
 
     /// Check if a file should be synced based on content type settings
@@ -386,8 +387,8 @@ public class CloudSyncManager { // swiftlint:disable:this type_body_length
 
         switch networkMode {
         case .wifiAndCellular:
-            // Conservative path previously applied cellular cap always; relax it to only cap truly tiny thresholds
-            return fileSize <= maxCellularSizeBytes
+            // The cap applies only on a metered connection.
+            return !DeviceConditionsMonitor.shared.current.isExpensiveNetwork || fileSize <= maxCellularSizeBytes
         case .wifiOnly:
             return true
         case .cellularOnly:
@@ -428,12 +429,6 @@ public class CloudSyncManager { // swiftlint:disable:this type_body_length
     /// Check if sync notifications should be shown
     private func shouldShowSyncNotifications() -> Bool {
         return Defaults[.cloudKitShowSyncNotifications]
-    }
-
-    /// Get the sync frequency interval in seconds
-    private func getSyncFrequencyInterval() -> TimeInterval? {
-        let frequency = Defaults[.cloudKitSyncFrequency]
-        return frequency.timeInterval
     }
 
     /// Whether ROM metadata/content should be synced for the current content preference.
@@ -1098,6 +1093,11 @@ public class CloudSyncManager { // swiftlint:disable:this type_body_length
               let romSyncer = romsSyncer as? CloudKitRomsSyncer else {
             return
         }
+        if !reason.contains("manual"),
+           let deferral = BackgroundWorkPolicy.deferral(for: .bulkNetwork, in: DeviceConditionsMonitor.shared.current) {
+            DLOG("Skipping CloudKit integrity audit (\(reason)): \(deferral.rawValue)")
+            return
+        }
 
         integrityAuditTask = Task.detached(priority: .background) { [weak self] in
             if delay > 0 {
@@ -1626,6 +1626,7 @@ public class CloudSyncManager { // swiftlint:disable:this type_body_length
     }
 
     /// Set up observers for sync setting changes and other relevant events
+    @MainActor
     private func setupObservers() {
         // Observe iCloud Sync setting changes using Combine
         Defaults.publisher(.iCloudSync)
@@ -1639,6 +1640,8 @@ public class CloudSyncManager { // swiftlint:disable:this type_body_length
         // Observe new PVSaveState creation using RxRealm
         setupSaveStateObserver()
 
+        observeCadenceChanges()
+
         // Observe game additions/deletions (Realm Notifications)
         // Keep existing Realm notifications for game changes
         NotificationCenter.default.addObserver(self, selector: #selector(handleGameAdded(_:)), name: Notification.Name.PVGameImported, object: nil)
@@ -1650,10 +1653,9 @@ public class CloudSyncManager { // swiftlint:disable:this type_body_length
         notificationTokens.append(
             NotificationCenter.default.addObserver(forName: UIApplication.willEnterForegroundNotification, object: nil, queue: .main) { [weak self] _ in
                 guard let self = self else { return }
-                MainActor.assumeIsolated { self.resume(reason: .appBackgrounded) }
-                Task {
-                    await CloudKitSyncerStore.shared.refreshRomRemoteChanges()
-                    await self.checkForMissingROMFiles(force: false)
+                MainActor.assumeIsolated {
+                    self.resume(reason: .appBackgrounded)
+                    self.requestAutomaticSync(.foreground)
                 }
             }
         )
@@ -1922,6 +1924,13 @@ public class CloudSyncManager { // swiftlint:disable:this type_body_length
                 return
             }
 
+            // Not immediate: the next scheduled sync uploads it with everything else pending.
+            guard self.currentSyncCadence.uploadsImmediately else {
+                DLOG("Deferring CloudKit upload of \(game.title) to the next scheduled sync")
+                self.deferUpload()
+                return
+            }
+
             // Freeze the game while still on main actor (safe Realm snapshot),
             // then detach to perform the network upload off the main thread.
             let frozenGame = game.freeze()
@@ -1958,6 +1967,13 @@ public class CloudSyncManager { // swiftlint:disable:this type_body_length
 
     @objc private func handleSaveStateAdded(_ notification: Notification) {
         guard Defaults[.iCloudSync], let saveState = notification.object as? PVSaveState else { return }
+        // Save states stay prompt on every interval (small, and what people switch devices for);
+        // only Manual holds them for the next Sync.
+        if currentSyncCadence == .manual {
+            DLOG("Manual sync: save state upload waits for the next Sync")
+            Task { @MainActor in self.deferUpload() }
+            return
+        }
         DLOG("Save state added, uploading: \(saveState.file?.fileName ?? "unknown") for game \(saveState.game.title)")
         Task {
             do {
@@ -2322,6 +2338,8 @@ extension CloudSyncManager: PausableService {
 
         metadataBootstrapTask?.cancel()
         integrityAuditTask?.cancel()
+        deferredAutomaticSync?.cancel()
+        deferredAutomaticSync = nil
         cancelAllActiveSyncTasks()
 
         metadataQueue.isSuspended = true
