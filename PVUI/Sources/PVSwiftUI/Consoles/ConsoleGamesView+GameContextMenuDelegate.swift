@@ -15,6 +15,7 @@ import protocol PVUIBase.GameContextMenuDelegate
 import struct PVUIBase.GameContextMenu
 import struct PVUIBase.DownloadProgress
 import class PVUIBase.SceneCoordinator
+import SkinKitManager
 
 internal struct SystemMoveState: Identifiable {
     var id: String {

@@ -20,7 +20,9 @@ let package = Package(
         .package(path: "../PVCoreBridge"),
         .package(path: "../PVLogging"),
         .package(path: "../PVSettings"),
-        .package(url: "https://github.com/sindresorhus/Defaults.git", from: "9.0.2")
+        .package(url: "https://github.com/sindresorhus/Defaults.git", from: "9.0.2"),
+        /// `TouchInputRole` and `SkinTouchSelection` live in SkinKitUI, shared with the skin view.
+        .package(url: "https://github.com/Provenance-Emu/SkinKit", revision: "bdd638d5fe7a18362abef0b068e67f9b4ca103a0")
     ],
     targets: [
         .target(
@@ -31,12 +33,17 @@ let package = Package(
                 "PVCoreBridge",
                 "PVLogging",
                 "PVSettings",
-                "Defaults"
+                "Defaults",
+                .product(name: "SkinKitUI", package: "SkinKit")
             ]
         ),
         .testTarget(
             name: "PVTouchOverlayTests",
-            dependencies: ["PVTouchOverlay", .product(name: "PVSystems", package: "PVSystems")]
+            dependencies: [
+                "PVTouchOverlay",
+                .product(name: "PVSystems", package: "PVSystems"),
+                .product(name: "SkinKitUI", package: "SkinKit")
+            ]
         )
     ],
     swiftLanguageModes: [.v5, .v6],

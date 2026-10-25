@@ -8,6 +8,8 @@
 import SwiftUI
 import PVUIBase
 import PVLogging
+import SkinKitCore
+import SkinKitManager
 import UniformTypeIdentifiers
 
 @main
@@ -18,6 +20,10 @@ struct EmuSkinsApp: App {
     /// State to track any import errors
     @State private var importError: Error?
     @State private var showingImportError = false
+
+    init() {
+        SkinKitSetup.configure()
+    }
 
     var body: some Scene {
         WindowGroup {

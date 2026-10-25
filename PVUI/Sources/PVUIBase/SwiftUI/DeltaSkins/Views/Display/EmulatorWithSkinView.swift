@@ -11,6 +11,9 @@ import RealmSwift
 import Defaults
 import PVSettings
 import PVTouchOverlay
+import SkinKitCore
+import SkinKitManager
+import SkinKitUI
 
 /// A SwiftUI view that displays a custom skin for the emulator
 struct EmulatorWithSkinView: View {
@@ -368,7 +371,7 @@ struct EmulatorWithSkinView: View {
 
     // MARK: - Skin Content View
 
-    private func skinContentView(skin: any DeltaSkinProtocol, geometry: GeometryProxy) -> some View {
+    private func skinContentView(skin: any DeltaSkinRenderable, geometry: GeometryProxy) -> some View {
         // Create traits reactively - this will be recalculated when currentOrientation changes
         let traits = createSkinTraits()
 
@@ -452,11 +455,14 @@ struct EmulatorWithSkinView: View {
             screenAspectRatio: aspectRatio,
             isInEmulator: true,
             inputHandler: inputHandler,
-            core: coreInstance,
+            onViewportFrameChange: { [coreInstance] frame in
+                coreInstance.viewportLayoutDelegate?.viewportFrameDidUpdate(frame)
+            },
             isEditMode: $isEditMode,
             buttonOffsets: buttonOffsets
         )
         .environmentObject(inputHandler)
+        .deltaSkinInputHandler(inputHandler)
         // NOTE: Removed aggressive .id() modifier that was causing AG::precondition_failure crashes
         // when changing filters. The filter is passed as a parameter to DeltaSkinView and updates
         // automatically when state changes. Using .id() to force full view recreation corrupts
@@ -919,7 +925,7 @@ extension EmulatorWithSkinView {
             }
 
             await MainActor.run {
-                self.skinLoader.selectedSkin = foundSkin
+                self.skinLoader.selectedSkin = foundSkin?.renderable
                 self.skinLoader.isLoading = false
                 self.skinLoader.loadingProgress = 1.0
                 self.skinLoader.loadingStage = .complete

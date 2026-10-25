@@ -20,6 +20,7 @@ import PVRealm
 import PVSettings
 import Combine
 import Defaults
+import SkinKitManager
 
 // DeltaSkinManager already "conforms" to but does not
 // know about SkinImporterServicing, since that's in PVLibrary

@@ -1,3 +1,5 @@
+import SkinKitUI
+
 /// Shared diagnostic state for tracing the touch-to-core input pipeline
 /// after app background/resume cycles. Filter Console.app with `[INPUT-DIAG]`.
 ///
@@ -13,8 +15,12 @@ public enum InputDiagnostics {
     public static var hasLoggedJSButton: Bool = false
     /// OSD JSDPad touch layer
     public static var hasLoggedJSDPad: Bool = false
-    /// DeltaSkin MultiTouchView (UIKit backing view for SwiftUI skin)
-    public static var hasLoggedMultiTouch: Bool = false
+    /// DeltaSkin MultiTouchView (UIKit backing view for SwiftUI skin). The view lives in SkinKitUI,
+    /// which keeps the flag.
+    public static var hasLoggedMultiTouch: Bool {
+        get { DeltaSkinInputDiagnostics.hasLoggedMultiTouch }
+        set { DeltaSkinInputDiagnostics.hasLoggedMultiTouch = newValue }
+    }
     /// DeltaSkinInputHandler.buttonPressed (SwiftUI skin -> core bridge)
     public static var hasLoggedDeltaSkinPress: Bool = false
 

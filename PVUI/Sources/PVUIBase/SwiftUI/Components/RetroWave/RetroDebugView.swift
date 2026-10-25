@@ -12,6 +12,9 @@ import PVLibrary
 import PVRealm
 import RealmSwift
 import PVLogging
+import SkinKitCore
+import SkinKitManager
+import SkinKitUI
 
 // Add this enum at the top of your file or in a separate extension
 enum ThemeName: String, CaseIterable {
@@ -1505,7 +1508,7 @@ struct SaveStatesMockView: View {
 // Add this helper view to handle async loading of skins
 struct DeltaSkinPreviewWrapper: View {
     @StateObject private var skinManager = DeltaSkinManager.shared
-    @State private var skins: [any DeltaSkinProtocol] = []
+    @State private var skins: [any DeltaSkinRenderable] = []
     @State private var isLoading = true
 
     var body: some View {
@@ -1538,7 +1541,7 @@ struct DeltaSkinPreviewWrapper: View {
                 let availableSkins = try await skinManager.availableSkins()
 
                 await MainActor.run {
-                    self.skins = availableSkins
+                    self.skins = availableSkins.compactMap(\.renderable)
                     self.isLoading = false
                 }
             } catch {

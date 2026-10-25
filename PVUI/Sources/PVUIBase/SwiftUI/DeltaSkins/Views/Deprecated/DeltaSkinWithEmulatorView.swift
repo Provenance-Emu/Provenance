@@ -5,6 +5,8 @@ import PVUIBase
 import PVPrimitives
 import PVCoreBridge
 import GameController
+import SkinKitCore
+import SkinKitUI
 
 /// A view that positions the emulator screen within a DeltaSkin and handles button inputs
 public struct DeltaSkinWithEmulatorView: View {
@@ -284,7 +286,8 @@ public struct DeltaSkinWithEmulatorView: View {
     private func loadSkinImage() {
         Task {
             do {
-                let image = try await skin.image(for: traits)
+                guard let renderable = skin.renderable else { throw DeltaSkinError.missingAsset }
+                let image = try await renderable.image(for: traits)
 
                 await MainActor.run {
                     self.skinImage = image

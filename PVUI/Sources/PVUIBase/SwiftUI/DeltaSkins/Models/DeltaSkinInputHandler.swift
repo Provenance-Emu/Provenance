@@ -7,6 +7,7 @@ import PVUIBase
 import PVSettings
 import Defaults
 import PVTouchOverlay
+import SkinKitUI
 #if canImport(UIKit)
 import UIKit
 #endif
@@ -47,7 +48,7 @@ open class DeltaSkinInputHandler: ObservableObject {
 
     /// `true` while the frontend renderer shows each DS screen in the other one's
     /// skin slot. The skin's stylus area follows the DS bottom screen.
-    @Published var dsScreensSwapped = false
+    @Published public internal(set) var dsScreensSwapped = false
 
     /// Whether the last screen-swap button press went to the frontend renderer.
     private var frontendScreenSwapPressConsumed = false
@@ -59,7 +60,9 @@ open class DeltaSkinInputHandler: ObservableObject {
     /// Must be accessed from the main thread only.
     public let turboManager = TurboManager()
     /// Manages sticky (toggle-hold) button state.
-    public let stickyManager = StickyButtonManager()
+    /// SkinKitUI's `StickyButtonManager` has no public initializer at the pinned revision, so this
+    /// takes a fresh one from its public preview handler (which only owns state, no timers).
+    public let stickyManager = DeltaSkinPreviewInputHandler().stickyManager
 
     /// Initialize with an emulator core and optional controller view controller
     public init(emulatorCore: PVEmulatorCore? = nil, controllerVC: (any ControllerVC)? = nil, emulatorController: (any PVEmualatorControllerProtocol)? = nil) {
@@ -3183,4 +3186,15 @@ protocol PVControllerResponder {
 protocol PVAnalogResponder {
     func controllerMovedLeftAnalogStick(x: Float, y: Float, forPlayer player: Int)
     func controllerMovedRightAnalogStick(x: Float, y: Float, forPlayer player: Int)
+}
+
+// MARK: - SkinKit
+
+/// The skin views (SkinKitUI) talk to the handler through `DeltaSkinInputHandling`. They call it from
+/// the main thread, as they called the concrete handler before.
+extension DeltaSkinInputHandler: @preconcurrency DeltaSkinInputHandling {
+    /// Roles come from `TouchInputClassifier`, which matches what `buttonPressed` intercepts.
+    public func touchRole(forToken token: String) -> TouchInputRole {
+        TouchInputClassifier.role(forToken: token)
+    }
 }
