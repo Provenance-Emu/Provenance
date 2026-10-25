@@ -10,6 +10,7 @@ import PVLogging
 import PVLookup
 import PVMediaCache
 import PVRealm
+import PVSettings
 import RealmSwift
 #if canImport(UIKit) && !os(watchOS)
 import UIKit
@@ -20,9 +21,19 @@ import AppKit
 
 extension ArtworkSearchQueue {
 
+    /// Why retries and launch repair (bulk downloads nobody asked for) should wait, if they should:
+    /// Low Power Mode, no network, or cellular / hotspot / Low Data Mode. A later launch retries.
+    static func retryDeferral() -> BackgroundWorkDeferral? {
+        BackgroundWorkPolicy.deferral(for: .bulkNetwork, in: DeviceConditionsMonitor.shared.current)
+    }
+
     /// Schedules artwork URL→file retries after the primary pass, deferring full-library work during large backfills.
     func scheduleRetryAfterPrimaryPass(primaryBatchCount: Int) {
         guard !isPaused else { return }
+        if let deferral = Self.retryDeferral() {
+            ILOG("ArtworkSearchQueue: Skipping artwork retry (\(deferral.rawValue))")
+            return
+        }
 
         if primaryBatchCount <= ArtworkRetryLimits.deferRetryPrimaryBatchThreshold {
             Task { await retryFailedArtworkDownloads() }
@@ -54,9 +65,13 @@ extension ArtworkSearchQueue {
             } catch {
                 return
             }
+            if let deferral = Self.retryDeferral() {
+                ILOG("ArtworkSearchQueue: Skipping launch artwork repair (\(deferral.rawValue))")
+                return
+            }
             await self.discardUndecodableArtworkFiles()
             for pass in 1...ArtworkRetryLimits.launchRepairMaxPasses {
-                guard await !self.isPausedForWork else { return }
+                guard await !self.isPausedForWork, Self.retryDeferral() == nil else { return }
                 let handled = await self.retryFailedArtworkDownloads()
                 VLOG("ArtworkSearchQueue: launch artwork repair pass \(pass) handled \(handled) game(s)")
                 if handled == 0 { break }
