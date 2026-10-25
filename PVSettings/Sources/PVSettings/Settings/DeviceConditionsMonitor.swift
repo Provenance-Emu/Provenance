@@ -111,19 +111,21 @@ public final class DeviceConditionsMonitor: @unchecked Sendable {
 
     @MainActor
     private func applyBatteryState(_ batteryState: UIDevice.BatteryState) {
-        let onExternalPower = Self.isOnExternalPower(batteryState, isiOSAppOnMac: ProcessInfo.processInfo.isiOSAppOnMac)
+        let processInfo = ProcessInfo.processInfo
+        let onExternalPower = Self.isOnExternalPower(batteryState,
+                                                     isRunningOnMac: processInfo.isiOSAppOnMac || processInfo.isMacCatalystApp)
         update { $0.isOnExternalPower = onExternalPower }
     }
 
-    /// A Mac running the iOS app reports `.unknown`; treat it as plugged in.
-    static func isOnExternalPower(_ batteryState: UIDevice.BatteryState, isiOSAppOnMac: Bool) -> Bool {
+    /// A Mac (the iOS app or Catalyst) reports `.unknown`; treat it as plugged in.
+    static func isOnExternalPower(_ batteryState: UIDevice.BatteryState, isRunningOnMac: Bool) -> Bool {
         switch batteryState {
         case .charging, .full:
             return true
         case .unplugged:
             return false
         case .unknown:
-            return isiOSAppOnMac
+            return isRunningOnMac
         @unknown default:
             return false
         }

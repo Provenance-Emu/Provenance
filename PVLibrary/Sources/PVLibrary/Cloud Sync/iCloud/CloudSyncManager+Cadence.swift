@@ -74,8 +74,9 @@ extension CloudSyncManager {
 
     @MainActor
     private func cadenceDidChange() {
-        guard let pending = deferredAutomaticSync else { return }
-        pending.cancel()
+        // Also re-check held-back uploads: they may have been waiting for a charger or Wi-Fi.
+        guard deferredAutomaticSync != nil || hasDeferredUploads else { return }
+        deferredAutomaticSync?.cancel()
         deferredAutomaticSync = nil
         requestAutomaticSync(.scheduled)
     }
@@ -96,25 +97,37 @@ extension CloudSyncManager {
 
     @MainActor
     private func runAutomaticSync(_ trigger: AutomaticSyncTrigger) {
-        let uploadsPending = trigger == .scheduled && hasDeferredUploads
-        if uploadsPending {
-            hasDeferredUploads = false
-        }
+        // Any automatic sync that runs drains held-back uploads, so a pause that cancelled the
+        // deferred sync can't strand them.
+        let uploadsPending = hasDeferredUploads
+        hasDeferredUploads = false
         Task { [weak self] in
             guard let self else { return }
             switch trigger {
-            case .push:
+            case .push, .scheduled:
                 await self.fetchRemoteChangesOnly()
             case .foreground:
                 await CloudKitSyncerStore.shared.refreshRomRemoteChanges()
                 await self.checkForMissingROMFiles(force: false)
-            case .scheduled:
-                await self.fetchRemoteChangesOnly()
-                if uploadsPending {
-                    let uploaded = await CloudKitInitialSyncer.shared?.performInitialSync(forceSync: false) ?? 0
-                    DLOG("[SYNC] Scheduled sync uploaded \(uploaded) deferred records")
-                }
+            }
+            if uploadsPending {
+                await self.flushDeferredUploads()
             }
         }
+    }
+
+    /// Uploads what imports held back. The initial syncer queues uploads without the per-upload
+    /// checks in `uploadROM(for:)`, so apply them here: the sync gates (power, charging, network
+    /// mode), and no metered path, where the cellular size cap can't be applied per file.
+    /// When blocked, the uploads stay pending for the next sync or condition change.
+    private func flushDeferredUploads() async {
+        let allowed = await shouldAllowSync()
+        guard allowed, !DeviceConditionsMonitor.shared.current.isExpensiveNetwork else {
+            DLOG("[SYNC] Deferred uploads still held back (sync gates or metered network)")
+            await MainActor.run { self.hasDeferredUploads = true }
+            return
+        }
+        let uploaded = await CloudKitInitialSyncer.shared?.performInitialSync(forceSync: false) ?? 0
+        DLOG("[SYNC] Uploaded \(uploaded) deferred records")
     }
 }

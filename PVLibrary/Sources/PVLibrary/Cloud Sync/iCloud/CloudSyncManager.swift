@@ -288,7 +288,7 @@ public class CloudSyncManager { // swiftlint:disable:this type_body_length
     // MARK: - CloudKit Settings Integration
 
     /// Check if sync should be allowed based on current device conditions and user settings
-    private func shouldAllowSync() async -> Bool {
+    func shouldAllowSync() async -> Bool {
         // Check if paused for emulation
         if await MainActor.run(body: { isPausedForEmulation }) {
             DLOG("Sync paused for emulation, skipping sync")

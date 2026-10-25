@@ -541,7 +541,7 @@ public enum CloudKitSyncNetworkMode: String, Codable, Equatable, UserDefaultsRep
 public enum CloudKitSyncFrequency: String, Codable, Equatable, UserDefaultsRepresentable, Defaults.Serializable, CaseIterable {
     /// Picks immediate, every 15 minutes or hourly from power and network conditions.
     /// See `cadence(in:)`.
-    case automatic = "automatic"
+    case automatic
     /// Sync immediately when changes occur
     case immediate = "immediate"
     /// Sync every 5 minutes
