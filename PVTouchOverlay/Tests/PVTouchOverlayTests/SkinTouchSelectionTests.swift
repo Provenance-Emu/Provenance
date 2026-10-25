@@ -1,6 +1,7 @@
 import Foundation
 import Testing
 @testable import PVTouchOverlay
+import SkinKitUI
 
 /// Ported from iFly's `SkinMultiButtonTouchTests`, plus the slide-in lockout for every system control.
 @Suite("Skin touch selection")

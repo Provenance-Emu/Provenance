@@ -1,6 +1,7 @@
 import SwiftUI
 import PVEmulatorCore
 import PVLibrary
+import SkinKitUI
 
 /// A simple wrapper view to avoid generic type inference issues
 struct EmulatorWrapperView: View {
@@ -52,6 +53,7 @@ struct EmulatorWrapperView: View {
             onInitialSkinResolutionComplete: onInitialSkinResolutionComplete
         )
         .environmentObject(inputHandler)
+        .deltaSkinInputHandler(inputHandler)
         .environmentObject(virtualInputState)
         .ignoresSafeArea(.all)
     }

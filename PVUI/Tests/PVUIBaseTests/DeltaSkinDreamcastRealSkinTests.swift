@@ -18,6 +18,7 @@ import PVCoreBridge
 import PVSystems
 import PVTouchOverlay
 @testable import PVUIBase
+import SkinKitCore
 
 @Suite("Real Dreamcast skins") @MainActor
 struct DeltaSkinDreamcastRealSkinTests {

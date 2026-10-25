@@ -2,6 +2,7 @@ import Testing
 import PVPrimitives
 @testable import PVUIBase
 
+/// The catalog filter matching itself is tested in SkinKit (`SkinCatalogSystemGroupingTests`).
 @Suite("Skin Catalog System Grouping")
 struct SkinCatalogSystemGroupingTests {
     @Test("NES includes related FDS group codes")
@@ -35,22 +36,6 @@ struct SkinCatalogSystemGroupingTests {
         #expect(related == ["my-custom-system"])
     }
 
-    @Test("Service filter matching uses related system group IDs")
-    func serviceFilterMatchesRelatedGroupCodes() {
-        let filterCodes = SkinCatalogService.resolvedSystemFilterCodes("genesis")
-        #expect(filterCodes != nil)
-        guard let filterCodes else { return }
-
-        let matches32X = SkinCatalogService.matchesAnySystemCode(in: ["32x"], filterCodes: filterCodes)
-        #expect(matches32X)
-
-        let matchesSegaCD = SkinCatalogService.matchesAnySystemCode(in: ["segacd"], filterCodes: filterCodes)
-        #expect(matchesSegaCD)
-
-        let matchesUnrelated = SkinCatalogService.matchesAnySystemCode(in: ["snes"], filterCodes: filterCodes)
-        #expect(!matchesUnrelated)
-    }
-
     @Test("3DS feed tag threeds matches the canonical 3ds filter")
     func threeDSFeedTagMatchesCanonicalFilter() {
         let fromCanonical = SystemIdentifier.relatedCatalogSystemCodes(forCatalogCode: "3ds")
@@ -62,8 +47,6 @@ struct SkinCatalogSystemGroupingTests {
         #expect(fromFeed.contains("threeds"))
         #expect(fromFeed.contains("3ds"))
 
-        let filterCodes = SkinCatalogService.resolvedSystemFilterCodes("3ds")
-        #expect(SkinCatalogService.matchesAnySystemCode(in: ["threeDS"], filterCodes: filterCodes ?? []))
         #expect(SystemIdentifier.displayName(forCatalogCode: "threeds") == "Nintendo 3DS")
         #expect(SystemIdentifier.canonicalSkinCatalogCode("threeDS") == "3ds")
     }

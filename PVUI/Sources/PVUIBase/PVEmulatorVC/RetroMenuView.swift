@@ -16,6 +16,9 @@ import PVPrimitives
 import PVFeatureFlags
 import UniformTypeIdentifiers
 import PVThemes
+import SkinKitCore
+import SkinKitManager
+import SkinKitUI
 #if canImport(FreemiumKit)
 import FreemiumKit
 #endif
@@ -1587,7 +1590,7 @@ struct RetroMenuView: View {
                     NavigationStack {
                         SkinCatalogBrowserView(
                             preselectedSystem: skinCatalogActiveSystemIdentifier.skinCatalogSystemCode,
-                            activationContextSystemIdentifier: skinCatalogActiveSystemIdentifier,
+                            activationContextSystemIdentifier: skinCatalogActiveSystemIdentifier.deltaSkinSystem,
                             activationContextGameId: emulatorVC.game.id.isEmpty ? nil : emulatorVC.game.id
                         )
                         .toolbar {

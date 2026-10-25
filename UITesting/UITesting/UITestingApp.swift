@@ -32,6 +32,8 @@ struct UITestingApp: SwiftUI.App {
 
     init() {
         UITestingApp.shared = self
+        // The test skins render through SkinKit; wire its hooks first.
+        SkinKitSetup.configure()
         // Use in-memory SwiftData store for UITesting to avoid schema migration crashes
         if let container = try? PVSwiftDataSchema.makePVModelContainer(inMemory: true) {
             PVSwiftDataSchema.setSharedContainer(container)

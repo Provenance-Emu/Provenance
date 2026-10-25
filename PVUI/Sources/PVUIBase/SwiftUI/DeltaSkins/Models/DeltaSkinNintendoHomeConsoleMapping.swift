@@ -2,8 +2,8 @@
 //  DeltaSkinNintendoHomeConsoleMapping.swift
 //  PVUIBase
 //
-//  Skin-token -> core-button tables for GameCube and Wii (Dolphin), plus the
-//  thumbstick-side resolver shared by every system that ships analog sticks.
+//  Skin-token -> core-button tables for GameCube and Wii (Dolphin). The
+//  thumbstick-side resolver moved to SkinKitUI (`DeltaSkinThumbstickSide`).
 //
 
 import Foundation
@@ -106,38 +106,5 @@ enum DeltaSkinNintendoHomeConsoleMapping {
         case "r3", "home": return .wiiHome
         default: return nil
         }
-    }
-
-    // MARK: - Thumbstick side
-
-    /// Which physical stick a skin thumbstick item represents.
-    enum StickSide: Equatable {
-        case left
-        case right
-
-        /// Identifier passed to `DeltaSkinInputHandler.analogStickMoved(_:x:y:)`.
-        var analogStickId: String {
-            switch self {
-            case .left: return "leftAnalog"
-            case .right: return "rightAnalog"
-            }
-        }
-    }
-
-    /// Decides left vs right for a thumbstick item.
-    ///
-    /// `DeltaSkin.buttons(for:)` mints ids like `"<skinId>-button-<n>"`, so the id
-    /// never says which stick it is. The authoritative signal is the item's
-    /// directional mapping (`{"up": "rightThumbstickUp", ...}`); the id is only a
-    /// fallback for older skins that encode the side there.
-    static func stickSide(for input: DeltaSkinInput, buttonId: String) -> StickSide {
-        if case .directional(let mapping) = input {
-            // Only stick-flavoured values count: a plain D-pad mapping is
-            // {"left": "left", "right": "right"} and must not read as a right stick.
-            let values = mapping.values.map { $0.lowercased() }.filter { $0.contains("stick") || $0.contains("analog") }
-            if values.contains(where: { $0.hasPrefix("right") }) { return .right }
-            if values.contains(where: { $0.hasPrefix("left") }) { return .left }
-        }
-        return buttonId.lowercased().contains("right") ? .right : .left
     }
 }

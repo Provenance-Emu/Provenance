@@ -23,6 +23,7 @@ import PVPrimitives
 import PVSettings
 import PVShaders
 import PVThemes
+import SkinKitUI
 #if canImport(UIKit)
 import UIKit
 #endif
@@ -1692,8 +1693,8 @@ struct PauseTileMenuView: View {
         .sheet(isPresented: $showingSystemSkinSelection) {
             NavigationStack {
                 SystemSkinSelectionView(
-                    system: activeSystemIdentifier,
-                    game: emulatorVC.game
+                    system: activeSystemIdentifier.deltaSkinSystem,
+                    game: emulatorVC.game.deltaSkinGameContext
                 )
             }
         }

@@ -17,6 +17,7 @@ import PVLogging
 import PVFeatureFlags
 import PVPrimitives
 import PVSettings
+import SkinKitManager
 
 #if canImport(PVAppIntents)
 import PVAppIntents

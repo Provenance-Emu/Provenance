@@ -9,6 +9,8 @@
 import Foundation
 import Testing
 @testable import PVUIBase
+import SkinKitCore
+import SkinKitManager
 
 @Suite("LayoutEditorKind")
 struct LayoutEditorKindTests {
