@@ -40,6 +40,9 @@ public enum PVPhysicalProfilePad: String, Sendable {
         if haystack.contains("md/gen") || haystack.contains("mega drive") || haystack.contains("megadrive") || haystack.contains("genesis") { return .megaDrive }
         return .generic
     }
+
+    /// The Switch Online pads, which the system exposes without an extended gamepad.
+    public var isSwitchOnline: Bool { self != .generic }
 }
 
 /// Resolves a physical-profile element name to a synthesized input.
@@ -183,5 +186,47 @@ public enum PVPhysicalProfileMapping {
         let hasDirection = !inputs.isDisjoint(with: [.dpad, .leftThumbstick])
         let hasButton = !inputs.isDisjoint(with: [.buttonA, .buttonB, .buttonX, .buttonY])
         return hasDirection && hasButton
+    }
+
+    /// Select + Start, the pause chord for pads with no Home button.
+    public static let selectStartChord: Set<PVSynthesizedInput> = [.options, .menu]
+
+    /// How a synthesized pad opens the Provenance pause menu: its Home button when it
+    /// has one, otherwise Select + Start held together. Start and Select alone always
+    /// reach the game.
+    ///
+    /// The Switch Online SNES pad is the chord case. Apple's profile for it
+    /// (`_GCNintendoSuperFamicomControllerProfile`, iOS 26 / tvOS 27) exposes only
+    /// A, B, X, Y, L, R, Start ("Button Menu"), Select ("Button Options") and the
+    /// D-pad: no Home, and no ZL/ZR although the pad has them.
+    public static func pauseTrigger(forBindings bindings: [String: PVSynthesizedInput]) -> PVPauseTrigger? {
+        let inputs = Set(bindings.values)
+        if inputs.contains(.home) { return .home }
+        if selectStartChord.isSubset(of: inputs) { return .chord(selectStartChord) }
+        return nil
+    }
+}
+
+/// What opens the Provenance pause menu on a synthesized pad.
+public enum PVPauseTrigger: Equatable, Sendable {
+    /// The pad's Home button.
+    case home
+    /// Every input in the set held at once.
+    case chord(Set<PVSynthesizedInput>)
+
+    /// Whether `pressed` completes this trigger.
+    public func isSatisfied(by pressed: Set<PVSynthesizedInput>) -> Bool {
+        switch self {
+        case .home: return pressed.contains(.home)
+        case .chord(let inputs): return !inputs.isEmpty && inputs.isSubset(of: pressed)
+        }
+    }
+
+    /// Inputs that belong to the trigger and so are held back from the game once it fires.
+    public var inputs: Set<PVSynthesizedInput> {
+        switch self {
+        case .home: return [.home]
+        case .chord(let inputs): return inputs
+        }
     }
 }

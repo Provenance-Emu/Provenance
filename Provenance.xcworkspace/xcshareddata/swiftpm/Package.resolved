@@ -506,8 +506,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/apple/swift-openapi-runtime",
       "state" : {
-        "revision" : "3d3a8457661daf7fb260ceeb9f0e24e5204ba5fb",
-        "version" : "1.12.0"
+        "revision" : "9e53df53e043b53046a371b31aaf0a1e26eef946",
+        "version" : "1.12.1"
       }
     },
     {
@@ -607,14 +607,6 @@
       "state" : {
         "revision" : "22787ffb59de99e5dc1fbfe80b19c97a904ad48d",
         "version" : "0.9.20"
-      }
-    },
-    {
-      "identity" : "zstd",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/facebook/zstd",
-      "state" : {
-        "revision" : "3ae099b48dfcfe02b1b3ba81ab85457f8a922e9f"
       }
     }
   ],

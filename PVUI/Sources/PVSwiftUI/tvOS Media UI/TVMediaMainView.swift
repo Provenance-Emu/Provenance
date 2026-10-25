@@ -163,6 +163,7 @@ struct TVMediaMainView: View {
             modalContent: { modal in modalContent(for: modal) },
             renameAlertContent: { renameAlertContent }
         )
+        .tint(Color(themeManager.currentPalette.defaultTintColor))
 #if !os(tvOS)
         // tvOS's default UI is this same TVMediaMainView, and TVMediaRouter.navigate(to:)
         // resets navigationPath + return destinations — on tvOS that would jump to Settings
@@ -1490,6 +1491,7 @@ struct TVMediaLogsView: View {
 // MARK: - Empty State View
 @available(tvOS 16.0, iOS 17.0, *)
 struct TVMediaEmptyStateView: View {
+    @ObservedObject private var themeManager = ThemeManager.shared
     let title: String
     let subtitle: String
     /// When true a compact controller-tip row is shown below the subtitle.
@@ -1530,12 +1532,12 @@ struct TVMediaEmptyStateView: View {
 
             Text(title)
                 .font(.title2.weight(.semibold))
-                .foregroundStyle(.white)
+                .foregroundStyle(Color(themeManager.currentPalette.gameLibraryText))
                 .shadow(color: Color.retroPink.opacity(0.3), radius: 6)
 
             Text(subtitle)
                 .font(.callout)
-                .foregroundStyle(.white.opacity(0.7))
+                .foregroundStyle(Color(themeManager.currentPalette.gameLibraryText).opacity(0.7))
                 .multilineTextAlignment(.center)
                 .frame(maxWidth: 520)
 
@@ -1551,7 +1553,7 @@ struct TVMediaEmptyStateView: View {
                 Text("tv_media.hint.swipe_navigation", bundle: .module)
                     .font(.caption)
             }
-            .foregroundStyle(.white.opacity(0.35))
+            .foregroundStyle(Color(themeManager.currentPalette.gameLibraryText).opacity(0.72))
             .padding(.top, showControllerTip ? 8 : 16)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -1740,6 +1742,7 @@ struct VisibleSectionPreferenceKey: PreferenceKey {
 /// Also shows current scroll position indicator
 @available(tvOS 16.0, iOS 17.0, *)
 struct TVMediaScrollIndexRail: View {
+    @ObservedObject private var themeManager = ThemeManager.shared
     let systems: [PVSystem]
     let hasFavorites: Bool
     /// Currently visible/focused section in the main content
@@ -1980,6 +1983,7 @@ struct TVMediaScrollIndexRail: View {
 
 @available(tvOS 16.0, iOS 17.0, *)
 struct TVMediaSavesView: View {
+    @ObservedObject private var themeManager = ThemeManager.shared
     @ObservedObject var model: TVMediaLibraryModel
     @ObservedObject var saveStatesStore: RetroSaveStatesStore
     @ObservedObject var router: TVMediaRouter
@@ -2128,17 +2132,17 @@ struct TVMediaSavesView: View {
         VStack(spacing: 14) {
             Image(systemName: "rectangle.stack.badge.play")
                 .font(.system(size: 44, weight: .light))
-                .foregroundStyle(.white.opacity(0.4))
+                .foregroundStyle(Color(themeManager.currentPalette.gameLibraryText).opacity(0.72))
 
             Text(selectedSystems.isEmpty ? "No Save States" : "No Saves for Selection")
                 .font(.title3.weight(.semibold))
-                .foregroundStyle(.white)
+                .foregroundStyle(Color(themeManager.currentPalette.gameLibraryText))
 
             Text(selectedSystems.isEmpty ?
                  "Play some games and create save states to see them here." :
                  "No save states found for the selected systems.")
                 .font(.callout)
-                .foregroundStyle(.white.opacity(0.7))
+                .foregroundStyle(Color(themeManager.currentPalette.gameLibraryText).opacity(0.7))
                 .multilineTextAlignment(.center)
                 .frame(maxWidth: 480)
 
@@ -2168,7 +2172,7 @@ struct TVMediaSavesView: View {
                 Text("tv_media.hint.swipe_navigation", bundle: .module)
                     .font(.caption)
             }
-            .foregroundStyle(.white.opacity(0.35))
+            .foregroundStyle(Color(themeManager.currentPalette.gameLibraryText).opacity(0.72))
             .padding(.top, 16)
         }
         .frame(maxWidth: .infinity, minHeight: 300)
@@ -2317,6 +2321,7 @@ struct TVMediaSavesView: View {
 /// Multi-select system filter picker for saves
 @available(tvOS 16.0, iOS 17.0, *)
 struct TVMediaSystemFilterPicker: View {
+    @ObservedObject private var themeManager = ThemeManager.shared
     let availableSystemIDs: [String]
     @Binding var selectedSystems: Set<String>
     @ObservedObject var model: TVMediaLibraryModel
@@ -2360,12 +2365,12 @@ struct TVMediaSystemFilterPicker: View {
                 Text("tv_media.filter.by_system", bundle: .module)
                     .font(.system(size: 28, weight: .bold, design: .default))
                     .tracking(2)
-                    .foregroundStyle(.white)
+                    .foregroundStyle(Color(themeManager.currentPalette.gameLibraryText))
                     .shadow(color: Color.retroPink.opacity(0.4), radius: 8)
 
                 Text("tv_media.filter.select_systems", bundle: .module)
                     .font(.system(size: 15, weight: .medium))
-                    .foregroundStyle(.white.opacity(0.6))
+                    .foregroundStyle(Color(themeManager.currentPalette.gameLibraryText).opacity(0.6))
             }
 
             Spacer()
@@ -2432,13 +2437,13 @@ struct TVMediaSystemFilterPicker: View {
                 VStack(alignment: .leading, spacing: 4) {
                     Text(systemName)
                         .font(.system(size: 18, weight: .semibold))
-                        .foregroundStyle(.white)
+                        .foregroundStyle(Color(themeManager.currentPalette.gameLibraryText))
 
                     if !shortName.isEmpty && shortName != systemName {
                         Text(shortName.uppercased())
                             .font(.system(size: 12, weight: .medium))
                             .tracking(0.8)
-                            .foregroundStyle(.white.opacity(0.5))
+                            .foregroundStyle(Color(themeManager.currentPalette.gameLibraryText).opacity(0.72))
                     }
                 }
 
@@ -2638,6 +2643,7 @@ private struct TVMediaSaveStateTileButton: View {
 
 @available(tvOS 16.0, iOS 17.0, *)
 struct TVMediaHomeView: View {
+    @ObservedObject private var themeManager = ThemeManager.shared
     @ObservedObject var model: TVMediaLibraryModel
     @ObservedObject var saveStatesStore: RetroSaveStatesStore
     @ObservedObject var gameActions: TVMediaGameActions
@@ -2888,7 +2894,7 @@ struct TVMediaHomeView: View {
             Text("tv_media.library.loading", bundle: .module)
                 .font(.system(size: 14, weight: .semibold, design: .default))
                 .tracking(2)
-                .foregroundStyle(.white.opacity(0.6))
+                .foregroundStyle(Color(themeManager.currentPalette.gameLibraryText).opacity(0.6))
         }
         .frame(maxWidth: .infinity)
         .padding(.vertical, 100)
@@ -2925,12 +2931,12 @@ struct TVMediaHomeView: View {
                 Text("tv_media.library.no_games", bundle: .module)
                     .font(.system(size: 24, weight: .bold, design: .default))
                     .tracking(2)
-                    .foregroundStyle(.white)
+                    .foregroundStyle(Color(themeManager.currentPalette.gameLibraryText))
                     .shadow(color: Color.retroPink.opacity(0.4), radius: 8)
 
                 Text("tv_media.library.add_roms_hint", bundle: .module)
                     .font(.system(size: 16, weight: .medium))
-                    .foregroundStyle(.white.opacity(0.6))
+                    .foregroundStyle(Color(themeManager.currentPalette.gameLibraryText).opacity(0.6))
                     .multilineTextAlignment(.center)
                     .frame(maxWidth: 500)
 #if canImport(PVWebServer)
@@ -2969,7 +2975,7 @@ struct TVMediaHomeView: View {
                     Text("Swipe left or press Menu for navigation")
                         .font(.caption)
                 }
-                .foregroundStyle(.white.opacity(0.35))
+                .foregroundStyle(Color(themeManager.currentPalette.gameLibraryText).opacity(0.72))
             }
             .padding(.top, 16)
 
@@ -3052,6 +3058,7 @@ struct TVMediaHomeView: View {
 
 @available(tvOS 16.0, iOS 17.0, *)
 struct TVMediaSystemsView: View {
+    @ObservedObject private var themeManager = ThemeManager.shared
     @ObservedObject var model: TVMediaLibraryModel
     @ObservedObject var router: TVMediaRouter
 
@@ -3225,10 +3232,10 @@ struct TVMediaSystemsView: View {
 
             Text("NO SYSTEMS YET")
                 .font(.title2.weight(.semibold))
-                .foregroundStyle(.white)
+                .foregroundStyle(Color(themeManager.currentPalette.gameLibraryText))
 
             Text("Add games to see their systems here.")
-                .foregroundStyle(.white.opacity(0.7))
+                .foregroundStyle(Color(themeManager.currentPalette.gameLibraryText).opacity(0.7))
                 .multilineTextAlignment(.center)
 
             TVMediaEmptyLibraryActionButtons(
@@ -3267,6 +3274,7 @@ struct TVMediaSystemsView: View {
 
 @available(tvOS 16.0, iOS 17.0, *)
 struct TVMediaSystemCard: View {
+    @ObservedObject private var themeManager = ThemeManager.shared
     let system: PVSystem
     let icon: Image?
     let gameCount: Int
@@ -3344,8 +3352,8 @@ struct TVMediaSystemCard: View {
                                 .foregroundStyle(
                                     LinearGradient(
                                         colors: isFocused ?
-                                            [.white, Color.retroBlue.opacity(0.85)] :
-                                            [.white.opacity(0.7), .white.opacity(0.5)],
+                                            [Color(themeManager.currentPalette.gameLibraryText), Color.retroBlue.opacity(0.85)] :
+                                            [Color(themeManager.currentPalette.gameLibraryText).opacity(0.7), Color(themeManager.currentPalette.gameLibraryText).opacity(0.72)],
                                         startPoint: .top,
                                         endPoint: .bottom
                                     )
@@ -3358,8 +3366,8 @@ struct TVMediaSystemCard: View {
                                 .foregroundStyle(
                                     LinearGradient(
                                         colors: isFocused ?
-                                            [.white, Color.retroBlue.opacity(0.8)] :
-                                            [.white.opacity(0.4), .white.opacity(0.3)],
+                                            [Color(themeManager.currentPalette.gameLibraryText), Color.retroBlue.opacity(0.8)] :
+                                            [Color(themeManager.currentPalette.gameLibraryText).opacity(0.72), Color(themeManager.currentPalette.gameLibraryText).opacity(0.3)],
                                         startPoint: .top,
                                         endPoint: .bottom
                                     )
@@ -3372,7 +3380,7 @@ struct TVMediaSystemCard: View {
                     Text(system.name.uppercased())
                         .font(.system(size: 15, weight: .bold, design: .default))
                         .tracking(0.6)
-                        .foregroundStyle(isFocused ? .white : .white.opacity(0.9))
+                        .foregroundStyle(isFocused ? Color(themeManager.currentPalette.gameLibraryText) : Color(themeManager.currentPalette.gameLibraryText).opacity(0.9))
                         .multilineTextAlignment(.center)
                         .lineLimit(2)
                         .minimumScaleFactor(0.7)
@@ -3383,18 +3391,18 @@ struct TVMediaSystemCard: View {
                     HStack(spacing: 6) {
                         Text(verbatim: "\(gameCount)")
                             .font(.system(size: 14, weight: .semibold, design: .monospaced))
-                            .foregroundStyle(isFocused ? Color.retroBlue : .white.opacity(0.6))
+                            .foregroundStyle(isFocused ? Color.retroBlue : Color(themeManager.currentPalette.gameLibraryText).opacity(0.6))
                         Text("tv_media.games", bundle: .module)
                             .font(.system(size: 10, weight: .medium, design: .default))
                             .tracking(1)
-                            .foregroundStyle(.white.opacity(0.45))
+                            .foregroundStyle(Color(themeManager.currentPalette.gameLibraryText).opacity(0.72))
                     }
 
                     if !system.manufacturer.isEmpty || system.releaseYear > 0 {
                         Text(systemMetadataFull(system).uppercased())
                             .font(.system(size: 10, weight: .medium, design: .default))
                             .tracking(0.6)
-                            .foregroundStyle(.white.opacity(0.35))
+                            .foregroundStyle(Color(themeManager.currentPalette.gameLibraryText).opacity(0.72))
                             .lineLimit(1)
                             .multilineTextAlignment(.center)
                             .frame(maxWidth: .infinity)
@@ -3432,8 +3440,8 @@ struct TVMediaSystemCard: View {
                                     .foregroundStyle(
                                         LinearGradient(
                                             colors: isFocused ?
-                                                [.white, Color.retroBlue.opacity(0.85)] :
-                                                [.white.opacity(0.7), .white.opacity(0.5)],
+                                                [Color(themeManager.currentPalette.gameLibraryText), Color.retroBlue.opacity(0.85)] :
+                                                [Color(themeManager.currentPalette.gameLibraryText).opacity(0.7), Color(themeManager.currentPalette.gameLibraryText).opacity(0.72)],
                                             startPoint: .top,
                                             endPoint: .bottom
                                         )
@@ -3446,8 +3454,8 @@ struct TVMediaSystemCard: View {
                                     .foregroundStyle(
                                         LinearGradient(
                                             colors: isFocused ?
-                                                [.white, Color.retroBlue.opacity(0.8)] :
-                                                [.white.opacity(0.4), .white.opacity(0.3)],
+                                                [Color(themeManager.currentPalette.gameLibraryText), Color.retroBlue.opacity(0.8)] :
+                                                [Color(themeManager.currentPalette.gameLibraryText).opacity(0.72), Color(themeManager.currentPalette.gameLibraryText).opacity(0.3)],
                                             startPoint: .top,
                                             endPoint: .bottom
                                         )
@@ -3462,7 +3470,7 @@ struct TVMediaSystemCard: View {
                             Text(system.name.uppercased())
                                 .font(.system(size: 17, weight: .bold, design: .default))
                                 .tracking(0.8)
-                                .foregroundStyle(isFocused ? .white : .white.opacity(0.85))
+                                .foregroundStyle(isFocused ? Color(themeManager.currentPalette.gameLibraryText) : Color(themeManager.currentPalette.gameLibraryText).opacity(0.85))
                                 .lineLimit(2)
                                 .minimumScaleFactor(0.8)
                                 .fixedSize(horizontal: false, vertical: true)
@@ -3472,11 +3480,11 @@ struct TVMediaSystemCard: View {
                             HStack(spacing: 6) {
                                 Text(verbatim: "\(gameCount)")
                                     .font(.system(size: 15, weight: .semibold, design: .monospaced))
-                                    .foregroundStyle(isFocused ? Color.retroBlue : .white.opacity(0.6))
+                                    .foregroundStyle(isFocused ? Color.retroBlue : Color(themeManager.currentPalette.gameLibraryText).opacity(0.6))
                                 Text("tv_media.games", bundle: .module)
                                     .font(.system(size: 11, weight: .medium, design: .default))
                                     .tracking(1)
-                                    .foregroundStyle(.white.opacity(0.45))
+                                    .foregroundStyle(Color(themeManager.currentPalette.gameLibraryText).opacity(0.72))
                             }
                         }
 
@@ -3492,7 +3500,7 @@ struct TVMediaSystemCard: View {
                                         startPoint: .top,
                                         endPoint: .bottom
                                     )) :
-                                    AnyShapeStyle(Color.white.opacity(0.2))
+                                    AnyShapeStyle(Color(themeManager.currentPalette.gameLibraryText).opacity(0.2))
                             )
                             .shadow(color: isFocused ? Color.retroBlue.opacity(0.5) : .clear, radius: 6)
                     }
@@ -3502,7 +3510,7 @@ struct TVMediaSystemCard: View {
                         Text(systemMetadataFull(system).uppercased())
                             .font(.system(size: 11, weight: .medium, design: .default))
                             .tracking(0.8)
-                            .foregroundStyle(.white.opacity(0.35))
+                            .foregroundStyle(Color(themeManager.currentPalette.gameLibraryText).opacity(0.72))
                             .lineLimit(1)
                             .padding(.top, 12)
                             .padding(.leading, 100) // Align with text
@@ -3546,7 +3554,7 @@ struct TVMediaSystemCard: View {
                         endPoint: .bottomTrailing
                     ) :
                     LinearGradient(
-                        colors: [Color.white.opacity(0.02), Color.white.opacity(0.01)],
+                        colors: [Color(themeManager.currentPalette.gameLibraryText).opacity(0.02), Color(themeManager.currentPalette.gameLibraryText).opacity(0.01)],
                         startPoint: .leading,
                         endPoint: .trailing
                     )
@@ -3567,7 +3575,7 @@ struct TVMediaSystemCard: View {
                         endPoint: .bottomTrailing
                     ) :
                     LinearGradient(
-                        colors: [Color.white.opacity(0.06), Color.white.opacity(0.03)],
+                        colors: [Color(themeManager.currentPalette.gameLibraryText).opacity(0.06), Color(themeManager.currentPalette.gameLibraryText).opacity(0.03)],
                         startPoint: .leading,
                         endPoint: .trailing
                     ),
@@ -3616,6 +3624,7 @@ struct TVMediaFlatButtonStyle: ButtonStyle {
 /// View All card that appears at the end of horizontal shelves
 @available(tvOS 16.0, iOS 17.0, *)
 struct TVMediaViewAllCard: View {
+    @ObservedObject private var themeManager = ThemeManager.shared
     let title: String
     let subtitle: String
     let action: () -> Void
@@ -3665,7 +3674,7 @@ struct TVMediaViewAllCard: View {
 
                     Text(subtitle)
                         .font(.system(size: 12, weight: .medium, design: .default))
-                        .foregroundStyle(.white.opacity(0.5))
+                        .foregroundStyle(Color(themeManager.currentPalette.gameLibraryText).opacity(0.72))
                 }
             }
             .frame(width: cardWidth, height: cardHeight)
@@ -3715,6 +3724,7 @@ struct TVMediaViewAllCard: View {
 /// View All card for save states shelf
 @available(tvOS 16.0, iOS 17.0, *)
 struct TVMediaSaveStatesViewAllCard: View {
+    @ObservedObject private var themeManager = ThemeManager.shared
     let count: Int
     let action: () -> Void
 
@@ -3762,7 +3772,7 @@ struct TVMediaSaveStatesViewAllCard: View {
 
                     Text(verbatim: String.localizedStringWithFormat(NSLocalizedString("tv_media.saves.count", bundle: .module, comment: ""), count))
                         .font(.system(size: 11, weight: .medium, design: .default))
-                        .foregroundStyle(.white.opacity(0.5))
+                        .foregroundStyle(Color(themeManager.currentPalette.gameLibraryText).opacity(0.72))
                 }
             }
             .frame(width: cardWidth, height: cardHeight)
@@ -3813,6 +3823,7 @@ struct TVMediaSaveStatesViewAllCard: View {
 
 @available(tvOS 16.0, iOS 17.0, *)
 struct TVMediaSystemGamesView: View {
+    @ObservedObject private var themeManager = ThemeManager.shared
     let system: PVSystem
     @ObservedObject var model: TVMediaLibraryModel
     @ObservedObject var saveStatesStore: RetroSaveStatesStore
@@ -3837,7 +3848,7 @@ struct TVMediaSystemGamesView: View {
                         ProgressView("Loading...")
                             .controlSize(.large)
                             .frame(maxWidth: .infinity, minHeight: 200)
-                            .foregroundStyle(.white.opacity(0.7))
+                            .foregroundStyle(Color(themeManager.currentPalette.gameLibraryText).opacity(0.7))
                     } else {
                         // Recently played shelf
                         if !recentGames.isEmpty {
@@ -3880,7 +3891,7 @@ struct TVMediaSystemGamesView: View {
                                 Text("tv_media.all_system_games \(system.shortName.uppercased())", bundle: .module)
                                     .font(.system(size: 18, weight: .semibold, design: .default))
                                     .tracking(1.2)
-                                    .foregroundStyle(.white.opacity(0.95))
+                                    .foregroundStyle(Color(themeManager.currentPalette.gameLibraryText).opacity(0.95))
 
                                 Spacer()
 
@@ -3888,7 +3899,7 @@ struct TVMediaSystemGamesView: View {
                                 Text(verbatim: String.localizedStringWithFormat(NSLocalizedString("tv_media.games_count", bundle: .module, comment: ""), gameCount))
                                     .font(.system(size: 13, weight: .medium, design: .default))
                                     .tracking(0.8)
-                                    .foregroundStyle(.white.opacity(0.4))
+                                    .foregroundStyle(Color(themeManager.currentPalette.gameLibraryText).opacity(0.72))
                             }
 
                             TVMediaAllGamesGrid(
@@ -3944,6 +3955,7 @@ struct TVMediaSystemGamesView: View {
 
 @available(tvOS 16.0, iOS 17.0, *)
 struct TVMediaSystemHeader: View {
+    @ObservedObject private var themeManager = ThemeManager.shared
     let system: PVSystem
 
     var body: some View {
@@ -3955,17 +3967,17 @@ struct TVMediaSystemHeader: View {
                 size: 52,
                 placeholder: "gamecontroller.fill"
             )
-            .foregroundStyle(.white.opacity(0.85))
+            .foregroundStyle(Color(themeManager.currentPalette.gameLibraryText).opacity(0.85))
             .frame(width: 80, height: 80)
 
             VStack(alignment: .leading, spacing: 6) {
                 Text(system.name)
                     .font(.largeTitle.weight(.bold))
-                    .foregroundStyle(.white)
+                    .foregroundStyle(Color(themeManager.currentPalette.gameLibraryText))
 
                 Text(systemMetadataLine(system))
                     .font(.subheadline.weight(.medium))
-                    .foregroundStyle(.white.opacity(0.6))
+                    .foregroundStyle(Color(themeManager.currentPalette.gameLibraryText).opacity(0.6))
                     .lineLimit(1)
             }
 
@@ -4108,6 +4120,7 @@ struct TVMediaAllGamesGrid: View {
 
 @available(tvOS 16.0, iOS 17.0, *)
 struct TVMediaSearchView: View {
+    @ObservedObject private var themeManager = ThemeManager.shared
     @ObservedObject var model: TVMediaLibraryModel
     @ObservedObject var gameActions: TVMediaGameActions
 
@@ -4291,7 +4304,7 @@ struct TVMediaSearchView: View {
             TextField("Search games…", text: $text)
                 .textInputAutocapitalization(.never)
                 .disableAutocorrection(true)
-                .foregroundStyle(.white)
+                .foregroundStyle(Color(themeManager.currentPalette.gameLibraryText))
                 .font(.system(size: 24, weight: .medium))
                 .focused($isSearchFieldFocused)
                 .onChange(of: text) { _ in
@@ -4452,7 +4465,7 @@ struct TVMediaSearchView: View {
                 Text("tv_media.search.recent_searches", bundle: .module)
                     .font(.system(size: 13, weight: .semibold, design: .default))
                     .tracking(1.2)
-                    .foregroundStyle(.white.opacity(0.7))
+                    .foregroundStyle(Color(themeManager.currentPalette.gameLibraryText).opacity(0.7))
 
                 Spacer()
 
@@ -4641,12 +4654,12 @@ struct TVMediaSearchView: View {
                 Text("tv_media.search.prompt", bundle: .module)
                     .font(.system(size: 18, weight: .bold, design: .default))
                     .tracking(1.5)
-                    .foregroundStyle(.white)
+                    .foregroundStyle(Color(themeManager.currentPalette.gameLibraryText))
                     .shadow(color: Color.retroPink.opacity(0.3), radius: 6)
 
                 Text("tv_media.search.type_hint", bundle: .module)
                     .font(.system(size: 14, weight: .medium))
-                    .foregroundStyle(.white.opacity(0.5))
+                    .foregroundStyle(Color(themeManager.currentPalette.gameLibraryText).opacity(0.72))
             }
 
             // Navigation hint
@@ -4656,7 +4669,7 @@ struct TVMediaSearchView: View {
                 Text("tv_media.hint.swipe_navigation", bundle: .module)
                     .font(.caption)
             }
-            .foregroundStyle(.white.opacity(0.35))
+            .foregroundStyle(Color(themeManager.currentPalette.gameLibraryText).opacity(0.72))
             .padding(.top, 16)
         }
         .frame(maxWidth: .infinity, minHeight: 280)
@@ -4692,11 +4705,11 @@ struct TVMediaSearchView: View {
                 Text("tv_media.search.no_results", bundle: .module)
                     .font(.system(size: 18, weight: .bold, design: .default))
                     .tracking(1.5)
-                    .foregroundStyle(.white)
+                    .foregroundStyle(Color(themeManager.currentPalette.gameLibraryText))
 
                 Text("No games found for \"\(text)\"")
                     .font(.system(size: 14, weight: .medium))
-                .foregroundStyle(.white.opacity(0.6))
+                .foregroundStyle(Color(themeManager.currentPalette.gameLibraryText).opacity(0.6))
         }
 
             // Suggestion to try different search
@@ -4749,6 +4762,7 @@ struct TVMediaSearchView: View {
 
 @available(tvOS 16.0, iOS 17.0, *)
 struct TVMediaFavoritesView: View {
+    @ObservedObject private var themeManager = ThemeManager.shared
     @ObservedObject var model: TVMediaLibraryModel
     @ObservedObject var gameActions: TVMediaGameActions
 
@@ -4784,15 +4798,15 @@ struct TVMediaFavoritesView: View {
         VStack(spacing: 14) {
             Image(systemName: "heart")
                 .font(.system(size: 44, weight: .light))
-                .foregroundStyle(.white.opacity(0.4))
+                .foregroundStyle(Color(themeManager.currentPalette.gameLibraryText).opacity(0.72))
 
             Text("tv_media.favorites.no_favorites", bundle: .module)
                 .font(.title3.weight(.semibold))
-                .foregroundStyle(.white)
+                .foregroundStyle(Color(themeManager.currentPalette.gameLibraryText))
 
             Text("tv_media.favorites.mark_hint", bundle: .module)
                 .font(.callout)
-                .foregroundStyle(.white.opacity(0.7))
+                .foregroundStyle(Color(themeManager.currentPalette.gameLibraryText).opacity(0.7))
                 .multilineTextAlignment(.center)
                 .frame(maxWidth: 480)
 
@@ -4803,7 +4817,7 @@ struct TVMediaFavoritesView: View {
                 Text("tv_media.hint.swipe_navigation", bundle: .module)
                     .font(.caption)
             }
-            .foregroundStyle(.white.opacity(0.35))
+            .foregroundStyle(Color(themeManager.currentPalette.gameLibraryText).opacity(0.72))
             .padding(.top, 16)
         }
         .frame(maxWidth: .infinity, minHeight: 300)
@@ -4814,6 +4828,7 @@ struct TVMediaFavoritesView: View {
 // MARK: - Top Bar
 
 struct TVMediaTopBar: View {
+    @ObservedObject private var themeManager = ThemeManager.shared
     let title: String
 
     var body: some View {
@@ -5295,16 +5310,17 @@ struct TVMediaSearchResultsGrid: View {
 // MARK: - Background
 
 struct TVMediaBackground: View {
+    @ObservedObject private var themeManager = ThemeManager.shared
     var body: some View {
         ZStack {
-            // Deep base - true black with subtle blue tint
-            Color(red: 0.01, green: 0.01, blue: 0.03)
+            // The library surface carries the selected theme across the full TV canvas.
+            Color(themeManager.currentPalette.gameLibraryBackground)
 
             // Radial gradient for depth
             RadialGradient(
                 colors: [
-                    Color(red: 0.03, green: 0.02, blue: 0.06),
-                    Color(red: 0.01, green: 0.01, blue: 0.02)
+                    Color(themeManager.currentPalette.gameLibraryHeaderBackground),
+                    Color(themeManager.currentPalette.gameLibraryBackground)
                 ],
                 center: .topLeading,
                 startRadius: 100,
@@ -5811,6 +5827,7 @@ struct TVMediaImportStatusToaster: View {
 /// RetroWave-themed view showing how to add ROMs via various methods
 @available(tvOS 16.0, iOS 17.0, *)
 struct TVMediaROMInstructionsView: View {
+    @ObservedObject private var themeManager = ThemeManager.shared
     let onDismiss: () -> Void
 
     #if canImport(PVWebServer)
@@ -5898,7 +5915,7 @@ struct TVMediaROMInstructionsView: View {
 
     var body: some View {
         ZStack {
-            Color(red: 0.04, green: 0.04, blue: 0.08)
+            Color(themeManager.currentPalette.gameLibraryBackground)
                 .ignoresSafeArea()
 
             ScrollView {
@@ -5952,12 +5969,12 @@ struct TVMediaROMInstructionsView: View {
 
             Text("tv_media.roms.adding", bundle: .module)
                 .font(.system(size: titleFontSize, weight: .bold))
-                .foregroundStyle(.white)
+                .foregroundStyle(Color(themeManager.currentPalette.gameLibraryText))
                 .shadow(color: .retroBlue.opacity(0.6), radius: 8)
 
             Text("tv_media.roms.several_ways", bundle: .module)
                 .font(.system(size: subtitleFontSize))
-                .foregroundStyle(.white.opacity(0.7))
+                .foregroundStyle(Color(themeManager.currentPalette.gameLibraryText).opacity(0.7))
                 .multilineTextAlignment(.center)
         }
         .padding(.bottom, 8)
@@ -5990,7 +6007,7 @@ struct TVMediaROMInstructionsView: View {
             } else {
                 Text("tv_media.roms.start_web_server", bundle: .module)
                     .font(.system(size: cardSubtitleFontSize))
-                    .foregroundStyle(.white.opacity(0.5))
+                    .foregroundStyle(Color(themeManager.currentPalette.gameLibraryText).opacity(0.72))
                     .italic()
             }
             #endif
@@ -6060,7 +6077,7 @@ struct TVMediaROMInstructionsView: View {
                 VStack(alignment: .leading, spacing: 4) {
                     Text("tv_media.roms.full_documentation", bundle: .module)
                         .font(.system(size: cardTitleFontSize, weight: .bold))
-                        .foregroundStyle(.white)
+                        .foregroundStyle(Color(themeManager.currentPalette.gameLibraryText))
 
                     Text(wikiURL)
                         .font(.system(size: cardSubtitleFontSize, design: .monospaced))
@@ -6128,7 +6145,7 @@ struct TVMediaROMInstructionsView: View {
                 VStack(alignment: .leading, spacing: 4) {
                     Text(title)
                         .font(.system(size: cardTitleFontSize, weight: .bold))
-                        .foregroundStyle(.white)
+                        .foregroundStyle(Color(themeManager.currentPalette.gameLibraryText))
                         .shadow(color: accentColor.opacity(0.4), radius: 4)
 
                     Text(subtitle)
@@ -6141,7 +6158,7 @@ struct TVMediaROMInstructionsView: View {
 
             Text(description)
                 .font(.system(size: cardDescriptionFontSize))
-                .foregroundStyle(.white.opacity(0.75))
+                .foregroundStyle(Color(themeManager.currentPalette.gameLibraryText).opacity(0.75))
                 .lineSpacing(4)
 
             extras()

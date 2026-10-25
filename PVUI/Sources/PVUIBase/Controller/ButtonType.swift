@@ -6,6 +6,7 @@
 //
 
 import GameController
+import PVSupport
 
 // #if os(iOS)
 
@@ -71,6 +72,11 @@ public extension GCController {
             }
         }
         #endif
+        // The Switch Online pads also report a micro gamepad and no extended one
+        // (Apple builds the SNES pad as a basic MFi gamepad), but they are game pads.
+        if PVPhysicalProfilePad.detect(vendorName: vendorName, productCategory: productCategory).isSwitchOnline {
+            return false
+        }
         return self.extendedGamepad == nil && self.microGamepad != nil
     }
     

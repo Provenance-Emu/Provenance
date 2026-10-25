@@ -59,6 +59,8 @@
 #import "osal/dynamiclib.h"
 #import "../Plugins/Core/Core/src/main/version.h"
 #import "../Plugins/Core/Core/src/plugin/plugin.h"
+#import "device/device.h"
+#import "main/main.h"
 //#import "rom.h"
 //#import "savestates.h"
 //#import "memory.h"
@@ -93,6 +95,100 @@ __weak PVMupenBridge *_current = nil;
 /// from "the frontend never showed the frames it was given".
 static uint64_t sVICount;
 static uint64_t sSwapCount;
+static uint64_t sDisplayListCount;
+static uint64_t sDiagnosticSwapCount;
+static ptr_ProcessDList sProcessDList;
+static uint32_t (*sPluginMicrocodeCRC)(uint32_t, const void *, uint32_t);
+extern AUDIO_INFO AudioInfo;
+
+static const uint64_t kMupenVideoProbeFirstVI = 120;
+static const uint64_t kMupenVideoProbeLastVI = 600;
+static const unsigned int kMupenMicrocodeProbeLimit = 4;
+
+// Sample only three frames, before Metal reads the shared surface. Preserve GL
+// bindings and packing state so the probe cannot invalidate the plugin's cache.
+static void MupenProbePresentationFramebuffer(PVMupenBridge *bridge) {
+    GLuint framebuffer = [bridge presentationFramebufferName];
+    if (!framebuffer || bridge.videoWidth <= 0 || bridge.videoHeight <= 0) {
+        WLOG(@"[MUPEN-VIDEO] cannot sample presentation framebuffer %u", framebuffer);
+        return;
+    }
+
+    const GLenum packingParameters[] = { GL_PACK_ROW_LENGTH, GL_PACK_SKIP_ROWS, GL_PACK_SKIP_PIXELS };
+    GLint packingValues[3];
+    GLint previousReadFramebuffer, previousPackBuffer;
+    glGetIntegerv(GL_READ_FRAMEBUFFER_BINDING, &previousReadFramebuffer);
+    glGetIntegerv(GL_PIXEL_PACK_BUFFER_BINDING, &previousPackBuffer);
+    glBindBuffer(GL_PIXEL_PACK_BUFFER, 0);
+    for (unsigned int i = 0; i < 3; ++i) {
+        glGetIntegerv(packingParameters[i], &packingValues[i]);
+        glPixelStorei(packingParameters[i], 0);
+    }
+    glBindFramebuffer(GL_READ_FRAMEBUFFER, framebuffer);
+    GLenum status = glCheckFramebufferStatus(GL_READ_FRAMEBUFFER);
+    unsigned int colored = 0, opaque = 0;
+    const unsigned int gridSize = 4;
+    if (status == GL_FRAMEBUFFER_COMPLETE) {
+        for (unsigned int y = 1; y <= gridSize; ++y) {
+            for (unsigned int x = 1; x <= gridSize; ++x) {
+                GLubyte pixel[4] = { 0 };
+                glReadPixels((GLint)((uint64_t)bridge.videoWidth * x / (gridSize + 1)),
+                             (GLint)((uint64_t)bridge.videoHeight * y / (gridSize + 1)),
+                             1, 1, GL_RGBA, GL_UNSIGNED_BYTE, pixel);
+                colored += pixel[0] > 0 || pixel[1] > 0 || pixel[2] > 0;
+                opaque += pixel[3] > 0;
+            }
+        }
+    }
+    glBindFramebuffer(GL_READ_FRAMEBUFFER, (GLuint)previousReadFramebuffer);
+    for (unsigned int i = 0; i < 3; ++i) {
+        glPixelStorei(packingParameters[i], packingValues[i]);
+    }
+    glBindBuffer(GL_PIXEL_PACK_BUFFER, (GLuint)previousPackBuffer);
+
+    ILOG(@"[MUPEN-VIDEO] swap=%llu vi=%llu fbo=%u status=%04x size=%dx%d coloredSamples=%u/%u alphaSamples=%u/%u",
+         (unsigned long long)sSwapCount, (unsigned long long)sVICount, framebuffer, status,
+         bridge.videoWidth, bridge.videoHeight, colored, gridSize * gridSize, opaque, gridSize * gridSize);
+}
+
+// Independent of GLideN64's CRC table: detects a bad hash implementation or
+// initialization separately from changed microcode bytes in RDRAM.
+static uint32_t MupenDiagnosticCRC(const uint8_t *bytes, size_t length) {
+    uint32_t crc = UINT32_MAX;
+    for (size_t i = 0; i < length; ++i) {
+        crc ^= bytes[i];
+        for (unsigned int bit = 0; bit < 8; ++bit) {
+            crc = (crc >> 1) ^ ((crc & 1) ? UINT32_C(0xedb88320) : 0);
+        }
+    }
+    return crc ^ UINT32_MAX;
+}
+
+// Install before InitiateRSP captures gfx.processDList. Forward every task unchanged.
+static void MupenDiagnosticProcessDList(void) {
+    ++sDisplayListCount;
+    if (sDisplayListCount <= kMupenMicrocodeProbeLimit && AudioInfo.DMEM && AudioInfo.RDRAM) {
+        uint32_t address;
+        memcpy(&address, AudioInfo.DMEM + 0xfd0, sizeof(address));
+        address &= 0x1fffffff;
+        const size_t microcodeSize = 4096;
+        if (g_dev.rdram.dram_size >= microcodeSize && address <= g_dev.rdram.dram_size - microcodeSize) {
+            const uint8_t *microcode = AudioInfo.RDRAM + address;
+            uint32_t referenceCRC = MupenDiagnosticCRC(microcode, microcodeSize);
+            if (sPluginMicrocodeCRC) {
+                uint32_t pluginCRC = sPluginMicrocodeCRC(UINT32_MAX, microcode, (uint32_t)microcodeSize);
+                ILOG(@"[MUPEN-VIDEO] dlist=%llu ucode=%08x referenceCRC=%08x pluginCRC=%08x rdram=%zu",
+                     (unsigned long long)sDisplayListCount, address, referenceCRC, pluginCRC, g_dev.rdram.dram_size);
+            } else {
+                ILOG(@"[MUPEN-VIDEO] dlist=%llu ucode=%08x referenceCRC=%08x pluginCRC=unavailable rdram=%zu",
+                     (unsigned long long)sDisplayListCount, address, referenceCRC, g_dev.rdram.dram_size);
+            }
+        } else {
+            WLOG(@"[MUPEN-VIDEO] ucode address %08x outside RDRAM (%zu)", address, g_dev.rdram.dram_size);
+        }
+    }
+    sProcessDList();
+}
 
 /// How many vertical interrupts a game gets to produce its first swap before the miss
 /// is logged. Two seconds of NTSC video is long enough for any boot sequence.
@@ -111,9 +207,15 @@ EXPORT static void PV_DrawOSD(const char *_pText, float _x, float _y)
 
 static void MupenDebugCallback(void *context, int level, const char *message)
 {
-#if DEBUG
-    DLOG(@"Mupen (%d): %s", level, message);
-#endif
+    if (level == M64MSG_ERROR) {
+        ELOG(@"Mupen: %s", message);
+    } else if (level == M64MSG_WARNING) {
+        WLOG(@"Mupen: %s", message);
+    } else if (level == M64MSG_INFO) {
+        ILOG(@"Mupen: %s", message);
+    } else {
+        DLOG(@"Mupen (%d): %s", level, message);
+    }
 }
 
 static void MupenFrameCallback(unsigned int FrameIndex) {
@@ -502,6 +604,15 @@ static void *dlopen_myself()
         // Store handle for later unload
         plugins[pluginType] = rsp_handle;
 
+        if (pluginType == M64PLUGIN_GFX) {
+            sProcessDList = gfx.processDList;
+            sPluginMicrocodeCRC = (uint32_t (*)(uint32_t, const void *, uint32_t))
+                osal_dynlib_getproc(rsp_handle, "_Z20CRC_Calculate_StrictjPKvj");
+            if (sProcessDList) {
+                gfx.processDList = MupenDiagnosticProcessDList;
+            }
+        }
+
         return YES;
     };
 
@@ -644,6 +755,8 @@ static void *dlopen_myself()
         // same process would otherwise inherit the first session's counts.
         sVICount = 0;
         sSwapCount = 0;
+        sDisplayListCount = 0;
+        sDiagnosticSwapCount = 0;
         [super startEmulation];
         [NSThread detachNewThreadSelector:@selector(runMupenEmuThread) toTarget:self withObject:nil];
     }
@@ -753,6 +866,14 @@ static const NSTimeInterval kMupenPALRefreshRate  = 50.0;
     }
 
     ++sVICount;
+    if (sVICount == kMupenVideoProbeFirstVI || sVICount == kMupenVideoProbeLastVI) {
+        ILOG(@"[MUPEN-VIDEO] vi=%llu dlists=%llu swaps=%llu swapsSinceProbe=%llu VI_STATUS=%08x VI_ORIGIN=%08x VI_WIDTH=%u SP_STATUS=%08x",
+             (unsigned long long)sVICount, (unsigned long long)sDisplayListCount,
+             (unsigned long long)sSwapCount, (unsigned long long)(sSwapCount - sDiagnosticSwapCount),
+             g_dev.vi.regs[VI_STATUS_REG], g_dev.vi.regs[VI_ORIGIN_REG],
+             g_dev.vi.regs[VI_WIDTH_REG], g_dev.sp.regs[SP_STATUS_REG]);
+        sDiagnosticSwapCount = sSwapCount;
+    }
     if (sVICount == kMupenNoSwapVIThreshold && sSwapCount == 0) {
         WLOG(@"[NO-SWAP] %llu vertical interrupts with no VidExt_GL_SwapBuffers: the video plugin "
              @"is not presenting. videoMode=(%d,%d) bitDepth=%d NTSC=%d",
@@ -778,6 +899,9 @@ static const NSTimeInterval kMupenPALRefreshRate  = 50.0;
     if (++sSwapCount == 1) {
         ILOG(@"First video plugin swap after %llu vertical interrupts, videoMode=(%d,%d)",
              sVICount, self.videoWidth, self.videoHeight);
+    }
+    if (sSwapCount == 1 || sSwapCount == kMupenVideoProbeFirstVI || sSwapCount == kMupenVideoProbeLastVI) {
+        MupenProbePresentationFramebuffer(self);
     }
     [self.renderDelegate didRenderFrameOnAlternateThread];
 }

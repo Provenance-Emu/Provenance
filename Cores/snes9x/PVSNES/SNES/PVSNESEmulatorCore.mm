@@ -1193,8 +1193,13 @@ static void FinalizeSamplesAudioCallback(void *) {
             S9xReportButton(playerMask | PVSNESButtonTriggerLeft, gamepad.leftShoulder.pressed);
             S9xReportButton(playerMask | PVSNESButtonTriggerRight, gamepad.rightShoulder.pressed);
 
-            S9xReportButton(playerMask | PVSNESButtonStart, gamepad.rightTrigger.pressed);
-            S9xReportButton(playerMask | PVSNESButtonSelect, gamepad.leftTrigger.pressed);
+            // Switch Online SNES pad: Apple exposes no ZL/ZR, so its real Start and Select
+            // (buttonMenu / buttonOptions) carry them. Other pads keep the trigger mapping.
+            BOOL synthesizedPad = PVIsPhysicalProfileController(controller);
+            S9xReportButton(playerMask | PVSNESButtonStart,
+                            gamepad.rightTrigger.pressed || (synthesizedPad && gamepad.buttonMenu.pressed));
+            S9xReportButton(playerMask | PVSNESButtonSelect,
+                            gamepad.leftTrigger.pressed || (synthesizedPad && gamepad.buttonOptions.pressed));
 
         }
         else if ([controller gamepad])

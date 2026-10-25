@@ -9,6 +9,25 @@ import XCTest
 @testable import PVLibrarySharing
 
 final class ICubeContinuitySourceTests: XCTestCase {
+    func testAuthChallengeMustMatchSelectedPairedHost() async throws {
+        let transport = MockTransport()
+        transport.script(TestPaths.authStart, .json(AuthStartResponse(authId: "a", serverId: "other-host", nonce: Data([1]))))
+        transport.script(TestPaths.authComplete, .json(LibraryTokenResponse(libraryToken: "wrong-host-token")))
+        transport.script(TestPaths.iCubeCatalog, LibraryHTTPResponse(status: 200, body: try Fixture.data("icube-library-catalog")))
+        let source = ICubeContinuitySource(baseURLs: [URL(string: "http://host.local")!], identity: .init(name: "receiver"),
+                                          transport: transport, expectedPeerID: "paired-host")
+        do { _ = try await source.catalogue { _ in }; XCTFail("Wrong host was accepted") } catch {}
+        XCTAssertTrue(transport.requests(to: TestPaths.authComplete).isEmpty)
+    }
+
+    func testPairingHandleMustMatchDiscoveredHost() async throws {
+        let transport = MockTransport()
+        transport.script(TestPaths.pairStart, .json(ICubePairStartResponse(pairingId: "p", serverId: "other-host",
+            serverName: "Other", serverPublicKey: Data(repeating: 1, count: 32))))
+        let source = ICubeContinuitySource(baseURLs: [URL(string: "http://host.local")!], identity: .init(name: "receiver"),
+                                          transport: transport, expectedPeerID: "selected-host")
+        do { _ = try await source.beginPairing(); XCTFail("Mismatched pairing host was accepted") } catch {}
+    }
     private let base = URL(string: "http://icube.local/")!
     private let nonce = Data([1, 2, 3])
     private let identity = PeerIdentity(id: "provenance-peer", name: "Provenance on iPhone")
@@ -158,4 +177,22 @@ final class ICubeContinuitySourceTests: XCTestCase {
         let art = try await makeSource(transport).artwork(for: item)
         XCTAssertNil(art)
     }
+    func testICubeLibraryRejectsUserDataBeforeNormalization() async throws {
+        let fields = ["saveState", "optionalExtras", "bios", "files"]
+        for field in fields {
+            let transport = MockTransport()
+            transport.script(TestPaths.authStart, .json(AuthStartResponse(authId: "a", serverId: "s", nonce: nonce)))
+            transport.script(TestPaths.authComplete, .json(LibraryTokenResponse(libraryToken: "t")))
+            var json = try XCTUnwrap(JSONSerialization.jsonObject(with: Fixture.data("icube-library-manifest")) as? [String: Any])
+            let descriptor: [String: Any] = ["kind": "gameCubeMemoryCard", "relativePath": "GC/card.raw", "sha256": "aa", "size": 1]
+            if field == "files" { json["files"] = (json["files"] as! [[String: Any]]) + [descriptor] }
+            else if field == "saveState" { json[field] = descriptor }
+            else { json[field] = [descriptor] }
+            transport.script(TestPaths.iCubeManifest, LibraryHTTPResponse(status: 200, body: try JSONSerialization.data(withJSONObject: json)))
+            let item = RemoteLibraryItem(id: "game", title: "Game", platform: "gc", systemIdentifier: .GameCube,
+                                         md5: nil, sizeBytes: 3, artKey: nil, source: .iCube)
+            do { _ = try await makeSource(transport).pullManifest(for: item) { _ in }; XCTFail("accepted userdata field \(field)") } catch {}
+        }
+    }
+
 }

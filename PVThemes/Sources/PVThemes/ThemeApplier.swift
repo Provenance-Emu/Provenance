@@ -33,6 +33,8 @@ public extension ThemeManager {
                 let isDarkMode = UITraitCollection.current.userInterfaceStyle == .dark
                 paletteToApply = isDarkMode ? ProvenanceThemes.dark.palette : ProvenanceThemes.light.palette
             }
+        case .retrowave:
+            paletteToApply = ProvenanceThemes.retrowave.palette
         case .cga(let option):
             let isDarkMode = UITraitCollection.current.userInterfaceStyle == .dark
             let autoPalette = isDarkMode ? ProvenanceThemes.dark.palette : ProvenanceThemes.light.palette
@@ -281,8 +283,8 @@ public extension ThemeManager {
     private class func configureTabBar(_ palette: any UXThemePalette) {
         UITabBar.appearance {
             $0.tintColor = palette.defaultTintColor
-            $0.unselectedItemTintColor = palette.segmentedControlTint
-            $0.barTintColor = palette.segmentedControlSelectedTint
+            $0.unselectedItemTintColor = palette.gameLibraryText.withAlphaComponent(0.6)
+            $0.barTintColor = palette.tabBarBackground
         }
         DLOG("Tab bar - tintColor: \(palette.defaultTintColor.debugDescription), barTintColor: \(palette.tabBarBackground?.debugDescription ?? "nil")")
     }

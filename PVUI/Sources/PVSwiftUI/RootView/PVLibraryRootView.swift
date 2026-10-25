@@ -15,6 +15,7 @@ import FreemiumKit
 
 /// The paged library's SwiftUI navigation and presentation root.
 struct PVLibraryRootView: View {
+    @ObservedObject private var themeManager = ThemeManager.shared
     @Environment(\.openURL) private var openURL
     @Environment(\.scenePhase) private var scenePhase
     @StateObject private var navigation: PVLibraryNavigation
@@ -27,6 +28,7 @@ struct PVLibraryRootView: View {
 
     var body: some View {
         libraryContent
+            .tint(Color(themeManager.currentPalette.defaultTintColor))
             .sheet(item: $navigation.sheet, onDismiss: navigation.didDismissSheet) { sheet in
                 NavigationStack {
                     sheetContent(sheet)

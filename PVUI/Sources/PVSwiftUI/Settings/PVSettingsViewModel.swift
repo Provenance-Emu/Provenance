@@ -166,6 +166,9 @@ class PVSettingsViewModel: ObservableObject {
             case .standard(let mode):
                 darkTheme = (mode == .auto && UITraitCollection.current.userInterfaceStyle == .dark) || mode == .dark
                 newTheme = darkTheme ? ProvenanceThemes.dark.palette : ProvenanceThemes.light.palette
+            case .retrowave:
+                darkTheme = true
+                newTheme = ProvenanceThemes.retrowave.palette
             case .cga(let cgaTheme):
                 let palette = CGAThemes(rawValue: cgaTheme.rawValue)?.palette ?? ProvenanceThemes.dark.palette
                 darkTheme = palette.dark

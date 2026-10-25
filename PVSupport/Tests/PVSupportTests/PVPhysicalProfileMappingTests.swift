@@ -112,4 +112,83 @@ final class PVPhysicalProfileMappingTests: XCTestCase {
         XCTAssertNil(PVPhysicalProfileMapping.input(forElementNamed: "Capture"))
         XCTAssertNil(PVPhysicalProfileMapping.input(forElementNamed: "Touchpad"))
     }
+
+    // MARK: Switch Online SNES pad (VID 0x057E, PID 0x2017)
+
+    /// The nine elements Apple's `_GCNintendoSuperFamicomControllerProfile` describes
+    /// (GameController, iOS 26.6 and tvOS 27.2): no Home, no ZL/ZR.
+    private let appleSNESElementNames = [
+        "Button A", "Button B", "Button X", "Button Y", "Left Shoulder", "Right Shoulder",
+        "Button Menu", "Button Options", "Direction Pad",
+    ]
+
+    func testSNESPadFromAppleProfileBindsEveryButtonOnce() {
+        XCTAssertEqual(PVPhysicalProfilePad.detect(vendorName: "SNES Controller", productCategory: "Switch SNES Controller"), .snes)
+        let bindings = PVPhysicalProfileMapping.bindings(forElementNames: appleSNESElementNames, pad: .snes)
+        XCTAssertEqual(bindings, [
+            "Button A": .buttonA, "Button B": .buttonB, "Button X": .buttonX, "Button Y": .buttonY,
+            "Left Shoulder": .leftShoulder, "Right Shoulder": .rightShoulder,
+            "Button Menu": .menu, "Button Options": .options, "Direction Pad": .dpad,
+        ])
+        XCTAssertEqual(Set(bindings.values).count, bindings.count, "no two elements drive the same input")
+        XCTAssertTrue(PVPhysicalProfileMapping.isUsable(bindings: bindings))
+    }
+
+    func testSNESPadPausesOnSelectPlusStartNeverStartAlone() throws {
+        let bindings = PVPhysicalProfileMapping.bindings(forElementNames: appleSNESElementNames, pad: .snes)
+        let trigger = try XCTUnwrap(PVPhysicalProfileMapping.pauseTrigger(forBindings: bindings))
+        XCTAssertEqual(trigger, .chord([.options, .menu]))
+        XCTAssertFalse(trigger.isSatisfied(by: [.menu]), "Start alone is a game button")
+        XCTAssertFalse(trigger.isSatisfied(by: [.options]), "Select alone is a game button")
+        XCTAssertFalse(trigger.isSatisfied(by: [.menu, .buttonA]))
+        XCTAssertTrue(trigger.isSatisfied(by: [.options, .menu]))
+        XCTAssertTrue(trigger.isSatisfied(by: [.options, .menu, .dpad]))
+        XCTAssertEqual(trigger.inputs, [.options, .menu])
+    }
+
+    func testPadsWithHomePauseOnHome() throws {
+        let n64 = PVPhysicalProfileMapping.bindings(forElementNames: ["Button A", "Direction Pad", "Button Menu", "Button Options", "Button Home"], pad: .n64)
+        let trigger = try XCTUnwrap(PVPhysicalProfileMapping.pauseTrigger(forBindings: n64))
+        XCTAssertEqual(trigger, .home)
+        XCTAssertTrue(trigger.isSatisfied(by: [.home]))
+        XCTAssertFalse(trigger.isSatisfied(by: [.menu, .options]), "with Home available, Select + Start stays a game chord")
+        let megaDrive = PVPhysicalProfileMapping.bindings(forElementNames: ["Button 0", "Direction Pad", "Button 9", "Button 12"], pad: .megaDrive)
+        XCTAssertEqual(PVPhysicalProfileMapping.pauseTrigger(forBindings: megaDrive), .home)
+    }
+
+    func testNoPauseTriggerWithoutHomeOrSelectStart() {
+        let bindings = PVPhysicalProfileMapping.bindings(forElementNames: ["Button A", "Direction Pad", "Button Menu"])
+        XCTAssertNil(PVPhysicalProfileMapping.pauseTrigger(forBindings: bindings))
+        XCTAssertFalse(PVPauseTrigger.chord([]).isSatisfied(by: [.menu]))
+    }
+
+    func testOnlySwitchOnlinePadsAreFlagged() {
+        XCTAssertTrue(PVPhysicalProfilePad.snes.isSwitchOnline)
+        XCTAssertTrue(PVPhysicalProfilePad.n64.isSwitchOnline)
+        XCTAssertTrue(PVPhysicalProfilePad.megaDrive.isSwitchOnline)
+        XCTAssertFalse(PVPhysicalProfilePad.generic.isSwitchOnline)
+    }
+
+    /// The tester's RetroArch autoconfig for this pad agrees with the SNES HID index table.
+    func testSNESIndexTableMatchesTesterAutoconfig() throws {
+        let url = try XCTUnwrap(Bundle.module.url(forResource: "SNES_Nintendo_Switch_Online", withExtension: "cfg", subdirectory: "Fixtures"))
+        let config = try String(contentsOf: url, encoding: .utf8)
+        var values: [String: String] = [:]
+        for line in config.split(separator: "\n") {
+            let parts = line.split(separator: "=", maxSplits: 1).map { $0.trimmingCharacters(in: .whitespaces) }
+            guard parts.count == 2 else { continue }
+            values[parts[0]] = parts[1].trimmingCharacters(in: CharacterSet(charactersIn: "\""))
+        }
+        XCTAssertEqual(values["input_vendor_id"], "1406")
+        XCTAssertEqual(values["input_product_id"], "8215")
+        // RetroPad button → extended-gamepad input the cores read.
+        let retroPad: [String: PVSynthesizedInput] = [
+            "b": .buttonA, "a": .buttonB, "y": .buttonX, "x": .buttonY, "l": .leftShoulder, "r": .rightShoulder,
+            "l2": .leftTrigger, "r2": .rightTrigger, "select": .options, "start": .menu,
+        ]
+        for (button, input) in retroPad {
+            let index = try XCTUnwrap(values["input_\(button)_btn"].flatMap(Int.init), "input_\(button)_btn")
+            XCTAssertEqual(PVPhysicalProfileMapping.input(forElementNamed: "Button \(index)", pad: .snes), input, button)
+        }
+    }
 }

@@ -21,6 +21,8 @@ public struct ThemeOptionBridge: Defaults.Bridge, Sendable {
         switch value {
         case .standard(let option):
             return ["type": "standard", "value": option.rawValue]
+        case .retrowave:
+            return ["type": "retrowave", "value": "retrowave"]
         case .cga(let option):
             return ["type": "cga", "value": option.rawValue]
         }
@@ -31,6 +33,8 @@ public struct ThemeOptionBridge: Defaults.Bridge, Sendable {
         switch type {
         case "standard":
             return .standard(ThemeOptionsStandard(rawValue: value) ?? .dark)
+        case "retrowave":
+            return .retrowave
         case "cga":
             return .cga(ThemeOptionsCGA(rawValue: value) ?? .blue)
         default:
@@ -42,25 +46,28 @@ public struct ThemeOptionBridge: Defaults.Bridge, Sendable {
 public enum ThemeOption: Defaults.Serializable, Equatable, CustomStringConvertible {
     case standard(ThemeOptionsStandard)
     case cga(ThemeOptionsCGA)
+    case retrowave
     
     public static let bridge = ThemeOptionBridge()
     
     public var description: String {
         switch self {
         case .standard(let option): return "Standard " + option.description
+        case .retrowave: return "RetroWave"
         case .cga(let option): return "CGA " + option.description
         }
     }
     
     public static var allCases: [ThemeOption] {
         return ThemeOptionsStandard.allCases.map { ThemeOption.standard($0) } +
-               ThemeOptionsCGA.allCases.map { ThemeOption.cga($0) }
+               ThemeOptionsCGA.allCases.map { ThemeOption.cga($0) } + [.retrowave]
     }
     
     public static func == (lhs: ThemeOption, rhs: ThemeOption) -> Bool {
         switch (lhs, rhs) {
         case (.standard(let l), .standard(let r)): return l == r
         case (.cga(let l), .cga(let r)): return l == r
+        case (.retrowave, .retrowave): return true
         default: return false
         }
     }
