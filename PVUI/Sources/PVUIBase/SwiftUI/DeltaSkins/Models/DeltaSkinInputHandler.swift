@@ -16,6 +16,7 @@ import GameController
 #endif
 
 /// Handles input from Delta Skins and forwards it to the emulator core or controller
+// swiftlint:disable:next type_body_length
 open class DeltaSkinInputHandler: ObservableObject {
     /// Button IDs that fire only on press — release events are suppressed.
     /// This Set is `static` so it is allocated once rather than on every release call.
