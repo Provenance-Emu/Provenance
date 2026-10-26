@@ -9,7 +9,8 @@ final class PVPhysicalProfileMappingTests: XCTestCase {
         XCTAssertEqual(PVPhysicalProfileMapping.input(forElementNamed: "Left Thumbstick"), .leftThumbstick)
         XCTAssertEqual(PVPhysicalProfileMapping.input(forElementNamed: "Button Options"), .options)
         XCTAssertEqual(PVPhysicalProfileMapping.input(forElementNamed: "Right Trigger"), .rightTrigger)
-        // Standard names mean the same on every pad family.
+        // Standard names are positional except a labelled pad's faces (SNES, below);
+        // the N64 pad keeps the positional reading.
         XCTAssertEqual(PVPhysicalProfileMapping.input(forElementNamed: "Button B", pad: .n64), .buttonB)
     }
 
@@ -126,12 +127,34 @@ final class PVPhysicalProfileMappingTests: XCTestCase {
         XCTAssertEqual(PVPhysicalProfilePad.detect(vendorName: "SNES Controller", productCategory: "Switch SNES Controller"), .snes)
         let bindings = PVPhysicalProfileMapping.bindings(forElementNames: appleSNESElementNames, pad: .snes)
         XCTAssertEqual(bindings, [
-            "Button A": .buttonA, "Button B": .buttonB, "Button X": .buttonX, "Button Y": .buttonY,
+            "Button A": .buttonB, "Button B": .buttonA, "Button X": .buttonY, "Button Y": .buttonX,
             "Left Shoulder": .leftShoulder, "Right Shoulder": .rightShoulder,
             "Button Menu": .menu, "Button Options": .options, "Direction Pad": .dpad,
         ])
         XCTAssertEqual(Set(bindings.values).count, bindings.count, "no two elements drive the same input")
         XCTAssertTrue(PVPhysicalProfileMapping.isUsable(bindings: bindings))
+    }
+
+    /// Apple names the SNES pad's faces by printed label, so "Button A" is the A button
+    /// (right) and must drive RetroPad A, as the label alias and the RetroArch HID index
+    /// do. Reading it positionally swapped A/B and X/Y in every core.
+    func testSNESAppleFaceNamesAgreeWithLabelsAndHIDIndices() {
+        let faces: [(apple: String, label: String, hid: String, expected: PVSynthesizedInput)] = [
+            ("Button B", "B", "Button 0", .buttonA),
+            ("Button A", "A", "Button 1", .buttonB),
+            ("Button Y", "Y", "Button 2", .buttonX),
+            ("Button X", "X", "Button 3", .buttonY),
+        ]
+        for face in faces {
+            for name in [face.apple, face.label, face.hid] {
+                XCTAssertEqual(PVPhysicalProfileMapping.input(forElementNamed: name, pad: .snes), face.expected, "SNES \(name)")
+            }
+        }
+        XCTAssertTrue(PVPhysicalProfilePad.snes.namesFacesByLabel)
+        XCTAssertFalse(PVPhysicalProfilePad.generic.namesFacesByLabel)
+        XCTAssertFalse(PVPhysicalProfilePad.n64.namesFacesByLabel)
+        XCTAssertFalse(PVPhysicalProfilePad.megaDrive.namesFacesByLabel)
+        XCTAssertEqual(PVPhysicalProfileMapping.input(forElementNamed: "Button A", pad: .generic), .buttonA)
     }
 
     func testSNESPadPausesOnSelectPlusStartNeverStartAlone() throws {

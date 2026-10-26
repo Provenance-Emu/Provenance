@@ -43,12 +43,23 @@ public enum PVPhysicalProfilePad: String, Sendable {
 
     /// The Switch Online pads, which the system exposes without an extended gamepad.
     public var isSwitchOnline: Bool { self != .generic }
+
+    /// Whether the system's face element names ("Button A" …) are the printed labels
+    /// rather than positions. True for the SNES pad: Apple's "Button A" is the button
+    /// marked A (right), so binding it positionally swapped A/B and X/Y in every core
+    /// (tester-confirmed with Contra III). The N64 and Mega Drive pads probably follow the
+    /// same rule (Nintendo-built profiles; Joy-Cons need the same swap in
+    /// `PVRemappableController`), but neither profile is verified, so they keep the
+    /// positional reading until one is.
+    public var namesFacesByLabel: Bool { self == .snes }
 }
 
 /// Resolves a physical-profile element name to a synthesized input.
 ///
 /// Order: the GameController framework's own element names first (`GCInputButtonA`
-/// is "Button A", and so on), then the printed-label aliases of the pad family, then
+/// is "Button A", and so on; on a pad whose ``PVPhysicalProfilePad/namesFacesByLabel``
+/// the four face names resolve as printed labels), then the printed-label aliases of
+/// the pad family, then
 /// bare "Button <n>" names resolved through RetroArch's HID autoconfig for that pad
 /// (libretro/retroarch-joypad-autoconfig, `hid/*_Switch_Online.cfg`).
 ///
@@ -59,6 +70,10 @@ public enum PVPhysicalProfilePad: String, Sendable {
 public enum PVPhysicalProfileMapping {
 
     /// Element names the system uses for standard inputs.
+    /// The system's face element names; on a ``PVPhysicalProfilePad/namesFacesByLabel`` pad
+    /// these mean the printed labels and resolve through ``faceAliases``.
+    static let standardFaceNames: Set<String> = ["button a", "button b", "button x", "button y"]
+
     static let standardNames: [String: PVSynthesizedInput] = [
         "button a": .buttonA, "button b": .buttonB, "button x": .buttonX, "button y": .buttonY,
         "direction pad": .dpad, "left thumbstick": .leftThumbstick, "right thumbstick": .rightThumbstick,
@@ -155,8 +170,9 @@ public enum PVPhysicalProfileMapping {
     ///   - pad: the family, which selects the face labels and the "Button <n>" table.
     public static func input(forElementNamed name: String, pad: PVPhysicalProfilePad = .generic) -> PVSynthesizedInput? {
         let normalized = normalize(name)
-        if let standard = standardNames[normalized] { return standard }
         let bare = normalized.hasPrefix("button ") ? String(normalized.dropFirst("button ".count)) : normalized
+        if pad.namesFacesByLabel, standardFaceNames.contains(normalized), let face = faceAliases[pad]?[bare] { return face }
+        if let standard = standardNames[normalized] { return standard }
         if let face = faceAliases[pad]?[bare] { return face }
         if let common = commonAliases[bare] { return common }
         if let index = Int(bare) { return hidButtons[pad]?[index] }
