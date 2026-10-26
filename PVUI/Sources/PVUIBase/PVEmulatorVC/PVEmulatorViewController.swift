@@ -564,6 +564,7 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
         NotificationCenter.default.addObserver(self, selector: #selector(PVEmulatorViewController.screenDidConnect(_:)), name: UIScreen.didConnectNotification, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(PVEmulatorViewController.screenDidDisconnect(_:)), name: UIScreen.didDisconnectNotification, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(PVEmulatorViewController.handleControllerManagerControllerReassigned(_:)), name: .PVControllerManagerControllerReassigned, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(PVEmulatorViewController.handleControllerMappingsChanged(_:)), name: ControllerMappingStore.didChangeNotification, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(PVEmulatorViewController.handlePause(_:)), name: Notification.Name("PauseGame"), object: nil)
 
         // DualSense microphone button → toggle audio mute

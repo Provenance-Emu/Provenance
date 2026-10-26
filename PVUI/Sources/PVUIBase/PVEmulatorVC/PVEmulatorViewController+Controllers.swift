@@ -162,6 +162,14 @@ extension PVEmulatorViewController {
         (controllerViewController as? OSDControlsVisibilityObserver)?.toggleOnScreenControlsVisibility()
     }
 
+    /// A remap changed: hand the controllers to the core again so a native core picks
+    /// up (or drops) its `PVRemappedController`. The store may post off the main thread.
+    @objc nonisolated func handleControllerMappingsChanged(_ note: Notification?) {
+        Task { @MainActor [weak self] in
+            self?.handleControllerManagerControllerReassigned(nil)
+        }
+    }
+
     @objc func handleControllerManagerControllerReassigned(_: Notification?) {
         core.controller1 = PVControllerManager.shared.player1
         core.controller2 = PVControllerManager.shared.player2

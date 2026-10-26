@@ -136,37 +136,15 @@ extension PVThinLibretroCore {
         return Self.physicalPressed(effective, on: pad)
     }
 
-    /// Look up the physical button on the gamepad by its `ButtonIdentifier`.
-    /// Returns false for identifiers the thin wrapper doesn't surface
-    /// (touchpadButton, paddleN, etc.) since those have no libretro
-    /// JOYPAD equivalent.
+    /// Look up the physical button on the gamepad by its `ButtonIdentifier`
+    /// (`pvButton(for:)`, shared with `PVRemappedController` so native cores
+    /// resolve remaps identically). False for identifiers with no element
+    /// (touchpadButton, paddleN, etc.), which have no libretro JOYPAD equivalent.
     private static func physicalPressed(
         _ identifier: ButtonIdentifier,
         on pad: GCExtendedGamepad
     ) -> Bool {
-        switch identifier {
-        case .buttonA:              return pad.buttonA.isPressed
-        case .buttonB:              return pad.buttonB.isPressed
-        case .buttonX:              return pad.buttonX.isPressed
-        case .buttonY:              return pad.buttonY.isPressed
-        case .leftShoulder:         return pad.leftShoulder.isPressed
-        case .rightShoulder:        return pad.rightShoulder.isPressed
-        case .leftTrigger:          return pad.leftTrigger.isPressed
-        case .rightTrigger:         return pad.rightTrigger.isPressed
-        case .dpadUp:               return pad.dpad.up.isPressed
-        case .dpadDown:             return pad.dpad.down.isPressed
-        case .dpadLeft:             return pad.dpad.left.isPressed
-        case .dpadRight:            return pad.dpad.right.isPressed
-        case .menu:                 return pad.buttonMenu.isPressed
-        // DualSense Create / DS4 Share / Xbox Share / generic Options all
-        // surface through `buttonOptions` — match every ButtonIdentifier
-        // that could legitimately resolve to it.
-        case .options, .share, .createButton, .shareButton:
-            return pad.buttonOptions?.isPressed ?? false
-        case .leftThumbstickButton:  return pad.leftThumbstickButton?.isPressed ?? false
-        case .rightThumbstickButton: return pad.rightThumbstickButton?.isPressed ?? false
-        default:                     return false
-        }
+        pad.pvButton(for: identifier)?.isPressed ?? false
     }
 
     /// One-shot diagnostic flag for logging the first pollControllers call after resume.

@@ -147,10 +147,17 @@ PVTouchpadButtonForController(GCController * _Nonnull controller) {
 static inline BOOL
 PVIsPhysicalProfileController(GCController * _Nullable controller) {
     static Class profileControllerClass = Nil;
+    static Class remappedControllerClass = Nil;
     static dispatch_once_t once;
     dispatch_once(&once, ^{
         profileControllerClass = NSClassFromString(@"PVPhysicalProfileController");
+        remappedControllerClass = NSClassFromString(@"PVRemappedController");
     });
+    // The PVCoreBridge remap wrapper stands in front of the pad when the player has
+    // remapped buttons; its gamepad keeps the profile pad's Start/Select layout.
+    if (controller != nil && remappedControllerClass != Nil && [controller isKindOfClass:remappedControllerClass]) {
+        controller = [controller valueForKey:@"base"];
+    }
     return controller != nil && profileControllerClass != Nil && [controller isKindOfClass:profileControllerClass];
 }
 

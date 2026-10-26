@@ -213,6 +213,10 @@ class PVThinLibretroCore: PVEmulatorCore, @unchecked Sendable {
         systemIdentifier == SystemIdentifier.DS.rawValue
     }
 
+    /// `pollControllers` resolves remaps through `ControllerMappingStore` itself, so
+    /// the core keeps the real controllers (and their DualSense/DS4 touchpad).
+    public override var appliesControllerRemapsItself: Bool { true }
+
     required init() {
         // Claim a fresh generation BEFORE super.init so the poll closure
         // installed during startEmulation captures a value that's guaranteed

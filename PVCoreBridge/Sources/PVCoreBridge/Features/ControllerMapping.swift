@@ -95,11 +95,22 @@ public final class ControllerMappingStore: @unchecked Sendable {
 
     public static let shared = ControllerMappingStore()
 
+    /// Posted after a vendor's mappings are written or cleared through this store.
+    /// `PVEmulatorViewController` re-hands controllers to the running core on it, so a
+    /// remap made mid-session reaches native cores (see ``PVRemappedController``).
+    public static let didChangeNotification = Notification.Name("PVControllerMappingStoreDidChange")
+
     // MARK: State
 
+    private let defaults: UserDefaults
     private let lock = NSLock()
     private var cache: [String: [ButtonIdentifier: ButtonMapping]] = [:]
     private var observerInstalled = false
+
+    /// `defaults` is injectable for tests; the app uses ``shared`` (standard defaults).
+    public init(defaults: UserDefaults = .standard) {
+        self.defaults = defaults
+    }
 
     // MARK: Key
 
@@ -131,6 +142,11 @@ public final class ControllerMappingStore: @unchecked Sendable {
         return map[source]?.destinationId ?? source
     }
 
+    /// True when `vendor` has at least one mapping that sends a button somewhere else.
+    public func hasActiveRemaps(forVendor vendor: String) -> Bool {
+        mappings(forVendor: vendor).values.contains { $0.sourceId != $0.destinationId }
+    }
+
     // MARK: Write
 
     /// Replace the entire mapping table for `vendor` and persist.
@@ -140,6 +156,7 @@ public final class ControllerMappingStore: @unchecked Sendable {
         cache[vendor] = mappings
         lock.unlock()
         saveToDefaults(mappings: mappings, vendor: vendor)
+        postDidChange(vendor: vendor)
     }
 
     /// Add or replace a single source→destination mapping.
@@ -163,13 +180,14 @@ public final class ControllerMappingStore: @unchecked Sendable {
         lock.lock()
         cache[vendor] = [:]
         lock.unlock()
-        UserDefaults.standard.removeObject(forKey: Self.storageKey(forVendor: vendor))
+        defaults.removeObject(forKey: Self.storageKey(forVendor: vendor))
+        postDidChange(vendor: vendor)
     }
 
     // MARK: - Internal helpers
 
     private func loadFromDefaults(vendor: String) -> [ButtonIdentifier: ButtonMapping] {
-        guard let data = UserDefaults.standard.data(forKey: Self.storageKey(forVendor: vendor)),
+        guard let data = defaults.data(forKey: Self.storageKey(forVendor: vendor)),
               let decoded = try? JSONDecoder().decode([ButtonIdentifier: ButtonMapping].self, from: data) else {
             return [:]
         }
@@ -179,15 +197,23 @@ public final class ControllerMappingStore: @unchecked Sendable {
     private func saveToDefaults(mappings: [ButtonIdentifier: ButtonMapping],
                                 vendor: String) {
         guard let data = try? JSONEncoder().encode(mappings) else { return }
-        UserDefaults.standard.set(data, forKey: Self.storageKey(forVendor: vendor))
+        defaults.set(data, forKey: Self.storageKey(forVendor: vendor))
     }
+
+    private func postDidChange(vendor: String) {
+        NotificationCenter.default.post(name: Self.didChangeNotification, object: self,
+                                        userInfo: [Self.vendorUserInfoKey: vendor])
+    }
+
+    /// `userInfo` key of ``didChangeNotification``: the vendor whose mappings changed.
+    public static let vendorUserInfoKey = "vendor"
 
     private func installObserverIfNeeded_locked() {
         guard !observerInstalled else { return }
         observerInstalled = true
         NotificationCenter.default.addObserver(
             forName: UserDefaults.didChangeNotification,
-            object: UserDefaults.standard,
+            object: defaults,
             queue: nil
         ) { [weak self] _ in
             guard let self = self else { return }

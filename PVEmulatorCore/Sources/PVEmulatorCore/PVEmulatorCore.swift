@@ -36,11 +36,27 @@ open class PVEmulatorCore: NSObject, ObjCBridgedCore, PVEmulatorCoreT {
         self.valueChangedHandler = valueChangedHandler
     }
     // MARK: EmulatorCoreControllerDataSource
+
+    /// True for cores that read ``ControllerMappingStore`` themselves (the thin
+    /// libretro wrapper). Every other core is handed a ``PVRemappedController`` when
+    /// the player has remapped buttons, so the remap is never applied twice.
+    @objc open var appliesControllerRemapsItself: Bool { false }
+
+    /// The controller the core reads for `controller`: remapped unless the core remaps itself.
+    private func coreFacing(_ controller: GCController?) -> GCController? {
+        #if os(watchOS)
+        return controller
+        #else
+        return PVRemappedController.coreFacing(controller, coreAppliesRemaps: appliesControllerRemapsItself)
+        #endif
+    }
+
+    // Haptics are registered with the real controller; the core gets the remapped one.
     @objc
     dynamic open var controller1: GCController? {
         get { bridge.controller1 }
         set {
-            bridge.controller1 = newValue
+            bridge.controller1 = coreFacing(newValue)
             registerControllerForHaptics(newValue, player: 0)
             guard let controller1 = controller1, !controller1.isAttachedToDevice else {
                 stopHaptic()
@@ -52,26 +68,26 @@ open class PVEmulatorCore: NSObject, ObjCBridgedCore, PVEmulatorCoreT {
 
     @objc dynamic open var controller2: GCController? {
         get { bridge.controller2 }
-        set { bridge.controller2 = newValue; registerControllerForHaptics(newValue, player: 1) } }
+        set { bridge.controller2 = coreFacing(newValue); registerControllerForHaptics(newValue, player: 1) } }
     @objc dynamic open var controller3: GCController? {
         get { bridge.controller3 }
-        set { bridge.controller3 = newValue; registerControllerForHaptics(newValue, player: 2) } }
+        set { bridge.controller3 = coreFacing(newValue); registerControllerForHaptics(newValue, player: 2) } }
     @objc dynamic open var controller4: GCController? {
         get { bridge.controller4 }
-        set { bridge.controller4 = newValue; registerControllerForHaptics(newValue, player: 3) } }
+        set { bridge.controller4 = coreFacing(newValue); registerControllerForHaptics(newValue, player: 3) } }
 
     @objc dynamic open var controller5: GCController? {
         get { bridge.controller5 }
-        set { bridge.controller5 = newValue; registerControllerForHaptics(newValue, player: 4) } }
+        set { bridge.controller5 = coreFacing(newValue); registerControllerForHaptics(newValue, player: 4) } }
     @objc dynamic open var controller6: GCController? {
         get { bridge.controller6 }
-        set { bridge.controller6 = newValue; registerControllerForHaptics(newValue, player: 5) } }
+        set { bridge.controller6 = coreFacing(newValue); registerControllerForHaptics(newValue, player: 5) } }
     @objc dynamic open var controller7: GCController?  {
         get { bridge.controller7 }
-        set { bridge.controller7 = newValue; registerControllerForHaptics(newValue, player: 6) } }
+        set { bridge.controller7 = coreFacing(newValue); registerControllerForHaptics(newValue, player: 6) } }
     @objc dynamic open var controller8: GCController? {
         get { bridge.controller8 }
-        set { bridge.controller8 = newValue; registerControllerForHaptics(newValue, player: 7) } }
+        set { bridge.controller8 = coreFacing(newValue); registerControllerForHaptics(newValue, player: 7) } }
 
     private func registerControllerForHaptics(_ controller: GCController?, player: Int) {
         if #available(iOS 14.0, tvOS 14.0, *) {
