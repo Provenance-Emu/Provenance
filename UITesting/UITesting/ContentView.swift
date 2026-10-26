@@ -16,8 +16,6 @@ struct ContentView: View {
     @EnvironmentObject var appState: AppState
     @EnvironmentObject var themeManager: ThemeManager
     @EnvironmentObject var sceneCoordinator: SceneCoordinator
-    /// Use EnvironmentObject for app delegate
-    @EnvironmentObject private var appDelegate: PVAppDelegate
 
     // State to force view refresh
     @State private var forceRefresh: Bool = false
@@ -76,15 +74,9 @@ struct ContentView: View {
                     // Show the main view
                     ZStack {
                         switch appState.mainUIMode {
-                            #if !os(tvOS)
-                        case .paged:
-                            SwiftUIHostedProvenanceMainView()
-                                .environmentObject(appDelegate)
-                                .edgesIgnoringSafeArea(.all)
-                            #endif
-                        case .singlePage:
+                            // The paged UI (SwiftUIHostedProvenanceMainView) no longer exists; use the single-page UI.
+                        case .paged, .singlePage:
                             RetroMainView()
-                                .environmentObject(appDelegate)
                                 .environmentObject(ThemeManager.shared)
                                 .edgesIgnoringSafeArea(.all)
                             #if os(tvOS)
@@ -93,7 +85,6 @@ struct ContentView: View {
                             // single-page UI. (UITesting does not yet build for tvOS anyway:
                             // TestEmulatorScene uses iOS-only commands/keyboard-shortcut APIs.)
                             RetroMainView()
-                                .environmentObject(appDelegate)
                                 .environmentObject(ThemeManager.shared)
                                 .edgesIgnoringSafeArea(.all)
                             #endif
