@@ -60,9 +60,7 @@ open class DeltaSkinInputHandler: ObservableObject {
     /// Must be accessed from the main thread only.
     public let turboManager = TurboManager()
     /// Manages sticky (toggle-hold) button state.
-    /// SkinKitUI's `StickyButtonManager` has no public initializer at the pinned revision, so this
-    /// takes a fresh one from its public preview handler (which only owns state, no timers).
-    public let stickyManager = DeltaSkinPreviewInputHandler().stickyManager
+    public let stickyManager = StickyButtonManager()
 
     /// Initialize with an emulator core and optional controller view controller
     public init(emulatorCore: PVEmulatorCore? = nil, controllerVC: (any ControllerVC)? = nil, emulatorController: (any PVEmualatorControllerProtocol)? = nil) {

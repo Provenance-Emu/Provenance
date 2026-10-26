@@ -77,6 +77,12 @@ struct SkinKitSetupTests {
         #expect(directory.relatedCatalogSystemCodes("genesis") == SystemIdentifier.relatedCatalogSystemCodes(forCatalogCode: "genesis"))
     }
 
+    @Test("A system with no catalog code gets nil, so its Get More link is unfiltered")
+    func systemWithoutCatalogCode() throws {
+        let uncoded = try #require(SystemIdentifier.allCases.first { $0.skinCatalogSystemCode == nil })
+        #expect(uncoded.deltaSkinSystem.skinCatalogSystemCode == nil)
+    }
+
     @Test("The skin views use Provenance's RetroWave colors")
     func theme() {
         let theme = SkinKitTheme.current

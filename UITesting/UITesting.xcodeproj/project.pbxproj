@@ -285,6 +285,7 @@
 				B3A8C3BF2D9B6385005A032F /* XCLocalSwiftPackageReference "../Cores/mGBA" */,
 				B300D3932DA0966A003A9ED4 /* XCLocalSwiftPackageReference "../Cores/Stella" */,
 				B300D6372DA0A95E003A9ED4 /* XCLocalSwiftPackageReference "../PVSettings" */,
+				B3D00000000000000000AA01 /* XCLocalSwiftPackageReference "../PVPrimitives" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = B36DFC102CF196D700BAE9BE /* Products */;
@@ -669,6 +670,10 @@
 /* End XCConfigurationList section */
 
 /* Begin XCLocalSwiftPackageReference section */
+		B3D00000000000000000AA01 /* XCLocalSwiftPackageReference "../PVPrimitives" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../PVPrimitives;
+		};
 		B300D3932DA0966A003A9ED4 /* XCLocalSwiftPackageReference "../Cores/Stella" */ = {
 			isa = XCLocalSwiftPackageReference;
 			relativePath = ../Cores/Stella;

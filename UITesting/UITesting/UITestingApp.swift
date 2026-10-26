@@ -28,7 +28,7 @@ import FreemiumKit
 struct UITestingApp: SwiftUI.App {
     // Static shared instance for access from other components
     static var shared: UITestingApp!
-    @UIApplicationDelegateAdaptor(PVAppDelegate.self) var appDelegate
+    @UIApplicationDelegateAdaptor(PVSystemEvents.self) var systemEvents
 
     init() {
         UITestingApp.shared = self
@@ -328,7 +328,6 @@ struct UITestingApp: SwiftUI.App {
                 .environmentObject(appState)
                 .environmentObject(ThemeManager.shared)
                 .environmentObject(sceneCoordinator)
-                .environmentObject(appDelegate)
                 .hideHomeIndicator() // Hide the home indicator
 #if canImport(FreemiumKit)
                 .environmentObject(FreemiumKit.shared)
@@ -337,7 +336,6 @@ struct UITestingApp: SwiftUI.App {
 #if canImport(FreemiumKit)
                     FreemiumKit.shared.overrideForDebug(purchasedTier: 1)
 #endif
-                    appDelegate.appState = appState
                 }
                 .onReceive(bootupRefreshTimer) { _ in
                     // Only refresh during bootup process
