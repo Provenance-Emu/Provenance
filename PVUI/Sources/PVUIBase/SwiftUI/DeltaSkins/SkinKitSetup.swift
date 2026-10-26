@@ -49,9 +49,8 @@ public enum SkinKitSetup {
 
     // MARK: - Logging
 
-    /// Manager messages (scan, import, selection) go to PVLogging, as they did before the move, so
-    /// they stay in the session logs. SkinKitCore, SkinKitUI and the shared catalog service log to
-    /// `os.Logger` (subsystem `com.provenance-emu.SkinKit`) with no hook.
+    /// Every SkinKit module logs through PVLogging, as the skin code did before the move, so the
+    /// lines (scan, import, selection, skin rendering, catalog fetches) stay in the session logs.
     private static func configureLogging() {
         SkinManagerLog.logger = { level, message in
             switch level {
@@ -59,6 +58,28 @@ public enum SkinKitSetup {
             case .info: ILOG(message)
             case .warning: WLOG(message)
             case .error: ELOG(message)
+            }
+        }
+        SkinKitCoreLog.logger = { level, message in
+            switch level {
+            case .debug: DLOG(message)
+            case .info: ILOG(message)
+            case .warning: WLOG(message)
+            case .error: ELOG(message)
+            }
+        }
+        SkinKitUILog.logger = { level, message in
+            switch level {
+            case .debug: DLOG(message)
+            case .info: ILOG(message)
+            case .warning: WLOG(message)
+            case .error: ELOG(message)
+            }
+        }
+        SkinCatalogLog.logger = { level, message in
+            switch level {
+            case .info: ILOG(message)
+            case .warning: WLOG(message)
             }
         }
     }
@@ -213,7 +234,7 @@ extension SystemIdentifier {
             id: skinSystemID,
             fullName: fullName,
             gameType: DeltaSkinGameType(systemIdentifier: self),
-            skinCatalogSystemCode: skinCatalogSystemCode ?? "",
+            skinCatalogSystemCode: skinCatalogSystemCode,
             relatedSkinCatalogSystemCodes: Set(relatedSkinCatalogSystemCodes)
         )
     }
