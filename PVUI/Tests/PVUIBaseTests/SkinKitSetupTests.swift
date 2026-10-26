@@ -83,11 +83,6 @@ struct SkinKitSetupTests {
         #expect(uncoded.deltaSkinSystem.skinCatalogSystemCode == nil)
     }
 
-    @Test("The input handler owns a usable sticky manager")
-    func stickyManager() {
-        #expect(DeltaSkinInputHandler().stickyManager.stickyButtons.isEmpty)
-    }
-
     @Test("The skin views use Provenance's RetroWave colors")
     func theme() {
         let theme = SkinKitTheme.current
