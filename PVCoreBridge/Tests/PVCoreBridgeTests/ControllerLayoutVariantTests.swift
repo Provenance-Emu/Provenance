@@ -6,6 +6,7 @@
 import XCTest
 @testable import PVCoreBridge
 import PVPrimitives
+import PVSystems
 
 final class ControllerLayoutVariantTests: XCTestCase {
 
@@ -70,7 +71,11 @@ final class ControllerLayoutVariantTests: XCTestCase {
         // Systems that have a single fixed layout should return nil
         XCTAssertNil(SystemIdentifier.SNES.availableControllerLayoutVariants)
         XCTAssertNil(SystemIdentifier.GBA.availableControllerLayoutVariants)
-        XCTAssertNil(SystemIdentifier.PSX.availableControllerLayoutVariants)
+    }
+
+    func testPSXOffersDualShockAndDigital() {
+        let variants = SystemIdentifier.PSX.availableControllerLayoutVariants
+        XCTAssertEqual(variants?.map(\.id), ["psx-dualshock", "psx-digital"])
     }
 
     // MARK: - Default Variant

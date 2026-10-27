@@ -25,7 +25,7 @@ private struct MockCore: CoreOptional {
     }
 
     // Tests control this to simulate loading different games.
-    static var currentGameMD5: String? = nil
+    nonisolated(unsafe) static var currentGameMD5: String?
 }
 
 private let boolOption = MockCore.options[0]

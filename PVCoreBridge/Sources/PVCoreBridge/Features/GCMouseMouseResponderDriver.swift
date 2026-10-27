@@ -237,14 +237,7 @@ public let PVMousePositionKey = "PVMousePositionKey"
             let session = self?._session ?? -1
             Task { @MainActor [weak self] in
                 guard let self, self._session == session, self.isEnabled else { return }
-                self.leftDown = pressed
-                let point = CGPoint(x: self.cursorX, y: self.cursorY)
-                if pressed {
-                    self.responder?.leftMouseDown(atPoint: point)
-                    NotificationCenter.default.post(name: .PVMouseButtonDidPress, object: nil)
-                } else {
-                    self.responder?.leftMouseUp()
-                }
+                self._setLeftButton(pressed: pressed)
             }
         }
 
@@ -305,6 +298,22 @@ public let PVMousePositionKey = "PVMousePositionKey"
         cursorX = max(0, min(1, cursorX + dx * scale))
         cursorY = max(0, min(1, cursorY + dy * scale))
         _deliverPosition()
+    }
+
+    private func _setLeftButton(pressed: Bool) {
+        leftDown = pressed
+        if pressed {
+            responder?.leftMouseDown(atPoint: CGPoint(x: cursorX, y: cursorY))
+            NotificationCenter.default.post(name: .PVMouseButtonDidPress, object: nil)
+        } else {
+            responder?.leftMouseUp()
+        }
+    }
+
+    /// Presses the left button as the hardware handler does, leaving it held.
+    /// Exposed as `internal` so the test suite can check `detach()` releases it.
+    func _simulateLeftDown() {
+        _setLeftButton(pressed: true)
     }
 
     private func _deliverPosition() {

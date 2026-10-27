@@ -20,7 +20,8 @@ import XCTest
 
 import GameController
 
-@MainActor
+/// Not `@MainActor` (`MouseResponder` is nonisolated); the driver and these tests
+/// only touch it on the main actor.
 final class MockMouseResponder: NSObject, MouseResponder {
 
     // MARK: MouseResponder conformance

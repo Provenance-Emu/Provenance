@@ -24,7 +24,7 @@ final class FakeMouseResponder: NSObject, MouseResponder {
 
 #if canImport(GameController)
     @available(iOS 14.0, tvOS 14.0, *)
-    func didScroll(_ cursor: any GCDeviceCursor) {}
+    func didScroll(_ cursor: GCDeviceCursor) {}
     var mouseMovedHandler: GCMouseMoved?
 #endif
 

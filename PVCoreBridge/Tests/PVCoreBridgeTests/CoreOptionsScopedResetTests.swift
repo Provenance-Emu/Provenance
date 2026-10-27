@@ -23,7 +23,7 @@ private enum MockCore: CoreOptional {
         ),
         .range(
             CoreOptionValueDisplay(title: "audio.volume", description: nil),
-            range: CoreOptionRange(min: 0, max: 100),
+            range: CoreOptionRange(defaultValue: 50, min: 0, max: 100),
             defaultValue: 50
         )
     ]
