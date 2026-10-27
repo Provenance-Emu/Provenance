@@ -131,6 +131,7 @@ jobs:
       pvui: ${{ steps.detect.outputs.pvui }}
       pvlibrary: ${{ steps.detect.outputs.pvlibrary }}
       corebridgeretro: ${{ steps.detect.outputs.corebridgeretro }}
+      corebridge: ${{ steps.detect.outputs.corebridge }}
     steps:
       - name: Detect
         id: detect
@@ -169,6 +170,7 @@ jobs:
             echo "pvui=true" >> "$GITHUB_OUTPUT"
             echo "pvlibrary=true" >> "$GITHUB_OUTPUT"
             echo "corebridgeretro=true" >> "$GITHUB_OUTPUT"
+            echo "corebridge=true" >> "$GITHUB_OUTPUT"
             echo "No PR number — running all modules"
             exit 0
           fi
@@ -182,6 +184,7 @@ jobs:
             echo "pvui=true" >> "$GITHUB_OUTPUT"
             echo "pvlibrary=true" >> "$GITHUB_OUTPUT"
             echo "corebridgeretro=true" >> "$GITHUB_OUTPUT"
+            echo "corebridge=true" >> "$GITHUB_OUTPUT"
             exit 0
           fi
 
@@ -218,6 +221,14 @@ jobs:
             echo "corebridgeretro=true" >> "$GITHUB_OUTPUT"
           else
             echo "corebridgeretro=false" >> "$GITHUB_OUTPUT"
+          fi
+
+          # PVCoreBridge imports UIKit, so it can't `swift build` on macOS either;
+          # pvcorebridge-test runs its tests on a simulator.
+          if printf '%s\n' "$FILES" | grep -Eq '^(PVCoreBridge/|\.github/workflows/agent-validation\.yml$)'; then
+            echo "corebridge=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "corebridge=false" >> "$GITHUB_OUTPUT"
           fi
 
   # Job 2b: SPM Build/Test — only for modules that actually changed.
@@ -465,6 +476,61 @@ jobs:
           path: |
             /tmp/pvcbr-build.log
             /tmp/pvcbr-test.log
+          retention-days: 3
+
+  # Job 2e: PVCoreBridge package tests (controller remapping, core options, input
+  # registries). Its graph is local packages plus remote SwiftPM ones: no submodules.
+  pvcorebridge-test:
+    name: PVCoreBridge Tests (iOS Simulator)
+    needs: spm-changed
+    if: needs.spm-changed.outputs.corebridge == 'true'
+    runs-on: macos-26
+    timeout-minutes: 60
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: false
+          fetch-depth: 1
+
+      - name: Select Xcode
+        run: sudo xcode-select -s /Applications/Xcode_26.3.app
+
+      - name: Cache DerivedData
+        uses: actions/cache@v4
+        with:
+          path: ${{ runner.temp }}/pvcb-package-deriveddata
+          key: ${{ runner.os }}-pvcb-package-deriveddata-${{ hashFiles('**/Package.swift', '**/Package.resolved') }}
+          restore-keys: |
+            ${{ runner.os }}-pvcb-package-deriveddata-
+
+      - name: Test PVCoreBridge
+        working-directory: PVCoreBridge
+        run: |
+          set -eo pipefail
+          udid=$(xcrun simctl list devices available -j \
+            | jq -r '[.devices | to_entries[] | select(.key | contains("SimRuntime.iOS-")) | .value[]
+                | select(.name | startswith("iPhone"))][0].udid')
+          if [ -z "$udid" ] || [ "$udid" = "null" ]; then
+            echo "::error::No available iOS simulator"
+            exit 1
+          fi
+          xcodebuild test \
+            -scheme PVCoreBridge-Package \
+            -destination "id=$udid" \
+            -derivedDataPath "$RUNNER_TEMP/pvcb-package-deriveddata" \
+            -skipPackagePluginValidation \
+            -skipMacroValidation \
+            -collect-test-diagnostics never \
+            EXCLUDED_ARCHS=x86_64 CODE_SIGNING_ALLOWED=NO \
+            2>&1 | tee /tmp/pvcb-test.log | grep -E "(: (fatal )?error:|^Undefined symbols|Test Case .* failed|Executed [0-9]+ tests|TEST (SUCCEEDED|FAILED))" | tail -200
+
+      - name: Upload PVCoreBridge test log
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: pvcb-test-log
+          path: /tmp/pvcb-test.log
           retention-days: 3
 
   # Job 3: Fast CI simulator build — validates that code compiles
