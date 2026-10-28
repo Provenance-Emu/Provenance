@@ -240,12 +240,34 @@ public enum PVDebugAPIRoutes {
         if let coreID, !coreID.isEmpty {
             core = database.object(ofType: PVCore.self, wherePrimaryKeyEquals: coreID)
             if core == nil { return .error("unknown core '\(coreID)'", status: 404) }
+        } else {
+            // Unattended: never stop at the multi-core picker.
+            core = defaultCore(for: game)
         }
 
         let row: [String: Any] = ["md5": game.md5Hash, "title": game.title, "system": game.systemIdentifier]
         ILOG("PVDebugAPIRoutes: boot \(game.title) [\(game.systemIdentifier)] core=\(coreID ?? "default")")
         SceneCoordinator.shared.launchGame(game, core: core, bypassDefaultPatch: false)
         return .ok(["accepted": true, "game": row])
+    }
+
+    /// The user's preferred core, else the first core the launcher's picker would
+    /// list (same filter and `corePickerOrder` as `GameLaunchingViewController`).
+    private static func defaultCore(for game: PVGame) -> PVCore? {
+        guard let system = game.system else { return nil }
+        let unsupportedCores = Defaults[.unsupportedCores]
+        let cores = system.cores.filter {
+            (!$0.disabled || unsupportedCores) && $0.hasCoreClass && !(AppState.shared.isAppStore && $0.appStoreDisabled)
+        }
+        if let preferred = game.userPreferredCoreID ?? system.userPreferredCoreID,
+           let core = cores.first(where: { $0.identifier == preferred }) {
+            return core
+        }
+        return cores.sorted { a, b in
+            if a.isDeprecated != b.isDeprecated { return !a.isDeprecated }
+            if a.isLibretroCore != b.isLibretroCore { return !a.isLibretroCore }
+            return a.projectName.localizedCaseInsensitiveCompare(b.projectName) == .orderedAscending
+        }.first
     }
 
     private static func setPaused(_ paused: Bool) -> PVDebugAPIResponse {
