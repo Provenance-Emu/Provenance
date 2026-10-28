@@ -648,5 +648,23 @@ class RemoteTests(unittest.TestCase):
         self.assertEqual(made, ["mini"])
 
 
+
+class DiscardRelocatedCMakeTreesTests(unittest.TestCase):
+    def test_removes_only_trees_configured_elsewhere(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            here = root / "build-iphoneos-Release"
+            moved = root / "build-appletvos-Release"
+            unknown = root / "build-iphonesimulator-Release"
+            for tree in (here, moved, unknown):
+                tree.mkdir()
+            (here / "CMakeCache.txt").write_text(f"CMAKE_CACHEFILE_DIR:INTERNAL={here}\n")
+            (moved / "CMakeCache.txt").write_text("CMAKE_CACHEFILE_DIR:INTERNAL=/Users/ghrunner/elsewhere\n")
+            (unknown / "CMakeCache.txt").write_text("CMAKE_HOME_DIRECTORY:INTERNAL=/src\n")
+            build_slice.discard_relocated_cmake_trees(root)
+            self.assertTrue(here.is_dir())
+            self.assertFalse(moved.exists())
+            self.assertFalse(unknown.exists())
+
 if __name__ == "__main__":
     unittest.main()

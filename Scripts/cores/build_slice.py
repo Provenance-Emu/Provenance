@@ -328,6 +328,25 @@ def remove_path(path: Path) -> None:
         shutil.rmtree(path)
 
 
+def discard_relocated_cmake_trees(root: Path) -> None:
+    """Remove `root/build-*` CMake trees configured at another path.
+
+    A restored CI cache or a second runner checkout brings build trees whose
+    CMakeCache.txt names the old location, and CMake refuses them ("The current
+    CMakeCache.txt directory ... is different"). Azahar's builder already does
+    this for its own tree; Dolphin's (in the dolphin-ios submodule) does not.
+    """
+    for cache in sorted(root.glob("build-*/CMakeCache.txt")):
+        recorded = None
+        for line in cache.read_text(errors="replace").splitlines():
+            if line.startswith("CMAKE_CACHEFILE_DIR:") and "=" in line:
+                recorded = line.split("=", 1)[1]
+                break
+        if recorded is None or Path(recorded).resolve() != cache.parent.resolve():
+            log(f"discarding {cache.parent}: configured at {recorded or 'an unknown path'}")
+            shutil.rmtree(cache.parent)
+
+
 def link_legacy(spec: CoreSpec, slice_name: str, target: Path) -> Path:
     legacy = spec.legacy_dir / framework_name(spec, slice_name)
     remove_path(legacy)
@@ -418,6 +437,7 @@ def ensure_slice(spec: CoreSpec, slice_name: str, cache: Path, key: str, inputs:
     legacy = spec.legacy_dir / framework_name(spec, slice_name)
     remove_path(legacy)  # the builders rmtree() this path, which fails on a symlink
     log(f"{spec.name} {slice_name}: cache miss {key[:12]}; building")
+    discard_relocated_cmake_trees(spec.submodule)
     builder(spec, slice_name)
     if legacy.is_symlink() or not legacy.is_dir():
         raise SystemExit(f"build_slice: {legacy} was not produced by the {spec.name} builder")
