@@ -62,6 +62,7 @@ import plistlib
 import re
 import shlex
 import shutil
+import stat
 import subprocess
 import sys
 import tempfile
@@ -111,6 +112,10 @@ DOLPHIN_BUILD_PATHS: Tuple[str, ...] = (
     "Source/iOS/Library",
     "Data/Sys/ApprovedInis.json",
 )
+
+# Part of every key and fast fingerprint. Bump it when the key's inputs change meaning, so
+# checkouts whose last preparation recorded an old-format key compute a new one.
+KEY_FORMAT = "2"  # 2: nested submodules from recorded gitlinks, not `submodule status --recursive`
 
 Runner = Callable[[List[str], Optional[Path]], str]
 Builder = Callable[["CoreSpec", str], None]
@@ -281,6 +286,7 @@ def cheap_inputs(spec: CoreSpec, slice_name: str, runner: Runner, env: Mapping[s
     """Key inputs that need no working-tree scan: a few file hashes and git object reads."""
     sl = SLICES[slice_name]
     inputs = {
+        "key_format": KEY_FORMAT,
         "core": spec.name,
         "slice": slice_name,
         "script": file_hash(spec.script),
@@ -687,10 +693,13 @@ def asset_exists(url: str) -> bool:
 def ditto_unpack(archive: Path, destination: Path) -> None:
     """Unpack a downloaded zip after checking that every member stays inside destination."""
     with zipfile.ZipFile(archive) as handle:
-        for name in handle.namelist():
-            parts = Path(name).parts
-            if name.startswith("/") or ".." in parts:
-                raise ValueError(f"unsafe member {name!r}")
+        for info in handle.infolist():
+            if info.filename.startswith("/") or ".." in Path(info.filename).parts:
+                raise ValueError(f"unsafe member {info.filename!r}")
+            if stat.S_ISLNK(info.external_attr >> 16):
+                target = handle.read(info).decode("utf-8", "replace")
+                if target.startswith("/") or ".." in Path(target).parts:
+                    raise ValueError(f"unsafe symlink {info.filename!r} -> {target!r}")
     subprocess.run(["ditto", "-x", "-k", str(archive), str(destination)], check=True, capture_output=True)
     root = destination.resolve()
     for path in destination.rglob("*"):

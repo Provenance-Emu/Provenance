@@ -497,6 +497,21 @@ class FastPathTests(unittest.TestCase):
         self.assertGreater(self.runner.scans, scans)
         self.assertEqual(self.builds, ["ios", "ios"])
 
+    def test_record_from_an_older_key_format_rescans(self):
+        self.prepare()
+        record_path = next((self.cache / "azahar/ios").glob("prepared-*.json"))
+        spec = self.repo.specs["azahar"]
+        with patch.object(build_slice, "KEY_FORMAT", "1"):
+            old_fast = build_slice.fast_fingerprint(spec, "ios", self.runner, {})
+        record_path.write_text(json.dumps({"fast": old_fast, "key": "1" * 64}))
+        write(self.cache / "azahar/ios" / ("1" * 12) / "stamp.json", "{}")
+        write(self.cache / "azahar/ios" / ("1" * 12) / "PVlibAzahar-ios.framework/Headers/config.h", "old")
+        scans = self.runner.scans
+        self.prepare()
+        self.assertGreater(self.runner.scans, scans)
+        record = json.loads(record_path.read_text())
+        self.assertEqual(record["key"], build_slice.compute_key(spec, "ios", self.runner, {}))
+
     def test_fast_path_uses_the_same_key_as_a_full_scan(self):
         self.prepare()
         record = json.loads(next((self.cache / "azahar/ios").glob("prepared-*.json")).read_text())
@@ -822,6 +837,16 @@ class SharedCacheTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             build_slice.ditto_unpack(archive, Path(self.tmp.name) / "out")
         self.assertFalse((Path(self.tmp.name) / "outside.txt").exists())
+
+    def test_symlink_members_leaving_the_slice_are_rejected_before_extracting(self):
+        import stat
+        archive = Path(self.tmp.name) / "evil.zip"
+        with zipfile.ZipFile(archive, "w") as handle:
+            link = zipfile.ZipInfo("entry/escape")
+            link.external_attr = (stat.S_IFLNK | 0o777) << 16
+            handle.writestr(link, "../../outside")
+        with self.assertRaises(ValueError):
+            build_slice.ditto_unpack(archive, Path(self.tmp.name) / "out")
 
     # MARK: upload
 
