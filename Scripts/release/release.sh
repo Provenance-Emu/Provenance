@@ -111,6 +111,14 @@ run()  {
         "$@"
     fi
 }
+
+# `xcodebuild -exportArchive` copies with /usr/bin/rsync (openrsync), which starts
+# its receiving side by looking `rsync` up on PATH. With Homebrew first on PATH
+# that is rsync 3.x, which rejects openrsync's -E ("--extended-attributes: unknown
+# option") and the export fails with only "exportArchive Copy failed".
+export_archive() {
+    (export PATH="/usr/bin:/bin:/usr/sbin:/sbin:$PATH"; run xcodebuild -exportArchive "$@")
+}
 # True when the requested channel includes "$1" (or is "all").
 should_run() { [[ "$CHANNEL" == "all" || "$CHANNEL" == "$1" ]]; }
 # True when the requested platform includes "$1" (or is "all").
@@ -450,7 +458,7 @@ do_appstore_upload() {
     # only consults profiles already installed on the machine, and a fresh runner
     # has none. That failed the upload after both archives had succeeded:
     #   error: exportArchive No profiles for 'org.provenance-emu.provenance' were found
-    run xcodebuild -exportArchive \
+    export_archive \
         -archivePath "$archive" \
         -exportPath "$exportdir" \
         -exportOptionsPlist "$EXPORT_OPTIONS_APPSTORE" \
@@ -539,7 +547,7 @@ IPA_SIZE=""
 if should_platform ios && should_run github; then
     log "Exporting Ad Hoc IPA..."
     run mkdir -p "$ADHOC_EXPORT"
-    run xcodebuild -exportArchive \
+    export_archive \
         -archivePath "$IOS_ARCHIVE" \
         -exportPath "$ADHOC_EXPORT" \
         -exportOptionsPlist "$EXPORT_OPTIONS_ADHOC" \
