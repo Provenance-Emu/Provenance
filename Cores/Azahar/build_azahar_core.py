@@ -106,13 +106,26 @@ def run(cmd: list[str], cwd: Path | None = None, verbose: bool = False) -> None:
         raise BuildError(f"`{cmd[0]}` exited with {e.returncode}") from e
 
 
+def active_xcode_version() -> str | None:
+    """`26.6` for Xcode 26.6, as the iOS toolchain caches it in XCODE_VERSION_INT."""
+    try:
+        first = subprocess.check_output(["xcodebuild", "-version"], text=True).splitlines()[0]
+    except (OSError, subprocess.CalledProcessError, IndexError):
+        return None
+    return first.split()[-1] if first.startswith("Xcode ") else None
+
+
 def prepare_build_directory(out: Path) -> None:
-    """Discard a relocated CMake tree; its generated paths and objects are not portable."""
+    """Discard a CMake tree that can't be reused: one that moved (its generated paths
+    aren't portable) or one configured by another Xcode. The toolchain caches the
+    SDK path and compilers, so after an Xcode update CMake points at an SDK that no
+    longer exists and finds no compiler."""
     cache = out / "CMakeCache.txt"
     if cache.exists():
         entries = {}
         for line in cache.read_text().splitlines():
-            if line.startswith(("CMAKE_HOME_DIRECTORY:", "CMAKE_CACHEFILE_DIR:")) and "=" in line:
+            if line.startswith(("CMAKE_HOME_DIRECTORY:", "CMAKE_CACHEFILE_DIR:", "CMAKE_OSX_SYSROOT:",
+                                "XCODE_VERSION_INT:")) and "=" in line:
                 key, value = line.split("=", 1)
                 entries[key.split(":", 1)[0]] = value
         expected = {"CMAKE_HOME_DIRECTORY": SRC, "CMAKE_CACHEFILE_DIR": out}
@@ -120,6 +133,13 @@ def prepare_build_directory(out: Path) -> None:
                for key, path in expected.items()):
             log(f"Discarding relocated or incomplete CMake tree at {out}", "warning")
             shutil.rmtree(out)
+        else:
+            sysroot = entries.get("CMAKE_OSX_SYSROOT")
+            cached_xcode, xcode = entries.get("XCODE_VERSION_INT"), active_xcode_version()
+            if (sysroot and not Path(sysroot).exists()) or (cached_xcode and xcode and cached_xcode != xcode):
+                log(f"Discarding CMake tree at {out} configured by Xcode {cached_xcode} "
+                    f"(active: Xcode {xcode})", "warning")
+                shutil.rmtree(out)
     out.mkdir(parents=True, exist_ok=True)
 
 
