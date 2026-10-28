@@ -74,8 +74,15 @@ struct ContentView: View {
                     // Show the main view
                     ZStack {
                         switch appState.mainUIMode {
-                            // The paged UI (SwiftUIHostedProvenanceMainView) no longer exists; use the single-page UI.
-                        case .paged, .singlePage:
+                        // Match MainView: the paged (iOS default) mode is PVLibraryRootView, which also
+                        // handles the ScreenNavigator deep links ScreenshotUITests relies on.
+                        case .paged:
+                            if let gameLibrary = appState.gameLibrary,
+                               let updatesController = appState.libraryUpdatesController,
+                               let gameImporter = appState.gameImporter {
+                                PVLibraryRootView(gameLibrary: gameLibrary, updatesController: updatesController, gameImporter: gameImporter)
+                            }
+                        case .singlePage:
                             RetroMainView()
                                 .environmentObject(ThemeManager.shared)
                                 .edgesIgnoringSafeArea(.all)

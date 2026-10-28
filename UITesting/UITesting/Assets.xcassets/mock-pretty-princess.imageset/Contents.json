@@ -1,0 +1,12 @@
+{
+  "images": [
+    {
+      "filename": "mock-pretty-princess.jpg",
+      "idiom": "universal"
+    }
+  ],
+  "info": {
+    "author": "xcode",
+    "version": 1
+  }
+}

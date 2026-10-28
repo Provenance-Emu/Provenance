@@ -19,6 +19,8 @@ import PVMediaCache
 import PVCoreLoader
 import PVPrimitives
 import ObjectiveC
+import CoreImage
+import CoreImage.CIFilterBuiltins
 
 #if canImport(FreemiumKit)
 import FreemiumKit
@@ -234,24 +236,25 @@ struct UITestingApp: SwiftUI.App {
 
         ILOG("UITestingApp: Populating mock library")
 
-        let mockGames: [(title: String, systemID: String, developer: String, publisher: String, genres: String, year: String)] = [
-            ("Super Mario World", SystemIdentifier.SNES.rawValue, "Nintendo EAD", "Nintendo", "Platform, Action", "1990"),
-            ("The Legend of Zelda: A Link to the Past", SystemIdentifier.SNES.rawValue, "Nintendo EAD", "Nintendo", "Action, Adventure", "1991"),
-            ("Super Metroid", SystemIdentifier.SNES.rawValue, "Nintendo R&D1", "Nintendo", "Action, Adventure", "1994"),
-            ("Chrono Trigger", SystemIdentifier.SNES.rawValue, "Square", "Square", "RPG", "1995"),
-            ("Super Mario Bros.", SystemIdentifier.NES.rawValue, "Nintendo", "Nintendo", "Platform", "1985"),
-            ("The Legend of Zelda", SystemIdentifier.NES.rawValue, "Nintendo", "Nintendo", "Action, Adventure", "1986"),
-            ("Mega Man 2", SystemIdentifier.NES.rawValue, "Capcom", "Capcom", "Platform, Action", "1988"),
-            ("Sonic the Hedgehog", SystemIdentifier.Genesis.rawValue, "Sonic Team", "Sega", "Platform", "1991"),
-            ("Streets of Rage 2", SystemIdentifier.Genesis.rawValue, "Sega", "Sega", "Beat 'em up", "1992"),
-            ("Pokemon Red", SystemIdentifier.GB.rawValue, "Game Freak", "Nintendo", "RPG", "1996"),
-            ("Tetris", SystemIdentifier.GB.rawValue, "Nintendo", "Nintendo", "Puzzle", "1989"),
-            ("Pokemon FireRed", SystemIdentifier.GBA.rawValue, "Game Freak", "Nintendo", "RPG", "2004"),
-            ("Metroid Fusion", SystemIdentifier.GBA.rawValue, "Nintendo R&D1", "Nintendo", "Action, Adventure", "2002"),
-            ("Super Mario 64", SystemIdentifier.N64.rawValue, "Nintendo EAD", "Nintendo", "Platform", "1996"),
-            ("The Legend of Zelda: Ocarina of Time", SystemIdentifier.N64.rawValue, "Nintendo EAD", "Nintendo", "Action, Adventure", "1998"),
-            ("Final Fantasy VII", SystemIdentifier.PSX.rawValue, "Square", "Square", "RPG", "1997"),
-            ("Castlevania: Symphony of the Night", SystemIdentifier.PSX.rawValue, "Konami", "Konami", "Action, RPG", "1997"),
+        // Freely distributed homebrew from Provenance-Emu/provenance-data, so App Store
+        // screenshots show no commercial titles or console trademarks. `art` names an
+        // imageset in Assets.xcassets (covers with Nintendo/Sega/Sony branding are excluded).
+        let mockGames: [(title: String, systemID: String, developer: String, genres: String, year: String, art: String)] = [
+            ("Nova the Squirrel", SystemIdentifier.NES.rawValue, "NovaSquirrel", "Platform", "", "mock-nova-the-squirrel"),
+            ("Spacegulls", SystemIdentifier.NES.rawValue, "Morphcat Games", "Platform", "", "mock-spacegulls"),
+            ("Super Tilt Bro.", SystemIdentifier.NES.rawValue, "sgadrat", "Fighting", "", "mock-super-tilt-bro"),
+            ("The Tower of Turmoil", SystemIdentifier.NES.rawValue, "", "Action", "", "mock-tower-of-turmoil"),
+            ("Twin Dragons", SystemIdentifier.NES.rawValue, "Broke Studio", "Platform", "", "mock-twin-dragons"),
+            ("Shadow Animus", SystemIdentifier.NES.rawValue, "", "Action", "", "mock-shadow-animus"),
+            ("PROTO DERE .NES", SystemIdentifier.NES.rawValue, "", "Puzzle", "", "mock-proto-dere"),
+            ("Tobu Tobu Girl", SystemIdentifier.GB.rawValue, "Tangram Games", "Arcade", "", "mock-tobu-tobu-girl"),
+            ("PolkaSheep", SystemIdentifier.GB.rawValue, "Monis Games", "Puzzle", "", "mock-polkasheep"),
+            ("Super Princess' 2092 Exodus", SystemIdentifier.GB.rawValue, "Monis Games", "Shooter", "", "mock-super-princess-2092"),
+            ("Pretty Princess Castle Escape", SystemIdentifier.GB.rawValue, "", "Platform", "", "mock-pretty-princess"),
+            ("Thunder Paw", SystemIdentifier.Genesis.rawValue, "", "Run and Gun", "", "mock-thunder-paw"),
+            ("Tourmaline", SystemIdentifier.Genesis.rawValue, "", "Puzzle", "", "mock-tourmaline"),
+            ("Break An Egg", SystemIdentifier.Genesis.rawValue, "", "Puzzle", "", "mock-break-an-egg"),
+            ("Super Boss Gaiden", SystemIdentifier.SNES.rawValue, "", "Beat 'em up", "", "mock-super-boss-gaiden"),
         ]
 
         do {
@@ -264,9 +267,19 @@ struct UITestingApp: SwiftUI.App {
                     game.system = system
                     game.md5Hash = UUID().uuidString
                     game.developer = mock.developer
-                    game.publisher = mock.publisher
                     game.genres = mock.genres
                     game.publishDate = mock.year
+                    #if canImport(UIKit)
+                    if let artwork = UIImage(named: mock.art).map(Self.screenshotSafeArtwork) {
+                        let key = "uitesting-\(mock.art)"
+                        do {
+                            try PVMediaCache.writeImage(toDisk: artwork, withKey: key)
+                            game.customArtworkURL = key
+                        } catch {
+                            ELOG("UITestingApp: Failed to cache artwork \(mock.art): \(error)")
+                        }
+                    }
+                    #endif
                     game.regionName = "USA"
                     game.playCount = Int.random(in: 0...50)
                     game.rating = Int.random(in: 3...5)
@@ -282,6 +295,21 @@ struct UITestingApp: SwiftUI.App {
         }
         #endif
     }
+
+    #if canImport(UIKit)
+    /// Pixel-mosaic a cover so marketing screenshots keep its colors and layout
+    /// without reproducing third-party box art (same idea as iFly's `hideLibraryArtwork`).
+    private static func screenshotSafeArtwork(_ image: UIImage) -> UIImage {
+        guard let input = CIImage(image: image) else { return image }
+        let filter = CIFilter.pixellate()
+        filter.inputImage = input.clampedToExtent()
+        filter.scale = Float(max(input.extent.width, input.extent.height) / 14)
+        filter.center = CGPoint(x: input.extent.midX, y: input.extent.midY)
+        guard let output = filter.outputImage?.cropped(to: input.extent),
+              let cgImage = CIContext().createCGImage(output, from: input.extent) else { return image }
+        return UIImage(cgImage: cgImage)
+    }
+    #endif
 
     // MARK: - Deep links (provenance://screen/...)
 
@@ -309,7 +337,11 @@ struct UITestingApp: SwiftUI.App {
         guard !UITestingApp.didHandleLaunchDeepLink, let url = LaunchArgument.deepLinkURL else { return }
         UITestingApp.didHandleLaunchDeepLink = true
         ILOG("UITestingApp: replaying launch-argument deep link \(url.absoluteString)")
-        handle(deepLink: url)
+        // Bootup completion also bumps `viewRefreshTrigger`, which rebuilds the root view;
+        // wait for that so sheet destinations (Settings) aren't presented on a discarded view.
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
+            handle(deepLink: url)
+        }
     }
     private static var didHandleLaunchDeepLink = false
 

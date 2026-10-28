@@ -27,7 +27,7 @@ final class ScreenshotUITests: XCTestCase {
     /// How long to wait for the app to boot (first launch scans systems and builds the mock library).
     private let bootTimeout: TimeInterval = 180
     /// Settle time after navigation so transitions and artwork finish rendering.
-    private let settleSeconds: UInt32 = 3
+    private let settleSeconds: UInt32 = 5
 
     override func setUpWithError() throws {
         continueAfterFailure = false
@@ -75,9 +75,9 @@ final class ScreenshotUITests: XCTestCase {
     }
 
     @MainActor
-    func testScreenshot_SystemBrowser_SNES() throws {
-        launch(screen: "system/com.provenance.snes")
-        takeScreenshot(named: "06_SystemBrowser_SNES")
+    func testScreenshot_SystemBrowser_GB() throws {
+        launch(screen: "system/com.provenance.gb")
+        takeScreenshot(named: "06_SystemBrowser_GB")
     }
 
     // MARK: - Helpers

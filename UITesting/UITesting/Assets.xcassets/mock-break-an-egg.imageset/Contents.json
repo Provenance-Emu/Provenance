@@ -1,0 +1,12 @@
+{
+  "images": [
+    {
+      "filename": "mock-break-an-egg.jpg",
+      "idiom": "universal"
+    }
+  ],
+  "info": {
+    "author": "xcode",
+    "version": 1
+  }
+}
