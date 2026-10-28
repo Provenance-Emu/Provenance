@@ -659,6 +659,8 @@ def make_remote_builder(preference: Optional[str], repo: Path, probe: Probe = ss
 
 SLICE_REPO = "Provenance-Emu/core-slices"
 SLICE_TAG = "core-slices"
+SLICE_RELEASE_NOTES = ("Prebuilt Azahar and Dolphin slices, keyed by Scripts/cores/build_slice.py "
+                       "content keys. Downloaded by build_slice.py; uploaded by CI.")
 REMOTE_KEEP = 6  # newest assets kept per core and slice after an upload
 CURL_OPTIONS: Tuple[str, ...] = ("--fail", "--silent", "--show-error", "--location",
                                  "--connect-timeout", "10", "--retry", "2")
@@ -749,8 +751,7 @@ def ensure_release(repo: str, run: Callable[..., subprocess.CompletedProcess]) -
         return
     log(f"creating the {SLICE_TAG} release on {repo}")
     run(["gh", "release", "create", SLICE_TAG, "-R", repo, "--latest=false", "--title", "Core slices",
-         "--notes", "Prebuilt Azahar and Dolphin slices, keyed by Scripts/cores/build_slice.py "
-                    "content keys. Downloaded by build_slice.py; uploaded by CI."], check=True)
+         "--notes", SLICE_RELEASE_NOTES], check=True)
 
 
 def stale_assets(names: List[Tuple[str, str]], spec: CoreSpec, slice_name: str, keep: int) -> List[str]:
