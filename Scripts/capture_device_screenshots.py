@@ -10,6 +10,9 @@ iPhone / iPad / Apple TV or a simulator:
      and saves a PNG per (game, shader),
   4. restores the shader / pixelate settings it changed.
 
+A game that has save states stops at the launcher's "Quick Continue / Start
+Fresh" prompt and is skipped, so run against a library without 240p saves.
+
 The debug API is always on in DEBUG builds; Release builds need Settings >
 Advanced > About (secret unlock) > Debug API & Screenshots > Enable Debug API.
 Stdlib only.
@@ -167,6 +170,8 @@ def main() -> int:
     # Library shot.
     if not args.no_pixelate:
         api.post("/api/debug/pixelate", {"enabled": True})
+    api.post("/api/debug/dismiss")  # What's New, onboarding, a leftover Settings sheet
+    time.sleep(1)
     api.post("/api/debug/navigate", url="provenance://screen/library")
     time.sleep(3)
     print("library")
@@ -187,8 +192,16 @@ def main() -> int:
             if not resp.get("ok"):
                 print(f"  boot refused: {resp.get('error')}")
                 continue
-            wait_for(lambda: (api.get("/api/debug/status")["data"].get("core") or {}).get("running"),
-                     timeout=60, what=f"{game['title']} to start")
+            try:
+                wait_for(lambda: (api.get("/api/debug/status")["data"].get("core") or {}).get("running"),
+                         timeout=60, what=f"{game['title']} to start")
+            except TimeoutError:
+                # Usually the launcher's save-state prompt (the game has saves) or a
+                # core that can't load here; /exit unwinds a launch stuck at a picker.
+                print("  did not start (save-state / core picker up?) — skipping")
+                api.post("/api/debug/exit")
+                time.sleep(2)
+                continue
             time.sleep(args.settle)
             system = game["system"].split(".")[-1]
             for shader in args.shaders:

@@ -20,6 +20,7 @@
 //    GET  /api/debug/screenshot[?source=window|game]   PNG
 //    GET  /api/debug/uitree               key-window UIView tree (UIKit only)
 //    POST /api/debug/navigate?url=provenance://screen/...
+//    POST /api/debug/dismiss              dismiss presented sheets / alerts
 //    POST /api/debug/boot   {md5 | title [, system, core]}
 //    POST /api/debug/exit
 //    POST /api/debug/pause | /resume
@@ -91,6 +92,28 @@ public enum PVDebugAPIRoutes {
             return handled ? .ok(["url": raw]) : .error("no route handled \(raw)", status: 404)
         }
 
+        // Clears sheets / alerts (What's New, a stuck picker, Settings) so a capture
+        // run starts from a clean screen. Returns the dismissed controllers' classes.
+        registry.register("POST", "/api/debug/dismiss") { _ in
+            await MainActor.run {
+                guard var base = keyWindow()?.rootViewController else { return .error("no key window", status: 503) }
+                // Never dismiss the emulator itself (that strands a running core —
+                // use /exit); only what is stacked above it.
+                var chain: [UIViewController] = []
+                var presented = base.presentedViewController
+                while let current = presented {
+                    chain.append(current)
+                    presented = current.presentedViewController
+                }
+                if let emulatorIndex = chain.lastIndex(where: { $0 is PVEmulatorViewController }) {
+                    base = chain[emulatorIndex]
+                    chain = Array(chain.suffix(from: emulatorIndex + 1))
+                }
+                if !chain.isEmpty { base.dismiss(animated: false) }
+                return .ok(["dismissed": chain.map { String(describing: type(of: $0)) }])
+            }
+        }
+
         registry.register("POST", "/api/debug/boot") { request in
             let md5 = request.value("md5")
             let title = request.value("title")
@@ -102,7 +125,14 @@ public enum PVDebugAPIRoutes {
         registry.register("POST", "/api/debug/exit") { _ in
             await MainActor.run {
                 guard let emulator = AppState.shared.emulationUIState.emulator else {
-                    return .error("no game running", status: 409)
+                    // A launch that never reached the emulator (core / save picker
+                    // still up) leaves currentGame set; unwind it the same way.
+                    guard AppState.shared.emulationUIState.currentGame != nil else {
+                        return .error("no game running", status: 409)
+                    }
+                    keyWindow()?.rootViewController?.dismiss(animated: false)
+                    SceneCoordinator.shared.closeEmulator()
+                    return .ok(["accepted": true, "unwoundLaunch": true])
                 }
                 Task { @MainActor in
                     await emulator.quit(optionallySave: false) {
