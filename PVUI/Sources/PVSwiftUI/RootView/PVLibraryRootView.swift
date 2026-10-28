@@ -14,18 +14,18 @@ import FreemiumKit
 #endif
 
 /// The paged library's SwiftUI navigation and presentation root.
-struct PVLibraryRootView: View {
+public struct PVLibraryRootView: View {
     @Environment(\.openURL) private var openURL
     @Environment(\.scenePhase) private var scenePhase
     @StateObject private var navigation: PVLibraryNavigation
     @ObservedObject private var sceneCoordinator = SceneCoordinator.shared
     @State private var navigationTask: Task<Void, Never>?
 
-    init(gameLibrary: PVGameLibrary<RealmDatabaseDriver>, updatesController: PVGameLibraryUpdatesController, gameImporter: GameImporter) {
+    public init(gameLibrary: PVGameLibrary<RealmDatabaseDriver>, updatesController: PVGameLibraryUpdatesController, gameImporter: GameImporter) {
         _navigation = StateObject(wrappedValue: PVLibraryNavigation(gameLibrary: gameLibrary, updatesController: updatesController, gameImporter: gameImporter))
     }
 
-    var body: some View {
+    public var body: some View {
         libraryContent
             .sheet(item: $navigation.sheet, onDismiss: navigation.didDismissSheet) { sheet in
                 NavigationStack {
