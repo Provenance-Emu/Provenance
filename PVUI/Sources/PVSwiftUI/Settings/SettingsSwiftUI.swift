@@ -1142,7 +1142,7 @@ struct SettingsRow: View {
 }
 
 /// Labels a group of rows inside one settings section (e.g. the debug rows at the end of Advanced).
-private struct SettingsSubheading: View {
+struct SettingsSubheading: View {
     let title: String
 
     var body: some View {
