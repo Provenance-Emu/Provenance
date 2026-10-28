@@ -430,6 +430,24 @@ jobs:
             python3 Scripts/cores/build_slice.py "$core" "${{ steps.core-keys.outputs.slice }}" --xcframework
           done
 
+      # Publish the prepared slices as assets of Provenance-Emu/core-slices (build_slice.py
+      # --upload, a no-op when the asset exists), so dev Macs and other runners on the same Xcode
+      # download them instead of building for 30-40 minutes. CORE_SLICES_TOKEN is a token with
+      # contents:write on that repo; forks never get it, and an upload failure never fails the build.
+      - name: Share core slices
+        if: ${{ github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository }}
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ secrets.CORE_SLICES_TOKEN }}
+        run: |
+          if [ -z "$GH_TOKEN" ]; then
+            echo "::notice::CORE_SLICES_TOKEN is not set; not sharing core slices"
+            exit 0
+          fi
+          for core in azahar dolphin; do
+            python3 Scripts/cores/build_slice.py "$core" "${{ steps.core-keys.outputs.slice }}" --upload
+          done
+
       - name: Build Provenance
         id: build
         env:

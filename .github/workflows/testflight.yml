@@ -385,6 +385,21 @@ jobs:
           ARGS+=(--build "$BUILD")
           ./Scripts/release/release.sh "${ARGS[@]}" 2>&1 | tee /tmp/testflight.log | "$FORMATTER"
 
+      # release.sh prepared this platform's core slices; publish them to Provenance-Emu/core-slices
+      # like build.yml does (a no-op when the asset exists; never fails the release).
+      - name: Share core slices
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ secrets.CORE_SLICES_TOKEN }}
+        run: |
+          if [ -z "$GH_TOKEN" ]; then
+            echo "::notice::CORE_SLICES_TOKEN is not set; not sharing core slices"
+            exit 0
+          fi
+          for core in azahar dolphin; do
+            python3 Scripts/cores/build_slice.py "$core" "${{ matrix.platform }}" --upload
+          done
+
       # "What to Test" shown in TestFlight for this build: the commit subjects
       # since the last run of this workflow that finished successfully (found via
       # the Actions API, so no tag or write access is needed), capped like

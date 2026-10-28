@@ -6,15 +6,29 @@ import io
 import importlib.util
 import json
 import os
+import shutil
 import sys
 import tempfile
 import unittest
+import zipfile
 from contextlib import redirect_stdout
 from pathlib import Path
 from unittest.mock import patch
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 import build_slice  # noqa: E402
+
+
+_offline = patch.object(build_slice, "curl_download", return_value=False)
+
+
+def setUpModule():
+    # main() downloads a missing slice from the shared cache; tests never reach the network.
+    _offline.start()
+
+
+def tearDownModule():
+    _offline.stop()
 
 
 def write(path: Path, text: str) -> Path:
@@ -88,12 +102,24 @@ class KeyTests(unittest.TestCase):
         self.assertNotEqual(self.key(), self.key(runner=FakeRunner(head="dddd")))
 
     def test_changes_with_nested_submodule(self):
-        self.assertNotEqual(self.key(), self.key(runner=FakeRunner(status=" eeee externals/x (v2)")))
+        moved = FakeRunner()
+        moved.tree = "160000 commit eeee\texternals/x"
+        self.assertNotEqual(self.key(), self.key(runner=moved))
+
+    def test_changes_when_a_nested_repo_is_checked_out_elsewhere(self):
+        self.assertNotEqual(self.key(), self.key(runner=FakeRunner(status="+eeee externals/x (v2)")))
 
     def test_submodule_init_state_does_not_change_key(self):
         a = FakeRunner(status=" bbbb externals/x (v1)")
         b = FakeRunner(status="-bbbb externals/x")
         self.assertEqual(self.key(runner=a), self.key(runner=b))
+
+    def test_uninitialized_parents_hiding_their_submodules_do_not_change_key(self):
+        # CI initializes everything; a dev checkout leaves unused ones (cubeb) uninitialized, so
+        # `submodule status --recursive` never lists their children there.
+        ci = FakeRunner(status=" bbbb externals/x (v1)\n ffff externals/x/googletest (v2)")
+        dev = FakeRunner(status="-bbbb externals/x")
+        self.assertEqual(self.key(runner=ci), self.key(runner=dev))
 
     def test_changes_with_script_and_toolchain(self):
         before = self.key()
@@ -665,6 +691,227 @@ class DiscardRelocatedCMakeTreesTests(unittest.TestCase):
             self.assertTrue(here.is_dir())
             self.assertFalse(moved.exists())
             self.assertFalse(unknown.exists())
+
+
+class SharedCacheTests(unittest.TestCase):
+    """Download a missing slice from the core-slices release; upload what CI prepared."""
+
+    KEY = "a1b2c3d4e5f6" + "0" * 52
+
+    def setUp(self):
+        self.tmp = tempfile.TemporaryDirectory()
+        root = Path(self.tmp.name)
+        self.repo_root = root / "repo"
+        self.repo = FakeRepo(self.repo_root)
+        self.cache = root / "cache"
+        self.published = root / "published"  # what the fake release serves, one entry dir per asset
+        self.runner = FakeRunner()
+        self.builds, self.packs, self.downloads = [], [], []
+        self.pack_patch = patch.object(build_slice, "pack_xcframework", lambda spec: self.packs.append(spec.name))
+        self.pack_patch.start()
+
+    def tearDown(self):
+        self.pack_patch.stop()
+        self.tmp.cleanup()
+
+    def builder(self, spec, slice_name):
+        self.builds.append(slice_name)
+        write(spec.legacy_dir / f"{spec.product}-{slice_name}.framework/Headers/config.h", "built")
+
+    def publish(self, spec, slice_name, key, stamp_key=None):
+        entry = self.published / build_slice.asset_name(spec, slice_name, key) / key[:12]
+        write(entry / f"{spec.product}-{slice_name}.framework/Headers/config.h", "downloaded")
+        write(entry / "stamp.json", json.dumps({"key": stamp_key or key, "inputs": {}}))
+
+    def download(self, url, destination):
+        self.downloads.append(url)
+        asset = url.rsplit("/", 1)[-1]
+        if not (self.published / asset).is_dir():
+            return False
+        destination.write_text(asset)  # the fake unpacker reads the asset name back
+        return True
+
+    def unpack(self, archive, destination):
+        import shutil
+        shutil.copytree(str(self.published / archive.read_text()), str(destination))
+
+    def key_for(self, spec, slice_name="ios"):
+        return build_slice.compute_key(spec, slice_name, self.runner, {})
+
+    def prepare(self, *extra, env=None, core="azahar"):
+        args = [core, "ios", "--repo-root", str(self.repo_root), "--cache-dir", str(self.cache), *extra]
+        with patch.object(build_slice, "fetch_slice", self.fetch_with_fake_unpack):
+            return build_slice.main(args, runner=self.runner, env=env or {}, builder=self.builder,
+                                    download=self.download)
+
+    def fetch_with_fake_unpack(self, *args, **kwargs):
+        return SharedCacheTests._fetch(*args, unpack=self.unpack, **kwargs)
+
+    _fetch = staticmethod(build_slice.fetch_slice)
+
+    def test_asset_name_and_url(self):
+        spec = self.repo.specs["dolphin"]
+        self.assertEqual(build_slice.asset_name(spec, "tvos-sim", self.KEY), "dolphin-tvos-sim-a1b2c3d4e5f6.zip")
+        self.assertEqual(build_slice.asset_url("Provenance-Emu/core-slices", "dolphin-ios-a1b2c3d4e5f6.zip"),
+                         "https://github.com/Provenance-Emu/core-slices/releases/download/core-slices/"
+                         "dolphin-ios-a1b2c3d4e5f6.zip")
+
+    def test_miss_downloads_instead_of_building(self):
+        spec = self.repo.specs["azahar"]
+        key = self.key_for(spec)
+        self.publish(spec, "ios", key)
+        self.prepare()
+        self.assertEqual(self.builds, [])
+        framework = self.cache / "azahar/ios" / key[:12] / "PVlibAzahar-ios.framework"
+        self.assertEqual((framework / "Headers/config.h").read_text(), "downloaded")
+        legacy = spec.legacy_dir / "PVlibAzahar-ios.framework"
+        self.assertEqual(Path(os.readlink(legacy)), framework)
+        self.assertEqual((spec.legacy_dir.parent / "headers/config.h").read_text(), "downloaded")
+        self.assertEqual(list((self.cache / ".fetch").iterdir()), [])
+        self.prepare()  # now a plain hit: no second download
+        self.assertEqual(len(self.downloads), 1)
+
+    def test_downloaded_dolphin_slice_repacks_the_xcframework(self):
+        spec = self.repo.specs["dolphin"]
+        self.publish(spec, "ios", self.key_for(spec))
+        self.prepare(core="dolphin")
+        self.assertEqual(self.builds, [])
+        self.assertEqual(self.packs, ["dolphin"])
+
+    def test_missing_asset_falls_back_to_building(self):
+        self.prepare()
+        self.assertEqual(len(self.downloads), 1)
+        self.assertEqual(self.builds, ["ios"])
+
+    def test_asset_for_another_key_is_ignored(self):
+        spec = self.repo.specs["azahar"]
+        self.publish(spec, "ios", self.key_for(spec), stamp_key="f" * 64)
+        self.prepare()
+        self.assertEqual(self.builds, ["ios"])
+        self.assertEqual(sorted(p.name for p in (self.cache / "azahar/ios").iterdir() if p.is_dir()),
+                         [self.key_for(spec)[:12]])
+
+    def test_unpack_failure_falls_back_to_building(self):
+        def broken(archive, destination):
+            raise ValueError("truncated")
+
+        spec = self.repo.specs["azahar"]
+        self.publish(spec, "ios", self.key_for(spec))
+        self.unpack = broken
+        self.prepare()
+        self.assertEqual(self.builds, ["ios"])
+
+    def test_opt_outs_skip_the_download(self):
+        spec = self.repo.specs["azahar"]
+        self.publish(spec, "ios", self.key_for(spec))
+        self.prepare("--no-fetch")
+        shutil.rmtree(str(self.cache))
+        self.prepare(env={"PV_CORE_FETCH": "0"})
+        self.prepare("--force")
+        self.assertEqual(self.downloads, [])
+        self.assertEqual(self.builds, ["ios", "ios", "ios"])
+
+    def test_repo_override(self):
+        self.prepare(env={"PV_CORE_SLICE_REPO": "me/slices"})
+        self.assertTrue(self.downloads[0].startswith("https://github.com/me/slices/releases/download/core-slices/"))
+
+    def test_unsafe_archive_members_are_rejected_before_extracting(self):
+        archive = Path(self.tmp.name) / "evil.zip"
+        with zipfile.ZipFile(archive, "w") as handle:
+            handle.writestr("../outside.txt", "x")
+        with self.assertRaises(ValueError):
+            build_slice.ditto_unpack(archive, Path(self.tmp.name) / "out")
+        self.assertFalse((Path(self.tmp.name) / "outside.txt").exists())
+
+    # MARK: upload
+
+    def cached_entry(self, spec, worktree=build_slice.CLEAN_WORKTREE):
+        entry = self.cache / spec.name / "ios" / self.KEY[:12]
+        write(entry / f"{spec.product}-ios.framework/{spec.product}", "archive")
+        write(entry / "stamp.json", json.dumps({"key": self.KEY, "inputs": {"worktree": worktree}}))
+        return entry
+
+    def fake_run(self, calls, listing=()):
+        import subprocess
+
+        def run(cmd, **kwargs):
+            calls.append(cmd)
+            if cmd[0] == "ditto":
+                Path(cmd[-1]).write_bytes(b"zip")
+            stdout = json.dumps({"assets": [{"name": n, "createdAt": t} for n, t in listing]}) if "--json" in cmd else ""
+            return subprocess.CompletedProcess(cmd, 0, stdout=stdout)
+        return run
+
+    def test_upload_publishes_missing_asset_and_prunes_old_ones(self):
+        spec = self.repo.specs["azahar"]
+        self.cached_entry(spec)
+        listing = [(f"azahar-ios-{i:012d}.zip", f"2026-10-{i + 1:02d}T00:00:00Z") for i in range(8)]
+        listing += [("dolphin-ios-000000000000.zip", "2026-01-01T00:00:00Z")]
+        calls = []
+        uploaded = build_slice.upload_slice(spec, "ios", self.cache, self.KEY, "o/r", exists=lambda url: False,
+                                            run=self.fake_run(calls, listing))
+        self.assertTrue(uploaded)
+        upload = next(cmd for cmd in calls if cmd[:3] == ["gh", "release", "upload"])
+        self.assertTrue(upload[4].endswith("azahar-ios-a1b2c3d4e5f6.zip"))
+        self.assertIn("--clobber", upload)
+        deleted = [cmd[4] for cmd in calls if cmd[:3] == ["gh", "release", "delete-asset"]]
+        self.assertEqual(deleted, ["azahar-ios-000000000001.zip", "azahar-ios-000000000000.zip"])
+
+    def test_upload_skips_an_asset_that_exists(self):
+        spec = self.repo.specs["azahar"]
+        self.cached_entry(spec)
+        calls = []
+        self.assertFalse(build_slice.upload_slice(spec, "ios", self.cache, self.KEY, "o/r", exists=lambda url: True,
+                                                  run=self.fake_run(calls)))
+        self.assertEqual(calls, [])
+
+    def test_upload_refuses_slices_built_from_uncommitted_edits(self):
+        spec = self.repo.specs["azahar"]
+        self.cached_entry(spec, worktree="dirty")
+        calls = []
+        self.assertFalse(build_slice.upload_slice(spec, "ios", self.cache, self.KEY, "o/r", exists=lambda url: False,
+                                                  run=self.fake_run(calls)))
+        self.assertEqual(calls, [])
+
+    def test_main_uploads_after_preparing(self):
+        uploads = []
+        with patch.object(build_slice, "upload_slice", lambda *a: uploads.append(a)):
+            self.prepare("--upload", env={"PV_CORE_SLICE_REPO": "o/r"})
+        spec = self.repo.specs["azahar"]
+        self.assertEqual(uploads[-1][1:], ("ios", self.cache, self.key_for(spec), "o/r"))
+
+    @unittest.skipUnless(shutil.which("ditto"), "ditto is macOS-only")
+    def test_ditto_round_trip_keeps_files_and_symlinks(self):
+        spec = self.repo.specs["azahar"]
+        entry = self.cached_entry(spec)
+        framework = entry / "PVlibAzahar-ios.framework"
+        os.link(str(framework / "PVlibAzahar"), str(Path(self.tmp.name) / "hardlink"))
+        os.symlink("PVlibAzahar", str(framework / "Current"))
+        archives = Path(self.tmp.name) / "archives"
+        archives.mkdir()
+        run = self.fake_run([])
+
+        def real_ditto(cmd, **kwargs):
+            if cmd[0] == "ditto":
+                import subprocess
+                subprocess.run(cmd, check=True)
+                shutil.copy(cmd[-1], str(archives / Path(cmd[-1]).name))
+                return subprocess.CompletedProcess(cmd, 0, stdout="")
+            return run(cmd, **kwargs)
+
+        build_slice.upload_slice(spec, "ios", self.cache, self.KEY, "o/r", exists=lambda url: False, run=real_ditto)
+        shutil.rmtree(str(self.cache / "azahar"))
+
+        def serve(url, destination):
+            shutil.copy(str(archives / url.rsplit("/", 1)[-1]), str(destination))
+            return True
+
+        self.assertTrue(build_slice.fetch_slice(spec, "ios", self.cache, self.KEY, "o/r", download=serve))
+        fetched = self.cache / "azahar/ios" / self.KEY[:12] / "PVlibAzahar-ios.framework"
+        self.assertEqual((fetched / "PVlibAzahar").read_text(), "archive")
+        self.assertEqual(os.readlink(str(fetched / "Current")), "PVlibAzahar")
+        self.assertEqual(json.loads((fetched.parent / "stamp.json").read_text())["key"], self.KEY)
+
 
 if __name__ == "__main__":
     unittest.main()
