@@ -56,9 +56,9 @@ struct DebugAPISettingsView: View {
                     .onChange(of: authEnabled) { PVDebugAPIPrefs.authEnabled = $0 }
 
                     TextField("Password", text: $debugAPIPassword)
-                        .textFieldStyle(.roundedBorder)
                         .autocorrectionDisabled()
                         #if os(iOS)
+                        .textFieldStyle(.roundedBorder)
                         .textInputAutocapitalization(.never)
                         #endif
 
