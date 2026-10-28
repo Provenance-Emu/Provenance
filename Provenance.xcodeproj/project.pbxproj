@@ -4154,7 +4154,7 @@
 			);
 			productName = TopShelf;
 			productReference = BE9FDCB71C210B9E0046DF0E /* TopShelf.appex */;
-			productType = "com.apple.product-type.tv-app-extension";
+			productType = "com.apple.product-type.app-extension";
 		};
 		C0C0CAFE000000000000001A /* ProvenanceCompanion */ = {
 			isa = PBXNativeTarget;
