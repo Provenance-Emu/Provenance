@@ -275,9 +275,11 @@ A second, generated workspace for fast iteration. `Provenance.xcodeproj` still s
   time-based estimates (`"frameCountSource": "estimated"`). Its first catch was a native Stella VFS
   regression (`16da1e4c40`).
 - **Core slices:** `Scripts/cores/build_slice.py <azahar|dolphin> <ios|ios-sim|tvos|tvos-sim>
-  [--print-key|--force|--xcframework|--cache-dir DIR]` builds or links one slice.
-  - The key is a content hash: submodule working tree (dirty edits bust the cache; `--force` rebuilds) and
-    nested externals, build script and toolchain, flags, Xcode and SDK, and Azahar's MoltenVK slice.
+  [--print-key|--force|--xcframework|--cache-dir DIR|--no-fetch|--upload]` builds, downloads or links one slice.
+  - The key is a content hash: submodule working tree (dirty edits bust the cache; `--force` rebuilds),
+    the nested commits HEAD records plus any nested repo checked out elsewhere (not
+    `submodule status --recursive`, whose list depends on which unused submodules are initialized),
+    build script and toolchain, flags, the exact Xcode build and SDK, and Azahar's MoltenVK slice.
   - Dolphin keys only on the dolphin-ios paths its CMake build reads (`DOLPHIN_BUILD_PATHS`: top-level
     CMake files, `Externals`, `Source/Core`, `Source/iOS/Library`, `ApprovedInis.json`), as HEAD tree
     hashes plus dirty edits under them. iCube app commits and edits there no longer force a rebuild;
@@ -287,10 +289,18 @@ A second, generated workspace for fast iteration. `Provenance.xcodeproj` still s
     (`studio-cable`, then `studio-runner`): the build inputs rsync to `~/Builds/pv-slices/<core>` there and
     the framework comes back. Dolphin syncs only `DOLPHIN_BUILD_PATHS`, so iCube's 31 GB app tree stays home.
   - On a hit, the legacy `build/xcframework/<Product>-<slice>.framework` path is a symlink into it.
+  - **Shared cache:** a local miss first downloads `<core>-<slice>-<key12>.zip` (32 MB for Azahar's
+    162 MB slice) from the `core-slices` release of public `Provenance-Emu/core-slices`
+    (`PV_CORE_SLICE_REPO` overrides); no asset or no network builds as before, `--no-fetch` /
+    `PV_CORE_FETCH=0` skips it. CI's "Share core slices" steps run `--upload` (needs the
+    `CORE_SLICES_TOKEN` secret; a no-op when the asset exists; keeps 6 keys per core and slice).
+    Keys only match on the same Xcode build, so keep the Studio runner and dev Macs on one Xcode.
+    Upload by hand only slices built with this Mac's Xcode: a `--remote` build uses the Studio's
+    while the key names this Mac's.
   - Only `--xcframework` repacks the multi-slice xcframework (Dolphin's is repacked after every miss).
     If its hard links fail, set `PV_CORE_CACHE` to a folder on the repo's volume.
 - **CI:** `build.yml` and `testflight.yml` cache `~/Library/Caches/Provenance/cores` per platform,
-  keyed on `build_slice.py --print-key`. `dev-workspace.yml` smoke-builds `Provenance-Dev-UI` on
+  keyed on `build_slice.py --print-key`, and upload them to the shared cache. `dev-workspace.yml` smoke-builds `Provenance-Dev-UI` on
   both simulators (Tuist via mise, which needs `GITHUB_TOKEN`).
 - **Pruning rule:** no new `Cores/` project without an audit row in
   `docs/superpowers/specs/2026-10-10-core-audit.md`.

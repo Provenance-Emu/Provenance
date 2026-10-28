@@ -2,13 +2,16 @@
 """Build one Azahar or Dolphin core slice outside the app, cached by a content key.
 
   build_slice.py <azahar|dolphin> <ios|ios-sim|tvos|tvos-sim> [--print-key] [--force]
-                 [--cache-dir DIR] [--xcframework] [--remote[=HOST]]
+                 [--cache-dir DIR] [--xcframework] [--remote[=HOST]] [--no-fetch] [--upload]
 
-Key: sha256 over the core submodule HEAD and `git submodule status --recursive` inside it,
-the wrapped build script and CMake toolchain contents (Azahar's CMAKE_OPTIONS live in its
-script), Dolphin's DOL_FULL_LTO / DOL_PGO / DOL_PGO_PROFILE and the PGO profile it would use,
-`xcodebuild -version`, the slice SDK version and, for Azahar, the MoltenVK static slice it
-configures against. `--print-key` prints it (CI cache keys).
+Key: sha256 over the core submodule HEAD, the nested submodule commits that HEAD records plus
+any nested repo checked out at another commit, the wrapped build script and CMake toolchain
+contents (Azahar's CMAKE_OPTIONS live in its script), Dolphin's DOL_FULL_LTO / DOL_PGO /
+DOL_PGO_PROFILE and the PGO profile it would use, `xcodebuild -version`, the slice SDK version
+and, for Azahar, the MoltenVK static slice it configures against. `--print-key` prints it (CI
+cache keys). The exact Xcode build stays in the key: CI's Studio runner and dev Macs share
+slices while they run the same Xcode, and an archive from a newer clang never reaches an older
+linker.
 
 Dolphin's submodule is also iCube's app repo, whose app code, docs and prebuilt build/ binaries
 change far more often than the engine. So Dolphin keys on the tree hashes of only the paths the
@@ -38,6 +41,13 @@ miss on the Studio instead: the build inputs are rsynced to ~/Builds/pv-slices/<
 same wrapped builder runs over ssh, and the framework comes back to the legacy path. The key is
 still computed here, so hits never reach the network.
 
+Shared cache: on a local miss, before building here or remotely, the slice is downloaded from
+the `core-slices` release of SLICE_REPO (PV_CORE_SLICE_REPO overrides) as
+<core>-<slice>-<key[:12]>.zip, which unpacks to the cache entry itself. A missing asset or no
+network falls back to building. `--no-fetch` (or PV_CORE_FETCH=0) skips it. `--upload`
+publishes this key's prepared slice when the release lacks it (gh, with a token that can write
+to SLICE_REPO); CI runs it after preparing. Only slices built from a clean tree are uploaded.
+
 Python 3.9 compatible (Dolphin's Xcode phase runs /usr/bin/python3). Azahar's builder needs
 3.10+, so it runs in a separate interpreter (PV_PYTHON3, Homebrew python3, python3.1x).
 """
@@ -52,9 +62,12 @@ import plistlib
 import re
 import shlex
 import shutil
+import stat
 import subprocess
 import sys
+import tempfile
 import time
+import zipfile
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Callable, Dict, List, Mapping, Optional, Tuple
@@ -99,6 +112,10 @@ DOLPHIN_BUILD_PATHS: Tuple[str, ...] = (
     "Source/iOS/Library",
     "Data/Sys/ApprovedInis.json",
 )
+
+# Part of every key and fast fingerprint. Bump it when the key's inputs change meaning, so
+# checkouts whose last preparation recorded an old-format key compute a new one.
+KEY_FORMAT = "2"  # 2: nested submodules from recorded gitlinks, not `submodule status --recursive`
 
 Runner = Callable[[List[str], Optional[Path]], str]
 Builder = Callable[["CoreSpec", str], None]
@@ -269,6 +286,7 @@ def cheap_inputs(spec: CoreSpec, slice_name: str, runner: Runner, env: Mapping[s
     """Key inputs that need no working-tree scan: a few file hashes and git object reads."""
     sl = SLICES[slice_name]
     inputs = {
+        "key_format": KEY_FORMAT,
         "core": spec.name,
         "slice": slice_name,
         "script": file_hash(spec.script),
@@ -304,10 +322,27 @@ def fast_fingerprint(spec: CoreSpec, slice_name: str, runner: Runner, env: Mappi
     return hashlib.sha256(json.dumps(inputs, sort_keys=True).encode()).hexdigest()
 
 
+def submodule_state(spec: CoreSpec, runner: Runner) -> str:
+    """Nested submodule commits: the ones the core's HEAD records, then any checked out elsewhere.
+
+    `git submodule status --recursive` lists a submodule's own submodules only once it is
+    initialized, so CI (which initializes everything) and a checkout that leaves unused ones
+    uninitialized (Azahar's cubeb, libadrenotools) hashed different lists for the same sources
+    and never shared a key. A nested commit is fixed by its parent's, so the recorded gitlinks
+    plus the repos checked out away from them ('+', or 'U' mid-merge) describe the sources
+    whatever is initialized.
+    """
+    recorded = [line for line in recorded_gitlinks(spec, runner).splitlines()
+                if affects_build(line.split("\t", 1)[-1], spec.build_paths)]
+    status = runner(["git", "-C", str(spec.submodule), "submodule", "status", "--recursive"], None)
+    moved = [line for line in status.splitlines()
+             if line[:1] in "+U" and len(line.split()) >= 2 and affects_build(line.split()[1], spec.build_paths)]
+    return "\n".join(recorded) + "\0" + normalize_submodule_status("\n".join(moved))
+
+
 def key_inputs(spec: CoreSpec, slice_name: str, runner: Runner, env: Mapping[str, str]) -> Dict[str, str]:
     inputs = cheap_inputs(spec, slice_name, runner, env)
-    inputs["submodule_tree"] = normalize_submodule_status(
-        runner(["git", "-C", str(spec.submodule), "submodule", "status", "--recursive"], None))
+    inputs["submodules"] = submodule_state(spec, runner)
     inputs["worktree"] = worktree_state(spec, runner)
     return inputs
 
@@ -614,8 +649,156 @@ def make_remote_builder(preference: Optional[str], repo: Path, probe: Probe = ss
     return build
 
 
+# MARK: - Shared slice cache
+#
+# Prepared slices are also assets on one release of a public repo, so a machine that lacks one
+# downloads it instead of building for 30-40 minutes. Each asset is a ditto zip of the cache
+# entry directory (<key12>/<Product>-<slice>.framework + stamp.json); ditto keeps any symlinks,
+# and hard links come back as copies, which --xcframework re-creates. CI uploads after preparing
+# (`--upload`), which is a no-op when the asset already exists.
+
+SLICE_REPO = "Provenance-Emu/core-slices"
+SLICE_TAG = "core-slices"
+SLICE_RELEASE_NOTES = ("Prebuilt Azahar and Dolphin slices, keyed by Scripts/cores/build_slice.py "
+                       "content keys. Downloaded by build_slice.py; uploaded by CI.")
+REMOTE_KEEP = 6  # newest assets kept per core and slice after an upload
+CURL_OPTIONS: Tuple[str, ...] = ("--fail", "--silent", "--show-error", "--location",
+                                 "--connect-timeout", "10", "--retry", "2")
+CLEAN_WORKTREE = hashlib.sha256().hexdigest()  # worktree_state() of a checkout without edits
+
+Downloader = Callable[[str, Path], bool]
+Unpacker = Callable[[Path, Path], None]
+
+
+def asset_name(spec: CoreSpec, slice_name: str, key: str) -> str:
+    return f"{spec.name}-{slice_name}-{key[:12]}.zip"
+
+
+def asset_url(repo: str, asset: str) -> str:
+    return f"https://github.com/{repo}/releases/download/{SLICE_TAG}/{asset}"
+
+
+def curl_download(url: str, destination: Path) -> bool:
+    """Save url to destination; False when the asset is missing or GitHub is unreachable."""
+    result = subprocess.run(["curl", *CURL_OPTIONS, "--output", str(destination), url],
+                            capture_output=True, text=True)
+    if result.returncode != 0:
+        log(f"no shared slice at {url} ({result.stderr.strip() or f'curl exit {result.returncode}'})")
+    return result.returncode == 0
+
+
+def asset_exists(url: str) -> bool:
+    return subprocess.run(["curl", *CURL_OPTIONS, "--head", "--output", os.devnull, url],
+                          capture_output=True).returncode == 0
+
+
+def ditto_unpack(archive: Path, destination: Path) -> None:
+    """Unpack a downloaded zip after checking that every member stays inside destination."""
+    with zipfile.ZipFile(archive) as handle:
+        for info in handle.infolist():
+            if info.filename.startswith("/") or ".." in Path(info.filename).parts:
+                raise ValueError(f"unsafe member {info.filename!r}")
+            if stat.S_ISLNK(info.external_attr >> 16):
+                target = handle.read(info).decode("utf-8", "replace")
+                if target.startswith("/") or ".." in Path(target).parts:
+                    raise ValueError(f"unsafe symlink {info.filename!r} -> {target!r}")
+    subprocess.run(["ditto", "-x", "-k", str(archive), str(destination)], check=True, capture_output=True)
+    root = destination.resolve()
+    for path in destination.rglob("*"):
+        if path.is_symlink() and root not in path.resolve().parents:
+            raise ValueError(f"symlink {path.relative_to(destination)} points outside the slice")
+
+
+def fetch_slice(spec: CoreSpec, slice_name: str, cache: Path, key: str, repo: str,
+                download: Downloader = curl_download, unpack: Unpacker = ditto_unpack) -> bool:
+    """Install the shared slice for key as its cache entry. False, with the cache untouched, on any miss."""
+    asset = asset_name(spec, slice_name, key)
+    label = f"{spec.name} {slice_name}"
+    # Staged beside the slice folders, not in one, so prune_entries never sees it.
+    staging_root = cache / ".fetch"
+    staging_root.mkdir(parents=True, exist_ok=True)
+    staging = Path(tempfile.mkdtemp(prefix=f"{spec.name}-{slice_name}-", dir=str(staging_root)))
+    try:
+        log(f"{label}: looking for {asset} on {repo}")
+        archive = staging / asset
+        if not download(asset_url(repo, asset), archive):
+            return False
+        unpacked = staging / "unpacked"
+        try:
+            unpack(archive, unpacked)
+        except (OSError, ValueError, zipfile.BadZipFile, subprocess.CalledProcessError) as error:
+            log(f"{label}: ignoring {asset}: cannot unpack it ({error})")
+            return False
+        entry = unpacked / key[:12]
+        holds_key = read_prepared(entry / "stamp.json").get("key") == key
+        if not holds_key or not (entry / framework_name(spec, slice_name)).is_dir():
+            log(f"{label}: ignoring {asset}: it does not hold {framework_name(spec, slice_name)} for key {key[:12]}")
+            return False
+        target = cache / spec.name / slice_name / key[:12]
+        remove_path(target)
+        target.parent.mkdir(parents=True, exist_ok=True)
+        os.rename(str(entry), str(target))
+        os.utime(str(target))  # unpacked with the uploader's mtime; prune_entries keeps the newest
+        prune_entries(target.parent, KEEP_ENTRIES, target)
+        log(f"{label}: downloaded {asset} ({archive.stat().st_size >> 20} MB)")
+        return True
+    finally:
+        shutil.rmtree(staging, ignore_errors=True)
+
+
+def ensure_release(repo: str, run: Callable[..., subprocess.CompletedProcess]) -> None:
+    if run(["gh", "release", "view", SLICE_TAG, "-R", repo], capture_output=True).returncode == 0:
+        return
+    log(f"creating the {SLICE_TAG} release on {repo}")
+    run(["gh", "release", "create", SLICE_TAG, "-R", repo, "--latest=false", "--title", "Core slices",
+         "--notes", SLICE_RELEASE_NOTES], check=True)
+
+
+def stale_assets(names: List[Tuple[str, str]], spec: CoreSpec, slice_name: str, keep: int) -> List[str]:
+    """Assets of this core and slice beyond the newest `keep`, from (name, createdAt) pairs."""
+    prefix = f"{spec.name}-{slice_name}-"
+    ours = sorted((item for item in names if item[0].startswith(prefix) and item[0].endswith(".zip")
+                   and len(item[0]) == len(prefix) + 12 + len(".zip")),
+                  key=lambda item: item[1], reverse=True)
+    return [name for name, _ in ours[keep:]]
+
+
+def upload_slice(spec: CoreSpec, slice_name: str, cache: Path, key: str, repo: str,
+                 exists: Callable[[str], bool] = asset_exists,
+                 run: Callable[..., subprocess.CompletedProcess] = subprocess.run) -> bool:
+    """Publish this key's cache entry unless the release has it. True when it uploaded."""
+    label = f"{spec.name} {slice_name}"
+    asset = asset_name(spec, slice_name, key)
+    entry = cache / spec.name / slice_name / key[:12]
+    stamp = read_prepared(entry / "stamp.json")
+    if stamp.get("key") != key:
+        raise SystemExit(f"build_slice: {entry} holds no prepared slice for key {key[:12]}")
+    inputs = stamp.get("inputs") or {}
+    if inputs.get("worktree") != CLEAN_WORKTREE:
+        log(f"{label}: not uploading {asset}: it was built from uncommitted edits, so no other "
+            "checkout can use it")
+        return False
+    if exists(asset_url(repo, asset)):
+        log(f"{label}: {repo} already has {asset}")
+        return False
+    ensure_release(repo, run)
+    with tempfile.TemporaryDirectory() as tmp:
+        archive = Path(tmp) / asset
+        run(["ditto", "-c", "-k", "--keepParent", str(entry), str(archive)], check=True)
+        log(f"{label}: uploading {asset} ({archive.stat().st_size >> 20} MB) to {repo}")
+        run(["gh", "release", "upload", SLICE_TAG, str(archive), "-R", repo, "--clobber"], check=True)
+    listing = run(["gh", "release", "view", SLICE_TAG, "-R", repo, "--json", "assets"],
+                  capture_output=True, text=True, check=True).stdout
+    assets = [(a["name"], a["createdAt"]) for a in json.loads(listing).get("assets", [])]
+    for stale in stale_assets(assets, spec, slice_name, REMOTE_KEEP):
+        log(f"{label}: deleting old shared slice {stale}")
+        run(["gh", "release", "delete-asset", SLICE_TAG, stale, "-R", repo, "--yes"], check=True)
+    return True
+
+
 def main(argv: Optional[List[str]] = None, runner: Runner = default_runner,
-         env: Optional[Mapping[str, str]] = None, builder: Builder = run_wrapped_build) -> int:
+         env: Optional[Mapping[str, str]] = None, builder: Builder = run_wrapped_build,
+         download: Optional[Downloader] = None, uploader: Optional[Callable[..., bool]] = None) -> int:
     parser = argparse.ArgumentParser(description="Build or link one cached Azahar/Dolphin core slice.")
     parser.add_argument("core", choices=["azahar", "dolphin"])
     parser.add_argument("slice", choices=sorted(SLICES))
@@ -628,6 +811,12 @@ def main(argv: Optional[List[str]] = None, runner: Runner = default_runner,
     parser.add_argument("--remote", nargs="?", const="", default=None, metavar="HOST",
                         help="build a missing slice on a remote Mac over ssh (default host: the first "
                              f"reachable of {', '.join(REMOTE_HOSTS)}; also PV_CORE_REMOTE=1|HOST)")
+    parser.add_argument("--no-fetch", action="store_true",
+                        help="build a missing slice instead of downloading it from the shared cache "
+                             "(also PV_CORE_FETCH=0)")
+    parser.add_argument("--upload", action="store_true",
+                        help="publish the prepared slice to the shared cache unless it is there already "
+                             "(gh; needs a token that can write to PV_CORE_SLICE_REPO)")
     parser.add_argument("--repo-root", type=Path, default=REPO_ROOT, help=argparse.SUPPRESS)
     args = parser.parse_args(argv)
 
@@ -664,8 +853,13 @@ def main(argv: Optional[List[str]] = None, runner: Runner = default_runner,
     if remote is not None and remote != "0":
         builder = make_remote_builder(None if remote in ("", "1") else remote, args.repo_root.resolve())
 
+    slice_repo = environment.get("PV_CORE_SLICE_REPO") or SLICE_REPO
+    fetch = not (args.no_fetch or environment.get("PV_CORE_FETCH") == "0")
     produced = args.force or not is_cached(spec, args.slice, cache, key)
-    if produced:
+    # A download turns the miss into a cache hit but stays "produced", so Dolphin repacks with it.
+    fetched = (produced and not args.force and fetch
+               and fetch_slice(spec, args.slice, cache, key, slice_repo, download or curl_download))
+    if produced and not fetched:
         log(f"{label}: building {spec.product}; a cold build takes 30-60 minutes. Build output follows.")
     framework = ensure_slice(spec, args.slice, cache, key, inputs, args.force, builder)
     prepare_headers(spec, framework)
@@ -677,6 +871,8 @@ def main(argv: Optional[List[str]] = None, runner: Runner = default_runner,
         log(f"{label}: {spec.product}.xcframework already holds this slice")
     write_prepared(record_path, {"fast": fast, "key": key, **({"xcframework": key} if packed else {})})
     log(f"{label}: ready ({time.monotonic() - started:.0f}s)")
+    if args.upload:
+        (uploader or upload_slice)(spec, args.slice, cache, key, slice_repo)
     return 0
 
 
