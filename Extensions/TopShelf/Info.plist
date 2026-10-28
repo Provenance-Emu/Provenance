@@ -34,13 +34,8 @@
 	<string></string>
 	<key>NSExtension</key>
 	<dict>
-		<key>NSExtensionAttributes</key>
-		<dict>
-			<key>TVExtensionProtocols</key>
-			<array>
-				<string>TVTopShelfProvider</string>
-			</array>
-		</dict>
+		<!-- TVTopShelfContentProvider uses the standard app-extension target type.
+		     TVExtensionProtocols belongs to the legacy _TVExtensionMain loader. -->
 		<key>NSExtensionPointIdentifier</key>
 		<string>com.apple.tv-top-shelf</string>
 		<key>NSExtensionPrincipalClass</key>
