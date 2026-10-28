@@ -2068,7 +2068,7 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
 
         do {
             // Find all CloudKit-synced games missing local artwork cache
-            let allCandidates = try await withRealm { realm in
+            let allCandidates = try await withRealm { realm -> [PVGame] in
                 realm.objects(PVGame.self)
                     .filter("cloudRecordID != nil")
                     .prefix(limit * 3)
@@ -2252,7 +2252,7 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
         }
 
         do {
-            let allCandidates = try await withRealm { realm in
+            let allCandidates = try await withRealm { realm -> [PVGame] in
                 realm.objects(PVGame.self)
                     .filter("cloudRecordID != nil")
                     .prefix(limit * 3)

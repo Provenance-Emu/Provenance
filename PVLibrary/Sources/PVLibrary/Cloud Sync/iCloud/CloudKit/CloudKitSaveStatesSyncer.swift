@@ -340,7 +340,7 @@ public class CloudKitSaveStatesSyncer: CloudKitSyncer, SaveStatesSyncing {
         }
 
         do {
-            let candidates = try await withRealm { realm in
+            let candidates = try await withRealm { realm -> [PVSaveState] in
                 realm.objects(PVSaveState.self)
                     .filter("cloudRecordID != nil")
                     .prefix(limit * 2)
@@ -1848,7 +1848,7 @@ public class CloudKitSaveStatesSyncer: CloudKitSyncer, SaveStatesSyncing {
 
             Task {
                 do {
-                    let saveStatesNeedingUpload = try await self.withRealm { realm in
+                    let saveStatesNeedingUpload = try await self.withRealm { realm -> [PVSaveState] in
                         realm.objects(PVSaveState.self)
                             .filter("cloudRecordID == nil OR lastUploadedDate == nil")
                             .map { $0.freeze() }
@@ -1886,7 +1886,7 @@ public class CloudKitSaveStatesSyncer: CloudKitSyncer, SaveStatesSyncing {
 
             Task {
                 do {
-                    let saveStatesNeedingDownload = try await self.withRealm { realm in
+                    let saveStatesNeedingDownload = try await self.withRealm { realm -> [PVSaveState] in
                         realm.objects(PVSaveState.self)
                             .filter("isDownloaded == false AND cloudRecordID != nil")
                             .map { $0.freeze() }
