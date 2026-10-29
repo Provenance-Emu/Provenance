@@ -3948,20 +3948,15 @@ struct TVMediaSystemGamesView: View {
         model.loadGamesIfNeeded(systemIdentifier: system.identifier)
         _ = await saveStatesStore.loadRecent(forSystemID: system.identifier, limit: 10)
 
-        let recents: [PVGame] = await Task.detached(priority: .userInitiated) {
-            do {
-                let realm = try Realm()
-                let results = realm.objects(PVGame.self)
-                    .filter("systemIdentifier == %@ AND lastPlayed != nil AND isHiddenPatchVariant == false", system.identifier)
-                    .sorted(byKeyPath: #keyPath(PVGame.lastPlayed), ascending: false)
-                return Array(results.prefix(24)).map { $0.freeze() }
-            } catch {
-                return []
-            }
-        }.value
-
-        await MainActor.run {
-            recentGames = recents
+        // Main-thread realm, not a fresh `Realm()` in a detached task: on boot into
+        // this screen that pattern threw "Realm accessed from incorrect thread"
+        // inside `filter` on every launch (tvOS 3.4.0 build 1793190893).
+        let systemID = system.identifier
+        recentGames = await MainActor.run {
+            let results = RomDatabase.sharedInstance.realm.objects(PVGame.self)
+                .filter("systemIdentifier == %@ AND lastPlayed != nil AND isHiddenPatchVariant == false", systemID)
+                .sorted(byKeyPath: #keyPath(PVGame.lastPlayed), ascending: false)
+            return Array(results.prefix(24)).map { $0.freeze() }
         }
     }
 }
