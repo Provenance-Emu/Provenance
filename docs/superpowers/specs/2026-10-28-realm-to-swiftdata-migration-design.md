@@ -305,7 +305,8 @@ Put a value-type repository in front of the store, move every caller onto it, im
 SwiftData, then flip platforms one at a time: tvOS first, iOS after.
 
 - **iOS data path:** a launch migration (bootstrap task with a blocking progress screen), resumable
-  and verified, with Realm left intact for rollback.
+  and verified. Realm is left intact, but it supports rollback only until SwiftData accepts its
+  first write (see Phase 4).
 - **CloudKit:** the syncers talk to the repository, not to Realm. Record encoding is shared code,
   so both backends produce identical records.
 - **Cost:** the largest total, but split into shippable phases. The first phase pays off before
@@ -451,6 +452,17 @@ Run it as a bootstrap task before library setup, with a blocking progress screen
 - Leaves `default.realm` untouched.
 - A `librarySchemaBackend` setting says which store is live. On failure the app stays on Realm,
   logs to Sentry, and retries next launch.
+- **Rollback window.** Once an install is on SwiftData, every write goes there, so the retained
+  Realm goes stale with the first import, save, favorite, patch or profile change. There is no
+  reverse migration and no dual-write after cutover. Rollback is therefore limited:
+  - **Before SwiftData's first write:** the backend flag can safely point back to Realm.
+  - **After that:** the flag is ignored, and recovery means fixing forward on SwiftData. CloudKit
+    restores synced games, saves and BIOS. Local-only changes made since the cutover would be lost
+    by a revert, which is why the flag refuses one.
+  - The store records a `firstWriteAt` marker so the flag can tell which side of that line an
+    install is on.
+  - A reverse copy (SwiftData → Realm) is out of scope. If Phase 5 shows it is needed, it reuses
+    the contract suite and the field mapping, in the other direction.
 
 Done when: a committed v29 `default.realm` fixture (systems, games with related files and artwork,
 saves, cheats, patches with a variant, controller profiles, recents, a rekeyed game) migrates with
@@ -493,9 +505,21 @@ scope), plus the Phase 4 suite on CI.
 
 ### Phase 7: remove Realm
 
-- After at least two iOS releases on SwiftData, delete `default.realm` on launch.
+- Delete `default.realm` per install, never by release count. An install deletes it only when all
+  three hold:
+  - its own migration finished and verified (the Phase 4 checkpoint says complete);
+  - `librarySchemaBackend` is SwiftData;
+  - it has run on SwiftData for at least two releases.
+
+  An install whose migration failed, or that skipped releases, still has an authoritative Realm,
+  and it keeps that file.
 - Then drop `PVRealm`, RealmSwift, RxRealm, `Packages/RxRealm` and `RealmLibraryStore`.
-- Keep the migrator only until telemetry shows no Realm-only installs launching, then remove it too.
+- Keep the migrator, and RealmSwift with it, until telemetry shows no Realm-only installs
+  launching.
+- When the migrator is removed, a launch that finds an unmigrated `default.realm` must not delete
+  it. It moves the file to `Backups/`, imports the library by rescanning the ROM folders, and tells
+  the user that saves and metadata come back from iCloud or from that backup. That keeps a
+  supported path for users who upgrade straight from a Realm-only version.
 
 Done when: there is no RealmSwift in `Package.resolved`, and the app's size delta is recorded.
 
@@ -511,7 +535,7 @@ Done when: there is no RealmSwift in `Package.resolved`, and the app's size delt
 | Primary-key change (GameRekey) | Phases 2–3 | `md5Hash` unique and `id` not unique; rekey test in the contract suite |
 | tvOS storage is purgeable | Phase 5 | Same exposure as Realm in Caches today; rescan fallback; CloudKit restore |
 | Dual-backend drift | Phases 1–6 | One contract suite, and the schema snapshot test |
-| Migration data loss | Phase 4 | Realm left intact; resumable; verified; backend flag for rollback |
+| Migration data loss | Phases 4 and 7 | Realm left intact; resumable; verified; rollback only before SwiftData's first write; Realm deleted only after that install's verified migration |
 
 ## 6. Open decisions for the maintainer
 
