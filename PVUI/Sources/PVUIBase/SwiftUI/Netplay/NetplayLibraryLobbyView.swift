@@ -74,8 +74,7 @@ public struct NetplayLibraryLobbyView: View {
                 }
                 ToolbarItem(placement: .primaryAction) {
                     #if os(tvOS)
-                    Button { showSettings = true } label: { Image(systemName: "gearshape") }
-                        .accessibilityLabel("Settings")
+                    Button("Settings") { showSettings = true }
                         .accessibilityIdentifier("netplay.hub.settings")
                     #else
                     Button("Settings", systemImage: "gearshape") { showSettings = true }.accessibilityIdentifier("netplay.hub.settings")
@@ -128,18 +127,18 @@ public struct NetplayLibraryLobbyView: View {
 
     private var gamesPanel: some View {
         VStack(alignment: .leading, spacing: 20) {
-            Picker("Game list", selection: $list) {
+            #if os(tvOS)
+            HStack(spacing: 10) {
                 ForEach(NetplayGameList.allCases.filter { $0 != .unverified || showUnverified }, id: \.self) { item in
-                    Text(item.title)
-                        #if os(tvOS)
-                        // The native TV selection capsule is white even in a dark theme.
-                        .foregroundStyle(item == list ? Color.black : Color.primary)
-                        #endif
-                        .tag(item)
+                    NetplayTVListFilter(title: item.title, selected: item == list) { list = item }
                 }
             }
             .accessibilityIdentifier("netplay.gameList")
-            #if !os(tvOS)
+            #else
+            Picker("Game list", selection: $list) {
+                ForEach(NetplayGameList.allCases.filter { $0 != .unverified || showUnverified }, id: \.self) { Text($0.title).tag($0) }
+            }
+            .accessibilityIdentifier("netplay.gameList")
             .pickerStyle(.menu)
             #endif
             if list == .unverified {

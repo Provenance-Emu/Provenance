@@ -149,8 +149,7 @@ final class NetplayHubIntegratedTests: XCTestCase {
     @MainActor private func selectList(_ target: XCUIElement, in app: XCUIApplication) {
         #if os(tvOS)
         focus(target, in: app)
-        // tvOS segmented pickers select on focus; pressing Select again can race
-        // the focus-driven SwiftUI update and activate the preceding segment.
+        // Wait for focus to settle before activating a library filter.
         let selected = NSPredicate(format: "selected == true")
         if !target.isSelected { XCUIRemote.shared.press(.select) }
         XCTAssertEqual(XCTWaiter.wait(for: [XCTNSPredicateExpectation(predicate: selected, object: target)], timeout: 3), .completed)

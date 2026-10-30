@@ -92,6 +92,37 @@ extension View {
     }
 }
 
+#if os(tvOS)
+/// Separate selection and focus colors keep library filters readable on Apple TV.
+struct NetplayTVListFilter: View {
+    let title: String
+    let selected: Bool
+    let action: () -> Void
+    @FocusState private var focused: Bool
+    @ObservedObject private var themeManager = ThemeManager.shared
+
+    var body: some View {
+        let accent = Color(themeManager.currentPalette.defaultTintColor)
+        Button(action: action) {
+            Text(title)
+                .font(.system(size: 25, weight: .semibold))
+                .lineLimit(1)
+                .frame(maxWidth: .infinity)
+                .padding(.horizontal, 12)
+                .padding(.vertical, 18)
+                .foregroundStyle(focused ? Color.black : Color(themeManager.currentPalette.gameLibraryCellText))
+                .background(focused ? Color.white : accent.opacity(selected ? 0.3 : 0.08), in: RoundedRectangle(cornerRadius: 16))
+                .overlay {
+                    RoundedRectangle(cornerRadius: 16).strokeBorder(selected ? accent : .clear, lineWidth: 3)
+                }
+        }
+        .buttonStyle(.plain)
+        .focused($focused)
+        .accessibilityAddTraits(selected ? .isSelected : [])
+    }
+}
+#endif
+
 /// Shared form layout with room for TV focus rings and readable sections on phones.
 struct NetplayForm<Content: View>: View {
     @ViewBuilder let content: Content
