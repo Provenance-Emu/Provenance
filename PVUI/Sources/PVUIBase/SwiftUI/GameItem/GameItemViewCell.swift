@@ -110,14 +110,7 @@ struct GameItemViewCell<Presentable: GameItemPresentable>: View, Equatable {
     }
 
     private var glowColor: Color {
-        switch themeManager.currentPalette {
-        case is DarkThemePalette:
-            return .cyan
-        case is LightThemePalette:
-            return .blue
-        default:
-            return .purple
-        }
+        Color(themeManager.currentPalette.defaultTintColor)
     }
 
     var body: some View {
@@ -291,7 +284,6 @@ struct GameItemViewCell<Presentable: GameItemPresentable>: View, Equatable {
                     }
                 }
                 .foregroundColor(textColor)
-                .shadow(color: glowColor, radius: 3, x: 0, y: 0)
                 .frame(maxWidth: textMaxWidth, alignment: .leading)
                 .padding(.bottom, -2) /// Negative padding to remove default spacing
             } else {

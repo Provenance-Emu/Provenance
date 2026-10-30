@@ -246,7 +246,7 @@ struct HomeView: SwiftUI.View {
                             mostPlayedSection()
                             if usesCompactChrome && !allGames.isEmpty {
                                 Text(String(localized: "All Games").uppercased())
-                                    .foregroundStyle(themeManager.currentPalette.gameLibraryText.swiftUIColor.opacity(RetroPauseChrome.sectionTitleMutedOpacity))
+                                    .foregroundStyle(themeManager.currentPalette.gameLibraryText.swiftUIColor.opacity(0.72))
                                     .retroPauseSectionHeaderTypography()
                                     .frame(maxWidth: .infinity, alignment: .leading)
                                     .padding(.horizontal, 10)
@@ -1112,7 +1112,7 @@ struct HomeView: SwiftUI.View {
                 // Section header with title and "Show All" button
                 HStack {
                     Text(String(localized: "RECENT SAVES"))
-                        .foregroundColor(themeManager.currentPalette.gameLibraryText.swiftUIColor.opacity(RetroPauseChrome.sectionTitleMutedOpacity))
+                        .foregroundColor(themeManager.currentPalette.gameLibraryText.swiftUIColor.opacity(0.72))
                         .retroPauseSectionHeaderTypography()
                     Spacer()
                     if usesCompactChrome {

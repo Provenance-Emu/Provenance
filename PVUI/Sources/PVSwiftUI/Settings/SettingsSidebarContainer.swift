@@ -198,7 +198,7 @@ struct SettingsSidebarContainer<PaneContent: View>: View {
                 .padding(.horizontal, 16)
                 .padding(.vertical, 8)
             }
-            .background(.ultraThinMaterial)
+            .background(Color(themeManager.currentPalette.settingsHeaderBackground ?? themeManager.currentPalette.gameLibraryBackground))
             .onAppear { proxy.scrollTo(selectedPane, anchor: .center) }
             .onChange(of: selectedPane) { _, pane in
                 withAnimation { proxy.scrollTo(pane, anchor: .center) }
@@ -216,10 +216,9 @@ struct SettingsSidebarContainer<PaneContent: View>: View {
         }
         .padding(.horizontal, 14)
         .padding(.vertical, 8)
-        .foregroundColor(isSelected ? .white : textColor)
-        // Purple, not pink, under the white label: retroPink is too light for 12pt white text.
+        .foregroundColor(isSelected ? Color(themeManager.currentPalette.gameLibraryBackground) : textColor)
         .background(
-            Capsule().fill(isSelected ? AnyShapeStyle(Color.retroPurple) : AnyShapeStyle(.ultraThinMaterial))
+            Capsule().fill(isSelected ? Color.retroPink : surfaceColor)
         )
         .overlay(
             Capsule().strokeBorder(isSelected ? Color.retroPink : Color.clear, lineWidth: 1.5)

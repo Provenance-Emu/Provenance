@@ -75,7 +75,7 @@ private struct ThemeButtonContent: View {
         } else if isSelected {
             return AnyShapeStyle(RetroTheme.retroPink)
         } else {
-            return AnyShapeStyle(accentColor.opacity(0.7))
+            return AnyShapeStyle(accentColor.opacity(0.18))
         }
     }
 
@@ -87,13 +87,13 @@ private struct ThemeButtonContent: View {
 
     private var scaleEffect: CGFloat {
         if configuration.isPressed { return 0.98 }
-        if isFocused { return 1.04 }
+        if isFocused { return 1.01 }
         return 1.0
     }
 
     private var shadowColor: Color {
-        if isFocused { return RetroTheme.retroPink.opacity(0.6) }
-        if isSelected { return RetroTheme.retroPink.opacity(0.5) }
+        if isFocused { return RetroTheme.retroPink.opacity(0.18) }
+        if isSelected { return RetroTheme.retroPink.opacity(0.06) }
         return .clear
     }
 
@@ -190,7 +190,7 @@ struct CGAThemeRow: View {
                 }
             }
         }
-        .buttonStyle(ThemeButtonStyle(isSelected: isSelected, accentColor: RetroTheme.retroPurple))
+        .buttonStyle(ThemeButtonStyle(isSelected: isSelected, accentColor: Color(cgaTheme.palette.defaultTintColor)))
         #if os(tvOS)
         .tvOSDisableFocusEffect()
         #endif
@@ -216,24 +216,8 @@ struct CGAThemeRow: View {
 
     // Get appropriate colors for each CGA theme
     private var cgaThemeColors: [Color] {
-        switch cgaTheme {
-        case .blue:
-            return [Color(UIColor.CGA.blue), Color(UIColor.CGA.blueShadow)]
-        case .cyan:
-            return [Color(UIColor.CGA.cyan), Color(UIColor.CGA.cyanShadow)]
-        case .green:
-            return [Color(UIColor.CGA.green), Color(UIColor.CGA.greenShadow)]
-        case .magenta:
-            return [Color(UIColor.CGA.magenta), Color(UIColor.CGA.magentaShadow)]
-        case .red:
-            return [Color(UIColor.CGA.red), Color(UIColor.CGA.redShadow)]
-        case .yellow:
-            return [Color(UIColor.CGA.yellow), Color(UIColor.CGA.yellowShadow)]
-        case .purple:
-            return [Color(UIColor.CGA.purple), Color(UIColor.CGA.purpleShadow)]
-        case .rainbow, .random:
-            return [Color.red, Color.green, Color.blue]
-        }
+        let palette = cgaTheme.palette
+        return [Color(palette.gameLibraryBackground), Color(palette.gameLibraryCellBackground ?? palette.gameLibraryBackground), Color(palette.defaultTintColor)]
     }
 }
 
@@ -244,20 +228,15 @@ struct RetroWaveThemeRow: View {
     let isSelected: Bool
     let action: () -> Void
     @ObservedObject private var themeManager = ThemeManager.shared
-    #if os(tvOS)
-    @Environment(\.isFocused) private var isFocused: Bool
-    #else
-    private var isFocused: Bool { false }
-    #endif
 
     var body: some View {
         Button(action: action) {
             HStack {
-                // Retrowave preview with animated gradient
+                // Preview the RetroWave palette independently of the current theme.
                 HStack(spacing: 10) {
-                    // Animated color preview
+                    // Palette preview
                     LinearGradient(
-                        gradient: Gradient(colors: [RetroTheme.retroPink, RetroTheme.retroPurple, RetroTheme.retroBlue]),
+                        gradient: Gradient(colors: [Color(ProvenanceThemes.retrowave.palette.defaultTintColor), Color(ProvenanceThemes.retrowave.palette.gameLibraryHeaderText)]),
                         startPoint: .leading,
                         endPoint: .trailing
                     )
@@ -279,25 +258,9 @@ struct RetroWaveThemeRow: View {
                 }
             }
         }
-        .buttonStyle(ThemeButtonStyle(isSelected: isSelected, accentColor: Color.clear))
+        .buttonStyle(ThemeButtonStyle(isSelected: isSelected, accentColor: Color(ProvenanceThemes.retrowave.palette.defaultTintColor)))
         #if os(tvOS)
         .tvOSDisableFocusEffect()
-        #endif
-        .background(
-            RoundedRectangle(cornerRadius: 8)
-                .fill(Color(themeManager.currentPalette.settingsCellBackground ?? themeManager.currentPalette.gameLibraryBackground).opacity(isFocused ? 0.8 : 0.6))
-                .overlay(
-                    RoundedRectangle(cornerRadius: 8)
-                        .strokeBorder(
-                            RetroTheme.retroGradient,
-                            lineWidth: isFocused ? 3 : 2
-                        )
-                )
-        )
-        .scaleEffect(isFocused ? 1.04 : 1.0)
-        .shadow(color: RetroTheme.retroPurple.opacity(isFocused ? 0.7 : 0.5), radius: isFocused ? 12 : 8)
-        #if os(tvOS)
-        .animation(.spring(response: 0.25, dampingFraction: 0.8), value: isFocused)
         #endif
         .padding(.horizontal)
     }
@@ -320,36 +283,13 @@ struct ThemeSection<Content: View>: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
             Text(title)
-                .font(.system(size: 18, weight: .bold, design: .rounded))
+                .font(.system(size: 18, weight: .semibold))
                 .foregroundColor(titleColor)
                 .padding(.horizontal)
 
             content
         }
-        .padding(.bottom, 20)
-        .modifier(RetroTheme.RetroSectionStyle())
-    }
-}
-
-// MARK: - Title View
-
-/// The animated title for the theme selection view
-struct ThemeSelectionTitleView: View {
-    @Binding var glowOpacity: Double
-    @Binding var isAnimating: Bool
-
-    var body: some View {
-        Text("THEME SELECTION")
-            .font(.system(size: 28, weight: .bold, design: .rounded))
-            .foregroundStyle(RetroTheme.retroHorizontalGradient)
-            .padding(.top, 20)
-            .shadow(color: RetroTheme.retroPink.opacity(glowOpacity), radius: 10, x: 0, y: 0)
-            .onAppear {
-                withAnimation(Animation.easeInOut(duration: 1.5).repeatForever(autoreverses: true)) {
-                    glowOpacity = 0.7
-                    isAnimating = true
-                }
-            }
+        .padding(.vertical, 16)
     }
 }
 
@@ -405,10 +345,6 @@ struct ThemeSelectionView: View {
     /// Current system color scheme (light/dark)
     @Environment(\.colorScheme) private var colorScheme
 
-    // Animation states for retrowave effects
-    @State private var isAnimating = false
-    @State private var glowOpacity = 0.0
-
     // MARK: - Background Components
 
     /// Background view with retrowave grid
@@ -429,7 +365,7 @@ struct ThemeSelectionView: View {
 
     /// Standard themes section
     private var standardThemesSection: some View {
-        ThemeSection(title: "STANDARD THEMES", titleColor: RetroTheme.retroBlue) {
+        ThemeSection(title: "Appearance", titleColor: RetroTheme.retroBlue) {
             ForEach(ThemeOptionsStandard.allCases, id: \.self) { option in
                 let isSelected = (currentTheme == .standard(option))
 
@@ -450,7 +386,7 @@ struct ThemeSelectionView: View {
     private var cgaThemesSection: some View {
         #if canImport(FreemiumKit)
         PaidFeatureView {
-            ThemeSection(title: "CGA THEMES", titleColor: RetroTheme.retroPink) {
+            ThemeSection(title: "Color themes", titleColor: RetroTheme.retroPink) {
                 ForEach(CGAThemes.allCases, id: \.self) { cgaTheme in
                     let isSelected = (currentTheme == .cga(ThemeOptionsCGA(rawValue: cgaTheme.rawValue) ?? .blue))
 
@@ -464,7 +400,7 @@ struct ThemeSelectionView: View {
             }
         } lockedView: {
             // Show themes but locked with overlay
-            ThemeSection(title: "CGA THEMES", titleColor: RetroTheme.retroPink) {
+            ThemeSection(title: "Color themes", titleColor: RetroTheme.retroPink) {
                 ForEach(CGAThemes.allCases.prefix(4), id: \.self) { cgaTheme in
                     CGAThemeRow(
                         cgaTheme: cgaTheme,
@@ -509,7 +445,7 @@ struct ThemeSelectionView: View {
         }
         .freemiumKitColorReset()
         #else
-        ThemeSection(title: "CGA THEMES", titleColor: RetroTheme.retroPink) {
+        ThemeSection(title: "Color themes", titleColor: RetroTheme.retroPink) {
             ForEach(CGAThemes.allCases, id: \.self) { cgaTheme in
                 let isSelected = (currentTheme == .cga(ThemeOptionsCGA(rawValue: cgaTheme.rawValue) ?? .blue))
 
@@ -530,14 +466,14 @@ struct ThemeSelectionView: View {
     private var retroWaveThemeSection: some View {
         #if canImport(FreemiumKit)
         PaidFeatureView {
-            ThemeSection(title: "RETROWAVE THEME", titleColor: RetroTheme.retroPurple) {
-                let isRetrowaveSelected = (currentTheme == .standard(.dark))
+            ThemeSection(title: "RetroWave", titleColor: RetroTheme.retroPurple) {
+                let isRetrowaveSelected = (currentTheme == .retrowave)
                 RetroWaveThemeRow(isSelected: isRetrowaveSelected) {
                     applyRetroWaveTheme()
                 }
             }
         } lockedView: {
-            ThemeSection(title: "RETROWAVE THEME", titleColor: RetroTheme.retroPurple) {
+            ThemeSection(title: "RetroWave", titleColor: RetroTheme.retroPurple) {
                 RetroWaveThemeRow(isSelected: false) { }
 
                 HStack {
@@ -574,8 +510,8 @@ struct ThemeSelectionView: View {
         }
         .freemiumKitColorReset()
         #else
-        ThemeSection(title: "RETROWAVE THEME", titleColor: RetroTheme.retroPurple) {
-            let isRetrowaveSelected = (currentTheme == .standard(.dark))
+        ThemeSection(title: "RetroWave", titleColor: RetroTheme.retroPurple) {
+            let isRetrowaveSelected = (currentTheme == .retrowave)
             RetroWaveThemeRow(isSelected: isRetrowaveSelected) {
                 applyRetroWaveTheme()
             }
@@ -588,9 +524,6 @@ struct ThemeSelectionView: View {
     /// Main content container
     private var contentView: some View {
         VStack(spacing: 20) {
-            // Title
-            ThemeSelectionTitleView(glowOpacity: $glowOpacity, isAnimating: $isAnimating)
-
             // Theme sections
             standardThemesSection
             cgaThemesSection
@@ -605,6 +538,12 @@ struct ThemeSelectionView: View {
             }
         }
         .padding()
+        #if os(tvOS)
+        .frame(maxWidth: 1100)
+        #else
+        .frame(maxWidth: 700)
+        #endif
+        .frame(maxWidth: .infinity)
     }
 
     var body: some View {
@@ -615,7 +554,11 @@ struct ThemeSelectionView: View {
                 contentView
             }
         }
-        .navigationTitle("Select Theme")
+        .navigationTitle("Theme")
+        .toolbarColorScheme(themeManager.currentPalette.dark ? .dark : .light, for: .navigationBar)
+        #if os(iOS)
+        .navigationBarTitleDisplayMode(.inline)
+        #endif
         #if os(tvOS)
         .focusSection()
         .onExitCommand { dismiss() }
@@ -627,12 +570,7 @@ struct ThemeSelectionView: View {
 
     /// Apply a standard theme
     private func applyStandardTheme(_ option: ThemeOptionsStandard) {
-        // Determine if dark theme should be applied
-        let darkTheme = (option == .auto && colorScheme == .dark) || option == .dark
-        let newPalette = darkTheme ? ProvenanceThemes.dark.palette : ProvenanceThemes.light.palette
-
         // Apply the selected theme
-        ThemeManager.shared.setCurrentPalette(newPalette)
         currentTheme = .standard(option)
         ThemeManager.applySavedTheme()
         dismiss()
@@ -641,8 +579,6 @@ struct ThemeSelectionView: View {
     /// Apply a CGA theme
     private func applyCGATheme(_ cgaTheme: CGAThemes) {
         // Apply selected CGA theme
-        let palette = cgaTheme.palette
-        ThemeManager.shared.setCurrentPalette(palette)
         let themeOptionCGA = ThemeOptionsCGA(rawValue: cgaTheme.rawValue) ?? .blue
         currentTheme = .cga(themeOptionCGA)
         ThemeManager.applySavedTheme()
@@ -652,9 +588,8 @@ struct ThemeSelectionView: View {
     /// Apply the RetroWave theme
     private func applyRetroWaveTheme() {
         // Apply the official RetroWave theme
-        ThemeManager.shared.setCurrentPalette(ProvenanceThemes.retrowave.palette)
-        // Set the theme to retrowave (using standard dark as fallback for now)
-        currentTheme = .standard(.dark)
+        // Persist RetroWave independently of the standard dark appearance.
+        currentTheme = .retrowave
         ThemeManager.applySavedTheme()
         dismiss()
     }

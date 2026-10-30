@@ -219,14 +219,15 @@ extension View {
 #if os(tvOS)
 /// Cinematic background for tvOS settings matching the Media UI aesthetic
 struct TVOSSettingsBackground: View {
+    @ObservedObject private var themeManager = ThemeManager.shared
     var body: some View {
         ZStack {
-            // Deep space gradient
+            // Layer the selected palette across the settings canvas.
             LinearGradient(
                 colors: [
-                    Color(red: 0.02, green: 0.02, blue: 0.06),
-                    Color(red: 0.05, green: 0.03, blue: 0.10),
-                    Color(red: 0.03, green: 0.02, blue: 0.08)
+                    Color(themeManager.currentPalette.gameLibraryBackground),
+                    Color(themeManager.currentPalette.gameLibraryHeaderBackground),
+                    Color(themeManager.currentPalette.gameLibraryBackground)
                 ],
                 startPoint: .top,
                 endPoint: .bottom
@@ -303,6 +304,7 @@ struct TVOSSettingsScanlines: View {
 
 /// Premium header for tvOS settings
 struct TVOSSettingsHeader: View {
+    @ObservedObject private var themeManager = ThemeManager.shared
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
             HStack(spacing: 20) {
@@ -330,7 +332,7 @@ struct TVOSSettingsHeader: View {
                         .tracking(4)
                         .foregroundStyle(
                             LinearGradient(
-                                colors: [.white, Color.retroBlue.opacity(0.9)],
+                                colors: [Color(themeManager.currentPalette.gameLibraryText), Color.retroBlue.opacity(0.9)],
                                 startPoint: .leading,
                                 endPoint: .trailing
                             )
@@ -340,7 +342,7 @@ struct TVOSSettingsHeader: View {
                     Text("settings.subtitle", bundle: .module)
                         .font(.system(size: 14, weight: .medium, design: .default))
                         .tracking(3)
-                        .foregroundStyle(Color.retroPink.opacity(0.7))
+                        .foregroundStyle(Color(themeManager.currentPalette.settingsCellTextDetail ?? themeManager.currentPalette.gameLibraryText))
                 }
 
                 Spacer()
@@ -403,6 +405,7 @@ extension EnvironmentValues {
 ///
 /// Collapsed sections do not build their rows, which keeps the long single-page layout cheap to scroll with a remote.
 struct TVOSSettingsSection<Content: View>: View {
+    @ObservedObject private var themeManager = ThemeManager.shared
     let title: String
     let icon: String
     @ViewBuilder let content: () -> Content
@@ -447,11 +450,11 @@ struct TVOSSettingsSection<Content: View>: View {
                             .foregroundStyle(
                                 headerFocused ?
                                     AnyShapeStyle(LinearGradient(
-                                        colors: [.white, Color.retroBlue],
+                                        colors: [Color(themeManager.currentPalette.gameLibraryText), Color.retroBlue],
                                         startPoint: .top,
                                         endPoint: .bottom
                                     )) :
-                                    AnyShapeStyle(Color.white.opacity(0.6))
+                                    AnyShapeStyle(Color(themeManager.currentPalette.gameLibraryText).opacity(0.6))
                             )
                             .shadow(color: headerFocused ? Color.retroPink.opacity(0.6) : .clear, radius: 8)
                     }
@@ -463,11 +466,11 @@ struct TVOSSettingsSection<Content: View>: View {
                         .foregroundStyle(
                             headerFocused ?
                                 AnyShapeStyle(LinearGradient(
-                                    colors: [.white, Color.retroBlue.opacity(0.9)],
+                                    colors: [Color(themeManager.currentPalette.gameLibraryText), Color.retroBlue.opacity(0.9)],
                                     startPoint: .leading,
                                     endPoint: .trailing
                                 )) :
-                                AnyShapeStyle(Color.white.opacity(0.85))
+                                AnyShapeStyle(Color(themeManager.currentPalette.gameLibraryText).opacity(0.85))
                         )
 
                     Spacer()
@@ -478,7 +481,7 @@ struct TVOSSettingsSection<Content: View>: View {
                         .foregroundStyle(
                             headerFocused ?
                                 AnyShapeStyle(Color.retroPink) :
-                                AnyShapeStyle(Color.white.opacity(0.4))
+                                AnyShapeStyle(Color(themeManager.currentPalette.gameLibraryText).opacity(0.4))
                         )
                         .animation(.spring(response: 0.3), value: isExpanded)
                 }
@@ -494,7 +497,7 @@ struct TVOSSettingsSection<Content: View>: View {
                                     endPoint: .bottomTrailing
                                 ) :
                                 LinearGradient(
-                                    colors: [Color.white.opacity(0.04), Color.white.opacity(0.02)],
+                                    colors: [Color(themeManager.currentPalette.gameLibraryText).opacity(0.04), Color(themeManager.currentPalette.gameLibraryText).opacity(0.02)],
                                     startPoint: .top,
                                     endPoint: .bottom
                                 )
@@ -510,7 +513,7 @@ struct TVOSSettingsSection<Content: View>: View {
                                     endPoint: .bottomTrailing
                                 ) :
                                 LinearGradient(
-                                    colors: [Color.white.opacity(0.08), Color.white.opacity(0.04)],
+                                    colors: [Color(themeManager.currentPalette.gameLibraryText).opacity(0.08), Color(themeManager.currentPalette.gameLibraryText).opacity(0.04)],
                                     startPoint: .top,
                                     endPoint: .bottom
                                 ),
@@ -741,6 +744,7 @@ public struct PVSettingsView: View {
             }
         }
         .navigationViewStyle(StackNavigationViewStyle())
+        .environment(\.colorScheme, themeManager.currentPalette.dark ? .dark : .light)
         #if os(tvOS)
         .environment(\.settingsSubpageDepth, $settingsSubpageDepth)
         .onChange(of: settingsSubpageDepth) { depth in
@@ -1015,7 +1019,7 @@ struct SettingsRow: View {
                 Text(title)
                     #if os(tvOS)
                     .font(.system(size: 20, weight: .medium))
-                    .foregroundStyle(isFocused ? .white : Color(themeManager.currentPalette.settingsCellText ?? themeManager.currentPalette.gameLibraryText))
+                    .foregroundStyle(isFocused ? Color(themeManager.currentPalette.gameLibraryText) : Color(themeManager.currentPalette.settingsCellText ?? themeManager.currentPalette.gameLibraryText))
                     #else
                     .font(.headline)
                     .foregroundColor(Color(themeManager.currentPalette.settingsCellText ?? themeManager.currentPalette.gameLibraryText))
@@ -1025,10 +1029,10 @@ struct SettingsRow: View {
                     Text(subtitle)
                         #if os(tvOS)
                         .font(.system(size: 15))
-                        .foregroundStyle(isFocused ? .white.opacity(0.8) : Color(themeManager.currentPalette.settingsCellTextDetail ?? themeManager.currentPalette.settingsCellText ?? themeManager.currentPalette.gameLibraryText).opacity(0.7))
+                        .foregroundStyle(Color(themeManager.currentPalette.settingsCellTextDetail ?? themeManager.currentPalette.gameLibraryText))
                         #else
                         .font(.footnote)
-                        .foregroundColor(Color(themeManager.currentPalette.settingsCellTextDetail ?? themeManager.currentPalette.settingsCellText ?? themeManager.currentPalette.gameLibraryText).opacity(0.8))
+                        .foregroundColor(Color(themeManager.currentPalette.settingsCellTextDetail ?? themeManager.currentPalette.gameLibraryText))
                         #endif
                         .lineLimit(effectiveSubtitleLineLimit)
                         .multilineTextAlignment(.leading)
@@ -1083,7 +1087,7 @@ struct SettingsRow: View {
             if showChevron {
                 Image(systemName: "chevron.right")
                     .font(.system(size: 16, weight: .semibold))
-                    .foregroundStyle(isFocused ? Color.retroPink : Color.white.opacity(0.3))
+                    .foregroundStyle(isFocused ? Color.retroPink : Color(themeManager.currentPalette.gameLibraryText).opacity(0.3))
             }
             #endif
         }
@@ -1101,7 +1105,7 @@ struct SettingsRow: View {
                             endPoint: .bottomTrailing
                         ) :
                         LinearGradient(
-                            colors: [Color.white.opacity(0.03), Color.white.opacity(0.01)],
+                            colors: [Color(themeManager.currentPalette.gameLibraryText).opacity(0.03), Color(themeManager.currentPalette.gameLibraryText).opacity(0.01)],
                             startPoint: .top,
                             endPoint: .bottom
                         )
@@ -1117,7 +1121,7 @@ struct SettingsRow: View {
                             endPoint: .bottomTrailing
                         ) :
                         LinearGradient(
-                            colors: [Color.white.opacity(0.06), Color.white.opacity(0.02)],
+                            colors: [Color(themeManager.currentPalette.gameLibraryText).opacity(0.06), Color(themeManager.currentPalette.gameLibraryText).opacity(0.02)],
                             startPoint: .top,
                             endPoint: .bottom
                         ),
@@ -1304,6 +1308,7 @@ private struct CoreOptionsSection: View {
 /// RetroWave-styled single-choice list for tvOS, replacing the clipped default Picker.
 /// Picking a row stores it and pops back to Settings.
 private struct TVOSSettingsChoiceView<Value: Hashable>: View {
+    @ObservedObject private var themeManager = ThemeManager.shared
     let title: String
     let icon: String
     let choices: [Value]
@@ -1320,7 +1325,7 @@ private struct TVOSSettingsChoiceView<Value: Hashable>: View {
             .padding(.horizontal, 48)
             .padding(.vertical, 24)
         }
-        .background(Color.black)
+        .background(Color(themeManager.currentPalette.gameLibraryBackground))
         .focusSection()
         .onExitCommand { dismiss() }
         .settingsSubpageTracking()
@@ -1358,7 +1363,7 @@ private struct TVOSSettingsChoiceView<Value: Hashable>: View {
         .padding(12)
         .background(
             RoundedRectangle(cornerRadius: 12)
-                .fill(Color.white.opacity(0.03))
+                .fill(Color(themeManager.currentPalette.settingsCellBackground ?? themeManager.currentPalette.gameLibraryBackground))
                 .overlay(
                     RoundedRectangle(cornerRadius: 12)
                         .strokeBorder(Color.retroPurple.opacity(0.15), lineWidth: 1)
@@ -1369,6 +1374,7 @@ private struct TVOSSettingsChoiceView<Value: Hashable>: View {
 
 /// Individual row in a `TVOSSettingsChoiceView` with RetroWave focus styling
 private struct TVOSSettingsChoiceRow: View {
+    @ObservedObject private var themeManager = ThemeManager.shared
     let title: String
     let isSelected: Bool
     let action: () -> Void
@@ -1378,7 +1384,7 @@ private struct TVOSSettingsChoiceRow: View {
             HStack(spacing: 14) {
                 Text(title)
                     .font(.system(size: 22, weight: isSelected ? .semibold : .regular))
-                    .foregroundColor(isSelected ? .white : .white.opacity(0.75))
+                    .foregroundColor(Color(themeManager.currentPalette.settingsCellText ?? themeManager.currentPalette.gameLibraryText).opacity(isSelected ? 1 : 0.85))
                     .lineLimit(1)
 
                 Spacer()
@@ -3054,6 +3060,8 @@ private struct RetroAchievementsSection: View {
 #if canImport(FreemiumKit)
 @available(iOS 15.0, tvOS 15.0, macOS 12.0, *)
 struct PlusStatusBanner: View {
+    @ObservedObject private var themeManager = ThemeManager.shared
+
     var body: some View {
         PaidFeatureView {
             // Subscriber view
@@ -3080,7 +3088,7 @@ struct PlusStatusBanner: View {
                         )
                     Text("settings.plus.thank_you", bundle: .module)
                         .font(.system(size: 12))
-                        .foregroundColor(.gray)
+                        .foregroundColor(Color(themeManager.currentPalette.settingsCellTextDetail ?? themeManager.currentPalette.gameLibraryText))
                 }
 
                 Spacer()
@@ -3093,7 +3101,7 @@ struct PlusStatusBanner: View {
             .padding(.vertical, 14)
             .background(
                 RoundedRectangle(cornerRadius: 14)
-                    .fill(Color.black.opacity(0.5))
+                    .fill(Color(themeManager.currentPalette.settingsCellBackground ?? themeManager.currentPalette.gameLibraryBackground))
                     .overlay(
                         RoundedRectangle(cornerRadius: 14)
                             .strokeBorder(
@@ -3135,7 +3143,7 @@ struct PlusStatusBanner: View {
                         )
                     Text("settings.plus.upgrade_description", bundle: .module)
                         .font(.system(size: 12))
-                        .foregroundColor(.gray)
+                        .foregroundColor(Color(themeManager.currentPalette.settingsCellTextDetail ?? themeManager.currentPalette.gameLibraryText))
                 }
 
                 Spacer()
@@ -3148,7 +3156,7 @@ struct PlusStatusBanner: View {
             .padding(.vertical, 14)
             .background(
                 RoundedRectangle(cornerRadius: 14)
-                    .fill(Color.black.opacity(0.5))
+                    .fill(Color(themeManager.currentPalette.settingsCellBackground ?? themeManager.currentPalette.gameLibraryBackground))
                     .overlay(
                         RoundedRectangle(cornerRadius: 14)
                             .strokeBorder(

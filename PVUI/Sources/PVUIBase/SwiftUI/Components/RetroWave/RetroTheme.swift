@@ -5,13 +5,13 @@ import PVThemes
 /// RetroTheme provides retrowave styling elements for the Settings UI
 public struct RetroTheme {
     // MARK: - Colors
-    public static let retroPink = Color.retroPink
-    public static let retroPurple = Color.retroPurple
-    public static let retroBlue = Color.retroBlue
-    public static let retroDarkBlue = Color.retroDarkBlue
-    public static let retroBlack = Color.retroBlack
-    public static let retroBlackClear = Color.retroBlackClear
-    public static let retroGreen = Color.retroGreen
+    public static var retroPink: Color { Color.retroPink }
+    public static var retroPurple: Color { Color.retroPurple }
+    public static var retroBlue: Color { Color.retroBlue }
+    public static var retroDarkBlue: Color { Color.retroDarkBlue }
+    public static var retroBlack: Color { Color.retroBlack }
+    public static var retroBlackClear: Color { Color.retroBlackClear }
+    public static var retroGreen: Color { Color.retroGreen }
 
     // MARK: - Gradients
     public static let retroGradient = LinearGradient(
@@ -78,25 +78,27 @@ public struct RetroTheme {
 
     // MARK: - Button Styles
     public struct RetroButtonStyle: ButtonStyle {
+        @ObservedObject private var themeManager = ThemeManager.shared
         public func makeBody(configuration: Configuration) -> some View {
             configuration.label
                 .padding(.vertical, 10)
                 .padding(.horizontal, 20)
                 .background(
                     RoundedRectangle(cornerRadius: RetroPauseChrome.radiusSM)
-                        .fill(Color.black.opacity(0.6))
+                        .fill(Color(themeManager.currentPalette.settingsCellBackground ?? themeManager.currentPalette.gameLibraryHeaderBackground))
                         .overlay(
                             RoundedRectangle(cornerRadius: RetroPauseChrome.radiusSM)
                                 .strokeBorder(RetroTheme.retroPink, lineWidth: 2)
                         )
                 )
                 .scaleEffect(configuration.isPressed ? 0.98 : 1.0)
-                .foregroundColor(.white)
+                .foregroundStyle(Color(themeManager.currentPalette.gameLibraryText))
         }
     }
 
     // MARK: - Section Styles
     public struct RetroSectionStyle: ViewModifier {
+        @ObservedObject private var themeManager = ThemeManager.shared
 
         public init() {}
 
@@ -105,13 +107,13 @@ public struct RetroTheme {
                 .padding()
                 .background(
                     RoundedRectangle(cornerRadius: RetroPauseChrome.radiusMD)
-                        .fill(Color.black.opacity(0.6))
+                        .fill(Color(themeManager.currentPalette.settingsCellBackground ?? themeManager.currentPalette.gameLibraryHeaderBackground))
                         .overlay(
                             RoundedRectangle(cornerRadius: RetroPauseChrome.radiusMD)
                                 .strokeBorder(RetroTheme.retroGradient, lineWidth: 1)
                         )
                 )
-                .shadow(color: RetroTheme.retroPurple.opacity(0.3), radius: 10, x: 0, y: 5)
+                .shadow(color: RetroTheme.retroPurple.opacity(0.06), radius: 10, x: 0, y: 5)
         }
     }
 

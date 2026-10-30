@@ -146,7 +146,6 @@ struct GameItemViewRow<Presentable: GameItemPresentable>: SwiftUI.View, Equatabl
                                 speed: 50.0,
                                 loop: true)
                         .foregroundColor(textColor)
-                        .shadow(color: glowColor.opacity(0.7), radius: 2, x: 1, y: 1)
                         .frame(maxWidth: .infinity, alignment: .leading)
 
                     // Game metadata row

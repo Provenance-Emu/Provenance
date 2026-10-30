@@ -11,6 +11,7 @@ import Defaults
 /// Scales elegantly on focus with neon glow effects
 @available(tvOS 16.0, *)
 struct TVMediaGameTileView<MenuContent: View>: View {
+    @ObservedObject private var themeManager = ThemeManager.shared
     let game: PVGame
     let titleFont: Font
     let onPlay: () -> Void
@@ -147,15 +148,7 @@ struct TVMediaGameTileView<MenuContent: View>: View {
                 Text(game.title)
                     .font(.system(size: 15, weight: isFocused ? .semibold : .medium, design: .default))
                     .tracking(0.3)
-                    .foregroundStyle(
-                        isFocused ?
-                            AnyShapeStyle(LinearGradient(
-                                colors: [.white, .white.opacity(0.9)],
-                                startPoint: .top,
-                                endPoint: .bottom
-                            )) :
-                            AnyShapeStyle(Color.white.opacity(0.8))
-                    )
+                    .foregroundStyle(Color(themeManager.currentPalette.gameLibraryCellText).opacity(isFocused ? 1 : 0.85))
                     .lineLimit(2)
                     .multilineTextAlignment(.center)
                     .frame(width: tileWidth)

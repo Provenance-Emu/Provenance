@@ -15,6 +15,7 @@ import FreemiumKit
 
 /// The paged library's SwiftUI navigation and presentation root.
 public struct PVLibraryRootView: View {
+    @ObservedObject private var themeManager = ThemeManager.shared
     @Environment(\.openURL) private var openURL
     @Environment(\.scenePhase) private var scenePhase
     @StateObject private var navigation: PVLibraryNavigation
@@ -28,6 +29,7 @@ public struct PVLibraryRootView: View {
 
     public var body: some View {
         libraryContent
+            .tint(Color(themeManager.currentPalette.defaultTintColor))
             .netplayPresentation(item: $netplayRequest) { request in
                 NetplayLibraryLobbyView(initialGameMD5: request.gameMD5)
             }

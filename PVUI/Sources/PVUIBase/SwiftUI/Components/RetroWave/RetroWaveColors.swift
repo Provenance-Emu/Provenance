@@ -6,21 +6,36 @@
 //
 
 import SwiftUI
+import UIKit
+import PVThemes
 
 // MARK: - Retrowave Design System
 
 // Retrowave color palette
 public extension Color {
-    public static let retroPink = Color(red: 0.98, green: 0.2, blue: 0.6)
-    public static let retroPurple = Color(red: 0.5, green: 0.0, blue: 0.8)
-    public static let retroBlue = Color(red: 0.0, green: 0.8, blue: 0.95)
-    public static let retroDarkBlue = Color(red: 0.05, green: 0.05, blue: 0.2)
+    /// Legacy accent names resolve through the active palette so shared controls follow paid themes.
+    public static var retroPink: Color { paletteColor { $0.defaultTintColor } }
+    public static var retroPurple: Color {
+        paletteColor { palette in
+            palette is RetroWaveThemePalette ? UIColor(red: 0.69, green: 0.55, blue: 0.91, alpha: 1) : palette.defaultTintColor
+        }
+    }
+    public static var retroBlue: Color {
+        paletteColor { palette in
+            palette is RetroWaveThemePalette ? UIColor(red: 0.40, green: 0.80, blue: 0.90, alpha: 1) : palette.defaultTintColor
+        }
+    }
+    public static var retroDarkBlue: Color { paletteColor { $0.gameLibraryCellBackground ?? $0.gameLibraryHeaderBackground } }
     public static let retroGreen = Color(red: 0.0, green: 0.95, blue: 0.8)
     public static let retroYellow = Color(red: 0.98, green: 0.84, blue: 0.2)
     public static let retroOrange = Color(red: 0.98, green: 0.5, blue: 0.2)
-    public static let retroBlack = Color(red: 0.05, green: 0.05, blue: 0.1)
+    public static var retroBlack: Color { paletteColor { $0.gameLibraryBackground } }
     public static let retroCyan = Color(red: 0.0, green: 0.95, blue: 0.95)
     public static let retroBlackClear = Color.black.opacity(0.001)
+
+    private static func paletteColor(_ color: @escaping @Sendable (any UXThemePalette) -> UIColor) -> Color {
+        Color(UIColor { _ in color(ThemeManager.shared.paletteForColorResolution) })
+    }
 
     // Gradient helpers
     public static let retroSunset = LinearGradient(

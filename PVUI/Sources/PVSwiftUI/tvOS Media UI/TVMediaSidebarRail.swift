@@ -11,6 +11,7 @@ import PVSettings
 /// Icon-only rail that expands elegantly on focus
 @available(tvOS 16.0, iOS 17.0, *)
 struct TVMediaSidebarRail: View {
+    @ObservedObject private var themeManager = ThemeManager.shared
     @Binding var destination: TVMediaDestination
     @ObservedObject var focusCoordinator: TVMediaFocusCoordinator
     @ObservedObject var router: TVMediaRouter
@@ -247,7 +248,7 @@ struct TVMediaSidebarRail: View {
                         .tracking(2)
                         .foregroundStyle(
                             LinearGradient(
-                                colors: [.white, Color.retroBlue.opacity(0.8)],
+                                colors: [Color(themeManager.currentPalette.menuText), Color.retroBlue.opacity(0.8)],
                                 startPoint: .leading,
                                 endPoint: .trailing
                             )
@@ -350,11 +351,11 @@ struct TVMediaSidebarRail: View {
                         .foregroundStyle(
                             isFocused ?
                                 AnyShapeStyle(LinearGradient(
-                                    colors: [.white, Color.retroBlue.opacity(0.9)],
+                                    colors: [Color(themeManager.currentPalette.menuText), Color.retroBlue.opacity(0.9)],
                                     startPoint: .top,
                                     endPoint: .bottom
                                 )) :
-                                AnyShapeStyle(isSelected ? Color.white : Color.white.opacity(0.5))
+                                AnyShapeStyle(isSelected ? Color(themeManager.currentPalette.menuText) : Color(themeManager.currentPalette.menuText).opacity(0.5))
                         )
                         .frame(width: 32, height: 32)
                         .shadow(color: isFocused ? Color.retroPink.opacity(0.8) : .clear, radius: 8)
@@ -366,8 +367,8 @@ struct TVMediaSidebarRail: View {
                         .font(.system(size: 14, weight: isFocused ? .semibold : .medium, design: .default))
                         .tracking(1.5) // Refined letter spacing
                         .foregroundStyle(
-                            isFocused ? .white :
-                            (isSelected ? .white.opacity(0.9) : .white.opacity(0.6))
+                            isFocused ? Color(themeManager.currentPalette.menuText) :
+                            (isSelected ? Color(themeManager.currentPalette.menuText).opacity(0.9) : Color(themeManager.currentPalette.menuText).opacity(0.6))
                         )
                         .shadow(color: isFocused ? Color.retroPink.opacity(0.5) : .clear, radius: 6)
                         .transition(.asymmetric(
@@ -414,7 +415,7 @@ struct TVMediaSidebarRail: View {
                     ) :
                     (isSelected ?
                         LinearGradient(
-                            colors: [Color.white.opacity(0.06), Color.white.opacity(0.03)],
+                            colors: [Color(themeManager.currentPalette.menuText).opacity(0.06), Color(themeManager.currentPalette.menuText).opacity(0.03)],
                             startPoint: .leading,
                             endPoint: .trailing
                         ) :
@@ -467,9 +468,9 @@ struct TVMediaSidebarRail: View {
 
     private var sidebarBackground: some View {
         ZStack {
-            // Deep dark base
+            // Palette surface
             Rectangle()
-                .fill(Color(red: 0.02, green: 0.02, blue: 0.04))
+                .fill(Color(themeManager.currentPalette.menuBackground))
 
             // Subtle gradient overlay
             LinearGradient(
@@ -506,7 +507,7 @@ struct TVMediaSidebarRail: View {
                 .opacity(0.03)
         }
         .shadow(color: Color.retroPink.opacity(0.1), radius: 30, x: 8, y: 0)
-        .shadow(color: .black.opacity(0.9), radius: 50, x: 15, y: 0)
+        .shadow(color: .black.opacity(themeManager.currentPalette.dark ? 0.45 : 0.08), radius: 24, x: 6, y: 0)
     }
 
     private var scanlineOverlay: some View {
@@ -514,7 +515,7 @@ struct TVMediaSidebarRail: View {
             VStack(spacing: 0) {
                 ForEach(0..<Int(geo.size.height / 3), id: \.self) { _ in
                     Color.clear.frame(height: 2)
-                    Color.white.frame(height: 1)
+                    Color(themeManager.currentPalette.menuText).frame(height: 1)
                 }
             }
         }

@@ -36,7 +36,7 @@ struct SettingsSearchField: View {
                     )
                 )
 
-            TextField("Search settings", text: $text)
+            TextField("Search settings", text: $text, prompt: Text("Search settings").foregroundColor(textColor.opacity(0.65)))
                 .focused(isFocused)
                 .textInputAutocapitalization(.never)
                 .autocorrectionDisabled()
