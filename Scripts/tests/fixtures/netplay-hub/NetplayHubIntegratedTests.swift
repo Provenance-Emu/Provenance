@@ -1,6 +1,8 @@
 import XCTest
 
 final class NetplayHubIntegratedTests: XCTestCase {
+    private var fixtureTitle: String { ProcessInfo.processInfo.environment["NETPLAY_GAME_TITLE"] ?? "Theme Preview" }
+
     override func setUpWithError() throws { continueAfterFailure = false }
 
     @MainActor func testRealLibraryHub() throws {
@@ -10,7 +12,7 @@ final class NetplayHubIntegratedTests: XCTestCase {
         app.launch()
         XCTAssertTrue(app.wait(for: .runningForeground, timeout: 40))
         #if os(tvOS)
-        let libraryGame = app.buttons.matching(NSPredicate(format: "label CONTAINS %@", "Theme Preview")).firstMatch
+        let libraryGame = app.buttons.matching(NSPredicate(format: "label CONTAINS %@", fixtureTitle)).firstMatch
         XCTAssertTrue(libraryGame.waitForExistence(timeout: 90))
         focus(libraryGame, in: app)
         for _ in 0..<4 {
@@ -113,7 +115,7 @@ final class NetplayHubIntegratedTests: XCTestCase {
         let app = XCUIApplication(bundleIdentifier: bundle)
         app.launchArguments = ["-netplayEnabled", "YES", "-iCloudSync", "NO"]
         app.launch()
-        let game = app.buttons.matching(NSPredicate(format: "label CONTAINS %@", "Theme Preview")).firstMatch
+        let game = app.buttons.matching(NSPredicate(format: "label CONTAINS %@", fixtureTitle)).firstMatch
         XCTAssertTrue(game.waitForExistence(timeout: 90))
         #if os(tvOS)
         focus(game, in: app)

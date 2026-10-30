@@ -16,6 +16,7 @@ def main():
     parser.add_argument("--udid", required=True)
     parser.add_argument("--app-bundle", default="org.provenance-emu.provenance.dev.coreless")
     parser.add_argument("--test", choices=["testRealLibraryHub", "testGameContextMenuOpensDetailsOnce"])
+    parser.add_argument("--game-title", default="Theme Preview", help="Imported synthetic game used for the library/context-menu checks")
     args = parser.parse_args()
     root = Path(__file__).resolve().parents[2]
     output = root / "build/netplay-hub-smoke" / (args.platform + "-" + datetime.now().strftime("%Y%m%d-%H%M%S"))
@@ -31,7 +32,7 @@ def main():
         }},
         "schemes": {target: {
             "build": {"targets": {target: "all"}},
-            "test": {"targets": [target], "environmentVariables": {"NETPLAY_APP_BUNDLE": args.app_bundle}},
+            "test": {"targets": [target], "environmentVariables": {"NETPLAY_APP_BUNDLE": args.app_bundle, "NETPLAY_GAME_TITLE": args.game_title}},
         }},
     }
     path = output / "project.json"
