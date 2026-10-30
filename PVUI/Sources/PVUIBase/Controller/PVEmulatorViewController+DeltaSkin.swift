@@ -1261,14 +1261,15 @@ extension PVEmulatorViewController {
 
     // MARK: - Screen Filter Wiring
 
-    /// The current skin's game screen for the representation being drawn: the smallest
-    /// screen, as the viewport picks it (larger screens are effect backdrops such as a
-    /// blurred copy of the game).
+    /// The current skin's game screen for the representation being drawn, as the viewport
+    /// picks it: larger screens are effect backdrops such as a blurred copy of the game,
+    /// thinner ones effect strips such as a reflective bezel edge.
     internal func currentSkinGameScreen(_ skin: (any DeltaSkinProtocol)? = nil) -> DeltaSkinScreen? {
-        guard let skin = skin ?? currentSkin, let screens = skin.screens(for: skinRenderTraits()) else { return nil }
-        return screens
-            .compactMap { screen in screen.outputFrame.map { (screen, $0.width * $0.height) } }
-            .min { $0.1 < $1.1 }?.0
+        let traits = skinRenderTraits()
+        guard let skin = skin ?? currentSkin,
+              let screens = skin.screens(for: traits),
+              let mappingSize = skin.mappingSize(for: traits) else { return nil }
+        return DeltaSkinScreen.gameScreen(in: screens, mappingSize: mappingSize)
     }
 
     /// The filters the current skin runs over its game screen, in order. A skin whose only
