@@ -294,7 +294,6 @@ public struct SaveStateRowView: View {
     @ObservedObject private var themeManager = ThemeManager.shared
     @State private var showingEditDialog = false
     @State private var showingLoadAlert = false
-    @State private var tempDescription: String? = nil
     @Binding var currentUserInteractionCellID: String?
     var onEdit: ((SaveStateEditField, SaveStateRowViewModel, String?) -> Void)?
 
@@ -496,59 +495,29 @@ public struct SaveStateRowView: View {
             currentUserInteractionCellID: $currentUserInteractionCellID
         )
 #endif
-        .uiKitAlert("Load Save State",
-                    message: "",
-                    isPresented: $showingLoadAlert,
-                    buttons: {
-            UIAlertAction(title: "Yes", style: .default, handler: {
-                _ in
-                viewModel.onLoad?()
-                showingLoadAlert = false
-            })
-            UIAlertAction(title: "No", style: .destructive, handler: {
-                _ in
-                showingLoadAlert = false
-            })
-        })
-        .uiKitAlert(
-            "Edit Description",
-            message: "Enter a custom description for this save state",
-            isPresented: $showingEditDialog,
-            textValue: Binding(
-                get: { self.tempDescription ?? viewModel.description ?? "" },
-                set: { newValue in
-                    if newValue == nil || newValue!.isEmpty {
-                        self.tempDescription = nil
-                    } else {
-                        self.tempDescription = newValue
-                    }
-                }
-            ),
-            preferredContentSize: CGSize(width: 300, height: 200),
-            textField: { textField in
-                textField.placeholder = "Description"
-                textField.clearButtonMode = .whileEditing
-                textField.autocapitalizationType = .sentences
-            }
-        ) {
-            UIAlertAction(title: "Save", style: .default) { _ in
-                // Only update the viewModel when Save is clicked
-                viewModel.description = tempDescription
-                // Reset the temp value
-                tempDescription = nil
-                showingEditDialog = false
-            }
-            UIAlertAction(title: NSLocalizedString("Cancel", comment: "Cancel"), style: .cancel) { _ in
-                // Discard the temp value
-                tempDescription = nil
-                showingEditDialog = false
-            }
+        .pvAlert(isPresented: $showingLoadAlert) {
+            PVAlert(
+                title: "Load Save State",
+                actions: [
+                    PVAlertAction("Yes") {
+                        viewModel.onLoad?()
+                    },
+                    PVAlertAction("No", role: .destructive)
+                ]
+            )
         }
-        .onChange(of: showingEditDialog) { isShowing in
-            if isShowing {
-                // Initialize the temp value when the dialog is shown
-                tempDescription = viewModel.description
-            }
+        .pvAlert(isPresented: $showingEditDialog) {
+            PVAlert(
+                title: "Edit Description",
+                message: "Enter a custom description for this save state",
+                actions: [
+                    PVAlertAction("Save", responseHandler: { response in
+                        viewModel.description = response.text.isEmpty ? nil : response.text
+                    }),
+                    PVAlertAction(NSLocalizedString("Cancel", comment: "Cancel"), role: .cancel)
+                ],
+                textFields: [PVAlertTextField(placeholder: "Description", text: viewModel.description ?? "")]
+            )
         }
     }
 

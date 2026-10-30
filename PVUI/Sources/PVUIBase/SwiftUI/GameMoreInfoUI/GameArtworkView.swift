@@ -263,22 +263,21 @@ struct GameArtworkView: View {
                 }
             }
         }
-        .uiKitAlert(
-            "Choose Artwork Source",
-            message: "Select artwork from your photo library or search online sources",
-            isPresented: $showArtworkSourceAlert,
-            buttons: {
-                UIAlertAction(title: "Select from Photos", style: .default) { _ in
-                    handleArtworkSourceSelection(sourceType: .photoLibrary)
-                }
-                UIAlertAction(title: "Search Online", style: .default) { _ in
-                    handleArtworkSourceSelection(sourceType: .onlineSearch)
-                }
-                UIAlertAction(title: NSLocalizedString("Cancel", comment: "Cancel"), style: .cancel) { _ in
-                    showArtworkSourceAlert = false
-                }
-            }
-        )
+        .pvAlert(isPresented: $showArtworkSourceAlert) {
+            PVAlert(
+                title: "Choose Artwork Source",
+                message: "Select artwork from your photo library or search online sources",
+                actions: [
+                    PVAlertAction("Select from Photos") {
+                        handleArtworkSourceSelection(sourceType: .photoLibrary)
+                    },
+                    PVAlertAction("Search Online") {
+                        handleArtworkSourceSelection(sourceType: .onlineSearch)
+                    },
+                    .cancel(NSLocalizedString("Cancel", comment: "Cancel"))
+                ]
+            )
+        }
     }
 
     /// Save artwork for a game

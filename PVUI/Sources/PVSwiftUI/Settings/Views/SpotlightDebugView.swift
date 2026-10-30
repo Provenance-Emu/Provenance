@@ -11,6 +11,7 @@ import PVSupport
 import PVLogging
 import CoreSpotlight
 import PVThemes
+import PVUIBase
 import Combine
 import RealmSwift
 
@@ -78,15 +79,16 @@ public struct SpotlightDebugView: View {
                 glowOpacity = 0.9
             }
         }
-        .uiKitAlert(
-            "Error",
-            message: errorMessage ?? "",
-            isPresented: .constant(errorMessage != nil),
-            preferredContentSize: CGSize(width: 500, height: 300)
+        .pvAlert(
+            isPresented: Binding(
+                get: { errorMessage != nil },
+                set: { if !$0 { errorMessage = nil } }
+            )
         ) {
-            UIAlertAction(title: "OK", style: .default) { _ in
-                errorMessage = nil
-            }
+            PVAlert(
+                title: "Error",
+                message: errorMessage ?? ""
+            )
         }
     }
 

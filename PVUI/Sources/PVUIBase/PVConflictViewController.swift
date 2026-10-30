@@ -122,34 +122,32 @@ extension PVConflictViewController { // : UITableViewDataSource, UITableViewDele
     public override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
         if case .conflict(let conflict) = rows[indexPath.row] {
-            showSystemSelectionAlert(for: conflict, at: indexPath)
+            showSystemSelectionAlert(for: conflict)
         }
     }
 
-    private func showSystemSelectionAlert(for conflict: ConflictsController.ConflictItem, at indexPath: IndexPath) {
+    private func showSystemSelectionAlert(for conflict: ConflictsController.ConflictItem) {
         let showsUnsupportedSystems = Defaults[.unsupportedCores]
-        let alertController = UIAlertController(title: "Choose a System", message: nil, preferredStyle: .actionSheet)
-        alertController.popoverPresentationController?.sourceView = self.view
-        alertController.popoverPresentationController?.sourceRect = self.tableView.rectForRow(at: indexPath)
-        conflict.candidates
+        let systemActions = conflict.candidates
             .filter { $0.supported || showsUnsupportedSystems }
-            .sorted(by: { sys1,sys2 in sys1.identifier < sys2.identifier })
-            .forEach { system in
-                alertController.addAction(.init(title: system.name, style: .default, handler: { _ in
+            .sorted { $0.identifier < $1.identifier }
+            .map { system in
+                PVAlertAction(system.name) { [weak self] in
                     Task {
-                        await self.conflictsController.resolveConflicts(withSolutions: [conflict.path: system])
+                        await self?.conflictsController.resolveConflicts(withSolutions: [conflict.path: system])
                     }
-                }))
+                }
             }
-        alertController.addAction(.init(title: NSLocalizedString("Delete", comment: "Delete file"), style: .destructive, handler: { _ in
+        let deleteAction = PVAlertAction(NSLocalizedString("Delete", comment: "Delete file"), role: .destructive) { [weak self] in
             Task {
-                await self.conflictsController.deleteConflict(path: conflict.path)
+                await self?.conflictsController.deleteConflict(path: conflict.path)
             }
-        }))
-        alertController.addAction(UIAlertAction(title: NSLocalizedString("Cancel", comment: "Cancel"), style: .cancel, handler: nil))
-        self.present(alertController, animated: true) { () -> Void in
-            self.tableView.reloadData()
         }
+        present(PVAlert(
+            title: "Choose a System",
+            style: .actionSheet,
+            actions: systemActions + [deleteAction, .cancel()]
+        ))
     }
 
     public override func tableView(_ tableView: UITableView, shouldIndentWhileEditingRowAt indexPath: IndexPath) -> Bool {

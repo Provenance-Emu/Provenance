@@ -13,6 +13,7 @@ import PVPrimitives
 import PVThemes
 import PVSettings
 import PVCoreBridge
+import PVUIBase
 
 struct SystemSettingsView: View {
     @ObservedResults(PVSystem.self) private var systems
@@ -517,15 +518,12 @@ struct BIOSRow: View {
         .task {
             biosStatus = (bios as BIOSStatusProvider).status
         }
-        .uiKitAlert("MD5 Copied",
-                    message: "The MD5 for \(bios.expectedFilename) has been copied to the pasteboard",
-                    isPresented: $showCopiedAlert,
-                    buttons: {
-            UIAlertAction(title: "OK", style: .default, handler: {
-                _ in
-                showCopiedAlert = false
-            })
-        })
+        .pvAlert(isPresented: $showCopiedAlert) {
+            PVAlert(
+                title: "MD5 Copied",
+                message: "The MD5 for \(bios.expectedFilename) has been copied to the pasteboard"
+            )
+        }
     }
 
     private func statusColor(for status: BIOSStatus?) -> Color {

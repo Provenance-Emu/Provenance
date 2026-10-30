@@ -82,28 +82,28 @@ struct BackupRestoreView: View {
             handleImport(result: result)
         }
         #endif
-        .uiKitAlert(
-            "Backup & Restore",
-            message: alertMessage ?? "",
-            isPresented: $showAlert,
-            buttons: {
-                UIAlertAction(title: "OK", style: .default) { _ in
-                    showAlert = false
-                    alertMessage = nil
-                }
-            }
-        )
-        .uiKitAlert(
-            "Restore Complete",
-            message: "The backup has been restored. Please restart the app for all changes to take effect.",
-            isPresented: $showRestartAlert,
-            buttons: {
-                UIAlertAction(title: "OK", style: .default) { _ in
-                    showRestartAlert = false
-                    coordinator.resetRestoreState()
-                }
-            }
-        )
+        .pvAlert(isPresented: $showAlert) {
+            PVAlert(
+                title: "Backup & Restore",
+                message: alertMessage ?? "",
+                actions: [
+                    .ok {
+                        alertMessage = nil
+                    }
+                ]
+            )
+        }
+        .pvAlert(isPresented: $showRestartAlert) {
+            PVAlert(
+                title: "Restore Complete",
+                message: "The backup has been restored. Please restart the app for all changes to take effect.",
+                actions: [
+                    .ok {
+                        coordinator.resetRestoreState()
+                    }
+                ]
+            )
+        }
         .onAppear {
             // If backup finished while the view was away, show share sheet immediately.
             #if !os(tvOS)

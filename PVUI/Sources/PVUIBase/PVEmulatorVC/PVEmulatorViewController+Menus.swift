@@ -39,15 +39,12 @@ extension PVEmulatorViewController {
         }
         enableControllerInput(false)
         isShowingMenu = false
-        if (presentedViewController is UIAlertController) && !presentedViewController!.isBeingDismissed {
-            dismiss(animated: true) { () -> Void in }
-        }
-        if (presentedViewController is TVAlertController) && !presentedViewController!.isBeingDismissed {
-            dismiss(animated: true) { () -> Void in }
+        if isPresentingPVAlert {
+            PVAlertCenter.shared.dismissCurrent()
         }
         // The pause-tile menu is presented as a generic UIViewController hosting
         // a SwiftUI overlay (see showMenu in PVEmulatorViewController+PauseMenu.swift),
-        // so the type-specific dismissals above don't reach it. When the user
+        // so the alert dismissal above doesn't reach it. When the user
         // toggles pause again with their controller (e.g. PS5 Options button),
         // controllerPauseButtonPressed lands here and we have to actually dismiss
         // that VC ourselves — otherwise the menu stays on screen and only the
@@ -80,37 +77,24 @@ extension PVEmulatorViewController {
     }
 
     @objc public func showSpeedMenu() {
-        let actionSheet = UIAlertController(title: "Game Speed", message: nil, preferredStyle: .actionSheet)
-        actionSheet.popoverPresentationController?.barButtonItem = self.navigationItem.leftBarButtonItem
-        actionSheet.popoverPresentationController?.sourceView = self.navigationItem.titleView ?? self.view
-        if let menuButton = menuButton {
-            actionSheet.popoverPresentationController?.sourceView = menuButton
-            actionSheet.popoverPresentationController?.sourceRect = menuButton.bounds
-        }
-        let speeds = GameSpeed.allCases.map { $0.description }
-        speeds.enumerated().forEach { idx, title in
-            let action = UIAlertAction(title: title, style: .default, handler: { (_: UIAlertAction) -> Void in
+        var actions = GameSpeed.allCases.map { speed in
+            PVAlertAction(speed.description) {
                 self.enableControllerInput(false)
                 self.isShowingMenu = false
-                self.setGameSpeedRespectingAchievements(GameSpeed(rawValue: idx) ?? .normal)
+                self.setGameSpeedRespectingAchievements(speed)
                 self.core.setPauseEmulation(false)
-            })
-            actionSheet.addAction(action)
-            if idx == self.core.gameSpeed.rawValue {
-                actionSheet.preferredAction = action
             }
         }
-        let action = UIAlertAction(title: NSLocalizedString("Cancel", comment: "Cancel"), style: .cancel, handler: { (_: UIAlertAction) -> Void in
+        let currentSpeedID = actions[safe: core.gameSpeed.rawValue]?.id
+        actions.append(.cancel(NSLocalizedString("Cancel", comment: "Cancel")) {
             self.enableControllerInput(false)
             self.isShowingMenu = false
             self.core.setPauseEmulation(false)
         })
-        actionSheet.addAction(action)
-        present(actionSheet, animated: true, completion: { () -> Void in
-            Task.detached { @MainActor in
-                await PVControllerManager.shared.iCadeController?.refreshListener()
-            }
-        })
+        present(PVAlert(title: "Game Speed", style: .actionSheet, actions: actions, preferredActionID: currentSpeedID))
+        Task { @MainActor in
+            await PVControllerManager.shared.iCadeController?.refreshListener()
+        }
     }
 
     public func showMoreInfo() {

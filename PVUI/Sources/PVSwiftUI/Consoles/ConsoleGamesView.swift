@@ -758,30 +758,25 @@ struct ConsoleGamesView: SwiftUI.View {
                         Text(String(localized: "Error: Could not load save states"))
                     }
                 }
-                .uiKitAlert(
-                    "Rename Game",
-                    message: "Enter a new name for \(gamesViewModel.gameToRename?.title ?? "")",
-                    isPresented: $gamesViewModel.showingRenameAlert,
-                    textValue: newGameTitleBindingForAlert,
-                    preferredContentSize: CGSize(width: 300, height: 200),
-                    textField: { textField in
-                        textField.placeholder = "Game name"
-                        textField.clearButtonMode = .whileEditing
-                        textField.autocapitalizationType = .words
-                    }
-                ) {
-                    [
-                        UIAlertAction(title: "Save", style: .default) { _ in
-                            // The submitRename() method in ConsoleGamesView+GameContextMenuDelegate.swift
-                            // has already been updated to use gamesViewModel and handle dismissal.
-                            submitRename()
-                        },
-                        UIAlertAction(title: "Cancel", style: .cancel) { _ in
-                            Task {
-                                await gamesViewModel.cancelRenameAction()
+                .pvAlert(isPresented: $gamesViewModel.showingRenameAlert) {
+                    PVAlert(
+                        title: "Rename Game",
+                        message: "Enter a new name for \(gamesViewModel.gameToRename?.title ?? "")",
+                        actions: [
+                            PVAlertAction("Save", responseHandler: { response in
+                                gamesViewModel.newGameTitle = response.text
+                                // The submitRename() method in ConsoleGamesView+GameContextMenuDelegate.swift
+                                // has already been updated to use gamesViewModel and handle dismissal.
+                                submitRename()
+                            }),
+                            PVAlertAction("Cancel", role: .cancel) {
+                                Task {
+                                    await gamesViewModel.cancelRenameAction()
+                                }
                             }
-                        }
-                    ]
+                        ],
+                        textFields: [PVAlertTextField(placeholder: "Game name", text: gamesViewModel.newGameTitle)]
+                    )
                 }
                 .sheet(item: $gamesViewModel.systemMoveState) { state in
                     SystemPickerView(
@@ -796,62 +791,60 @@ struct ConsoleGamesView: SwiftUI.View {
                         )
                     )
                 }
-                .uiKitAlert(
-                    "Choose Artwork Source",
-                    message: "Select artwork from your photo library or search online sources",
-                    isPresented: $gamesViewModel.showArtworkSourceAlert,
-                    buttons: {
-                        UIAlertAction(title: "Search Online", style: .default) { _ in
-                            Task { @MainActor in
-                                // gameForArtworkUpdate is already set in gamesViewModel via prepareArtworkSourceAlert
-                                await gamesViewModel.handleSearchOnline()
-                                // After alert is dismissed by ViewModel, trigger the sheet
-                                gamesViewModel.showArtworkSearch = true
+                .pvAlert(isPresented: $gamesViewModel.showArtworkSourceAlert) {
+                    PVAlert(
+                        title: "Choose Artwork Source",
+                        message: "Select artwork from your photo library or search online sources",
+                        actions: [
+                            PVAlertAction("Search Online") {
+                                Task { @MainActor in
+                                    // gameForArtworkUpdate is already set in gamesViewModel via prepareArtworkSourceAlert
+                                    await gamesViewModel.handleSearchOnline()
+                                    // After alert is dismissed by ViewModel, trigger the sheet
+                                    gamesViewModel.showArtworkSearch = true
+                                }
+                            },
+                            PVAlertAction("Select from Photos") {
+                                Task { @MainActor in
+                                    await gamesViewModel.handleSelectFromPhotos()
+                                    // After alert is dismissed by ViewModel, trigger the sheet
+                                    gamesViewModel.showImagePicker = true
+                                }
+                            },
+                            PVAlertAction(NSLocalizedString("Cancel", comment: "Cancel"), role: .cancel) {
+                                Task { @MainActor in
+                                    await gamesViewModel.cancelArtworkSourceAlert()
+                                }
                             }
-                        }
-                        UIAlertAction(title: "Select from Photos", style: .default) { _ in
-                            Task { @MainActor in
-                                await gamesViewModel.handleSelectFromPhotos()
-                                // After alert is dismissed by ViewModel, trigger the sheet
-                                gamesViewModel.showImagePicker = true
-                            }
-                        }
-                        UIAlertAction(title:  NSLocalizedString("Cancel", comment: "Cancel"), style: .cancel) { _ in
-                            Task { @MainActor in
-                                await gamesViewModel.cancelArtworkSourceAlert()
-                            }
-                        }
-                    }
-                )
-                .uiKitAlert(
-                    "Select Disc",
-                    message: "Choose which disc to load",
+                        ]
+                    )
+                }
+                .pvAlert(
                     isPresented: Binding(
                         get: { gamesViewModel.discSelectionAlert != nil },
                         set: { if !$0 { gamesViewModel.discSelectionAlert = nil } }
-                    ),
-                    preferredContentSize: CGSize(width: 500, height: 300),
-                    buttons: {
-                        if let alert = gamesViewModel.discSelectionAlert, let game = alert.game  {
-                            let actions = alert.discs.map { (disc: DiscSelectionAlert.Disc) -> UIAlertAction in
-                                UIAlertAction(title: disc.fileName, style: .default) { _ in
-                                    gamesViewModel.discSelectionAlert = nil
-                                    Task { @MainActor in
-                                        SceneCoordinator.shared.launchGame(game.freeze(), discPath: disc.path, core: nil, saveState: nil)
-                                    }
+                    )
+                ) {
+                    let cancel = PVAlertAction(NSLocalizedString("Cancel", comment: "Cancel"), role: .cancel) {
+                        gamesViewModel.discSelectionAlert = nil
+                    }
+                    var discActions: [PVAlertAction] = []
+                    if let alert = gamesViewModel.discSelectionAlert, let game = alert.game {
+                        discActions = alert.discs.map { (disc: DiscSelectionAlert.Disc) in
+                            PVAlertAction(disc.fileName) {
+                                gamesViewModel.discSelectionAlert = nil
+                                Task { @MainActor in
+                                    SceneCoordinator.shared.launchGame(game.freeze(), discPath: disc.path, core: nil, saveState: nil)
                                 }
                             }
-
-                            actions + [UIAlertAction(title: NSLocalizedString("Cancel", comment: "Cancel"), style: .cancel) { _ in
-                                gamesViewModel.discSelectionAlert = nil
-                            }]
-                        } else {
-                            [UIAlertAction(title: NSLocalizedString("Cancel", comment: "Cancel"), style: .cancel) { _ in
-                                gamesViewModel.discSelectionAlert = nil
-                            }]
                         }
                     }
-                )
+                    return PVAlert(
+                        title: "Select Disc",
+                        message: "Choose which disc to load",
+                        actions: discActions + [cancel]
+                    )
+                }
                 .sheet(isPresented: $gamesViewModel.showCoreOptionsSheet) {
                     if let className = gamesViewModel.coreOptionsClassName,
                        let coreClass = NSClassFromString(className) as? CoreOptional.Type {
@@ -1495,13 +1488,6 @@ struct ConsoleGamesView: SwiftUI.View {
                 }
             }
         }
-    }
-
-    private var newGameTitleBindingForAlert: Binding<String?> {
-        Binding<String?>(
-            get: { gamesViewModel.newGameTitle },
-            set: { gamesViewModel.newGameTitle = $0 ?? "" }
-        )
     }
 
 }

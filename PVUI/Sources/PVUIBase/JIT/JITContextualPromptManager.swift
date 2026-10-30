@@ -311,18 +311,15 @@ public final class JITContextualPromptManager {
         #else
         message += "\n\nEnable via AltStore, SideStore, or StikDebug before launching."
         #endif
-        let alert = UIAlertController(
+        ask(PVAlert(
             title: "Performance Mode Required",
             message: message,
-            preferredStyle: .alert
-        )
-        alert.addAction(UIAlertAction(title: "Launch Anyway", style: .destructive) { _ in
-            completion(true)
-        })
-        alert.addAction(UIAlertAction(title: "Cancel", style: .cancel) { _ in
-            completion(false)
-        })
-        viewController.present(alert, animated: true)
+            type: .warning,
+            actions: [
+                PVAlertAction("Launch Anyway", role: .destructive) { completion(true) },
+                .cancel { completion(false) }
+            ]
+        ), from: viewController, completion: completion)
     }
 
     @MainActor
@@ -332,18 +329,15 @@ public final class JITContextualPromptManager {
         completion: @escaping @Sendable (Bool) -> Void
     ) {
         let message = "\(coreName) runs best with JIT (Performance Mode), which isn't available on this device. Expect reduced performance."
-        let alert = UIAlertController(
+        ask(PVAlert(
             title: "Reduced Performance Expected",
             message: message,
-            preferredStyle: .alert
-        )
-        alert.addAction(UIAlertAction(title: "Launch", style: .default) { _ in
-            completion(true)
-        })
-        alert.addAction(UIAlertAction(title: "Cancel", style: .cancel) { _ in
-            completion(false)
-        })
-        viewController.present(alert, animated: true)
+            type: .warning,
+            actions: [
+                PVAlertAction("Launch") { completion(true) },
+                .cancel { completion(false) }
+            ]
+        ), from: viewController, completion: completion)
     }
 
     @MainActor
@@ -370,21 +364,29 @@ public final class JITContextualPromptManager {
             + "\n\nEnable via AltStore, SideStore, or StikDebug for the best experience."
             + " You can also set a per-game preference in Game Info."
         #endif
-        let alert = UIAlertController(
+        ask(PVAlert(
             title: "Performance Mode Available",
             message: message,
-            preferredStyle: .alert
-        )
-        alert.addAction(UIAlertAction(title: "Launch", style: .default) { _ in
-            completion(true)
-        })
-        alert.addAction(UIAlertAction(title: "Skip JIT for This Game", style: .default) { _ in
-            Defaults.setJITPreference(.skipJIT, forGameMD5: gameMD5)
-            completion(true)
-        })
-        alert.addAction(UIAlertAction(title: "Cancel", style: .cancel) { _ in
-            completion(false)
-        })
-        viewController.present(alert, animated: true)
+            type: .standard,
+            actions: [
+                PVAlertAction("Launch") { completion(true) },
+                PVAlertAction("Skip JIT for This Game") {
+                    Defaults.setJITPreference(.skipJIT, forGameMD5: gameMD5)
+                    completion(true)
+                },
+                .cancel { completion(false) }
+            ]
+        ), from: viewController, completion: completion)
+    }
+
+    /// Shows `alert`; its actions call `completion`. An alert taken down without an
+    /// answer counts as Cancel, so the launch never waits forever.
+    @MainActor
+    private func ask(_ alert: PVAlert, from viewController: UIViewController, completion: @escaping @Sendable (Bool) -> Void) {
+        Task { @MainActor in
+            if await PVAlertCenter.shared.presentAndWait(alert, from: viewController) == nil {
+                completion(false)
+            }
+        }
     }
 }

@@ -57,7 +57,7 @@ public protocol GameLaunchingViewController: AnyObject {
 
     func displayAndLogError(withTitle title: String,
                             message: String,
-                            customActions: [UIAlertAction]?)
+                            customActions: [PVAlertAction]?)
 }
 
 /// The result of the unified launch flow for game launching
@@ -118,7 +118,7 @@ public extension GameLaunchingViewController {
         let relativeBiosPath = "\(rootDirName)/BIOS/\(system.identifier)/"
 
         let message = "\(system.shortName) requires BIOS files to run games. Ensure the following files are inside \(relativeBiosPath)\n\(missingFilesString)"
-        let cancelAction = UIAlertAction(title: "Close", style: .destructive)
+        let cancelAction = PVAlertAction.cancel("Close")
 #if os(iOS)
         let guideAction = BIOSGuideLink.alertAction()
         displayAndLogError(withTitle: "Missing BIOS files", message: message, customActions: [guideAction, cancelAction])
@@ -1338,100 +1338,48 @@ extension GameLaunchingViewController where Self: UIViewController {
             (!$0.disabled || unsupportedCores) && $0.hasCoreClass && !(AppState.shared.isAppStore && $0.appStoreDisabled)
         }.sorted(by: Self.corePickerOrder)
 
-        let coreChoiceAlert = UIAlertController(title: "Multiple cores found",
-                                                message: "Select which core to use with this game.",
-                                                preferredStyle: .actionSheet)
-#if os(macOS) || targetEnvironment(macCatalyst)
-        if let senderView = sender as? UIView ?? self.view {
-            coreChoiceAlert.popoverPresentationController?.sourceView = senderView
-            coreChoiceAlert.popoverPresentationController?.sourceRect = senderView.bounds
-        } else {
-            ELOG("Nil senderView")
-            assertionFailure("Nil senderview")
-        }
-#else
-        if traitCollection.userInterfaceIdiom == .pad, let senderView = sender as? UIView ?? self.view {
-            coreChoiceAlert.popoverPresentationController?.sourceView = senderView
-            coreChoiceAlert.popoverPresentationController?.sourceRect = senderView.bounds
-        }
-#endif
-
-        for core in cores {
-            let action = UIAlertAction(title: core.displayName, style: .default) { [unowned self] _ in
-                let message = "Open with \(core.displayName)…"
-                let alwaysUseAlert = UIAlertController(title: nil, message: message, preferredStyle: .actionSheet)
-#if os(macOS) || targetEnvironment(macCatalyst)
-                if let senderView = sender as? UIView ?? self.view {
-                    alwaysUseAlert.popoverPresentationController?.sourceView = senderView
-                    alwaysUseAlert.popoverPresentationController?.sourceRect = senderView.bounds
-                } else {
-                    ELOG("Nil senderView")
-                    assertionFailure("Nil senderview")
-                }
-#else
-                if self.traitCollection.userInterfaceIdiom == .pad, let senderView = sender as? UIView ?? self.view {
-                    alwaysUseAlert.popoverPresentationController?.sourceView = senderView
-                    alwaysUseAlert.popoverPresentationController?.sourceRect = senderView.bounds
-                }
-#endif
-
-                let thisTimeOnlyAction = UIAlertAction(title: "This time", style: .default, handler: { _ in
-                    Task { @MainActor in
-                        await self.presentEMU(withCore: core, forGame: game, source: sender as? UIView ?? self.view)
-                    }
-                })
-                let alwaysThisGameAction = UIAlertAction(title: "Always for this game", style: .default, handler: { [unowned self] _ in
-                    try! RomDatabase.sharedInstance.writeTransaction {
-                        game.userPreferredCoreID = core.identifier
-                    }
-                    Task { @MainActor in
-                        await self.presentEMU(withCore: core, forGame: game, source: sender as? UIView ?? self.view)
-                    }
-                })
-                let alwaysThisSystemAction = UIAlertAction(title: "Always for this system", style: .default, handler: { [unowned self] _ in
-                    try! RomDatabase.sharedInstance.writeTransaction {
-                        system.userPreferredCoreID = core.identifier
-                    }
-                    Task { @MainActor in
-                        await self.presentEMU(withCore: core, forGame: game, source: sender as? UIView ?? self.view)
-                    }
-                })
-
-                alwaysUseAlert.addAction(thisTimeOnlyAction)
-                alwaysUseAlert.addAction(alwaysThisGameAction)
-                alwaysUseAlert.addAction(alwaysThisSystemAction)
-
-                self.present(alwaysUseAlert, animated: true)
+        let source = sender as? UIView ?? self.view
+        let launch: (PVCore) -> Void = { [weak self] core in
+            Task { @MainActor in
+                await self?.presentEMU(withCore: core, forGame: game, source: source)
             }
-
-            coreChoiceAlert.addAction(action)
+        }
+        let coreActions = cores.map { core in
+            PVAlertAction(core.displayName) { [weak self] in
+                self?.present(PVAlert(
+                    title: "Open with \(core.displayName)…",
+                    style: .actionSheet,
+                    actions: [
+                        PVAlertAction("This time") { launch(core) },
+                        PVAlertAction("Always for this game") {
+                            try? RomDatabase.sharedInstance.writeTransaction {
+                                game.userPreferredCoreID = core.identifier
+                            }
+                            launch(core)
+                        },
+                        PVAlertAction("Always for this system") {
+                            try? RomDatabase.sharedInstance.writeTransaction {
+                                system.userPreferredCoreID = core.identifier
+                            }
+                            launch(core)
+                        },
+                        .cancel()
+                    ]
+                ))
+            }
         }
 
-        coreChoiceAlert.addAction(UIAlertAction(title: NSLocalizedString("Cancel", comment: "Cancel"), style: .destructive, handler: nil))
-
-        present(coreChoiceAlert, animated: true)
+        present(PVAlert(
+            title: "Multiple cores found",
+            message: "Select which core to use with this game.",
+            style: .actionSheet,
+            actions: coreActions + [.cancel()]
+        ))
     }
 
-    func displayAndLogError(withTitle title: String, message: String, customActions: [UIAlertAction]? = nil) {
+    func displayAndLogError(withTitle title: String, message: String, customActions: [PVAlertAction]? = nil) {
         ELOG(message)
-
-        // Use RetroWave styled alert for simple OK-only alerts
-        if customActions == nil || customActions?.isEmpty == true {
-            Task { @MainActor in
-                SceneCoordinator.shared.alertState.show(
-                    title: title,
-                    message: message,
-                    type: .error
-                )
-            }
-        } else {
-            // Fall back to UIKit alert for complex alerts with custom actions
-            let alertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
-            alertController.popoverPresentationController?.barButtonItem = navigationItem.leftBarButtonItem
-            customActions?.forEach { alertController.addAction($0) }
-            alertController.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
-            present(alertController, animated: true)
-        }
+        present(PVAlert(title: title, message: message, type: .error, actions: customActions ?? []))
     }
 
     /// Presents the emulator and optionally prompts the user about continuing from a save state.
@@ -1475,7 +1423,7 @@ extension GameLaunchingViewController where Self: UIViewController {
             @ThreadSafe var theadsafeCore = core
             @ThreadSafe var threadsafeGame = game
 
-            await checkForSaveStateThenRun(withCore: theadsafeCore!, forGame: threadsafeGame!, source: source) { optionallyChosenSaveState in
+            await checkForSaveStateThenRun(withCore: theadsafeCore!, forGame: threadsafeGame!) { optionallyChosenSaveState in
                 self.presentEMUVC(emulatorViewController, withGame: game, loadingSaveState: optionallyChosenSaveState)
             }
         } else {
@@ -1540,7 +1488,7 @@ extension GameLaunchingViewController where Self: UIViewController {
     }
 
     @MainActor
-    private func checkForSaveStateThenRun(withCore core: PVCore, forGame game: PVGame, source: UIView?, completion: @escaping (PVSaveState?) -> Void) async {
+    private func checkForSaveStateThenRun(withCore core: PVCore, forGame game: PVGame, completion: @escaping (PVSaveState?) -> Void) async {
         var foundSave = false
         // Note: saveStates already includes autoSaves (autoSaves is a filtered subset)
         let saves = game.saveStates.filter("core.identifier == \"\(core.identifier)\"")
@@ -1565,78 +1513,31 @@ extension GameLaunchingViewController where Self: UIViewController {
             if shouldAutoLoadSaveState {
                 completion(latestSaveState)
             } else if shouldAskToLoadSaveState {
-                Task { @MainActor in
-                    // 1) Alert to ask about loading latest save state
-                    let alert = UIAlertController(title: "Save State Detected", message: nil, preferredStyle: .actionSheet)
-                    // TODO: XCode15/iOS17 Requires actual source view here
-                    alert.preferredContentSize = CGSize(width: 300, height: 150)
-                    alert.popoverPresentationController?.sourceView = source
-                    alert.popoverPresentationController?.sourceRect = source?.bounds ?? UIScreen.main.bounds
-#if os(iOS)
-                    let switchControl = UISwitch()
-                    switchControl.isOn = !Defaults[.askToAutoLoad]
-                    textEditBlocker.switchControl = switchControl
-
-                    // Add a save this setting toggle
-                    alert.addTextField { textField in
-                        textField.text = "Auto Load Saves"
-                        textField.rightViewMode = .always
-                        textField.rightView = switchControl
-                        textField.borderStyle = .none
-                        textField.delegate = textEditBlocker // Weak ref
-                        switchControl.transform = CGAffineTransform(scaleX: 0.90, y: 0.90)
-                    }
-#endif
-
-                    // Restart
-                    alert.addAction(UIAlertAction(title: "Restart", style: .default, handler: { (_: UIAlertAction) -> Void in
-#if os(iOS)
-                        if switchControl.isOn {
-                            Defaults[.askToAutoLoad] = false
-                            Defaults[.autoLoadSaves] = false
-                        }
-#endif
-                        completion(nil)
-                    }))
-
-#if os(tvOS)
-                    alert.addAction(UIAlertAction(title: "Restart (Always)", style: .default, handler: { (_: UIAlertAction) -> Void in
-                        Defaults[.askToAutoLoad] = false
-                        Defaults[.autoLoadSaves] = false
-                        completion(nil)
-                    }))
-#endif
-
-                    // Continue
-                    alert.addAction(UIAlertAction(title: "Continue", style: .default, handler: { (_: UIAlertAction) -> Void in
-#if os(iOS)
-                        if switchControl.isOn {
-                            Defaults[.askToAutoLoad] = false
-                            Defaults[.autoLoadSaves] = true
-                        }
-#endif
-                        completion(latestSaveState)
-                    }))
-                    alert.preferredAction = alert.actions.last
-
-#if os(tvOS)
-                    // Continue Always
-                    alert.addAction(UIAlertAction(title: "Continue (Always)", style: .default, handler: { (_: UIAlertAction) -> Void in
-                        Defaults[.askToAutoLoad] = false
-                        Defaults[.autoLoadSaves] = true
-                        completion(latestSaveState)
-                    }))
-#endif
-
-                    alert.addAction(UIAlertAction(title: NSLocalizedString("Cancel", comment: "Cancel"), style: .cancel, handler: nil))
-
-                    // Present the alert
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) { [weak self] in
-                        guard let `self` = self else { return }
-
-                        self.present(alert, animated: true)
-                    }
+                // "Auto Load Saves" remembers the answer and stops asking.
+                let rememberChoice: (PVAlertResponse, Bool) -> Void = { response, autoLoad in
+                    guard response.toggleValue else { return }
+                    Defaults[.askToAutoLoad] = false
+                    Defaults[.autoLoadSaves] = autoLoad
                 }
+                let continueAction = PVAlertAction("Continue") { response in
+                    rememberChoice(response, true)
+                    completion(latestSaveState)
+                }
+                present(PVAlert(
+                    title: "Save State Detected",
+                    message: "Continue from your latest save, or restart the game?",
+                    style: .actionSheet,
+                    actions: [
+                        continueAction,
+                        PVAlertAction("Restart") { response in
+                            rememberChoice(response, false)
+                            completion(nil)
+                        },
+                        .cancel()
+                    ],
+                    toggle: PVAlertToggle("Auto Load Saves", isOn: !Defaults[.askToAutoLoad]),
+                    preferredActionID: continueAction.id
+                ))
             } else {
                 // Asking is turned off, either load the save state or don't based on the 'autoLoadSaves' setting
                 completion(shouldAutoLoadSaveState ? latestSaveState : nil)

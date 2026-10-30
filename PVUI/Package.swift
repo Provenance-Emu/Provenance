@@ -373,9 +373,6 @@ let package = Package(
             name: "PVUI_IOS",
             dependencies: [
 //                .product(name: "Dependencies", package: "swift-dependencies")
-            ],
-            resources: [
-                .process("Resources/StoryBoards/")
             ]
         ),
 
@@ -402,7 +399,6 @@ let package = Package(
 //                .product(name: "Dependencies", package: "swift-dependencies")
             ],
             resources: [
-                .process("Resources/StoryBoards/"),
                 .process("Resources/TVAssets.xcassets"),
                 .process("Resources/LaunchImageTV.png")
             ]

@@ -6,27 +6,70 @@
 //
 
 import SwiftUI
+import Defaults
+import PVSettings
+import PVThemes
 import PVUIBase
-#if canImport(PVUI_IOS)
-import PVUI_IOS
-#endif
-#if canImport(PVUI_TV)
-import PVUI_TV
-#endif
-import PVUIKit
 
-struct ICadeControllerView: UIViewControllerRepresentable {
-    func makeUIViewController(context: Context) -> PViCadeControllerViewController {
-#if canImport(PVUI_IOS)
-        let storyboard = UIStoryboard(name: "Settings", bundle: PVUI_IOS.BundleLoader.bundle)
-        return storyboard.instantiateViewController(withIdentifier: "PViCadeControllerViewController") as! PViCadeControllerViewController
-#elseif canImport(PVUI_TV)
-        let storyboard = UIStoryboard(name: "Settings", bundle: PVUI_TV.BundleLoader.bundle)
-        return storyboard.instantiateViewController(withIdentifier: "PViCadeControllerViewController") as! PViCadeControllerViewController
-#endif
+/// Settings → Controllers → iCade / 8Bitdo: picks which iCade-protocol controller is paired.
+struct ICadeControllerView: View {
+    @Default(.myiCadeControllerSetting) private var selection
+
+    @Environment(\.dismiss) private var dismiss
+    @ObservedObject private var themeManager = ThemeManager.shared
+
+    private var accentColor: Color {
+        themeManager.currentPalette.defaultTintColor.swiftUIColor ?? .accentColor
     }
 
-    func updateUIViewController(_ uiViewController: PViCadeControllerViewController, context: Context) {
-        // Update the view controller if needed
+    var body: some View {
+        List {
+            Section {
+                ForEach(iCadeControllerSetting.allCases, id: \.self) { setting in
+                    Button {
+                        select(setting)
+                    } label: {
+                        HStack {
+                            Text(setting.description)
+                                .foregroundColor(themeManager.currentPalette.gameLibraryText.swiftUIColor)
+                            Spacer()
+                            if selection == setting {
+                                Image(systemName: "checkmark")
+                                    .foregroundColor(accentColor)
+                            }
+                        }
+                    }
+                    #if os(tvOS)
+                    .retroFocusButtonStyle(showBorder: false)
+                    #endif
+                }
+            } header: {
+                Text("Supported iCade Controllers")
+            } footer: {
+                Text("Controllers must be paired with device.")
+            }
+        }
+        #if os(tvOS)
+        .listStyle(.plain)
+        .background { RetroSettingsBackground() }
+        .tvOSSettingsHorizontalPadding()
+        #else
+        .listStyle(.insetGrouped)
+        #endif
+        .navigationTitle("iCade / 8Bitdo")
+        #if os(tvOS)
+        .focusSection()
+        .onExitCommand { dismiss() }
+        #endif
+        .settingsSubpageTracking()
+        #if !os(tvOS)
+        .navigationBarTitleDisplayMode(.inline)
+        #endif
+    }
+
+    private func select(_ setting: iCadeControllerSetting) {
+        selection = setting
+        PVControllerManager.shared.resetICadeController()
+        dismiss()
     }
 }

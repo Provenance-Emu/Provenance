@@ -331,39 +331,16 @@ struct EmulatorContainerView: UIViewControllerRepresentable {
         }
     }
 
-    private func displayAndLogError(withTitle title: String, message: String, customActions: [UIAlertAction]?) {
-        /// Get root view controller using modern API
-        guard let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
-              let viewController = windowScene.windows.first?.rootViewController else {
-            ELOG("EmulatorContainerView: Could not find root view controller to present error")
-            /// Fallback: just close the emulator if we can't present the alert
-            AppState.shared.emulationUIState.reset()
-            SceneCoordinator.shared.closeEmulator()
-            return
-        }
-
-        /// Find the topmost presented view controller
-        var topController = viewController
-        while let presented = topController.presentedViewController {
-            topController = presented
-        }
-
-        let alertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
-
-        if let customActions = customActions {
-            for action in customActions {
-                alertController.addAction(action)
-            }
-        } else {
-            alertController.addAction(UIAlertAction(title: "OK", style: .default, handler: { _ in
+    private func displayAndLogError(withTitle title: String, message: String, customActions: [PVAlertAction]?) {
+        let actions = customActions ?? [
+            .ok {
                 ILOG("EmulatorContainerView: User dismissed error alert, returning to main scene")
                 /// Reset state and close emulator immediately
                 AppState.shared.emulationUIState.reset()
                 SceneCoordinator.shared.closeEmulator()
-            }))
-        }
-
-        topController.present(alertController, animated: true)
+            }
+        ]
+        PVAlertCenter.shared.present(PVAlert(title: title, message: message, type: .error, actions: actions))
     }
 
     func updateRecentGames(_ game: PVGame) {
@@ -481,29 +458,16 @@ class EmulatorContainerViewController: UIViewController, GameLaunchingViewContro
         }
     }
 
-    func displayAndLogError(withTitle title: String, message: String, customActions: [UIAlertAction]?) {
-        let alertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
-
-        if let customActions = customActions {
-            for action in customActions {
-                alertController.addAction(action)
-            }
-        } else {
-            alertController.addAction(UIAlertAction(title: "OK", style: .default, handler: { [weak self] _ in
+    func displayAndLogError(withTitle title: String, message: String, customActions: [PVAlertAction]?) {
+        let actions = customActions ?? [
+            .ok { [weak self] in
                 ILOG("EmulatorContainerViewController: User dismissed error alert, returning to main scene")
                 // Tear down the hosted emulator (stops core/audio/timers + detaches the
                 // child VC). Error paths otherwise skip quit() and leak the core+VC+Metal view.
                 self?.tearDownEmulatorAndClose(optionallySave: false)
-            }))
-        }
-
-        /// Find the topmost presented view controller
-        var topController: UIViewController = self
-        while let presented = topController.presentedViewController {
-            topController = presented
-        }
-
-        topController.present(alertController, animated: true, completion: nil)
+            }
+        ]
+        present(PVAlert(title: title, message: message, type: .error, actions: actions))
     }
 
     func updateRecentGames(_ game: PVGame) {
@@ -662,10 +626,10 @@ class EmulatorContainerViewController: UIViewController, GameLaunchingViewContro
             // Passing `customActions` suppresses the auto-added OK button, so the
             // dismiss action must perform the teardown itself — otherwise the core,
             // audio, timers and child VC leak (see `displayAndLogError` below).
-            let closeAction = UIAlertAction(title: "Close", style: .destructive, handler: { [weak self] _ in
+            let closeAction = PVAlertAction.cancel("Close") { [weak self] in
                 ILOG("EmulatorContainerViewController: User dismissed missing BIOS alert, returning to main scene")
                 self?.tearDownEmulatorAndClose(optionallySave: false)
-            })
+            }
             // The guide action dismisses the alert too, so it performs the same
             // teardown rather than stranding the user on a dead emulator screen.
             let guideAction = BIOSGuideLink.alertAction(then: { [weak self] in

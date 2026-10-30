@@ -498,19 +498,17 @@ struct CoreOptionsListView: View {
             DLOG("CoreOptions: Loading core items for \(cores.count) cores")
             await loadCoreItems()
         }
-        .uiKitAlert(
-            "Reset All Core Options",
-            message: "Are you sure you want to reset ALL options for ALL cores to their default values? This cannot be undone.",
-            isPresented: $showResetAllConfirmation
-        ) {
-            UIAlertAction(title: "Reset All", style: .destructive) { _ in
-                resetAllCoreOptions()
-                showResetAllConfirmation = false
-            }
-
-            UIAlertAction(title: "Cancel", style: .cancel) { _ in
-                showResetAllConfirmation = false
-            }
+        .pvAlert(isPresented: $showResetAllConfirmation) {
+            PVAlert(
+                title: "Reset All Core Options",
+                message: "Are you sure you want to reset ALL options for ALL cores to their default values? This cannot be undone.",
+                actions: [
+                    PVAlertAction("Reset All", role: .destructive) {
+                        resetAllCoreOptions()
+                    },
+                    .cancel()
+                ]
+            )
         }
     }
 

@@ -426,20 +426,21 @@ private struct GameContextMenuItems: View {
             }.value
             hasBatterySaves = result
         }
-        .uiKitAlert(
-            "Choose Artwork Source",
-            message: "Select artwork from your photo library or search online sources",
-            isPresented: $showArtworkSourceAlert,
-            buttons: {
-                UIAlertAction(title: "Select from Photos", style: .default) { [contextMenuDelegate] _ in
-                    contextMenuDelegate?.gameContextMenu(menu, didRequestShowImagePickerFor: game)
-                }
-                UIAlertAction(title: "Search Online", style: .default) { [contextMenuDelegate] _ in
-                    contextMenuDelegate?.gameContextMenu(menu, didRequestShowArtworkSearchFor: game)
-                }
-                UIAlertAction(title: "Cancel", style: .cancel)
-            }
-        )
+        .pvAlert(isPresented: $showArtworkSourceAlert) {
+            PVAlert(
+                title: "Choose Artwork Source",
+                message: "Select artwork from your photo library or search online sources",
+                actions: [
+                    PVAlertAction("Select from Photos") { [contextMenuDelegate] in
+                        contextMenuDelegate?.gameContextMenu(menu, didRequestShowImagePickerFor: game)
+                    },
+                    PVAlertAction("Search Online") { [contextMenuDelegate] in
+                        contextMenuDelegate?.gameContextMenu(menu, didRequestShowArtworkSearchFor: game)
+                    },
+                    PVAlertAction("Cancel", role: .cancel)
+                ]
+            )
+        }
     }
 
     // Move heavy operations to background tasks
@@ -726,12 +727,10 @@ extension GameContextMenuItems {
         let hasGamePreference = game.userPreferredCoreID != nil
         let hasSystemPreference = game.system?.userPreferredCoreID != nil
 
-        let alert = UIAlertController(title: "Reset Core Preferences",
-                                    message: "Which core preference would you like to reset?",
-                                    preferredStyle: .alert)
+        var actions: [PVAlertAction] = []
 
         if hasGamePreference {
-            alert.addAction(UIAlertAction(title: "Game Preference", style: .default) { _ in
+            actions.append(PVAlertAction("Game Preference") {
                 try! Realm().write {
                     game.thaw()?.userPreferredCoreID = nil
                 }
@@ -739,7 +738,7 @@ extension GameContextMenuItems {
         }
 
         if hasSystemPreference {
-            alert.addAction(UIAlertAction(title: "System Preference", style: .default) { _ in
+            actions.append(PVAlertAction("System Preference") {
                 try! Realm().write {
                     game.system?.thaw()?.userPreferredCoreID = nil
                 }
@@ -747,7 +746,7 @@ extension GameContextMenuItems {
         }
 
         if hasGamePreference && hasSystemPreference {
-            alert.addAction(UIAlertAction(title: "Both", style: .default) { _ in
+            actions.append(PVAlertAction("Both") {
                 try! Realm().write {
                     game.thaw()?.userPreferredCoreID = nil
                     game.system?.thaw()?.userPreferredCoreID = nil
@@ -755,12 +754,13 @@ extension GameContextMenuItems {
             })
         }
 
-        alert.addAction(UIAlertAction(title: "Cancel", style: .cancel))
+        actions.append(PVAlertAction("Cancel", role: .cancel))
 
-        if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
-           let viewController = windowScene.windows.first?.rootViewController {
-            viewController.present(alert, animated: true)
-        }
+        PVAlertCenter.shared.present(PVAlert(
+            title: "Reset Core Preferences",
+            message: "Which core preference would you like to reset?",
+            actions: actions
+        ))
     }
 
     /// Check if game has a per-game skin preference set

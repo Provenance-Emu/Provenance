@@ -10,5 +10,6 @@ import Foundation
 public let PVUI_IOSVersion = "1.0.0"
 
 public class BundleLoader {
-    public static let bundle: Bundle = Bundle.module
+    /// PVUI_IOS has no resources of its own any more; this is the code bundle that holds it.
+    public static let bundle = Bundle(for: BundleLoader.self)
 }

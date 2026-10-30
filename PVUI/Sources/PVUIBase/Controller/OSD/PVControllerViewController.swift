@@ -2133,13 +2133,10 @@ open class PVControllerViewController<T: ResponderClient> : UIViewController, Co
             guard PlusEntitlement.isUnlocked else {
                 // Recording is a Plus feature; direct the user to the pause menu where
                 // the paywall is presented via PaidFeatureView.
-                let alert = UIAlertController(
+                present(PVAlert(
                     title: "Provenance Plus Required",
-                    message: "Gameplay recording is a Provenance Plus feature. Open the pause menu to upgrade.",
-                    preferredStyle: .alert
-                )
-                alert.addAction(UIAlertAction(title: "OK", style: .default))
-                present(alert, animated: true)
+                    message: "Gameplay recording is a Provenance Plus feature. Open the pause menu to upgrade."
+                ))
                 return
             }
         }

@@ -128,16 +128,16 @@ public struct BatchArtworkMatchingView: View {
             // Load games on first appearance
             await loadGamesNeedingArtwork()
         }
-        .uiKitAlert(
-            "Error",
-            message: errorMessage ?? "",
-            isPresented: $showErrorAlert,
-            preferredContentSize: CGSize(width: 500, height: 300)
-        ) {
-            UIAlertAction(title: "OK", style: .default) { _ in
-                showErrorAlert = false
-                errorMessage = nil
-            }
+        .pvAlert(isPresented: $showErrorAlert) {
+            PVAlert(
+                title: "Error",
+                message: errorMessage ?? "",
+                actions: [
+                    .ok {
+                        errorMessage = nil
+                    }
+                ]
+            )
         }
     }
 

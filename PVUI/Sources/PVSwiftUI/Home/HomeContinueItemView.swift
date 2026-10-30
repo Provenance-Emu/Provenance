@@ -260,25 +260,23 @@ struct HomeContinueItemView: SwiftUI.View {
                 Label("Delete Save State", systemImage: "trash")
             }
         }
-        .uiKitAlert(
-            "Delete Save State",
-            message: "Are you sure you want to delete this save state for \(gameTitle ?? "Deleted")?",
-            isPresented: $showDeleteAlert,
-            preferredContentSize: CGSize(width: 500, height: 300)
-        ) {
-            UIAlertAction(title: "Delete", style: .destructive) { _ in
-                if let continueState = RomDatabase.sharedInstance.object(ofType: PVSaveState.self, wherePrimaryKeyEquals: saveStateId) {
-                    do {
-                        try RomDatabase.sharedInstance.delete(saveState: continueState)
-                    } catch {
-                        ELOG("Failed to delete save state: \(error.localizedDescription)")
-                    }
-                }
-                showDeleteAlert = false
-            }
-            UIAlertAction(title: NSLocalizedString("Cancel", comment: "Cancel"), style: .cancel) { _ in
-                showDeleteAlert = false
-            }
+        .pvAlert(isPresented: $showDeleteAlert) {
+            PVAlert(
+                title: "Delete Save State",
+                message: "Are you sure you want to delete this save state for \(gameTitle ?? "Deleted")?",
+                actions: [
+                    PVAlertAction("Delete", role: .destructive) {
+                        if let continueState = RomDatabase.sharedInstance.object(ofType: PVSaveState.self, wherePrimaryKeyEquals: saveStateId) {
+                            do {
+                                try RomDatabase.sharedInstance.delete(saveState: continueState)
+                            } catch {
+                                ELOG("Failed to delete save state: \(error.localizedDescription)")
+                            }
+                        }
+                    },
+                    .cancel(NSLocalizedString("Cancel", comment: "Cancel"))
+                ]
+            )
         }
         .onAppear { isVisible = true }
         .onDisappear { isVisible = false }

@@ -42,13 +42,11 @@ extension PVEmulatorViewController {
         // Surface load failures to the user so "GO LIVE" doesn't silently do nothing.
         PVBroadcastManager.shared.onBroadcastLoadError = { [weak self] _ in
             guard let self else { return }
-            let alert = UIAlertController(
+            self.present(PVAlert(
                 title: "Live Broadcast Unavailable",
                 message: "No broadcast extensions are installed. Install an app like Twitch or YouTube to enable live streaming.",
-                preferredStyle: .alert
-            )
-            alert.addAction(UIAlertAction(title: "OK", style: .default))
-            self.present(alert, animated: true)
+                type: .warning
+            ))
         }
         PVBroadcastManager.shared.presentBroadcastActivity(from: presentingVC)
         // isBroadcasting state is updated asynchronously via RPBroadcastControllerDelegate
@@ -225,29 +223,22 @@ extension PVEmulatorViewController {
     // MARK: Private
 
     private func showRecordingError(_ error: Error) {
-        let alert = UIAlertController(
-            title: "Recording Error",
-            message: error.localizedDescription,
-            preferredStyle: .alert
-        )
-        alert.addAction(UIAlertAction(title: "OK", style: .default))
-        present(alert, animated: true)
+        present(PVAlert(title: "Recording Error", message: error.localizedDescription, type: .error))
     }
 
     #if os(tvOS)
     /// On tvOS, after stopping a recording, show a brief confirmation since there
     /// is no `RPPreviewViewController` share sheet.
     private func showRecordingStoppedAlert() {
-        let alert = UIAlertController(
+        present(PVAlert(
             title: "Recording Saved",
             message: "Your gameplay recording has been saved and is accessible via the Apple TV Photos app or iCloud Photo Library.",
-            preferredStyle: .alert
-        )
-        alert.addAction(UIAlertAction(title: "OK", style: .default) { [weak self] _ in
-            guard let self, self.core.isOn else { return }
-            self.core.setPauseEmulation(false)
-        })
-        present(alert, animated: true)
+            type: .success,
+            actions: [.ok { [weak self] in
+                guard let self, self.core.isOn else { return }
+                self.core.setPauseEmulation(false)
+            }]
+        ))
     }
     #endif
 
@@ -296,17 +287,21 @@ extension PVEmulatorViewController {
         // Mark as asked immediately so a swipe-dismiss / interruption (call, power-off)
         // does not cause the prompt to reappear on the next game launch.
         Defaults[.clipBufferingPermissionAsked] = true
-        let alert = UIAlertController(
+        present(PVAlert(
             title: "Save Gameplay Clips",
-            message: "Provenance can keep a rolling buffer of your gameplay so you can save recent clips at any time.\n\nThis uses screen recording and requires your permission.",
-            preferredStyle: .alert
-        )
-        alert.addAction(UIAlertAction(title: "Enable Clips", style: .default) { [weak self] _ in
-            Defaults[.clipBufferingEnabled] = true
-            self?._beginClipBuffering()
-        })
-        alert.addAction(UIAlertAction(title: "Not Now", style: .cancel) { _ in })
-        present(alert, animated: true)
+            message: """
+                Provenance can keep a rolling buffer of your gameplay so you can save recent clips at any time.
+
+                This uses screen recording and requires your permission.
+                """,
+            actions: [
+                PVAlertAction("Enable Clips") { [weak self] in
+                    Defaults[.clipBufferingEnabled] = true
+                    self?._beginClipBuffering()
+                },
+                .cancel("Not Now")
+            ]
+        ))
     }
 
     private func _beginClipBuffering() {
@@ -404,9 +399,7 @@ extension PVEmulatorViewController {
     }
 
     private func showClipAlert(title: String, message: String) {
-        let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "OK", style: .default))
-        present(alert, animated: true)
+        present(PVAlert(title: title, message: message))
     }
 }
 #endif // os(iOS) || os(tvOS)

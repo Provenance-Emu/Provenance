@@ -18,6 +18,7 @@ import PVLogging
 import PVMediaCache
 import PVRealm
 import PVSystems
+import PVUIBase
 import RealmSwift
 import SwiftUI
 import UIKit
@@ -331,60 +332,26 @@ struct HostPromptPresenter: LibraryHostApproving {
     /// away before the peer is told "no".
     static let promptTimeout: TimeInterval = 115
 
-    /// One alert at a time: a prompt that arrives while another is up waits
-    /// its turn instead of failing to present.
-    @MainActor private static var showing = false
-    @MainActor private static var waiting: [CheckedContinuation<Void, Never>] = []
-
+    /// Prompts queue in `PVAlertCenter`, so one that arrives while another is up waits its turn.
     @MainActor
     private func ask<T: Sendable>(
         title: String,
         message: String,
-        choices: [(String, UIAlertAction.Style, T)],
+        choices: [(String, PVAlertAction.Role, T)],
         fallback: T
     ) async -> T {
-        if Self.showing {
-            await withCheckedContinuation { Self.waiting.append($0) }
+        let alert = PVAlert(
+            title: title,
+            message: message,
+            actions: choices.map { PVAlertAction($0.0, role: $0.1) }
+        )
+        let timeout = Task { @MainActor in
+            try await Task.sleep(nanoseconds: UInt64(Self.promptTimeout * 1_000_000_000))
+            PVAlertCenter.shared.dismiss(alertID: alert.id)
         }
-        Self.showing = true
-        defer {
-            if Self.waiting.isEmpty {
-                Self.showing = false
-            } else {
-                Self.waiting.removeFirst().resume()
-            }
-        }
-        guard let presenter = Self.topViewController() else { return fallback }
-        let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
-        return await withCheckedContinuation { (continuation: CheckedContinuation<T, Never>) in
-            var answered = false
-            let answer: (T) -> Void = { value in
-                guard !answered else { return }
-                answered = true
-                continuation.resume(returning: value)
-            }
-            for (label, style, value) in choices {
-                alert.addAction(UIAlertAction(title: label, style: style) { _ in answer(value) })
-            }
-            presenter.present(alert, animated: true)
-            Task { @MainActor in
-                try? await Task.sleep(nanoseconds: UInt64(Self.promptTimeout * 1_000_000_000))
-                guard !answered else { return }
-                alert.dismiss(animated: true)
-                answer(fallback)
-            }
-        }
-    }
-
-    @MainActor
-    private static func topViewController() -> UIViewController? {
-        let scenes = UIApplication.shared.connectedScenes.compactMap { $0 as? UIWindowScene }
-        var top = scenes.first { $0.activationState == .foregroundActive }?.keyWindow?.rootViewController
-            ?? scenes.first?.keyWindow?.rootViewController
-        while let presented = top?.presentedViewController, !presented.isBeingDismissed {
-            top = presented
-        }
-        return top
+        defer { timeout.cancel() }
+        guard let index = await PVAlertCenter.shared.presentAndWait(alert) else { return fallback }
+        return choices[index].2
     }
 }
 #endif

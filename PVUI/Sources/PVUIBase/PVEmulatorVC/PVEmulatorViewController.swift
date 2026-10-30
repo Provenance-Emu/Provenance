@@ -629,35 +629,22 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
             // here but it floated to the library view when the emulator
             // dismissed before the user could read it.
             let title = isBiosError ? "Missing System File" : "Failed to Start"
-            let alert = UIAlertController(title: title,
-                                          message: displayMessage,
-                                          preferredStyle: .alert)
+            var actions: [PVAlertAction] = []
 #if os(iOS)
             // Missing-BIOS messages name the exact files but give the user no way
             // to act on that; the guide explains where to get and put them.
             // Tapping it dismisses the alert, so it also returns to the library —
             // otherwise the user comes back from Safari to a dead emulator screen.
             if isBiosError {
-                alert.addAction(BIOSGuideLink.alertAction(then: {
+                actions.append(BIOSGuideLink.alertAction(then: {
                     self.dismissAndCloseEmulator()
                 }))
             }
 #endif
-            alert.addAction(UIAlertAction(title: "Return to Library",
-                                          style: .default,
-                                          handler: { _ in
+            actions.append(PVAlertAction("Return to Library") {
                 self.dismissAndCloseEmulator()
-            }))
-
-            // If anything else is already presented, dismiss it first so
-            // the alert isn't hidden under another modal.
-            if let presented = self.presentedViewController {
-                presented.dismiss(animated: false) {
-                    self.present(alert, animated: true)
-                }
-            } else {
-                self.present(alert, animated: true)
-            }
+            })
+            self.presentBlockingAlert(PVAlert(title: title, message: displayMessage, type: .error, actions: actions))
         }
     }
 
@@ -696,38 +683,34 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
                 different core or game.
                 """
 
-            let alert = UIAlertController(title: title,
-                                          message: message,
-                                          preferredStyle: .alert)
-            alert.addAction(UIAlertAction(title: "Return to Library",
-                                          style: .default,
-                                          handler: { _ in
-                self.dismissAndCloseEmulator()
-            }))
+            var actions = [
+                PVAlertAction("Return to Library") {
+                    self.dismissAndCloseEmulator()
+                }
+            ]
             #if !os(tvOS)
-            // tvOS: only one button — the remote's Menu / Back already
-            // dismisses. iOS / iPad: also offer a "Copy Error" so
-            // testers can paste into Discord / GitHub without having
-            // to retype.
-            alert.addAction(UIAlertAction(title: "Copy Error",
-                                          style: .default,
-                                          handler: { _ in
+            // iOS / iPad: also offer a "Copy Error" so testers can paste into
+            // Discord / GitHub without having to retype.
+            actions.append(PVAlertAction("Copy Error") {
                 UIPasteboard.general.string =
                     "Core: \(coreName)\nReason: \(reason)"
                 self.dismissAndCloseEmulator()
-            }))
+            })
             #endif
+            self.presentBlockingAlert(PVAlert(title: title, message: message, type: .error, actions: actions))
+        }
+    }
 
-            // If anything else is already presented (smart-picker, save-
-            // state browser, etc.), dismiss it first so the alert isn't
-            // hidden under another modal.
-            if let presented = self.presentedViewController {
-                presented.dismiss(animated: false) {
-                    self.present(alert, animated: true)
-                }
-            } else {
-                self.present(alert, animated: true)
+    /// Shows an alert the user must answer before the emulator closes. Anything
+    /// else already presented (smart picker, save-state browser, …) is dismissed
+    /// first so the alert isn't hidden under another modal.
+    private func presentBlockingAlert(_ alert: PVAlert) {
+        if let presented = presentedViewController, !(presented is PVAlertHostingController) {
+            presented.dismiss(animated: false) {
+                self.present(alert)
             }
+        } else {
+            present(alert)
         }
     }
 
@@ -839,50 +822,17 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
                 let neError = error as NSError
             } catch {
                 let neError = error as NSError
-
-                //                if let presentingViewController = presentingViewController {
-                //                    Task { @MainActor in
-                //                        presentingViewController.presentError(error.localizedDescription, source: self.view)
-                //                    }
-                //                } else {
                 Task { @MainActor in
                     self.hideBootHUDIfNeeded()
-                    let alert = UIAlertController(title: neError.localizedDescription,
-                                                  message: neError.localizedRecoverySuggestion,
-                                                  preferredStyle: .alert)
-
-                    alert.popoverPresentationController?.barButtonItem = self.navigationItem.leftBarButtonItem
-                    alert.popoverPresentationController?.sourceView = self.navigationItem.titleView ?? self.view
-                    alert.addAction(UIAlertAction(title: "OK",
-                                                  style: .default,
-                                                  handler: { (_: UIAlertAction) in
-                                                      ILOG("PVEmulatorViewController: User tapped OK on error alert, returning to main scene")
-                                                      // Ensure we're on the main thread for UI updates with a small delay
-                                                      DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                                                          ILOG("PVEmulatorViewController: About to call SceneCoordinator.closeEmulator()")
-
-                                                          // First dismiss any presented view controllers
-                                                          if let presentedVC = self.presentedViewController {
-                                                              ILOG("PVEmulatorViewController: Dismissing presented view controller first")
-                                                              presentedVC.dismiss(animated: false) {
-                                                                  SceneCoordinator.shared.closeEmulator()
-                                                              }
-                                                          } else {
-                                                              // Dismiss this view controller if it's presented
-                                                              if self.presentingViewController != nil {
-                                                                  ILOG("PVEmulatorViewController: Dismissing self, then calling closeEmulator")
-                                                                  self.dismiss(animated: false) {
-                                                                      SceneCoordinator.shared.closeEmulator()
-                                                                  }
-                                                              } else {
-                                                                  ILOG("PVEmulatorViewController: No presented view controllers, calling closeEmulator directly")
-                                                                  SceneCoordinator.shared.closeEmulator()
-                                                              }
-                                                          }
-                                                      }
-                                                  }))
-
-                    self.present(alert, animated: true)
+                    self.present(PVAlert(
+                        title: neError.localizedDescription,
+                        message: neError.localizedRecoverySuggestion,
+                        type: .error,
+                        actions: [.ok {
+                            ILOG("PVEmulatorViewController: User tapped OK on error alert, returning to main scene")
+                            self.dismissAndCloseEmulator()
+                        }]
+                    ))
                 }
             }
         }
@@ -1887,51 +1837,38 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
 
             After freeing space, try downloading again.
             """
-            let alert = UIAlertController(
-                title: "Insufficient Storage",
-                message: message,
-                preferredStyle: .alert
-            )
-
-            alert.addAction(UIAlertAction(title: "OK", style: .default) { _ in
-                self.dismiss(animated: true)
-            })
-
+            var actions = [PVAlertAction.ok { self.dismissAndCloseEmulator() }]
             #if os(tvOS)
-            alert.addAction(UIAlertAction(title: "Storage Settings", style: .default) { _ in
+            actions.append(PVAlertAction("Storage Settings") {
                 // On tvOS, open storage settings if possible
                 if let settingsURL = URL(string: "App-Prefs:General&path=STORAGE_MGMT") {
                     UIApplication.shared.open(settingsURL)
                 }
-                self.dismiss(animated: true)
+                self.dismissAndCloseEmulator()
             })
             #endif
-
-            present(alert, animated: true)
+            self.hideBootHUDIfNeeded()
+            present(PVAlert(title: "Insufficient Storage", message: message, type: .warning, actions: actions))
         }
     }
 
     /// Show download error alert
     private func showDownloadErrorAlert(gameTitle: String, error: Error) async {
         await MainActor.run {
-            let alert = UIAlertController(
+            self.hideBootHUDIfNeeded()
+            present(PVAlert(
                 title: "Download Failed",
                 message: "Failed to download \(gameTitle).\n\nError: \(error.localizedDescription)",
-                preferredStyle: .alert
-            )
-
-            alert.addAction(UIAlertAction(title: "Retry", style: .default) { _ in
-                Task {
-                    // Retry the download
-                    try? await self.handleOnDemandDownload(for: self.game)
-                }
-            })
-
-            alert.addAction(UIAlertAction(title: "Cancel", style: .cancel) { _ in
-                self.dismiss(animated: true)
-            })
-
-            present(alert, animated: true)
+                type: .error,
+                actions: [
+                    PVAlertAction("Retry") {
+                        Task {
+                            try? await self.handleOnDemandDownload(for: self.game)
+                        }
+                    },
+                    .cancel { self.dismissAndCloseEmulator() }
+                ]
+            ))
         }
     }
 

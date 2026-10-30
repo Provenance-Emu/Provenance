@@ -410,30 +410,28 @@ private struct SaveStateBrowserItemRow: View {
             }
         }
         #endif
-        .uiKitAlert(
-            "Delete Save State",
-            message: "Delete this save state for \(gameTitle)?",
-            isPresented: $showDeleteAlert,
-            preferredContentSize: CGSize(width: 500, height: 300)
-        ) {
-            UIAlertAction(title: "Delete", style: .destructive) { _ in
-                if let state = RomDatabase.sharedInstance.object(
-                    ofType: PVSaveState.self,
-                    wherePrimaryKeyEquals: item.id
-                ) {
-                    do {
-                        try RomDatabase.sharedInstance.delete(saveState: state)
-                        RetroSaveStatesStore.shared.removeFromCache(id: item.id, systemID: item.systemId)
-                        onDeleted()
-                    } catch {
-                        ELOG("SaveStateBrowserView: Failed to delete save state: \(error)")
-                    }
-                }
-                showDeleteAlert = false
-            }
-            UIAlertAction(title: NSLocalizedString("Cancel", comment: "Cancel"), style: .cancel) { _ in
-                showDeleteAlert = false
-            }
+        .pvAlert(isPresented: $showDeleteAlert) {
+            PVAlert(
+                title: "Delete Save State",
+                message: "Delete this save state for \(gameTitle)?",
+                actions: [
+                    PVAlertAction("Delete", role: .destructive) {
+                        if let state = RomDatabase.sharedInstance.object(
+                            ofType: PVSaveState.self,
+                            wherePrimaryKeyEquals: item.id
+                        ) {
+                            do {
+                                try RomDatabase.sharedInstance.delete(saveState: state)
+                                RetroSaveStatesStore.shared.removeFromCache(id: item.id, systemID: item.systemId)
+                                onDeleted()
+                            } catch {
+                                ELOG("SaveStateBrowserView: Failed to delete save state: \(error)")
+                            }
+                        }
+                    },
+                    .cancel(NSLocalizedString("Cancel", comment: "Cancel"))
+                ]
+            )
         }
     }
 }

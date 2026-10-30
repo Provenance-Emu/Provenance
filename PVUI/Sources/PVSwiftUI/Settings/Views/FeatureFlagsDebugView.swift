@@ -123,15 +123,11 @@ struct FeatureFlagsDebugView: View {
             }
 #endif
         }
-        .uiKitAlert(
-            "Error",
-            message: errorMessage ?? "",
-            isPresented: isErrorAlertPresented,
-            preferredContentSize: CGSize(width: 500, height: 300)
-        ) {
-            UIAlertAction(title: "OK", style: .default) { _ in
-                errorMessage = nil
-            }
+        .pvAlert(isPresented: isErrorAlertPresented) {
+            PVAlert(
+                title: "Error",
+                message: errorMessage ?? ""
+            )
         }
     }
 

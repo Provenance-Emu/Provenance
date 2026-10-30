@@ -44,9 +44,9 @@ public enum BIOSGuideLink {
         UIApplication.shared.open(url, options: [:], completionHandler: nil)
     }
 
-    /// A `.default` alert action that opens the BIOS guide.
+    /// An alert action that opens the BIOS guide.
     ///
-    /// - Parameter completion: Run BEFORE the guide is opened. A `UIAlertController`
+    /// - Parameter completion: Run BEFORE the guide is opened. An alert
     ///   dismisses on *any* action, so surfaces presented over a live emulator must
     ///   pass the same teardown their close button performs — otherwise tapping the
     ///   guide leaves the user on a dead emulator screen with the core still running.
@@ -58,13 +58,13 @@ public enum BIOSGuideLink {
     ///   blocking forever once Metal reclaims drawables in the background, and
     ///   main-thread starvation against the emulation loop's `@synchronized(self)`.
     @MainActor
-    public static func alertAction(then completion: (@MainActor () -> Void)? = nil) -> UIAlertAction {
-        UIAlertAction(title: actionTitle, style: .default, handler: { _ in
+    public static func alertAction(then completion: (@MainActor () -> Void)? = nil) -> PVAlertAction {
+        PVAlertAction(actionTitle) {
             Task { @MainActor in
                 completion?()
                 open()
             }
-        })
+        }
     }
 #endif
 }

@@ -109,32 +109,30 @@ public struct CoreOptionsDetailView: View {
             .background(palette.background.ignoresSafeArea())
             .navigationTitle(title)
             .onAppear(perform: loadSections)
-            .uiKitAlert(
-                "Reset All Options",
-                message: resetAllMessage,
-                isPresented: $showResetConfirmation
-            ) {
-                UIAlertAction(title: "Reset", style: .destructive) { _ in
-                    resetAllOptions()
-                    showResetConfirmation = false
-                }
-                UIAlertAction(title: "Cancel", style: .cancel) { _ in
-                    showResetConfirmation = false
-                }
+            .pvAlert(isPresented: $showResetConfirmation) {
+                PVAlert(
+                    title: "Reset All Options",
+                    message: resetAllMessage,
+                    actions: [
+                        PVAlertAction("Reset", role: .destructive) {
+                            resetAllOptions()
+                        },
+                        .cancel()
+                    ]
+                )
             }
-            .uiKitAlert(
-                "Reset Game Overrides",
-                message: "Remove all per-game option overrides for this title? "
-                    + "Core-global settings will be used instead.",
-                isPresented: $showResetGameOverridesConfirmation
-            ) {
-                UIAlertAction(title: "Reset", style: .destructive) { _ in
-                    resetGameOverrides()
-                    showResetGameOverridesConfirmation = false
-                }
-                UIAlertAction(title: "Cancel", style: .cancel) { _ in
-                    showResetGameOverridesConfirmation = false
-                }
+            .pvAlert(isPresented: $showResetGameOverridesConfirmation) {
+                PVAlert(
+                    title: "Reset Game Overrides",
+                    message: "Remove all per-game option overrides for this title? "
+                        + "Core-global settings will be used instead.",
+                    actions: [
+                        PVAlertAction("Reset", role: .destructive) {
+                            resetGameOverrides()
+                        },
+                        .cancel()
+                    ]
+                )
             }
     }
 

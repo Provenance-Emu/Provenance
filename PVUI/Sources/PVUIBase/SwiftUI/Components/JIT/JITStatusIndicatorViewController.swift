@@ -34,7 +34,7 @@ private final class PassthroughView: UIView {
 ///
 /// The root view is a `PassthroughView` so touches outside the pill fall through
 /// to the game content below.  When the user taps the pill, a compact
-/// `UIAlertController` is presented from the nearest view controller in the
+/// `PVAlert` is presented from the nearest view controller in the
 /// hierarchy — no full-screen cover sheet.
 ///
 /// ## PVToast notifications
@@ -90,7 +90,7 @@ public final class JITStatusIndicatorViewController: UIViewController {
         hostingController = host
     }
 
-    /// Presents a compact `UIAlertController` describing the current JIT status.
+    /// Presents a compact `PVAlert` describing the current JIT status.
     ///
     /// The alert title and message are tailored to the core's support level:
     /// - **JIT Required**: strong call to action with setup instructions
@@ -101,8 +101,7 @@ public final class JITStatusIndicatorViewController: UIViewController {
         let title = viewModel.alertTitle
         let message = viewModel.explanation
 
-        let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "OK", style: .default))
+        var actions: [PVAlertAction] = [.ok()]
 
         // When JIT is inactive and the user should take action, add a second button
         // that opens the in-app guide for enabling JIT.
@@ -115,23 +114,18 @@ public final class JITStatusIndicatorViewController: UIViewController {
         let showJITGuide = true
         #endif
         if showJITGuide && viewModel.coreSupportLevel.requiresUserAction && viewModel.status != .active {
-            let settingsAction = UIAlertAction(title: "How to Enable JIT", style: .default) { [weak self] _ in
+            actions.append(PVAlertAction("How to Enable JIT") { [weak self] in
                 self?.presentJITEnableGuide()
-            }
-            alert.addAction(settingsAction)
+            })
         }
 
         // Present from the parent (emulator) VC so the alert sits above the game view
-        let presenter = parent ?? self
-        guard presenter.presentedViewController == nil else {
-            return
-        }
-        presenter.present(alert, animated: true)
+        (parent ?? self).present(PVAlert(title: title, message: message, actions: actions))
     }
 
     /// Presents a brief guide alert listing ways to enable JIT.
     private func presentJITEnableGuide() {
-        let guide = UIAlertController(
+        (parent ?? self).present(PVAlert(
             title: "Enabling JIT",
             message: """
             JIT compilation can be enabled using one of the following tools:
@@ -143,14 +137,8 @@ public final class JITStatusIndicatorViewController: UIViewController {
             • TrollStore — permanent JIT for supported iOS/iPadOS versions
 
             After enabling JIT, return to the game and the indicator will update automatically.
-            """,
-            preferredStyle: .alert
-        )
-        guide.addAction(UIAlertAction(title: "OK", style: .default))
-
-        let presenter = parent ?? self
-        guard presenter.presentedViewController == nil else { return }
-        presenter.present(guide, animated: true)
+            """
+        ))
     }
 
     private func setupNotificationObservers() {
