@@ -166,6 +166,9 @@ public struct NetplayLibraryLobbyView: View {
                     Button("Show More (\(visible.count) games)") { pageLimit += 40 }.buttonStyle(.bordered)
                 }
             }
+            #if os(tvOS)
+            .focusSection()
+            #endif
         }
     }
 
