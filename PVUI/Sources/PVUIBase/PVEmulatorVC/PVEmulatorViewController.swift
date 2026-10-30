@@ -2856,6 +2856,9 @@ extension PVEmulatorViewController {
         // 5. Clear the skin container reference and reset target frame
         skinContainerView = nil
         currentTargetFrame = nil // Reset target frame to force recalculation
+        // The fallback frame belongs to the skin being removed; keeping it would pin the
+        // next skin's picture to this skin's screen rect.
+        forgetInitialCorrectFrame()
 
         // NOTE: We intentionally DO NOT reset the sharedInputHandler here
         // to maintain input state across skin changes
