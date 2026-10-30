@@ -408,6 +408,15 @@ needs = ["macos"]
 
 cli_only = true
 
+[jobs.device-screenshots]
+title = "Capture App Store screenshots from a device"
+category = "Release"
+description = "Drives a running Provenance (device or simulator) over the debug API: library with pixelated covers, then 240p Test Suite gameplay per shader."
+run = ["python3", "Scripts/capture_device_screenshots.py"]
+args_hint = "--host <device ip> [--password …] [--upload roms…]"
+needs = ["network"]
+cli_only = true
+
 [jobs.dev-harness]
 title = "Dev harness run"
 category = "Dev workspace"
