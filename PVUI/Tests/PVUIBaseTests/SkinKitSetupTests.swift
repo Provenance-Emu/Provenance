@@ -10,12 +10,14 @@ import Defaults
 import Foundation
 import PVSettings
 import PVSystems
+import PVThemes
 import SkinCatalogKit
 import SkinKitCore
 import SkinKitManager
 import SkinKitUI
 import SwiftUI
 import Testing
+import UIKit
 @testable import PVUIBase
 
 @Suite("SkinKit setup", .serialized)
@@ -83,12 +85,31 @@ struct SkinKitSetupTests {
         #expect(uncoded.deltaSkinSystem.skinCatalogSystemCode == nil)
     }
 
-    @Test("The skin views use Provenance's RetroWave colors")
-    func theme() {
+    @Test("The skin views resolve the active palette after theme changes")
+    @MainActor func theme() {
         let theme = SkinKitTheme.current
-        #expect(theme.pink == Color.retroPink)
+        let manager = ThemeManager.shared
+        let original = manager.currentPalette
+        defer { manager.setCurrentPalette(original) }
+
+        for palette in [CGAThemes.green.palette, CGAThemes.cyan.palette] {
+            manager.setCurrentPalette(palette)
+            // Dynamic UIColor providers have distinct identities; compare their rendered values.
+            #expect(resolvedComponents(theme.pink) == resolvedComponents(Color.retroPink))
+            #expect(resolvedComponents(theme.pink) == resolvedComponents(Color(palette.defaultTintColor)))
+        }
         #expect(theme.cyan == Color.retroCyan)
         #expect(theme.panelCornerRadius == RetroPauseChrome.panelCornerRadius)
+    }
+
+    @MainActor private func resolvedComponents(_ color: Color) -> [CGFloat] {
+        let resolved = UIColor(color).resolvedColor(with: UITraitCollection(userInterfaceStyle: .dark))
+        var red: CGFloat = 0
+        var green: CGFloat = 0
+        var blue: CGFloat = 0
+        var alpha: CGFloat = 0
+        #expect(resolved.getRed(&red, green: &green, blue: &blue, alpha: &alpha))
+        return [red, green, blue, alpha]
     }
 
     @Test("The multi-touch diagnostic flag is shared with SkinKitUI")
