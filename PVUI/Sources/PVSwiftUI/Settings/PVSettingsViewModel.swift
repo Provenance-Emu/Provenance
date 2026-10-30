@@ -125,64 +125,6 @@ class PVSettingsViewModel: ObservableObject {
             .store(in: &cancellables)
     }
 
-    // Function to show theme options
-    func showThemeOptions() {
-        let alert = UIAlertController(title: "Theme", message: "", preferredStyle: .actionSheet)
-
-        let systemMode = UITraitCollection.current.userInterfaceStyle == .dark ? "Dark" : "Light"
-
-        // Standard themes
-        ThemeOptionsStandard.allCases.forEach { mode in
-            let modeLabel = mode == .auto ? mode.description + " (\(systemMode))" : mode.description
-            let action = UIAlertAction(title: modeLabel, style: .default) { [weak self] _ in
-                self?.applyTheme(.standard(mode))
-            }
-            alert.addAction(action)
-        }
-
-        // CGA themes
-        CGAThemes.allCases.forEach { cgaTheme in
-            let action = UIAlertAction(title: cgaTheme.palette.name, style: .default) { [weak self] _ in
-                let themeOptionCGA = ThemeOptionsCGA(rawValue: cgaTheme.rawValue) ?? .blue
-                self?.applyTheme(.cga(themeOptionCGA))
-            }
-            alert.addAction(action)
-        }
-
-        alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
-
-        if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
-           let rootViewController = windowScene.windows.first?.rootViewController {
-            rootViewController.present(alert, animated: true, completion: nil)
-        }
-    }
-
-    private func applyTheme(_ theme: ThemeOption) {
-        Task { @MainActor in
-            let darkTheme: Bool
-            let newTheme: any UXThemePalette
-
-            switch theme {
-            case .standard(let mode):
-                darkTheme = (mode == .auto && UITraitCollection.current.userInterfaceStyle == .dark) || mode == .dark
-                newTheme = darkTheme ? ProvenanceThemes.dark.palette : ProvenanceThemes.light.palette
-            case .cga(let cgaTheme):
-                let palette = CGAThemes(rawValue: cgaTheme.rawValue)?.palette ?? ProvenanceThemes.dark.palette
-                darkTheme = palette.dark
-                newTheme = palette
-            }
-
-            ThemeManager.shared.setCurrentPalette(newTheme)
-            UIApplication.shared.windows.first?.overrideUserInterfaceStyle = darkTheme ? .dark : .light
-
-            Defaults[.theme] = theme
-            DLOG("Saving theme to Defaults: \(theme)")
-
-            // Apply the theme again
-            ThemeManager.applySavedTheme()
-        }
-    }
-
     // Function to show help
     func showHelp() {
         #if canImport(SafariServices)

@@ -75,7 +75,7 @@ public
 // types is a separate, larger change, out of scope here. Remove this disable once
 // that split happens.
 // swiftlint:disable:next type_body_length
-final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmualatorControllerProtocol, PVAudioDelegate, PVSaveStatesViewControllerDelegate {
+final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmualatorControllerProtocol, PVAudioDelegate {
     public let core: PVEmulatorCore
     @ThreadSafe
     public var game: PVGame!

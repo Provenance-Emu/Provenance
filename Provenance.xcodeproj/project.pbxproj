@@ -172,7 +172,6 @@
 		B32987CE2B66193F00728996 /* TVAssets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1AD481C21BA350A400FDA50A /* TVAssets.xcassets */; platformFilters = (tvos, ); };
 		B32987CF2B66194900728996 /* LaunchImageTV.png in Resources */ = {isa = PBXBuildFile; fileRef = 555454412AC09997006A065F /* LaunchImageTV.png */; platformFilters = (tvos, ); };
 		B32987D02B66194900728996 /* LaunchScreenTV.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 555454422AC09998006A065F /* LaunchScreenTV.storyboard */; platformFilters = (tvos, ); };
-		B32987D32B66198300728996 /* SaveStates.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B3296ECA26CABFCA0088AC32 /* SaveStates.storyboard */; platformFilters = (tvos, ); };
 		B32987D72B661C7A00728996 /* TVUIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B32987D62B661C7A00728996 /* TVUIKit.framework */; platformFilters = (tvos, ); };
 		B32C08E62D0538240024A3E2 /* MoltenVK in Frameworks */ = {isa = PBXBuildFile; platformFilters = (ios, tvos, ); productRef = B32C08E52D0538240024A3E2 /* MoltenVK */; };
 		B32C08E82D05382F0024A3E2 /* MoltenVK-Catalyst in Frameworks */ = {isa = PBXBuildFile; platformFilter = maccatalyst; productRef = B32C08E72D05382F0024A3E2 /* MoltenVK-Catalyst */; };
@@ -320,7 +319,6 @@
 		B35EEFED2C6C6D1A00EBD1A8 /* LaunchImageTV.png in Resources */ = {isa = PBXBuildFile; fileRef = 555454412AC09997006A065F /* LaunchImageTV.png */; platformFilters = (tvos, ); };
 		B35EEFEF2C6C6D1A00EBD1A8 /* TVAssets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1AD481C21BA350A400FDA50A /* TVAssets.xcassets */; platformFilters = (tvos, ); };
 		B35EEFF22C6C6D1A00EBD1A8 /* licenses.html in Resources */ = {isa = PBXBuildFile; fileRef = 1F8D52471D91993000C29F90 /* licenses.html */; };
-		B35EEFF52C6C6D1A00EBD1A8 /* SaveStates.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B3296ECA26CABFCA0088AC32 /* SaveStates.storyboard */; platformFilters = (tvos, ); };
 		B35EEFF92C6C6D1A00EBD1A8 /* LaunchScreenTV.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 555454422AC09998006A065F /* LaunchScreenTV.storyboard */; platformFilters = (tvos, ); };
 		B35F93E12D2F71450016E633 /* WhatsNewKit in Frameworks */ = {isa = PBXBuildFile; platformFilters = (ios, maccatalyst, ); productRef = B35F93E02D2F71450016E633 /* WhatsNewKit */; };
 		B35F93E32D2F811B0016E633 /* WhatsNewKit in Frameworks */ = {isa = PBXBuildFile; platformFilters = (ios, maccatalyst, ); productRef = B35F93E22D2F811B0016E633 /* WhatsNewKit */; };
@@ -488,7 +486,6 @@
 		B3AD744A2D2474F3001E5EC3 /* PVCoreBridgeRetro.framework in Embed Frameworks */ = {isa = PBXBuildFile; productRef = C0C0CAFE1F55DEDF43524F34 /* PVCoreBridgeRetro */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3AED2F72BE355B7003A9290 /* LaunchScreenTV.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 555454422AC09998006A065F /* LaunchScreenTV.storyboard */; platformFilters = (tvos, ); };
 		B3AED2F82BE355BB003A9290 /* LaunchImageTV.png in Resources */ = {isa = PBXBuildFile; fileRef = 555454412AC09997006A065F /* LaunchImageTV.png */; platformFilters = (tvos, ); };
-		B3AED2F92BE355C3003A9290 /* SaveStates.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B3296ECA26CABFCA0088AC32 /* SaveStates.storyboard */; platformFilters = (tvos, ); };
 		B3AED3002BE355DE003A9290 /* TVAssets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1AD481C21BA350A400FDA50A /* TVAssets.xcassets */; platformFilters = (tvos, ); };
 		B3AF705A21916F30000FA7F9 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AF705921916F2F000FA7F9 /* Foundation.framework */; };
 		B3AFCF962977A80700A01010 /* PVLogging in Frameworks */ = {isa = PBXBuildFile; productRef = B3AFCF952977A80700A01010 /* PVLogging */; };
@@ -1416,13 +1413,6 @@
 		B311B1EE27A53FC500D1DE41 /* nl */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = nl; path = nl.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		B311B1FA27A53FEF00D1DE41 /* it */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = it; path = it.lproj/Strings.strings; sourceTree = "<group>"; };
 		B311B1FB27A53FF000D1DE41 /* it */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = it; path = it.lproj/InfoPlist.strings; sourceTree = "<group>"; };
-		B31B36202959761200E5AA3C /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/SaveStates.strings"; sourceTree = "<group>"; };
-		B31B36212959761A00E5AA3C /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/SaveStates.strings; sourceTree = "<group>"; };
-		B31B36222959762000E5AA3C /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/SaveStates.strings; sourceTree = "<group>"; };
-		B31B36232959762700E5AA3C /* ja */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ja; path = ja.lproj/SaveStates.strings; sourceTree = "<group>"; };
-		B31B36242959763200E5AA3C /* it */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = it; path = it.lproj/SaveStates.strings; sourceTree = "<group>"; };
-		B31B36252959763900E5AA3C /* nl */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = nl; path = nl.lproj/SaveStates.strings; sourceTree = "<group>"; };
-		B31B36272959764700E5AA3C /* pt-BR */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "pt-BR"; path = "pt-BR.lproj/SaveStates.strings"; sourceTree = "<group>"; };
 		B32296CB2878381C00585AD8 /* PVFBNeo.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVFBNeo.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B32296CE2878382500585AD8 /* PVFBNeo.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVFBNeo.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B324C2FC21919568009F4EDC /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS12.1.sdk/System/Library/Frameworks/AVFoundation.framework; sourceTree = DEVELOPER_DIR; };
@@ -1461,7 +1451,6 @@
 		B3287500AA001100BB000002 /* fr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = fr; path = fr.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		B3287500AA001100BB000003 /* pt-BR */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "pt-BR"; path = "pt-BR.lproj/InfoPlist.strings"; sourceTree = "<group>"; };
 		B3296EA926CABE760088AC32 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/InfoPlist.strings"; sourceTree = "<group>"; };
-		B3296EDC26CAC2220088AC32 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = en; path = en.lproj/SaveStates.storyboard; sourceTree = "<group>"; };
 		B3296EE926CAC3ED0088AC32 /* en */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Strings.strings; sourceTree = "<group>"; };
 		B3296EEB26CAC3F00088AC32 /* zh-Hans */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/Strings.strings"; sourceTree = "<group>"; };
 		B32987D62B661C7A00728996 /* TVUIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = TVUIKit.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS17.2.sdk/System/Library/Frameworks/TVUIKit.framework; sourceTree = DEVELOPER_DIR; };
@@ -3110,7 +3099,6 @@
 				B347B38A2BC4CA99006A3B2D /* ProvenanceTV-Lite-Info.plist */,
 				555454422AC09998006A065F /* LaunchScreenTV.storyboard */,
 				555454412AC09997006A065F /* LaunchImageTV.png */,
-				B35D667D21814EAB0005A992 /* Story Boards */,
 				BE9FDCCC1C21109B0046DF0E /* ProvenanceTV.entitlements */,
 				B379D0482B4FBF240067325A /* ProvenanceTV-Free.entitlements */,
 				B379D0492B4FBF240067325A /* ProvenanceTV-JB.entitlements */,
@@ -3216,14 +3204,6 @@
 				BE9FDCBA1C210B9E0046DF0E /* TopShelf */,
 			);
 			path = Extensions;
-			sourceTree = "<group>";
-		};
-		B35D667D21814EAB0005A992 /* Story Boards */ = {
-			isa = PBXGroup;
-			children = (
-				B3296ECA26CABFCA0088AC32 /* SaveStates.storyboard */,
-			);
-			path = "Story Boards";
 			sourceTree = "<group>";
 		};
 		B37769052CF6D47300A48B35 /* Products */ = {
@@ -4520,7 +4500,6 @@
 				1A3D40A217B2DCE4004DFFFC /* InfoPlist.strings in Resources */,
 				B3296EE826CAC3ED0088AC32 /* Strings.strings in Resources */,
 				B3DF8ED82CC7AE1F0006F20E /* ColoredIcons.xcassets in Resources */,
-				B32987D32B66198300728996 /* SaveStates.storyboard in Resources */,
 				B32987D02B66194900728996 /* LaunchScreenTV.storyboard in Resources */,
 				551DA2FC2ABF7E99004BA3E9 /* LaunchScreen.storyboard in Resources */,
 				B32987CF2B66194900728996 /* LaunchImageTV.png in Resources */,
@@ -4626,7 +4605,6 @@
 				B35EEFEF2C6C6D1A00EBD1A8 /* TVAssets.xcassets in Resources */,
 				B35EEFF22C6C6D1A00EBD1A8 /* licenses.html in Resources */,
 				B39D8F092D0CEC5300577667 /* Assets-Lite.xcassets in Resources */,
-				B35EEFF52C6C6D1A00EBD1A8 /* SaveStates.storyboard in Resources */,
 				B39FAC1D2D5E7E690065B66B /* CONTRIBUTORS.md in Resources */,
 				B39FAC282D5E7F630065B66B /* SYSTEMS.md in Resources */,
 				B35EEFF92C6C6D1A00EBD1A8 /* LaunchScreenTV.storyboard in Resources */,
@@ -4646,7 +4624,6 @@
 				B3AED2F82BE355BB003A9290 /* LaunchImageTV.png in Resources */,
 				B3AED3002BE355DE003A9290 /* TVAssets.xcassets in Resources */,
 				B394CDCC2BDEE53A006B63E8 /* licenses.html in Resources */,
-				B3AED2F92BE355C3003A9290 /* SaveStates.storyboard in Resources */,
 				B39FAC1E2D5E7E690065B66B /* CONTRIBUTORS.md in Resources */,
 				B39FAC2B2D5E7F630065B66B /* SYSTEMS.md in Resources */,
 				B3AED2F72BE355B7003A9290 /* LaunchScreenTV.storyboard in Resources */,
@@ -5930,21 +5907,6 @@
 				B3287500AA001100BB000003 /* pt-BR */,
 			);
 			name = InfoPlist.strings;
-			sourceTree = "<group>";
-		};
-		B3296ECA26CABFCA0088AC32 /* SaveStates.storyboard */ = {
-			isa = PBXVariantGroup;
-			children = (
-				B3296EDC26CAC2220088AC32 /* en */,
-				B31B36202959761200E5AA3C /* zh-Hans */,
-				B31B36212959761A00E5AA3C /* es */,
-				B31B36222959762000E5AA3C /* ru */,
-				B31B36232959762700E5AA3C /* ja */,
-				B31B36242959763200E5AA3C /* it */,
-				B31B36252959763900E5AA3C /* nl */,
-				B31B36272959764700E5AA3C /* pt-BR */,
-			);
-			name = SaveStates.storyboard;
 			sourceTree = "<group>";
 		};
 		B3296EEA26CAC3ED0088AC32 /* Strings.strings */ = {

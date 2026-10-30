@@ -241,62 +241,9 @@ public extension PVEmulatorViewController {
     }
 }
 
-// MARK: - Save states UI
+// MARK: - Save state conversion
 
 public extension PVEmulatorViewController {
-    func saveStatesViewControllerDone(_: PVSaveStatesViewController) {
-        dismiss(animated: true, completion: nil)
-        // Don't resume emulation here - the presenting menu handles that.
-        // This prevents the game from unpausing when navigating back to the pause menu.
-        enableControllerInput(false)
-    }
-    func saveStatesViewControllerCreateNewState(_ saveStatesViewController: PVSaveStatesViewController) async throws -> Bool {
-        try await createNewSaveState(auto: false, screenshot: saveStatesViewController.screenshot)
-    }
-    func saveStatesViewControllerOverwriteState(_ saveStatesViewController: PVSaveStatesViewController, state: PVSaveState) async throws -> Bool {
-        try await createNewSaveState(auto: false, screenshot: saveStatesViewController.screenshot)
-    }
-    func saveStatesViewController(_: PVSaveStatesViewController, load state: PVSaveState) {
-        dismiss(animated: true, completion: nil)
-        Task.detached { [weak self] in
-            await self?.loadSaveState(state)
-        }
-    }
-
-    @objc public func showSaveStateMenu() {
-        let frozenGame = game.freeze()
-        Task.detached { [weak self] in
-            guard let self = self else { return }
-            await try RomDatabase.sharedInstance.updateSaveStates(forGame: frozenGame)
-            await try RomDatabase.sharedInstance.recoverSaveStates(forGame: frozenGame, core: core)
-        }
-        guard let saveStatesNavController = UIStoryboard(name: "SaveStates", bundle: BundleLoader.module).instantiateViewController(withIdentifier: "PVSaveStatesViewControllerNav") as? UINavigationController else {
-            return
-        }
-
-        let image = captureScreenshot()
-
-        if let saveStatesViewController = saveStatesNavController.viewControllers.first as? PVSaveStatesViewController {
-            // Wrap in AnyRealmCollection to decouple from the @ThreadSafe game's
-            // LinkingObjects, preventing Realm thread-safety crashes.
-            saveStatesViewController.saveStates = AnyRealmCollection(game.saveStates)
-            saveStatesViewController.delegate = self
-            saveStatesViewController.screenshot = image
-            saveStatesViewController.coreID = core.coreIdentifier
-        }
-
-        saveStatesNavController.modalPresentationStyle = .overCurrentContext
-
-#if os(iOS)
-        if traitCollection.userInterfaceIdiom == .pad {
-            saveStatesNavController.modalPresentationStyle = .formSheet
-        }
-#endif
-#if os(tvOS)
-        saveStatesNavController.modalPresentationStyle = .blurOverFullScreen
-#endif
-        present(saveStatesNavController, animated: true)
-    }
     func convertOldSaveStatesToNewIfNeeded() {
         let fileManager = FileManager.default
         let saveStatePath = self.saveStatePath

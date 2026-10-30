@@ -102,14 +102,6 @@ public final class PVApplicationServices: NSObject, ObservableObject {
         return isAppStore
     }
 
-    /// JIT-related state shared by non-App Store iOS and tvOS builds.
-#if (os(iOS) || os(tvOS)) && !APP_STORE && canImport(PVJIT)
-    weak var jitScreenDelegate: JitScreenDelegate?
-    weak var jitWaitScreenVC: JitWaitScreenViewController?
-    var cancellation_token = DOLCancellationToken()
-    var is_presenting_alert = false
-#endif
-
     private var cancellables = Set<AnyCancellable>()
     @MainActor private var libraryNotificationHandlersInstalled = false
 

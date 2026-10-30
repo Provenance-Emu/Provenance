@@ -375,8 +375,7 @@ let package = Package(
 //                .product(name: "Dependencies", package: "swift-dependencies")
             ],
             resources: [
-                .process("Resources/StoryBoards/"),
-                .process("Resources/XIBs/")
+                .process("Resources/StoryBoards/")
             ]
         ),
 
@@ -404,7 +403,6 @@ let package = Package(
             ],
             resources: [
                 .process("Resources/StoryBoards/"),
-                .process("Resources/XIBs"),
                 .process("Resources/TVAssets.xcassets"),
                 .process("Resources/LaunchImageTV.png")
             ]
