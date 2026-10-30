@@ -46,6 +46,9 @@ struct WebServerBootstrapTask: BootstrapTask {
         // paused during emulation and resumed when the user returns home.
         _ = PVWebServerLifecycleService.shared
 
+        // /api/debug/* handlers (no-op unless PVDebugAPIPrefs.isEnabled).
+        PVDebugAPIRoutes.registerAll()
+
         await PVWebServerManager.shared.refreshFeatureFlag()
         let impl = await PVWebServerManager.shared.implementationDescription
         ILOG("WebServerBootstrapTask: starting web server (impl=\(impl))")

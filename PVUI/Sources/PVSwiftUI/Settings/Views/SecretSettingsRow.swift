@@ -31,6 +31,15 @@ internal struct SecretSettingsRow: View {
                 #if os(tvOS)
                 .retroFocusButtonStyle(showBorder: false)
                 #endif
+
+                NavigationLink(destination: DebugAPISettingsView()) {
+                    SettingsRow(title: "Debug API & Screenshots",
+                                subtitle: "LAN automation API and screenshot-safe library covers",
+                                icon: .sfSymbol("camera.viewfinder"))
+                }
+                #if os(tvOS)
+                .retroFocusButtonStyle(showBorder: false)
+                #endif
             }
 
             Button {

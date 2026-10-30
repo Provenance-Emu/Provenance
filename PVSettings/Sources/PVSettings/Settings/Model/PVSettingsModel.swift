@@ -735,6 +735,21 @@ public extension Defaults.Keys {
     static let localNetworkOnboardingShown = Key<Bool>("localNetworkOnboardingShown", default: false)
 }
 
+// MARK: Debug API / Screenshots
+public extension Defaults.Keys {
+    /// Release-build opt-in for the `/api/debug/*` automation routes (DEBUG builds
+    /// always enable them). Same key string as `PVDebugAPIPrefs.enabledKey` in
+    /// PVWebServer, which reads it with plain UserDefaults. Surfaced only behind the
+    /// hidden Developer unlock (Settings › Advanced › Debug API).
+    static let debugAPIEnabled = Key<Bool>("debugAPIEnabled", default: false)
+    /// Basic-auth password for the debug API. Same key as `PVDebugAPIPrefs.passwordKey`.
+    static let debugAPIPassword = Key<String>("debugAPIPassword", default: "")
+
+    /// Screenshot-safe library: covers render as a coarse pixel mosaic (CIPixellate)
+    /// so App Store screenshots keep color and layout without readable box art.
+    static let pixelateLibraryArtwork = Key<Bool>("pixelateLibraryArtwork", default: false)
+}
+
 // MARK: ROM Import Options
 public extension Defaults.Keys {
     /// Automatically strip ROM annotation tags and normalize titles when importing.

@@ -36,6 +36,9 @@ public final class PVWebServerLifecycleService: PausableService {
     // MARK: - PausableService
 
     public func pause(reason: ServiceLifecycleReason) {
+        // The debug API exists to drive gameplay (boot, savestate, screenshots),
+        // so it must keep answering while the emulator runs.
+        if reason == .emulation, PVDebugAPIPrefs.isEnabled { return }
         guard !activePauseReasons.contains(reason) else { return }
         activePauseReasons.insert(reason)
         if activePauseReasons.count == 1 {

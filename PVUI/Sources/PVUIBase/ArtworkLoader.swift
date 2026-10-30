@@ -11,7 +11,10 @@ import PVRealm
 import PVMediaCache
 import RealmSwift
 import PVLogging
+import PVSettings
+import Defaults
 import Combine
+import CoreImage
 
 /// A simple loader for game artwork that prioritizes visible items
 /// This class uses PVMediaCache directly without additional caching layers
@@ -23,6 +26,10 @@ public class ArtworkLoader: ObservableObject {
     /// Emits sets of game IDs whose artwork was just cached on disk.
     /// Views observe this to retry loading artwork that was previously nil.
     public let artworkBecameAvailable = PassthroughSubject<Set<String>, Never>()
+
+    /// Fires when every already-loaded cover must be re-requested (the
+    /// `pixelateLibraryArtwork` mode flipped). Views drop their image and reload.
+    public let artworkNeedsReload = PassthroughSubject<Void, Never>()
 
     /// Notifies views that artwork was cached for the given game IDs so they can retry loading.
     public func notifyArtworkAvailable(gameIds: Set<String>) {
@@ -69,6 +76,7 @@ public class ArtworkLoader: ObservableObject {
     private static let libraryArtworkCachedNotification: Notification.Name = .artworkDidCache
 
     private var librarySub: AnyCancellable?
+    private var pixelateSub: Task<Void, Never>?
 
     /// Initialize the loader with default settings
     init() {
@@ -80,6 +88,15 @@ public class ArtworkLoader: ObservableObject {
                 guard let ids = note.userInfo?[SyncNotification.gameIDsKey] as? Set<String> else { return }
                 self?.notifyArtworkAvailable(gameIds: ids)
             }
+
+        pixelateSub = Task { @MainActor [weak self] in
+            for await _ in Defaults.updates(.pixelateLibraryArtwork, initial: false) {
+                guard let self else { return }
+                for task in self.loadingTasks.values { task.cancel() }
+                self.loadingTasks.removeAll()
+                self.artworkNeedsReload.send()
+            }
+        }
     }
 
     /// Load artwork for a game with priority based on visibility
@@ -110,9 +127,10 @@ public class ArtworkLoader: ObservableObject {
         // Track this game ID as recently accessed
         updateRecentlyAccessed(gameId: gameId)
 
-        // De-duplicate per (game, decode budget) — a grid thumbnail request must
-        // not be satisfied by an in-flight detail-sized load, or vice versa.
-        let taskKey = Self.loadingTaskKey(gameId: gameId, target: downsampleTarget)
+        // De-duplicate per (game, decode budget, mosaic mode) — a grid thumbnail
+        // request must not be satisfied by an in-flight detail-sized load, or vice versa.
+        let pixelate = Defaults[.pixelateLibraryArtwork]
+        let taskKey = Self.loadingTaskKey(gameId: gameId, target: downsampleTarget, pixelate: pixelate)
 
         // If there's already a task loading this artwork, join it
         if let existingTask = loadingTasks[taskKey] {
@@ -131,7 +149,9 @@ public class ArtworkLoader: ObservableObject {
             // Run the actual disk I/O off the MainActor to avoid blocking UI
             let image = try await Task.detached(priority: priority) {
                 try Task.checkCancellation()
-                return await PVMediaCache.shareInstance().image(forKey: artworkURL, downsampleTo: downsampleTarget)
+                let image = await PVMediaCache.shareInstance().image(forKey: artworkURL, downsampleTo: downsampleTarget)
+                guard pixelate, let image else { return image }
+                return ArtworkMosaic.pixellate(image) ?? image
             }.value
 
             return image
@@ -156,9 +176,9 @@ public class ArtworkLoader: ObservableObject {
         }
     }
 
-    /// Key for the in-flight-load dictionary: one entry per game *and* decode budget.
-    private static func loadingTaskKey(gameId: String, target: ArtworkDownsampleTarget) -> String {
-        "\(gameId)@\(target.rawValue)"
+    /// Key for the in-flight-load dictionary: one entry per game, decode budget and mosaic mode.
+    private static func loadingTaskKey(gameId: String, target: ArtworkDownsampleTarget, pixelate: Bool) -> String {
+        "\(gameId)@\(target.rawValue)\(pixelate ? "#px" : "")"
     }
 
     /// Legacy method for backward compatibility - extracts values on main thread
@@ -207,9 +227,11 @@ public class ArtworkLoader: ObservableObject {
     /// nothing and leak the entry.
     public func cancelLoading(for gameId: String) {
         for target in ArtworkDownsampleTarget.allCases {
-            let key = Self.loadingTaskKey(gameId: gameId, target: target)
-            loadingTasks[key]?.cancel()
-            loadingTasks[key] = nil
+            for pixelate in [false, true] {
+                let key = Self.loadingTaskKey(gameId: gameId, target: target, pixelate: pixelate)
+                loadingTasks[key]?.cancel()
+                loadingTasks[key] = nil
+            }
         }
     }
 
@@ -313,5 +335,34 @@ public class ArtworkLoader: ObservableObject {
         Task(priority: priority) {
             await PVMediaCache.shareInstance().preloadImages(forKeys: artworkURLs)
         }
+    }
+}
+
+// MARK: - Screenshot-safe mosaic
+
+/// CIPixellate pass for `Defaults[.pixelateLibraryArtwork]` (ported from iFly's
+/// `MosaicImageLoader`): ~11 blocks across the cover's shorter side, so App Store
+/// screenshots keep each cover's color and layout without readable box art.
+/// Runs on the decoded bitmap, so it can't be optimized away by view transforms.
+enum ArtworkMosaic {
+    /// Block size as a fraction of the image's shorter side (iFly: 0.09).
+    static let blockFraction: CGFloat = 0.09
+
+    private static let context = CIContext(options: nil)
+
+    static func pixellate(_ image: UIImage) -> UIImage? {
+        guard let input = CIImage(image: image) else { return nil }
+        let extent = input.extent
+        guard extent.width > 0, extent.height > 0 else { return nil }
+        let scale = max(4, min(extent.width, extent.height) * blockFraction)
+
+        guard let filter = CIFilter(name: "CIPixellate") else { return nil }
+        filter.setValue(input, forKey: kCIInputImageKey)
+        filter.setValue(scale, forKey: kCIInputScaleKey)
+        filter.setValue(CIVector(x: extent.midX, y: extent.midY), forKey: kCIInputCenterKey)
+
+        guard let output = filter.outputImage?.cropped(to: extent),
+              let rendered = context.createCGImage(output, from: extent) else { return nil }
+        return UIImage(cgImage: rendered, scale: image.scale, orientation: image.imageOrientation)
     }
 }
