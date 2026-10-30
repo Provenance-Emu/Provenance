@@ -52,11 +52,14 @@ public enum ProvenanceSnapshotBuilder {
     /// Prefix of every mirrored cover file, so pruning never touches anything else.
     public static let coverFilenamePrefix = "cover_"
 
+    /// Increment when the cover renderer changes so existing images regenerate.
+    public static let coverRenderingVersion = 2
+
     /// Basename of a game's mirrored cover. It carries a hash of the artwork key,
-    /// so a changed cover is written as a new file rather than skipped as
-    /// already mirrored.
-    public static func coverFilename(gameID: String, artworkKey: String) -> String {
-        "\(coverFilenamePrefix)\(gameID)_\(stableHash(artworkKey)).jpg"
+    /// plus a rendering version and source fingerprint, so changed artwork and
+    /// rendering upgrades use a fresh URL in both our cache and tvOS's cache.
+    public static func coverFilename(gameID: String, artworkKey: String, sourceFingerprint: String = "") -> String {
+        "\(coverFilenamePrefix)\(gameID)_v\(coverRenderingVersion)_\(stableHash(artworkKey))_\(stableHash(sourceFingerprint)).jpg"
     }
 
     /// Newest of `PVRecentGame.lastPlayedDate` and `PVGame.lastPlayed`.

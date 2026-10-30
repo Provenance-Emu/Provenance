@@ -1,57 +1,44 @@
-//
-//  LibraryArtworkShape.swift
-//  PVLibrarySnapshotConfig
-//
-//  Copyright © 2026 Provenance Emu. All rights reserved.
-//
+// Copyright © 2026 Provenance Emu. All rights reserved.
 
 import Foundation
 
-/// The aspect a system's box art is expected to have.
-///
-/// Extensions map this onto their own presentation type (Top Shelf maps it to
-/// `TVTopShelfSectionedItem.ImageShape`).  Deciding it here — rather than in
-/// each extension — keeps the system-identifier table in one place.
+/// Top Shelf frame selected from the artwork itself, including custom and regional covers.
 public enum LibraryArtworkShape: String, Sendable, CaseIterable {
-    /// Cartridge/handheld art, roughly 1:1.
-    case square
-    /// Landscape box art, roughly 16:9.
-    case wide
-}
+    case poster, square, wide
 
-public extension LibraryArtworkShape {
-    /// Systems whose box art is landscape rather than square.
-    ///
-    /// These strings mirror `SystemIdentifier.rawValue` in the PVSystems
-    /// package.  They are duplicated here **on purpose**: PVLibrarySnapshotConfig
-    /// must stay light so app extensions can link it without pulling in
-    /// PVSystems, PVLibrary or Realm.  Keep this set in
-    /// sync when system identifiers change — `LibraryArtworkShapeTests` guards
-    /// the format, not the membership.
-    private static let wideSystemIdentifiers: Set<String> = [
-        "com.provenance.snes",
-        "com.provenance.nes",
-        "com.provenance.genesis",
-        "com.provenance.mastersystem",
-        "com.provenance.n64",
-        "com.provenance.5200",
-        "com.provenance.7800",
-        "com.provenance.jaguar",
-        "com.provenance.jaguarcd",
-        "com.provenance.psx",
-        "com.provenance.saturn",
-        "com.provenance.dreamcast",
-        "com.provenance.ps2",
-        "com.provenance.ps3",
-        "com.provenance.gamecube",
-        "com.provenance.wii"
-    ]
+    /// Pixel bounds for the 2x Top Shelf image. The renderer may use a smaller
+    /// proportional canvas to avoid enlarging a low-resolution source.
+    public var pixelSize: CGSize {
+        switch self {
+        case .poster: return CGSize(width: 808, height: 1216)
+        case .square: return CGSize(width: 1216, height: 1216)
+        case .wide: return CGSize(width: 1816, height: 1024)
+        }
+    }
 
-    /// Resolves the expected art shape for a reverse-DNS system identifier.
-    /// Unknown or missing identifiers fall back to `.square`, matching the
-    /// previous Top Shelf behaviour.
-    static func shape(forSystemIdentifier identifier: String?) -> LibraryArtworkShape {
-        guard let identifier, wideSystemIdentifiers.contains(identifier) else { return .square }
-        return .wide
+    /// Picks the frame with the nearest aspect ratio on a logarithmic scale,
+    /// minimizing padding without confusing a console's screen with its box art.
+    public static func shape(for size: CGSize) -> LibraryArtworkShape {
+        guard size.width.isFinite, size.height.isFinite, size.width > 0, size.height > 0 else { return .square }
+        let ratio = size.width / size.height
+        return allCases.min {
+            abs(log(ratio / ($0.pixelSize.width / $0.pixelSize.height)))
+                < abs(log(ratio / ($1.pixelSize.width / $1.pixelSize.height)))
+        } ?? .square
+    }
+
+    /// Aspect-fit canvas and draw rect. Never crops or stretches the source,
+    /// and never resamples it upward just to inflate the cache's pixel count.
+    public func layout(for source: CGSize) -> (canvas: CGSize, drawing: CGRect)? {
+        guard source.width.isFinite, source.height.isFinite, source.width > 0, source.height > 0 else { return nil }
+        let bounds = pixelSize
+        let canvasScale = min(1, max(source.width / bounds.width, source.height / bounds.height))
+        let canvas = CGSize(width: max(1, (bounds.width * canvasScale).rounded()),
+                            height: max(1, (bounds.height * canvasScale).rounded()))
+        let scale = min(1, min(canvas.width / source.width, canvas.height / source.height))
+        let size = CGSize(width: source.width * scale, height: source.height * scale)
+        let origin = CGPoint(x: (canvas.width - size.width) * 0.5, y: (canvas.height - size.height) * 0.5)
+        let drawing = CGRect(origin: origin, size: size)
+        return (canvas, drawing)
     }
 }

@@ -23,6 +23,7 @@
 
 #if os(tvOS)
 import Foundation
+import CryptoKit
 import PVLibrary
 import PVLibrarySnapshotConfig
 import PVLogging
@@ -44,8 +45,7 @@ enum LibrarySnapshotWriter {
             guard let key = source.artworkKey,
                   let file = PVMediaCache.filePath(forKey: key),
                   FileManager.default.fileExists(atPath: file.path) else { return nil }
-            return CoverJob(gameID: source.md5, source: file,
-                            filename: ProvenanceSnapshotBuilder.coverFilename(gameID: source.md5, artworkKey: key))
+            return CoverJob(gameID: source.md5, source: file, artworkKey: key)
         }
 
         queue.async {
@@ -102,14 +102,11 @@ enum LibrarySnapshotWriter {
 private struct CoverJob: Sendable {
     let gameID: String
     let source: URL
-    let filename: String
+    let artworkKey: String
 }
 
 /// JPEG copies of cover art in the App Group media directory, for Top Shelf.
 private enum CoverMirror {
-    /// Long edge of every mirrored cover. Top Shelf leaves a small image blank
-    /// (`.poster` @2x is 808×1216), so small art is scaled up as well as down.
-    static let longEdge: CGFloat = 1280
     static let jpegQuality: CGFloat = 0.85
 
     /// Writes the covers that are missing and deletes covers no job names.
@@ -124,9 +121,13 @@ private enum CoverMirror {
 
         var present: [String: String] = [:]
         for job in jobs {
-            let url = directory.appendingPathComponent(job.filename, isDirectory: false)
+            guard let sourceData = try? Data(contentsOf: job.source) else { continue }
+            let fingerprint = SHA256.hash(data: sourceData).map { String(format: "%02x", $0) }.joined()
+            let filename = ProvenanceSnapshotBuilder.coverFilename(gameID: job.gameID, artworkKey: job.artworkKey,
+                                                                   sourceFingerprint: fingerprint)
+            let url = directory.appendingPathComponent(filename, isDirectory: false)
             if !fileManager.fileExists(atPath: url.path) {
-                guard let image = UIImage(contentsOfFile: job.source.path),
+                guard let image = UIImage(data: sourceData),
                       let data = jpegData(image) else { continue }
                 do {
                     try data.write(to: url, options: .atomic)
@@ -135,7 +136,7 @@ private enum CoverMirror {
                     continue
                 }
             }
-            present[job.gameID] = job.filename
+            present[job.gameID] = filename
         }
 
         let keep = Set(present.values)
@@ -149,14 +150,17 @@ private enum CoverMirror {
     static func jpegData(_ image: UIImage) -> Data? {
         let pixelWidth = image.size.width * image.scale
         let pixelHeight = image.size.height * image.scale
-        guard pixelWidth > 0, pixelHeight > 0 else { return nil }
-        let scale = longEdge / max(pixelWidth, pixelHeight)
-        let target = CGSize(width: (pixelWidth * scale).rounded(), height: (pixelHeight * scale).rounded())
+        let source = CGSize(width: pixelWidth, height: pixelHeight)
+        let shape = LibraryArtworkShape.shape(for: source)
+        guard let layout = shape.layout(for: source) else { return nil }
         let format = UIGraphicsImageRendererFormat.preferred()
         format.scale = 1
         format.opaque = true
-        let rendered = UIGraphicsImageRenderer(size: target, format: format).image { _ in
-            image.draw(in: CGRect(origin: .zero, size: target))
+        let rendered = UIGraphicsImageRenderer(size: layout.canvas, format: format).image { context in
+            UIColor.black.setFill()
+            context.fill(CGRect(origin: .zero, size: layout.canvas))
+            context.cgContext.interpolationQuality = .high
+            image.draw(in: layout.drawing)
         }
         return rendered.jpegData(compressionQuality: jpegQuality)
     }

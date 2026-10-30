@@ -15,6 +15,7 @@
 //  `nil`, which shows the static Top Shelf image.
 //
 import Foundation
+import ImageIO
 import os
 import PVLibrarySnapshotConfig
 import TVServices
@@ -51,11 +52,13 @@ public final class ServiceProvider: TVTopShelfContentProvider {
                 // The same game can appear in two sections, so identifiers carry the section.
                 let item = TVTopShelfSectionedItem(identifier: "\(prefix)-\(game.id)")
                 item.title = game.title
-                switch LibraryArtworkShape.shape(forSystemIdentifier: game.platform) {
+                let coverURL = game.coverURL
+                switch Self.artworkShape(at: coverURL) {
+                case .poster: item.imageShape = .poster
                 case .square: item.imageShape = .square
                 case .wide: item.imageShape = .hdtv
                 }
-                if let url = game.coverURL, FileManager.default.fileExists(atPath: url.path) {
+                if let url = coverURL, FileManager.default.fileExists(atPath: url.path) {
                     item.setImageURL(url, for: .screenScale1x)
                     item.setImageURL(url, for: .screenScale2x)
                     covers += 1
@@ -91,6 +94,16 @@ public final class ServiceProvider: TVTopShelfContentProvider {
             sections=\(sections.count) covers=\(covers)
             """)
         return sections
+    }
+
+    /// ImageIO reads dimensions without decoding the cover into a pixel buffer.
+    private static func artworkShape(at url: URL?) -> LibraryArtworkShape {
+        guard let url,
+              let source = CGImageSourceCreateWithURL(url as CFURL, nil),
+              let properties = CGImageSourceCopyPropertiesAtIndex(source, 0, nil) as? [CFString: Any],
+              let width = properties[kCGImagePropertyPixelWidth] as? NSNumber,
+              let height = properties[kCGImagePropertyPixelHeight] as? NSNumber else { return .square }
+        return LibraryArtworkShape.shape(for: CGSize(width: width.doubleValue, height: height.doubleValue))
     }
 
     // MARK: - Localized strings
