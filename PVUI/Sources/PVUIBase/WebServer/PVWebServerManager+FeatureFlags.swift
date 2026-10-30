@@ -18,8 +18,12 @@ extension PVWebServerManager {
 
     /// Aligns `useModernServer` with `Defaults[.useModernWebServer]`.
     /// Synchronous on the manager actor; callers still use `await` to hop onto the actor.
+    ///
+    /// The `/api/debug/*` automation routes only exist on the modern (Hummingbird)
+    /// server, so an enabled debug API (DEBUG builds, or the hidden Release toggle)
+    /// forces it on.
     public func refreshFeatureFlag() {
-        setModernServerEnabled(Defaults[.useModernWebServer])
+        setModernServerEnabled(Defaults[.useModernWebServer] || PVDebugAPIPrefs.isEnabled)
     }
 }
 #endif

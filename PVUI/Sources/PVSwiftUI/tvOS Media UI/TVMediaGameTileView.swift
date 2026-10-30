@@ -173,6 +173,11 @@ struct TVMediaGameTileView<MenuContent: View>: View {
             ArtworkLoader.shared.cancelLoading(for: game.id)
             Task { await loadArtworkIfNeeded(forceReload: true) }
         }
+        .onReceive(ArtworkLoader.shared.artworkNeedsReload) { _ in
+            artwork = nil
+            artworkSize = nil
+            Task { await loadArtworkIfNeeded(forceReload: true) }
+        }
         .onChange(of: isFocused) { focused in
             if focused {
                 Task { await loadArtworkIfNeeded(priority: .userInitiated) }

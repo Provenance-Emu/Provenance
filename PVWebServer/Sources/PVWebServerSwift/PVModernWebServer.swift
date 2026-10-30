@@ -532,6 +532,9 @@ private extension PVModernWebServer {
             )
         }
 
+        // /api/debug/* — automation routes; no-op unless PVDebugAPIPrefs.isEnabled.
+        registerDebugAPIRoutes(on: router)
+
         return router
     }
 

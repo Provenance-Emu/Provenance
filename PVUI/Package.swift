@@ -41,8 +41,8 @@ let package = Package(
         .package(url: "https://github.com/Provenance-Emu/PVSystems.git", from: "1.0.0"),
         .package(url: "https://github.com/Provenance-Emu/PVLookup.git", from: "1.0.0"),
         /// Skin model, manager, catalog and skin views, shared with iFly and iCube.
-        /// SkinKit has no tags yet, so it is pinned by revision: the merge commit of SkinKit#35 on main.
-        .package(url: "https://github.com/Provenance-Emu/SkinKit", revision: "3ef3ef95f7a8143db09afad79d3464e9ac742767"),
+        /// SkinKit has no tags yet, so it is pinned by revision: the game-screen pick fix, on top of SkinKit#35.
+        .package(url: "https://github.com/Provenance-Emu/SkinKit", revision: "f394638b2291f08df14ad315df3b7418704b9b20"),
         .package(path: "../PVLogging"),
         .package(path: "../PVPatreon"),
         .package(path: "../PVSupport"),
