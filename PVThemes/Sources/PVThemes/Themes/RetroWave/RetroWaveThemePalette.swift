@@ -17,17 +17,17 @@ public struct RetroWaveThemePalette: UXThemePalette {
     // MARK: - Retrowave Colors
     enum Colors {
         #if canImport(UIKit)
-        static let retroPink = UIColor(red: 0.99, green: 0.11, blue: 0.55, alpha: 1.0)
-        static let retroPurple = UIColor(red: 0.53, green: 0.11, blue: 0.91, alpha: 1.0)
-        static let retroBlue = UIColor(red: 0.0, green: 0.75, blue: 0.95, alpha: 1.0)
-        static let retroDarkBlue = UIColor(red: 0.05, green: 0.05, blue: 0.2, alpha: 1.0)
-        static let retroBlack = UIColor(red: 0.05, green: 0.0, blue: 0.1, alpha: 1.0)
+        static let retroPink = UIColor(red: 0.94, green: 0.49, blue: 0.71, alpha: 1.0)
+        static let retroPurple = UIColor(red: 0.69, green: 0.55, blue: 0.91, alpha: 1.0)
+        static let retroBlue = UIColor(red: 0.40, green: 0.80, blue: 0.90, alpha: 1.0)
+        static let retroDarkBlue = UIColor(red: 0.14, green: 0.12, blue: 0.20, alpha: 1.0)
+        static let retroBlack = UIColor(red: 0.08, green: 0.07, blue: 0.11, alpha: 1.0)
         #else
-        static let retroPink = NSColor(red: 0.99, green: 0.11, blue: 0.55, alpha: 1.0)
-        static let retroPurple = NSColor(red: 0.53, green: 0.11, blue: 0.91, alpha: 1.0)
-        static let retroBlue = NSColor(red: 0.0, green: 0.75, blue: 0.95, alpha: 1.0)
-        static let retroDarkBlue = NSColor(red: 0.05, green: 0.05, blue: 0.2, alpha: 1.0)
-        static let retroBlack = NSColor(red: 0.05, green: 0.0, blue: 0.1, alpha: 1.0)
+        static let retroPink = NSColor(red: 0.94, green: 0.49, blue: 0.71, alpha: 1.0)
+        static let retroPurple = NSColor(red: 0.69, green: 0.55, blue: 0.91, alpha: 1.0)
+        static let retroBlue = NSColor(red: 0.40, green: 0.80, blue: 0.90, alpha: 1.0)
+        static let retroDarkBlue = NSColor(red: 0.14, green: 0.12, blue: 0.20, alpha: 1.0)
+        static let retroBlack = NSColor(red: 0.08, green: 0.07, blue: 0.11, alpha: 1.0)
         #endif
     }
     
@@ -50,15 +50,15 @@ public struct RetroWaveThemePalette: UXThemePalette {
     
     // MARK: - Game Library
     public var gameLibraryBackground: UIColor { Colors.retroBlack }
-    public var gameLibraryText: UIColor { Colors.retroPink }
-    public var gameLibraryCellBackground: UIColor? { Colors.retroDarkBlue.withAlphaComponent(0.7) }
+    public var gameLibraryText: UIColor { UIColor(white: 0.95, alpha: 1) }
+    public var gameLibraryCellBackground: UIColor? { Colors.retroDarkBlue }
     public var gameLibraryCellText: UIColor { .white }
     public var gameLibraryHeaderBackground: UIColor { Colors.retroDarkBlue }
     public var gameLibraryHeaderText: UIColor { Colors.retroBlue }
     
     // MARK: - Navigation
     public var navigationBarBackgroundColor: UIColor? { Colors.retroBlack }
-    public var navigationBarTitleColor: UIColor? { Colors.retroPink }
+    public var navigationBarTitleColor: UIColor? { gameLibraryText }
     
     // MARK: - Tab Bar
     public var tabBarBackground: UIColor? { Colors.retroBlack }
@@ -66,7 +66,7 @@ public struct RetroWaveThemePalette: UXThemePalette {
     // MARK: - Settings
     public var settingsHeaderBackground: UIColor? { Colors.retroDarkBlue }
     public var settingsHeaderText: UIColor? { Colors.retroBlue }
-    public var settingsCellBackground: UIColor? { Colors.retroBlack }
+    public var settingsCellBackground: UIColor? { Colors.retroDarkBlue }
     public var settingsCellText: UIColor? { .white }
     public var settingsCellTextDetail: UIColor? { Colors.retroPink.withAlphaComponent(0.8) }
     public var settingsSeperator: UIColor? { Colors.retroPurple.withAlphaComponent(0.3) }

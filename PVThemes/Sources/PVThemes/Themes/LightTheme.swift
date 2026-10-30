@@ -31,8 +31,11 @@ struct LightThemePalette: UXThemePalette {
     public var gameLibraryHeaderBackground: UIColor { Colors.white9alpha6 }
     public var gameLibraryHeaderText: UIColor { .darkGray }
 
-    public var navigationBarBackgroundColor: UIColor? { .grey.g1C }
-    public var statusBarColor: UIColor { .grey.g1C }
+    public var navigationBarBackgroundColor: UIColor? { .white }
+    #if !os(tvOS)
+    public var statusBarColor: UIColor? { .white }
+    #endif
+    public var navigationBarTitleColor: UIColor? { .black }
 
     public var settingsCellBackground: UIColor? { .white }
     public var settingsCellText: UIColor? { .black }

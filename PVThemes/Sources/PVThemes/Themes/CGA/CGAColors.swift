@@ -115,69 +115,79 @@ public struct CGAGreenThemePalette: UXThemePalette, Codable, Sendable, Hashable 
     public var group: String { "CGA" }
 
 #if !os(tvOS)
-    public var statusBarColor: UIColor { .CGA.green }
+    public var statusBarColor: UIColor? { UIColor(rgb: 0x101B19) }
 #endif
-    public var defaultTintColor: UIColor { .CGA.green }
+    public var defaultTintColor: UIColor { UIColor(rgb: 0x70D6A0) }
 
 #if canImport(UIKit)
     public var keyboardAppearance: UIKeyboardAppearance { .dark }
 #endif
 
     /// Switches
-    public var switchThumb: UIColor? { .CGA.greenShadow }
-    public var switchON: UIColor? { .CGA.green }
+    public var switchThumb: UIColor? { UIColor(rgb: 0xFFFFFF) }
+    public var switchON: UIColor? { UIColor(rgb: 0x70D6A0) }
 
     /// Game Library
     ///     Background
-    public var gameLibraryBackground: UIColor { .CGA.greenShadow.brightness(0.10) }
+    public var gameLibraryBackground: UIColor { UIColor(rgb: 0x101B19) }
     ///     Text
-    public var gameLibraryText: UIColor { .CGA.green.brightness(1.0) }
+    public var gameLibraryText: UIColor { UIColor(rgb: 0xF2F3F7) }
     ///     Cell
     ///         Background
-    public var gameLibraryCellBackground: UIColor { .CGA.greenShadow.brightness(0.20) }
+    public var gameLibraryCellBackground: UIColor? { UIColor(rgb: 0x1B2C26) }
     ///         Text
-    public var gameLibraryCellText: UIColor { .CGA.green.brightness(1.0) }
+    public var gameLibraryCellText: UIColor { UIColor(rgb: 0xF2F3F7) }
     ///     Header
     ///         Background
-    public var gameLibraryHeaderBackground: UIColor { .CGA.green.withAlphaComponent(0.20) }
+    public var gameLibraryHeaderBackground: UIColor { UIColor(rgb: 0x1B2C26) }
     ///         Text
-    public var gameLibraryHeaderText: UIColor { .CGA.green }
+    public var gameLibraryHeaderText: UIColor { UIColor(rgb: 0x70D6A0) }
 
     /// Navigation Bar
     ///     Background Color
-    public var navigationBarBackgroundColor: UIColor? { .CGA.greenShadow }
+    public var navigationBarBackgroundColor: UIColor? { UIColor(rgb: 0x101B19) }
     ///     Item Tint
-    public var barButtonItemTint: UIColor? { .CGA.green }
+    public var barButtonItemTint: UIColor? { UIColor(rgb: 0x70D6A0) }
 
     /// Settings
     ///     Header Background
-    public var settingsHeaderBackground: UIColor? { .CGA.greenShadow.brightness(backgroundBrightness) }
+    public var settingsHeaderBackground: UIColor? { UIColor(rgb: 0x1B2C26) }
     ///     Header Text
-    public var settingsHeaderText: UIColor? { .CGA.green }
+    public var settingsHeaderText: UIColor? { UIColor(rgb: 0x70D6A0) }
     ///     Cell Background
-    public var settingsCellBackground: UIColor? { .CGA.greenShadow.brightness(backgroundBrightness) }
+    public var settingsCellBackground: UIColor? { UIColor(rgb: 0x1B2C26) }
     ///     Cell Text
-    public var settingsCellText: UIColor? { .CGA.green }
+    public var settingsCellText: UIColor? { UIColor(rgb: 0xF2F3F7) }
 
     ///  Menu
     ///     Background
-    public var menuBackground: UIColor { .CGA.green.brightness(0.2) }
+    public var menuBackground: UIColor { UIColor(rgb: 0x101B19) }
     ///     Text
-    public var menuText: UIColor { .CGA.greenShadow }
+    public var menuText: UIColor { UIColor(rgb: 0xF2F3F7) }
     ///     Divider
-    public var menuDivider: UIColor { .CGA.green.brightness(0.4) }
+    public var menuDivider: UIColor { UIColor(rgb: 0xF2F3F7).withAlphaComponent(0.14) }
     ///     Icon Tint
-    public var menuIconTint: UIColor { .CGA.greenShadow }
+    public var menuIconTint: UIColor { UIColor(rgb: 0x70D6A0) }
     ///     Header
     ///         Background
-    public var menuHeaderBackground: UIColor  { .CGA.green.brightness(0.3) }
+    public var menuHeaderBackground: UIColor  { UIColor(rgb: 0x1B2C26) }
     ///         Tint
-    public var menuHeaderIconTint: UIColor { .CGA.greenShadow }
+    public var menuHeaderIconTint: UIColor { UIColor(rgb: 0x70D6A0) }
     ///     Section Header
     ///         Background
-    public var menuSectionHeaderBackground: UIColor  { .CGA.green.brightness(0.3) }
+    public var menuSectionHeaderBackground: UIColor  { UIColor(rgb: 0x1B2C26) }
     ///         Tint
-    public var menuSectionHeaderIconTint: UIColor { .CGA.green }
+    public var menuSectionHeaderIconTint: UIColor { UIColor(rgb: 0x70D6A0) }
+    public var uiviewBackground: UIColor? { UIColor(rgb: 0x101B19) }
+    public var tableViewBackgroundColor: UIColor? { UIColor(rgb: 0x101B19) }
+    public var tabBarBackground: UIColor? { UIColor(rgb: 0x101B19) }
+    public var menuHeaderText: UIColor { UIColor(rgb: 0xF2F3F7) }
+    public var navigationBarTitleColor: UIColor? { UIColor(rgb: 0xF2F3F7) }
+    public var menuSectionHeaderText: UIColor { UIColor(rgb: 0x70D6A0) }
+    public var segmentedControlTint: UIColor? { UIColor(rgb: 0x70D6A0) }
+    public var segmentedControlSelectedTint: UIColor? { UIColor(rgb: 0x70D6A0) }
+    public var settingsCellTextDetail: UIColor? { UIColor(rgb: 0xB8BDC9) }
+    public var settingsSeperator: UIColor? { UIColor(rgb: 0xF2F3F7).withAlphaComponent(0.14) }
 }
 
 public struct CGABlueThemePalette: UXThemePalette, Codable, Sendable, Hashable {
@@ -189,71 +199,80 @@ public struct CGABlueThemePalette: UXThemePalette, Codable, Sendable, Hashable {
     var backgroundAlpha: CGFloat { 0.95 }
 
 #if !os(tvOS)
-    public var statusBarColor: UIColor { .CGA.blue }
+    public var statusBarColor: UIColor? { UIColor(rgb: 0x111923) }
 #endif
-    public var defaultTintColor: UIColor { .CGA.blue.addSaturation(1.0).brightness(1.0) }
+    public var defaultTintColor: UIColor { UIColor(rgb: 0x8EB8FF) }
 
 #if canImport(UIKit)
     public var keyboardAppearance: UIKeyboardAppearance { .dark }
 #endif
-    public var switchThumb: UIColor? { .CGA.blueShadow }
-    public var switchON: UIColor? { .CGA.blue }
+    public var switchThumb: UIColor? { UIColor(rgb: 0xFFFFFF) }
+    public var switchON: UIColor? { UIColor(rgb: 0x8EB8FF) }
 
     /// Game Library
     ///     Background
-    public var gameLibraryBackground: UIColor { .CGA.blueShadow.brightness(0.1) }
+    public var gameLibraryBackground: UIColor { UIColor(rgb: 0x111923) }
     ///     Text
-    public var gameLibraryText: UIColor { .CGA.blue }
+    public var gameLibraryText: UIColor { UIColor(rgb: 0xF2F3F7) }
     ///     Header
     ///         Background
-    public var gameLibraryHeaderBackground: UIColor { .CGA.blueShadow.brightness(0.10) }
+    public var gameLibraryHeaderBackground: UIColor { UIColor(rgb: 0x1D2A3C) }
     ///         Text
-    public var gameLibraryHeaderText: UIColor { .CGA.blue.addSaturation(1.0).brightness(1.0) }
+    public var gameLibraryHeaderText: UIColor { UIColor(rgb: 0x8EB8FF) }
     ///     Cell
     ///         Background
-    public var gameLibraryCellBackground: UIColor? { .CGA.blueShadow.brightness(0.10) }
+    public var gameLibraryCellBackground: UIColor? { UIColor(rgb: 0x1D2A3C) }
     ///         Text
-    public var gameLibraryCellText: UIColor? { .CGA.blue.addSaturation(1.0).brightness(1.0) }
+    public var gameLibraryCellText: UIColor { UIColor(rgb: 0xF2F3F7) }
 
     /// Navigation Bar
     ///     Background
-    public var navigationBarBackgroundColor: UIColor? {  .CGA.blueShadow.brightness(0.10) }
+    public var navigationBarBackgroundColor: UIColor? { UIColor(rgb: 0x111923) }
     ///     Bar button tint
-    public var barButtonItemTint: UIColor? {.CGA.blue.addSaturation(1.0).brightness(1.0)  }
+    public var barButtonItemTint: UIColor? { UIColor(rgb: 0x8EB8FF) }
 
     /// Settings
     ///     Header
     ///         Background
-    public var settingsHeaderBackground: UIColor? { .black }
+    public var settingsHeaderBackground: UIColor? { UIColor(rgb: 0x1D2A3C) }
     ///         Text
-    public var settingsHeaderText: UIColor? { .CGA.blue }
+    public var settingsHeaderText: UIColor? { UIColor(rgb: 0x8EB8FF) }
     ///     Cell
     ///         Background
-    public var settingsCellBackground: UIColor? { .CGA.blueShadow.brightness(0.2) }
+    public var settingsCellBackground: UIColor? { UIColor(rgb: 0x1D2A3C) }
     ///         Text
-    public var settingsCellText: UIColor? { .CGA.blue }
+    public var settingsCellText: UIColor? { UIColor(rgb: 0xF2F3F7) }
 
     /// Menu
     ///     Background
-    public var menuBackground: UIColor { .CGA.blue.brightness(0.2) }
+    public var menuBackground: UIColor { UIColor(rgb: 0x111923) }
     ///     Text
-    public var menuText: UIColor { .CGA.blueShadow }
+    public var menuText: UIColor { UIColor(rgb: 0xF2F3F7) }
     ///     Divider
-    public var menuDivider: UIColor { .CGA.blue.brightness(0.4) }
+    public var menuDivider: UIColor { UIColor(rgb: 0xF2F3F7).withAlphaComponent(0.14) }
     ///     Icon Tint
-    public var menuIconTint: UIColor { .CGA.blueShadow }
+    public var menuIconTint: UIColor { UIColor(rgb: 0x8EB8FF) }
     ///     Header
     ///         Background
-    public var menuHeaderBackground: UIColor { .CGA.blue.brightness(0.3) }
+    public var menuHeaderBackground: UIColor { UIColor(rgb: 0x1D2A3C) }
     ///         Icon Tint
-    public var menuHeaderIconTint: UIColor { .CGA.blueShadow }
+    public var menuHeaderIconTint: UIColor { UIColor(rgb: 0x8EB8FF) }
     ///     Section Header
     ///         Background
-    public var menuSectionHeaderBackground: UIColor { .CGA.blue.brightness(0.3) }
+    public var menuSectionHeaderBackground: UIColor { UIColor(rgb: 0x1D2A3C) }
     ///         Text
-    public var menuSectionHeaderText: UIColor { .CGA.blueShadow.brightness(0.5) }
+    public var menuSectionHeaderText: UIColor { UIColor(rgb: 0x8EB8FF) }
     ///         Icon
-    public var menuSectionHeaderIconTint: UIColor {.CGA.blueShadow }
+    public var menuSectionHeaderIconTint: UIColor { UIColor(rgb: 0x8EB8FF) }
+    public var uiviewBackground: UIColor? { UIColor(rgb: 0x111923) }
+    public var tableViewBackgroundColor: UIColor? { UIColor(rgb: 0x111923) }
+    public var tabBarBackground: UIColor? { UIColor(rgb: 0x111923) }
+    public var menuHeaderText: UIColor { UIColor(rgb: 0xF2F3F7) }
+    public var navigationBarTitleColor: UIColor? { UIColor(rgb: 0xF2F3F7) }
+    public var segmentedControlTint: UIColor? { UIColor(rgb: 0x8EB8FF) }
+    public var segmentedControlSelectedTint: UIColor? { UIColor(rgb: 0x8EB8FF) }
+    public var settingsCellTextDetail: UIColor? { UIColor(rgb: 0xB8BDC9) }
+    public var settingsSeperator: UIColor? { UIColor(rgb: 0xF2F3F7).withAlphaComponent(0.14) }
 }
 
 public struct CGACyanThemePalette: UXThemePalette, Codable, Sendable, Hashable {
@@ -262,71 +281,80 @@ public struct CGACyanThemePalette: UXThemePalette, Codable, Sendable, Hashable {
     public var dark: Bool { false }
 
 #if !os(tvOS)
-    public var statusBarColor: UIColor { .CGA.cyan }
+    public var statusBarColor: UIColor? { UIColor(rgb: 0xEDF7F5) }
 #endif
-    public var defaultTintColor: UIColor { .CGA.cyan }
+    public var defaultTintColor: UIColor { UIColor(rgb: 0x08766F) }
 
 #if canImport(UIKit)
     public var keyboardAppearance: UIKeyboardAppearance { .light }
 #endif
-    public var switchThumb: UIColor? { .CGA.cyanShadow }
-    public var switchON: UIColor? { .CGA.cyan }
+    public var switchThumb: UIColor? { UIColor(rgb: 0xFFFFFF) }
+    public var switchON: UIColor? { UIColor(rgb: 0x08766F) }
 
     /// Game Library
     ///     Background
-    public var gameLibraryBackground: UIColor { .CGA.cyanShadow.brightness(0.97).saturation(0.15) }
+    public var gameLibraryBackground: UIColor { UIColor(rgb: 0xEDF7F5) }
     ///     Text
-    public var gameLibraryText: UIColor { .CGA.cyan }
+    public var gameLibraryText: UIColor { UIColor(rgb: 0x182E2C) }
     ///     Header
     ///         Background
-    public var gameLibraryHeaderBackground: UIColor { .CGA.cyanShadow }
+    public var gameLibraryHeaderBackground: UIColor { UIColor(rgb: 0xFFFFFF) }
     ///         Text
-    public var gameLibraryHeaderText: UIColor { .black }
+    public var gameLibraryHeaderText: UIColor { UIColor(rgb: 0x08766F) }
     ///     Cell
     ///         Background
-    public var gameLibraryCellBackground: UIColor? { gameLibraryBackground }
+    public var gameLibraryCellBackground: UIColor? { UIColor(rgb: 0xFFFFFF) }
     ///         Text
-    public var gameLibraryCellText: UIColor? { .CGA.cyan }
+    public var gameLibraryCellText: UIColor { UIColor(rgb: 0x182E2C) }
 
     /// Navigation Bar
     ///     Background
-    public var navigationBarBackgroundColor: UIColor? { .CGA.cyanShadow }
+    public var navigationBarBackgroundColor: UIColor? { UIColor(rgb: 0xEDF7F5) }
     ///     Bar button tint
-    public var barButtonItemTint: UIColor? { .CGA.cyan }
+    public var barButtonItemTint: UIColor? { UIColor(rgb: 0x08766F) }
 
     /// Settings
     ///     Header
     ///         Background
-    public var settingsHeaderBackground: UIColor? { .CGA.cyanShadow }
+    public var settingsHeaderBackground: UIColor? { UIColor(rgb: 0xFFFFFF) }
     ///         Text
-    public var settingsHeaderText: UIColor? { .CGA.cyan.brightness(1.0) }
+    public var settingsHeaderText: UIColor? { UIColor(rgb: 0x08766F) }
     ///     Cell
     ///         Background
-    public var settingsCellBackground: UIColor? { .CGA.cyanShadow.brightness(0.95).saturation(0.10) }
+    public var settingsCellBackground: UIColor? { UIColor(rgb: 0xFFFFFF) }
     ///         Text
-    public var settingsCellText: UIColor? { .CGA.cyan }
+    public var settingsCellText: UIColor? { UIColor(rgb: 0x182E2C) }
 
     /// Menu
     ///     Background
-    public var menuBackground: UIColor { .CGA.cyan.brightness(0.7) }
+    public var menuBackground: UIColor { UIColor(rgb: 0xEDF7F5) }
     ///     Text
-    public var menuText: UIColor { .CGA.cyan.brightness(1.0) }
+    public var menuText: UIColor { UIColor(rgb: 0x182E2C) }
     ///     Divider
-    public var menuDivider: UIColor { .CGA.cyan.brightness(0.6) }
+    public var menuDivider: UIColor { UIColor(rgb: 0x182E2C).withAlphaComponent(0.14) }
     ///     Icon Tint
-    public var menuIconTint: UIColor { .CGA.cyanShadow.brightness(1.0) }
+    public var menuIconTint: UIColor { UIColor(rgb: 0x08766F) }
     ///     Header
     ///         Background
-    public var menuHeaderBackground: UIColor { .CGA.cyanShadow.brightness(0.7) }
+    public var menuHeaderBackground: UIColor { UIColor(rgb: 0xFFFFFF) }
     ///         Icon Tint
-    public var menuHeaderIconTint: UIColor { .CGA.cyan.brightness(1.0) }
+    public var menuHeaderIconTint: UIColor { UIColor(rgb: 0x08766F) }
     ///     Section Header
     ///         Background
-    public var menuSectionHeaderBackground: UIColor { .CGA.cyan.brightness(0.3) }
+    public var menuSectionHeaderBackground: UIColor { UIColor(rgb: 0xFFFFFF) }
     ///         Text
-    public var menuSectionHeaderText: UIColor { .CGA.cyanShadow.brightness(0.5) }
+    public var menuSectionHeaderText: UIColor { UIColor(rgb: 0x08766F) }
     ///         Icon
-    public var menuSectionHeaderIconTint: UIColor { .CGA.cyan }
+    public var menuSectionHeaderIconTint: UIColor { UIColor(rgb: 0x08766F) }
+    public var uiviewBackground: UIColor? { UIColor(rgb: 0xEDF7F5) }
+    public var tableViewBackgroundColor: UIColor? { UIColor(rgb: 0xEDF7F5) }
+    public var tabBarBackground: UIColor? { UIColor(rgb: 0xEDF7F5) }
+    public var menuHeaderText: UIColor { UIColor(rgb: 0x182E2C) }
+    public var navigationBarTitleColor: UIColor? { UIColor(rgb: 0x182E2C) }
+    public var segmentedControlTint: UIColor? { UIColor(rgb: 0x08766F) }
+    public var segmentedControlSelectedTint: UIColor? { UIColor(rgb: 0x08766F) }
+    public var settingsCellTextDetail: UIColor? { UIColor(rgb: 0x4C6764) }
+    public var settingsSeperator: UIColor? { UIColor(rgb: 0x182E2C).withAlphaComponent(0.14) }
 }
 
 public struct CGAPurpleThemePalette: UXThemePalette, Codable, Sendable, Hashable {
@@ -339,65 +367,77 @@ public struct CGAPurpleThemePalette: UXThemePalette, Codable, Sendable, Hashable
     var backgroundAlpha: CGFloat { 0.95 }
 
 #if !os(tvOS)
-    public var statusBarColor: UIColor { .CGA.purple }
+    public var statusBarColor: UIColor? { UIColor(rgb: 0x1A1624) }
 #endif
-    public var defaultTintColor: UIColor { .CGA.purple }
+    public var defaultTintColor: UIColor { UIColor(rgb: 0xC6ABFA) }
 
 #if canImport(UIKit)
     public var keyboardAppearance: UIKeyboardAppearance { .dark }
 #endif
 
-    public var switchThumb: UIColor? { .CGA.purpleShadow }
-    public var switchON: UIColor? { .CGA.purple }
+    public var switchThumb: UIColor? { UIColor(rgb: 0xFFFFFF) }
+    public var switchON: UIColor? { UIColor(rgb: 0xC6ABFA) }
 
     /// Game Library
     ///     Background
-    public var gameLibraryBackground: UIColor { .CGA.purpleShadow.brightness(backgroundBrightness) }
+    public var gameLibraryBackground: UIColor { UIColor(rgb: 0x1A1624) }
     ///     Text
-    public var gameLibraryText: UIColor { .CGA.purple }
+    public var gameLibraryText: UIColor { UIColor(rgb: 0xF2F3F7) }
     ///     Header
     ///         Background
-    public var gameLibraryHeaderBackground: UIColor { .CGA.purpleShadow }
+    public var gameLibraryHeaderBackground: UIColor { UIColor(rgb: 0x2A2238) }
     ///         Text
-    public var gameLibraryHeaderText: UIColor { .CGA.purple }
+    public var gameLibraryHeaderText: UIColor { UIColor(rgb: 0xC6ABFA) }
     ///     Cell
     ///         Background
-    public var gameLibraryCellBackground: UIColor? { .CGA.purpleShadow.brightness(0.10) }
+    public var gameLibraryCellBackground: UIColor? { UIColor(rgb: 0x2A2238) }
     ///         Text
-    public var gameLibraryCellText: UIColor? { .CGA.purple }
+    public var gameLibraryCellText: UIColor { UIColor(rgb: 0xF2F3F7) }
 
     /// Navigation Bar
     ///     Background
-    public var navigationBarBackgroundColor: UIColor? { .CGA.purpleShadow }
+    public var navigationBarBackgroundColor: UIColor? { UIColor(rgb: 0x1A1624) }
     ///     Bar button tint
-    public var barButtonItemTint: UIColor? { .CGA.purple }
+    public var barButtonItemTint: UIColor? { UIColor(rgb: 0xC6ABFA) }
 
     /// Settings
     ///     Header
     ///         Background
-    public var settingsHeaderBackground: UIColor? { .CGA.purpleShadow.brightness(backgroundBrightness) }
+    public var settingsHeaderBackground: UIColor? { UIColor(rgb: 0x2A2238) }
     ///         Text
-    public var settingsHeaderText: UIColor? { .CGA.purple }
+    public var settingsHeaderText: UIColor? { UIColor(rgb: 0xC6ABFA) }
     ///     Cell
     ///         Background
-    public var settingsCellBackground: UIColor? { .CGA.purpleShadow.brightness(backgroundBrightness) }
+    public var settingsCellBackground: UIColor? { UIColor(rgb: 0x2A2238) }
     ///         Text
-    public var settingsCellText: UIColor? { .CGA.purple }
+    public var settingsCellText: UIColor? { UIColor(rgb: 0xF2F3F7) }
 
     /// Menu
     ///     Background
-    public var menuBackground: UIColor { .CGA.purple.brightness(0.2) }
+    public var menuBackground: UIColor { UIColor(rgb: 0x1A1624) }
     ///     Text
-    public var menuText: UIColor { .CGA.purple }
+    public var menuText: UIColor { UIColor(rgb: 0xF2F3F7) }
     ///     Divider
-    public var menuDivider: UIColor { .CGA.purple.brightness(0.4) }
+    public var menuDivider: UIColor { UIColor(rgb: 0xF2F3F7).withAlphaComponent(0.14) }
     ///     Icon Tint
-    public var menuIconTint: UIColor { .CGA.purple }
+    public var menuIconTint: UIColor { UIColor(rgb: 0xC6ABFA) }
     ///     Header
     ///         Background
-    public var menuHeaderBackground: UIColor { .CGA.purple.brightness(0.3) }
+    public var menuHeaderBackground: UIColor { UIColor(rgb: 0x2A2238) }
     ///         Icon Tint
-    public var menuHeaderIconTint: UIColor { .CGA.purpleShadow }
+    public var menuHeaderIconTint: UIColor { UIColor(rgb: 0xC6ABFA) }
+    public var uiviewBackground: UIColor? { UIColor(rgb: 0x1A1624) }
+    public var tableViewBackgroundColor: UIColor? { UIColor(rgb: 0x1A1624) }
+    public var tabBarBackground: UIColor? { UIColor(rgb: 0x1A1624) }
+    public var menuSectionHeaderBackground: UIColor { UIColor(rgb: 0x2A2238) }
+    public var menuHeaderText: UIColor { UIColor(rgb: 0xF2F3F7) }
+    public var navigationBarTitleColor: UIColor? { UIColor(rgb: 0xF2F3F7) }
+    public var menuSectionHeaderText: UIColor { UIColor(rgb: 0xC6ABFA) }
+    public var menuSectionHeaderIconTint: UIColor { UIColor(rgb: 0xC6ABFA) }
+    public var segmentedControlTint: UIColor? { UIColor(rgb: 0xC6ABFA) }
+    public var segmentedControlSelectedTint: UIColor? { UIColor(rgb: 0xC6ABFA) }
+    public var settingsCellTextDetail: UIColor? { UIColor(rgb: 0xB8BDC9) }
+    public var settingsSeperator: UIColor? { UIColor(rgb: 0xF2F3F7).withAlphaComponent(0.14) }
 }
 
 public struct CGAMagentaThemePalette: UXThemePalette, Codable, Sendable, Hashable {
@@ -408,65 +448,77 @@ public struct CGAMagentaThemePalette: UXThemePalette, Codable, Sendable, Hashabl
     var backgroundBrightness: CGFloat { 0.05 }
 
 #if !os(tvOS)
-    public var statusBarColor: UIColor { .CGA.magenta }
+    public var statusBarColor: UIColor? { UIColor(rgb: 0x211720) }
 #endif
-    public var defaultTintColor: UIColor { .CGA.magenta }
+    public var defaultTintColor: UIColor { UIColor(rgb: 0xED9CC6) }
 
 #if canImport(UIKit)
     public var keyboardAppearance: UIKeyboardAppearance { .dark }
 #endif
 
-    public var switchThumb: UIColor? { .CGA.magentaShadow }
-    public var switchON: UIColor? { .CGA.magenta }
+    public var switchThumb: UIColor? { UIColor(rgb: 0xFFFFFF) }
+    public var switchON: UIColor? { UIColor(rgb: 0xED9CC6) }
 
     /// Game Library
     ///     Background
-    public var gameLibraryBackground: UIColor { .CGA.magentaShadow.brightness(backgroundBrightness) }
+    public var gameLibraryBackground: UIColor { UIColor(rgb: 0x211720) }
     ///     Text
-    public var gameLibraryText: UIColor { .CGA.magenta }
+    public var gameLibraryText: UIColor { UIColor(rgb: 0xF2F3F7) }
     ///     Header
     ///         Background
-    public var gameLibraryHeaderBackground: UIColor { .CGA.magentaShadow.withAlphaComponent(0.2) }
+    public var gameLibraryHeaderBackground: UIColor { UIColor(rgb: 0x352532) }
     ///         Text
-    public var gameLibraryHeaderText: UIColor { .CGA.magenta }
+    public var gameLibraryHeaderText: UIColor { UIColor(rgb: 0xED9CC6) }
     ///     Cell
     ///         Background
-    public var gameLibraryCellBackground: UIColor? { .CGA.magentaShadow.brightness(0.10) }
+    public var gameLibraryCellBackground: UIColor? { UIColor(rgb: 0x352532) }
     ///         Text
-    public var gameLibraryCellText: UIColor? { .CGA.magenta }
+    public var gameLibraryCellText: UIColor { UIColor(rgb: 0xF2F3F7) }
 
     /// Navigation Bar
     ///     Background
-    public var navigationBarBackgroundColor: UIColor? { .CGA.magentaShadow }
+    public var navigationBarBackgroundColor: UIColor? { UIColor(rgb: 0x211720) }
     ///     Bar button tint
-    public var barButtonItemTint: UIColor? { .CGA.magenta }
+    public var barButtonItemTint: UIColor? { UIColor(rgb: 0xED9CC6) }
 
     /// Settings
     ///     Header
     ///         Background
-    public var settingsHeaderBackground: UIColor? { .CGA.magentaShadow }
+    public var settingsHeaderBackground: UIColor? { UIColor(rgb: 0x352532) }
     ///         Text
-    public var settingsHeaderText: UIColor? { .CGA.magenta }
+    public var settingsHeaderText: UIColor? { UIColor(rgb: 0xED9CC6) }
     ///     Cell
     ///         Background
-    public var settingsCellBackground: UIColor? { .CGA.magentaShadow.brightness(0.2) }
+    public var settingsCellBackground: UIColor? { UIColor(rgb: 0x352532) }
     ///         Text
-    public var settingsCellText: UIColor? { .CGA.magenta }
+    public var settingsCellText: UIColor? { UIColor(rgb: 0xF2F3F7) }
 
     /// Menu
     ///     Background
-    public var menuBackground: UIColor { .CGA.magenta.brightness(0.2) }
+    public var menuBackground: UIColor { UIColor(rgb: 0x211720) }
     ///     Text
-    public var menuText: UIColor { .CGA.magentaShadow }
+    public var menuText: UIColor { UIColor(rgb: 0xF2F3F7) }
     ///     Divider
-    public var menuDivider: UIColor { .CGA.magenta.brightness(0.4) }
+    public var menuDivider: UIColor { UIColor(rgb: 0xF2F3F7).withAlphaComponent(0.14) }
     ///     Icon Tint
-    public var menuIconTint: UIColor { .CGA.magentaShadow }
+    public var menuIconTint: UIColor { UIColor(rgb: 0xED9CC6) }
     ///     Header
     ///         Background
-    public var menuHeaderBackground: UIColor { .CGA.magenta.brightness(0.3) }
+    public var menuHeaderBackground: UIColor { UIColor(rgb: 0x352532) }
     ///         Icon Tint
-    public var menuHeaderIconTint: UIColor { .CGA.magentaShadow }
+    public var menuHeaderIconTint: UIColor { UIColor(rgb: 0xED9CC6) }
+    public var uiviewBackground: UIColor? { UIColor(rgb: 0x211720) }
+    public var tableViewBackgroundColor: UIColor? { UIColor(rgb: 0x211720) }
+    public var tabBarBackground: UIColor? { UIColor(rgb: 0x211720) }
+    public var menuSectionHeaderBackground: UIColor { UIColor(rgb: 0x352532) }
+    public var menuHeaderText: UIColor { UIColor(rgb: 0xF2F3F7) }
+    public var navigationBarTitleColor: UIColor? { UIColor(rgb: 0xF2F3F7) }
+    public var menuSectionHeaderText: UIColor { UIColor(rgb: 0xED9CC6) }
+    public var menuSectionHeaderIconTint: UIColor { UIColor(rgb: 0xED9CC6) }
+    public var segmentedControlTint: UIColor? { UIColor(rgb: 0xED9CC6) }
+    public var segmentedControlSelectedTint: UIColor? { UIColor(rgb: 0xED9CC6) }
+    public var settingsCellTextDetail: UIColor? { UIColor(rgb: 0xB8BDC9) }
+    public var settingsSeperator: UIColor? { UIColor(rgb: 0xF2F3F7).withAlphaComponent(0.14) }
 }
 
 public struct CGARedThemePalette: UXThemePalette, Codable, Sendable, Hashable {
@@ -475,71 +527,80 @@ public struct CGARedThemePalette: UXThemePalette, Codable, Sendable, Hashable {
     public var dark: Bool { true }
 
 #if !os(tvOS)
-    public var statusBarColor: UIColor { .CGA.red }
+    public var statusBarColor: UIColor? { UIColor(rgb: 0x231818) }
 #endif
-    public var defaultTintColor: UIColor { .CGA.red }
+    public var defaultTintColor: UIColor { UIColor(rgb: 0xF5A097) }
 
 #if canImport(UIKit)
-    public var keyboardAppearance: UIKeyboardAppearance { .light }
+    public var keyboardAppearance: UIKeyboardAppearance { .dark }
 #endif
-    public var switchThumb: UIColor? { .CGA.redShadow }
-    public var switchON: UIColor? { .CGA.red }
+    public var switchThumb: UIColor? { UIColor(rgb: 0xFFFFFF) }
+    public var switchON: UIColor? { UIColor(rgb: 0xF5A097) }
 
     /// Game Library
     ///     Background
-    public var gameLibraryBackground: UIColor { .CGA.redShadow.brightness(0.2) }
+    public var gameLibraryBackground: UIColor { UIColor(rgb: 0x231818) }
     ///     Text
-    public var gameLibraryText: UIColor { .CGA.red }
+    public var gameLibraryText: UIColor { UIColor(rgb: 0xF2F3F7) }
     ///     Header
     ///         Background
-    public var gameLibraryHeaderBackground: UIColor { .CGA.redShadow.brightness(0.25) }
+    public var gameLibraryHeaderBackground: UIColor { UIColor(rgb: 0x392625) }
     ///         Text
-    public var gameLibraryHeaderText: UIColor { .CGA.red.brightness(1.0) }
+    public var gameLibraryHeaderText: UIColor { UIColor(rgb: 0xF5A097) }
     ///     Cell
     ///         Background
-    public var gameLibraryCellBackground: UIColor? { .CGA.redShadow.brightness(0.20) }
+    public var gameLibraryCellBackground: UIColor? { UIColor(rgb: 0x392625) }
     ///         Text
-    public var gameLibraryCellText: UIColor? { .CGA.red.brightness(1.0) }
+    public var gameLibraryCellText: UIColor { UIColor(rgb: 0xF2F3F7) }
 
     /// Navigation Bar
     ///     Background
-    public var navigationBarBackgroundColor: UIColor? { .CGA.redShadow }
+    public var navigationBarBackgroundColor: UIColor? { UIColor(rgb: 0x231818) }
     ///     Bar button tint
-    public var barButtonItemTint: UIColor? { .CGA.red.brightness(1.0) }
+    public var barButtonItemTint: UIColor? { UIColor(rgb: 0xF5A097) }
 
     /// Settings
     ///     Cell
     ///         Background
-    public var settingsCellBackground: UIColor? { .CGA.redShadow.brightness(0.2) }
+    public var settingsCellBackground: UIColor? { UIColor(rgb: 0x392625) }
     ///         Text
-    public var settingsCellText: UIColor? { .CGA.red }
+    public var settingsCellText: UIColor? { UIColor(rgb: 0xF2F3F7) }
     ///     Header
     ///         Background
-    public var settingsHeaderBackground: UIColor? { .CGA.redShadow }
+    public var settingsHeaderBackground: UIColor? { UIColor(rgb: 0x392625) }
     ///         Text
-    public var settingsHeaderText: UIColor? { .CGA.red }
+    public var settingsHeaderText: UIColor? { UIColor(rgb: 0xF5A097) }
 
     /// Menu
     ///     Background
-    public var menuBackground: UIColor { .CGA.redShadow.brightness(0.3) }
+    public var menuBackground: UIColor { UIColor(rgb: 0x231818) }
     ///     Text
-    public var menuText: UIColor { .CGA.red.brightness(1.0) }
+    public var menuText: UIColor { UIColor(rgb: 0xF2F3F7) }
     ///     Divider
-    public var menuDivider: UIColor { .CGA.red.brightness(0.6) }
+    public var menuDivider: UIColor { UIColor(rgb: 0xF2F3F7).withAlphaComponent(0.14) }
     ///     Icon Tint
-    public var menuIconTint: UIColor { .CGA.red.brightness(1.0) }
+    public var menuIconTint: UIColor { UIColor(rgb: 0xF5A097) }
     ///     Header
     ///         Background
-    public var menuHeaderBackground: UIColor { .CGA.redShadow.brightness(0.3) }
+    public var menuHeaderBackground: UIColor { UIColor(rgb: 0x392625) }
     ///         Icon Tint
-    public var menuHeaderIconTint: UIColor { .CGA.red.brightness(1.0) }
+    public var menuHeaderIconTint: UIColor { UIColor(rgb: 0xF5A097) }
     ///     Section Header
     ///         Background
-    public var menuSectionHeaderBackground: UIColor {  .CGA.redShadow.brightness(0.2) }
+    public var menuSectionHeaderBackground: UIColor { UIColor(rgb: 0x392625) }
     ///         Text
-    public var menuSectionHeaderText: UIColor { .CGA.red.brightness(1.0) }
+    public var menuSectionHeaderText: UIColor { UIColor(rgb: 0xF5A097) }
     ///         Icon
-    public var menuSectionHeaderIconTint: UIColor { .CGA.red.brightness(1.0)  }
+    public var menuSectionHeaderIconTint: UIColor { UIColor(rgb: 0xF5A097) }
+    public var uiviewBackground: UIColor? { UIColor(rgb: 0x231818) }
+    public var tableViewBackgroundColor: UIColor? { UIColor(rgb: 0x231818) }
+    public var tabBarBackground: UIColor? { UIColor(rgb: 0x231818) }
+    public var menuHeaderText: UIColor { UIColor(rgb: 0xF2F3F7) }
+    public var navigationBarTitleColor: UIColor? { UIColor(rgb: 0xF2F3F7) }
+    public var segmentedControlTint: UIColor? { UIColor(rgb: 0xF5A097) }
+    public var segmentedControlSelectedTint: UIColor? { UIColor(rgb: 0xF5A097) }
+    public var settingsCellTextDetail: UIColor? { UIColor(rgb: 0xB8BDC9) }
+    public var settingsSeperator: UIColor? { UIColor(rgb: 0xF2F3F7).withAlphaComponent(0.14) }
 }
 
 public struct CGAYellowThemePalette: UXThemePalette, Codable, Sendable, Hashable {
@@ -549,72 +610,81 @@ public struct CGAYellowThemePalette: UXThemePalette, Codable, Sendable, Hashable
     public var dark: Bool { true }
 
 #if !os(tvOS)
-    public var statusBarColor: UIColor { .CGA.yellow }
+    public var statusBarColor: UIColor? { UIColor(rgb: 0x201D15) }
 #endif
-    public var defaultTintColor: UIColor { .CGA.yellow }
+    public var defaultTintColor: UIColor { UIColor(rgb: 0xE4C778) }
 
 #if canImport(UIKit)
-    public var keyboardAppearance: UIKeyboardAppearance { .light }
+    public var keyboardAppearance: UIKeyboardAppearance { .dark }
 #endif
 
-    public var switchThumb: UIColor? { .CGA.yellowShadow }
-    public var switchON: UIColor? { .CGA.yellow }
+    public var switchThumb: UIColor? { UIColor(rgb: 0xFFFFFF) }
+    public var switchON: UIColor? { UIColor(rgb: 0xE4C778) }
 
     /// Game Library
     ///     Background
-    public var gameLibraryBackground: UIColor { .CGA.yellowShadow.brightness(0.2) }
+    public var gameLibraryBackground: UIColor { UIColor(rgb: 0x201D15) }
     ///     Text
-    public var gameLibraryText: UIColor { .CGA.yellow }
+    public var gameLibraryText: UIColor { UIColor(rgb: 0xF2F3F7) }
     ///     Header
     ///         Background
-    public var gameLibraryHeaderBackground: UIColor { .CGA.yellowShadow.brightness(0.9) }
+    public var gameLibraryHeaderBackground: UIColor { UIColor(rgb: 0x332E22) }
     ///         Text
-    public var gameLibraryHeaderText: UIColor { .CGA.yellow }
+    public var gameLibraryHeaderText: UIColor { UIColor(rgb: 0xE4C778) }
     ///     Cell
     ///         Background
-    public var gameLibraryCellBackground: UIColor? { .CGA.yellowShadow.brightness(0.10) }
+    public var gameLibraryCellBackground: UIColor? { UIColor(rgb: 0x332E22) }
     ///         Text
-    public var gameLibraryCellText: UIColor? { .CGA.yellow }
+    public var gameLibraryCellText: UIColor { UIColor(rgb: 0xF2F3F7) }
 
     /// Navigation Bar
     ///     Background
-    public var navigationBarBackgroundColor: UIColor? { .CGA.yellowShadow }
+    public var navigationBarBackgroundColor: UIColor? { UIColor(rgb: 0x201D15) }
     ///     Bar button tint
-    public var barButtonItemTint: UIColor? { .CGA.yellow }
+    public var barButtonItemTint: UIColor? { UIColor(rgb: 0xE4C778) }
 
     /// Settings
     ///     Header
     ///         Background
-    public var settingsHeaderBackground: UIColor? { .CGA.yellowShadow }
+    public var settingsHeaderBackground: UIColor? { UIColor(rgb: 0x332E22) }
     ///         Text
-    public var settingsHeaderText: UIColor? { .CGA.yellow }
+    public var settingsHeaderText: UIColor? { UIColor(rgb: 0xE4C778) }
     ///     Cell
     ///         Background
-    public var settingsCellBackground: UIColor? { .CGA.yellowShadow.brightness(0.2) }
+    public var settingsCellBackground: UIColor? { UIColor(rgb: 0x332E22) }
     ///         Text
-    public var settingsCellText: UIColor? { .CGA.yellow }
+    public var settingsCellText: UIColor? { UIColor(rgb: 0xF2F3F7) }
 
     /// Menu
     ///     Background
-    public var menuBackground: UIColor { .CGA.yellow.brightness(0.20) }
+    public var menuBackground: UIColor { UIColor(rgb: 0x201D15) }
     ///     Text
-    public var menuText: UIColor { .CGA.yellow.brightness(1.0) }
+    public var menuText: UIColor { UIColor(rgb: 0xF2F3F7) }
     ///     Divider
-    public var menuDivider: UIColor { .CGA.yellow.brightness(0.6) }
+    public var menuDivider: UIColor { UIColor(rgb: 0xF2F3F7).withAlphaComponent(0.14) }
     ///     Icon Tint
-    public var menuIconTint: UIColor { .CGA.yellow.brightness(1.0) }
+    public var menuIconTint: UIColor { UIColor(rgb: 0xE4C778) }
     ///     Header
     ///         Background
-    public var menuHeaderBackground: UIColor { .CGA.yellow.brightness(0.5) }
+    public var menuHeaderBackground: UIColor { UIColor(rgb: 0x332E22) }
     ///         Icon Tint
-    public var menuHeaderIconTint: UIColor { .CGA.yellowShadow.brightness(2.0) }
+    public var menuHeaderIconTint: UIColor { UIColor(rgb: 0xE4C778) }
     ///     Section Header
     ///         Background
-    public var menuSectionHeaderBackground: UIColor {  .CGA.yellowShadow.brightness(0.1) }
+    public var menuSectionHeaderBackground: UIColor { UIColor(rgb: 0x332E22) }
     ///         Text
-    public var menuSectionHeaderText: UIColor { .CGA.yellow.brightness(1.0) }
+    public var menuSectionHeaderText: UIColor { UIColor(rgb: 0xE4C778) }
     ///         Icon
-    public var menuSectionHeaderIconTint: UIColor { .CGA.yellow.brightness(1.0)  }
+    public var menuSectionHeaderIconTint: UIColor { UIColor(rgb: 0xE4C778) }
+    public var uiviewBackground: UIColor? { UIColor(rgb: 0x201D15) }
+    public var tableViewBackgroundColor: UIColor? { UIColor(rgb: 0x201D15) }
+    public var tabBarBackground: UIColor? { UIColor(rgb: 0x201D15) }
+    public var menuHeaderText: UIColor { UIColor(rgb: 0xF2F3F7) }
+    public var navigationBarTitleColor: UIColor? { UIColor(rgb: 0xF2F3F7) }
+    public var segmentedControlTint: UIColor? { UIColor(rgb: 0xE4C778) }
+    public var segmentedControlSelectedTint: UIColor? { UIColor(rgb: 0xE4C778) }
+    public var settingsCellTextDetail: UIColor? { UIColor(rgb: 0xB8BDC9) }
+    public var settingsSeperator: UIColor? { UIColor(rgb: 0xF2F3F7).withAlphaComponent(0.14) }
 }
 
 public struct CGARainbowThemePalette: UXThemePalette, Codable, Sendable, Hashable {
@@ -627,72 +697,81 @@ public struct CGARainbowThemePalette: UXThemePalette, Codable, Sendable, Hashabl
     var backgroundAlpha: CGFloat { 0.95 }
 
 #if !os(tvOS)
-    public var statusBarColor: UIColor { .CGA.blue }
+    public var statusBarColor: UIColor? { UIColor(rgb: 0x171B26) }
 #endif
-    public var defaultTintColor: UIColor { .CGA.cyan }
+    public var defaultTintColor: UIColor { UIColor(rgb: 0x99C8EE) }
 
 #if canImport(UIKit)
     public var keyboardAppearance: UIKeyboardAppearance { .dark }
 #endif
 
-    public var switchThumb: UIColor? { .CGA.yellowShadow }
-    public var switchON: UIColor? { .CGA.green }
+    public var switchThumb: UIColor? { UIColor(rgb: 0xFFFFFF) }
+    public var switchON: UIColor? { UIColor(rgb: 0x99C8EE) }
 
     /// Game Library
     ///     Background
-    public var gameLibraryBackground: UIColor { .CGA.blueShadow.brightness(0.1) }
+    public var gameLibraryBackground: UIColor { UIColor(rgb: 0x171B26) }
     ///     Text
-    public var gameLibraryText: UIColor { .CGA.yellow }
+    public var gameLibraryText: UIColor { UIColor(rgb: 0xF2F3F7) }
     ///     Header
     ///         Background
-    public var gameLibraryHeaderBackground: UIColor { .CGA.purpleShadow }
+    public var gameLibraryHeaderBackground: UIColor { UIColor(rgb: 0x252B3C) }
     ///         Text
-    public var gameLibraryHeaderText: UIColor { .CGA.magenta }
+    public var gameLibraryHeaderText: UIColor { UIColor(rgb: 0x99C8EE) }
     ///     Cell
     ///         Background
-    public var gameLibraryCellBackground: UIColor? { .CGA.redShadow.brightness(0.2) }
+    public var gameLibraryCellBackground: UIColor? { UIColor(rgb: 0x252B3C) }
     ///         Text
-    public var gameLibraryCellText: UIColor? { .CGA.cyan }
+    public var gameLibraryCellText: UIColor { UIColor(rgb: 0xF2F3F7) }
 
     /// Navigation Bar
     ///     Background
-    public var navigationBarBackgroundColor: UIColor? { .CGA.redShadow }
+    public var navigationBarBackgroundColor: UIColor? { UIColor(rgb: 0x171B26) }
     ///     Bar button tint
-    public var barButtonItemTint: UIColor? { .CGA.cyan }
+    public var barButtonItemTint: UIColor? { UIColor(rgb: 0x99C8EE) }
 
     /// Settings
     ///     Header
     ///         Background
-    public var settingsHeaderBackground: UIColor? { .CGA.greenShadow.brightness(0.1) }
+    public var settingsHeaderBackground: UIColor? { UIColor(rgb: 0x252B3C) }
     ///         Text
-    public var settingsHeaderText: UIColor? { .CGA.yellow }
+    public var settingsHeaderText: UIColor? { UIColor(rgb: 0x99C8EE) }
     ///     Cell
     ///         Background
-    public var settingsCellBackground: UIColor? { .CGA.magentaShadow.brightness(0.2) }
+    public var settingsCellBackground: UIColor? { UIColor(rgb: 0x252B3C) }
     ///         Text
-    public var settingsCellText: UIColor? { .CGA.cyan }
+    public var settingsCellText: UIColor? { UIColor(rgb: 0xF2F3F7) }
 
     /// Menu
     ///     Background
-    public var menuBackground: UIColor { .CGA.yellow.brightness(0.2) }
+    public var menuBackground: UIColor { UIColor(rgb: 0x171B26) }
     ///     Text
-    public var menuText: UIColor { .CGA.redShadow }
+    public var menuText: UIColor { UIColor(rgb: 0xF2F3F7) }
     ///     Divider
-    public var menuDivider: UIColor { .CGA.red.brightness(0.4) }
+    public var menuDivider: UIColor { UIColor(rgb: 0xF2F3F7).withAlphaComponent(0.14) }
     ///     Icon Tint
-    public var menuIconTint: UIColor { .CGA.greenShadow }
+    public var menuIconTint: UIColor { UIColor(rgb: 0x99C8EE) }
     ///     Header
     ///         Background
-    public var menuHeaderBackground: UIColor { .CGA.blue.brightness(0.3) }
+    public var menuHeaderBackground: UIColor { UIColor(rgb: 0x252B3C) }
     ///         Icon Tint
-    public var menuHeaderIconTint: UIColor { .CGA.cyanShadow }
+    public var menuHeaderIconTint: UIColor { UIColor(rgb: 0x99C8EE) }
     ///     Section Header
     ///         Background
-    public var menuSectionHeaderBackground: UIColor  { .CGA.green.brightness(0.3) }
+    public var menuSectionHeaderBackground: UIColor  { UIColor(rgb: 0x252B3C) }
     ///         Tint
-    public var menuSectionHeaderIconTint: UIColor { .CGA.purple }
+    public var menuSectionHeaderIconTint: UIColor { UIColor(rgb: 0x99C8EE) }
+    public var uiviewBackground: UIColor? { UIColor(rgb: 0x171B26) }
+    public var tableViewBackgroundColor: UIColor? { UIColor(rgb: 0x171B26) }
+    public var tabBarBackground: UIColor? { UIColor(rgb: 0x171B26) }
+    public var menuHeaderText: UIColor { UIColor(rgb: 0xF2F3F7) }
+    public var navigationBarTitleColor: UIColor? { UIColor(rgb: 0xF2F3F7) }
+    public var menuSectionHeaderText: UIColor { UIColor(rgb: 0x99C8EE) }
+    public var segmentedControlTint: UIColor? { UIColor(rgb: 0x99C8EE) }
+    public var segmentedControlSelectedTint: UIColor? { UIColor(rgb: 0x99C8EE) }
+    public var settingsCellTextDetail: UIColor? { UIColor(rgb: 0xB8BDC9) }
+    public var settingsSeperator: UIColor? { UIColor(rgb: 0xF2F3F7).withAlphaComponent(0.14) }
 }
-
 
 public struct CGARandomThemePalette: UXThemePalette, Codable, Sendable, Hashable {
 
@@ -728,7 +807,7 @@ public struct CGARandomThemePalette: UXThemePalette, Codable, Sendable, Hashable
     private let _menuSectionHeaderIconTint: Int
 
 #if !os(tvOS)
-    public var statusBarColor: UIColor { UIColor(rgb: _statusBarColor) }
+    public var statusBarColor: UIColor? { UIColor(rgb: _statusBarColor) }
 #endif
     public var defaultTintColor: UIColor { UIColor(rgb: _defaultTintColor) }
 
@@ -741,117 +820,64 @@ public struct CGARandomThemePalette: UXThemePalette, Codable, Sendable, Hashable
 
     // Game Library
     public var gameLibraryBackground: UIColor { UIColor(rgb: _gameLibraryBackground) }
-    public var gameLibraryText: UIColor {
-        let background = UIColor(rgb: _gameLibraryBackground)
-        let text = UIColor(rgb: _gameLibraryText)
-        return adjustBrightness(text: text, background: background)
-    }
+    public var gameLibraryText: UIColor { UIColor(rgb: _gameLibraryText) }
     public var gameLibraryHeaderBackground: UIColor { UIColor(rgb: _gameLibraryHeaderBackground) }
-    public var gameLibraryHeaderText: UIColor {
-        let background = UIColor(rgb: _gameLibraryHeaderBackground)
-        let text = UIColor(rgb: _gameLibraryHeaderText)
-        return adjustBrightness(text: text, background: background)
-    }
+    public var gameLibraryHeaderText: UIColor { UIColor(rgb: _gameLibraryHeaderText) }
     public var gameLibraryCellBackground: UIColor? { _gameLibraryCellBackground.map { UIColor(rgb: $0) } }
-    public var gameLibraryCellText: UIColor? {
-        guard let cellBackground = _gameLibraryCellBackground.map({ UIColor(rgb: $0) }),
-              let cellText = _gameLibraryCellText.map({ UIColor(rgb: $0) }) else { return nil }
-        return adjustBrightness(text: cellText, background: cellBackground)
-    }
+    public var gameLibraryCellText: UIColor { _gameLibraryCellText.map { UIColor(rgb: $0) } ?? gameLibraryText }
 
     // Navigation Bar
     public var navigationBarBackgroundColor: UIColor? { _navigationBarBackgroundColor.map { UIColor(rgb: $0) } }
-    public var barButtonItemTint: UIColor? {
-        guard let background = _navigationBarBackgroundColor.map({ UIColor(rgb: $0) }),
-              let tint = _barButtonItemTint.map({ UIColor(rgb: $0) }) else { return nil }
-        return adjustBrightness(text: tint, background: background)
-    }
+    public var barButtonItemTint: UIColor? { _barButtonItemTint.map { UIColor(rgb: $0) } }
 
     // Settings
     public var settingsHeaderBackground: UIColor? { _settingsHeaderBackground.map { UIColor(rgb: $0) } }
-    public var settingsHeaderText: UIColor? {
-        guard let background = _settingsHeaderBackground.map({ UIColor(rgb: $0) }),
-              let text = _settingsHeaderText.map({ UIColor(rgb: $0) }) else { return nil }
-        return adjustBrightness(text: text, background: background)
-    }
+    public var settingsHeaderText: UIColor? { _settingsHeaderText.map { UIColor(rgb: $0) } }
     public var settingsCellBackground: UIColor? { _settingsCellBackground.map { UIColor(rgb: $0) } }
-    public var settingsCellText: UIColor? {
-        guard let background = _settingsCellBackground.map({ UIColor(rgb: $0) }),
-              let text = _settingsCellText.map({ UIColor(rgb: $0) }) else { return nil }
-        return adjustBrightness(text: text, background: background)
-    }
+    public var settingsCellText: UIColor? { _settingsCellText.map { UIColor(rgb: $0) } }
 
     // Menu
     public var menuBackground: UIColor { UIColor(rgb: _menuBackground) }
-    public var menuText: UIColor {
-        let background = UIColor(rgb: _menuBackground)
-        let text = UIColor(rgb: _menuText)
-        return adjustBrightness(text: text, background: background)
-    }
+    public var menuText: UIColor { UIColor(rgb: _menuText) }
     public var menuDivider: UIColor { UIColor(rgb: _menuDivider) }
-    public var menuIconTint: UIColor {
-        let background = UIColor(rgb: _menuBackground)
-        let tint = UIColor(rgb: _menuIconTint)
-        return adjustBrightness(text: tint, background: background)
-    }
+    public var menuIconTint: UIColor { UIColor(rgb: _menuIconTint) }
     public var menuHeaderBackground: UIColor { UIColor(rgb: _menuHeaderBackground) }
-    public var menuHeaderIconTint: UIColor {
-        let background = UIColor(rgb: _menuHeaderBackground)
-        let tint = UIColor(rgb: _menuHeaderIconTint)
-        return adjustBrightness(text: tint, background: background)
-    }
+    public var menuHeaderIconTint: UIColor { UIColor(rgb: _menuHeaderIconTint) }
     public var menuSectionHeaderBackground: UIColor { UIColor(rgb: _menuSectionHeaderBackground) }
-    public var menuSectionHeaderText: UIColor {
-        let background = UIColor(rgb: _menuSectionHeaderBackground)
-        let text = UIColor(rgb: _menuSectionHeaderText)
-        return adjustBrightness(text: text, background: background)
-    }
-    public var menuSectionHeaderIconTint: UIColor {
-        let background = UIColor(rgb: _menuSectionHeaderBackground)
-        let tint = UIColor(rgb: _menuSectionHeaderIconTint)
-        return adjustBrightness(text: tint, background: background)
-    }
+    public var menuSectionHeaderText: UIColor { UIColor(rgb: _menuSectionHeaderText) }
+    public var menuSectionHeaderIconTint: UIColor { UIColor(rgb: _menuSectionHeaderIconTint) }
 
     public init() {
-        self._dark = Bool.random()
-        self._statusBarColor = UIColor.CGA.allCases.randomElement()!.rgb
-        self._defaultTintColor = UIColor.CGA.allCases.randomElement()!.rgb
-        self._switchThumb = UIColor.CGA.allCases.randomElement()!.rgb
-        self._switchON = UIColor.CGA.allCases.randomElement()!.rgb
-        self._gameLibraryBackground = UIColor.CGA.allCases.randomElement()!.rgb
-        self._gameLibraryText = UIColor.CGA.allCases.randomElement()!.rgb
-        self._gameLibraryHeaderBackground = UIColor.CGA.allCases.randomElement()!.rgb
-        self._gameLibraryHeaderText = UIColor.CGA.allCases.randomElement()!.rgb
-        self._gameLibraryCellBackground = UIColor.CGA.allCases.randomElement()!.rgb
-        self._gameLibraryCellText = UIColor.CGA.allCases.randomElement()!.rgb
-        self._navigationBarBackgroundColor = UIColor.CGA.allCases.randomElement()!.rgb
-        self._barButtonItemTint = UIColor.CGA.allCases.randomElement()!.rgb
-        self._settingsHeaderBackground = UIColor.CGA.allCases.randomElement()!.rgb
-        self._settingsHeaderText = UIColor.CGA.allCases.randomElement()!.rgb
-        self._settingsCellBackground = UIColor.CGA.allCases.randomElement()!.rgb
-        self._settingsCellText = UIColor.CGA.allCases.randomElement()!.rgb
-        self._menuBackground = UIColor.CGA.allCases.randomElement()!.rgb
-        self._menuText = UIColor.CGA.allCases.randomElement()!.rgb
-        self._menuDivider = UIColor.CGA.allCases.randomElement()!.rgb
-        self._menuIconTint = UIColor.CGA.allCases.randomElement()!.rgb
-        self._menuHeaderBackground = UIColor.CGA.allCases.randomElement()!.rgb
-        self._menuHeaderIconTint = UIColor.CGA.allCases.randomElement()!.rgb
-        self._menuSectionHeaderBackground = UIColor.CGA.allCases.randomElement()!.rgb
-        self._menuSectionHeaderText = UIColor.CGA.allCases.randomElement()!.rgb
-        self._menuSectionHeaderIconTint = UIColor.CGA.allCases.randomElement()!.rgb
+        let options = CGAThemes.allCases.filter { $0 != .random }
+        let palette = (options.randomElement() ?? .blue).palette
+        self._dark = palette.dark
+        self._statusBarColor = palette.gameLibraryBackground.rgb
+        self._defaultTintColor = palette.defaultTintColor.rgb
+        self._switchThumb = palette.switchThumb?.rgb
+        self._switchON = palette.switchON?.rgb
+        self._gameLibraryBackground = palette.gameLibraryBackground.rgb
+        self._gameLibraryText = palette.gameLibraryText.rgb
+        self._gameLibraryHeaderBackground = palette.gameLibraryHeaderBackground.rgb
+        self._gameLibraryHeaderText = palette.gameLibraryHeaderText.rgb
+        self._gameLibraryCellBackground = palette.gameLibraryCellBackground?.rgb
+        self._gameLibraryCellText = palette.gameLibraryCellText.rgb
+        self._navigationBarBackgroundColor = palette.navigationBarBackgroundColor?.rgb
+        self._barButtonItemTint = palette.barButtonItemTint?.rgb
+        self._settingsHeaderBackground = palette.settingsHeaderBackground?.rgb
+        self._settingsHeaderText = palette.settingsHeaderText?.rgb
+        self._settingsCellBackground = palette.settingsCellBackground?.rgb
+        self._settingsCellText = palette.settingsCellText?.rgb
+        self._menuBackground = palette.menuBackground.rgb
+        self._menuText = palette.menuText.rgb
+        self._menuDivider = palette.menuDivider.rgb
+        self._menuIconTint = palette.menuIconTint.rgb
+        self._menuHeaderBackground = palette.menuHeaderBackground.rgb
+        self._menuHeaderIconTint = palette.menuHeaderIconTint.rgb
+        self._menuSectionHeaderBackground = palette.menuSectionHeaderBackground.rgb
+        self._menuSectionHeaderText = palette.menuSectionHeaderText.rgb
+        self._menuSectionHeaderIconTint = palette.menuSectionHeaderIconTint.rgb
     }
 
-    private func adjustBrightness(text: UIColor, background: UIColor) -> UIColor {
-        var textBrightness: CGFloat = 0
-        var backgroundBrightness: CGFloat = 0
-        text.getHue(nil, saturation: nil, brightness: &textBrightness, alpha: nil)
-        background.getHue(nil, saturation: nil, brightness: &backgroundBrightness, alpha: nil)
-
-        if abs(textBrightness - backgroundBrightness) < 0.5 {
-            return textBrightness > backgroundBrightness ? text.brightness(1.0) : text.brightness(0.0)
-        }
-        return text
-    }
 }
 
 private extension UIColor {

@@ -711,12 +711,13 @@ struct MetalFilterSelectionOptionTests {
 @Suite("ThemeOption", .serialized)
 struct ThemeOptionTests {
 
-    @Test("allCases includes standard and CGA themes")
+    @Test("allCases includes standard, CGA, and RetroWave themes")
     func allCasesCount() {
         let cases = ThemeOption.allCases
         let standardCount = ThemeOptionsStandard.allCases.count
         let cgaCount = ThemeOptionsCGA.allCases.count
-        #expect(cases.count == standardCount + cgaCount)
+        #expect(cases.count == standardCount + cgaCount + 1)
+        #expect(cases.contains(.retrowave))
     }
 
     @Test("Standard theme description is correct")
@@ -751,6 +752,14 @@ struct ThemeOptionTests {
         #expect(serialized != nil)
         #expect(serialized?["type"] == "standard")
         #expect(serialized?["value"] == "dark")
+    }
+
+    @Test("RetroWave persists independently of the standard dark theme")
+    func bridgeRoundTripRetroWave() {
+        let bridge = ThemeOptionBridge()
+        #expect(bridge.deserialize(bridge.serialize(.retrowave)) == .retrowave)
+        #expect(ThemeOption.retrowave != .standard(.dark))
+        #expect(ThemeOption.retrowave.description == "RetroWave")
     }
 
     @Test("ThemeOptionBridge serializes CGA theme")
