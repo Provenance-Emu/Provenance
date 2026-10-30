@@ -1,5 +1,5 @@
 {
-  "originHash" : "836f5ce248a7cba0f43b7fcd73a1ff0922e2ee7ec0e1f752c1931cf16366b47f",
+  "originHash" : "090f409c721bf4fbd9021043788f08501e6ebdc69a5f71042694eaf48346ea97",
   "pins" : [
     {
       "identity" : "activityindicatorview",
@@ -301,7 +301,7 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Provenance-Emu/SkinKit",
       "state" : {
-        "revision" : "3ef3ef95f7a8143db09afad79d3464e9ac742767"
+        "revision" : "f394638b2291f08df14ad315df3b7418704b9b20"
       }
     },
     {
