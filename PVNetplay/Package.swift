@@ -18,6 +18,7 @@ let package = Package(
         .target(
             name: "PVNetplay",
             dependencies: [],
+            resources: [.process("Resources")],
             swiftSettings: [
                 .swiftLanguageMode(.v6)
             ]

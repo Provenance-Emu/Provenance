@@ -1,0 +1,6 @@
+Player-count facts from GameTDB: https://www.gametdb.com/wiitdb.zip?LANG=EN&GAMECUBE=1
+Retrieved 2026-10-29. XML SHA256: f24fd0b01161994df667b79e69da82eaf42292d2e01a023c63f9136b759d91d3
+Only standard G-prefix GameCube and R/S-prefix Wii retail IDs. Custom titles and GBA/DS peripheral records are omitted.
+Local input players and native network players remain distinct. One-local-player records without another known mode remain unverified.
+No title matching, descriptions or artwork are included. These are multiplayer facts, not tested emulator compatibility.
+Rebuild with Scripts/netplay/build_multiplayer_catalog.py and an official wiitdb.zip download.

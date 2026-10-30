@@ -22,6 +22,8 @@ public enum NetplayRoomTXTRecord {
         public static let serial = "serial"
         public static let system = "system"
         public static let core = "core"
+        public static let coreVersion = "coreVersion"
+        public static let playMode = "playMode"
         public static let maxPlayers = "maxPlayers"
         public static let players = "players"
         public static let spectators = "spectators"
@@ -55,6 +57,8 @@ public enum NetplayRoomTXTRecord {
         if !room.gameHash.isEmpty { txt[Key.hash] = room.gameHash }
         if !room.gameSerial.isEmpty { txt[Key.serial] = room.gameSerial }
         if !room.systemIdentifier.isEmpty { txt[Key.system] = room.systemIdentifier }
+        if !room.coreVersion.isEmpty { txt[Key.coreVersion] = room.coreVersion }
+        if let mode = room.playMode { txt[Key.playMode] = mode.rawValue }
         return txt.reduce(into: [:]) { result, entry in
             let budget = maxEntryBytes - entry.key.utf8.count - 1
             result[entry.key] = truncated(entry.value, toBytes: budget)
@@ -102,7 +106,9 @@ public enum NetplayRoomTXTRecord {
             discoverySource: .bonjour,
             lastSeen: lastSeen,
             gameSerial: txt[Key.serial] ?? "",
-            systemIdentifier: txt[Key.system] ?? ""
+            systemIdentifier: txt[Key.system] ?? "",
+            coreVersion: txt[Key.coreVersion] ?? "",
+            playMode: txt[Key.playMode].flatMap(NetplayPlayMode.init(rawValue:))
         )
     }
 

@@ -339,11 +339,12 @@ public struct NetplayGameCenterView: View {
 
     public var body: some View {
         NavigationStack {
-            Form {
+            NetplayForm {
                 authSection
                 matchmakingSection
             }
-            .navigationTitle("Game Center Match")
+            .netplayScreen()
+            .netplayNavigationTitle("Game Center Match")
             #if !os(tvOS)
             .navigationBarTitleDisplayMode(.inline)
             #endif
@@ -372,7 +373,7 @@ public struct NetplayGameCenterView: View {
             }
         }
 #if !os(tvOS)
-        .sheet(isPresented: $showMatchmaker) {
+        .netplayPresentation(isPresented: $showMatchmaker) {
             if gkManager.isAuthenticated {
                 GKMatchmakerRepresentable(
                     request: makeMatchRequest(),
@@ -395,7 +396,7 @@ public struct NetplayGameCenterView: View {
     // MARK: - Sections
 
     private var authSection: some View {
-        SwiftUI.Section("Game Center") {
+        NetplayFormSection("Game Center") {
             HStack {
                 Image(systemName: gkManager.isAuthenticated
                       ? "checkmark.circle.fill"
@@ -435,7 +436,7 @@ public struct NetplayGameCenterView: View {
     }
 
     private var matchmakingSection: some View {
-        SwiftUI.Section {
+        NetplayFormSection {
             VStack(alignment: .leading, spacing: 8) {
                 Text("Find a partner via Game Center to play \"\(gameName)\" together.")
                     .font(.subheadline)

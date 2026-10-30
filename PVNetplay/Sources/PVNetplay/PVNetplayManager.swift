@@ -137,6 +137,13 @@ public actor PVNetplayManager {
         guard let bridge = activeBridge else { throw NetplayError.bridgeNotReady }
         guard bridge.supportsNetplay else { throw NetplayError.unsupported }
 
+        if let option = game?.option {
+            guard (2...option.maxPlayers).contains(settings.maxPlayers),
+                  !settings.allowSpectators || option.core.supportsSpectators else {
+                throw NetplayError.invalidSettings("Player or spectator settings exceed this game's multiplayer mode.")
+            }
+        }
+
         let role = NetplayRole.host(port: settings.port)
         let placeholder = NetplayRoom(
             hostName: "Local Host",
@@ -175,6 +182,7 @@ public actor PVNetplayManager {
 
     /// Join an existing netplay room.
     public func join(room: NetplayRoom, settings: NetplaySettings) async throws {
+        guard !room.isFull else { throw NetplayError.sessionFull }
         guard !state.isActive else { throw NetplayError.alreadyActive }
         guard let bridge = activeBridge else { throw NetplayError.bridgeNotReady }
         guard bridge.supportsNetplay else { throw NetplayError.unsupported }
@@ -210,13 +218,13 @@ public actor PVNetplayManager {
     // MARK: - Spectate
 
     /// Join a room as a spectator.
-    public func spectate(room: NetplayRoom) async throws {
+    public func spectate(room: NetplayRoom, settings: NetplaySettings = .defaultLAN) async throws {
+        guard room.allowsSpectators else { throw NetplayError.invalidSettings("This room does not allow spectators.") }
         guard !state.isActive else { throw NetplayError.alreadyActive }
         guard let bridge = activeBridge else { throw NetplayError.bridgeNotReady }
         guard bridge.supportsNetplay else { throw NetplayError.unsupported }
 
         let role = NetplayRole.spectator(host: room.hostAddress, port: room.port)
-        let settings = NetplaySettings.defaultLAN
         state = .connecting(to: room)
         do {
             try await bridge.startNetplay(role: role, settings: settings)
@@ -337,7 +345,9 @@ public actor PVNetplayManager {
             spectatorCount: hosted.spectatorCount,
             discoverySource: .bonjour,
             gameSerial: firstNonEmpty(game?.serial, hosted.gameSerial),
-            systemIdentifier: firstNonEmpty(game?.systemIdentifier, hosted.systemIdentifier)
+            systemIdentifier: firstNonEmpty(game?.systemIdentifier, hosted.systemIdentifier),
+            coreVersion: firstNonEmpty(game?.coreVersion, hosted.coreVersion),
+            playMode: game?.option?.mode ?? hosted.playMode
         )
     }
 
@@ -388,8 +398,8 @@ public final class ObservableNetplayManager: ObservableObject {
         try await manager.join(room: room, settings: settings)
     }
 
-    public func spectate(room: NetplayRoom) async throws {
-        try await manager.spectate(room: room)
+    public func spectate(room: NetplayRoom, settings: NetplaySettings = .defaultLAN) async throws {
+        try await manager.spectate(room: room, settings: settings)
     }
 
     public func disconnect() async {

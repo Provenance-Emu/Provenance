@@ -105,7 +105,7 @@ public struct NetplayWaitingRoomView: View {
 
     public var body: some View {
         NavigationStack {
-            List {
+            NetplayForm {
                 roomHeaderSection
                 connectionInfoSection
                 playersSection
@@ -114,7 +114,7 @@ public struct NetplayWaitingRoomView: View {
                 }
                 startGameSection
             }
-            .navigationTitle("Waiting Room")
+            .netplayNavigationTitle("Waiting Room")
             #if !os(tvOS)
             .navigationBarTitleDisplayMode(.inline)
             #endif
@@ -151,7 +151,7 @@ public struct NetplayWaitingRoomView: View {
     // MARK: - Sections
 
     private var roomHeaderSection: some View {
-        SwiftUI.Section {
+        NetplayFormSection {
             HStack(spacing: 12) {
                 ZStack {
                     Circle()
@@ -168,9 +168,6 @@ public struct NetplayWaitingRoomView: View {
                         .font(.subheadline)
                         .foregroundStyle(.secondary)
                         .lineLimit(1)
-                    Text(coreIdentifier)
-                        .font(.caption2)
-                        .foregroundStyle(.tertiary)
                         .lineLimit(1)
                 }
                 Spacer()
@@ -190,7 +187,7 @@ public struct NetplayWaitingRoomView: View {
     }
 
     private var connectionInfoSection: some View {
-        SwiftUI.Section("Connection Info") {
+        NetplayFormSection("Connection Info") {
             LabeledContent("Room Name", value: settings.roomName)
             LabeledContent("IP Address") {
                 if localIP.isEmpty {
@@ -225,7 +222,7 @@ public struct NetplayWaitingRoomView: View {
     }
 
     private var playersSection: some View {
-        SwiftUI.Section {
+        NetplayFormSection {
             let hostNickname = settings.nickname.isEmpty ? "You" : settings.nickname
             playerRow(
                 nickname: hostNickname,
@@ -271,7 +268,7 @@ public struct NetplayWaitingRoomView: View {
     }
 
     private var spectatorsSection: some View {
-        SwiftUI.Section("Spectators (\(spectatorCount))") {
+        NetplayFormSection("Spectators (\(spectatorCount))") {
             if spectatorPeers.isEmpty {
                 Text("\(spectatorCount) spectator(s) connected")
                     .foregroundStyle(.secondary)
@@ -291,7 +288,7 @@ public struct NetplayWaitingRoomView: View {
     }
 
     private var startGameSection: some View {
-        SwiftUI.Section {
+        NetplayFormSection {
             Button {
                 startGame()
             } label: {

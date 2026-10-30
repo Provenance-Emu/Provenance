@@ -26,6 +26,9 @@ public struct NetplayCreateRoomView: View {
 
     @StateObject private var netplay = ObservableNetplayManager.shared
     @State private var settings = NetplaySettings.fromStoredDefaults()
+    @State private var selectedOptionID = ""
+    @State private var options: [NetplayGameOption] = []
+    @State private var showMetadata = false
     @State private var isStarting = false
     @State private var errorMessage: String?
     @State private var showError = false
@@ -44,32 +47,66 @@ public struct NetplayCreateRoomView: View {
         self.hostedGame = hostedGame
     }
 
+    private var selectedOption: NetplayGameOption? { options.first { $0.id == selectedOptionID } ?? options.first }
+
+    private func loadOptions() {
+        guard let game = hostedGame,
+              let support = NetplayCoreCompatibility.support(coreIdentifier: coreIdentifier, systemIdentifier: game.systemIdentifier, coreVersion: game.coreVersion) else {
+            options = []
+            return
+        }
+        let metadata = NetplayMetadataStore.shared.metadata(md5: game.md5, system: game.systemIdentifier, serial: game.serial,
+                                                           isPatched: game.isPatched)
+        options = NetplayEligibility.evaluate(localFileAvailable: true, metadata: metadata, cores: [support]).options
+        if !options.contains(where: { $0.id == selectedOptionID }) { selectedOptionID = options.first?.id ?? "" }
+        normalizeSettings()
+    }
+
+    private func normalizeSettings() {
+        guard let option = selectedOption else { return }
+        settings.maxPlayers = min(max(2, settings.maxPlayers), option.maxPlayers)
+        if !option.core.supportsSpectators { settings.allowSpectators = false; settings.maxSpectators = 0 }
+        if !option.core.supportsFrameDelay { settings.frameDelay = 0 }
+    }
+
     public var body: some View {
         NavigationStack {
-            Form {
+            NetplayForm {
                 // Game info
-                SwiftUI.Section("Game") {
+                NetplayFormSection("Game") {
                     LabeledContent("Title", value: gameName)
-                    LabeledContent("Core", value: coreIdentifier)
+                    if options.isEmpty {
+                        Label("Multiplayer details or core support are missing.", systemImage: "questionmark.circle")
+                    } else {
+                        Picker("Play style", selection: $selectedOptionID) {
+                            ForEach(options) { Text($0.mode.title).tag($0.id) }
+                        }
+                    }
+                    if hostedGame != nil { Button("Review Multiplayer Details") { showMetadata = true } }
                 }
 
                 // Room settings
-                SwiftUI.Section("Room Settings") {
+                NetplayFormSection("Room Settings") {
                     TextField("Room Name", text: $settings.roomName)
                         .autocorrectionDisabled()
 
-                    NetplayStepperView(label: "Max Players", value: $settings.maxPlayers, in: 2...4)
+                    NetplayStepperView(label: "Max Players", value: $settings.maxPlayers, in: 2...(selectedOption?.maxPlayers ?? 2))
 
-                    Toggle("Allow Spectators", isOn: $settings.allowSpectators)
+                    if selectedOption?.core.supportsSpectators == true {
+                        Toggle("Allow Spectators", isOn: $settings.allowSpectators)
+                    }
 
-                    if settings.allowSpectators {
+                    if settings.allowSpectators && selectedOption?.core.supportsSpectators == true {
                         NetplayStepperView(label: "Max Spectators", value: $settings.maxSpectators, in: 0...11)
                     }
                 }
 
                 // Network settings
-                SwiftUI.Section("Network") {
-                    NetplayStepperView(label: "Frame Delay", value: $settings.frameDelay, in: 0...10)
+                NetplayDisclosure("Advanced Network Settings") {
+                  NetplayFormSection("Network") {
+                    if selectedOption?.core.supportsFrameDelay == true {
+                        NetplayStepperView(label: "Frame Delay", value: $settings.frameDelay, in: 0...10)
+                    }
                     HStack {
                         Text("Port")
                         Spacer()
@@ -86,8 +123,10 @@ public struct NetplayCreateRoomView: View {
                     }
                 }
 
+                }
+
                 // Optional password
-                SwiftUI.Section("Security") {
+                NetplayFormSection("Security") {
                     SecureField("Password (optional)", text: Binding(
                         get: { settings.password ?? "" },
                         set: { settings.password = $0.isEmpty ? nil : $0 }
@@ -95,7 +134,7 @@ public struct NetplayCreateRoomView: View {
                 }
 
                 // Start button
-                SwiftUI.Section {
+                NetplayFormSection {
                     Button {
                         startHosting()
                     } label: {
@@ -110,15 +149,21 @@ public struct NetplayCreateRoomView: View {
                             Spacer()
                         }
                     }
-                    .disabled(isStarting || settings.roomName.isEmpty)
+                    .disabled(isStarting || settings.roomName.isEmpty || selectedOption == nil)
                 } footer: {
                     if hostingRestartsGame {
                         Text("Hosting restarts the game so it can use the network. Save first.")
                     }
                 }
             }
-            .task { hostingRestartsGame = await netplay.hostingRestartsGame() }
-            .navigationTitle("Create Room")
+            .task { hostingRestartsGame = await netplay.hostingRestartsGame(); loadOptions() }
+            .onChange(of: selectedOptionID) { _, _ in normalizeSettings() }
+            .netplayPresentation(isPresented: $showMetadata, onDismiss: loadOptions) {
+                if let game = hostedGame {
+                    NetplayMetadataEditor(title: gameName, md5: game.md5, system: game.systemIdentifier, onSave: loadOptions)
+                }
+            }
+            .netplayNavigationTitle("Create Room")
             #if !os(tvOS)
             .navigationBarTitleDisplayMode(.inline)
             #endif
@@ -135,7 +180,7 @@ public struct NetplayCreateRoomView: View {
             // After hosting starts successfully, navigate to the waiting room.
             // When the waiting room is dismissed, also dismiss this sheet so the user
             // returns to the lobby. Only disconnect if the game was NOT started.
-            .sheet(isPresented: $showWaitingRoom, onDismiss: {
+            .netplayPresentation(isPresented: $showWaitingRoom, onDismiss: {
                 if !gameStarted {
                     Task { @MainActor in await netplay.disconnect() }
                 }
@@ -164,7 +209,12 @@ public struct NetplayCreateRoomView: View {
         isStarting = true
         Task { @MainActor in
             do {
-                try await netplay.host(settings: settings, game: hostedGame)
+                loadOptions()
+                guard let option = selectedOption else { throw NetplayError.invalidSettings("Confirm a supported multiplayer mode first.") }
+                normalizeSettings()
+                var game = hostedGame
+                game?.option = option
+                try await netplay.host(settings: settings, game: game)
                 // Navigate to waiting room — do not dismiss yet.
                 showWaitingRoom = true
             } catch {

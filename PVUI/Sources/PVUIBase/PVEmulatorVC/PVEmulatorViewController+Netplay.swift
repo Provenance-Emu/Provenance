@@ -16,6 +16,8 @@
 import PVNetplay
 import PVLogging
 import ObjectiveC
+import PVLibrary
+import PVRealm
 
 // MARK: - Associated-object storage
 
@@ -88,6 +90,13 @@ extension PVEmulatorViewController {
             // unregister it.  stopNetplayBridge() is responsible for clearing the
             // bridge on teardown.
             ILOG("Netplay: registered \(bridge.netplayEngineName) bridge with PVNetplayManager.")
+            if let packet = bridge as? any PVNetpacketCapable, let self,
+               let game = self.game, let identifier = self.core.coreIdentifier {
+                let ready = await PVNetplayManager.shared.waitUntilNetplayReady(timeout: NetplayLaunchIntentDefaults.readyTimeout)
+                guard !Task.isCancelled else { return }
+                let version = RomDatabase.sharedInstance.realm.object(ofType: PVCore.self, forPrimaryKey: identifier)?.projectVersion ?? ""
+                NetplayCoreCompatibility.recordNetpacket(coreIdentifier: identifier, coreVersion: version, available: ready && packet.hasNetpacketInterface)
+            }
             await self?.runNetplayLaunchIntentIfAny()
         }
         netplayStartTaskBox = TaskBox(task)
@@ -123,10 +132,28 @@ extension PVEmulatorViewController {
             return
         }
 
+        if let option = intent.option {
+            guard option.core.coreIdentifier == core.coreIdentifier,
+                  let game,
+                  NetplayLibraryEligibility.entry(game, realm: RomDatabase.sharedInstance.realm).eligibility.options.contains(option) else {
+                Self.postNetplayUnsupportedToast()
+                return
+            }
+        }
+
         switch intent.action {
         case .join(let room):
             do {
-                try await PVNetplayManager.shared.join(room: room, settings: NetplaySettings.fromStoredDefaults())
+                guard room.gameHash.caseInsensitiveCompare(md5) == .orderedSame,
+                      room.coreIdentifier == core.coreIdentifier else { throw NetplayError.romMismatch }
+                let version = RomDatabase.sharedInstance.realm.object(ofType: PVCore.self, forPrimaryKey: room.coreIdentifier)?.projectVersion ?? ""
+                guard room.coreVersion.isEmpty || room.coreVersion == version,
+                      room.playMode == nil || room.playMode == intent.option?.mode else {
+                    throw NetplayError.invalidSettings("The host uses a different core version or multiplayer mode.")
+                }
+                var settings = NetplaySettings.fromStoredDefaults()
+                settings.password = intent.password
+                try await PVNetplayManager.shared.join(room: room, settings: settings)
                 let message = (core as? any PVNetplayCapable)?.netplayHostStartsGame == true
                     ? String(localized: "Joined \(room.hostName). Waiting for the host to start.")
                     : String(localized: "Joined \(room.hostName).")

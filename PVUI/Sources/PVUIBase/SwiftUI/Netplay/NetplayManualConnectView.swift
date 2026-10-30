@@ -46,8 +46,8 @@ public struct NetplayManualConnectView: View {
 
     public var body: some View {
         NavigationStack {
-            Form {
-                SwiftUI.Section("Host Details") {
+            NetplayForm {
+                NetplayFormSection("Host Details") {
                     TextField("IP Address or Hostname", text: $hostAddress)
                         .autocorrectionDisabled()
                         #if canImport(UIKit)
@@ -71,35 +71,12 @@ public struct NetplayManualConnectView: View {
                     }
                 }
 
-                SwiftUI.Section("Options") {
-                    #if os(tvOS)
-                    HStack {
-                        Text("Frame Delay: \(frameDelay)")
-                        Spacer()
-                        Button {
-                            frameDelay = max(0, frameDelay - 1)
-                        } label: {
-                            Image(systemName: "minus.circle")
-                        }
-                        .disabled(frameDelay <= 0)
-                        .accessibilityLabel("Decrease frame delay")
-                        .accessibilityHint("Minimum frame delay is zero frames")
-                        Button {
-                            frameDelay = min(10, frameDelay + 1)
-                        } label: {
-                            Image(systemName: "plus.circle")
-                        }
-                        .disabled(frameDelay >= 10)
-                        .accessibilityLabel("Increase frame delay")
-                        .accessibilityHint("Maximum frame delay is ten frames")
-                    }
-                    #else
-                    Stepper("Frame Delay: \(frameDelay)", value: $frameDelay, in: 0...10)
-                    #endif
+                NetplayFormSection("Options") {
+                    NetplayStepperView(label: "Frame Delay", value: $frameDelay, in: 0...10)
                     Toggle("Connect as Spectator", isOn: $spectate)
                 }
 
-                SwiftUI.Section {
+                NetplayFormSection {
                     Button {
                         connect()
                     } label: {
@@ -116,7 +93,7 @@ public struct NetplayManualConnectView: View {
                     .disabled(isConnecting || hostAddress.isEmpty || !portIsValid)
                 }
             }
-            .navigationTitle("Manual Connect")
+            .netplayNavigationTitle("Manual Connect")
             #if !os(tvOS)
             .navigationBarTitleDisplayMode(.inline)
             #endif

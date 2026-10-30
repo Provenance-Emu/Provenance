@@ -56,6 +56,8 @@ public struct NetplayRoom: Identifiable, Sendable, Hashable {
     /// The host game's system identifier (e.g. "com.provenance.gamecube"),
     /// empty when unknown.
     public let systemIdentifier: String
+    public let coreVersion: String
+    public let playMode: NetplayPlayMode?
 
     public init(
         id: UUID = UUID(),
@@ -76,7 +78,9 @@ public struct NetplayRoom: Identifiable, Sendable, Hashable {
         discoverySource: DiscoverySource = .bonjour,
         lastSeen: Date = Date(),
         gameSerial: String = "",
-        systemIdentifier: String = ""
+        systemIdentifier: String = "",
+        coreVersion: String = "",
+        playMode: NetplayPlayMode? = nil
     ) {
         self.id = id
         self.hostName = hostName
@@ -97,6 +101,8 @@ public struct NetplayRoom: Identifiable, Sendable, Hashable {
         self.lastSeen = lastSeen
         self.gameSerial = gameSerial
         self.systemIdentifier = systemIdentifier
+        self.coreVersion = coreVersion
+        self.playMode = playMode
     }
 
     /// Whether the room still has open player slots

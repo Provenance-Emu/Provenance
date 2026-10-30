@@ -34,7 +34,9 @@ public struct NetplayStepperView: View {
                 value = max(range.lowerBound, value - 1)
             } label: {
                 Image(systemName: "minus.circle")
+                    .frame(minWidth: 52, minHeight: 52)
             }
+            .retroFocusButtonStyle(focusScale: 1.05)
             .accessibilityLabel("Decrease \(label)")
             .accessibilityHint("Current: \(value), minimum: \(range.lowerBound)")
             .disabled(value <= range.lowerBound)
@@ -42,7 +44,9 @@ public struct NetplayStepperView: View {
                 value = min(range.upperBound, value + 1)
             } label: {
                 Image(systemName: "plus.circle")
+                    .frame(minWidth: 52, minHeight: 52)
             }
+            .retroFocusButtonStyle(focusScale: 1.05)
             .accessibilityLabel("Increase \(label)")
             .accessibilityHint("Current: \(value), maximum: \(range.upperBound)")
             .disabled(value >= range.upperBound)

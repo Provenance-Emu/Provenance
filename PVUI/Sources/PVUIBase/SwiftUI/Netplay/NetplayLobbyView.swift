@@ -19,9 +19,9 @@ import GameKit
 /// The top-level netplay entry view shown from the pause menu or game library.
 ///
 /// Shows the current game's netplay support badge, Host / Browse / Spectate
-/// action tiles, and quick-access to settings.
+/// action cards, and quick-access to settings.
 ///
-/// Presented sheet-style from the pause menu's "Network Play" tile.
+/// Presented sheet-style from the pause menu's "Network Play" action.
 @MainActor
 public struct NetplayLobbyView: View {
     let gameName: String
@@ -32,12 +32,16 @@ public struct NetplayLobbyView: View {
     /// Serial / game ID and system of the local game, for the room's LAN advertisement.
     let gameSerial: String
     let systemIdentifier: String
+    let coreVersion: String
+    let isPatched: Bool
+    let startHosting: Bool
 
     @State private var showRoomBrowser = false
     @State private var showSpectate = false
     @State private var showCreateRoom = false
     @State private var showSettings = false
     @State private var showGameCenter = false
+    @State private var didOpenHostSetup = false
 
     private var isNetplayEnabled: Bool {
         Defaults[.netplayEnabled]
@@ -50,23 +54,32 @@ public struct NetplayLobbyView: View {
         coreIdentifier: String,
         localGameHash: String = "",
         gameSerial: String = "",
-        systemIdentifier: String = ""
+        systemIdentifier: String = "",
+        coreVersion: String = "",
+        isPatched: Bool = false,
+        startHosting: Bool = false
     ) {
         self.gameName = gameName
         self.coreIdentifier = coreIdentifier
         self.localGameHash = localGameHash
         self.gameSerial = gameSerial
         self.systemIdentifier = systemIdentifier
+        self.coreVersion = coreVersion
+        self.isPatched = isPatched
+        self.startHosting = startHosting
     }
 
     private var hostedGame: NetplayHostedGame {
-        NetplayHostedGame(
+        var game = NetplayHostedGame(
             name: gameName,
             md5: localGameHash,
             serial: gameSerial,
             systemIdentifier: systemIdentifier,
             coreIdentifier: coreIdentifier
         )
+        game.isPatched = isPatched
+        game.coreVersion = coreVersion
+        return game
     }
 
     public var body: some View {
@@ -75,7 +88,7 @@ public struct NetplayLobbyView: View {
                 // Game info header
                 gameHeader
 
-                // Action tiles
+                // Action cards
                 ScrollView {
                     VStack(spacing: 16) {
                         if !isNetplayEnabled {
@@ -86,17 +99,17 @@ public struct NetplayLobbyView: View {
                                 .multilineTextAlignment(.center)
                         }
 
-                        actionTile(
+                        actionCard(
                             icon: "antenna.radiowaves.left.and.right",
                             title: "Host a Room",
-                            subtitle: "Invite friends to join your game",
+                            subtitle: "Let friends on your network join this game",
                             color: .blue
                         ) {
                             showCreateRoom = true
                         }
                         .disabled(!isNetplayEnabled)
 
-                        actionTile(
+                        actionCard(
                             icon: "list.bullet.rectangle",
                             title: "Browse Rooms",
                             subtitle: "Join a game in progress on your network",
@@ -106,7 +119,8 @@ public struct NetplayLobbyView: View {
                         }
                         .disabled(!isNetplayEnabled)
 
-                        actionTile(
+                        if NetplayCoreCompatibility.support(coreIdentifier: coreIdentifier, systemIdentifier: systemIdentifier)?.supportsSpectators == true {
+                        actionCard(
                             icon: "eye",
                             title: "Spectate",
                             subtitle: "Watch a room without playing",
@@ -116,8 +130,10 @@ public struct NetplayLobbyView: View {
                         }
                         .disabled(!isNetplayEnabled)
 
+                        }
+
 #if canImport(GameKit)
-                        actionTile(
+                        actionCard(
                             icon: "person.2.wave.2",
                             title: "Game Center Match",
                             subtitle: "Find opponents via Apple Game Center",
@@ -135,7 +151,14 @@ public struct NetplayLobbyView: View {
                 coreNetplaySupportBadge
                     .padding(.bottom)
             }
-            .navigationTitle("Network Play")
+            .netplayScreen()
+            .onAppear {
+                if startHosting && !didOpenHostSetup {
+                    didOpenHostSetup = true
+                    showCreateRoom = true
+                }
+            }
+            .netplayNavigationTitle("Network Play")
             #if !os(tvOS)
             .navigationBarTitleDisplayMode(.inline)
             #endif
@@ -149,22 +172,23 @@ public struct NetplayLobbyView: View {
                     } label: {
                         Image(systemName: "gearshape")
                     }
+                    .accessibilityLabel("Network Play Settings")
                 }
             }
-            .sheet(isPresented: $showRoomBrowser) {
+            .netplayPresentation(isPresented: $showRoomBrowser) {
                 NetplayRoomBrowserView(gameName: gameName, coreIdentifier: coreIdentifier, localGameHash: localGameHash, spectateMode: false)
             }
-            .sheet(isPresented: $showSpectate) {
+            .netplayPresentation(isPresented: $showSpectate) {
                 NetplayRoomBrowserView(gameName: gameName, coreIdentifier: coreIdentifier, localGameHash: localGameHash, spectateMode: true)
             }
-            .sheet(isPresented: $showCreateRoom) {
+            .netplayPresentation(isPresented: $showCreateRoom, onDismiss: { if startHosting { dismiss() } }) {
                 NetplayCreateRoomView(gameName: gameName, coreIdentifier: coreIdentifier, hostedGame: hostedGame)
             }
-            .sheet(isPresented: $showSettings) {
+            .netplayPresentation(isPresented: $showSettings) {
                 NetplaySettingsView()
             }
 #if canImport(GameKit)
-            .sheet(isPresented: $showGameCenter) {
+            .netplayPresentation(isPresented: $showGameCenter) {
                 NetplayGameCenterView(gameName: gameName, coreIdentifier: coreIdentifier, localGameHash: localGameHash)
             }
 #endif
@@ -182,7 +206,7 @@ public struct NetplayLobbyView: View {
                 Text(gameName)
                     .font(.headline)
                     .lineLimit(1)
-                Text(coreIdentifier)
+                Text("Play together on your local network")
                     .font(.caption)
                     .foregroundStyle(.secondary)
                     .lineLimit(1)
@@ -207,52 +231,20 @@ public struct NetplayLobbyView: View {
         return HStack(spacing: 6) {
             Image(systemName: isEnabled ? "checkmark.circle.fill" : "xmark.circle.fill")
                 .foregroundStyle(isEnabled ? .green : .secondary)
-            Text(isEnabled ? "Netplay: Available" : "Netplay: Disabled")
+            Text(isEnabled ? "Network Play enabled" : "Network Play disabled")
                 .font(.caption)
                 .foregroundStyle(.secondary)
         }
     }
 
-    private func actionTile(
+    private func actionCard(
         icon: String,
         title: String,
         subtitle: String,
         color: Color,
         action: @escaping () -> Void
     ) -> some View {
-        Button(action: action) {
-            HStack(spacing: 16) {
-                Image(systemName: icon)
-                    .font(.title2)
-                    .foregroundStyle(color)
-                    .frame(width: 40)
-
-                VStack(alignment: .leading, spacing: 2) {
-                    Text(title)
-                        .font(.headline)
-                        .foregroundStyle(.primary)
-                    Text(subtitle)
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
-                        .multilineTextAlignment(.leading)
-                }
-
-                Spacer()
-
-                Image(systemName: "chevron.right")
-                    .foregroundStyle(.tertiary)
-            }
-            .padding()
-            #if os(tvOS)
-            .background(Color.white.opacity(0.1))
-            #elseif canImport(UIKit)
-            .background(Color(.secondarySystemGroupedBackground))
-            #else
-            .background(Color(.controlBackgroundColor))
-            #endif
-            .clipShape(RoundedRectangle(cornerRadius: 12))
-        }
-        .buttonStyle(.plain)
+        NetplayActionCard(title: title, subtitle: subtitle, icon: icon, color: color, action: action)
     }
 }
 

@@ -13,8 +13,7 @@ import PVNetplay
 /// Pre-join confirmation screen that verifies the local ROM hash matches the host's.
 ///
 /// Shown before joining a room so the player knows immediately if there is a
-/// ROM version mismatch. A mismatch doesn't block joining, but it significantly
-/// increases the risk of desync for all participants and is not recommended.
+/// ROM version mismatch. Only a matching ROM can join.
 ///
 /// Usage:
 /// ```swift
@@ -79,7 +78,8 @@ public struct NetplayJoinConfirmView: View {
                 }
                 .padding()
             }
-            .navigationTitle("Join Room")
+            .netplayScreen()
+            .netplayNavigationTitle("Join Room")
             #if !os(tvOS)
             .navigationBarTitleDisplayMode(.inline)
             #endif
@@ -88,9 +88,10 @@ public struct NetplayJoinConfirmView: View {
                     Button("Cancel", role: .cancel, action: onCancel)
                 }
                 ToolbarItem(placement: .confirmationAction) {
-                    Button(hashVerification == .mismatch ? "Join Anyway" : "Join") {
+                    Button("Join") {
                         onConfirm()
                     }
+                    .disabled(!hashesMatch || room.isFull)
                     .fontWeight(hashVerification == .match ? .bold : .regular)
                     .tint(hashVerification == .mismatch ? .orange : .accentColor)
                 }

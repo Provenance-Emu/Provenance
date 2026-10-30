@@ -22,6 +22,8 @@ enum NetplayDefaultsKey {
     static let frameDelay          = "netplay.frameDelay"
     static let maxPlayers          = "netplay.maxPlayers"
     static let allowSpectators     = "netplay.allowSpectators"
+    static let showUnverified = "netplay.showUnverified"
+    static let playStyle = "netplay.playStyle"
     /// RetroArch's relay, the old default. Nothing can use it since the
     /// RetroArch runtime was removed, and it broke mGBA and Dolphin joins, so a
     /// stored "ra.me" counts as no relay.
@@ -56,6 +58,10 @@ public struct NetplaySettingsView: View {
     @AppStorage(NetplayDefaultsKey.maxPlayers)      private var maxPlayers: Int = 2
     @AppStorage(NetplayDefaultsKey.allowSpectators) private var allowSpectators: Bool = true
 
+    @AppStorage(NetplayDefaultsKey.showUnverified) private var showUnverified = false
+    @AppStorage(NetplayDefaultsKey.playStyle) private var playStyle = "any"
+    @State private var showAdvanced = false
+
     private var isNetplayEnabled: Bool {
         Defaults[.netplayEnabled]
     }
@@ -78,13 +84,17 @@ public struct NetplaySettingsView: View {
     public var body: some View {
         NavigationStack {
             if isNetplayEnabled {
-                Form {
+                NetplayForm {
                     playerProfileSection
-                    connectionSection
-                    performanceSection
                     hostingDefaultsSection
+                    suggestionsSection
+                    NetplayDisclosure("Advanced Connection Defaults", isExpanded: $showAdvanced) {
+                        connectionSection
+                        performanceSection
+                    }
                 }
-                .navigationTitle("Netplay Settings")
+                .netplayScreen()
+                .netplayNavigationTitle("Netplay Settings")
                 #if !os(tvOS)
                 .navigationBarTitleDisplayMode(.inline)
                 #endif
@@ -103,14 +113,14 @@ public struct NetplaySettingsView: View {
     // MARK: - Sections
 
     private var playerProfileSection: some View {
-        SwiftUI.Section("Player Profile") {
+        NetplayFormSection("Player Profile") {
             TextField("Nickname", text: $nickname)
                 .autocorrectionDisabled()
         }
     }
 
     private var connectionSection: some View {
-        SwiftUI.Section {
+        NetplayFormSection {
             portRow
             TextField("Relay (optional)", text: $relayServer)
                 .autocorrectionDisabled()
@@ -158,7 +168,7 @@ public struct NetplaySettingsView: View {
     }
 
     private var performanceSection: some View {
-        SwiftUI.Section {
+        NetplayFormSection {
             NetplayStepperView(label: "Frame Delay", value: $frameDelay, in: 0...10)
         } header: {
             Text("Performance")
@@ -168,9 +178,29 @@ public struct NetplaySettingsView: View {
     }
 
     private var hostingDefaultsSection: some View {
-        SwiftUI.Section("Hosting Defaults") {
-            NetplayStepperView(label: "Max Players", value: $maxPlayers, in: 2...4)
+        NetplayFormSection("Hosting Defaults") {
+            NetplayStepperView(label: "Preferred Room Size", value: $maxPlayers, in: 2...8)
+            Text("Limited by the selected game and core. Spectators are offered only by methods that support them.")
+                .font(.caption).foregroundStyle(.secondary)
             Toggle("Allow Spectators", isOn: $allowSpectators)
+        }
+    }
+
+    private var suggestionsSection: some View {
+        NetplayFormSection("Game Suggestions") {
+            Picker("Play style", selection: $playStyle) {
+                Text("Any multiplayer").tag("any")
+                Text("Shared console").tag("shared")
+                Text("Linked devices").tag("linked")
+            }
+            Toggle("Show Unverified Games", isOn: $showUnverified)
+                .accessibilityIdentifier("netplay.showUnverified")
+            Text("Unverified games have a separate list and never appear in recommendations. Confirm multiplayer details to check their available cores.")
+                .font(.caption).foregroundStyle(.secondary)
+            NetplayDisclosure("How the Lists Are Ordered") {
+                Text("Suggested: compatible open rooms, then favorites, then recently played. All supported and Favorites: A–Z. Recent: last played first. Title, system and ROM identity break ties.")
+                Text("Games need multiplayer metadata and an installed core for that mode. Single-player-only games and unsupported combinations are excluded. Unplayed eligible games are included.")
+            }
         }
     }
 
@@ -188,7 +218,8 @@ public struct NetplaySettingsView: View {
                 .padding(.horizontal)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .navigationTitle("Netplay Settings")
+        .netplayScreen()
+        .netplayNavigationTitle("Netplay Settings")
         #if !os(tvOS)
         .navigationBarTitleDisplayMode(.inline)
         #endif
@@ -226,7 +257,7 @@ extension NetplaySettings {
             allowSpectators: defaults.object(forKey: NetplayDefaultsKey.allowSpectators) as? Bool ?? true,
             relayServer:     NetplayDefaultsKey.storedRelayServer(),
             roomName:        roomName,
-            maxPlayers:      max(2, min(4, storedPlayers == 0 ? 2 : storedPlayers)),
+            maxPlayers:      max(2, min(8, storedPlayers == 0 ? 2 : storedPlayers)),
             playerIndex:     0,
             port:            clampedPort,
             nickname:        defaults.string(forKey: NetplayDefaultsKey.nickname) ?? ""

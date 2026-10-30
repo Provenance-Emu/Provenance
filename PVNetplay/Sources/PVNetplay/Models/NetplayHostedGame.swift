@@ -22,6 +22,9 @@ public struct NetplayHostedGame: Sendable, Hashable {
     /// System identifier (e.g. "com.provenance.gamecube").
     public var systemIdentifier: String
     /// Identifier of the core running it.
+    public var isPatched: Bool = false
+    public var coreVersion: String = ""
+    public var option: NetplayGameOption?
     public var coreIdentifier: String
 
     public init(name: String, md5: String, serial: String = "", systemIdentifier: String = "", coreIdentifier: String = "") {

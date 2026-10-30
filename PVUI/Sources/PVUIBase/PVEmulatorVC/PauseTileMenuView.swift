@@ -117,6 +117,7 @@ struct PauseTileMenuView: View {
     @State private var showingN64PakConfig = false
     @State private var showingPalettePicker = false
     @State private var showingNetworkPlay = false
+    @State private var startNetplayHosting = false
     /// Triggers the AirPlay route-picker sheet via the hidden AVRoutePickerView bridge.
     #if os(iOS) || targetEnvironment(macCatalyst)
     @State private var triggerAirPlayPicker = false
@@ -1516,6 +1517,7 @@ struct PauseTileMenuView: View {
     private func openNetworkPlayIfRequested() {
         #if canImport(PVNetplay)
         if emulatorVC.takeNetworkPlayMenuRequest() {
+            startNetplayHosting = true
             showingNetworkPlay = true
         }
         #endif
@@ -1772,13 +1774,16 @@ struct PauseTileMenuView: View {
             }
         }
         #if !os(watchOS)
-        .sheet(isPresented: $showingNetworkPlay) {
+        .netplayPresentation(isPresented: $showingNetworkPlay, onDismiss: { startNetplayHosting = false }) {
             NetplayLobbyView(
                 gameName: emulatorVC.game?.title ?? "",
                 coreIdentifier: emulatorVC.core.coreIdentifier ?? "",
                 localGameHash: emulatorVC.game?.md5Hash ?? "",
                 gameSerial: emulatorVC.game?.romSerial ?? "",
-                systemIdentifier: emulatorVC.game?.systemIdentifier ?? ""
+                systemIdentifier: emulatorVC.game?.systemIdentifier ?? "",
+                coreVersion: RomDatabase.sharedInstance.realm.object(ofType: PVCore.self, forPrimaryKey: emulatorVC.core.coreIdentifier ?? "")?.projectVersion ?? "",
+                isPatched: emulatorVC.game?.isPatchVariant ?? false,
+                startHosting: startNetplayHosting
             )
         }
         #endif

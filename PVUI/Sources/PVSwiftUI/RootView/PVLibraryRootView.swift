@@ -20,6 +20,7 @@ public struct PVLibraryRootView: View {
     @StateObject private var navigation: PVLibraryNavigation
     @ObservedObject private var sceneCoordinator = SceneCoordinator.shared
     @State private var navigationTask: Task<Void, Never>?
+    @State private var netplayRequest: NetplayLibraryRequest?
 
     public init(gameLibrary: PVGameLibrary<RealmDatabaseDriver>, updatesController: PVGameLibraryUpdatesController, gameImporter: GameImporter) {
         _navigation = StateObject(wrappedValue: PVLibraryNavigation(gameLibrary: gameLibrary, updatesController: updatesController, gameImporter: gameImporter))
@@ -27,6 +28,16 @@ public struct PVLibraryRootView: View {
 
     public var body: some View {
         libraryContent
+            .netplayPresentation(item: $netplayRequest) { request in
+                NetplayLibraryLobbyView(initialGameMD5: request.gameMD5)
+            }
+            .onReceive(NotificationCenter.default.publisher(for: NetplayLibraryRequest.notification)) { notification in
+                guard let md5 = notification.object as? String else { return }
+                Task { @MainActor in
+                    try? await Task.sleep(for: .milliseconds(250))
+                    netplayRequest = NetplayLibraryRequest(gameMD5: md5)
+                }
+            }
             .sheet(item: $navigation.sheet, onDismiss: navigation.didDismissSheet) { sheet in
                 NavigationStack {
                     sheetContent(sheet)

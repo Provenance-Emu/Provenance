@@ -14,8 +14,8 @@ import PVNetplay
 ///
 /// Automatically starts/stops Bonjour discovery when presented.
 /// Rooms are polled from `PVNetplayBonjourDiscovery` and displayed in a list.
-/// Tapping a room attempts to join it; when `spectateMode` is true, room
-/// taps default to spectating instead of joining as a player.
+/// Each room has a focusable Join action; in `spectateMode`, that action
+/// watches the room instead of joining as a player.
 @MainActor
 public struct NetplayRoomBrowserView: View {
     let gameName: String
@@ -34,6 +34,7 @@ public struct NetplayRoomBrowserView: View {
     @State private var showManualConnect = false
     @State private var roomToConfirm: NetplayRoom?
     @State private var showInviteSheet = false
+    @State private var password = ""
 
     @Environment(\.dismiss) private var dismiss
 
@@ -54,7 +55,8 @@ public struct NetplayRoomBrowserView: View {
                 }
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
-            .navigationTitle(spectateMode ? "Find Room to Spectate" : "Browse Rooms")
+            .netplayScreen()
+            .netplayNavigationTitle(spectateMode ? "Find Room to Spectate" : "Browse Rooms")
             #if !os(tvOS)
             .navigationBarTitleDisplayMode(.inline)
             #endif
@@ -77,10 +79,10 @@ public struct NetplayRoomBrowserView: View {
                     }
                 }
             }
-            .sheet(isPresented: $showManualConnect) {
+            .netplayPresentation(isPresented: $showManualConnect) {
                 NetplayManualConnectView(gameName: gameName, coreIdentifier: coreIdentifier, defaultSpectate: spectateMode)
             }
-            .sheet(item: $roomToConfirm) { room in
+            .netplayPresentation(item: $roomToConfirm) { room in
                 NetplayJoinConfirmView(
                     room: room,
                     localGameHash: localGameHash
@@ -91,7 +93,7 @@ public struct NetplayRoomBrowserView: View {
                     roomToConfirm = nil
                 }
             }
-            .sheet(isPresented: $showInviteSheet) {
+            .netplayPresentation(isPresented: $showInviteSheet) {
                 NetplayInviteView(gameName: gameName)
             }
             .alert("Connection Error", isPresented: $showError, presenting: errorMessage) { _ in
@@ -135,8 +137,8 @@ public struct NetplayRoomBrowserView: View {
     }
 
     private var lanRoomList: some View {
-        List {
-            SwiftUI.Section {
+        NetplayForm {
+            NetplayFormSection {
                 ForEach(netplay.discoveredRooms) { room in
                     roomRow(room)
                 }
@@ -180,9 +182,22 @@ public struct NetplayRoomBrowserView: View {
 
             Spacer()
 
+            if room.isPasswordProtected { SecureField("Room password", text: $password).frame(maxWidth: 220) }
+            Button {
+                join(room: room, spectate: spectateMode)
+            } label: {
+                Label(spectateMode ? "Spectate" : (room.isFull ? "Full" : "Join"), systemImage: spectateMode ? "eye" : "arrow.right.circle.fill")
+                    .padding(12)
+            }
+            .retroFocusButtonStyle(focusScale: 1.025)
+            .disabled(isJoining || (!spectateMode && room.isFull) || room.coreIdentifier != coreIdentifier
+                      || room.gameHash.caseInsensitiveCompare(localGameHash) != .orderedSame
+                      || (spectateMode && !room.allowsSpectators) || (room.isPasswordProtected && password.isEmpty))
+
             // Show a spectate button for full rooms that allow spectators,
             // unless we're already in spectate mode (the tap itself will spectate).
-            if !spectateMode && room.isFull && room.allowsSpectators {
+            if !spectateMode && room.isFull && room.allowsSpectators && room.coreIdentifier == coreIdentifier
+                && room.gameHash.caseInsensitiveCompare(localGameHash) == .orderedSame {
                 Button {
                     join(room: room, spectate: true)
                 } label: {
@@ -193,12 +208,7 @@ public struct NetplayRoomBrowserView: View {
                 .disabled(isJoining)
             }
         }
-        .contentShape(Rectangle())
-        .onTapGesture {
-            if !isJoining {
-                join(room: room, spectate: spectateMode)
-            }
-        }
+        .padding(.vertical, 12)
     }
 
     // MARK: - Actions
@@ -216,9 +226,12 @@ public struct NetplayRoomBrowserView: View {
         isJoining = true
         Task { @MainActor in
             do {
-                let settings = NetplaySettings.fromStoredDefaults()
+                guard room.coreIdentifier == coreIdentifier,
+                      room.gameHash.caseInsensitiveCompare(localGameHash) == .orderedSame else { throw NetplayError.romMismatch }
+                var settings = NetplaySettings.fromStoredDefaults()
+                settings.password = password.isEmpty ? nil : password
                 if spectate {
-                    try await netplay.spectate(room: room)
+                    try await netplay.spectate(room: room, settings: settings)
                 } else {
                     try await netplay.join(room: room, settings: settings)
                 }

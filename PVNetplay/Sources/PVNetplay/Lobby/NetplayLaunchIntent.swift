@@ -24,11 +24,15 @@ public struct NetplayLaunchIntent: Sendable, Equatable {
     /// Library MD5 of the game the intent is for.
     public let gameMD5: String
     public let createdAt: Date
+    public let option: NetplayGameOption?
+    public let password: String?
 
-    public init(action: Action, gameMD5: String, createdAt: Date = Date()) {
+    public init(action: Action, gameMD5: String, createdAt: Date = Date(), option: NetplayGameOption? = nil, password: String? = nil) {
         self.action = action
         self.gameMD5 = gameMD5
         self.createdAt = createdAt
+        self.option = option
+        self.password = password
     }
 
     /// Whether this intent applies to the game `md5` at `now`.

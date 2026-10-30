@@ -32,12 +32,12 @@ public struct NetplayInviteView: View {
 
     public var body: some View {
         NavigationStack {
-            Form {
+            NetplayForm {
                 connectionSection
                 relaySection
                 inviteLinkSection
             }
-            .navigationTitle("Share Invite Link")
+            .netplayNavigationTitle("Share Invite Link")
             #if !os(tvOS)
             .navigationBarTitleDisplayMode(.inline)
             #endif
@@ -53,7 +53,7 @@ public struct NetplayInviteView: View {
     // MARK: - Sections
 
     private var connectionSection: some View {
-        SwiftUI.Section {
+        NetplayFormSection {
             TextField("Host IP or Hostname", text: $hostAddress)
                 .autocorrectionDisabled()
                 #if canImport(UIKit)
@@ -72,7 +72,7 @@ public struct NetplayInviteView: View {
     }
 
     private var relaySection: some View {
-        SwiftUI.Section {
+        NetplayFormSection {
             Toggle("Use Relay Server", isOn: $useRelay)
             if useRelay {
                 TextField("Relay Server", text: $relayServer)
@@ -90,7 +90,7 @@ public struct NetplayInviteView: View {
     }
 
     private var inviteLinkSection: some View {
-        SwiftUI.Section {
+        NetplayFormSection {
             if let url = buildInviteURL() {
                 VStack(alignment: .leading, spacing: 8) {
                     Text(url.absoluteString)

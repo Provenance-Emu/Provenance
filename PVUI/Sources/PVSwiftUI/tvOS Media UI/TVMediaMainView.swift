@@ -108,6 +108,7 @@ struct TVMediaMainView: View {
 
     @StateObject private var focusCoordinator = TVMediaFocusCoordinator()
     @StateObject private var router = TVMediaRouter()
+    @State private var netplayRequest: NetplayLibraryRequest?
     @StateObject private var libraryModel = TVMediaLibraryModel()
     @StateObject private var saveStatesStore = RetroSaveStatesStore.shared
     @StateObject private var gameActions = TVMediaGameActions()
@@ -163,6 +164,16 @@ struct TVMediaMainView: View {
             modalContent: { modal in modalContent(for: modal) },
             renameAlertContent: { renameAlertContent }
         )
+        .netplayPresentation(item: $netplayRequest) { request in
+            NetplayLibraryLobbyView(initialGameMD5: request.gameMD5)
+        }
+        .onReceive(NotificationCenter.default.publisher(for: NetplayLibraryRequest.notification)) { notification in
+            guard let md5 = notification.object as? String else { return }
+            Task { @MainActor in
+                try? await Task.sleep(for: .milliseconds(250))
+                netplayRequest = NetplayLibraryRequest(gameMD5: md5)
+            }
+        }
 #if !os(tvOS)
         // tvOS's default UI is this same TVMediaMainView, and TVMediaRouter.navigate(to:)
         // resets navigationPath + return destinations — on tvOS that would jump to Settings

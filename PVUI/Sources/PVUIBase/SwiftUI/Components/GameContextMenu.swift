@@ -17,6 +17,7 @@ import PVLogging
 import PVFeatureFlags
 import PVPrimitives
 import PVSettings
+import Defaults
 import SkinKitManager
 
 #if canImport(PVAppIntents)
@@ -135,6 +136,15 @@ private struct GameContextMenuItems: View {
     var body: some View {
         Group {
             if !game.isInvalidated {
+                #if !os(watchOS)
+                if Defaults[.netplayEnabled] && game.isDownloaded && !game.contentless {
+                    Button {
+                        NotificationCenter.default.post(name: NetplayLibraryRequest.notification, object: game.md5Hash)
+                    } label: {
+                        Label("Network Play…", systemImage: "person.2.wave.2")
+                    }
+                }
+                #endif
                 // Add multi-disc menu if game has related files
                 if Set(game.relatedFiles).count > 1 {
                     Button {
