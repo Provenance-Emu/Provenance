@@ -11,7 +11,7 @@
 //  mounts `/api/debug/*` on DEBUG builds or when the hidden Developer toggle
 //  is on, and every request passes the Basic-auth check before reaching a
 //  handler here. Served by the modern (Hummingbird) server only —
-//  `refreshFeatureFlag()` selects it whenever the debug API is enabled.
+//  The Swift-native server is the sole HTTP backend.
 //
 //  Routes:
 //    GET  /api/debug                      route index

@@ -1,5 +1,5 @@
 {
-  "originHash" : "7dd7aec23f39a2f125bd97aa2aa23a7ac84f9ae418fd8acd3d4b619a4ba52542",
+  "originHash" : "dc19755ab6ebc3ef1ae4d86779df4ad5b448df4b43e611901324f65c3522fcaf",
   "pins" : [
     {
       "identity" : "async-http-client",
@@ -8,24 +8,6 @@
       "state" : {
         "revision" : "c5784ca81535cc6a92d900f84abd070dfb0e9392",
         "version" : "1.32.1"
-      }
-    },
-    {
-      "identity" : "checksum",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/JoeMatt/Checksum.git",
-      "state" : {
-        "revision" : "11bf55d6ec0e4dbfff2bcd99b6b12c5ce5d57b91",
-        "version" : "1.1.1"
-      }
-    },
-    {
-      "identity" : "defaults",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/sindresorhus/Defaults.git",
-      "state" : {
-        "revision" : "5bfac4928f000fabdbef7e4ed0251399bb0841c9",
-        "version" : "9.0.8"
       }
     },
     {
@@ -224,15 +206,6 @@
       "state" : {
         "revision" : "89888196dd79c61c50bca9a103d8114f32e1e598",
         "version" : "2.10.1"
-      }
-    },
-    {
-      "identity" : "swift-syntax",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/swiftlang/swift-syntax",
-      "state" : {
-        "revision" : "2b59c0c741e9184ab057fd22950b491076d42e91",
-        "version" : "603.0.0"
       }
     },
     {

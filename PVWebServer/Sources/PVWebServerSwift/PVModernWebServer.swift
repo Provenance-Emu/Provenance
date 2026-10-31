@@ -6,20 +6,8 @@
 //  Copyright © 2026 Provenance Emu. All rights reserved.
 //
 //  Swift-native HTTP/WebDAV server built on Hummingbird 2 + Swift NIO.
-//  Replaces the vendored 2015 ObjC GCDWebServer when the `modernWebServer`
-//  feature flag is enabled.
-//
-//  Phase 1 (this PR) — Epic #2758, Task A #2760:
-//    • Basic HTTP file listing + single-file upload (POST /upload)
-//    • WebDAV stub (PROPFIND/PUT/DELETE route placeholders)
-//    • Fires the same PVWebServer*Notification constants as the legacy server
-//    • Bonjour advertisement via Network.framework
-//
-//  Phase 2 follow-ups:
-//    • Full WebDAV (Task A)
-//    • Delete/Move → Realm (Task B #2759)
-//    • Upload routing to Imports/ (Task C #2761)
-//    • Modern web UI with SSE progress (Task D #2762)
+//  Sole HTTP/WebDAV backend, including upload routing, file events,
+//  the file-manager dashboard and authenticated debug automation routes.
 //
 
 // Pre-existing SwiftLint debt, verified by linting develop's copy of this file:
@@ -43,7 +31,6 @@ import CoreImage
 #endif
 import Hummingbird
 import PVLogging
-import PVPrimitives
 
 /// Cached PROPFIND multistatus body. Finder repeats the same path and depth during a mount.
 private struct PVModernPropfindCacheEntry {
@@ -54,8 +41,7 @@ private struct PVModernPropfindCacheEntry {
 // MARK: - PVModernWebServer
 
 /// Swift-native HTTP + WebDAV server using Hummingbird 2 / Swift NIO.
-/// Conforms to `PVWebServerProtocol` so `PVWebServerManager` can swap it
-/// for the legacy adapter without changing any call sites.
+/// Owned by `PVWebServerManager`; presentation does not control its lifetime.
 // FIXME: @unchecked Sendable — mutable state (_isHTTPRunning, httpServerTask, cachedIPAddress,
 // netService) can be accessed from multiple concurrent contexts if callers bypass
 // PVWebServerManager. Phase 2 should convert this to an `actor` or confine all
@@ -84,7 +70,7 @@ public final class PVModernWebServer: @unchecked Sendable {
 
     private var httpServerTask: Task<Void, Error>?
     private var webDAVServerTask: Task<Void, Error>?
-    private var netService: NetService?
+    private var netServices: [NetService] = []
     private var cachedIPAddress: String?
     /// Stamped on init so `/stats` can report process uptime to the dashboard.
     private let serverStartTime: Date = Date()
@@ -169,7 +155,7 @@ extension PVModernWebServer: PVWebServerProtocol {
             return false
         }
 
-        startBonjourAdvertisement()
+        await startBonjourAdvertisement()
 
         postStatusNotification(isRunning: true, type: "WebUploader", port: httpPort, url: serverURL)
         postStatusNotification(isRunning: true, type: "WebDAV", port: webDAVPort, url: webDAVURL)
@@ -186,8 +172,7 @@ extension PVModernWebServer: PVWebServerProtocol {
         webDAVServerTask?.cancel()
         httpServerTask = nil
         webDAVServerTask = nil
-        netService?.stop()
-        netService = nil
+        await stopBonjourAdvertisement()
         _isHTTPRunning = false
         _isWebDAVRunning = false
 
@@ -227,6 +212,9 @@ private extension PVModernWebServer {
         )
     }
 
+}
+
+extension PVModernWebServer {
     func buildHTTPRouter() -> Router<BasicRequestContext> {
         let router = Router()
         let browse = self.browseRoot
@@ -537,6 +525,10 @@ private extension PVModernWebServer {
 
         return router
     }
+
+}
+
+private extension PVModernWebServer {
 
     // MARK: - SSE broadcast
 
@@ -1029,11 +1021,14 @@ private extension PVModernWebServer {
         return result == 0
     }
 
+}
+
+extension PVModernWebServer {
     func buildWebDAVRouter(uploadDirectory: URL) -> Router<BasicRequestContext> {
         let router = Router()
 
         // OPTIONS — advertise WebDAV class 1 support (anonymous/guest writes allowed)
-        router.on("/**", method: .options) { _, _ -> Response in
+        let options: @Sendable (Request, BasicRequestContext) async throws -> Response = { _, _ in
             var headers = HTTPFields()
             if let dav = kWebDAVFieldNameDAV   { headers[dav]   = "1" }
             if let allow = kWebDAVFieldNameAllow {
@@ -1041,11 +1036,17 @@ private extension PVModernWebServer {
             }
             return Response(status: .ok, headers: headers)
         }
+        router.on("/", method: .options, use: options)
+        router.on("/**", method: .options, use: options)
 
         // PROPFIND — directory/file property listing (WebDAV class 1)
         // `HTTPRequest.Method(_:)` is failable for arbitrary strings; PROPFIND is a valid token.
         guard let propfindMethod = HTTPRequest.Method("PROPFIND") else {
             preconditionFailure("PROPFIND must be a valid HTTP method token")
+        }
+        router.on("/", method: propfindMethod) { [weak self] request, context -> Response in
+            guard let self else { return Response(status: .internalServerError) }
+            return self.handlePROPFIND(request: request, context: context, uploadDirectory: uploadDirectory)
         }
         router.on("/**", method: propfindMethod) { [weak self] request, context -> Response in
             guard let self else { return Response(status: .internalServerError) }
@@ -1057,21 +1058,21 @@ private extension PVModernWebServer {
         // Large ROMs/ISOs can cause memory pressure or OOM. Replace with a streaming/
         // sendfile response once Hummingbird's file-serving middleware is integrated.
         router.get("/**") { [weak self] _, context -> Response in
-            let path = context.parameters.get("**") ?? ""
+            let path = context.parameters.getCatchAll().joined(separator: "/")
             guard let self else { return Response(status: .internalServerError) }
             return self.fileDownloadResponse(path: path, uploadDirectory: uploadDirectory)
         }
 
         // HEAD — metadata only (Finder compatibility)
         router.on("/**", method: .head) { [weak self] _, context -> Response in
-            let path = context.parameters.get("**") ?? ""
+            let path = context.parameters.getCatchAll().joined(separator: "/")
             guard let self else { return Response(status: .internalServerError) }
             return self.fileHeadResponse(path: path, uploadDirectory: uploadDirectory)
         }
 
         // PUT — streaming file upload
         router.put("/**") { [weak self] request, context -> Response in
-            let path = context.parameters.get("**") ?? ""
+            let path = context.parameters.getCatchAll().joined(separator: "/")
             guard let self,
                   let target = self.resolvedPath(path, withinDirectory: uploadDirectory) else {
                 return Response(status: .forbidden)
@@ -1109,7 +1110,7 @@ private extension PVModernWebServer {
 
         // DELETE — remove file
         router.delete("/**") { [weak self] _, context -> Response in
-            let path = context.parameters.get("**") ?? ""
+            let path = context.parameters.getCatchAll().joined(separator: "/")
             guard let self,
                   let target = self.resolvedPath(path, withinDirectory: uploadDirectory) else {
                 return Response(status: .forbidden)
@@ -1134,7 +1135,7 @@ private extension PVModernWebServer {
             preconditionFailure("MKCOL must be a valid HTTP method token")
         }
         router.on("/**", method: mkcolMethod) { [weak self] _, context -> Response in
-            let path = context.parameters.get("**") ?? ""
+            let path = context.parameters.getCatchAll().joined(separator: "/")
             guard let self,
                   let target = self.resolvedPath(path, withinDirectory: uploadDirectory) else {
                 return Response(status: .forbidden)
@@ -1170,6 +1171,9 @@ private extension PVModernWebServer {
         return router
     }
 
+}
+
+private extension PVModernWebServer {
     func fileDownloadResponse(path: String, uploadDirectory: URL) -> Response {
         guard let target = resolvedPath(path, withinDirectory: uploadDirectory),
               let data = try? Data(contentsOf: target) else {
@@ -1212,7 +1216,7 @@ private extension PVModernWebServer {
         uploadDirectory: URL,
         isMove: Bool
     ) -> Response {
-        let srcRelative = context.parameters.get("**") ?? ""
+        let srcRelative = context.parameters.getCatchAll().joined(separator: "/")
         guard let src = resolvedPath(srcRelative, withinDirectory: uploadDirectory) else {
             return Response(status: .forbidden)
         }
@@ -1305,7 +1309,7 @@ private extension PVModernWebServer {
     }
 
     func handlePROPFIND(request: Request, context: some RequestContext, uploadDirectory: URL) -> Response {
-        let path = context.parameters.get("**") ?? ""
+        let path = context.parameters.getCatchAll().joined(separator: "/")
         guard let target = resolvedPath(path, withinDirectory: uploadDirectory) else {
             return Response(status: .forbidden)
         }
@@ -1416,13 +1420,37 @@ private extension PVModernWebServer {
 
 private extension PVModernWebServer {
 
-    func startBonjourAdvertisement() {
-        // NetService advertises an existing port via mDNS without binding a new socket,
-        // so it does not conflict with the Hummingbird listener already bound to httpPort.
-        let service = NetService(domain: "local.", type: "_http._tcp.", name: "Provenance", port: Int32(httpPort))
-        service.publish()
-        netService = service
-        ILOG("[PVModernWebServer] Bonjour advertising 'Provenance' on port \(httpPort)")
+    func startBonjourAdvertisement() async {
+        // NetService needs an active run loop; manager calls otherwise run off-main.
+        // These records advertise existing listeners without binding another socket.
+        await withCheckedContinuation { (continuation: CheckedContinuation<Void, Never>) in
+            DispatchQueue.main.async {
+                self.netServices = self.makeBonjourServices()
+                self.netServices.forEach { $0.publish() }
+                continuation.resume()
+            }
+        }
+        ILOG("[PVModernWebServer] Bonjour advertising HTTP \(httpPort) and WebDAV \(webDAVPort)")
+    }
+
+    func stopBonjourAdvertisement() async {
+        await withCheckedContinuation { (continuation: CheckedContinuation<Void, Never>) in
+            DispatchQueue.main.async {
+                self.netServices.forEach { $0.stop() }
+                self.netServices.removeAll()
+                continuation.resume()
+            }
+        }
+    }
+}
+
+extension PVModernWebServer {
+    /// Discovery records for the existing HTTP and WebDAV listeners.
+    func makeBonjourServices() -> [NetService] {
+        [
+            NetService(domain: "local.", type: "_http._tcp.", name: "Provenance", port: Int32(httpPort)),
+            NetService(domain: "local.", type: "_webdav._tcp.", name: "Provenance", port: Int32(webDAVPort))
+        ]
     }
 }
 

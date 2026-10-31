@@ -22,6 +22,7 @@ public struct PVLibraryRootView: View {
     @ObservedObject private var sceneCoordinator = SceneCoordinator.shared
     @State private var navigationTask: Task<Void, Never>?
     @State private var netplayRequest: NetplayLibraryRequest?
+    @State private var isWebServerRunning = false
 
     public init(gameLibrary: PVGameLibrary<RealmDatabaseDriver>, updatesController: PVGameLibraryUpdatesController, gameImporter: GameImporter) {
         _navigation = StateObject(wrappedValue: PVLibraryNavigation(gameLibrary: gameLibrary, updatesController: updatesController, gameImporter: gameImporter))
@@ -55,7 +56,7 @@ public struct PVLibraryRootView: View {
                 Button("Cloud & Local Files") { navigation.showsFileImporter = true }
                 #endif
                 #if canImport(PVWebServer)
-                Button("Web Server") { startWebServer() }
+                Button(isWebServerRunning ? "Web Server — Running" : "Web Server") { startWebServer() }
                 #endif
                 if PVFeatureFlagsManager.shared.featureStates[.inAppFreeROMs] == true {
                     Button("Free ROMs") { navigation.sheet = .freeROMs }
@@ -96,6 +97,13 @@ public struct PVLibraryRootView: View {
             .onReceive(NotificationCenter.default.publisher(for: .pvShowSettings)) { _ in
                 navigation.didTapSettings()
             }
+            #if canImport(PVWebServer)
+            .onReceive(NotificationCenter.default.publisher(for: .pvWebServerStatusChanged)) { notification in
+                if let running = notification.userInfo?["isRunning"] as? Bool {
+                    isWebServerRunning = running
+                }
+            }
+            #endif
             .onReceive(GamepadManager.shared.eventPublisher.receive(on: DispatchQueue.main), perform: handleGamepad)
             .onChange(of: sceneCoordinator.currentScene) {
                 navigationTask?.cancel()
@@ -110,6 +118,9 @@ public struct PVLibraryRootView: View {
             }
             .task {
                 navigation.updatesController.resume()
+                #if canImport(PVWebServer)
+                isWebServerRunning = await PVWebServerManager.shared.isRunning
+                #endif
             }
     }
 
@@ -199,33 +210,36 @@ public struct PVLibraryRootView: View {
     #if canImport(PVWebServer)
     private func startWebServer() {
         Task {
-            await PVWebServerManager.shared.refreshFeatureFlag()
             do {
                 guard try await PVWebServerManager.shared.start() else {
                     navigation.showMessage("Check your network connection and server settings.", title: "Unable to Start Web Server")
                     return
                 }
                 let message = await PVUIBase.PVWebServerAlertMessageBuilder.wikiMessageFromManager()
-                #if os(tvOS)
-                let viewTitle = "OK"
-                #else
+                isWebServerRunning = true
+                #if !os(tvOS)
                 let url = await PVWebServerManager.shared.serverURL
-                let viewTitle = "Open Web Uploader"
+                let openUploaderTitle: String? = "Open Web Uploader"
+                #else
+                let openUploaderTitle: String? = nil
                 #endif
                 sceneCoordinator.alertState.show(
-                    title: "Web Server Active",
-                    message: message,
+                    title: "Web Server Running",
+                    message: message + "\n\nChoose Done to return to your library. The server and any uploads will keep running.",
                     type: .success,
-                    primaryButtonTitle: viewTitle,
-                    primaryAction: {
+                    primaryButtonTitle: "Done",
+                    primaryAction: {},
+                    secondaryButtonTitle: openUploaderTitle,
+                    secondaryAction: {
                         #if !os(tvOS)
                         if let url { openURL(url) }
                         #endif
                     },
-                    secondaryButtonTitle: "Stop Server",
-                    secondaryAction: {
+                    destructiveButtonTitle: "Stop Server",
+                    destructiveAction: {
                         Task {
                             await PVWebServerManager.shared.stop()
+                            isWebServerRunning = false
                             if !(await navigation.gameImporter.importQueue).isEmpty {
                                 navigation.didTapImports()
                             }

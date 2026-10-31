@@ -234,7 +234,6 @@ final class RetroStatusControlViewModel: ObservableObject {
             if self.isWebServerRunning {
                 await PVWebServerManager.shared.stop()
             } else {
-                await PVWebServerManager.shared.refreshFeatureFlag()
                 do {
                     let started = try await PVWebServerManager.shared.start()
                     if !started {
