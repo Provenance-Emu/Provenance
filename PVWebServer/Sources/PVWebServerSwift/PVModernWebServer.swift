@@ -796,7 +796,7 @@ private extension PVModernWebServer {
             )
 
             do {
-                try fileData.write(to: dest)
+                try fileData.write(to: dest, options: .atomic)
                 savedFiles.append(sanitizedName)
                 postUploadCompletedNotifications(path: dest.path, fileSize: fileSize)
                 sseBroadcast(

@@ -83,6 +83,7 @@ final class PVWebFileEventObserverTests: XCTestCase {
 
     // MARK: - Lifecycle
 
+    @MainActor
     func testCompletedUploadQueuesFileWithItsDestinationSystem() async throws {
         let imported = expectation(description: "completed MAME upload queued")
         let coordinator = PVWebUploadImportCoordinator { url, system in
@@ -97,7 +98,7 @@ final class PVWebFileEventObserverTests: XCTestCase {
         let system = PVSystem()
         system.identifier = "com.provenance.mame"
         system.supportedExtensions.append("zip")
-        let realm = try Realm(configuration: realmConfig)
+        let realm = try await Realm(configuration: realmConfig)
         try realm.write { realm.add(system) }
 
         let root = URL(fileURLWithPath: romsPrefix, isDirectory: true)
