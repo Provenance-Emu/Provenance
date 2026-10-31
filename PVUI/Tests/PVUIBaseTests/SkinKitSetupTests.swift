@@ -44,6 +44,20 @@ struct SkinKitSetupTests {
         #expect(identifiers.contains { $0.hasPrefix("com.provenance.defaultskins.") })
     }
 
+    @Test("An app-bundled skin renders a bounded thumbnail through the configured manager")
+    @MainActor func bundledSkinThumbnail() async throws {
+        let skins = try await DeltaSkinManager.shared.availableSkins()
+        let skin = try #require(skins.first { $0.identifier == "com.provenance.defaultskins.backbone.snes" })
+        let traits = DeltaSkinTraits(device: .iphone, displayType: .standard, orientation: .landscape)
+        #expect(skin.supports(traits))
+        let renderable = try #require(skin.renderable)
+        let thumbnail = try await renderable.thumbnail(for: traits, maxDimension: 120)
+        #expect(thumbnail.size.width > 0 && thumbnail.size.height > 0)
+        #expect(max(thumbnail.size.width, thumbnail.size.height) <= 121)
+        #expect(thumbnail.cgImage != nil)
+        #expect(thumbnail.scale == 2)
+    }
+
     @Test("Case-controller skin detection uses CaseControllerDetector")
     func companionMatcher() {
         let caseSkin = "com.provenance.defaultskins.backbone.snes"

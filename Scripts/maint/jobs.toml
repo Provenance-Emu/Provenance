@@ -268,6 +268,41 @@ files = ["Dev/Tests/ManifestChecks/main.swift", "Tuist/ProjectDescriptionHelpers
 needs = ["macos", "mise"]
 mode = "manual"
 
+[jobs.skinkit-alignment]
+title = "SkinKit consumer revision alignment"
+category = "Audits"
+description = "Checks immutable SkinKit requirements and tracked resolver pins across Provenance, iFly and iCube before a shared package tag."
+run = ["python3", "Scripts/dev/check_skinkit_alignment.py"]
+args_hint = "--expected-revision <full-SHA> [--ifly <checkout>] [--icube <checkout>]"
+needs = ["git"]
+mode = "manual"
+cli_only = true
+
+[jobs.netplay-hub-smoke]
+title = "Netplay hub simulator smoke checks"
+category = "Audits"
+description = "Exercises the installed app's library and game-context netplay entry points, retaining screenshots and XCTest results."
+run = ["python3", "Scripts/dev/run_netplay_hub_smoke.py"]
+files = ["Scripts/tests/fixtures/netplay-hub/NetplayHubIntegratedTests.swift"]
+args_hint = "--platform <ios|tvos> --udid <simulator> [--app-bundle <bundle-id>] [--game-title <title>]"
+needs = ["macos", "xcodegen"]
+mode = "manual"
+cli_only = true
+
+[jobs.netplay-multiplayer-catalog]
+title = "Build the multiplayer metadata catalog"
+category = "Netplay"
+description = "Extracts player-count facts from an explicitly supplied official GameTDB archive; emulator compatibility is checked separately."
+run = ["python3", "Scripts/netplay/build_multiplayer_catalog.py"]
+args_hint = "<official-wiitdb.zip>"
+mode = "manual"
+cli_only = true
+
+[jobs.netplay-multiplayer-catalog-tests]
+title = "Multiplayer catalog extraction tests"
+category = "Audits"
+run = ["python3", "Scripts/tests/test_multiplayer_catalog.py"]
+
 # ─────────────────────────────────────────────────────────── audits
 
 [jobs.pbxproj-sources]
