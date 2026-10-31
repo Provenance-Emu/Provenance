@@ -167,25 +167,26 @@ def main() -> int:
         wait_for(lambda: api.get("/api/debug/library")["data"]["count"] >= before + len(args.upload),
                  timeout=120, interval=2, what="uploaded ROMs to import")
 
-    # Library shot.
-    if not args.no_pixelate:
-        api.post("/api/debug/pixelate", {"enabled": True})
-    api.post("/api/debug/dismiss")  # What's New, onboarding, a leftover Settings sheet
-    time.sleep(1)
-    api.post("/api/debug/navigate", url="provenance://screen/library")
-    time.sleep(3)
-    print("library")
-    save("01-library", api.screenshot())
-
-    games = api.get("/api/debug/library", q=args.query)["data"]["games"]
-    if args.systems:
-        games = [g for g in games if any(s.lower() in g["system"].lower() for s in args.systems)]
-    games = games[: args.max_games]
-    if not games:
-        print(f"no games matching {args.query!r} in the library — import the 240p Test Suite ROMs (--upload)")
-
     index = 2
+    gameplay_captures = 0
     try:
+        # Library shot.
+        if not args.no_pixelate:
+            api.post("/api/debug/pixelate", {"enabled": True})
+        api.post("/api/debug/dismiss")  # What's New, onboarding, a leftover Settings sheet
+        time.sleep(1)
+        api.post("/api/debug/navigate", url="provenance://screen/library")
+        time.sleep(3)
+        print("library")
+        save("01-library", api.screenshot())
+
+        games = api.get("/api/debug/library", q=args.query)["data"]["games"]
+        if args.systems:
+            games = [g for g in games if any(s.lower() in g["system"].lower() for s in args.systems)]
+        games = games[: args.max_games]
+        if not games:
+            print(f"no games matching {args.query!r} in the library — import the 240p Test Suite ROMs (--upload)")
+
         for game in games:
             print(f"boot {game['title']} [{game['system']}]")
             resp = api.post("/api/debug/boot", {"md5": game["md5"]})
@@ -212,6 +213,7 @@ def main() -> int:
                 time.sleep(1.5)
                 name = f"{index:02d}-{system}-{slug(game['title'])}-{shader}"
                 save(name, api.screenshot())
+                gameplay_captures += 1
                 if args.game_source:
                     save(name + "-frame", api.screenshot("game"))
                 index += 1
@@ -222,11 +224,16 @@ def main() -> int:
         filter_name = "none"
         if original_shader.startswith("Always(") and original_shader.endswith(")"):
             filter_name = original_shader[len("Always("):-1]
-        if not original_shader.startswith("Auto("):
-            api.post("/api/debug/shader", {"filter": filter_name})
-        api.post("/api/debug/pixelate", {"enabled": bool(original_pixelate)})
+        try:
+            if not original_shader.startswith("Auto("):
+                api.post("/api/debug/shader", {"filter": filter_name})
+        finally:
+            api.post("/api/debug/pixelate", {"enabled": bool(original_pixelate)})
 
-    print(f"done — {index - 1} screenshots in {args.out}")
+    print(f"done — library + {gameplay_captures} gameplay screenshots in {args.out}")
+    if gameplay_captures == 0:
+        print("no gameplay screenshots captured", file=sys.stderr)
+        return 1
     return 0
 
 
