@@ -834,7 +834,6 @@ extension RetroGameLibraryView {
         #if canImport(PVWebServer)
         ILOG("RetroGameLibraryView: Starting web server for imports")
         Task { @MainActor in
-            await PVWebServerManager.shared.refreshFeatureFlag()
             do {
                 let ok = try await PVWebServerManager.shared.start()
                 guard ok, let serverURL = await PVWebServerManager.shared.serverURL?.absoluteString else {

@@ -355,6 +355,8 @@ Proposed additive ECS changes:
 
 ### Phase 3 device checklist
 
+Manual verification, 2026-10-31: Joe confirmed successfully copying one Dreamcast game from Provenance on iPad to iFly on tvOS. This verifies that copy direction only. Game format/build numbers and launch after copying were not recorded.
+
 - [ ] Share This Library on (iPhone). Unmodified iFly on another device lists the Provenance device and shows only Dreamcast/NAOMI/Atomiswave games. iFly's consent prompt appears on the Provenance device.
 - [ ] iFly copies a single-file `.chd` and a GDI set from Provenance, and both boot in iFly. With Play, iFly boots the `.gdi`, not a track.
 - [ ] "Ask for Each Game": iFly shows waiting, the Provenance device shows "wants to copy <game>", and Allow lets the copy proceed. "Never Allow This Device" moves the device to Nothing in Trusted Devices.

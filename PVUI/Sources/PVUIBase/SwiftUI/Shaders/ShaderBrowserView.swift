@@ -40,6 +40,10 @@ public struct ShaderBrowserView: View {
     /// Offer "Skin's filter" (only when the current skin ships one).
     let showsSkinFilter: Bool
     let onSelect: (ShaderBrowserChoice) -> Void
+    /// Keeps the paused game in step when editing a filter from the browser.
+    let onParametersChange: (() -> Void)?
+    /// A presenter can keep parameter navigation inside its own themed container.
+    let onEdit: ((ShaderCatalogEntry) -> Void)?
 
     @ObservedObject private var themeManager = ThemeManager.shared
     @State private var query = ""
@@ -50,17 +54,48 @@ public struct ShaderBrowserView: View {
     private let store = ShaderLibraryStore.shared
     private let catalog = ShaderCatalog.shared
 
-    public init(current: ShaderBrowserChoice?, showsSkinFilter: Bool = false,
+    public init(current: ShaderBrowserChoice?, showsSkinFilter: Bool = false, onParametersChange: (() -> Void)? = nil,
+                onEdit: ((ShaderCatalogEntry) -> Void)? = nil,
                 onSelect: @escaping (ShaderBrowserChoice) -> Void) {
         self.current = current
         self.showsSkinFilter = showsSkinFilter
         self.onSelect = onSelect
+        self.onParametersChange = onParametersChange
+        self.onEdit = onEdit
     }
 
     private var palette: UXThemePalette { themeManager.currentPalette }
     private var isFiltering: Bool { !query.isEmpty || !looks.isEmpty }
 
     public var body: some View {
+        Group {
+            if onEdit != nil {
+                content
+            } else {
+                content.navigationDestination(item: $editing) { entry in
+                    ShaderParameterEditorView(entry: entry, onChange: onParametersChange)
+                }
+            }
+        }
+        .onAppear(perform: expandCurrentCategory)
+    }
+
+    private var content: some View {
+        #if os(tvOS)
+        VStack(spacing: 16) {
+            TextField(String(localized: "Search \(catalog.entries.count) filters"), text: $query)
+                .padding(12)
+                .background(RetroPauseSearchFieldBackground())
+            filterList
+                .listStyle(.plain)
+        }
+        #else
+        filterList
+            .searchable(text: $query, prompt: Text(String(localized: "Search \(catalog.entries.count) filters")))
+        #endif
+    }
+
+    private var filterList: some View {
         List {
             lookChips
             if isFiltering {
@@ -79,11 +114,6 @@ public struct ShaderBrowserView: View {
                 }
             }
         }
-        .searchable(text: $query, prompt: Text(String(localized: "Search \(catalog.entries.count) filters")))
-        .navigationDestination(item: $editing) { entry in
-            ShaderParameterEditorView(entry: entry)
-        }
-        .onAppear(perform: expandCurrentCategory)
     }
 
     // MARK: - Sections
@@ -103,7 +133,11 @@ public struct ShaderBrowserView: View {
                             .background(Capsule().fill(isOn ? palette.defaultTintColor.swiftUIColor : Color.secondary.opacity(0.2)))
                             .foregroundColor(isOn ? .white : .primary)
                     }
+                    #if os(tvOS)
+                    .retroFocusButtonStyle(focusScale: 1.04, cornerRadius: RetroPauseChrome.radiusMD, primaryColor: .retroCyan)
+                    #else
                     .buttonStyle(.plain)
+                    #endif
                 }
             }
             .padding(.vertical, 4)
@@ -151,7 +185,11 @@ public struct ShaderBrowserView: View {
                 }
                 .contentShape(Rectangle())
             }
+            #if os(tvOS)
+            .retroFocusButtonStyle(focusScale: 1.02, primaryColor: .retroCyan)
+            #else
             .buttonStyle(.plain)
+            #endif
             if isExpanded {
                 ForEach(entries) { entry in row(entry) }
             }
@@ -173,7 +211,11 @@ public struct ShaderBrowserView: View {
             }
             .contentShape(Rectangle())
         }
+        #if os(tvOS)
+        .retroFocusButtonStyle(focusScale: 1.02, primaryColor: .retroCyan)
+        #else
         .buttonStyle(.plain)
+        #endif
     }
 
     private func row(_ entry: ShaderCatalogEntry) -> some View {
@@ -183,7 +225,9 @@ public struct ShaderBrowserView: View {
                   palette: palette,
                   onSelect: { onSelect(.shader(entry.id)) },
                   onToggleFavorite: { store.toggleFavorite(entry.id) },
-                  onEdit: entry.editableParameters.isEmpty ? nil : { editing = entry })
+                  onEdit: entry.editableParameters.isEmpty ? nil : {
+                      if let onEdit { onEdit(entry) } else { editing = entry }
+                  })
     }
 
     private func expandCurrentCategory() {
@@ -203,7 +247,11 @@ struct ShaderRow: View {
     let onToggleFavorite: () -> Void
     let onEdit: (() -> Void)?
 
+    #if os(tvOS)
+    private static let thumbnailSize = CGSize(width: 128, height: 96)
+    #else
     private static let thumbnailSize = CGSize(width: 64, height: 48)
+    #endif
 
     var body: some View {
         Button(action: onSelect) {
@@ -227,7 +275,11 @@ struct ShaderRow: View {
             }
             .contentShape(Rectangle())
         }
+        #if os(tvOS)
+        .retroFocusButtonStyle(focusScale: 1.02, primaryColor: .retroCyan)
+        #else
         .buttonStyle(.plain)
+        #endif
         .contextMenu {
             Button(action: onToggleFavorite) {
                 Label(isFavorite ? String(localized: "Remove from Favorites") : String(localized: "Add to Favorites"),

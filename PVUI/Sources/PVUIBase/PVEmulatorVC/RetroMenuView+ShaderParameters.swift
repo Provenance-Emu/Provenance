@@ -68,18 +68,20 @@ struct ShaderParameterSlider: View {
                 Text(label)
                     #if os(tvOS)
                     .font(.system(size: 22, weight: .medium))
+                    .foregroundStyle(.primary)
                     #else
                     .font(.system(size: 14, weight: .medium))
-                    #endif
                     .foregroundColor(palette.settingsCellText?.swiftUIColor ?? palette.gameLibraryText.swiftUIColor)
+                    #endif
                 Spacer()
                 Text(formattedValue)
                     #if os(tvOS)
                     .font(.system(size: 20, weight: .regular).monospacedDigit())
+                    .foregroundStyle(.secondary)
                     #else
                     .font(.system(size: 13, weight: .regular).monospacedDigit())
-                    #endif
                     .foregroundColor((palette.settingsCellTextDetail?.swiftUIColor ?? palette.gameLibraryText.swiftUIColor).opacity(0.7))
+                    #endif
             }
             #if os(tvOS)
             HStack(spacing: 16) {

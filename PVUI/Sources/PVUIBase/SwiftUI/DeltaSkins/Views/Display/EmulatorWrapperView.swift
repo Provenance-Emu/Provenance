@@ -11,6 +11,8 @@ struct EmulatorWrapperView: View {
     let onRefreshRequested: () -> Void
     /// Optional override of the skin identifier to display immediately for this session
     let preselectedSkinIdentifier: String?
+    /// Re-selecting the same skin after rotation is still a new load request.
+    let skinRequestRevision: Int
     /// Fires once packaged vs programmatic skin resolution completes (initial load path).
     let onInitialSkinResolutionComplete: (() -> Void)?
 
@@ -31,13 +33,15 @@ struct EmulatorWrapperView: View {
         preselectedSkinIdentifier: String?,
         onInitialSkinResolutionComplete: (() -> Void)? = nil,
         inputHandler: DeltaSkinInputHandler,
-        virtualInputState: VirtualInputState? = nil
+        virtualInputState: VirtualInputState? = nil,
+        skinRequestRevision: Int = 0
     ) {
         self.game = game
         self.coreInstance = coreInstance
         self.onSkinLoaded = onSkinLoaded
         self.onRefreshRequested = onRefreshRequested
         self.preselectedSkinIdentifier = preselectedSkinIdentifier
+        self.skinRequestRevision = skinRequestRevision
         self.onInitialSkinResolutionComplete = onInitialSkinResolutionComplete
         _inputHandler = ObservedObject(wrappedValue: inputHandler)
         self.virtualInputState = virtualInputState ?? VirtualInputState(supportsKeyboard: false, supportsMouse: false)
@@ -50,7 +54,8 @@ struct EmulatorWrapperView: View {
             onSkinLoaded: onSkinLoaded,
             onRefreshRequested: onRefreshRequested,
             preselectedSkinIdentifier: preselectedSkinIdentifier,
-            onInitialSkinResolutionComplete: onInitialSkinResolutionComplete
+            onInitialSkinResolutionComplete: onInitialSkinResolutionComplete,
+            skinRequestRevision: skinRequestRevision
         )
         .environmentObject(inputHandler)
         .deltaSkinInputHandler(inputHandler)

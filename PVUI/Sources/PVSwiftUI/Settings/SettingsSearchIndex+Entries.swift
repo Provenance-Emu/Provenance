@@ -253,8 +253,6 @@ extension SettingsSearchIndex {
               .advanced, SettingsSectionTitle.advanced, keywords: ["sleep", "screen timeout", "idle", "display"]),
         entry("adv.uimode", "UI Mode", "Choose between different UI modes.",
               .advanced, SettingsSectionTitle.advanced, keywords: ["interface", "layout", "library", "home"]),
-        entry("adv.modernwebserver", "Use Modern Web Server", "Opt in to the native Swift Hummingbird HTTP / WebDAV server.",
-              .advanced, SettingsSectionTitle.advanced, keywords: ["webdav", "http", "wifi", "transfer", "import", "gcdwebserver"]),
         entry("adv.appgroupfiles", "App Group File Browser", "Browse files in the app group container for debugging.",
               .advanced, SettingsSectionTitle.advanced, keywords: ["files", "debug", "container", "storage"]),
         entry("adv.spotlight", "Spotlight Debug", "View and manage Spotlight indexing for games and save states.",

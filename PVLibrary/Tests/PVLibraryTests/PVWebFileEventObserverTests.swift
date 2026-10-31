@@ -83,6 +83,35 @@ final class PVWebFileEventObserverTests: XCTestCase {
 
     // MARK: - Lifecycle
 
+    @MainActor
+    func testCompletedUploadQueuesFileWithItsDestinationSystem() async throws {
+        let imported = expectation(description: "completed MAME upload queued")
+        let coordinator = PVWebUploadImportCoordinator { url, system in
+            XCTAssertEqual(url.lastPathComponent, "blitz.zip")
+            XCTAssertEqual(system.rawValue, "com.provenance.mame")
+            imported.fulfill()
+        }
+        observer = PVWebFileEventObserver(uploadCoordinator: coordinator)
+        observer.realmConfiguration = realmConfig
+        observer._testRomsPathPrefix = romsPrefix
+
+        let system = PVSystem()
+        system.identifier = "com.provenance.mame"
+        system.supportedExtensions.append("zip")
+        let realm = try await Realm(configuration: realmConfig)
+        try realm.write { realm.add(system) }
+
+        let root = URL(fileURLWithPath: romsPrefix, isDirectory: true)
+        defer { try? FileManager.default.removeItem(at: root.deletingLastPathComponent()) }
+        let url = root.appendingPathComponent("com.provenance.mame/blitz.zip")
+        try FileManager.default.createDirectory(at: url.deletingLastPathComponent(), withIntermediateDirectories: true)
+        try Data([1]).write(to: url)
+
+        observer.start()
+        NotificationCenter.default.post(name: .pvWebServerFileUploadCompleted, object: nil, userInfo: ["filePath": url.path])
+        await fulfillment(of: [imported], timeout: 15)
+    }
+
     func testStartRegistersObservers() {
         // Starting an observer should not crash and should enable notification delivery.
         observer.start()

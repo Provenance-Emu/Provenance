@@ -485,35 +485,27 @@ struct TVMediaMainView: View {
         private var layoutWithArtworkSourceAlert: some View {
             layoutWithImportsAlert
                 #if !os(tvOS)
-                .uiKitAlert(
-                    "Choose Artwork Source",
-                    message: "Select artwork from your photo library or search online sources",
-                    isPresented: $gameActions.showArtworkSourceAlert,
-                    buttons: {
-                        UIAlertAction(title: "Search Online", style: .default) { _ in
-                            Task { @MainActor in
-                                gameActions.showArtworkSourceAlert = false
+                .pvAlert(isPresented: $gameActions.showArtworkSourceAlert) {
+                    PVAlert(
+                        title: "Choose Artwork Source",
+                        message: "Select artwork from your photo library or search online sources",
+                        actions: [
+                            PVAlertAction("Search Online") {
                                 if let game = gameActions.gameForArtworkUpdate {
                                     gameActions.artworkSearchGame = game
                                 }
-                            }
-                        }
-                        UIAlertAction(title: "Select from Photos", style: .default) { _ in
-                            Task { @MainActor in
-                                gameActions.showArtworkSourceAlert = false
+                            },
+                            PVAlertAction("Select from Photos") {
                                 if let game = gameActions.gameForArtworkUpdate {
                                     gameActions.imagePickerGame = game
                                 }
-                            }
-                        }
-                        UIAlertAction(title: NSLocalizedString("Cancel", comment: "Cancel"), style: .cancel) { _ in
-                            Task { @MainActor in
-                                gameActions.showArtworkSourceAlert = false
+                            },
+                            .cancel {
                                 gameActions.gameForArtworkUpdate = nil
                             }
-                        }
-                    }
-                )
+                        ]
+                    )
+                }
                 #endif
         }
 
@@ -1355,30 +1347,28 @@ final class TVMediaGameActions: ObservableObject, GameContextMenuDelegate {
         let title = Bundle.module.localized("DeleteGameTitle")
         let message = Bundle.module.localized("DeleteGameBody", gameTitle)
 
-        let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "Yes", style: .destructive) { _ in
-            let realm = RomDatabase.sharedInstance.realm
-            guard let liveGame = realm.object(ofType: PVGame.self, forPrimaryKey: gameMD5)
-                    ?? realm.object(ofType: PVGame.self, forPrimaryKey: gameMD5.uppercased()) else {
-                ELOG("Could not find game with MD5 \(gameMD5) to delete")
-                return
-            }
-            do {
-                try RomDatabase.sharedInstance.delete(game: liveGame, deleteSaves: false)
-                ILOG("Deleted game: \(gameTitle)")
-            } catch {
-                ELOG("Failed to delete game \(gameTitle): \(error.localizedDescription)")
-            }
-        })
-        alert.addAction(UIAlertAction(title: "Cancel", style: .cancel))
-
-        if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
-           let viewController = windowScene.windows.first?.rootViewController {
-            var topVC = viewController
-            while let presented = topVC.presentedViewController {
-                topVC = presented
-            }
-            topVC.present(alert, animated: true)
+        Task { @MainActor in
+            PVAlertCenter.shared.present(PVAlert(
+                title: title,
+                message: message,
+                actions: [
+                    PVAlertAction("Yes", role: .destructive) {
+                        let realm = RomDatabase.sharedInstance.realm
+                        guard let liveGame = realm.object(ofType: PVGame.self, forPrimaryKey: gameMD5)
+                                ?? realm.object(ofType: PVGame.self, forPrimaryKey: gameMD5.uppercased()) else {
+                            ELOG("Could not find game with MD5 \(gameMD5) to delete")
+                            return
+                        }
+                        do {
+                            try RomDatabase.sharedInstance.delete(game: liveGame, deleteSaves: false)
+                            ILOG("Deleted game: \(gameTitle)")
+                        } catch {
+                            ELOG("Failed to delete game \(gameTitle): \(error.localizedDescription)")
+                        }
+                    },
+                    .cancel()
+                ]
+            ))
         }
     }
 }

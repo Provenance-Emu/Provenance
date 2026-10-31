@@ -86,6 +86,9 @@ struct ConsolesWrapperView: SwiftUI.View {
 
     /// Track the previous tab for comparison
     @State private var previousTab: String = ""
+    #if os(iOS)
+    @GestureState private var isPagingSystems = false
+    #endif
 
     /// State to control the presentation of ImportStatusView
     @State private var showImportStatusView = false
@@ -481,8 +484,22 @@ struct ConsolesWrapperView: SwiftUI.View {
 
             consolesList
         }
+        #if os(iOS)
+        .tabViewStyle(.page(indexDisplayMode: .never))
+        .contentMargins(.bottom, 64, for: .scrollContent)
+        .simultaneousGesture(
+            DragGesture(minimumDistance: 20)
+                .updating($isPagingSystems) { value, state, _ in
+                    state = abs(value.translation.width) > abs(value.translation.height)
+                }
+        )
+        .overlay(alignment: .bottom) {
+            FloatingSystemSelector(items: systemSelectorItems, selection: binding, isPaging: isPagingSystems)
+        }
+        #else
         .tabViewStyle(.page)
         .indexViewStyle(.page(backgroundDisplayMode: .interactive))
+        #endif
         .onChange(of: delegate.selectedTab) { newValue in
             DLOG("Tab changed in view: \(newValue)")
         }
@@ -490,6 +507,21 @@ struct ConsolesWrapperView: SwiftUI.View {
         .foregroundStyle(themeManager.currentPalette.gameLibraryText.swiftUIColor)
         .background(themeManager.currentPalette.gameLibraryBackground.swiftUIColor)
     }
+
+    #if os(iOS)
+    private var systemSelectorItems: [FloatingSystemSelectorItem] {
+        var items: [FloatingSystemSelectorItem] = []
+        if showFeatureFlagsDebug {
+            items.append(.init(id: "debug", title: "Debug", icon: Image(systemName: "bug")))
+            items.append(.init(id: "test", title: "Test", icon: Image(systemName: "wrench.and.screwdriver")))
+        }
+        items.append(.init(id: "home", title: "Home", icon: Image(systemName: "house")))
+        items.append(contentsOf: sortedConsoles().map { console in
+            .init(id: console.identifier, title: console.name, icon: loadedIcons[console.iconName] ?? Image(systemName: "gamecontroller"))
+        })
+        return items
+    }
+    #endif
 
     // MARK: - Icon Rasterization
     /// Load tab icons asynchronously off the main thread

@@ -321,6 +321,9 @@ public final class PVApplicationServices: NSObject, ObservableObject {
             RealmConfiguration.setDefaultRealmConfig()
         }
 
+        // Capture the configured Realm and install file-event handlers before server startup.
+        PVWebFileEventObserver.shared.start()
+
         // Register MetricKit subscriber to capture hang / crash diagnostics passively
         #if !os(tvOS)
         if #available(iOS 14.0, *) {
@@ -391,7 +394,7 @@ public final class PVApplicationServices: NSObject, ObservableObject {
             .with(ThemeBootstrapTask())
             .with(iCloudBootstrapTask())
             .with(SkinIndexPrewarmBootstrapTask())
-            .with(WebServerBootstrapTask(delegate: self))
+            .with(WebServerBootstrapTask())
 
         await PVLaunchProfiler.measure("launch.bootstrapOrchestrator") {
             await orchestrator.run()

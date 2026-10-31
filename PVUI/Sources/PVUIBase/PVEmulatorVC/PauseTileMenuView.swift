@@ -1787,12 +1787,21 @@ struct PauseTileMenuView: View {
             )
         }
         #endif
+        #if os(tvOS)
+        .fullScreenCover(isPresented: $showingShaderBrowser, onDismiss: rebuildSections) {
+            ShaderPauseSheet(emulatorVC: emulatorVC)
+        }
+        .fullScreenCover(isPresented: $showingShaderSettings, onDismiss: rebuildSections) {
+            ShaderPauseSheet(emulatorVC: emulatorVC, startInEditor: true)
+        }
+        #else
         .sheet(isPresented: $showingShaderBrowser, onDismiss: rebuildSections) {
             ShaderPauseSheet(emulatorVC: emulatorVC)
         }
         .sheet(isPresented: $showingShaderSettings, onDismiss: rebuildSections) {
             ShaderPauseSheet(emulatorVC: emulatorVC, startInEditor: true)
         }
+        #endif
         .sheet(isPresented: $showingPortDevices) {
             PortDevicesPauseSheet(emulatorVC: emulatorVC)
         }

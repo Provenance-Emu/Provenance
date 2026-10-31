@@ -8,35 +8,16 @@
 
 import Combine
 import XCTest
-import PVPrimitives
 @testable import PVWebServer
 
 class PVWebServerTests: XCTestCase {
 
     // MARK: - PVWebServerManager tests
 
-    func testManagerDefaultsToLegacyServer() async {
-        let manager = PVWebServerManager(useModernServer: false)
-        let isRunning = await manager.isRunning
-        XCTAssertFalse(isRunning, "Manager should not be running before start()")
-    }
-
-    func testManagerFeatureFlagOverride() async {
-        let manager = PVWebServerManager(useModernServer: true)
-        // Only verifies the flag is accepted; does not attempt a real bind on port 80.
-        let isRunning = await manager.isRunning
-        XCTAssertFalse(isRunning)
-    }
-
-    /// `refreshFeatureFlag()` lives in PVUIBase and reads `PVFeatureFlags`; here we only verify the manager obeys `setModernServerEnabled`.
-    func testManagerSetModernServerEnabled() async {
-        let manager = PVWebServerManager(useModernServer: false)
-        await manager.setModernServerEnabled(true)
-        let enabledAfterTrue = await manager.useModernServer
-        XCTAssertTrue(enabledAfterTrue)
-        await manager.setModernServerEnabled(false)
-        let enabledAfterFalse = await manager.useModernServer
-        XCTAssertFalse(enabledAfterFalse)
+    func testManagerDefaultsToSwiftServer() async {
+        let manager = PVWebServerManager()
+        let implementation = await manager.implementationDescription
+        XCTAssertEqual(implementation, "Modern (Hummingbird)")
     }
 
     // MARK: - PVModernWebServer unit tests
@@ -63,6 +44,14 @@ class PVWebServerTests: XCTestCase {
         XCTAssertFalse(server.isWWWServerRunning)
         XCTAssertFalse(server.isWebDAVServerRunning)
         XCTAssertNil(server.serverURL, "serverURL should be nil before start")
+    }
+
+    func testBonjourAdvertisesBothExistingListeners() {
+        let server = PVModernWebServer(httpPort: 6080, webDAVPort: 6081)
+        let services = server.makeBonjourServices()
+        XCTAssertEqual(services.count, 2)
+        XCTAssertEqual(services.first { $0.type == "_http._tcp." }?.port, 6080)
+        XCTAssertEqual(services.first { $0.type == "_webdav._tcp." }?.port, 6081)
     }
 
     // MARK: - Notification name constants

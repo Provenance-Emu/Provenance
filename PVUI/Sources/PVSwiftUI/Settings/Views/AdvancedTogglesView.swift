@@ -16,7 +16,6 @@ internal struct AdvancedTogglesView: View {
     @Default(.autoJIT) var autoJIT
     @Default(.disableAutoLock) var disableAutoLock
     @Default(.mainUIMode) var mainUIMode
-    @Default(.useModernWebServer) var useModernWebServer
 
     // Netplay, N64 Transfer Pak, Light Gun Crosshair, Companion Controller, Case Companion Skins,
     // Gameplay Clips, Live Broadcast and AirPlay Audio Menu moved to Emulation › Gameplay Features
@@ -52,13 +51,7 @@ internal struct AdvancedTogglesView: View {
                                 icon: .sfSymbol("switch.2"),
                                 showChevron: false)
                 }
-                
-                PremiumThemedToggle(isOn: $useModernWebServer) {
-                    SettingsRow(title: "Use Modern Web Server",
-                                subtitle: "Opt in to the native Swift Hummingbird HTTP / WebDAV server. The default GCDWebServer UI is fully featured; the modern implementation is still reaching parity.",
-                                icon: .sfSymbol("network"),
-                                showChevron: false)
-                }
+
             }
         }
     }

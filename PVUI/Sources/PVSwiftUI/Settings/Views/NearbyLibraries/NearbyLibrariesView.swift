@@ -70,11 +70,6 @@ struct NearbyLibrariesView: View {
             } footer: {
                 Text("An emulator-content-server on your network or at home. Provenance keeps a sign-in token in the Keychain, never your password.")
             }
-            .sheet(isPresented: $showingAddServer) {
-                AddContentServerView { url, username, password in
-                    model.addContentServer(url: url, username: username, password: password)
-                }
-            }
 
             if model.snapshot.localNetworkDenied {
                 SwiftUI.Section {
@@ -99,6 +94,12 @@ struct NearbyLibrariesView: View {
             }
         }
         .navigationTitle("Nearby Libraries")
+        // Keep the presenter outside List's transient section hosts as discovery updates the rows.
+        .sheet(isPresented: $showingAddServer) {
+            AddContentServerView { url, username, password in
+                model.addContentServer(url: url, username: username, password: password)
+            }
+        }
         #if os(iOS)
         .navigationBarTitleDisplayMode(.inline)
         #endif

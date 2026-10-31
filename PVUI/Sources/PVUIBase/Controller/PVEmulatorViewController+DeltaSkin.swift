@@ -10,6 +10,7 @@ import Combine
 import PVTouchOverlay
 import Defaults
 import PVSettings
+import PVSystems
 import SkinKitCore
 import SkinKitManager
 
@@ -50,9 +51,8 @@ extension PVEmulatorViewController {
     /// classic on-screen controller instead of an automatically chosen skin.
     var hasExplicitSkinSelectionForGame: Bool {
         guard let game, let systemId = game.system?.systemIdentifier else { return false }
-        // Skin pickers key game selections by `PVGame.id` (library / skin browser) or by
-        // `md5Hash` (in-game RetroMenu), so check both.
-        return DeltaSkinSelectionManager.shared.hasExplicitPackagedSkinSelection(for: systemId, gameIds: [game.id, game.md5Hash])
+        // Legacy picks can be keyed by UUID, MD5 or CRC; boot and live selection must agree.
+        return DeltaSkinSelectionManager.shared.hasExplicitPackagedSkinSelection(for: systemId, gameIds: [game.id, game.md5Hash, game.crc])
     }
 
     /// For cores with `requiresExplicitSkinSelection`: when the player clears their skin pick
@@ -85,17 +85,25 @@ extension PVEmulatorViewController {
         let userInfo = notification.userInfo
         DispatchQueue.main.async { [weak self] in
             guard let self else { return }
-            guard self.core.supportsSkins else { return }
+            guard self.core.supportsSkins, !self.isQuitting else { return }
             guard let systemRaw = userInfo?["systemId"] as? String,
                   systemRaw == self.runningSystemRawIdentifier else { return }
             guard let orientationRaw = userInfo?["orientation"] as? String,
                   let orientation = SkinOrientation(rawValue: orientationRaw),
                   orientation == self.currentOrientation else { return }
 
+            let keys = [self.game.id, self.game.md5Hash, self.game.crc]
+            if let changedGame = userInfo?["gameId"] as? String,
+               userInfo?["scope"] as? String != SkinScope.system.rawValue,
+               !keys.contains(changedGame) { return }
+            guard let systemId = SystemIdentifier(rawValue: systemRaw) else { return }
             let keepPaused = self.isShowingMenu
-            let skinId = Self.skinIdentifier(fromSelectionNotification: userInfo)
-            Task { @MainActor in
-                if skinId == nil || skinId == DeltaSkinSelectionManager.builtInSkinPreferenceToken {
+            let skinId = DeltaSkinSelectionManager.shared.effectiveSkinIdentifier(
+                for: systemId, gameIds: keys, orientation: orientation)
+            self.liveSkinSelectionTask?.cancel()
+            self.liveSkinSelectionTask = Task { @MainActor in
+                guard !Task.isCancelled else { return }
+                if skinId == nil {
                     guard self.currentSkin != nil || self.skinContainerView != nil else { return }
                     try? await self.resetToBuiltInControls()
                     if keepPaused {
@@ -104,7 +112,7 @@ extension PVEmulatorViewController {
                     return
                 }
                 guard let skinId, self.currentSkin?.identifier != skinId else { return }
-                guard let skin = try? await DeltaSkinManager.shared.skin(withIdentifier: skinId) else { return }
+                guard let skin = try? await DeltaSkinManager.shared.skin(withIdentifier: skinId), !Task.isCancelled else { return }
                 try? await self.applySkin(skin, keepPaused: keepPaused)
             }
         }
@@ -119,12 +127,6 @@ extension PVEmulatorViewController {
             return game.systemIdentifier
         }
         return core.systemIdentifier ?? ""
-    }
-
-    /// Skin id from a selection notification. `NSNull` and a missing value mean built-in / cleared.
-    private static func skinIdentifier(fromSelectionNotification userInfo: [AnyHashable: Any]?) -> String? {
-        guard let value = userInfo?["skinIdentifier"], !(value is NSNull) else { return nil }
-        return value as? String
     }
 
     @objc private func handleSkinSelectionChangedForExplicitCore(_ notification: Notification) {
@@ -525,11 +527,8 @@ extension PVEmulatorViewController {
         let preselectedSkinIdentifier: String? = await MainActor.run { [weak self] in
             guard let self, let sid = self.game.system?.systemIdentifier else { return nil }
             let orient = self.currentOrientation
-            let gid = self.game.id
-            if !gid.isEmpty {
-                return DeltaSkinSelectionManager.shared.effectiveGameSkinIdentifier(for: sid, gameId: gid, orientation: orient)
-            }
-            return DeltaSkinSelectionManager.shared.effectiveSkinIdentifier(for: sid, gameId: nil, orientation: orient)
+            return DeltaSkinSelectionManager.shared.effectiveSkinIdentifier(
+                for: sid, gameIds: [self.game.id, self.game.md5Hash, self.game.crc], orientation: orient)
         }
 
         // Create a container for the skin

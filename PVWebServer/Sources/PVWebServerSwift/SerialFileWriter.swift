@@ -26,20 +26,40 @@ final class SerialFileWriter: @unchecked Sendable {
     }
 
     private let queue: DispatchQueue
+    private let destination: URL
+    private let stagingURL: URL
     private var fileHandle: FileHandle?
     private var finalized = false
     private var bytesWritten: Int64 = 0
 
-    /// Creates/truncates `destination` and opens it for writing.
+    /// Stages bytes beside the destination so readers never observe a partially written upload.
     init(destination: URL) throws {
+        self.destination = destination
         let parent = destination.deletingLastPathComponent()
+        stagingURL = parent.appendingPathComponent(".pv-upload-\(UUID().uuidString)")
         try FileManager.default.createDirectory(at: parent, withIntermediateDirectories: true)
-        FileManager.default.createFile(atPath: destination.path, contents: nil)
-        fileHandle = try FileHandle(forWritingTo: destination)
+        var isDirectory: ObjCBool = false
+        if FileManager.default.fileExists(atPath: destination.path, isDirectory: &isDirectory), isDirectory.boolValue {
+            throw CocoaError(.fileWriteFileExists)
+        }
+        guard FileManager.default.createFile(atPath: stagingURL.path, contents: nil) else {
+            throw CocoaError(.fileWriteUnknown)
+        }
+        do {
+            fileHandle = try FileHandle(forWritingTo: stagingURL)
+        } catch {
+            try? FileManager.default.removeItem(at: stagingURL)
+            throw error
+        }
         queue = DispatchQueue(
             label: "com.provenance.webserver.serialwriter.\(destination.path.hashValue)",
             qos: .utility
         )
+    }
+
+    deinit {
+        try? fileHandle?.close()
+        try? FileManager.default.removeItem(at: stagingURL)
     }
 
     /// Total bytes written after the last completed `append`.
@@ -72,7 +92,7 @@ final class SerialFileWriter: @unchecked Sendable {
         await append(data)
     }
 
-    /// Closes the handle on the serial queue, then invokes `completion` with total bytes written.
+    /// Closes and atomically publishes the upload, then reports its total byte count.
     func finalize(completion: @escaping (Result<Int64, Error>) -> Void) {
         queue.async { [self] in
             do {
@@ -98,11 +118,19 @@ final class SerialFileWriter: @unchecked Sendable {
             throw WriterError.alreadyFinalized
         }
         finalized = true
-        defer { fileHandle = nil }
+        defer {
+            fileHandle = nil
+            try? FileManager.default.removeItem(at: stagingURL)
+        }
         guard let handle = fileHandle else {
             throw WriterError.notOpen
         }
         try handle.close()
+        if FileManager.default.fileExists(atPath: destination.path) {
+            _ = try FileManager.default.replaceItemAt(destination, withItemAt: stagingURL)
+        } else {
+            try FileManager.default.moveItem(at: stagingURL, to: destination)
+        }
         return bytesWritten
     }
 }

@@ -24,12 +24,16 @@ struct EmulatorWithSkinView: View {
     let gameId: String?
     /// ROM MD5 of the game, `nil` when unknown; keys the overlay's per-game layout.
     let gameMD5: String?
+    let gameCRC: String
+
+    private var gameSkinKeys: [String] { [gameId ?? "", gameMD5 ?? "", gameCRC].filter { !$0.isEmpty } }
 
     let coreInstance: PVEmulatorCore
     let onSkinLoaded: () -> Void
     let onRefreshRequested: () -> Void
     /// Optional override to force a specific skin for this session (identifier)
     let preselectedSkinIdentifier: String?
+    let skinRequestRevision: Int
     /// Unblocks ``PVEmulatorViewController/awaitDeltaSkinInitialResolutionIfNeeded()`` after the first resolution pass.
     let onInitialSkinResolutionComplete: (() -> Void)?
 
@@ -92,7 +96,8 @@ struct EmulatorWithSkinView: View {
         onSkinLoaded: @escaping () -> Void,
         onRefreshRequested: @escaping () -> Void,
         preselectedSkinIdentifier: String? = nil,
-        onInitialSkinResolutionComplete: (() -> Void)? = nil
+        onInitialSkinResolutionComplete: (() -> Void)? = nil,
+        skinRequestRevision: Int = 0
     ) {
         self.gameTitle = game.title
         self.systemName = game.system?.name
@@ -104,11 +109,13 @@ struct EmulatorWithSkinView: View {
         // Get game ID for skin preferences (must match game.id used in skin selection)
         self.gameId = game.id
         self.gameMD5 = game.md5Hash.isEmpty ? nil : game.md5Hash
+        self.gameCRC = game.crc
 
         self.coreInstance = coreInstance
         self.onSkinLoaded = onSkinLoaded
         self.onRefreshRequested = onRefreshRequested
         self.preselectedSkinIdentifier = preselectedSkinIdentifier
+        self.skinRequestRevision = skinRequestRevision
         self.onInitialSkinResolutionComplete = onInitialSkinResolutionComplete
     }
 
@@ -126,6 +133,8 @@ struct EmulatorWithSkinView: View {
                         .background(Color.clear)
                         .onAppear {
                             DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                                // A newer selection can replace this skin before its delayed callback fires.
+                                guard !skinLoader.isLoading, skinLoader.selectedSkin?.identifier == skin.identifier else { return }
                                 if !skinRenderComplete {
                                     skinRenderComplete = true
                                     onSkinLoaded()
@@ -251,7 +260,7 @@ struct EmulatorWithSkinView: View {
                 ILOG("skins: Loaded filter preference on appear: \(selectedFilterName ?? "none")")
 
                 // Start loading the skin - completely non-blocking
-                loadSkinSafely()
+                loadSkinSafely(usePreselected: true)
 
                 // Set up orientation handling
                 setupOrientationHandling()
@@ -261,6 +270,9 @@ struct EmulatorWithSkinView: View {
 
                 // Listen for skin selection changes to refresh view dynamically
                 setupSkinChangeNotificationObserver()
+            }
+            .onChange(of: skinRequestRevision) { _, _ in
+                loadSkinSafely(usePreselected: true)
             }
             .onDisappear {
                 // Cancel any in-flight skin loading task
@@ -750,7 +762,7 @@ extension EmulatorWithSkinView {
 
     /// Resolves the effective skin on a background task, shows loading until a packaged skin is chosen or the user is on the built-in-only path.
     @MainActor
-    fileprivate func loadSkinSafely() {
+    fileprivate func loadSkinSafely(usePreselected: Bool = false) {
         // Cancel any in-flight skin load to avoid stale tasks mutating state
         activeSkinLoadTask?.cancel()
         activeSkinLoadTask = nil
@@ -775,12 +787,10 @@ extension EmulatorWithSkinView {
         let currentDevice: DeltaSkinDevice = .ipad
         #endif
 
-        let prefersBuiltInOnly: Bool = {
-            if let gameId = gameId, !gameId.isEmpty {
-                return DeltaSkinSelectionManager.shared.prefersBuiltInControllerSkin(for: systemId, gameId: gameId, orientation: currentOrientation)
-            }
-            return DeltaSkinSelectionManager.shared.prefersBuiltInControllerSkin(for: systemId, gameId: nil, orientation: currentOrientation)
-        }()
+        let preselected = usePreselected ? preselectedSkinIdentifier : nil
+        let prefersBuiltInOnly = preselected == DeltaSkinSelectionManager.builtInSkinPreferenceToken
+            || (preselected == nil && DeltaSkinSelectionManager.shared.prefersBuiltInControllerSkin(
+                for: systemId, gameIds: gameSkinKeys, orientation: currentOrientation))
 
         if prefersBuiltInOnly {
             skinLoader.isLoading = false
@@ -793,7 +803,7 @@ extension EmulatorWithSkinView {
             return
         }
 
-        let shouldPauseDuringResolve = skinLoader.selectedSkin != nil
+        let shouldPauseDuringResolve = skinLoader.selectedSkin != nil && !coreInstance.skipLayout
         if shouldPauseDuringResolve {
             coreInstance.setPauseEmulation(true)
         }
@@ -803,8 +813,7 @@ extension EmulatorWithSkinView {
         skinLoader.loadingStage = .loading
         skinLoader.loadingProgress = 0.5
 
-        let preselected = preselectedSkinIdentifier
-        let gameIdSnapshot = gameId
+        let gameKeysSnapshot = gameSkinKeys
         let onResolved = onInitialSkinResolutionComplete
 
         // Safety timeout: if skin resolution takes longer than 5 seconds, proceed without a skin.
@@ -813,6 +822,7 @@ extension EmulatorWithSkinView {
         let timeoutTask = Task {
             try await Task.sleep(nanoseconds: 5_000_000_000)
             await MainActor.run {
+                guard !Task.isCancelled else { return }
                 if skinLoaderRef.isLoading {
                     WLOG("🎮 EmulatorWithSkinView: Skin loading timeout (5s) — proceeding without skin")
                     skinLoaderRef.selectedSkin = nil
@@ -862,23 +872,9 @@ extension EmulatorWithSkinView {
             }
 
             if foundSkin == nil {
-                let effectiveId: String?
-                if let gameId = gameIdSnapshot, !gameId.isEmpty {
-                    effectiveId = await MainActor.run {
-                        DeltaSkinSelectionManager.shared.effectiveGameSkinIdentifier(
-                            for: systemId,
-                            gameId: gameId,
-                            orientation: currentOrientation
-                        )
-                    }
-                } else {
-                    effectiveId = await MainActor.run {
-                        DeltaSkinSelectionManager.shared.effectiveSkinIdentifier(
-                            for: systemId,
-                            gameId: nil,
-                            orientation: currentOrientation
-                        )
-                    }
+                let effectiveId = await MainActor.run {
+                    DeltaSkinSelectionManager.shared.effectiveSkinIdentifier(
+                        for: systemId, gameIds: gameKeysSnapshot, orientation: currentOrientation)
                 }
 
                 if let effectiveId {
@@ -894,11 +890,9 @@ extension EmulatorWithSkinView {
                 }
             }
 
-            let skipPackagedSkinFallback = await MainActor.run { () -> Bool in
-                if let gameId = gameIdSnapshot, !gameId.isEmpty {
-                    return DeltaSkinSelectionManager.shared.prefersBuiltInControllerSkin(for: systemId, gameId: gameId, orientation: currentOrientation)
-                }
-                return DeltaSkinSelectionManager.shared.prefersBuiltInControllerSkin(for: systemId, gameId: nil, orientation: currentOrientation)
+            let skipPackagedSkinFallback = await MainActor.run {
+                DeltaSkinSelectionManager.shared.prefersBuiltInControllerSkin(
+                    for: systemId, gameIds: gameKeysSnapshot, orientation: currentOrientation)
             }
 
             if foundSkin == nil, !skipPackagedSkinFallback {
@@ -925,6 +919,7 @@ extension EmulatorWithSkinView {
             }
 
             await MainActor.run {
+                guard !Task.isCancelled else { return }
                 self.skinLoader.selectedSkin = foundSkin?.renderable
                 self.skinLoader.isLoading = false
                 self.skinLoader.loadingProgress = 1.0

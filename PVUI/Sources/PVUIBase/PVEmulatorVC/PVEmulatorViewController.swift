@@ -179,6 +179,9 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
     // Keep track of whether we've positioned the GPU view
     static var hasPositionedGPUView = false
 
+    /// A newer preference supersedes any skin lookup still in flight.
+    var liveSkinSelectionTask: Task<Void, Never>?
+
     // Property to track skin hosting controllers - using UIViewController for type flexibility
     var skinHostingControllers: [UIViewController] = []
 
@@ -1943,6 +1946,8 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
     @MainActor
     public func quit(optionallySave canSave: Bool = true, completion: QuitCompletion? = nil) async {
         isQuitting = true
+        liveSkinSelectionTask?.cancel()
+        liveSkinSelectionTask = nil
         // Before the first await below: the timer fires on main, which those
         // awaits leave free, and its save would run on a GCD worker while the
         // core is being torn down (flycast deadlocked on that, 0x8BADF00D).
@@ -2189,6 +2194,8 @@ extension PVEmulatorViewController {
 
         // Clear dual screen frame cache when skin changes
         clearReceivedScreenFrames()
+        // Different screen pairs can have the same union; the new skin must still reach the core.
+        lastAppliedViewportFrame = nil
 
         // IMPORTANT: Use device orientation for skin traits
         // First get the real device orientation
@@ -2238,6 +2245,21 @@ extension PVEmulatorViewController {
                 try await resetToBuiltInControls()
                 return
             }
+        }
+
+        try Task.checkCancellation()
+
+        // Own-surface cores keep their UIKit/Metal hierarchy alive across skin changes. Rebuilding
+        // it also tears down the old overlay asynchronously, racing the new screen-frame updates.
+        if core.skipLayout, core.bridge is EmulatorCoreViewportPositioning,
+           let container = skinContainerView as? DeltaSkinContainerView {
+            let needsReload = currentSkin?.identifier != skinToApply.identifier || container.skinIdentifier != skinToApply.identifier
+            currentSkin = skinToApply
+            if needsReload { container.updateSkinIdentifier(skinToApply.identifier) }
+            applyViewportFromCurrentSkin()
+            ensureProperZOrder()
+            core.setPauseEmulation(keepPaused || isShowingMenu)
+            return
         }
 
         // RADICAL APPROACH: Completely rebuild the view hierarchy
@@ -2615,6 +2637,13 @@ extension PVEmulatorViewController {
     /// Clears the packaged skin and mounts the built-in controls (the programmatic overlay).
     public func resetToBuiltInControls() async throws {
         DLOG("Resetting to the built-in controls")
+
+        if core.skipLayout, core.bridge is EmulatorCoreViewportPositioning,
+           let container = skinContainerView as? DeltaSkinContainerView {
+            currentSkin = nil
+            container.updateSkinIdentifier(nil)
+            return
+        }
 
         // The programmatic overlay already is the built-in controls and lays itself out from
         // its own geometry, so there is nothing to rebuild or swap (rotation, "Built-in" picks).

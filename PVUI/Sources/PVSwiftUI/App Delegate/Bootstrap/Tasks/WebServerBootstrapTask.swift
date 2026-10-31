@@ -14,7 +14,7 @@ import PVUIBase
 import PVWebServer
 #endif
 
-/// Sets up web-server notifications, registers the lifecycle service with
+/// Registers the lifecycle service with
 /// `BackgroundServiceRegistry` for emulation pause/resume, and starts both
 /// the upload (HTTP) and WebDAV servers on every platform.
 ///
@@ -29,18 +29,8 @@ struct WebServerBootstrapTask: BootstrapTask {
     var dependencies: [String] { [BootstrapKey.logging] }
     var provisions: [String] { [BootstrapKey.webServer] }
 
-    /// Back-reference to the app delegate needed to call
-    /// `setupWebServerNotifications()`.
-    private weak var delegate: PVApplicationServices?
-
-    init(delegate: PVApplicationServices) {
-        self.delegate = delegate
-    }
-
     func execute() async throws {
 #if canImport(PVWebServer)
-        delegate?.setupWebServerNotifications()
-
         // Touch the lifecycle service so it self-registers with
         // BackgroundServiceRegistry — that's how the web server gets
         // paused during emulation and resumed when the user returns home.
@@ -49,7 +39,6 @@ struct WebServerBootstrapTask: BootstrapTask {
         // /api/debug/* handlers (no-op unless PVDebugAPIPrefs.isEnabled).
         PVDebugAPIRoutes.registerAll()
 
-        await PVWebServerManager.shared.refreshFeatureFlag()
         let impl = await PVWebServerManager.shared.implementationDescription
         ILOG("WebServerBootstrapTask: starting web server (impl=\(impl))")
         do {
@@ -59,7 +48,7 @@ struct WebServerBootstrapTask: BootstrapTask {
                 let dav  = await PVWebServerManager.shared.webDAVURL?.absoluteString ?? "?"
                 ILOG("WebServerBootstrapTask: web server started — HTTP: \(http), WebDAV: \(dav)")
             } else {
-                WLOG("WebServerBootstrapTask: web server did not start (impl=\(impl)) — see PVModernWebServer/PVLegacyWebServerAdapter log lines for the bind-confirm failure reason.")
+                WLOG("WebServerBootstrapTask: web server did not start (impl=\(impl)) — see PVModernWebServer log lines for the bind-confirm failure reason.")
             }
         } catch {
             ELOG("WebServerBootstrapTask: failed to start web server (impl=\(impl)): \(error.localizedDescription)")

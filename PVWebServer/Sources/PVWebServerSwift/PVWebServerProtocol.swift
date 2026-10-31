@@ -5,13 +5,10 @@
 //  Created by Agent on 2026-03-21.
 //  Copyright © 2026 Provenance Emu. All rights reserved.
 //
-//  Unified protocol that both the legacy GCDWebServer adapter and the new
-//  Hummingbird-based server conform to.  PVWebServerManager selects the
-//  active implementation at runtime via the `modernWebServer` feature flag.
+//  HTTP/WebDAV lifecycle and stable notification contracts.
 //
 
 import Foundation
-import PVPrimitives
 
 // MARK: - Notification names (kept identical to legacy PVWebServer.m constants)
 
@@ -84,9 +81,8 @@ public enum PVWebServerPorts {
 
 // MARK: - PVWebServerProtocol
 
-/// Abstracts over the legacy GCDWebServer and the modern Hummingbird server.
-/// Both servers must fire the Notification.Name constants above on the same
-/// events so the rest of the app remains unaffected by which server is active.
+/// HTTP/WebDAV lifecycle contract. Implementations emit the notification names
+/// above so upload, file event and status observers stay independent of presentation.
 public protocol PVWebServerProtocol: AnyObject, Sendable {
 
     // MARK: State

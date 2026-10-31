@@ -466,32 +466,24 @@ struct HomeView: SwiftUI.View {
                 }
             }
         }
-        .uiKitAlert(
-            "Rename Game",
-            message: "Enter a new name for \(gameToRename?.title ?? "")",
-            isPresented: $showingRenameAlert,
-            textValue: newGameTitleBinding,
-            preferredContentSize: CGSize(width: 300, height: 200),
-            textField: { textField in
-                textField.placeholder = "Game name"
-                textField.clearButtonMode = .whileEditing
-                textField.autocapitalizationType = .words
-            }
-        ) {
-            [
-                UIAlertAction(title: "Save", style: .default) { _ in
-                    submitRename()
-                    gameToRename = nil
-                    newGameTitle = ""
-                    showingRenameAlert = false
-                },
-                UIAlertAction(title: "Cancel", style: .cancel) { _ in
-                    showingRenameAlert = false
-                    gameToRename = nil
-                    newGameTitle = ""
-                    showingRenameAlert = false
-                }
-            ]
+        .pvAlert(isPresented: $showingRenameAlert) {
+            PVAlert(
+                title: "Rename Game",
+                message: "Enter a new name for \(gameToRename?.title ?? "")",
+                actions: [
+                    PVAlertAction("Save", responseHandler: { response in
+                        newGameTitle = response.text
+                        submitRename()
+                        gameToRename = nil
+                        newGameTitle = ""
+                    }),
+                    .cancel {
+                        gameToRename = nil
+                        newGameTitle = ""
+                    }
+                ],
+                textFields: [PVAlertTextField(placeholder: "Game name", text: newGameTitle)]
+            )
         }
         .sheet(isPresented: $showAllSavesBrowser) {
             NavigationView {
@@ -574,48 +566,43 @@ struct HomeView: SwiftUI.View {
             }
         }
 
-        .uiKitAlert(
-            String(localized: "Select Disc"),
-            message: String(localized: "Choose which disc to load"),
-            isPresented: Binding(
-                get: { discSelectionAlert != nil },
-                set: { if !$0 { discSelectionAlert = nil } }
-            ),
-            preferredContentSize: CGSize(width: 500, height: 300)
-        ) {
+        .pvAlert(isPresented: Binding(
+            get: { discSelectionAlert != nil },
+            set: { if !$0 { discSelectionAlert = nil } }
+        )) {
+            var actions: [PVAlertAction] = []
             if let alert = discSelectionAlert, let game = alert.game {
-                let actions = alert.discs.map { (disc: DiscSelectionAlert.Disc) -> UIAlertAction in
-                    UIAlertAction(title: disc.fileName, style: .default) { _ in
+                actions = alert.discs.map { (disc: DiscSelectionAlert.Disc) in
+                    PVAlertAction(disc.fileName) {
                         Task { @MainActor in
                             SceneCoordinator.shared.launchGame(game.freeze(), discPath: disc.path, core: nil, saveState: nil)
                         }
                     }
                 }
-
-                actions + [UIAlertAction(title: NSLocalizedString("Cancel", comment: "Cancel"), style: .cancel)]
-            } else {
-                [UIAlertAction(title: NSLocalizedString("Cancel", comment: "Cancel"), style: .cancel)]
             }
+            return PVAlert(
+                title: String(localized: "Select Disc"),
+                message: String(localized: "Choose which disc to load"),
+                style: .actionSheet,
+                actions: actions + [.cancel()]
+            )
         }
-        .uiKitAlert(
-            "Choose Artwork Source",
-            message: "Select artwork from your photo library or search online sources",
-            isPresented: $showArtworkSourceAlert,
-            buttons: {
-                UIAlertAction(title: "Select from Photos", style: .default) { _ in
-                    showArtworkSourceAlert = false
-                    showImagePicker = true
-                }
-                UIAlertAction(title: "Search Online", style: .default) { [game = gameToUpdateCover] _ in
-                    showArtworkSourceAlert = false
-                    gameToUpdateCover = game
-                    showArtworkSearch = true
-                }
-                UIAlertAction(title: NSLocalizedString("Cancel", comment: "Cancel"), style: .cancel) { _ in
-                    showArtworkSourceAlert = false
-                }
-            }
-        )
+        .pvAlert(isPresented: $showArtworkSourceAlert) {
+            PVAlert(
+                title: "Choose Artwork Source",
+                message: "Select artwork from your photo library or search online sources",
+                actions: [
+                    PVAlertAction("Select from Photos") {
+                        showImagePicker = true
+                    },
+                    PVAlertAction("Search Online") { [game = gameToUpdateCover] in
+                        gameToUpdateCover = game
+                        showArtworkSearch = true
+                    },
+                    .cancel()
+                ]
+            )
+        }
         .sheet(item: $patchManagerGame) { game in
             NavigationStack {
                 PatchManagerView(gameMD5: game.md5Hash, gameTitle: game.title)
@@ -1321,14 +1308,6 @@ struct HomeView: SwiftUI.View {
                 }
             }
         }
-    }
-
-    // Add this computed property to create the binding wrapper
-    private var newGameTitleBinding: Binding<String?> {
-        Binding<String?>(
-            get: { self.newGameTitle },
-            set: { self.newGameTitle = $0 ?? "" }
-        )
     }
 
     /// Function to filter games based on search text

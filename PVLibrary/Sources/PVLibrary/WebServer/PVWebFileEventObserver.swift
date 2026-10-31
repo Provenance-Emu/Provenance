@@ -47,6 +47,7 @@ public final class PVWebFileEventObserver: @unchecked Sendable {
 
     private let lock = NSLock()
     private var observations: [NSObjectProtocol] = []
+    private let uploadCoordinator: PVWebUploadImportCoordinator
 
     /// Realm configuration used when opening a Realm in event handlers.
     /// Defaults to the process-default configuration; override in tests
@@ -73,7 +74,9 @@ public final class PVWebFileEventObserver: @unchecked Sendable {
     /// Override the BIOS directory prefix for delete classification.
     internal var _testBiosPathPrefix: String?
 
-    internal init() {}
+    internal init(uploadCoordinator: PVWebUploadImportCoordinator = PVWebUploadImportCoordinator()) {
+        self.uploadCoordinator = uploadCoordinator
+    }
 
     // MARK: Lifecycle
 
@@ -85,6 +88,13 @@ public final class PVWebFileEventObserver: @unchecked Sendable {
         guard observations.isEmpty else { return }
 
         let center = NotificationCenter.default
+
+        observations.append(
+            center.addObserver(forName: .pvWebServerFileUploadCompleted, object: nil, queue: nil) { [weak self] note in
+                guard let filePath = note.userInfo?["filePath"] as? String else { return }
+                self?.handleFileUploaded(at: filePath)
+            }
+        )
 
         observations.append(
             center.addObserver(forName: .pvWebServerFileDeleted, object: nil, queue: nil) { [weak self] note in
@@ -118,6 +128,30 @@ public final class PVWebFileEventObserver: @unchecked Sendable {
     }
 
     // MARK: - Delete handler
+
+    private func handleFileUploaded(at fullPath: String) {
+        let config = realmConfiguration
+        let testRoms = _testRomsPathPrefix
+        let coordinator = uploadCoordinator
+        // Realm and active library paths are resolved off the notification's delivery thread.
+        DispatchQueue.global(qos: .utility).async {
+            do {
+                let url = URL(fileURLWithPath: fullPath)
+                guard try url.resourceValues(forKeys: [.isRegularFileKey]).isRegularFile == true else { return }
+                let realm = try Realm(configuration: config)
+                var extensions: [String: Set<String>] = [:]
+                for system in realm.objects(PVSystem.self) {
+                    extensions[system.identifier] = Set(system.supportedExtensions.map { $0.lowercased() })
+                }
+                let root = testRoms.map { URL(fileURLWithPath: $0, isDirectory: true) } ?? Paths.romsPath
+                guard let request = PVWebUploadImportRequest.resolve(fileURL: url, romsRoot: root, extensionsBySystem: extensions) else { return }
+                ILOG("PVWebFileEventObserver: queuing completed upload for \(request.systemIdentifier): \(url.lastPathComponent)")
+                Task { await coordinator.enqueue(request) }
+            } catch {
+                ELOG("PVWebFileEventObserver: unable to queue completed upload: \(error.localizedDescription)")
+            }
+        }
+    }
 
     private func handleFileDeleted(at fullPath: String) {
         _testOnDeleteHandlerInvoked?(fullPath)
