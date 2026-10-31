@@ -34,6 +34,9 @@ struct ShaderPauseSheet: View {
 
     @Environment(\.dismiss) private var dismiss
     @State private var scope: ShaderPauseScope = .game
+    #if os(tvOS)
+    @State private var editingEntry: ShaderCatalogEntry?
+    #endif
     private let store = ShaderLibraryStore.shared
 
     private var shaderScope: ShaderScope {
@@ -50,6 +53,15 @@ struct ShaderPauseSheet: View {
     }
 
     var body: some View {
+        #if os(tvOS)
+        televisionPanel
+            .shaderPreviews()
+            .onExitCommand(perform: goBack)
+            .onAppear {
+                scope = initialScope
+                if startInEditor { editingEntry = activeEntry }
+            }
+        #else
         NavigationStack {
             Group {
                 if startInEditor, let entry = activeEntry {
@@ -69,20 +81,95 @@ struct ShaderPauseSheet: View {
         // Leave the game visible above the sheet so choices preview on it.
         .presentationDetents([.medium, .large])
         #endif
-        #if os(tvOS)
-        .onExitCommand { dismiss() }
-        #endif
         .onAppear { scope = initialScope }
+        #endif
     }
+
+    #if os(tvOS)
+    /// Use the same panel and focus chrome as the pause menu, without the narrow system sheet.
+    private var televisionPanel: some View {
+        GeometryReader { geometry in
+            ZStack {
+                Color.black.opacity(0.35).ignoresSafeArea()
+                VStack(spacing: 24) {
+                    HStack(spacing: 24) {
+                        if editingEntry != nil, !startInEditor {
+                            Button(action: goBack) {
+                                Label(String(localized: "Back"), systemImage: "chevron.left")
+                                    .padding(12)
+                            }
+                            .retroFocusButtonStyle(focusScale: 1.04, primaryColor: .retroCyan)
+                        }
+                        Text(editingEntry?.displayName ?? String(localized: "Screen Filters"))
+                            .font(.title2.weight(.bold))
+                            .foregroundStyle(.white)
+                            .lineLimit(1)
+                        Spacer()
+                        Button { dismiss() } label: {
+                            Label(String(localized: "Done"), systemImage: "checkmark")
+                                .padding(12)
+                        }
+                        .retroFocusButtonStyle(focusScale: 1.04, primaryColor: .retroCyan)
+                    }
+                    .focusSection()
+                    if let entry = editingEntry {
+                        ShaderParameterEditorView(entry: entry) { emulatorVC.shaderParametersDidChange() }
+                    } else {
+                        browser
+                    }
+                }
+                .padding(32)
+                .frame(width: min(1400, max(0, geometry.size.width - 120)), height: geometry.size.height * 0.86)
+                .background(RetroPausePanelBackground(isDark: true))
+                .shadow(color: .retroPurple.opacity(0.25), radius: 18)
+                .position(x: geometry.size.width / 2, y: geometry.size.height / 2)
+            }
+        }
+        .preferredColorScheme(.dark)
+        .presentationBackground(.clear)
+    }
+
+    private func goBack() {
+        if editingEntry != nil, !startInEditor {
+            editingEntry = nil
+        } else {
+            dismiss()
+        }
+    }
+
+    private var scopeControls: some View {
+        HStack(spacing: 20) {
+            Text(String(localized: "Apply to"))
+                .foregroundStyle(.white.opacity(0.65))
+            ForEach(ShaderPauseScope.allCases) { option in
+                Button { scope = option } label: {
+                    HStack(spacing: 8) {
+                        Text(option.title)
+                        if scope == option { Image(systemName: "checkmark") }
+                    }
+                    .padding(12)
+                }
+                .retroFocusButtonStyle(focusScale: 1.04, primaryColor: .retroCyan)
+                .accessibilityAddTraits(scope == option ? .isSelected : [])
+            }
+            Spacer()
+        }
+        .focusSection()
+    }
+    #endif
 
     private var browser: some View {
         VStack(spacing: 0) {
+            #if os(tvOS)
+            scopeControls.padding(.bottom, 20)
+            #else
             Picker(String(localized: "Apply to"), selection: $scope) {
                 ForEach(ShaderPauseScope.allCases) { Text($0.title).tag($0) }
             }
             .pickerStyle(.segmented)
             .padding(.horizontal)
             .padding(.vertical, 8)
+            #endif
 
             if scope != .everywhere, store.selection(for: shaderScope) != nil {
                 Button(String(localized: "Use the \(scope == .game ? String(localized: "system") : String(localized: "global")) filter instead")) {
@@ -91,10 +178,15 @@ struct ShaderPauseSheet: View {
                 }
                 .font(.footnote)
                 .padding(.bottom, 4)
+                #if os(tvOS)
+                .retroFocusButtonStyle(focusScale: 1.02, primaryColor: .retroCyan)
+                #endif
             }
 
             ShaderBrowserView(current: currentChoice,
-                              showsSkinFilter: emulatorVC.currentSkinProvidesScreenFilter) { choice in
+                              showsSkinFilter: emulatorVC.currentSkinProvidesScreenFilter,
+                              onParametersChange: { emulatorVC.shaderParametersDidChange() },
+                              onEdit: editFromBrowser) { choice in
                 store.setSelection(choice.selection, for: shaderScope)
                 emulatorVC.shaderSelectionDidChange()
             }
@@ -102,6 +194,14 @@ struct ShaderPauseSheet: View {
         .navigationTitle(String(localized: "Screen Filter"))
         #if !os(tvOS)
         .navigationBarTitleDisplayMode(.inline)
+        #endif
+    }
+
+    private var editFromBrowser: ((ShaderCatalogEntry) -> Void)? {
+        #if os(tvOS)
+        return { editingEntry = $0 }
+        #else
+        return nil
         #endif
     }
 
