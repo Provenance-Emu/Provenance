@@ -1,6 +1,6 @@
 # SkinKit three-app release baseline
 
-This pass follows the completed October 30 TestFlights. It does not replace those builds or publish a version tag.
+This pass follows the completed October 30 TestFlights. The initial alignment was followed by the owner-authorized SkinKit `0.1.0` tag and exact-release adoption; it does not replace those TestFlight builds.
 
 ## Ownership
 
@@ -20,13 +20,17 @@ All six builds finished processing and were available to external testers when c
 
 ## Alignment acceptance
 
-Use the same immutable SkinKit commit in every consumer declaration and tracked resolver file. A future tag must identify that tested commit; do not point consumers at a moving branch or invent a version before the tag exists.
+Use the same exact SkinKit release in every consumer declaration and tracked resolver file. Resolver commits must identify the tested source; do not point consumers at a moving branch.
 
 The final shared baseline is `599030369e2ed8d052618128e169e6d08405c527` (PR #46 merge), tree `17479746f2e71d1c1ce8d47fde00c66370dcbfc9`. It is byte-identical to the tested source head `5e01829e02fca1e0fea37e93e9b09d7a210199b9`; the equivalence is retained in `build/skinkit-alignment/source-equivalence.json`.
 
-All three consumer adoptions are merged. Provenance [PR #3777](https://github.com/Provenance-Emu/Provenance/pull/3777) landed as `f3f619285999266d759690049b41d9db639812f3`, with a source tree identical to tested head `cbceedcb87316fc06f12fcede9761ab3d3ebc7f4`. The candidate is ready for the initial SkinKit `0.1.0` tag at `5990303`; this pass does not create that tag.
+All three revision-based consumer adoptions are merged. Provenance [PR #3777](https://github.com/Provenance-Emu/Provenance/pull/3777) landed as `f3f619285999266d759690049b41d9db639812f3`, with a source tree identical to tested head `cbceedcb87316fc06f12fcede9761ab3d3ebc7f4`.
 
-Run `python3 Scripts/dev/check_skinkit_alignment.py --expected-revision <full-SkinKit-SHA>` from Provenance. It scans every tracked package/project manifest (including Provenance's `PVTouchOverlay` dependency), iFly's resolver and every tracked Provenance resolver, including the skin demo/test apps. Use `--ifly` or `--icube` to inspect isolated consumer checkouts.
+The signed [SkinKit `0.1.0` tag](https://github.com/Provenance-Emu/SkinKit/tree/0.1.0) is now published. Its annotated tag object is `230b190d0c361798112346d189b51981f271a573`, and its peeled commit is exactly `599030369e2ed8d052618128e169e6d08405c527`. The apps now request exact version `0.1.0`; tracked resolver entries retain that tested commit and record version `0.1.0`. This changes dependency selection metadata, not SkinKit or app implementation source.
+
+Tagged requirements are adopted in [iCube #72](https://github.com/Provenance-Emu/iCube/pull/72) and [iFly #885](https://github.com/JoeMatt/iFly/pull/885), alongside Provenance's manifests, resolvers and iCube gitlink. Actual package resolution passed for all three apps; iFly's `make quick`, iCube generation and Provenance's Xcode resolution all selected `0.1.0` at the tested commit. Unrelated tracked dependency states and all three protected native artifact hashes are unchanged. The updated alignment checker has six passing regression tests, including null/empty resolver revisions, and the full script/maintenance checks pass. The app build/test results below remain the unchanged-source baseline; automatic tag-adoption CI jobs can continue separately.
+
+Run `python3 Scripts/dev/check_skinkit_alignment.py --expected-version 0.1.0 --expected-revision 599030369e2ed8d052618128e169e6d08405c527` from Provenance. It scans every tracked package/project manifest (including Provenance's `PVTouchOverlay` dependency), iFly's resolver and every tracked Provenance resolver, including the skin demo/test apps. Both version and commit must match. Use `--ifly` or `--icube` to inspect isolated consumer checkouts; omit `--expected-version` only when checking an older revision-based baseline.
 
 | Area | Required evidence | Result |
 | --- | --- | --- |
@@ -37,7 +41,7 @@ Run `python3 Scripts/dev/check_skinkit_alignment.py --expected-revision <full-Sk
 | Provenance consumer | iOS/tvOS app compilation and native skin-view checks on the aligned revision | Local Coreless builds and CI Coreless/UI simulator app builds pass for both iOS and tvOS on `5990303`. Native iOS settings, system browser and portrait/landscape skin selectors render correctly; the fixture has no installed custom skins. Bundled artwork rendering is covered by the passing manager thumbnail test. Gameplay is not claimed. |
 | iFly consumer | iOS/tvOS builds and skin behavior against the aligned revision | Both SDK builds and focused 71-test suites pass, zero failures/skips. Native phone artwork/resume/pause/quit and TV library checks pass. [PR #881](https://github.com/JoeMatt/iFly/pull/881) merged as `7e2ba56a03a319ea98cb5faf7b1f671269e27c84`, tree identical to its tested head; all CI/review checks clear. |
 | iCube consumer | Existing skin model/layout/import/store/input/asset tests and iOS/tvOS compilation | iOS app/test compilation and all 146 tests from ten skin suites pass on `5990303`, zero failures/skips. TV app compilation passes. Simulator core reuse confirmed; all three protected native artifact hashes match. [PR #71](https://github.com/Provenance-Emu/iCube/pull/71) merged as `784d1735777a017155d6dbdf4485bea28e66c074`, tree identical to signed/tested head `66876f7`. Build, lint, review and the [hosted full test recovery](https://github.com/Provenance-Emu/iCube/actions/runs/41151900753) pass; the full recovery has zero failures and seven intentional snapshot-output skips. The initial self-hosted test job could not start tests because its CoreSimulator service mismatched Xcode; its red result remains visible. |
-| Pins | All three consumer declarations and tracked resolver files identify the same commit | Nine entries pass at `5990303`, including both Provenance direct dependencies and demo/test resolver files. All three consumer adoptions are merged. |
+| Pins | All three consumer declarations and tracked resolver files identify the same release and commit | Nine entries pass at version `0.1.0` / commit `5990303`, including both Provenance direct dependencies and demo/test resolver files. |
 | Review | Scoped PRs, relevant checks, and no unresolved correctness findings | Shared fixes and all three consumer adoptions are reviewed and merged. Independent read-only Provenance review found no actionable findings. Provenance lint, maintenance, source registration, CodeQL, Azure, Seer, both PVUI suites and all UI/Coreless builds pass. |
 
 ## Consumer boundaries

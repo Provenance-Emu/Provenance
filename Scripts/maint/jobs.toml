@@ -271,12 +271,18 @@ mode = "manual"
 [jobs.skinkit-alignment]
 title = "SkinKit consumer revision alignment"
 category = "Audits"
-description = "Checks immutable SkinKit requirements and tracked resolver pins across Provenance, iFly and iCube before a shared package tag."
+description = "Checks exact SkinKit releases or immutable revisions and tracked resolver pins across Provenance, iFly and iCube."
 run = ["python3", "Scripts/dev/check_skinkit_alignment.py"]
-args_hint = "--expected-revision <full-SHA> [--ifly <checkout>] [--icube <checkout>]"
+args_hint = "--expected-revision <full-SHA> [--expected-version <version>] [--ifly <checkout>] [--icube <checkout>]"
 needs = ["git"]
 mode = "manual"
 cli_only = true
+
+[jobs.skinkit-alignment-tests]
+title = "SkinKit release alignment regression tests"
+category = "Audits"
+run = ["python3", "Scripts/tests/test_skinkit_alignment.py"]
+needs = ["git"]
 
 [jobs.netplay-hub-smoke]
 title = "Netplay hub simulator smoke checks"
@@ -385,6 +391,7 @@ run = """python3 Scripts/tests/test_check_pbxproj_sources.py \
   && python3 Scripts/tests/test_generate_uti_declarations.py \
   && python3 Scripts/tests/test_ipa_packaging.py \
   && python3 Scripts/tests/test_topshelf_registration.py \
+  && python3 Scripts/tests/test_skinkit_alignment.py \
   && python3 -m unittest discover -s Scripts/maint -p 'test_*.py' \
   && python3 -m unittest discover -s Scripts/cores/tests -p 'test_*.py' \
   && bash Scripts/tests/test-get-modules-validation.sh \
