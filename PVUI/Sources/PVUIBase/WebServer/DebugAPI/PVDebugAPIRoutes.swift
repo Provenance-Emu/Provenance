@@ -50,6 +50,8 @@ public enum PVDebugAPIRoutes {
         guard !registered, PVDebugAPIPrefs.isEnabled else { return }
         registered = true
 
+        PVDebugAPILogRoutes.register(in: registry)
+
         registry.register("GET", "/api/debug/status") { _ in
             await MainActor.run { .ok(statusPayload()) }
         }

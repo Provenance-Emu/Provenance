@@ -98,7 +98,7 @@ public struct PVLibraryRootView: View {
                 navigation.didTapSettings()
             }
             #if canImport(PVWebServer)
-            .onReceive(NotificationCenter.default.publisher(for: .pvWebServerStatusChanged)) { notification in
+            .onReceive(NotificationCenter.default.publisher(for: .pvWebServerStatusChanged).receive(on: DispatchQueue.main)) { notification in
                 if let running = notification.userInfo?["isRunning"] as? Bool {
                     isWebServerRunning = running
                 }
@@ -127,13 +127,13 @@ public struct PVLibraryRootView: View {
     private var libraryContent: some View {
         PVLibraryDrawerHost(viewModel: navigation.viewModel) {
             NavigationStack {
-                VStack(spacing: 0) {
-                    LibraryHeader(viewModel: navigation.viewModel)
-                    ConsolesWrapperView(consolesWrapperViewDelegate: navigation.tabs, viewModel: navigation.viewModel, rootDelegate: navigation)
-                }
+                ConsolesWrapperView(consolesWrapperViewDelegate: navigation.tabs, viewModel: navigation.viewModel, rootDelegate: navigation)
                 #if !os(tvOS)
                 .toolbar(.hidden, for: .navigationBar)
                 #endif
+            }
+            .safeAreaInset(edge: .top, spacing: 0) {
+                LibraryHeader(viewModel: navigation.viewModel)
             }
         } menu: {
             SideMenuView(gameLibrary: navigation.gameLibrary, viewModel: navigation.viewModel, delegate: navigation, rootDelegate: navigation)
