@@ -10,6 +10,7 @@ import PVLibrary
 import PVThemes
 import PVSystems
 import Combine
+import UniformTypeIdentifiers
 
 public protocol ImportStatusDelegate: AnyObject {
     @MainActor
@@ -36,6 +37,10 @@ public struct ImportStatusView: View {
 
     // ViewModel to handle state and actor isolation
     @StateObject private var viewModel = ImportStatusViewModel()
+
+    #if !os(tvOS)
+    @State private var documentSelection = ImportDocumentSelection()
+    #endif
 
     // Store for cancellables
     private var cancellables = Set<AnyCancellable>()
@@ -124,6 +129,20 @@ public struct ImportStatusView: View {
             }
         }
         #if !os(tvOS)
+        .fileImporter(isPresented: $documentSelection.isPresented, allowedContentTypes: [.item], allowsMultipleSelection: true) { result in
+            let urls = documentSelection.complete(result)
+            if !urls.isEmpty {
+                updatesController.handlePickedDocuments(urls)
+            }
+        }
+        .alert("Unable to Import Files", isPresented: Binding(
+            get: { documentSelection.errorMessage != nil },
+            set: { if !$0 { documentSelection.errorMessage = nil } }
+        )) {
+            Button("OK", role: .cancel) { documentSelection.errorMessage = nil }
+        } message: {
+            Text(documentSelection.errorMessage ?? "")
+        }
         // Observe file recovery progress
         .onReceive(NotificationCenter.default.publisher(for: iCloudDriveSync.iCloudFileRecoveryProgress)) { _ in
             viewModel.isVisible = true
@@ -275,11 +294,12 @@ public struct ImportStatusView: View {
                                 }
 #endif
                             })
+                            .importQueueToolbarBackground()
                             ToolbarItemGroup(placement: .topBarTrailing,
                                              content: {
 #if !os(tvOS)
                                 Button(action: {
-                                    delegate?.addImportsAction()
+                                    documentSelection.begin()
                                 }) {
                                     Text("ADD FILES")
                                         .font(.system(size: 14, weight: .bold))
@@ -320,6 +340,7 @@ public struct ImportStatusView: View {
                                 .focusable(true)
 #endif
                             })
+                            .importQueueToolbarBackground()
                         }
 #if os(tvOS)
                         .navigationDestination(item: $systemSelectionItemId) { id in
@@ -346,6 +367,21 @@ public struct ImportStatusView: View {
         if let gameImporter = AppState.shared.gameImporter {
             viewModel.queueItems = await gameImporter.importQueue
         }
+    }
+}
+
+private extension ToolbarContent {
+    @ToolbarContentBuilder
+    func importQueueToolbarBackground() -> some ToolbarContent {
+        #if os(iOS)
+        if #available(iOS 26.0, *) {
+            sharedBackgroundVisibility(.hidden)
+        } else {
+            self
+        }
+        #else
+        self
+        #endif
     }
 }
 

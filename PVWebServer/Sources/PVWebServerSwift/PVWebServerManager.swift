@@ -5,11 +5,7 @@
 //  Created by Agent on 2026-03-21.
 //  Copyright © 2026 Provenance Emu. All rights reserved.
 //
-//  Actor that owns the active web server implementation. Defaults to the
-//  legacy ObjC `PVWebServer` (`PVLegacyWebServerAdapter`) wrapping
-//  GCDWebServer + GCDWebUploader. The user may opt into `PVModernWebServer`
-//  (Hummingbird) via `Defaults[.useModernWebServer]` in
-//  Settings > Advanced.
+//  Owns the Swift HTTP/WebDAV server independently of presented controls.
 //
 //  Usage:
 //    let ok = try await PVWebServerManager.shared.start()
@@ -23,8 +19,7 @@ import PVLogging
 // MARK: - PVWebServerManager
 
 /// Unified async/await entry point for starting and stopping the web servers.
-/// Delegates to `PVModernWebServer` when `Defaults[.useModernWebServer]` is
-/// true; otherwise uses `PVLegacyWebServerAdapter` (GCDWebServer).
+/// Uses the Swift-native Hummingbird backend for fresh installs and upgrades.
 public actor PVWebServerManager {
 
     // MARK: Singleton
@@ -34,30 +29,34 @@ public actor PVWebServerManager {
     // MARK: State
 
     private var activeServer: (any PVWebServerProtocol)?
-    var useModernServer: Bool
+    // Actor methods can interleave at await. Chain lifecycle operations so a second
+    // presentation cannot restart a pending listener or race an explicit Stop.
+    private var lifecycleOperation: Task<Void, Never>?
+    private let serverFactory: @Sendable () -> any PVWebServerProtocol
 
     // MARK: Init
 
-    /// Designated initialiser. `useModernServer` can be injected for tests;
-    /// production callers use the `shared` singleton which reads the user setting.
-    public init(useModernServer: Bool? = nil) {
-        if let override = useModernServer {
-            self.useModernServer = override
-        } else {
-            self.useModernServer = false
-        }
+    public init() {
+        serverFactory = { PVModernWebServer() }
+    }
+
+    /// Internal dependency boundary for lifecycle tests without binding device ports.
+    init(serverFactory: @escaping @Sendable () -> any PVWebServerProtocol) {
+        self.serverFactory = serverFactory
     }
 
     // MARK: - Public API
 
     /// Returns whether either server is currently running.
-    public var isRunning: Bool { activeServer != nil }
+    public var isRunning: Bool {
+        activeServer?.isWWWServerRunning == true && activeServer?.isWebDAVServerRunning == true
+    }
 
     /// Diagnostic description of the impl that will be / has been started.
     /// Read from `WebServerBootstrapTask` so the log shows which backend is
     /// in play even when `start()` later fails silently.
     public var implementationDescription: String {
-        useModernServer ? "Modern (Hummingbird)" : "Legacy (GCDWebServer)"
+        "Modern (Hummingbird)"
     }
 
     /// Local HTTP file-uploader URL, if the server is running.
@@ -66,33 +65,45 @@ public actor PVWebServerManager {
     /// Local WebDAV URL, if the server is running.
     public var webDAVURL: URL? { activeServer?.webDAVURL }
 
-    /// Start both the HTTP and WebDAV servers using the current `useModernServer` value.
-    ///
-    /// Call `setModernServerEnabled(_:)` (typically from a tiny PVSettings-aware shim in
-    /// PVUIBase) before `start()` to match the user's `Defaults[.useModernWebServer]`
-    /// preference. Tests can construct an instance with `useModernServer:` directly.
-    ///
-    /// - Returns: `true` if both servers started successfully.
-    /// - Throws: Any error propagated from the active server implementation.
+    /// Start both HTTP and WebDAV services.
+    /// - Returns: `true` if both services started successfully.
+    /// - Throws: Any error propagated from the server.
     @discardableResult
     public func start() async throws -> Bool {
-        // Stop any existing server first.
-        // Clear activeServer BEFORE awaiting stopServers() to avoid actor re-entrancy
-        // issues where a concurrent call to start() could observe the stale reference.
-        if let existing = activeServer {
-            activeServer = nil
-            await existing.stopServers()
+        let previous = lifecycleOperation
+        let operation = Task {
+            await previous?.value
+            return try await startIfNeeded()
         }
+        lifecycleOperation = Task { _ = try? await operation.value }
+        return try await operation.value
+    }
 
-        let server = await makeServer()
+    /// Explicitly stop services. Dismissing a presentation never calls this.
+    public func stop() async {
+        let previous = lifecycleOperation
+        let operation = Task {
+            await previous?.value
+            await stopIfNeeded()
+        }
+        lifecycleOperation = operation
+        await operation.value
+    }
+
+    private func startIfNeeded() async throws -> Bool {
+        if let existing = activeServer {
+            guard !isRunning else { return true }
+            await existing.stopServers()
+            activeServer = nil
+        }
+        let server = serverFactory()
         do {
             let ok = try await server.startServers()
             if ok {
                 activeServer = server
-                let implName = useModernServer ? "Modern (Hummingbird)" : "Legacy (GCDWebServer)"
-                ILOG("[WebServerManager] Started \(implName) server — HTTP: \(server.serverURL?.absoluteString ?? "?"), DAV: \(server.webDAVURL?.absoluteString ?? "?")")
+                ILOG("[WebServerManager] Started Swift server — HTTP: \(server.serverURL?.absoluteString ?? "?"), DAV: \(server.webDAVURL?.absoluteString ?? "?")")
             } else {
-                // Modern may report false after tearing down listeners; legacy rolls back one service — always stop so the next start() is idempotent.
+                // Tear down a partial start so a subsequent attempt can bind cleanly.
                 await server.stopServers()
                 WLOG("[WebServerManager] startServers returned false; implementation was stopped to reset state.")
             }
@@ -104,33 +115,13 @@ public actor PVWebServerManager {
         }
     }
 
-    /// Stop the active server (if any).
-    public func stop() async {
+    private func stopIfNeeded() async {
         guard let server = activeServer else { return }
         await server.stopServers()
         activeServer = nil
         ILOG("[WebServerManager] Stopped web server")
     }
 
-    // MARK: - Private
-
-    /// Creates the active server implementation.
-    ///
-    /// `PVLegacyWebServerAdapter` touches the ObjC `PVWebServer` singleton whose
-    /// `+initialize` path expects the main thread. Use `DispatchQueue.main.async`
-    /// (not `MainActor.run`) so `@MainActor` callers awaiting `start()` do not deadlock
-    /// with this actor.
-    private func makeServer() async -> any PVWebServerProtocol {
-        if useModernServer {
-            return PVModernWebServer()
-        } else {
-            return await withCheckedContinuation { (continuation: CheckedContinuation<PVLegacyWebServerAdapter, Never>) in
-                DispatchQueue.main.async {
-                    continuation.resume(returning: PVLegacyWebServerAdapter())
-                }
-            }
-        }
-    }
 }
 
 // MARK: - Combine publishers for file-lifecycle events (Task B — Epic #2758)
@@ -138,8 +129,7 @@ public actor PVWebServerManager {
 extension PVWebServerManager {
 
     /// Emits the absolute path of every file deleted via the web UI or WebDAV.
-    /// Works with both the legacy and the modern server — they both post the same
-    /// `pvWebServerFileDeleted` notification to `NotificationCenter`.
+    /// Uses the stable `pvWebServerFileDeleted` notification contract.
     public nonisolated var fileDeletedPublisher: AnyPublisher<String, Never> {
         NotificationCenter.default
             .publisher(for: .pvWebServerFileDeleted)
@@ -159,17 +149,5 @@ extension PVWebServerManager {
                 return (from: from, to: to)
             }
             .eraseToAnyPublisher()
-    }
-}
-
-// MARK: - Implementation Selection
-
-extension PVWebServerManager {
-
-    /// Programmatically pick the implementation. Production callers wire this
-    /// from `Defaults[.useModernWebServer]` via a small PVSettings-aware shim
-    /// in PVUIBase (`PVWebServerManager+Settings.swift`).
-    public func setModernServerEnabled(_ enabled: Bool) {
-        useModernServer = enabled
     }
 }

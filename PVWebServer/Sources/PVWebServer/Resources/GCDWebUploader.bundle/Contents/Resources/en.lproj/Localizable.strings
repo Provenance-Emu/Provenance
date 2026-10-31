@@ -1,3 +1,0 @@
-"PROLOGUE" = "<p><span class=\"nowrap\">Upload ROM files to the <strong>Imports</strong> folder and they will be automatically detected.</span> <span class=\"nowrap\">Multi-file ROMs should be compressed as .zip or .7z archives.</span><br><span class=\"nowrap\">Files can also be placed directly into system folders under <strong>ROMs</strong>.</span> <br><span class=\"nowrap\">See the <a href=\"https://wiki.provenance-emu.com/installation-and-usage/roms/importing-roms\" target=\"_blank\">ROM Import Guide</a> for more details.</span></p>";
-"EPILOGUE" = "";
-"FOOTER_FORMAT" = "%@ %@ &mdash; <a href=\"https://github.com/Provenance-Emu/Provenance\">Provenance on GitHub</a>";

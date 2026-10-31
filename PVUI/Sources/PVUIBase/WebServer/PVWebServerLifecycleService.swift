@@ -53,7 +53,6 @@ public final class PVWebServerLifecycleService: PausableService {
         if activePauseReasons.isEmpty {
             ILOG("PVWebServerLifecycleService: Resuming web server (reason: \(reason.rawValue))")
             Task {
-                await PVWebServerManager.shared.refreshFeatureFlag()
                 do {
                     _ = try await PVWebServerManager.shared.start()
                 } catch {

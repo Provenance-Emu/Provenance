@@ -11,7 +11,7 @@
 //  mounts `/api/debug/*` on DEBUG builds or when the hidden Developer toggle
 //  is on, and every request passes the Basic-auth check before reaching a
 //  handler here. Served by the modern (Hummingbird) server only —
-//  `refreshFeatureFlag()` selects it whenever the debug API is enabled.
+//  The Swift-native server is the sole HTTP backend.
 //
 //  Routes:
 //    GET  /api/debug                      route index
@@ -49,6 +49,8 @@ public enum PVDebugAPIRoutes {
     public static func registerAll(in registry: PVDebugAPIRegistry = .shared) {
         guard !registered, PVDebugAPIPrefs.isEnabled else { return }
         registered = true
+
+        PVDebugAPILogRoutes.register(in: registry)
 
         registry.register("GET", "/api/debug/status") { _ in
             await MainActor.run { .ok(statusPayload()) }
