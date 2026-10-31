@@ -27,6 +27,8 @@ extension DeltaSkinGameType {
         case .PSP: self = .psp
         case ._3DS: self = .threeDS
         case .PokemonMini: self = .pokemonMini
+        // Arcade systems keep the existing Dreamcast default-skin fallback. Explicit arcade
+        // skins still map to their own system in the reverse mapping below.
         case .Dreamcast, .NAOMI, .Atomiswave, .NAOMI2: self = .dreamcast
         case .PCE: self = .pce
         case .PCECD: self = .pcecd
@@ -106,6 +108,9 @@ extension DeltaSkinGameType {
         case .threeDS: return ._3DS
         case .pokemonMini: return .PokemonMini
         case .dreamcast: return .Dreamcast
+        case .naomi: return .NAOMI
+        case .naomi2: return .NAOMI2
+        case .atomiswave: return .Atomiswave
         case .pce: return .PCE
         case .pcecd: return .PCECD
         case .pcfx: return .PCFX

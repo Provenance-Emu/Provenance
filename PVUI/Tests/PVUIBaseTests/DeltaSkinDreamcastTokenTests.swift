@@ -19,6 +19,22 @@ import SkinKitCore
 @Suite("Dreamcast skin tokens") @MainActor
 struct DeltaSkinDreamcastTokenTests {
 
+    @Test("Explicit arcade skin types resolve to their own system", arguments: [
+        ("naomi", SystemIdentifier.NAOMI),
+        ("naomi2", .NAOMI2),
+        ("atomiswave", .Atomiswave)
+    ])
+    func arcadeSkinSystem(identifier: String, system: SystemIdentifier) throws {
+        let gameType = try #require(DeltaSkinGameType.fromAnyString(identifier))
+        #expect(gameType.systemIdentifier == system)
+    }
+
+    @Test("Arcade systems retain their existing Dreamcast default-skin fallback",
+          arguments: [SystemIdentifier.NAOMI, .NAOMI2, .Atomiswave])
+    func arcadeDefaultSkinFallback(system: SystemIdentifier) {
+        #expect(DeltaSkinGameType(systemIdentifier: system) == .dreamcast)
+    }
+
     @Test("Face buttons, Start and the d-pad keep their own button")
     func faceButtons() {
         let expected: [String: PVDreamcastButton] = [
