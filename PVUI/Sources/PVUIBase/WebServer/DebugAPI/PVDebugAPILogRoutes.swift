@@ -63,7 +63,7 @@ enum PVDebugAPILogRoutes {
                 "level": entry.level.name.lowercased(),
                 "category": truncated(entry.category, maximumBytes: maximumCategoryBytes),
                 "message": message,
-                "messageTruncated": message != entry.message,
+                "messageTruncated": message != entry.message
             ]
             // Count JSON's escaped bytes, not String characters; control characters can expand sixfold.
             guard let encoded = try? JSONSerialization.data(withJSONObject: row),
@@ -85,7 +85,7 @@ enum PVDebugAPILogRoutes {
             "earlierEntriesMayBeUnavailable": true,
             "capturedAt": formatter.string(from: Date()),
             "oldestRetained": NSNull(),
-            "newestRetained": NSNull(),
+            "newestRetained": NSNull()
         ]
         if let oldest = entries.first { payload["oldestRetained"] = formatter.string(from: oldest.timestamp) }
         if let newest = entries.last { payload["newestRetained"] = formatter.string(from: newest.timestamp) }

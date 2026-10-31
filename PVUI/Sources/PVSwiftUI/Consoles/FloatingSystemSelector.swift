@@ -27,8 +27,11 @@ struct FloatingSystemSelector: View {
                 ScrollView(.horizontal, showsIndicators: false) { icons }
                     .onAppear { proxy.scrollTo(selection, anchor: .center) }
                     .onChange(of: selection) { _, value in
-                        if reduceMotion { proxy.scrollTo(value, anchor: .center) }
-                        else { withAnimation { proxy.scrollTo(value, anchor: .center) } }
+                        if reduceMotion {
+                            proxy.scrollTo(value, anchor: .center)
+                        } else {
+                            withAnimation { proxy.scrollTo(value, anchor: .center) }
+                        }
                     }
             }
         }
@@ -51,8 +54,11 @@ struct FloatingSystemSelector: View {
             }
             isSettling = true
             settleTask = Task { @MainActor in
-                do { try await Task.sleep(for: .milliseconds(700)) }
-                catch { return }
+                do {
+                    try await Task.sleep(for: .milliseconds(700))
+                } catch {
+                    return
+                }
                 isSettling = false
             }
         }

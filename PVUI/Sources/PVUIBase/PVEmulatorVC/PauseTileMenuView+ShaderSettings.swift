@@ -112,10 +112,15 @@ struct ShaderPauseSheet: View {
                         .retroFocusButtonStyle(focusScale: 1.04, primaryColor: .retroCyan)
                     }
                     .focusSection()
-                    if let entry = editingEntry {
-                        ShaderParameterEditorView(entry: entry) { emulatorVC.shaderParametersDidChange() }
-                    } else {
+                    ZStack {
+                        // Retain the browser's search, look filters, expanded sections and scroll state on Back.
                         browser
+                            .opacity(editingEntry == nil ? 1 : 0)
+                            .disabled(editingEntry != nil)
+                            .accessibilityHidden(editingEntry != nil)
+                        if let entry = editingEntry {
+                            ShaderParameterEditorView(entry: entry) { emulatorVC.shaderParametersDidChange() }
+                        }
                     }
                 }
                 .padding(32)

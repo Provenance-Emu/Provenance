@@ -227,39 +227,6 @@ final class RetroStatusControlViewModel: ObservableObject {
         }
     }
 
-    public func toggleWebServer() {
-        ILOG("Toggling web server from ViewModel...")
-        ButtonSoundGenerator.shared.playSound(.tap)
-        Task { @MainActor in
-            if self.isWebServerRunning {
-                await PVWebServerManager.shared.stop()
-            } else {
-                do {
-                    let started = try await PVWebServerManager.shared.start()
-                    if !started {
-                        ELOG("Failed to start web server from ViewModel")
-                        self.webServerError = "Failed to start server."
-                        self.isWebServerRunning = false
-                    }
-                } catch {
-                    ELOG("Error starting web server: \(error)")
-                    self.webServerError = error.localizedDescription
-                    self.isWebServerRunning = false
-                }
-            }
-        }
-    }
-
-    public func clearMessages() {
-        ILOG("Clearing messages.")
-        ButtonSoundGenerator.shared.playSound(.tap) // Was .back - .tap seems appropriate
-        WLOG("StatusMessageManager does not have a `clearMessages` method. Cannot clear.")
-        // Maybe clear local errors too?
-        // fileAccessErrors = []
-        // fileRecoveryErrors = []
-        self.pendingRecoveryFiles = []
-    }
-
     public func recoverFiles() {
         ILOG("Manual file recovery requested from ViewModel.")
         ButtonSoundGenerator.shared.playSound(.click2) // Use a valid sound like .click2
@@ -272,13 +239,6 @@ final class RetroStatusControlViewModel: ObservableObject {
             self.temporaryStatusMessage = "Manual recovery started..."
             self.fileRecoveryState = .inProgress // Set state immediately
         }
-    }
-
-    public func dismissAlert() {
-        // Dismiss the alert by setting it to nil
-        self.currentAlert = nil
-        self.showAlert = false
-        ILOG("Alert dismissed by ViewModel")
     }
 
     // MARK: - Private Logic & Notification Handling
@@ -294,7 +254,6 @@ final class RetroStatusControlViewModel: ObservableObject {
 
         // --- Web Server Upload Progress ---
         nc.addObserver(self, selector: #selector(handleWebServerUploadProgress), name: Notification.Name("PVWebServerUploadProgressNotification"), object: nil)
-
 
         // --- Archive Extraction --- (PVSupport standard notifications)
         nc.addObserver(self, selector: #selector(handleArchiveExtractionStarted(_:)), name: .archiveExtractionStarted, object: nil)
@@ -352,11 +311,6 @@ final class RetroStatusControlViewModel: ObservableObject {
         let timestamp: Date = extract(from: notification, key: "timestamp") ?? Date()
         let errorType: String? = extract(from: notification, key: "errorType") ?? defaultErrorType
         return FileErrorInfo(error: errorDesc, path: path, filename: filename, timestamp: timestamp, errorType: errorType)
-    }
-
-    /// Extract a value from a notification's userInfo
-    private func extract<T>(from notification: Notification, key: String) -> T? {
-        return notification.userInfo?[key] as? T
     }
 
     /// Helper to parse progress info from a notification
@@ -908,5 +862,54 @@ final class RetroStatusControlViewModel: ObservableObject {
         Task { @MainActor in
             self.pendingRecoveryFiles.append(PendingRecoveryInfo(filename: filename, path: path, timestamp: timestamp))
         }
+    }
+}
+
+// MARK: - Server and alert controls
+
+extension RetroStatusControlViewModel {
+    /// Extract a value from a notification's userInfo
+    private func extract<T>(from notification: Notification, key: String) -> T? {
+        return notification.userInfo?[key] as? T
+    }
+
+    public func toggleWebServer() {
+        ILOG("Toggling web server from ViewModel...")
+        ButtonSoundGenerator.shared.playSound(.tap)
+        Task { @MainActor in
+            if self.isWebServerRunning {
+                await PVWebServerManager.shared.stop()
+            } else {
+                do {
+                    let started = try await PVWebServerManager.shared.start()
+                    if !started {
+                        ELOG("Failed to start web server from ViewModel")
+                        self.webServerError = "Failed to start server."
+                        self.isWebServerRunning = false
+                    }
+                } catch {
+                    ELOG("Error starting web server: \(error)")
+                    self.webServerError = error.localizedDescription
+                    self.isWebServerRunning = false
+                }
+            }
+        }
+    }
+
+    public func clearMessages() {
+        ILOG("Clearing messages.")
+        ButtonSoundGenerator.shared.playSound(.tap) // Was .back - .tap seems appropriate
+        WLOG("StatusMessageManager does not have a `clearMessages` method. Cannot clear.")
+        // Maybe clear local errors too?
+        // fileAccessErrors = []
+        // fileRecoveryErrors = []
+        self.pendingRecoveryFiles = []
+    }
+
+    public func dismissAlert() {
+        // Dismiss the alert by setting it to nil
+        self.currentAlert = nil
+        self.showAlert = false
+        ILOG("Alert dismissed by ViewModel")
     }
 }
