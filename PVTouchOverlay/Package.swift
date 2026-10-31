@@ -22,8 +22,8 @@ let package = Package(
         .package(path: "../PVSettings"),
         .package(url: "https://github.com/sindresorhus/Defaults.git", from: "9.0.2"),
         /// `TouchInputRole` and `SkinTouchSelection` live in SkinKitUI, shared with the skin view.
-        /// Pinned by revision (SkinKit has no tags yet): the game-screen pick fix, on top of SkinKit#35.
-        .package(url: "https://github.com/Provenance-Emu/SkinKit", revision: "599030369e2ed8d052618128e169e6d08405c527")
+        /// Keep this exact release aligned with PVUI and the other SkinKit consumers.
+        .package(url: "https://github.com/Provenance-Emu/SkinKit", exact: "0.1.0")
     ],
     targets: [
         .target(
