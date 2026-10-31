@@ -722,12 +722,6 @@ public extension Defaults.Keys {
 
 // MARK: Web Server
 public extension Defaults.Keys {
-    /// Opt-in to the native Swift Hummingbird web server instead of the bundled
-    /// GCDWebServer implementation. The legacy GCDWebUploader UI ships as the
-    /// default because the modern UI is still reaching feature parity (Epic #2758).
-    /// Surfaced in Settings > Advanced.
-    static let useModernWebServer = Key<Bool>("useModernWebServer", default: false)
-
     /// One-shot flag for the iOS local-network permission onboarding sheet.
     /// `true` once the user has acknowledged the explainer (regardless of whether
     /// they ultimately allowed local network access in the system alert).

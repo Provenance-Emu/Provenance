@@ -40,6 +40,10 @@ public extension Notification.Name {
     /// Raw value must match `PVWebServerFileDeletedNotification` in PVWebServer.m.
     static let pvWebServerFileDeleted = Notification.Name("PVWebServerFileDeletedNotification")
 
+    /// A completed HTTP/WebDAV upload. userInfo: `"filePath": String` (absolute destination).
+    /// Matches the notification emitted after the server has finished writing the file.
+    static let pvWebServerFileUploadCompleted = Notification.Name("PVWebServerFileUploadCompletedNotification")
+
     /// Fired when a file is moved/renamed via the web UI or WebDAV.
     /// userInfo: `"fromPath": String, "toPath": String` — absolute paths before and after.
     /// Raw value must match `PVWebServerFileMovedNotification` in PVWebServer.m.

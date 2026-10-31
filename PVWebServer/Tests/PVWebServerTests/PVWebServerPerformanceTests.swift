@@ -9,6 +9,57 @@ import XCTest
 
 final class SerialFileWriterTests: XCTestCase {
 
+    func testDestinationAppearsOnlyAfterUploadCompletes() async throws {
+        let temporary = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
+        defer { try? FileManager.default.removeItem(at: temporary) }
+        let destination = temporary.appendingPathComponent("track.bin")
+        let writer = try SerialFileWriter(destination: destination)
+        await writer.append(Data("partial".utf8))
+        XCTAssertFalse(FileManager.default.fileExists(atPath: destination.path))
+        await writer.append(Data(" complete".utf8))
+        _ = try await writer.finalize()
+        XCTAssertEqual(try Data(contentsOf: destination), Data("partial complete".utf8))
+    }
+
+    func testExistingFileRemainsCompleteUntilReplacementFinishes() async throws {
+        let temporary = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
+        defer { try? FileManager.default.removeItem(at: temporary) }
+        try FileManager.default.createDirectory(at: temporary, withIntermediateDirectories: true)
+        let destination = temporary.appendingPathComponent("track.bin")
+        let original = Data("original complete file".utf8)
+        try original.write(to: destination)
+        let writer = try SerialFileWriter(destination: destination)
+        await writer.append(Data("new complete file".utf8))
+        XCTAssertEqual(try Data(contentsOf: destination), original)
+        _ = try await writer.finalize()
+        XCTAssertEqual(try Data(contentsOf: destination), Data("new complete file".utf8))
+    }
+
+    func testAbandonedUploadPreservesOriginalAndRemovesStagingFile() async throws {
+        let temporary = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
+        defer { try? FileManager.default.removeItem(at: temporary) }
+        try FileManager.default.createDirectory(at: temporary, withIntermediateDirectories: true)
+        let destination = temporary.appendingPathComponent("track.bin")
+        let original = Data("original".utf8)
+        try original.write(to: destination)
+        var writer: SerialFileWriter? = try SerialFileWriter(destination: destination)
+        await writer?.append(Data("partial replacement".utf8))
+        XCTAssertEqual(writer?.totalBytesWritten, 19)
+        writer = nil
+        XCTAssertEqual(try Data(contentsOf: destination), original)
+        XCTAssertEqual(try FileManager.default.contentsOfDirectory(atPath: temporary.path), ["track.bin"])
+    }
+
+    func testDirectoryDestinationIsNotReplaced() throws {
+        let temporary = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
+        defer { try? FileManager.default.removeItem(at: temporary) }
+        try FileManager.default.createDirectory(at: temporary, withIntermediateDirectories: true)
+        let existing = temporary.appendingPathComponent("existing.bin")
+        try Data([1]).write(to: existing)
+        XCTAssertThrowsError(try SerialFileWriter(destination: temporary))
+        XCTAssertEqual(try Data(contentsOf: existing), Data([1]))
+    }
+
     func testWriteChunksAndFinalizeReturnsByteCount() async throws {
         let tmp = URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent(UUID().uuidString)
         let file = tmp.appendingPathComponent("chunk.bin")

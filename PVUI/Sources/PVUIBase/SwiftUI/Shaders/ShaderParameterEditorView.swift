@@ -43,6 +43,10 @@ public struct ShaderParameterEditorView: View {
     }
 
     public var body: some View {
+        #if os(tvOS)
+        televisionEditor
+            .navigationTitle(entry.displayName)
+        #else
         List {
             SwiftUI.Section {
                 HStack {
@@ -79,7 +83,81 @@ public struct ShaderParameterEditorView: View {
         .navigationBarTitleDisplayMode(.inline)
         #endif
         .modifier(SearchIfNeeded(isEnabled: entry.editableParameters.count > Self.searchThreshold, query: $query))
+        #endif
     }
+
+    #if os(tvOS)
+    /// The preview stays outside the scrolling controls, including for presets with hundreds of parameters.
+    private var televisionEditor: some View {
+        GeometryReader { geometry in
+            let previewWidth = min(geometry.size.width * 0.38, geometry.size.height * 0.8, 480)
+            HStack(alignment: .top, spacing: 32) {
+                VStack(alignment: .leading, spacing: 16) {
+                    Text(String(localized: "LIVE PREVIEW"))
+                        .retroPauseSectionHeaderTypography()
+                        .foregroundStyle(Color.retroCyan)
+                    ShaderThumbnailView(entry: entry,
+                                        size: CGSize(width: previewWidth, height: previewWidth * 0.75),
+                                        revision: store.revision)
+                        .accessibilityIdentifier("shaderParameterPreview")
+                    Text(entry.displayName)
+                        .font(.headline)
+                        .foregroundStyle(.primary)
+                    Text(String(localized: "Changes apply immediately."))
+                        .font(.footnote)
+                        .foregroundStyle(.secondary)
+                }
+                .frame(width: previewWidth, alignment: .leading)
+                .accessibilityElement(children: .combine)
+
+                VStack(spacing: 16) {
+                    if entry.editableParameters.count > Self.searchThreshold {
+                        TextField(String(localized: "Search settings"), text: $query)
+                            .padding(12)
+                            .background(RetroPauseSearchFieldBackground())
+                    }
+                    ScrollView {
+                        VStack(alignment: .leading, spacing: 24) {
+                            if entry.editableParameters.isEmpty {
+                                Text(String(localized: "This filter has no adjustable settings."))
+                                    .foregroundStyle(.secondary)
+                            }
+                            ForEach(groups) { group in
+                                VStack(alignment: .leading, spacing: 20) {
+                                    if let title = group.title {
+                                        Text(title)
+                                            .retroPauseSectionHeaderTypography()
+                                            .foregroundStyle(Color.retroCyan)
+                                    }
+                                    ForEach(group.parameters) { parameter in
+                                        parameterRow(parameter)
+                                            .padding(16)
+                                            .background(Color.primary.opacity(0.06), in: RoundedRectangle(cornerRadius: RetroPauseChrome.radiusMD))
+                                    }
+                                }
+                            }
+                            if !entry.editableParameters.isEmpty {
+                                Button(role: .destructive) {
+                                    store.resetParameters(of: entry.id)
+                                    onChange?()
+                                } label: {
+                                    Label(String(localized: "Reset All to Defaults"), systemImage: "arrow.counterclockwise")
+                                        .padding(12)
+                                }
+                                .retroFocusButtonStyle(focusScale: 1.02, primaryColor: .retroPink)
+                            }
+                        }
+                        // Keep focused controls and their glow clear of the scroll view's clipping edge.
+                        .padding(12)
+                    }
+                    .accessibilityIdentifier("shaderParameterControls")
+                    .focusSection()
+                }
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+            }
+        }
+    }
+    #endif
 
     @ViewBuilder
     private func parameterRow(_ parameter: ShaderParameterDescriptor) -> some View {
@@ -94,6 +172,9 @@ public struct ShaderParameterEditorView: View {
             if parameter.isToggle {
                 Toggle(parameter.label, isOn: Binding(get: { binding.wrappedValue != 0 },
                                                       set: { binding.wrappedValue = $0 ? 1 : 0 }))
+                    #if os(tvOS)
+                    .tint(.retroCyan)
+                    #endif
             } else {
                 ShaderParameterSlider(label: parameter.label,
                                       value: binding,
@@ -109,7 +190,11 @@ public struct ShaderParameterEditorView: View {
                     Image(systemName: "arrow.uturn.backward.circle")
                         .foregroundColor(palette.defaultTintColor.swiftUIColor)
                 }
+                #if os(tvOS)
+                .retroFocusButtonStyle(focusScale: 1.1, primaryColor: .retroCyan)
+                #else
                 .buttonStyle(.plain)
+                #endif
                 .accessibilityLabel(String(localized: "Reset \(parameter.label)"))
             }
         }
