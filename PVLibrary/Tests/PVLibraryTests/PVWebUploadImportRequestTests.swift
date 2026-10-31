@@ -13,9 +13,38 @@ final class PVWebUploadImportRequestTests: XCTestCase {
         XCTAssertEqual(request.systemIdentifier, "com.provenance.mame")
     }
 
-    func testAcceptsCHDInSetSubfolder() {
-        let url = root.appendingPathComponent("com.provenance.mame/blitz/blitz.chd")
-        XCTAssertNotNil(PVWebUploadImportRequest.resolve(fileURL: url, romsRoot: root, extensionsBySystem: extensions))
+    func testLeavesArcadeCompanionsInTheirUploadedFolders() {
+        let systems = extensions.merging(["com.provenance.dreamcast": Set(["chd"])]) { first, _ in first }
+        for path in ["com.provenance.mame/blitz/blitz.chd", "com.provenance.dreamcast/ikaruga/gdl-0010.chd",
+                     "com.provenance.dreamcast/ikaruga/GDS-0005A.CHD"] {
+            XCTAssertNil(PVWebUploadImportRequest.resolve(fileURL: root.appendingPathComponent(path), romsRoot: root, extensionsBySystem: systems))
+        }
+    }
+
+    func testAcceptsStandaloneDreamcastCHDInSystemDirectory() throws {
+        let url = root.appendingPathComponent("com.provenance.dreamcast/Sonic Adventure.chd")
+        let systems = ["com.provenance.dreamcast": Set(["chd"])]
+        let request = try XCTUnwrap(PVWebUploadImportRequest.resolve(fileURL: url, romsRoot: root, extensionsBySystem: systems))
+        XCTAssertEqual(request.url, url)
+    }
+
+    func testAcceptsFilesInRecognizedDiscSetFolder() throws {
+        let temporary = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
+        defer { try? FileManager.default.removeItem(at: temporary) }
+        let roms = temporary.appendingPathComponent("ROMs")
+        let folder = roms.appendingPathComponent("com.provenance.dreamcast/Disc")
+        try FileManager.default.createDirectory(at: folder, withIntermediateDirectories: true)
+        try "1\n1 0 4 2352 track01.bin 0\n".write(to: folder.appendingPathComponent("Disc.gdi"), atomically: true, encoding: .utf8)
+        let systems = ["com.provenance.dreamcast": Set(["gdi", "bin"])]
+        for name in ["Disc.gdi", "track01.bin"] {
+            let url = folder.appendingPathComponent(name)
+            XCTAssertNotNil(PVWebUploadImportRequest.resolve(fileURL: url, romsRoot: roms, extensionsBySystem: systems))
+        }
+    }
+
+    func testRejectsNestedStandaloneFilesWithoutPreservedSetLayout() {
+        let url = root.appendingPathComponent("com.provenance.mame/extra/deeper/game.zip")
+        XCTAssertNil(PVWebUploadImportRequest.resolve(fileURL: url, romsRoot: root, extensionsBySystem: extensions))
     }
 
     func testRejectsOtherLibraryLocationsAndSiblingPrefix() {

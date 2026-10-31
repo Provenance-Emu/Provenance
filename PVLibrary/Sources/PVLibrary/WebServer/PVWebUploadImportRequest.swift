@@ -16,6 +16,11 @@ struct PVWebUploadImportRequest: Equatable {
               let system = components.first.map(String.init),
               let extensions = extensionsBySystem[system],
               extensions.contains(file.pathExtension.lowercased()) else { return nil }
+        // The importer preserves only these nested set folders; other folders can hold arcade companions.
+        if components.count > 2 {
+            guard components.count == 3,
+                  MultiFileSetPlacement.isSetFolder(file.deletingLastPathComponent()) else { return nil }
+        }
         return Self(url: file, systemIdentifier: system)
     }
 }
