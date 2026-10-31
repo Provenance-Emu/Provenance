@@ -2828,6 +2828,7 @@ struct RetroMenuView: View {
                         skinIdentifier,
                         for: systemId,
                         gameId: gameId,
+                        otherGameKeys: [emulatorVC.game.md5Hash, emulatorVC.game.crc],
                         orientation: orientation,
                         scope: scope
                     )
@@ -2852,20 +2853,14 @@ struct RetroMenuView: View {
                 // Don't apply skin immediately - wait for apply button to be clicked
                 ILOG("skins: Skin preference saved, will be applied when Apply button is clicked")
             } else {
-                // User selected the Built-in controls — session/game store a built-in token so resolution does not fall through to a saved `.deltaskin`; system scope clears the system preference.
+                // An explicit built-in choice must not fall through to an automatic packaged skin on relaunch.
                 await MainActor.run {
-                    let storedIdentifier: String? = {
-                        switch scope {
-                        case .system:
-                            return nil
-                        case .session, .game:
-                            return DeltaSkinSelectionManager.builtInSkinPreferenceToken
-                        }
-                    }()
+                    let storedIdentifier = DeltaSkinSelectionManager.builtInSkinPreferenceToken
                     DeltaSkinSelectionManager.shared.setSkin(
                         storedIdentifier,
                         for: systemId,
                         gameId: gameId,
+                        otherGameKeys: [emulatorVC.game.md5Hash, emulatorVC.game.crc],
                         orientation: orientation,
                         scope: scope
                     )

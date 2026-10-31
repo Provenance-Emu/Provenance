@@ -2,6 +2,7 @@ import UIKit
 import SwiftUI
 import PVEmulatorCore
 import PVLibrary
+import SkinKitManager
 
 /// A simple container view for Delta skins
 class DeltaSkinContainerView: UIView {
@@ -50,6 +51,7 @@ class DeltaSkinContainerView: UIView {
 
         // Store the hosting controller to prevent it from being deallocated
         containerView.hostingController = hostingController
+        containerView.skinIdentifier = preselectedSkinIdentifier
 
         // Log successful creation
         print("Created DeltaSkinContainerView with transparent background")
@@ -59,6 +61,24 @@ class DeltaSkinContainerView: UIView {
 
     // Store the hosting controller to prevent it from being deallocated
     private var hostingController: UIViewController?
+
+    private(set) var skinIdentifier: String?
+    private(set) var skinRequestRevision = 0
+
+    /// Replaces skin content without detaching the native core's render surface or its host.
+    func updateSkinIdentifier(_ identifier: String?) {
+        let identifier = identifier ?? DeltaSkinSelectionManager.builtInSkinPreferenceToken
+        guard let controller = hostingController as? UIHostingController<EmulatorWrapperView> else { return }
+        skinIdentifier = identifier
+        skinRequestRevision += 1
+        let root = controller.rootView
+        controller.rootView = EmulatorWrapperView(
+            game: root.game, coreInstance: root.coreInstance, onSkinLoaded: root.onSkinLoaded,
+            onRefreshRequested: root.onRefreshRequested, preselectedSkinIdentifier: identifier,
+            onInitialSkinResolutionComplete: root.onInitialSkinResolutionComplete,
+            inputHandler: root.inputHandler, virtualInputState: root.virtualInputState,
+            skinRequestRevision: skinRequestRevision)
+    }
 
     override func didMoveToSuperview() {
         super.didMoveToSuperview()
