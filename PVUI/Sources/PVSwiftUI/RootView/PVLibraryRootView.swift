@@ -219,22 +219,25 @@ public struct PVLibraryRootView: View {
                 isWebServerRunning = true
                 #if !os(tvOS)
                 let url = await PVWebServerManager.shared.serverURL
-                let openUploaderTitle: String? = "Open Web Uploader"
+                let primaryTitle = "Open Web Uploader"
+                let doneTitle: String? = "Done"
                 #else
-                let openUploaderTitle: String? = nil
+                let primaryTitle = "Done"
+                let doneTitle: String? = nil
                 #endif
                 sceneCoordinator.alertState.show(
                     title: "Web Server Running",
                     message: message + "\n\nChoose Done to return to your library. The server and any uploads will keep running.",
                     type: .success,
-                    primaryButtonTitle: "Done",
-                    primaryAction: {},
-                    secondaryButtonTitle: openUploaderTitle,
-                    secondaryAction: {
+                    primaryButtonTitle: primaryTitle,
+                    primaryAction: {
                         #if !os(tvOS)
                         if let url { openURL(url) }
                         #endif
                     },
+                    // Controller Cancel invokes the secondary action: keep it dismiss-only.
+                    secondaryButtonTitle: doneTitle,
+                    secondaryAction: {},
                     destructiveButtonTitle: "Stop Server",
                     destructiveAction: {
                         Task {
