@@ -788,7 +788,8 @@ extension EmulatorWithSkinView {
         #endif
 
         let preselected = usePreselected ? preselectedSkinIdentifier : nil
-        let prefersBuiltInOnly = preselected == DeltaSkinSelectionManager.builtInSkinPreferenceToken
+        let prefersBuiltInOnly = !ProgrammaticOverlaySupport.allowsPackagedSkins(for: coreInstance)
+            || preselected == DeltaSkinSelectionManager.builtInSkinPreferenceToken
             || (preselected == nil && DeltaSkinSelectionManager.shared.prefersBuiltInControllerSkin(
                 for: systemId, gameIds: gameSkinKeys, orientation: currentOrientation))
 
@@ -799,7 +800,7 @@ extension EmulatorWithSkinView {
             skinLoader.loadingStage = .complete
             skinRenderComplete = false
             onInitialSkinResolutionComplete?()
-            DLOG("🎮 EmulatorWithSkinView: Built-in skin preference — skipping packaged skin load")
+            DLOG("🎮 EmulatorWithSkinView: Built-in controls only — skipping packaged skin load")
             return
         }
 

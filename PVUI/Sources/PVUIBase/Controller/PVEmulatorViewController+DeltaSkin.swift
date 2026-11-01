@@ -26,10 +26,10 @@ extension PVEmulatorViewController {
         // Mac ("Designed for iPad") and iPad-opted-in desktop input mode have no touch
         // surface for the skin to render on; keyboard/gamepad drive input instead.
         guard !GamepadManager.isDesktopInputMode else { return false }
-        guard Defaults[.skinMode] != .off && core.supportsSkins else { return false }
-        // The programmatic overlay covers every bound system without a packaged skin, including
-        // explicit-selection cores (Dolphin): a bound system always has an overlay to show.
+        // The programmatic overlay covers every known system without a packaged skin, including
+        // Classic mode, cores without skin support and explicit-selection cores (Dolphin).
         if programmaticOverlayCoversGame { return true }
+        guard ProgrammaticOverlaySupport.allowsPackagedSkins(for: core) else { return false }
         guard core.requiresExplicitSkinSelection else { return true }
         return hasExplicitSkinSelectionForGame
         #endif

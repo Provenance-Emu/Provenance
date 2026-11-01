@@ -1046,7 +1046,7 @@ struct SkinModeDefaultsMigrationTests {
 
     @Test("SelectedOnly subtitle keeps the corrected spelling")
     func selectedOnlySubtitleSpelling() {
-        #expect(SkinMode.selectedOnly.subtitle == "Use skins for selected systems, use classic controller as default")
+        #expect(SkinMode.selectedOnly.subtitle == "Use skins for selected systems, use the built-in controller as default")
     }
 }
 

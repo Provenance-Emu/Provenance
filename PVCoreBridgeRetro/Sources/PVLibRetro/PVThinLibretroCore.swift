@@ -185,8 +185,8 @@ class PVThinLibretroCore: PVEmulatorCore, @unchecked Sendable {
 
     // MARK: - Skin support
 
-    /// Systems that don't have adequate skin support — disable skins to show
-    /// the native on-screen controls or core-specific overlays instead.
+    /// Systems that don't have adequate skin support: packaged skins stay off and
+    /// the programmatic touch overlay supplies the on-screen controls.
     /// NOTE: "com.provenance.ds" is intentionally NOT listed here — DS skins
     /// use the programmatic overlay's NDS dual-screen layout (portrait + landscape).
     private static let skinUnsupportedSystems: Set<String> = [
