@@ -250,6 +250,7 @@ let package = Package(
                 .product(name: "PVLookup", package: "PVLookup"),
                 "PVPrimitives",
                 "PVFileSystem",
+                "PVSettings",
                 .product(name: "RealmSwift", package: "realm-swift"),
                 .product(name: "ZipArchive", package: "ZipArchive"),
             ]
