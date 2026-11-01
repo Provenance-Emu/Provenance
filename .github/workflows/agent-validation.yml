@@ -327,18 +327,19 @@ jobs:
             git clone --depth 1 https://github.com/ZipArchive/ZipArchive.git Dependencies/ZipArchive
           fi
 
-      - name: Cache DerivedData
-        uses: actions/cache@v4
-        with:
-          path: ~/Library/Developer/Xcode/DerivedData
-          key: ${{ runner.os }}-pvui-deriveddata-${{ matrix.platform }}-${{ hashFiles('**/Package.swift', '**/Package.resolved') }}
-          restore-keys: |
-            ${{ runner.os }}-pvui-deriveddata-${{ matrix.platform }}-
-
       - name: Test PVUI
         working-directory: PVUI
         run: |
           set -eo pipefail
+          # Use an explicit package workspace; the bare-package loader failed
+          # during Xcode 26.3 dependency-file registration before any test ran.
+          ws=.swiftpm/xcode/package.xcworkspace
+          mkdir -p "$ws"
+          printf '%s\n' '<?xml version="1.0" encoding="UTF-8"?>' \
+            '<Workspace version = "1.0">' \
+            '   <FileRef location = "self:"></FileRef>' \
+            '</Workspace>' > "$ws/contents.xcworkspacedata"
+          git show --no-patch --format='Checkout commit: %H%nCheckout tree: %T' HEAD
           # Simulator names change with each Xcode; take the first available device.
           # Match on the runtime as well as the name, so each leg is guaranteed a
           # device of its own platform.
@@ -356,9 +357,18 @@ jobs:
           # whose Prefire-generated code doesn't compile.
           # Most suites use Swift Testing, which reports as "✔/✘ Test …" and
           # "Test run with N tests" — not the XCTest "Executed" lines.
+          # Keep this comparison independent of shared/default Xcode/SPM state.
+          # Both original failures and the bounded retry were cache misses.
           xcodebuild test \
+            -workspace "$ws" \
             -scheme PVUI-UnitTests \
             -destination "id=$udid" \
+            -derivedDataPath "$RUNNER_TEMP/pvui-deriveddata-${{ matrix.platform }}" \
+            -clonedSourcePackagesDirPath "$RUNNER_TEMP/pvui-source-packages-${{ matrix.platform }}" \
+            -packageCachePath "$RUNNER_TEMP/pvui-package-cache-${{ matrix.platform }}" \
+            -disablePackageRepositoryCache \
+            -resultBundlePath "$RUNNER_TEMP/pvui-${{ matrix.platform }}.xcresult" \
+            -collect-test-diagnostics never \
             -skipPackagePluginValidation \
             -skipMacroValidation \
             CODE_SIGNING_ALLOWED=NO \
@@ -370,12 +380,14 @@ jobs:
         if: failure()
         run: tail -60 /tmp/pvui-test.log || true
 
-      - name: Upload PVUI test log
-        if: failure()
+      - name: Upload PVUI test evidence
+        if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: pvui-test-log-${{ matrix.platform }}
-          path: /tmp/pvui-test.log
+          name: pvui-test-evidence-${{ matrix.platform }}-attempt-${{ github.run_attempt }}
+          path: |
+            /tmp/pvui-test.log
+            ${{ runner.temp }}/pvui-${{ matrix.platform }}.xcresult
           retention-days: 3
 
   # Job 2c-2: PVLibrary tests. The job lives in pvlibrary-tests.yml so pushes to
