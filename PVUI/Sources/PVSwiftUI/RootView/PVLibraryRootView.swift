@@ -62,6 +62,7 @@ public struct PVLibraryRootView: View {
                     netplayRequest = NetplayLibraryRequest(gameMD5: md5)
                 }
             }
+            .modifier(LibrarySidebarSheetPresenter(viewModel: navigation.viewModel))
             .sheet(item: $navigation.sheet, onDismiss: navigation.didDismissSheet) { sheet in
                 NavigationStack {
                     sheetContent(sheet)
@@ -318,6 +319,26 @@ public struct PVLibraryRootView: View {
         }
     }
     #endif
+}
+
+/// Observe the sheet owner directly; navigation's nested ObservableObject does not forward its changes.
+private struct LibrarySidebarSheetPresenter: ViewModifier {
+    @ObservedObject var viewModel: PVRootViewModel
+
+    func body(content: Content) -> some View {
+        content.sheet(item: $viewModel.sidebarSheet, onDismiss: viewModel.didDismissSidebarSheet) { sheet in
+            switch sheet {
+            case .nearbyLibraries:
+                #if os(iOS) || os(tvOS)
+                NearbyLibrariesSheet()
+                #else
+                EmptyView()
+                #endif
+            case .networkPlay:
+                NetplayLibraryLobbyView()
+            }
+        }
+    }
 }
 
 private enum LibraryChrome {

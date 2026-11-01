@@ -32,6 +32,26 @@ enum LibraryDestination: String, CaseIterable, Identifiable {
     }
 }
 
+/// Sidebar sheets are hosted by the library root so collapsing the sidebar cannot release their input claim.
+enum LibrarySidebarSheet: String, CaseIterable, Identifiable {
+    case nearbyLibraries, networkPlay
+    var id: Self { self }
+}
+
+/// Keeps the search field and its results in the same dismissal lifecycle without invalidating every library tab on typing.
+final class LibrarySearchState: ObservableObject {
+    @Published var isPresented = false {
+        didSet {
+            if !isPresented { query = "" }
+        }
+    }
+    @Published var query = ""
+
+    func isFieldVisible(gameCount: Int, prefersSearchbar: Bool) -> Bool {
+        isPresented || (gameCount > 8 && prefersSearchbar)
+    }
+}
+
 /// ViewModel for the Root view
 public class PVRootViewModel: ObservableObject {
 
@@ -48,8 +68,24 @@ public class PVRootViewModel: ObservableObject {
     @Published public var selectedConsole: PVSystem?
 
     @Published var libraryDestination: LibraryDestination = .home
-    @Published var showsLibrarySearch = false
+    let librarySearch = LibrarySearchState()
+    var showsLibrarySearch: Bool {
+        get { librarySearch.isPresented }
+        set { librarySearch.isPresented = newValue }
+    }
     @Published var isSidebarCollapsed = false
+
+    @Published var sidebarSheet: LibrarySidebarSheet? {
+        didSet {
+            if sidebarSheet != nil { inputOwnership.hasSidebarPresentation = true }
+        }
+    }
+
+    /// Keep input blocked during interactive/Back dismissal until the root presenter finishes.
+    func didDismissSidebarSheet() {
+        guard sidebarSheet == nil else { return }
+        inputOwnership.hasSidebarPresentation = false
+    }
 
     let drawerState = LibraryDrawerState()
 
@@ -97,6 +133,7 @@ final class LibraryDrawerState: ObservableObject {
 struct LibraryInputOwnership {
     var hasLibraryPresentation = false
     var hasCoreOptionsPresentation = false
+    var hasSidebarPresentation = false
 
-    var isBlocked: Bool { hasLibraryPresentation || hasCoreOptionsPresentation }
+    var isBlocked: Bool { hasLibraryPresentation || hasCoreOptionsPresentation || hasSidebarPresentation }
 }

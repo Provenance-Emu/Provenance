@@ -108,7 +108,13 @@ struct HomeView: SwiftUI.View {
     @State private var showPatchApplier = false
     @State private var patchApplierGameMD5: String?
 
-    @State private var searchText = ""
+    @ObservedObject private var librarySearch: LibrarySearchState
+
+    private var searchText: String { librarySearch.query }
+
+    private var isSearchFieldVisible: Bool {
+        librarySearch.isFieldVisible(gameCount: allGames.count, prefersSearchbar: showSearchbar)
+    }
 
 
     init(
@@ -120,6 +126,7 @@ struct HomeView: SwiftUI.View {
         //        self.gameLibrary = gameLibrary
         self.rootDelegate = delegate
         self.viewModel = viewModel
+        self._librarySearch = ObservedObject(wrappedValue: viewModel.librarySearch)
         self.showGameInfo = showGameInfo
         self._homeViewModel = StateObject(wrappedValue: HomeViewModel(sortAscending: viewModel.sortGamesAscending))
 
@@ -226,8 +233,8 @@ struct HomeView: SwiftUI.View {
                                 .padding(.horizontal, 10)
                             }
                             // Search bar inside scroll — no auto-hide, just scrolls with content
-                            if viewModel.showsLibrarySearch || (allGames.count > 8 && showSearchbar) {
-                                PVSearchBar(text: $searchText)
+                            if isSearchFieldVisible {
+                                PVSearchBar(text: $librarySearch.query)
                                     // Desktop aligns the field to the same gutter as the
                                     // shelves and grid; touch keeps its wider 16pt inset.
                                     .padding(.horizontal, DesktopLibraryMetrics.isDesktop ? DesktopLibraryMetrics.columnGutter : 16)
@@ -280,7 +287,7 @@ struct HomeView: SwiftUI.View {
                 }
                 .overlay(
                     Group {
-                        if !searchText.isEmpty {
+                        if isSearchFieldVisible && !searchText.isEmpty {
                             ScrollView {
                                 searchResultsView()
                                     .desktopLibraryContentColumn()
@@ -312,6 +319,9 @@ struct HomeView: SwiftUI.View {
         }
         .onChange(of: viewModel.sortGamesAscending) { newValue in
             homeViewModel.sortAscending = newValue
+        }
+        .onChange(of: isSearchFieldVisible) { _, visible in
+            if !visible { librarySearch.query = "" }
         }
         .onChange(of: GamepadManager.shared.isControllerConnected) { isConnected in
             isControllerConnected = isConnected
@@ -661,7 +671,7 @@ struct HomeView: SwiftUI.View {
     private func consumePendingSearch() {
         LibraryNavigator.shared.consumeSearch { query in
             viewModel.libraryDestination = .home
-            searchText = query
+            librarySearch.query = query
             viewModel.showsLibrarySearch = true
         }
     }

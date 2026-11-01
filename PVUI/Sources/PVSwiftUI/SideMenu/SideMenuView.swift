@@ -63,8 +63,6 @@ SideMenuView: SwiftUI.View {
 
     @ObservedObject private var featureFlags = PVFeatureFlagsManager.shared
 
-    @State private var showNearbyLibraries = false
-
     /// Focus id of the Nearby Libraries row (gamepad navigation).
     private static let nearbyItem = "nearby"
 
@@ -80,7 +78,6 @@ SideMenuView: SwiftUI.View {
 
 
     /// The library's netplay lobby (rooms nearby, host a game).
-    @State private var showNetplayLobby = false
     @Default(.netplayEnabled) private var netplayEnabled
 
     public init(gameLibrary: PVGameLibrary<RealmDatabaseDriver>, viewModel: PVRootViewModel, delegate: PVMenuDelegate, rootDelegate: PVRootDelegate) {
@@ -121,8 +118,8 @@ SideMenuView: SwiftUI.View {
         gamepadCancellable = GamepadManager.shared.eventPublisher
             .receive(on: DispatchQueue.main)
             .filter { _ in
-                // The Nearby Libraries sheet owns the controller while it is up.
-                return viewModel.isMenuShown && !showNearbyLibraries && !showNetplayLobby
+                // Presented sheets own the controller while they are up.
+                return viewModel.isMenuShown && !viewModel.isLibraryInputBlocked
             }
             .sink { event in
                 // Suppress while a full-screen retrowave alert is on top.
@@ -162,9 +159,9 @@ SideMenuView: SwiftUI.View {
         case "addgames":
             delegate?.didTapAddGames()
         case Self.nearbyItem:
-            showNearbyLibraries = true
+            viewModel.sidebarSheet = .nearbyLibraries
         case "netplay":
-            showNetplayLobby = true
+            viewModel.sidebarSheet = .networkPlay
         default:
             // Handle console selection
             delegate?.didTapConsole(with: focusedItem)
@@ -253,7 +250,7 @@ SideMenuView: SwiftUI.View {
 
                 MenuItemView(icon: .sfSymbol("antenna.radiowaves.left.and.right"), rowTitle: "Nearby Libraries",
                              isFocused: focusedItem == Self.nearbyItem) {
-                    showNearbyLibraries = true
+                    viewModel.sidebarSheet = .nearbyLibraries
                 }
                 .focusable()
                 .focused($focusedItem, equals: Self.nearbyItem)
@@ -269,7 +266,7 @@ SideMenuView: SwiftUI.View {
                 .frame(height: 1)
 
             MenuItemView(icon: .sfSymbol("network"), rowTitle: "Network Play", isFocused: focusedItem == "netplay") {
-                showNetplayLobby = true
+                viewModel.sidebarSheet = .networkPlay
             }
             .focusable()
             .focused($focusedItem, equals: "netplay")
@@ -443,10 +440,6 @@ SideMenuView: SwiftUI.View {
         }
         .foregroundStyle(themeManager.currentPalette.menuIconTint.swiftUIColor)
         .background(themeManager.currentPalette.menuBackground.swiftUIColor)
-        #if os(iOS) || os(tvOS)
-        .sheet(isPresented: $showNearbyLibraries) { NearbyLibrariesSheet() }
-        #endif
-        .sheet(isPresented: $showNetplayLobby) { NetplayLibraryLobbyView() }
         .onDisappear {
             gamepadCancellable?.cancel()
         }
