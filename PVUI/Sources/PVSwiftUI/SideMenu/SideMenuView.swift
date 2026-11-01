@@ -91,7 +91,7 @@ SideMenuView: SwiftUI.View {
         self.rootDelegate = rootDelegate
 
         #if targetEnvironment(simulator)
-        _showEmptySystems = State(initialValue: true)
+        _showEmptySystems = State(initialValue: ProcessInfo.processInfo.arguments.contains("-PVShowEmptySystems"))
         #else
         _showEmptySystems = State(initialValue: false)
         #endif
@@ -152,6 +152,9 @@ SideMenuView: SwiftUI.View {
         switch focusedItem {
         case "home":
             delegate?.didTapHome()
+        case "favorites", "recentlyPlayed":
+            delegate?.didTapHome()
+            viewModel.libraryDestination = focusedItem == "favorites" ? .favorites : .recentlyPlayed
         case "settings":
             delegate?.didTapSettings()
         case "imports":
@@ -176,7 +179,7 @@ SideMenuView: SwiftUI.View {
         if netplayEnabled {
             fixedItems.append("netplay")
         }
-        if !consoles.isEmpty { fixedItems.append("home") }
+        if !consoles.isEmpty { fixedItems.append(contentsOf: ["home", "favorites", "recentlyPlayed"]) }
         let items = fixedItems + sortedConsoles().map(\.identifier)
 
         if let currentIndex = items.firstIndex(of: focusedItem ?? "") {
@@ -287,12 +290,22 @@ SideMenuView: SwiftUI.View {
 
                 // Home first
 
-                MenuItemView(icon: .named("prov_home_icon", PVUIBase.BundleLoader.myBundle), rowTitle: "Home", isFocused: focusedItem == "home", isActive: viewModel.selectedConsole == nil) {
+                MenuItemView(icon: .named("prov_home_icon", PVUIBase.BundleLoader.myBundle), rowTitle: "Home", isFocused: focusedItem == "home", isActive: viewModel.selectedConsole == nil && viewModel.libraryDestination == .home) {
                     delegate?.didTapHome()
                 }
                 .focusable()
                 .focused($focusedItem, equals: "home")
                 .id("home")
+                ForEach([LibraryDestination.favorites, .recentlyPlayed]) { destination in
+                    MenuItemView(icon: .sfSymbol(destination.symbol), rowTitle: destination.title,
+                                 isFocused: focusedItem == destination.rawValue,
+                                 isActive: viewModel.selectedConsole == nil && viewModel.libraryDestination == destination) {
+                        delegate?.didTapHome()
+                        viewModel.libraryDestination = destination
+                    }
+                    .focusable()
+                    .focused($focusedItem, equals: destination.rawValue)
+                }
 
                 ForEach(sortedConsoles(), id: \.identifier) { console in
                     Rectangle()

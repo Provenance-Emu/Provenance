@@ -18,12 +18,12 @@ import PVThemes
 #endif
 
 /// Shelf row height scale for Favorites / Recently Played carousels (`PVRowHeight *` this value)
-/// on touch devices, where halving the row buys vertical space on a phone screen.
-private let PVCompactShelfRowHeightScaleTouch: CGFloat = 0.5
+/// on touch devices, reserving enough space for artwork plus the title/date/rating block.
+private let PVCompactShelfRowHeightScaleTouch: CGFloat = 0.9
 
 /// Shelf row height scale for Favorites / Recently Played carousels (`PVRowHeight *` this value).
 ///
-/// On a desktop window the halved row is what makes shelf titles unreadable — the title's max
+/// On a desktop window a smaller row makes shelf titles unreadable — the title's max
 /// width is the measured artwork width, so a 75pt cell clips a monospaced title to a few
 /// characters. Desktop therefore uses `DesktopLibraryMetrics.shelfRowHeightScale` (full height,
 /// matching the Most Played shelf). Runtime-gated, so iPhone / iPad / tvOS are unchanged.
@@ -40,7 +40,7 @@ public enum GameItemViewType {
     var titleFontSize: CGFloat {
         switch self {
         case .cell:
-            return 11
+            return 13
         case .row:
             return 15
         }
@@ -49,11 +49,9 @@ public enum GameItemViewType {
     var subtitleFontSize: CGFloat {
         switch self {
         case .cell:
-            return 8
+            return 10.5
         case .row:
             return 12
         }
     }
 }
-
-

@@ -6,6 +6,10 @@ import PVLibrary
 import PVUIBase
 import PVThemes
 import PVFeatureFlags
+import PVSettings
+#if canImport(UIKit)
+import UIKit
+#endif
 #if canImport(PVWebServer)
 import PVWebServer
 #endif
@@ -25,12 +29,29 @@ public struct PVLibraryRootView: View {
     @State private var isWebServerRunning = false
 
     public init(gameLibrary: PVGameLibrary<RealmDatabaseDriver>, updatesController: PVGameLibraryUpdatesController, gameImporter: GameImporter) {
+        #if DEBUG
+        if ProcessInfo.processInfo.arguments.contains("-PVSkipOnboarding") {
+            LocalNetworkOnboarding.markShown()
+        }
+        #endif
         _navigation = StateObject(wrappedValue: PVLibraryNavigation(gameLibrary: gameLibrary, updatesController: updatesController, gameImporter: gameImporter))
     }
 
     public var body: some View {
         libraryContent
+            #if DEBUG && canImport(UIKit)
+            .background {
+                if ProcessInfo.processInfo.arguments.contains("-PVReviewGeometry") {
+                    GeometryReader { geometry in
+                        Color.clear
+                            .onAppear { recordReviewGeometry(geometry) }
+                            .onChange(of: geometry.size) { _ in recordReviewGeometry(geometry) }
+                    }
+                }
+            }
+            #endif
             .tint(Color(themeManager.currentPalette.defaultTintColor))
+            .preferredColorScheme(themeManager.currentPalette.dark ? .dark : .light)
             .netplayPresentation(item: $netplayRequest) { request in
                 NetplayLibraryLobbyView(initialGameMD5: request.gameMD5)
             }
@@ -118,23 +139,65 @@ public struct PVLibraryRootView: View {
             }
             .task {
                 navigation.updatesController.resume()
+                #if DEBUG
+                if ProcessInfo.processInfo.arguments.contains("-PVThemeLight") {
+                    Defaults[.theme] = .standard(.light)
+                    ThemeManager.applySavedTheme()
+                } else if ProcessInfo.processInfo.arguments.contains("-PVThemeDark") {
+                    Defaults[.theme] = .standard(.dark)
+                    ThemeManager.applySavedTheme()
+                } else if ProcessInfo.processInfo.arguments.contains("-PVThemeRetroWave") {
+                    Defaults[.theme] = .retrowave
+                    ThemeManager.applySavedTheme()
+                }
+                #endif
                 #if canImport(PVWebServer)
                 isWebServerRunning = await PVWebServerManager.shared.isRunning
                 #endif
             }
     }
 
+    #if DEBUG && canImport(UIKit)
+    /// Records measured window insets for simulator review, without assuming device-specific values.
+    private func recordReviewGeometry(_ geometry: GeometryProxy) {
+        guard let window = UIApplication.shared.connectedScenes.compactMap({ $0 as? UIWindowScene })
+            .flatMap(\.windows).first(where: \.isKeyWindow) else { return }
+        let insets = window.safeAreaInsets
+        let record: [String: Any] = [
+            "windowWidth": window.bounds.width,
+            "windowHeight": window.bounds.height,
+            "contentWidth": geometry.size.width,
+            "contentHeight": geometry.size.height,
+            "safeAreaTop": insets.top,
+            "safeAreaLeading": insets.left,
+            "safeAreaBottom": insets.bottom,
+            "safeAreaTrailing": insets.right,
+            "palette": themeManager.currentPalette.name
+        ]
+        let directory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
+            .appendingPathComponent("UIReviewGeometry", isDirectory: true)
+        do {
+            try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
+            let data = try JSONSerialization.data(withJSONObject: record, options: [.prettyPrinted, .sortedKeys])
+            try data.write(to: directory.appendingPathComponent("window-\(Int(window.bounds.width))x\(Int(window.bounds.height)).json"), options: .atomic)
+        } catch {
+            assertionFailure("Unable to record library review geometry: \(error)")
+        }
+    }
+    #endif
+
     private var libraryContent: some View {
         PVLibraryDrawerHost(viewModel: navigation.viewModel) {
-            NavigationStack {
-                ConsolesWrapperView(consolesWrapperViewDelegate: navigation.tabs, viewModel: navigation.viewModel, rootDelegate: navigation)
-                #if !os(tvOS)
-                .toolbar(.hidden, for: .navigationBar)
-                #endif
+            VStack(spacing: 0) {
+                LibraryHeader(viewModel: navigation.viewModel, navigation: navigation)
+                NavigationStack {
+                    ConsolesWrapperView(consolesWrapperViewDelegate: navigation.tabs, viewModel: navigation.viewModel, rootDelegate: navigation)
+                    #if !os(tvOS)
+                    .toolbar(.hidden, for: .navigationBar)
+                    #endif
+                }
             }
-            .safeAreaInset(edge: .top, spacing: 0) {
-                LibraryHeader(viewModel: navigation.viewModel)
-            }
+            .background(RetroTheme.RetroBackgroundView().environmentObject(themeManager))
         } menu: {
             SideMenuView(gameLibrary: navigation.gameLibrary, viewModel: navigation.viewModel, delegate: navigation, rootDelegate: navigation)
         }
@@ -264,105 +327,96 @@ private enum LibraryChrome {
 
 private struct LibraryHeader: View {
     @ObservedObject var viewModel: PVRootViewModel
+    @ObservedObject var navigation: PVLibraryNavigation
     @ObservedObject private var themeManager = ThemeManager.shared
-    @Environment(\.accessibilityReduceTransparency) private var reduceTransparency
+    @Environment(\.horizontalSizeClass) private var horizontalSizeClass
+    @Environment(\.verticalSizeClass) private var verticalSizeClass
 
-    private var accent: Color { Color(themeManager.currentPalette.defaultTintColor) }
-    private var backgroundColor: Color { Color(themeManager.currentPalette.gameLibraryBackground) }
-
-    private var usesCompactChrome: Bool {
-        #if os(iOS)
-        UIDevice.current.userInterfaceIdiom == .phone
-        #else
-        false
-        #endif
+    #if os(iOS)
+    private var systemItems: [FloatingSystemSelectorItem] {
+        navigation.gameLibrary.activeSystems.map { system in
+            FloatingSystemSelectorItem(id: system.identifier, title: system.shortName,
+                                       icon: Image(system.iconName, bundle: PVUIBase.BundleLoader.myBundle))
+        }
     }
+    #endif
 
     var body: some View {
-        HStack(spacing: usesCompactChrome ? 8 : 16) {
+        HStack(spacing: 10) {
             Button {
+                #if os(iOS)
+                if UIDevice.current.userInterfaceIdiom == .pad && horizontalSizeClass == .regular {
+                    viewModel.isSidebarCollapsed.toggle()
+                } else {
+                    viewModel.isMenuVisible.toggle()
+                }
+                #else
                 viewModel.isMenuVisible.toggle()
+                #endif
             } label: {
                 Image(systemName: "line.3.horizontal")
                     .frame(width: LibraryChrome.controlSize, height: LibraryChrome.controlSize)
+                    .background(Color.retroDarkBlue.opacity(0.7), in: Circle())
             }
             .accessibilityLabel("Open Library Menu")
-            Spacer(minLength: 0)
-            LibraryHeaderTitle(
-                iconName: viewModel.selectedConsole?.iconName,
-                title: viewModel.selectedConsole?.name ?? "Home",
-                accent: accent
-            )
-            Spacer(minLength: 0)
-            Button {
-                NotificationCenter.default.post(name: .pvShowSettings, object: nil)
+
+            Menu {
+                ForEach(LibraryDestination.allCases) { destination in
+                    Button {
+                        navigation.didTapHome()
+                        viewModel.libraryDestination = destination
+                    } label: {
+                        Label(destination.title, systemImage: destination.symbol)
+                    }
+                }
             } label: {
-                Image(systemName: "gearshape")
-                    .frame(width: LibraryChrome.controlSize, height: LibraryChrome.controlSize)
+                HStack(spacing: 6) {
+                    Text("Library").font(.system(size: 16, weight: .medium))
+                    Image(systemName: "chevron.down").font(.system(size: 10, weight: .semibold))
+                }
+                .frame(minHeight: 44)
+                .contentShape(Rectangle())
+                .overlay(alignment: .bottomLeading) {
+                    Capsule().fill(Color.retroBlue).frame(width: 24, height: 1.5).offset(y: -8)
+                }
             }
-            .accessibilityLabel("Settings")
+            .accessibilityLabel("Library destinations")
+            #if os(iOS)
+            if verticalSizeClass == .compact {
+                FloatingSystemSelector(items: systemItems, selection: Binding(
+                    get: { navigation.tabs.selectedTab },
+                    set: { navigation.selectTab($0) }
+                ))
+                .frame(maxWidth: .infinity)
+            } else {
+                Spacer(minLength: 0)
+            }
+            #else
+            Spacer(minLength: 0)
+            #endif
+            Button {
+                navigation.didTapHome()
+                viewModel.showsLibrarySearch.toggle()
+            } label: {
+                Image(systemName: "magnifyingglass").frame(width: 44, height: 44).contentShape(Circle())
+            }
+            .accessibilityLabel("Search Games")
+            .background(.ultraThinMaterial, in: Circle())
+            .overlay { Circle().strokeBorder(Color.retroBlue.opacity(0.38), lineWidth: 1) }
+
+            Button { navigation.didTapAddGames() } label: {
+                Image(systemName: "plus").frame(width: 44, height: 44).contentShape(Circle())
+            }
+            .accessibilityLabel("Add Games")
+            .background(.ultraThinMaterial, in: Circle())
+            .overlay { Circle().strokeBorder(Color.retroBlue.opacity(0.38), lineWidth: 1) }
         }
         .buttonStyle(.plain)
         .font(.system(size: 20, weight: .medium))
-        .foregroundStyle(accent)
-        .padding(.horizontal, usesCompactChrome ? 12 : 8)
-        .padding(.vertical, usesCompactChrome ? 0 : 4)
-        .background {
-            LibraryHeaderBackground(
-                fillColor: backgroundColor,
-                accent: accent,
-                fillOpacity: reduceTransparency ? 1 : 0.94
-            )
-        }
-        .padding(.horizontal, usesCompactChrome ? 8 : 16)
-        .padding(.vertical, usesCompactChrome ? 0 : 8)
-        .padding(.bottom, usesCompactChrome ? 4 : 0)
-    }
-}
-
-private struct LibraryHeaderTitle: View {
-    let iconName: String?
-    let title: String
-    let accent: Color
-
-    var body: some View {
-        HStack(spacing: 8) {
-            if let iconName {
-                Image(iconName, bundle: PVUIBase.BundleLoader.myBundle)
-                    .resizable()
-                    .renderingMode(.template)
-                    .scaledToFit()
-                    .frame(width: 22, height: 22)
-                    .accessibilityHidden(true)
-            } else {
-                Image(systemName: "house.fill")
-                    .accessibilityHidden(true)
-            }
-            Text(title)
-                .font(.headline)
-                .tracking(1.4)
-                .lineLimit(1)
-        }
-        .shadow(color: accent.opacity(0.35), radius: 3)
-        .accessibilityElement(children: .combine)
-        .accessibilityAddTraits(.isHeader)
-    }
-}
-
-private struct LibraryHeaderBackground: View {
-    let fillColor: Color
-    let accent: Color
-    let fillOpacity: Double
-
-    var body: some View {
-        RoundedRectangle(cornerRadius: LibraryChrome.cornerRadius)
-            .fill(fillColor.opacity(fillOpacity))
-            .overlay {
-                RoundedRectangle(cornerRadius: LibraryChrome.cornerRadius)
-                    .strokeBorder(accent.opacity(0.75), lineWidth: 2)
-                    .shadow(color: accent.opacity(0.5), radius: 3)
-            }
-            .shadow(color: .black.opacity(0.25), radius: 8, y: 4)
+        .foregroundStyle(Color(themeManager.currentPalette.gameLibraryText))
+        .padding(.horizontal, 24)
+        .padding(.vertical, 4)
+        .background(Color.retroBlack.opacity(0.85))
     }
 }
 

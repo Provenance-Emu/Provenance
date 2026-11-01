@@ -80,12 +80,28 @@ public extension ThemeManager {
     @MainActor
     private class func styleStatusBar(withColor color: UIColor) {
         #if !os(tvOS) && !os(macOS)
-        if let keyWindow = UIApplication.shared.windows.first(where: { $0.isKeyWindow }),
-           let statusBarManager = keyWindow.windowScene?.statusBarManager {
-            let statusBar = UIView(frame: statusBarManager.statusBarFrame)
-            statusBar.backgroundColor = color
+        guard let keyWindow = UIApplication.shared.connectedScenes.compactMap({ $0 as? UIWindowScene })
+            .flatMap(\.windows).first(where: \.isKeyWindow) else { return }
+        let statusBar: UIView
+        if let existing = statusBarView, existing.superview === keyWindow {
+            statusBar = existing
+        } else {
+            statusBarView?.removeFromSuperview()
+            statusBar = UIView()
+            statusBar.translatesAutoresizingMaskIntoConstraints = false
+            statusBar.isUserInteractionEnabled = false
+            statusBar.accessibilityElementsHidden = true
             keyWindow.addSubview(statusBar)
+            // The safe-area edge follows rotation and status-bar visibility automatically.
+            NSLayoutConstraint.activate([
+                statusBar.leadingAnchor.constraint(equalTo: keyWindow.leadingAnchor),
+                statusBar.trailingAnchor.constraint(equalTo: keyWindow.trailingAnchor),
+                statusBar.topAnchor.constraint(equalTo: keyWindow.topAnchor),
+                statusBar.bottomAnchor.constraint(equalTo: keyWindow.safeAreaLayoutGuide.topAnchor)
+            ])
+            statusBarView = statusBar
         }
+        statusBar.backgroundColor = color
         #endif
     }
 

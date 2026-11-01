@@ -8,25 +8,13 @@
 import Foundation
 import SwiftUI
 import PVThemes
+import PVUIBase
 
 @available(iOS 18.0, *)
 public struct ProvenanceAnimatedBackgroundView: View {
     public var body: some View {
-        ZStack {
-//            Color.Provenance.blue
-            
-            AnimatedColorsGridGradientView()
-            
-            AnimatedCheckerboardView()
-                .blendMode(.difference)
-                .luminanceToAlpha()
-
-//            AnimatedColorsMeshGradientView()
-//                .blendMode(.colorBurn)
-//                .opacity(0.2)
-        }
-        .edgesIgnoringSafeArea(.bottom)
-        .colorInvert()
+        RetroTheme.RetroBackgroundView()
+            .environmentObject(ThemeManager.shared)
     }
 }
 

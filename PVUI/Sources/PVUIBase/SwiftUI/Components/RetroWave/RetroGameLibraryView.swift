@@ -417,7 +417,7 @@ public struct RetroGameLibraryView: View {
     private func mainContentView() -> some View {
         ZStack {
             // Background that respects safe areas
-            RetroTheme.retroBackground
+            RetroTheme.RetroBackgroundView().environmentObject(themeManager)
 
             if cachedGames.isEmpty {
                 emptyLibraryView()
@@ -441,24 +441,7 @@ public struct RetroGameLibraryView: View {
     /// Background view with retro aesthetics
     @ViewBuilder
     private func retroBackgroundView() -> some View {
-        ZStack {
-            /// Base dark background with proper safe area handling
-            RetroTheme.retroBlack.ignoresSafeArea(edges: [.horizontal, .bottom])
-
-            /// Use single Shape for grid lines instead of 40 individual Rectangle views
-            RetroGridShape(spacing: 20)
-                .stroke(Color.retroBlue.opacity(0.2), lineWidth: 1)
-
-            /// Sunset gradient at bottom
-            VStack {
-                Spacer()
-                Rectangle()
-                    .fill(Color.retroSunsetGradient)
-                    .frame(height: 150)
-                    .offset(y: 70)
-                    .blur(radius: 20)
-            }
-        }
+        RetroTheme.RetroBackgroundView().environmentObject(themeManager)
     }
 
     /// Content view for the library when games are present
@@ -503,10 +486,10 @@ public struct RetroGameLibraryView: View {
                 HStack(spacing: 6) {
                     Image(systemName: "plus.square")
                         .font(.system(size: 14, weight: .bold))
-                    Text("IMPORT")
+                    Text("Import")
                         .font(.system(size: 12, weight: .bold))
                 }
-                .padding(.vertical, 6)
+                .frame(minHeight: 44)
                 .padding(.horizontal, 10)
                 .background(
                     RoundedRectangle(cornerRadius: 8)
@@ -538,6 +521,7 @@ public struct RetroGameLibraryView: View {
                     }
                 } label: {
                     Label("Sort", systemImage: "arrow.up.arrow.down")
+                        .frame(minHeight: 44)
                         .font(.subheadline)
                         .foregroundColor(themeManager.currentPalette.defaultTintColor.swiftUIColor)
                 }
@@ -564,6 +548,7 @@ public struct RetroGameLibraryView: View {
                     }
                 } label: {
                     Image(systemName: viewModel.selectedViewMode.iconName)
+                        .frame(width: 44, height: 44)
                         .foregroundColor(themeManager.currentPalette.defaultTintColor.swiftUIColor)
                 }
             } else {
@@ -1425,9 +1410,8 @@ extension RetroGameLibraryView {
 
                     if let subtitle = subtitle, !subtitle.isEmpty {
                         Text(subtitle.uppercased())
-                            .font(.system(.subheadline, design: .monospaced))
+                            .font(.subheadline)
                             .foregroundColor(Color.retroBlue)
-                            .shadow(color: Color.retroPink.opacity(0.5), radius: 1, x: 1, y: 1)
                     }
                 }
 
@@ -1454,22 +1438,7 @@ extension RetroGameLibraryView {
             .padding(.vertical, 12)
             .padding(.horizontal, 16)
             .frame(maxWidth: .infinity, alignment: .leading)
-            .background(
-                RoundedRectangle(cornerRadius: 12)
-                    .fill(Color.retroBlack.opacity(0.7))
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 12)
-                            .strokeBorder(
-                                LinearGradient(
-                                    gradient: Gradient(colors: [.retroPink, .retroBlue]),
-                                    startPoint: .leading,
-                                    endPoint: .trailing
-                                ),
-                                lineWidth: 1.5
-                            )
-                    )
-                    .shadow(color: Color.retroPink.opacity(0.3), radius: 5, x: 0, y: 0)
-            )
+            .background(Color.retroDarkBlue.opacity(0.55), in: RoundedRectangle(cornerRadius: 10))
             .contentShape(Rectangle())
         }
         .buttonStyle(PlainButtonStyle())
@@ -1478,7 +1447,7 @@ extension RetroGameLibraryView {
     /// Creates a grid of games for a system
     @ViewBuilder
     private func systemGamesGrid(games: [PVGame]) -> some View {
-        LazyVGrid(columns: [GridItem(.adaptive(minimum: 160, maximum: 200), spacing: 16)], spacing: 16) {
+        LazyVGrid(columns: [GridItem(.adaptive(minimum: 104, maximum: 200), spacing: 10)], spacing: 16) {
             ForEach(games, id: \.id) { game in
                 gameGridItem(game: game)
             }

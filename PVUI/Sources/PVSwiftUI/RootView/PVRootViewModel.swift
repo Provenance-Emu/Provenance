@@ -12,6 +12,26 @@ import PVLibrary
 import SwiftUI
 #endif
 
+/// Destinations use the same live snapshots and game actions as the Home library.
+enum LibraryDestination: String, CaseIterable, Identifiable {
+    case home, favorites, recentlyPlayed
+    var id: Self { self }
+    var title: String {
+        switch self {
+        case .home: return String(localized: "Home")
+        case .favorites: return String(localized: "Favorites")
+        case .recentlyPlayed: return String(localized: "Recently played")
+        }
+    }
+    var symbol: String {
+        switch self {
+        case .home: return "house"
+        case .favorites: return "heart"
+        case .recentlyPlayed: return "clock"
+        }
+    }
+}
+
 /// ViewModel for the Root view
 public class PVRootViewModel: ObservableObject {
 
@@ -26,6 +46,10 @@ public class PVRootViewModel: ObservableObject {
 
     /// Currently selected console
     @Published public var selectedConsole: PVSystem?
+
+    @Published var libraryDestination: LibraryDestination = .home
+    @Published var showsLibrarySearch = false
+    @Published var isSidebarCollapsed = false
 
     let drawerState = LibraryDrawerState()
 
@@ -42,7 +66,12 @@ public class PVRootViewModel: ObservableObject {
 
     var inputOwnership = LibraryInputOwnership()
 
-    public init() {}
+    public init() {
+        #if DEBUG
+        // Snapshot runs use real library data and actions, with deterministic presentation only.
+        viewGamesAsGrid = !ProcessInfo.processInfo.arguments.contains("-PVLibraryList")
+        #endif
+    }
 }
 
 /// Drawer motion must not invalidate every library view observing the root model.

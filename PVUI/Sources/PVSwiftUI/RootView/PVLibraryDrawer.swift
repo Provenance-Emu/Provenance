@@ -1,5 +1,6 @@
 import SwiftUI
 import PVThemes
+import PVUIBase
 
 /// Local window geometry drives the panel; resizing never consults a global screen.
 enum LibraryDrawerLayout {
@@ -166,16 +167,40 @@ struct PVLibraryDrawer<Content: View, Menu: View>: View {
 /// Observes menu visibility at the shell boundary, without invalidating library data views.
 struct PVLibraryDrawerHost<Content: View, Menu: View>: View {
     @ObservedObject private var drawerState: LibraryDrawerState
+    @ObservedObject private var viewModel: PVRootViewModel
+    @Environment(\.horizontalSizeClass) private var horizontalSizeClass
     @ViewBuilder let content: Content
     @ViewBuilder let menu: Menu
 
     init(viewModel: PVRootViewModel, @ViewBuilder content: () -> Content, @ViewBuilder menu: () -> Menu) {
+        self.viewModel = viewModel
         drawerState = viewModel.drawerState
         self.content = content()
         self.menu = menu()
     }
 
     var body: some View {
+        #if os(iOS)
+        if UIDevice.current.userInterfaceIdiom == .pad && horizontalSizeClass == .regular {
+            HStack(spacing: 0) {
+                if !viewModel.isSidebarCollapsed {
+                    menu
+                        .frame(width: 224)
+                        .overlay(alignment: .trailing) {
+                            Rectangle().fill(Color.retroBlue.opacity(0.3)).frame(width: 1)
+                        }
+                }
+                content.frame(maxWidth: .infinity, maxHeight: .infinity)
+            }
+        } else {
+            overlayDrawer
+        }
+        #else
+        overlayDrawer
+        #endif
+    }
+
+    private var overlayDrawer: some View {
         PVLibraryDrawer(isPresented: $drawerState.isPresented) {
             content
         } menu: {
