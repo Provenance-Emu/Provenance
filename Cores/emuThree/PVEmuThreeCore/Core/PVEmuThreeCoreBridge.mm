@@ -226,7 +226,6 @@ static bool _isOff = false;
     _isInitialized = false;
     _isOff=true;
     [[NSNotificationCenter defaultCenter] removeObserver:self];
-    [[[[UIApplication sharedApplication] delegate] window] makeKeyAndVisible];
 }
 
 - (void)setupView {
