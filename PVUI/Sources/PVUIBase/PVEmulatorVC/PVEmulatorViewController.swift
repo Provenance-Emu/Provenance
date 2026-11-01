@@ -188,6 +188,20 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
     // Shared input handler to maintain input state across skin changes
     var sharedInputHandler: DeltaSkinInputHandler?
 
+    /// Routes every non-gamepad input to the core: skins, the touch overlay, keyboard
+    /// Start/Select and the pause menu's hardware switches. Made on first use when no
+    /// skin has made one yet.
+    public var coreInputHandler: DeltaSkinInputHandler {
+        if let sharedInputHandler { return sharedInputHandler }
+        let inputHandler = DeltaSkinInputHandler(emulatorCore: core, emulatorController: self)
+        installMetalDualScreenSwap(on: inputHandler)
+        inputHandler.menuButtonHandler = { [weak self] in
+            self?.showMenu(nil)
+        }
+        sharedInputHandler = inputHandler
+        return inputHandler
+    }
+
     #if os(iOS)
     var audioVisualizerHostingController: UIHostingController<AnyView>? = nil
 
@@ -223,14 +237,9 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
         return vc
     }()
 
-    public private(set) lazy var controllerViewController: (any ControllerVC)? = {
-        guard let system = game.system else {
-            ELOG("Nil system for \(game.title)")
-            return nil
-        }
-        let controller = PVCoreFactory.controllerViewController(forSystem: system, core: core)
-        return controller
-    }()
+    /// The classic on-screen controller. Made only by `addControllerOverlay()`; nil while a
+    /// skin or the touch overlay supplies the controls.
+    public private(set) var controllerViewController: (any ControllerVC)?
 
     #if os(tvOS)
     override public var preferredUserInterfaceStyle: UIUserInterfaceStyle { ThemeManager.shared.currentPalette.dark ? .dark : .light }
@@ -735,6 +744,9 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
     }
 
     private func addControllerOverlay() {
+        if controllerViewController == nil, let system = game.system {
+            controllerViewController = PVCoreFactory.controllerViewController(forSystem: system, core: core)
+        }
         if let aController = controllerViewController {
             addChild(aController)
         }
@@ -2403,7 +2415,6 @@ extension PVEmulatorViewController {
         // Create an input handler for the skin
         let inputHandler = DeltaSkinInputHandler(
             emulatorCore: core,
-            controllerVC: controllerViewController,
             emulatorController: self
         )
         installMetalDualScreenSwap(on: inputHandler)
@@ -2615,7 +2626,6 @@ extension PVEmulatorViewController {
 
             // Re-link the core, controller, and emulator controller
             inputHandler.setEmulatorCore(core)
-            inputHandler.setControllerVC(controllerViewController)
             inputHandler.setEmulatorController(self)
 
             // Ensure menu button handler is set

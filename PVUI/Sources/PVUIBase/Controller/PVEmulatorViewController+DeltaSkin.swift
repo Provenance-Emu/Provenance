@@ -495,22 +495,8 @@ extension PVEmulatorViewController {
             return
         }
 
-        // Create the input handler for both core-level and controller-level input
-
-        // Add debug logging for the controller view controller
-        if let controller = controllerViewController {
-            DLOG("Found controller view controller: \(controller) of type \(type(of: controller))")
-        } else {
-            DLOG("No controller view controller found")
-        }
-
-        // Log emulator controller availability
-        DLOG("Using self as emulator controller for special commands (quicksave/quickload)")
-
-        // Pass the controller view controller and emulator controller (self) to the input handler
-        let inputHandler = DeltaSkinInputHandler(emulatorCore: core,
-                                               controllerVC: controllerViewController,
-                                               emulatorController: self)
+        // The emulator controller (self) handles special commands like quicksave/quickload
+        let inputHandler = DeltaSkinInputHandler(emulatorCore: core, emulatorController: self)
         installMetalDualScreenSwap(on: inputHandler)
 
         // CRITICAL: Store this input handler in the shared property so it can be accessed

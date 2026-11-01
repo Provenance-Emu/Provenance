@@ -1980,27 +1980,15 @@ struct PauseTileMenuView: View {
         return activeSystemIdentifier.hardwareMomentaryButtons?.first(where: { $0.id == descriptorID })
     }
 
-    /// Sends a short press/release edge through the active input route.
-    private func dispatchHardwareButton(_ buttonId: String) {
-        if let inputHandler = emulatorVC.sharedInputHandler {
-            inputHandler.buttonPressed(buttonId)
-            DispatchQueue.main.asyncAfter(deadline: .now() + HardwareSwitchTiming.pressDuration) {
-                inputHandler.buttonReleased(buttonId)
-            }
-            return
-        }
-        emulatorVC.controllerViewController?.didReceiveHardwareSwitchInput(buttonId: buttonId, player: 0)
-    }
-
-    /// Sends switch input through the controller bridge first, then falls back to skin input.
+    /// Sends a short switch press/release edge to the core.
     /// Wrapped in `withCoreRunningForInput` because the pause menu stops the core, and
     /// level-sampled cores only see a press if a frame runs while it is held.
     private func dispatchHardwareSwitchButton(_ buttonId: String) {
         withCoreRunningForInput {
-            if emulatorVC.controllerViewController != nil {
-                emulatorVC.controllerViewController?.didReceiveHardwareSwitchInput(buttonId: buttonId, player: 0)
-            } else {
-                dispatchHardwareButton(buttonId)
+            let inputHandler = emulatorVC.coreInputHandler
+            inputHandler.sendHardwareSwitch(buttonId, isPressed: true)
+            DispatchQueue.main.asyncAfter(deadline: .now() + HardwareSwitchTiming.pressDuration) {
+                inputHandler.sendHardwareSwitch(buttonId, isPressed: false)
             }
         }
     }
@@ -2034,7 +2022,7 @@ struct PauseTileMenuView: View {
     }
 
     /// Briefly fires a press → release on the main queue, mimicking a momentary
-    /// physical button tap. The delay matches `dispatchHardwareButton`.
+    /// physical button tap. The delay matches `dispatchHardwareSwitchButton`.
     private func fireMomentaryRelease(after: TimeInterval = HardwareSwitchTiming.pressDuration, _ block: @escaping () -> Void) {
         DispatchQueue.main.asyncAfter(deadline: .now() + after, execute: block)
     }
