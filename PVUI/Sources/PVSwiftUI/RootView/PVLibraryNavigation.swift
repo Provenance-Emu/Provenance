@@ -65,6 +65,7 @@ final class PVLibraryNavigation: ObservableObject, PVMenuDelegate, PVRootDelegat
     func closeMenu() { viewModel.isMenuVisible = false }
     func didTapSettings() { closeMenu(); sheet = .settings }
     func didTapImports() { closeMenu(); sheet = .imports }
+    func didTapFreeROMs() { closeMenu(); sheet = .freeROMs }
     func didTapAddGames() { closeMenu(); showsImportSources = true }
 
     func handle(_ destination: ScreenDestination) {

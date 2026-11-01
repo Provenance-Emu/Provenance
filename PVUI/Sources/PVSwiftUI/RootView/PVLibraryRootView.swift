@@ -244,7 +244,7 @@ public struct PVLibraryRootView: View {
         case .menuToggle(let pressed):
             if pressed {
                 navigationTask?.cancel()
-                navigation.viewModel.isMenuVisible.toggle()
+                navigation.viewModel.toggleMenu()
             }
         case .shoulderLeft(let pressed):
             repeatNavigation(pressed: pressed, isNext: false)
@@ -329,7 +329,6 @@ private struct LibraryHeader: View {
     @ObservedObject var viewModel: PVRootViewModel
     @ObservedObject var navigation: PVLibraryNavigation
     @ObservedObject private var themeManager = ThemeManager.shared
-    @Environment(\.horizontalSizeClass) private var horizontalSizeClass
     @Environment(\.verticalSizeClass) private var verticalSizeClass
 
     #if os(iOS)
@@ -344,15 +343,7 @@ private struct LibraryHeader: View {
     var body: some View {
         HStack(spacing: 10) {
             Button {
-                #if os(iOS)
-                if UIDevice.current.userInterfaceIdiom == .pad && horizontalSizeClass == .regular {
-                    viewModel.isSidebarCollapsed.toggle()
-                } else {
-                    viewModel.isMenuVisible.toggle()
-                }
-                #else
-                viewModel.isMenuVisible.toggle()
-                #endif
+                viewModel.toggleMenu()
             } label: {
                 Image(systemName: "line.3.horizontal")
                     .frame(width: LibraryChrome.controlSize, height: LibraryChrome.controlSize)

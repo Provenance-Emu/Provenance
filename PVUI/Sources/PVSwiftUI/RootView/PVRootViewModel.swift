@@ -53,6 +53,20 @@ public class PVRootViewModel: ObservableObject {
 
     let drawerState = LibraryDrawerState()
 
+    /// True while a regular-width iPad shows the sidebar inline instead of as an overlay drawer.
+    var usesPinnedSidebar = false
+
+    /// Whether the menu is on screen, as an overlay drawer or the pinned sidebar.
+    var isMenuShown: Bool { usesPinnedSidebar ? !isSidebarCollapsed : isMenuVisible }
+
+    func toggleMenu() {
+        if usesPinnedSidebar { isSidebarCollapsed.toggle() } else { isMenuVisible.toggle() }
+    }
+
+    func dismissMenu() {
+        if usesPinnedSidebar { isSidebarCollapsed = true } else { isMenuVisible = false }
+    }
+
     public var isMenuVisible: Bool {
         get { drawerState.isPresented }
         set {

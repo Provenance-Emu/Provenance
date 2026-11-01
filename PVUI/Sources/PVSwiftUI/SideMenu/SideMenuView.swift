@@ -122,7 +122,7 @@ SideMenuView: SwiftUI.View {
             .receive(on: DispatchQueue.main)
             .filter { _ in
                 // The Nearby Libraries sheet owns the controller while it is up.
-                return viewModel.isMenuVisible && !showNearbyLibraries && !showNetplayLobby
+                return viewModel.isMenuShown && !showNearbyLibraries && !showNetplayLobby
             }
             .sink { event in
                 // Suppress while a full-screen retrowave alert is on top.
@@ -134,7 +134,7 @@ SideMenuView: SwiftUI.View {
                     }
                 case .buttonB(let isPressed):
                     if isPressed {
-                        delegate?.closeMenu()
+                        viewModel.dismissMenu()
                     }
                 case .verticalNavigation(let value, let isPressed):
                     if isPressed {
@@ -383,7 +383,7 @@ SideMenuView: SwiftUI.View {
                     .accessibilityLabel("Provenance")
                 Spacer(minLength: 8)
                 Button {
-                    delegate?.closeMenu()
+                    viewModel.dismissMenu()
                 } label: {
                     Image(systemName: "xmark")
                         .frame(width: 44, height: 44)

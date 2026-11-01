@@ -660,6 +660,7 @@ struct HomeView: SwiftUI.View {
     /// `.onReceive(LibraryNavigator.shared.$pendingAction)` (hot-launch / foreground handoff).
     private func consumePendingSearch() {
         LibraryNavigator.shared.consumeSearch { query in
+            viewModel.libraryDestination = .home
             searchText = query
             viewModel.showsLibrarySearch = true
         }

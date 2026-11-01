@@ -26,12 +26,14 @@ struct RetroThemeColorsTests {
         #expect(brightness(dark) < 0.1)
     }
 
+    #if !os(tvOS)
     @Test("Dark status-bar color survives palette protocol dispatch")
     func darkStatusBar() {
         let palette: any UXThemePalette = ProvenanceThemes.dark.palette
         #expect(palette.statusBarColor != nil)
         #expect(palette.statusBarColor != UIColor.white)
     }
+    #endif
 
     private func brightness(_ color: UIColor) -> CGFloat {
         var red: CGFloat = 0

@@ -37,7 +37,6 @@ public struct NoConsolesView: SwiftUI.View {
     weak var delegate: PVMenuDelegate!
 
     @ObservedObject private var themeManager = ThemeManager.shared
-    @State private var showsFreeGames = false
 
     public var body: some SwiftUI.View {
         GeometryReader { geometry in
@@ -78,16 +77,6 @@ public struct NoConsolesView: SwiftUI.View {
             .background(RetroTheme.RetroBackgroundView().environmentObject(themeManager))
         }
         .foregroundStyle(Color(themeManager.currentPalette.gameLibraryText))
-        .sheet(isPresented: $showsFreeGames) {
-            NavigationStack {
-                FreeROMsView(onROMDownloaded: { _, url in
-                    AppState.shared.libraryUpdatesController?.handlePickedDocuments([url])
-                }, onDismiss: {
-                    showsFreeGames = false
-                    delegate?.didTapImports()
-                })
-            }
-        }
     }
 
     @ViewBuilder
@@ -125,7 +114,7 @@ public struct NoConsolesView: SwiftUI.View {
             .shadow(color: .retroCyan.opacity(0.12), radius: 12)
             .frame(maxWidth: 280)
             if PVFeatureFlagsManager.shared.featureStates[.inAppFreeROMs] == true {
-                Button { showsFreeGames = true } label: {
+                Button { delegate?.didTapFreeROMs() } label: {
                     Text("Explore free games")
                         .font(.body.weight(.semibold))
                         .frame(maxWidth: 280, minHeight: 50)

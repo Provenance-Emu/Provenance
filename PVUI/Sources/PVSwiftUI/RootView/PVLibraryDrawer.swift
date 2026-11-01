@@ -179,9 +179,24 @@ struct PVLibraryDrawerHost<Content: View, Menu: View>: View {
         self.menu = menu()
     }
 
-    var body: some View {
+    private var isPinned: Bool {
         #if os(iOS)
-        if UIDevice.current.userInterfaceIdiom == .pad && horizontalSizeClass == .regular {
+        UIDevice.current.userInterfaceIdiom == .pad && horizontalSizeClass == .regular
+        #else
+        false
+        #endif
+    }
+
+    var body: some View {
+        layout(isPinned: isPinned)
+            .onAppear { viewModel.usesPinnedSidebar = isPinned }
+            .onChange(of: isPinned) { _, pinned in viewModel.usesPinnedSidebar = pinned }
+    }
+
+    @ViewBuilder
+    private func layout(isPinned: Bool) -> some View {
+        #if os(iOS)
+        if isPinned {
             HStack(spacing: 0) {
                 if !viewModel.isSidebarCollapsed {
                     menu
