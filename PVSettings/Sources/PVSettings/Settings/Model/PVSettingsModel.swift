@@ -856,7 +856,7 @@ public enum SkinMode: String, Codable, Equatable, UserDefaultsRepresentable, Def
     public var description: String {
         switch self {
         case .off:
-            return "Off (Classic)"
+            return "Off (Built-in Controller)"
         case .selectedOnly:
             return "Selected systems only"
         case .always:
@@ -867,9 +867,9 @@ public enum SkinMode: String, Codable, Equatable, UserDefaultsRepresentable, Def
     public var subtitle: String {
         switch self {
         case .off:
-            return "Always use the classic on-screen controller"
+            return "Always use the built-in on-screen controller"
         case .selectedOnly:
-            return "Use skins for selected systems, use classic controller as default"
+            return "Use skins for selected systems, use the built-in controller as default"
         case .always:
             return "Always use skins including the default generated skins"
         }

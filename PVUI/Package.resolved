@@ -1,5 +1,5 @@
 {
-  "originHash" : "090f409c721bf4fbd9021043788f08501e6ebdc69a5f71042694eaf48346ea97",
+  "originHash" : "e24ac7ef9b23711afaa19acdabe0d7468f04fa780948855697ba43126865766e",
   "pins" : [
     {
       "identity" : "activityindicatorview",
@@ -47,12 +47,12 @@
       }
     },
     {
-      "identity" : "checksum",
+      "identity" : "csqlite",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/JoeMatt/Checksum.git",
+      "location" : "https://github.com/stephencelis/CSQLite.git",
       "state" : {
-        "revision" : "11bf55d6ec0e4dbfff2bcd99b6b12c5ce5d57b91",
-        "version" : "1.1.1"
+        "revision" : "9106e983d5e3d5149ee35281ec089484b0def018",
+        "version" : "0.0.3"
       }
     },
     {
@@ -463,8 +463,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/apple/swift-nio.git",
       "state" : {
-        "revision" : "558f24a4647193b5a0e2104031b71c55d31ff83a",
-        "version" : "2.97.1"
+        "revision" : "6db9d9abd92ad7399b8a564cafbb87d3507245fa",
+        "version" : "2.104.0"
       }
     },
     {
@@ -472,8 +472,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/apple/swift-nio-extras.git",
       "state" : {
-        "revision" : "abcf5312eb8ed2fb11916078aef7c46b06f20813",
-        "version" : "1.33.0"
+        "revision" : "8e1249b29f92574e05e0d91637f239e378a9a95b",
+        "version" : "1.35.2"
       }
     },
     {
@@ -481,8 +481,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/apple/swift-nio-http2.git",
       "state" : {
-        "revision" : "6d8d596f0a9bfebb925733003731fe2d749b7e02",
-        "version" : "1.42.0"
+        "revision" : "0f3e54e29c944c2e835ad52159da7d9e1c94ac69",
+        "version" : "1.46.0"
       }
     },
     {

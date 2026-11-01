@@ -1016,6 +1016,9 @@ extension ControllerButtonPressTableView {
 
 // MARK: - Keyboard Controller
 
+/// How long a keyboard Start or Select press is held in the core.
+private let keyboardStartSelectHoldDuration: TimeInterval = 0.5
+
 //
 // create a GCController that turns a keyboard into a controller
 //
@@ -1135,19 +1138,13 @@ public extension GCKeyboard {
 
             // Bind / to select, rightShift to start
             if let emulator = emulationUIState.emulator, let core = emulationUIState.core, EmulationState.shared.stateSubject.value.isOn, core.isRunning {
-                if actionPressed(.select) {
-                    DLOG("Keyboard: Select pressed")
-                    emulator.controllerViewController?.pressSelect(forPlayer: 0)
-                    DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 0.5, execute: { () -> Void in
-                        emulator.controllerViewController?.releaseSelect(forPlayer: 0)
-                    })
-                }
-                if actionPressed(.start) {
-                    DLOG("Keyboard: Start pressed")
-                    emulator.controllerViewController?.pressStart(forPlayer: 0)
-                    DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 0.5, execute: { () -> Void in
-                        emulator.controllerViewController?.releaseStart(forPlayer: 0)
-                    })
+                let inputHandler = emulator.coreInputHandler
+                for (action, token) in [(KeyboardControllerAction.select, "select"), (.start, "start")] where actionPressed(action) {
+                    DLOG("Keyboard: \(token) pressed")
+                    inputHandler.sendCoreButton(token, isPressed: true)
+                    DispatchQueue.main.asyncAfter(deadline: .now() + keyboardStartSelectHoldDuration) {
+                        inputHandler.sendCoreButton(token, isPressed: false)
+                    }
                 }
             }
         }

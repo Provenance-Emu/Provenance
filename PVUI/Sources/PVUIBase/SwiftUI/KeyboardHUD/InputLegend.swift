@@ -16,15 +16,15 @@
 //     → `KeyboardControllerMap` / `KeyboardControllerAction`   (source of truth)
 //     → `GCKeyboard.createController()` in PVControllerManager.swift
 //     → either the virtual `GCExtendedGamepad` element, or (for
-//       `.start`/`.select` only) `controllerViewController.pressStart/pressSelect`
+//       `.start`/`.select` only) `coreInputHandler.sendCoreButton("start"/"select")`
 //     → the core.
 //
 // Two facts from that chain drive the rules below:
 //
 //  1. `.start` / `.select` never touch the virtual gamepad at all —
 //     `createController()` routes them straight to
-//     `controllerViewController?.pressStart(forPlayer:)` /`pressSelect(...)`,
-//     which is the *same* responder the on-screen Start/Select button uses.
+//     `coreInputHandler.sendCoreButton(_:isPressed:)`, which maps them through
+//     the *same* per-system table as the on-screen Start/Select button.
 //     So `PVStartButton` / `PVSelectButton`'s `PVControlTitle` from
 //     Systems.plist ("Start", "Run", "Mode", …) is exactly right for them,
 //     unconditionally.

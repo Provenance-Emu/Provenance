@@ -26,10 +26,10 @@ extension PVEmulatorViewController {
         // Mac ("Designed for iPad") and iPad-opted-in desktop input mode have no touch
         // surface for the skin to render on; keyboard/gamepad drive input instead.
         guard !GamepadManager.isDesktopInputMode else { return false }
-        guard Defaults[.skinMode] != .off && core.supportsSkins else { return false }
-        // The programmatic overlay covers every bound system without a packaged skin, including
-        // explicit-selection cores (Dolphin): a bound system always has an overlay to show.
+        // The programmatic overlay covers every known system without a packaged skin, including
+        // Classic mode, cores without skin support and explicit-selection cores (Dolphin).
         if programmaticOverlayCoversGame { return true }
+        guard ProgrammaticOverlaySupport.allowsPackagedSkins(for: core) else { return false }
         guard core.requiresExplicitSkinSelection else { return true }
         return hasExplicitSkinSelectionForGame
         #endif
@@ -495,22 +495,8 @@ extension PVEmulatorViewController {
             return
         }
 
-        // Create the input handler for both core-level and controller-level input
-
-        // Add debug logging for the controller view controller
-        if let controller = controllerViewController {
-            DLOG("Found controller view controller: \(controller) of type \(type(of: controller))")
-        } else {
-            DLOG("No controller view controller found")
-        }
-
-        // Log emulator controller availability
-        DLOG("Using self as emulator controller for special commands (quicksave/quickload)")
-
-        // Pass the controller view controller and emulator controller (self) to the input handler
-        let inputHandler = DeltaSkinInputHandler(emulatorCore: core,
-                                               controllerVC: controllerViewController,
-                                               emulatorController: self)
+        // The emulator controller (self) handles special commands like quicksave/quickload
+        let inputHandler = DeltaSkinInputHandler(emulatorCore: core, emulatorController: self)
         installMetalDualScreenSwap(on: inputHandler)
 
         // CRITICAL: Store this input handler in the shared property so it can be accessed

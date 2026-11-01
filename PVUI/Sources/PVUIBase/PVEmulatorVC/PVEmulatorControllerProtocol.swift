@@ -36,7 +36,8 @@ public protocol PVEmualatorControllerProtocol: AnyObject {
     // MARK: Timers
     var autosaveTimer: Timer?  { get }
 
-    var controllerViewController: (any ControllerVC)? { get }
+    /// Sends skin, overlay, keyboard and pause-menu input to the core.
+    var coreInputHandler: DeltaSkinInputHandler { get }
     func controllerPauseButtonPressed(_ sender: Any?)
 
     // MARK: - Methods

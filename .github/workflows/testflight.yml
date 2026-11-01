@@ -97,6 +97,9 @@ jobs:
         platform: ${{ fromJSON(needs.plan.outputs.matrix) }}
     # A single cold archive has measured >100 min.
     timeout-minutes: 300
+    env:
+      # release.sh labels its inner, unformatted logs iOS/tvOS (not the matrix's ios/tvos).
+      RAW_ARCHIVE_LOG: build/archives/xcodebuild-${{ matrix.platform == 'ios' && 'iOS' || 'tvOS' }}.log
     permissions:
       contents: read
       issues: write
@@ -350,6 +353,8 @@ jobs:
           SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
         run: |
           set -o pipefail
+          # A persistent runner can retain the previous attempt's archive log.
+          rm -f /tmp/testflight.log "$RAW_ARCHIVE_LOG"
           # Scheduled runs archive BOTH platforms. They were iOS-only for weeks
           # while the tvOS build was broken, which left the public tvOS TestFlight
           # stuck on a 2026-09-25 build. tvOS archives and uploads cleanly now: its
@@ -473,25 +478,9 @@ jobs:
       - name: Print build errors on failure
         if: failure()
         run: |
-          if [ -f /tmp/testflight.log ]; then
-            # Both formats: raw clang diagnostics (": error:", with the leading
-            # colon so ObjC selectors like ...:error: in warnings don't match) and
-            # the GitHub annotations xcbeautify rewrites them into ("^::error").
-            echo "::group::Compiler/linker diagnostics"
-            grep -E ": (fatal )?error:|^::error" /tmp/testflight.log | tail -100 \
-              || echo "(no compiler diagnostics found)"
-            echo "::endgroup::"
-            # Run Script phase failures surface only in this xcodebuild block.
-            echo "::group::Failed build commands"
-            grep -A15 "The following build commands failed:" /tmp/testflight.log \
-              || echo "(no 'build commands failed' summary found)"
-            echo "::endgroup::"
-            echo "::group::Last 100 lines of raw log"
-            tail -100 /tmp/testflight.log
-            echo "::endgroup::"
-          else
-            echo "::warning::/tmp/testflight.log not found — release.sh may have failed before xcodebuild ran"
-          fi
+          # The release transcript is already formatted once inside release.sh. Script and
+          # signing failures survive only in its separate inner xcodebuild log.
+          bash Scripts/ci/print-build-failure-logs.sh /tmp/testflight.log "$RAW_ARCHIVE_LOG"
 
       # Same rationale as build.yml: xcbeautify hides Run Script phase output,
       # so the raw log is the only place some failures appear.
@@ -501,7 +490,9 @@ jobs:
         with:
           # Per-platform: upload-artifact@v4 rejects two jobs uploading one name.
           name: testflight-log-${{ matrix.platform }}
-          path: /tmp/testflight.log
+          path: |
+            /tmp/testflight.log
+            ${{ env.RAW_ARCHIVE_LOG }}
           retention-days: 3
 
       - name: Clean up keychain
@@ -511,4 +502,4 @@ jobs:
           security delete-keychain "$RUNNER_TEMP/signing.keychain-db" 2>/dev/null || true
           # Persistent self-hosted runner: don't leave the archive log behind to be
           # mistaken for the next job's.
-          rm -f /tmp/testflight.log
+          rm -f /tmp/testflight.log "$RAW_ARCHIVE_LOG"
