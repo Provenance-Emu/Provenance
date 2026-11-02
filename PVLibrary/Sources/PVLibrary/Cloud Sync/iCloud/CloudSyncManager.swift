@@ -356,7 +356,7 @@ public class CloudSyncManager { // swiftlint:disable:this type_body_length
 
     /// Check if a file should be synced based on content type settings
     private func shouldSyncContent(type: CloudKitSyncContentType) -> Bool {
-        let userContentType = Defaults[.cloudKitSyncContentType]
+        let userContentType = CloudSyncContentAccess.effectiveScope(for: Defaults[.cloudKitSyncContentType])
 
         switch userContentType {
         case .all:
@@ -433,7 +433,7 @@ public class CloudSyncManager { // swiftlint:disable:this type_body_length
 
     /// Whether ROM metadata/content should be synced for the current content preference.
     private func shouldSyncROMContent() -> Bool {
-        switch Defaults[.cloudKitSyncContentType] {
+        switch CloudSyncContentAccess.effectiveScope(for: Defaults[.cloudKitSyncContentType]) {
         case .all, .romsOnly, .metadataOnly:
             return true
         case .saveStatesOnly:
@@ -443,12 +443,7 @@ public class CloudSyncManager { // swiftlint:disable:this type_body_length
 
     /// Whether save state metadata/content should be synced for the current content preference.
     private func shouldSyncSaveStateContent() -> Bool {
-        switch Defaults[.cloudKitSyncContentType] {
-        case .all, .saveStatesOnly, .metadataOnly:
-            return true
-        case .romsOnly:
-            return false
-        }
+        CloudSyncContentAccess.effectiveScope(for: Defaults[.cloudKitSyncContentType]).includesSaveProgress
     }
 
     // MARK: - Content Type Enum for Settings Integration

@@ -37,7 +37,7 @@ internal struct AdvancedTogglesView: View {
                     .padding(.vertical, 4)
                 }
                 
-                PremiumThemedToggle(isOn: $disableAutoLock) {
+                ThemedToggle(isOn: $disableAutoLock) {
                     SettingsRow(title: "Disable Auto Lock",
                                 subtitle: "Prevent device from auto-locking during gameplay.",
                                 icon: .sfSymbol("lock.open"),
