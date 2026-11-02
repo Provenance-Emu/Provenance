@@ -47,12 +47,12 @@
       }
     },
     {
-      "identity" : "csqlite",
+      "identity" : "checksum",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/stephencelis/CSQLite.git",
+      "location" : "https://github.com/JoeMatt/Checksum.git",
       "state" : {
-        "revision" : "9106e983d5e3d5149ee35281ec089484b0def018",
-        "version" : "0.0.3"
+        "revision" : "11bf55d6ec0e4dbfff2bcd99b6b12c5ce5d57b91",
+        "version" : "1.1.1"
       }
     },
     {

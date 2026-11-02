@@ -27,14 +27,17 @@ struct GameItemViewRow<Presentable: GameItemPresentable>: SwiftUI.View, Equatabl
         lhs.game.boxartAspectRatio == rhs.game.boxartAspectRatio &&
         lhs.game.systemShortName == rhs.game.systemShortName &&
         lhs.game.discCount == rhs.game.discCount &&
-        lhs.artwork?.hashValue == rhs.artwork?.hashValue &&
+        lhs.game.isPatchVariant == rhs.game.isPatchVariant &&
+        lhs.artwork === rhs.artwork &&
+        lhs.artwork?.size == rhs.artwork?.size &&
         lhs.hoverScale == rhs.hoverScale &&
         lhs.glowIntensity == rhs.glowIntensity
     }
 
     /// Use plain property instead of @ObservedRealmObject for performance
     let game: Presentable
-    @Default(.showGameTitles) private var showGameTitles
+    @ScaledMetric(relativeTo: .caption) private var textScale: CGFloat = 1
+    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
     @Default(.iCloudSync) private var iCloudSyncEnabled
 
     var artwork: SwiftImage?
@@ -75,7 +78,7 @@ struct GameItemViewRow<Presentable: GameItemPresentable>: SwiftUI.View, Equatabl
 
     var body: some SwiftUI.View {
         if !game.isInvalidated {
-            HStack(alignment: .center, spacing: 16) {
+            HStack(alignment: .center, spacing: 12) {
                 // Game cover image with effects
                 ZStack {
                     // Glow effect behind the image
@@ -93,8 +96,7 @@ struct GameItemViewRow<Presentable: GameItemPresentable>: SwiftUI.View, Equatabl
                         .frame(width: 60, height: 60)
                         .scaleEffect(hoverScale)
                         .overlay(alignment: .bottomLeading) {
-                            PatchTileBadge(isPatchVariant: game.isPatchVariant, md5: game.md5)
-                                .scaleEffect(0.75, anchor: .bottomLeading)
+                            PatchTileBadge(isPatchVariant: game.isPatchVariant, md5: game.md5, compact: true)
                                 .padding(2)
                         }
                         .overlay(alignment: .topTrailing) {
@@ -129,50 +131,61 @@ struct GameItemViewRow<Presentable: GameItemPresentable>: SwiftUI.View, Equatabl
                                 radius: glowIntensity > 0 ? 8 : 0,
                                 x: 0, y: 0)
                 }
-                .overlay(alignment: .topTrailing) {
+                .overlay(alignment: .bottomTrailing) {
                     if shouldShowDiscIndicator {
-                        DiscIndicatorView(count: discCount)
-                            .offset(x: 5, y: -5)
-                            .scaleEffect(0.8)
+                        DiscIndicatorView(count: discCount, compact: true)
+                            .padding(2)
                     }
                 }
 
                 // Game details
                 VStack(alignment: .leading, spacing: 4) {
                     // Title with marquee effect for long titles
-                    MarqueeText(text: game.title,
-                                font: .system(size: viewType.titleFontSize, weight: .bold, design: .monospaced),
-                                delay: 1.0,
-                                speed: 50.0,
-                                loop: true)
-                        .foregroundColor(textColor)
-                        .frame(maxWidth: .infinity, alignment: .leading)
+                    Group {
+                        if dynamicTypeSize.isAccessibilitySize {
+                            Text(game.title)
+                                .font(.system(size: 13 * textScale, weight: .medium))
+                                .lineLimit(2)
+                                .fixedSize(horizontal: false, vertical: true)
+                        } else {
+                            MarqueeText(text: game.title,
+                                        font: .system(size: 13 * textScale, weight: .medium),
+                                        delay: 1.0,
+                                        speed: 50.0,
+                                        loop: true)
+                        }
+                    }
+                    .foregroundColor(textColor)
+                    .frame(maxWidth: .infinity, alignment: .leading)
 
                     // Game metadata row
                     HStack(spacing: 12) {
                         // System name
-                        if let systemShortName = game.systemShortName {
+                        if let systemShortName = game.systemShortName, !systemShortName.isEmpty {
                             Text(systemShortName.uppercased())
-                                .font(.system(size: viewType.subtitleFontSize, weight: .semibold, design: .monospaced))
+                                .font(.system(size: viewType.subtitleFontSize * textScale, weight: .semibold))
                                 .foregroundColor(secondaryColor)
-                                .shadow(color: glowColor.opacity(0.5), radius: 1, x: 0, y: 0)
                         }
 
                         // Release date
-                        if let publishDate = game.publishDate {
+                        if let publishDate = game.publishDate, !publishDate.isEmpty {
                             Text(publishDate)
-                                .font(.system(size: viewType.subtitleFontSize - 1, weight: .medium, design: .monospaced))
-                                .foregroundColor(Color.retroCyan)
-                                .shadow(color: glowColor.opacity(0.3), radius: 1, x: 0, y: 0)
+                                .font(.system(size: (viewType.subtitleFontSize - 1) * textScale, weight: .medium))
+                                .foregroundColor(textColor.opacity(0.7))
                         }
 
                         Spacer()
 
                         // Rating stars
                         if game.rating > 0 {
-                            Text(String(repeating: "⭐️", count: game.rating))
-                                .font(.system(size: viewType.subtitleFontSize - 2))
-                                .lineLimit(1)
+                            HStack(spacing: 1) {
+                                ForEach(0..<min(5, game.rating), id: \.self) { _ in
+                                    Image(systemName: "star.fill")
+                                }
+                            }
+                            .font(.system(size: 9))
+                            .foregroundStyle(Color.retroYellow)
+                            .accessibilityLabel("Rating: \(game.rating) stars")
                         }
                     }
 
@@ -181,9 +194,8 @@ struct GameItemViewRow<Presentable: GameItemPresentable>: SwiftUI.View, Equatabl
                         // Last played date
                         if let lastPlayed = game.lastPlayed {
                             Text("PLAYED: \(lastPlayed.formatted(date: .numeric, time: .shortened))")
-                                .font(.system(size: viewType.subtitleFontSize - 2, weight: .medium, design: .monospaced))
-                                .foregroundColor(Color.retroCyan.opacity(0.8))
-                                .shadow(color: glowColor.opacity(0.3), radius: 1, x: 0, y: 0)
+                                .font(.system(size: (viewType.subtitleFontSize - 2) * textScale, weight: .medium))
+                                .foregroundColor(textColor.opacity(0.65))
                         }
 
                         Spacer()
@@ -191,33 +203,32 @@ struct GameItemViewRow<Presentable: GameItemPresentable>: SwiftUI.View, Equatabl
                         // Play count
                         if game.playCount > 0 {
                             Text("\(game.playCount)x")
-                                .font(.system(size: viewType.subtitleFontSize - 2, weight: .bold, design: .monospaced))
+                                .font(.system(size: (viewType.subtitleFontSize - 2) * textScale, weight: .bold))
                                 .foregroundColor(secondaryColor.opacity(0.8))
-                                .shadow(color: glowColor.opacity(0.3), radius: 1, x: 0, y: 0)
                         }
                     }
                 }
                 .padding(.vertical, 4)
             }
             .padding(.horizontal, 8)
-            .frame(height: 70.0)
+            .frame(minHeight: 78)
             .background(
                 ZStack {
                     RoundedRectangle(cornerRadius: 8)
-                        .fill(Color.retroBlack.opacity(0.6))
+                        .fill(Color.retroDarkBlue.opacity(0.78))
 
                     // Border gradient
                     RoundedRectangle(cornerRadius: 8)
                         .strokeBorder(
                             LinearGradient(
                                 gradient: Gradient(colors: [
-                                    glowIntensity > 0 ? glowColor.opacity(0.6) : Color.clear,
-                                    glowIntensity > 0 ? secondaryColor.opacity(0.6) : Color.clear
+                                    glowColor.opacity(glowIntensity > 0 ? 0.6 : 0.2),
+                                    secondaryColor.opacity(glowIntensity > 0 ? 0.6 : 0.28)
                                 ]),
                                 startPoint: .topLeading,
                                 endPoint: .bottomTrailing
                             ),
-                            lineWidth: 1.5
+                            lineWidth: 0.7
                         )
                 }
             )

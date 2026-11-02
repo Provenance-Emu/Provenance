@@ -59,12 +59,13 @@ final class PVLibraryNavigation: ObservableObject, PVMenuDelegate, PVRootDelegat
         selectTab(LibraryTabSelection.destination(from: tabs.selectedTab, systems: gameLibrary.activeSystems.map(\.identifier), isNext: isNext))
     }
 
-    func didTapHome() { selectTab("home"); closeMenu() }
+    func didTapHome() { viewModel.libraryDestination = .home; selectTab("home"); closeMenu() }
     func didTapConsole(with consoleId: String) { selectTab(consoleId); closeMenu() }
     func didTapCollection(with collection: Int) { showUnderConstructionAlert() }
     func closeMenu() { viewModel.isMenuVisible = false }
     func didTapSettings() { closeMenu(); sheet = .settings }
     func didTapImports() { closeMenu(); sheet = .imports }
+    func didTapFreeROMs() { closeMenu(); sheet = .freeROMs }
     func didTapAddGames() { closeMenu(); showsImportSources = true }
 
     func handle(_ destination: ScreenDestination) {

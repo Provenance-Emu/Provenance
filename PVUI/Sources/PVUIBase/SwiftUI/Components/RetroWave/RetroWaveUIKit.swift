@@ -12,12 +12,12 @@ import SwiftUI
 
 // Retrowave color palette for UIKit
 public extension UIColor {
-    static let retroPink = UIColor(red: 0.98, green: 0.2, blue: 0.6, alpha: 1.0)
-    static let retroPurple = UIColor(red: 0.5, green: 0.0, blue: 0.8, alpha: 1.0)
-    static let retroBlue = UIColor(red: 0.0, green: 0.8, blue: 0.95, alpha: 1.0)
+    static var retroPink: UIColor { RetroThemeColors.color(.tertiary) }
+    static var retroPurple: UIColor { RetroThemeColors.color(.secondary) }
+    static var retroBlue: UIColor { RetroThemeColors.color(.primary) }
     static let retroYellow = UIColor(red: 0.98, green: 0.84, blue: 0.2, alpha: 1.0)
     static let retroOrange = UIColor(red: 0.98, green: 0.5, blue: 0.2, alpha: 1.0)
-    static let retroBlack = UIColor(red: 0.05, green: 0.05, blue: 0.1, alpha: 1.0)
+    static var retroBlack: UIColor { RetroThemeColors.color(.background) }
 }
 
 // UIKit styling extensions

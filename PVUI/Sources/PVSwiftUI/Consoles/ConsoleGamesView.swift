@@ -79,6 +79,7 @@ struct ConsoleGamesView: SwiftUI.View {
     @ObservedObject var viewModel: PVRootViewModel
     @ObservedRealmObject var console: PVSystem
     @EnvironmentObject var themeManager: ThemeManager
+    @Environment(\.verticalSizeClass) private var verticalSizeClass
 
     // Properties that were @Default in the View, now @Default in ViewModel
     @Default(.libraryGridColumnAdjustment) var libraryGridColumnAdjustment: Int
@@ -318,16 +319,16 @@ struct ConsoleGamesView: SwiftUI.View {
 
                     continueSection()
                         .id("section_continues")
-                        .padding(.horizontal, 10)
+                        .padding(.horizontal, 24)
                     favoritesSection()
                         .id("section_favorites")
-                        .padding(.horizontal, 10)
+                        .padding(.horizontal, 24)
                     recentlyPlayedSection()
                         .id("section_recent")
-                        .padding(.horizontal, 10)
+                        .padding(.horizontal, 24)
                     gamesSection()
                         .id("section_allgames")
-                        .padding(.horizontal, 10)
+                        .padding(.horizontal, 24)
                 }
                 /// Clear the page-dots index. BiosesView sits below the scroll view and insets itself.
                 .padding(.bottom, LibraryLayout.pageIndexClearance)
@@ -363,7 +364,7 @@ struct ConsoleGamesView: SwiftUI.View {
         if gamesViewModel.hasBioses {
             BiosesView(console: console)
                 .padding(.horizontal, 8)
-                .padding(.bottom, 66) // Account for tab bar height
+                .padding(.bottom, 8)
         } else {
             emptyView
         }
@@ -375,7 +376,6 @@ struct ConsoleGamesView: SwiftUI.View {
             Text("")
         }
         .padding(.horizontal)
-        .padding(.bottom, 44) // Account for tab bar height
     }
 
     /// Image Picker Sheet modifier
@@ -431,8 +431,15 @@ struct ConsoleGamesView: SwiftUI.View {
                     // clamps them all. The group keeps the outer stack's 4pt spacing inside and
                     // out, so it is layout-identical off-Mac, where the modifier is identity.
                     VStack(spacing: 4) {
-                        displayOptionsView()
-                            .allowsHitTesting(true)
+                        if verticalSizeClass == .compact {
+                            HStack(spacing: 0) {
+                                systemHeading
+                                displayOptionsView().frame(maxWidth: 420)
+                            }
+                        } else {
+                            systemHeading
+                            displayOptionsView()
+                        }
 
                         importProgressView
 
@@ -1030,7 +1037,6 @@ struct ConsoleGamesView: SwiftUI.View {
             isEnabled: allGamesModels.count > 8,
             searchText: $gamesViewModel.searchText
         ))
-        .ignoresSafeArea(.all)
         // ROM drag & drop import — iOS/iPadOS/macCatalyst only (#3406)
 #if os(iOS)
         .romDropTarget()
@@ -1044,7 +1050,7 @@ struct ConsoleGamesView: SwiftUI.View {
     }
 
     var itemsPerRow: Int {
-        LibraryGrid.columns(forWidth: gridWidth, adjustment: libraryGridColumnAdjustment)
+        LibraryGrid.columns(forWidth: gridWidth, adjustment: libraryGridColumnAdjustment, compactHeight: verticalSizeClass == .compact)
     }
 
     private var columns: [GridItem] {
@@ -1495,6 +1501,22 @@ struct ConsoleGamesView: SwiftUI.View {
 // MARK: - View Components
 extension ConsoleGamesView {
 
+    private var systemHeading: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Text(console.name)
+                .font(.system(size: 24, weight: .medium, design: .rounded))
+                .foregroundStyle(Color.retroBlue)
+                .lineLimit(2)
+            Text("\(allGamesModels.count) games · \(console.manufacturer)")
+                .font(.system(size: 13))
+                .foregroundStyle(.secondary)
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(.horizontal, 24)
+        .padding(.top, 12)
+        .padding(.bottom, 4)
+    }
+
     @ViewBuilder
     private func displayOptionsView() -> some View {
         GamesDisplayOptionsView(
@@ -1526,15 +1548,14 @@ extension ConsoleGamesView {
                 showSkinCatalog = true
             },
             settingsContext: .console(console),
+            usesCompactMenu: true,
+            gameCount: allGamesModels.count,
+            importGamesAction: { (rootDelegate as? PVMenuDelegate)?.didTapAddGames() },
             toggleFilterAction: { self.rootDelegate?.showUnderConstructionAlert() },
             toggleSortAction: { viewModel.sortGamesAscending.toggle() },
             toggleViewTypeAction: { viewModel.viewGamesAsGrid.toggle() }
         )
-        .padding(.vertical, 12)
-        .padding(.horizontal, 12)
-        .retroPausePanelBackground(isDark: themeManager.currentPalette.dark)
-        .clipShape(RoundedRectangle(cornerRadius: RetroPauseChrome.panelCornerRadius))
-        .padding(.horizontal, 8)
+        .padding(.horizontal, 24)
         .allowsHitTesting(true)
     }
 
@@ -1587,7 +1608,7 @@ extension ConsoleGamesView {
     private func gamesSection() -> some View {
         Group {
             if allGamesModels.isEmpty {
-                if AppState.shared.isSimulator {
+                if AppState.shared.isSimulator && ProcessInfo.processInfo.arguments.contains("-PVShowEmptySystems") {
                     let fakeGames = PVGame.mockGenerate(systemID: console.identifier)
                     if viewModel.viewGamesAsGrid {
                         showGamesGrid(fakeGames)
@@ -1622,48 +1643,27 @@ extension ConsoleGamesView {
 
     @ViewBuilder
     private func titleBar() -> some View {
-        HStack {
-            VStack(alignment: .leading, spacing: 2) {
-                // The console name is already shown by the page tab, so only the subtitle remains.
-                HStack {
-                    Text(console.manufacturer)
-                        .font(.system(.subheadline, design: .monospaced))
-                        .foregroundColor(themeManager.currentPalette.defaultTintColor.swiftUIColor)
-                        .shadow(color: Color.retroPink.opacity(0.5), radius: 1, x: 1, y: 1)
-
-                    if console.releaseYear > 1970 {
-                        Text("•")
-                        Text(String(console.releaseYear))
-                            .font(.system(.subheadline, design: .monospaced))
-                            .foregroundColor(themeManager.currentPalette.defaultTintColor.swiftUIColor)
-                            .shadow(color: Color.retroPink.opacity(0.5), radius: 1, x: 1, y: 1)
-                    }
+        HStack(spacing: 10) {
+            VStack(alignment: .leading, spacing: 3) {
+                Text("All \(console.name) games")
+                    .font(.system(size: 16, weight: .semibold))
+                    .foregroundStyle(Color(themeManager.currentPalette.gameLibraryText))
+                if console.releaseYear > 1970 {
+                    Text("\(console.manufacturer) · \(String(console.releaseYear))")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
                 }
             }
-
-            Spacer()
-
-            // Use the already-computed snapshot count to avoid a live Realm
-            // relationship traversal on every body evaluation.
+            Spacer(minLength: 0)
             Text("\(allGamesModels.count)")
-                .font(.system(size: 12, weight: .semibold, design: .rounded))
-                .foregroundColor(themeManager.currentPalette.gameLibraryText.swiftUIColor)
-                .shadow(color: .retroCyan.opacity(0.5), radius: 3)
-                .padding(.horizontal, 8)
-                .padding(.vertical, 4)
-                .background {
-                    RetroPauseInsetPillBackground(isDark: themeManager.currentPalette.dark)
-                }
-
-#if !os(tvOS)
+                .font(.caption)
+                .foregroundStyle(.secondary)
+            #if !os(tvOS)
             multiSelectToggleButton
-#endif
+            #endif
         }
+        .frame(minHeight: 44)
         .padding(.vertical, 6)
-        .padding(.horizontal, 16)
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .retroPausePanelBackground(isDark: themeManager.currentPalette.dark)
-        .clipShape(RoundedRectangle(cornerRadius: RetroPauseChrome.panelCornerRadius))
         .contentShape(Rectangle())
     }
 

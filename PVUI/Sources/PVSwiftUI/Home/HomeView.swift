@@ -67,7 +67,13 @@ struct HomeView: SwiftUI.View {
     private var recentlyPlayedGames: [GameCellModel] { homeViewModel.recentlyPlayedModels }
     private var favorites: [GameCellModel] { homeViewModel.favoritesModels }
     private var mostPlayed: [GameCellModel] { homeViewModel.mostPlayedModels }
-    private var allGames: [GameCellModel] { homeViewModel.allGamesModels }
+    private var allGames: [GameCellModel] {
+        switch viewModel.libraryDestination {
+        case .home: return homeViewModel.allGamesModels
+        case .favorites: return favorites
+        case .recentlyPlayed: return recentlyPlayedGames
+        }
+    }
 
     @State private var gamepadCancellable: AnyCancellable?
 
@@ -102,7 +108,13 @@ struct HomeView: SwiftUI.View {
     @State private var showPatchApplier = false
     @State private var patchApplierGameMD5: String?
 
-    @State private var searchText = ""
+    @ObservedObject private var librarySearch: LibrarySearchState
+
+    private var searchText: String { librarySearch.query }
+
+    private var isSearchFieldVisible: Bool {
+        librarySearch.isFieldVisible(gameCount: allGames.count, prefersSearchbar: showSearchbar)
+    }
 
 
     init(
@@ -114,6 +126,7 @@ struct HomeView: SwiftUI.View {
         //        self.gameLibrary = gameLibrary
         self.rootDelegate = delegate
         self.viewModel = viewModel
+        self._librarySearch = ObservedObject(wrappedValue: viewModel.librarySearch)
         self.showGameInfo = showGameInfo
         self._homeViewModel = StateObject(wrappedValue: HomeViewModel(sortAscending: viewModel.sortGamesAscending))
 
@@ -152,7 +165,8 @@ struct HomeView: SwiftUI.View {
     }
 
     private var availableSections: [HomeSectionType] {
-        [
+        if viewModel.libraryDestination != .home { return allGames.isEmpty ? [] : [.allGames] }
+        return [
             (showRecentSaveStates && !recentSaveStateIDs.isEmpty) ? .recentSaveStates : nil,
             (showRecentGames && !recentlyPlayedGames.isEmpty) ? .recentlyPlayedGames : nil,
             (showFavorites && !favorites.isEmpty) ? .favorites : nil,
@@ -214,16 +228,13 @@ struct HomeView: SwiftUI.View {
                 ScrollView {
                     ScrollViewReader { proxy in
                         LazyVStack {
-                            if usesCompactChrome && !(showRecentSaveStates && !recentSaveStateIDs.isEmpty) {
-                                HStack {
-                                    Spacer()
-                                    displayOptionsView()
-                                }
+                            if usesCompactChrome {
+                                displayOptionsView()
                                 .padding(.horizontal, 10)
                             }
                             // Search bar inside scroll — no auto-hide, just scrolls with content
-                            if allGames.count > 8 && showSearchbar {
-                                PVSearchBar(text: $searchText)
+                            if isSearchFieldVisible {
+                                PVSearchBar(text: $librarySearch.query)
                                     // Desktop aligns the field to the same gutter as the
                                     // shelves and grid; touch keeps its wider 16pt inset.
                                     .padding(.horizontal, DesktopLibraryMetrics.isDesktop ? DesktopLibraryMetrics.columnGutter : 16)
@@ -237,15 +248,17 @@ struct HomeView: SwiftUI.View {
                                     .padding(.horizontal)
                                     .padding(.vertical, 4)
                             }
-                            continuesSection()
-                                .id("section_continues")
-                            favoritesSection()
-                                .id("section_favorites")
-                            recentlyPlayedSection()
-                                .id("section_recent")
-                            mostPlayedSection()
+                            if viewModel.libraryDestination == .home {
+                                continuesSection()
+                                    .id("section_continues")
+                                favoritesSection()
+                                    .id("section_favorites")
+                                recentlyPlayedSection()
+                                    .id("section_recent")
+                                mostPlayedSection()
+                            }
                             if usesCompactChrome && !allGames.isEmpty {
-                                Text(String(localized: "All Games").uppercased())
+                                Text(viewModel.libraryDestination == .home ? String(localized: "All Games") : viewModel.libraryDestination.title)
                                     .foregroundStyle(themeManager.currentPalette.gameLibraryText.swiftUIColor.opacity(0.72))
                                     .retroPauseSectionHeaderTypography()
                                     .frame(maxWidth: .infinity, alignment: .leading)
@@ -274,7 +287,7 @@ struct HomeView: SwiftUI.View {
                 }
                 .overlay(
                     Group {
-                        if !searchText.isEmpty {
+                        if isSearchFieldVisible && !searchText.isEmpty {
                             ScrollView {
                                 searchResultsView()
                                     .desktopLibraryContentColumn()
@@ -284,7 +297,6 @@ struct HomeView: SwiftUI.View {
                     }
                 )
             }
-            .background(themeManager.currentPalette.gameLibraryBackground.swiftUIColor)
             .padding(.bottom, LibraryLayout.pageIndexClearance)
         }
         .background {
@@ -308,24 +320,17 @@ struct HomeView: SwiftUI.View {
         .onChange(of: viewModel.sortGamesAscending) { newValue in
             homeViewModel.sortAscending = newValue
         }
+        .onChange(of: isSearchFieldVisible) { _, visible in
+            if !visible { librarySearch.query = "" }
+        }
         .onChange(of: GamepadManager.shared.isControllerConnected) { isConnected in
             isControllerConnected = isConnected
             if isConnected {
                 setInitialFocus()
             }
         }
-        .task {
-            // Set initial focus
-            if let firstSection = [
-                showRecentSaveStates && !recentSaveStateIDs.isEmpty ? HomeSectionType.recentSaveStates : nil,
-                showRecentGames && !recentlyPlayedGames.isEmpty ? .recentlyPlayedGames : nil,
-                showFavorites && !favorites.isEmpty ? .favorites : nil,
-                !allGames.isEmpty ? .allGames : nil
-            ].compactMap({ $0 }).first {
-                focusedSection = firstSection
-                focusedItemInSection = getFirstItemInSection(firstSection)
-            }
-        }
+        .task { setInitialFocus() }
+        .onChange(of: viewModel.libraryDestination) { _ in setInitialFocus() }
         .onDisappear {
             delayTask?.cancel()
             continuousNavigationTask?.cancel()
@@ -665,7 +670,9 @@ struct HomeView: SwiftUI.View {
     /// `.onReceive(LibraryNavigator.shared.$pendingAction)` (hot-launch / foreground handoff).
     private func consumePendingSearch() {
         LibraryNavigator.shared.consumeSearch { query in
-            searchText = query
+            viewModel.libraryDestination = .home
+            librarySearch.query = query
+            viewModel.showsLibrarySearch = true
         }
     }
 
@@ -708,12 +715,12 @@ struct HomeView: SwiftUI.View {
     @Default(.libraryGridColumnAdjustment) internal var libraryGridColumnAdjustment
     /// Width the grid is laid out in; drives the column count.
     @State private var gridWidth: CGFloat = 0
+    @Environment(\.verticalSizeClass) private var verticalSizeClass
 
     var itemsPerRow: Int {
-        let columns = LibraryGrid.columns(forWidth: gridWidth, adjustment: libraryGridColumnAdjustment)
-        /// A library smaller than one row fills the row rather than leaving
-        /// most of it empty.
-        return max(1, min(columns, allGames.count))
+        let columns = LibraryGrid.columns(forWidth: gridWidth, adjustment: libraryGridColumnAdjustment, compactHeight: verticalSizeClass == .compact)
+        // Keep artwork compact even when fewer than one row of games is available.
+        return columns
     }
 
 
@@ -744,7 +751,9 @@ struct HomeView: SwiftUI.View {
                 NotificationCenter.default.post(name: NSNotification.Name("PVShowSettings"), object: nil)
             },
             settingsContext: .home,
-            usesCompactMenu: usesCompactChrome,
+            usesCompactMenu: true,
+            gameCount: allGames.count,
+            importGamesAction: { (rootDelegate as? PVMenuDelegate)?.didTapAddGames() },
             toggleFilterAction: { self.rootDelegate?.showUnderConstructionAlert() },
             toggleSortAction: {
                 viewModel.sortGamesAscending.toggle()
@@ -752,16 +761,11 @@ struct HomeView: SwiftUI.View {
             },
             toggleViewTypeAction: { viewModel.viewGamesAsGrid.toggle() }
         )
-        .padding(.vertical, usesCompactChrome ? 0 : 12)
-        .padding(.horizontal, usesCompactChrome ? 0 : 12)
-        .background {
-            if !usesCompactChrome {
-                Color.clear
-                    .retroPausePanelBackground(isDark: themeManager.currentPalette.dark)
-            }
-        }
+        .padding(.vertical, 0)
+        .padding(.horizontal, 0)
+
         .clipShape(RoundedRectangle(cornerRadius: RetroPauseChrome.panelCornerRadius))
-        .padding(.horizontal, usesCompactChrome ? 0 : 8)
+        .padding(.horizontal, 24)
         .padding(.vertical, usesCompactChrome ? 0 : 8)
     }
 
@@ -1102,9 +1106,6 @@ struct HomeView: SwiftUI.View {
                         .foregroundColor(themeManager.currentPalette.gameLibraryText.swiftUIColor.opacity(0.72))
                         .retroPauseSectionHeaderTypography()
                     Spacer()
-                    if usesCompactChrome {
-                        displayOptionsView()
-                    }
                     if !recentSaveStates.isEmpty {
                         Button {
                             showAllSavesBrowser = true
@@ -1223,15 +1224,8 @@ struct HomeView: SwiftUI.View {
 #endif
 
     private func setInitialFocus() {
-        if let firstSection = [
-            showRecentSaveStates && !recentSaveStateIDs.isEmpty ? HomeSectionType.recentSaveStates : nil,
-            showRecentGames && !recentlyPlayedGames.isEmpty ? .recentlyPlayedGames : nil,
-            showFavorites && !favorites.isEmpty ? .favorites : nil,
-            !allGames.isEmpty ? .allGames : nil
-        ].compactMap({ $0 }).first {
-            focusedSection = firstSection
-            focusedItemInSection = getFirstItemInSection(firstSection)
-        }
+        focusedSection = availableSections.first
+        focusedItemInSection = focusedSection.flatMap(getFirstItemInSection)
     }
 
     private func handleVerticalNavigationWithinSection(_ section: HomeSectionType, direction: Float) {
@@ -1244,7 +1238,7 @@ struct HomeView: SwiftUI.View {
                let currentIndex = games.firstIndex(where: { $0.id == currentItem }) {
 
                 // Calculate items per row based on screen width or use default
-                let itemsPerRow = 4 // We can make this dynamic later if needed
+                let itemsPerRow = viewModel.viewGamesAsGrid ? self.itemsPerRow : 1
 
                 if direction > 0 { // Moving up
                     let newIndex = currentIndex - itemsPerRow

@@ -31,6 +31,9 @@ public protocol PVMenuDelegate: AnyObject {
     /// Delete all game data, settings and configurations, then re-import everything.
     /// This is destructive and removes custom artwork and names.
     func didTapResetLibrary()
+
+    /// Open the in-app free ROM browser from a host that outlives the empty-library screen.
+    func didTapFreeROMs()
 }
 
 // MARK: - Default Library Management Implementations
@@ -53,5 +56,9 @@ public extension PVMenuDelegate {
 
     func didTapResetLibrary() {
         NotificationCenter.default.post(name: .PVResetLibrary, object: nil)
+    }
+
+    func didTapFreeROMs() {
+        didTapImports()
     }
 }

@@ -52,20 +52,22 @@ public final class PatchCountStore: ObservableObject {
 public struct PatchTileBadge: View {
     private let isPatchVariant: Bool
     private let md5: String
+    private let compact: Bool
     @ObservedObject private var store = PatchCountStore.shared
 
-    public init(isPatchVariant: Bool, md5: String) {
+    public init(isPatchVariant: Bool, md5: String, compact: Bool = false) {
         self.isPatchVariant = isPatchVariant
         self.md5 = md5
+        self.compact = compact
     }
 
     public var body: some View {
         Group {
             let count = store.count(forGameMD5: md5)
             if isPatchVariant {
-                PatchIndicatorView()
+                PatchIndicatorView(compact: compact)
             } else if count > 0 {
-                PatchCountIndicatorView(count: count)
+                PatchCountIndicatorView(count: count, compact: compact)
             }
         }
         .allowsHitTesting(false)
@@ -74,14 +76,17 @@ public struct PatchTileBadge: View {
 
 struct PatchCountIndicatorView: View {
     let count: Int
+    var compact = false
 
     var body: some View {
         HStack(spacing: 2) {
             Image(systemName: "bandage")
             Text("\(count)")
         }
-        .font(.system(size: 12, weight: .bold))
-        .padding(4)
+        .font(.system(size: compact ? 8 : 10, weight: .semibold))
+        .lineLimit(1)
+        .minimumScaleFactor(0.7)
+        .padding(compact ? 2 : 3)
         .background(Material.ultraThin)
         .clipShape(Capsule())
         .accessibilityLabel(count == 1 ? "1 patched version" : "\(count) patched versions")

@@ -12,7 +12,7 @@ import PVThemes
 /// A view that displays the cloud sync status of a game
 public struct CloudSyncIndicatorView: View {
 
-    enum CloudStatus {
+    enum CloudStatus: Equatable {
         case available
         case downloading
         case downloaded
@@ -27,19 +27,25 @@ public struct CloudSyncIndicatorView: View {
     @ObservedObject private var themeManager = ThemeManager.shared
 
     public init(isDownloaded: Bool, hasCloudAssets: Bool, isDownloading: Bool = false, syncEnabled: Bool = true, size: CGFloat = 20) {
-        if !hasCloudAssets {
-            self.status = .none
-        } else if !syncEnabled && !isDownloaded {
-            self.status = .syncDisabled
-        } else if isDownloading {
-            self.status = .downloading
-        } else if isDownloaded {
-            self.status = .downloaded
-        } else {
-            self.status = .available
-        }
+        self.status = Self.resolveStatus(isDownloaded: isDownloaded, hasCloudAssets: hasCloudAssets,
+                                         isDownloading: isDownloading, syncEnabled: syncEnabled)
 
         self.size = size
+    }
+
+    /// Downloaded files stay usable when sync is off; absent cloud records never get a badge.
+    static func resolveStatus(isDownloaded: Bool, hasCloudAssets: Bool, isDownloading: Bool, syncEnabled: Bool) -> CloudStatus {
+        if !hasCloudAssets {
+            return .none
+        } else if !syncEnabled && !isDownloaded {
+            return .syncDisabled
+        } else if isDownloading {
+            return .downloading
+        } else if isDownloaded {
+            return .downloaded
+        } else {
+            return .available
+        }
     }
 
     public var body: some View {
