@@ -77,7 +77,7 @@ enum PauseTileMetrics {
     static let sectionTitleSize: CGFloat = 16
     static let infoTextSize: CGFloat = 18
     #else
-    static let iconSize: CGFloat = 20
+    static let iconSize: CGFloat = 28
     static let labelSize: CGFloat = 11.5
     static let badgeSize: CGFloat = 9.5
     static let sectionTitleSize: CGFloat = 11
@@ -143,6 +143,9 @@ struct PauseTileMenuView: View {
     @State private var hardwareSwitchStates: [String: Bool] = [:]
     /// Query string for global tile search.
     @State private var searchText: String = ""
+    @State private var showsSearch = false
+    @ScaledMetric(relativeTo: .caption) private var tooltipHeight: CGFloat = 76
+    @ScaledMetric(relativeTo: .caption) private var tooltipFontSize = PauseTileMetrics.infoTextSize
     /// Ranked search results across the full pause-menu tree.
     @State private var searchResults: [PauseMenuSearchResult] = []
     /// Description text shown in the bottom info shelf when a tile is focused/long-pressed.
@@ -161,10 +164,9 @@ struct PauseTileMenuView: View {
     @State private var appearedUptime: TimeInterval = ProcessInfo.processInfo.systemUptime
     #endif
 
-    // MARK: Size class / orientation
+    // MARK: Layout and environment
 
-    @Environment(\.horizontalSizeClass) private var horizontalSizeClass
-    @Environment(\.verticalSizeClass) private var verticalSizeClass
+    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
     @Environment(\.featureFlags) private var featureFlags
     @Environment(\.scenePhase) private var scenePhase
 
@@ -188,22 +190,12 @@ struct PauseTileMenuView: View {
     #endif
 
     #if os(iOS)
-    @State private var orientation: UIDeviceOrientation = UIDevice.current.orientation
     @StateObject private var gamepadManager = GamepadManager.shared
     /// Live width of the floating tile panel (driven by GeometryReader in `body`).
     /// Mirrors the `panelWidth` local in the layout so that controller nav helpers
     /// can compute the actual column count per row without re-deriving from UIScreen.
     @State private var currentPanelWidth: CGFloat = 0
     #endif
-
-    private var isLandscape: Bool {
-        #if os(iOS)
-        if horizontalSizeClass == .regular && verticalSizeClass == .compact { return true }
-        return orientation.isLandscape
-        #else
-        return true
-        #endif
-    }
 
     /// Scroll anchor for the panel's title row.
     private static let panelTopID = "pauseMenu.panelTop"
@@ -483,7 +475,7 @@ struct PauseTileMenuView: View {
     private var routeTitle: String {
         switch currentRoute {
         case .root:
-            return String(localized: "GAME MENU")
+            return String(localized: "Game menu")
         case .states:
             return String(localized: "STATES")
         case .options:
@@ -1098,24 +1090,12 @@ struct PauseTileMenuView: View {
 
     // MARK: - Layout helpers
 
-    /// Column count driven by available horizontal space.
-    ///
-    /// The breakpoints above `PauseTilePanelMetrics.desktopMinWidth` are only ever
-    /// reached on macOS ("Designed for iPad" on Apple Silicon) — iPhone/iPad cap the
-    /// panel at 560pt (landscape) / 420pt (portrait) and tvOS returns early — so
-    /// adding them cannot change handheld layout. They keep each grid cell in the
-    /// ~100-135pt range instead of ballooning to 200pt+ on a wide desktop panel.
+    /// Uses the same measured width for layout and controller navigation.
     private func columnCount(for width: CGFloat) -> Int {
         #if os(tvOS)
         return 6
         #else
-        if width >= 1000 { return 8 }
-        if width >= 800 { return 7 }
-        if width >= 650 { return 6 }
-        if width >= 500 { return 5 }
-        if width >= 400 { return 4 }
-        if width >= 280 { return 3 }
-        return 2
+        return PauseTileLayout.columns(panelWidth: width, accessibility: dynamicTypeSize.isAccessibilitySize)
         #endif
     }
 
@@ -1123,23 +1103,21 @@ struct PauseTileMenuView: View {
         #if os(tvOS)
         return 860
         #else
-        return isLandscape ? 560 : 420
+        return 840
         #endif
     }
 
     /// Width of the floating pause panel for the currently available layout width.
     ///
-    /// - On iPhone/iPad/tvOS this is the historical behaviour: the smaller of the
-    ///   available width (minus the edge inset) and `panelMaxWidth`.
+    /// - On iPhone/iPad/tvOS the panel follows the available width minus its edge inset,
+    ///   capped at `panelMaxWidth` so wide layouts can fit eight compact columns.
     /// - On macOS the panel scales with the *window* instead, clamped between
-    ///   `desktopMinWidth` and `desktopMaxWidth`. `UIDevice.current.orientation` is
-    ///   `.unknown` on a Mac, so `isLandscape` is false there and the old code fell
-    ///   through to the 420pt portrait width regardless of how wide the window was.
+    ///   `desktopMinWidth` and `desktopMaxWidth`.
     ///
     /// Callers must pass the live `GeometryReader` width so the panel re-derives on
     /// every window resize rather than caching a value from first layout.
     private func panelWidth(forAvailableWidth availableWidth: CGFloat) -> CGFloat {
-        let insetWidth = availableWidth - PauseTilePanelMetrics.horizontalInset
+        let insetWidth = max(0, availableWidth - PauseTilePanelMetrics.horizontalInset)
         #if os(iOS)
         if ProcessInfo.processInfo.isiOSAppOnMac {
             let scaled = availableWidth * PauseTilePanelMetrics.desktopWidthFraction
@@ -1160,71 +1138,13 @@ struct PauseTileMenuView: View {
         let opacity: Double = tile.isEnabled ? 1.0 : 0.4
         let isFocused = focusedTileID == tile.id
 
-        let iconSize = PauseTileMetrics.iconSize
-        let cornerRadius = RetroPauseChrome.menuCellCornerRadius()
 
         Button {
             handle(tile)
         } label: {
-            /// A clear square sized by the grid column, with the content laid
-            /// over it. This replaces a `GeometryReader` per cell, which cost a
-            /// second layout pass for each one — dozens on a big core's
-            /// options route.
-            Color.clear
-                .aspectRatio(1, contentMode: .fit)
-                .overlay {
-                    VStack(spacing: 4) {
-                        Spacer(minLength: 0)
-                        Image(systemName: tile.icon)
-                            .font(.system(size: iconSize, weight: .semibold))
-                            .foregroundColor(accentColor)
-                            .shadow(color: accentColor.opacity(isFocused ? 1.0 : 0.7), radius: isFocused ? 10 : 5)
+            PauseTileFace(label: tile.label, icon: tile.icon, badge: tile.badge,
+                          accent: accentColor, isFocused: isFocused)
 
-                        Text(tile.label)
-                            .font(.system(size: PauseTileMetrics.labelSize, weight: isFocused ? .bold : .semibold))
-                            .foregroundColor(.white)
-                            .lineLimit(2)
-                            .multilineTextAlignment(.center)
-                            .minimumScaleFactor(PauseTileMetrics.labelMinimumScale)
-                            .padding(.horizontal, 4)
-                        Spacer(minLength: 0)
-                    }
-                }
-                .overlay(alignment: .topTrailing) {
-                    if let badge = tile.badge {
-                        /// One line, truncated in the middle: option values are
-                        /// often long ("1920x1088 (4x)") and used to spill past
-                        /// the cell into its neighbours.
-                        Text(badge)
-                            .font(.system(size: PauseTileMetrics.badgeSize, weight: .bold))
-                            .foregroundColor(.black)
-                            .lineLimit(1)
-                            .truncationMode(.middle)
-                            .padding(.horizontal, 5)
-                            .padding(.vertical, 2)
-                            .background(accentColor)
-                            .clipShape(Capsule())
-                            .padding(.leading, PauseTileMetrics.badgeLeadingInset)
-                            .offset(x: 4, y: -4)
-                    }
-                }
-                .background(
-                    RoundedRectangle(cornerRadius: cornerRadius)
-                        .fill(accentColor.opacity(isFocused ? RetroPauseChrome.menuCellFillOpacityFocused : RetroPauseChrome.menuCellFillOpacityUnfocused))
-                        .overlay(
-                            RoundedRectangle(cornerRadius: cornerRadius)
-                                .strokeBorder(
-                                    accentColor.opacity(isFocused ? RetroPauseChrome.menuCellStrokeOpacityFocused : RetroPauseChrome.menuCellStrokeOpacityUnfocused),
-                                    lineWidth: isFocused ? RetroPauseChrome.menuCellStrokeWidthFocused : RetroPauseChrome.menuCellStrokeWidthUnfocused
-                                )
-                        )
-                )
-                .shadow(
-                    color: isFocused ? accentColor.opacity(RetroPauseChrome.menuCellFocusShadowOpacity) : .clear,
-                    radius: RetroPauseChrome.menuCellFocusShadowRadius,
-                    x: 0,
-                    y: 3
-                )
         }
         .buttonStyle(TileButtonStyle(isFocused: isFocused))
         .opacity(opacity)
@@ -1254,7 +1174,50 @@ struct PauseTileMenuView: View {
     }
 
     private var panelBackground: some View {
-        RetroPausePanelBackground(isDark: true)
+        RoundedRectangle(cornerRadius: 16)
+            .fill(.ultraThinMaterial)
+            .overlay {
+                RoundedRectangle(cornerRadius: 16)
+                    .fill(LinearGradient(colors: [.black.opacity(0.82), .black.opacity(0.94)],
+                                         startPoint: .topLeading, endPoint: .bottomTrailing))
+            }
+            .overlay {
+                RoundedRectangle(cornerRadius: 16)
+                    .strokeBorder(LinearGradient(colors: [.retroBlue.opacity(0.72), .retroPurple.opacity(0.65)],
+                                                 startPoint: .topLeading, endPoint: .bottomTrailing), lineWidth: 1)
+            }
+    }
+
+    private var panelHeader: some View {
+        HStack(spacing: 8) {
+            if routeStack.count > 1 {
+                Button { _ = popRoute() } label: {
+                    Image(systemName: "chevron.left").frame(width: 44, height: 44)
+                }
+                .accessibilityLabel("Back")
+            }
+            Text(routeTitle)
+                .font(.system(size: tvOSAdjusted(18, tvOS: 22), weight: .medium, design: .rounded))
+                .foregroundStyle(Color.retroBlue)
+                .lineLimit(1)
+            Spacer(minLength: 0)
+            Button { showsSearch.toggle() } label: {
+                Image(systemName: "magnifyingglass").frame(width: 44, height: 44)
+            }
+            .accessibilityLabel("Search settings")
+            Button { requestPauseMenuClose() } label: {
+                Text("Resume")
+                    .font(.system(size: tvOSAdjusted(12, tvOS: 18), weight: .medium))
+                    .frame(minWidth: 88, minHeight: 44)
+                    .foregroundStyle(Color.retroGreen)
+                    .background(Color.retroGreen.opacity(0.12), in: RoundedRectangle(cornerRadius: 14))
+            }
+        }
+        .buttonStyle(.plain)
+        .foregroundStyle(Color.retroBlue)
+        .padding(.horizontal, tvOSAdjusted(12, tvOS: 20))
+        .padding(.top, 10)
+        .padding(.bottom, 6)
     }
 
     // MARK: - Section view
@@ -1305,7 +1268,7 @@ struct PauseTileMenuView: View {
                         ForEach(0..<(cols - row.count), id: \.self) { _ in
                             Color.clear
                                 .frame(maxWidth: .infinity)
-                                .aspectRatio(1, contentMode: .fit)
+                                .frame(height: 112)
                         }
                     }
                 }
@@ -1540,37 +1503,14 @@ struct PauseTileMenuView: View {
                 let sections = viewModel.sections
 
                 VStack(spacing: 0) {
+                    panelHeader
                     ScrollViewReader { scrollProxy in
-                    ScrollView(.vertical, showsIndicators: false) {
+                    ScrollView(.vertical, showsIndicators: true) {
                         VStack(alignment: .leading, spacing: tvOSAdjusted(12, tvOS: 20)) {
-                            // Panel title
-                            HStack {
-                                if routeStack.count > 1 {
-                                    Button {
-                                        _ = popRoute()
-                                    } label: {
-                                        Label(String(localized: "Back"), systemImage: "chevron.left")
-                                            .font(.system(size: tvOSAdjusted(11, tvOS: 17), weight: .semibold))
-                                            .foregroundColor(.white.opacity(0.8))
-                                    }
-                                    .buttonStyle(.plain)
-                                } else {
-                                    Spacer().frame(width: tvOSAdjusted(46, tvOS: 68))
-                                }
-
-                                Spacer()
-                                Text(routeTitle)
-                                    .font(.system(size: tvOSAdjusted(12, tvOS: 18), weight: .heavy, design: .rounded))
-                                    .foregroundColor(.white.opacity(0.55))
-                                    .tracking(tvOSAdjusted(2, tvOS: 3.5))
-                                Spacer()
-
-                                Spacer().frame(width: tvOSAdjusted(46, tvOS: 68))
+                            Color.clear.frame(height: 0).id(Self.panelTopID)
+                            if showsSearch || !searchText.isEmpty {
+                                searchBarView
                             }
-                            .padding(.top, tvOSAdjusted(2, tvOS: 6))
-                            .id(Self.panelTopID)
-
-                            searchBarView
                             if currentRoute == .core {
                                 coreScopeControlsView
                             }
@@ -1623,9 +1563,9 @@ struct PauseTileMenuView: View {
                 }
                 .background(panelBackground)
                 .frame(width: panelWidth)
-                .frame(maxHeight: geo.size.height * 0.82)
+                .frame(maxHeight: min(geo.size.width < 600 ? 620 : 680, max(0, geo.size.height - 24)))
                 .fixedSize(horizontal: false, vertical: true)
-                .shadow(color: .retroPurple.opacity(0.25), radius: 18, x: 0, y: 0)
+                .shadow(color: .retroBlue.opacity(0.09), radius: 12, x: 0, y: 0)
                 .position(x: geo.size.width / 2, y: geo.size.height / 2)
                 #if os(iOS)
                 // Mirror the live panel width into @State so iOS controller
@@ -1877,11 +1817,7 @@ struct PauseTileMenuView: View {
             refreshSearchResults()
         }
         #if os(iOS)
-        .onReceive(NotificationCenter.default.publisher(for: UIDevice.orientationDidChangeNotification)) { _ in
-            orientation = UIDevice.current.orientation
-        }
         .onAppear {
-            orientation = UIDevice.current.orientation
             routeStack = initialRoute == .root ? [.root] : [.root, initialRoute]
             refreshControllerProfileState()
             initializeHardwareSwitchStatesIfNeeded()
@@ -2403,30 +2339,36 @@ struct PauseTileMenuView: View {
 
     // MARK: - Info shelf
 
-    /// Bottom bar that slides in to show the focused tile's description text.
-    @ViewBuilder
+    /// The reserved shelf stays the same height when focus changes, keeping the last row reachable.
     private var infoShelfView: some View {
-        if let text = infoText {
-            VStack(spacing: 0) {
-                Divider()
-                    .background(Color.white.opacity(0.15))
-                HStack(spacing: 6) {
+        ZStack(alignment: .bottom) {
+            Color.clear
+            if let text = infoText {
+                HStack(spacing: 8) {
                     Image(systemName: "info.circle")
-                        .font(.system(size: PauseTileMetrics.infoTextSize))
-                        .foregroundColor(.white.opacity(0.5))
+                        .foregroundStyle(Color.retroBlue)
                     Text(text)
-                        .font(.system(size: PauseTileMetrics.infoTextSize, weight: .regular, design: .rounded))
-                        .foregroundColor(.white.opacity(0.8))
+                        .font(.system(size: tooltipFontSize))
+                        .foregroundStyle(.white.opacity(0.85))
                         .lineLimit(3)
                         .fixedSize(horizontal: false, vertical: true)
                 }
-                .padding(.horizontal, tvOSAdjusted(12, tvOS: 20))
-                .padding(.vertical, tvOSAdjusted(8, tvOS: 12))
-                .frame(maxWidth: .infinity, alignment: .leading)
+                .padding(12)
+                .frame(maxWidth: 480, minHeight: 54, alignment: .leading)
+                .background(Color.black.opacity(0.76), in: RoundedRectangle(cornerRadius: 18))
+                .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 18))
+                .overlay {
+                    RoundedRectangle(cornerRadius: 18)
+                        .strokeBorder(RetroPauseChrome.panelBorderGradient, lineWidth: 1)
+                }
             }
-            .transition(.move(edge: .bottom).combined(with: .opacity))
         }
+        .frame(height: tvOSAdjusted(tooltipHeight, tvOS: 96))
+        .padding(.horizontal, tvOSAdjusted(20, tvOS: 28))
+        .padding(.top, 14)
+        .padding(.bottom, 12)
     }
+
 }
 // swiftlint:enable type_body_length
 

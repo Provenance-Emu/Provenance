@@ -61,6 +61,7 @@ struct ConsolesWrapperView: SwiftUI.View {
     private struct ConsoleTabItem: Identifiable, Hashable {
         let identifier: String
         let name: String
+        let shortName: String
         let iconName: String
 
         var id: String { identifier }
@@ -70,6 +71,7 @@ struct ConsolesWrapperView: SwiftUI.View {
 
     @ObservedObject var delegate: ConsolesWrapperViewDelegate
     @ObservedObject var viewModel: PVRootViewModel
+    @Environment(\.verticalSizeClass) private var verticalSizeClass
     weak var rootDelegate: (PVRootDelegate & PVMenuDelegate)!
 
     @ObservedObject private var bootupStateManager = AppState.shared.bootupStateManager
@@ -86,9 +88,6 @@ struct ConsolesWrapperView: SwiftUI.View {
 
     /// Track the previous tab for comparison
     @State private var previousTab: String = ""
-    #if os(iOS)
-    @GestureState private var isPagingSystems = false
-    #endif
 
     /// State to control the presentation of ImportStatusView
     @State private var showImportStatusView = false
@@ -125,7 +124,7 @@ struct ConsolesWrapperView: SwiftUI.View {
         self.rootDelegate = rootDelegate
 
         #if targetEnvironment(simulator)
-        _showEmptySystems = State(initialValue: true)
+        _showEmptySystems = State(initialValue: ProcessInfo.processInfo.arguments.contains("-PVShowEmptySystems"))
         #else
         _showEmptySystems = State(initialValue: false)
         #endif
@@ -164,14 +163,18 @@ struct ConsolesWrapperView: SwiftUI.View {
         }
     }
 
+    private var previewsEmptyLibrary: Bool {
+        #if DEBUG
+        return ProcessInfo.processInfo.arguments.contains("-PVLibraryEmpty")
+        #else
+        return false
+        #endif
+    }
+
     var body: some View {
         ZStack {
             Group {
-                // Add a glowing border line using glowColor
-                RetroDividerView()
-                    .shadow(color: .retroPink.opacity(0.55), radius: 2, x: 0, y: 1)
-
-                if bootupStateManager.isBootupCompleted && (consoles.isEmpty || (consoles.count == 1 && consoles.first!.identifier == SystemIdentifier.RetroArch.rawValue)) {
+                if previewsEmptyLibrary || (bootupStateManager.isBootupCompleted && (consoles.isEmpty || (consoles.count == 1 && consoles.first!.identifier == SystemIdentifier.RetroArch.rawValue))) {
                     noConsolesView
                 } else if !bootupStateManager.isBootupCompleted {
                     // Still loading — show nothing to avoid a jarring empty-state flash on launch
@@ -201,6 +204,7 @@ struct ConsolesWrapperView: SwiftUI.View {
             // RetroWave styled alert overlay
             RetroAlertStateView(alertState: SceneCoordinator.shared.alertState)
         }
+        .background(RetroTheme.RetroBackgroundView().environmentObject(themeManager))
         .environment(\.rootDelegate, rootDelegate)
         .onAppear {
             isVisible = true
@@ -282,6 +286,7 @@ struct ConsolesWrapperView: SwiftUI.View {
                 ConsoleTabItem(
                     identifier: $0.identifier,
                     name: $0.name,
+                    shortName: $0.shortName,
                     iconName: $0.iconName
                 )
             }
@@ -405,7 +410,7 @@ struct ConsolesWrapperView: SwiftUI.View {
                         .frame(maxWidth: .infinity, maxHeight: .infinity)
                 }
             }
-            .background(RetroTheme.retroBackground)
+            .background(Color.clear)
             .toolbarColorScheme(SwiftUI.ColorScheme.dark, for: SwiftUI.ToolbarPlacement.tabBar)
             .tag(console.identifier)
             .tabItem {
@@ -486,15 +491,10 @@ struct ConsolesWrapperView: SwiftUI.View {
         }
         #if os(iOS)
         .tabViewStyle(.page(indexDisplayMode: .never))
-        .contentMargins(.bottom, 64, for: .scrollContent)
-        .simultaneousGesture(
-            DragGesture(minimumDistance: 20)
-                .updating($isPagingSystems) { value, state, _ in
-                    state = abs(value.translation.width) > abs(value.translation.height)
-                }
-        )
-        .overlay(alignment: .bottom) {
-            FloatingSystemSelector(items: systemSelectorItems, selection: binding, isPaging: isPagingSystems)
+        .safeAreaInset(edge: .top, spacing: 0) {
+            if UIDevice.current.userInterfaceIdiom == .phone && verticalSizeClass != .compact {
+                FloatingSystemSelector(items: systemSelectorItems, selection: binding)
+            }
         }
         #else
         .tabViewStyle(.page)
@@ -505,7 +505,7 @@ struct ConsolesWrapperView: SwiftUI.View {
         }
         .tint(themeManager.currentPalette.defaultTintColor.swiftUIColor)
         .foregroundStyle(themeManager.currentPalette.gameLibraryText.swiftUIColor)
-        .background(themeManager.currentPalette.gameLibraryBackground.swiftUIColor)
+        .background(Color.clear)
     }
 
     #if os(iOS)
@@ -517,7 +517,7 @@ struct ConsolesWrapperView: SwiftUI.View {
         }
         items.append(.init(id: "home", title: "Home", icon: Image(systemName: "house")))
         items.append(contentsOf: sortedConsoles().map { console in
-            .init(id: console.identifier, title: console.name, icon: loadedIcons[console.iconName] ?? Image(systemName: "gamecontroller"))
+            .init(id: console.identifier, title: console.shortName, icon: loadedIcons[console.iconName] ?? Image(systemName: "gamecontroller"))
         })
         return items
     }

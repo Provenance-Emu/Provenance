@@ -99,18 +99,23 @@ struct SkinKitSetupTests {
         #expect(uncoded.deltaSkinSystem.skinCatalogSystemCode == nil)
     }
 
-    @Test("The skin views resolve the active palette after theme changes")
+    @Test("The skin views resolve coordinated accents after theme changes")
     @MainActor func theme() {
         let theme = SkinKitTheme.current
         let manager = ThemeManager.shared
         let original = manager.currentPalette
         defer { manager.setCurrentPalette(original) }
 
+        var previousPink: [CGFloat]?
         for palette in [CGAThemes.green.palette, CGAThemes.cyan.palette] {
             manager.setCurrentPalette(palette)
             // Dynamic UIColor providers have distinct identities; compare their rendered values.
-            #expect(resolvedComponents(theme.pink) == resolvedComponents(Color.retroPink))
-            #expect(resolvedComponents(theme.pink) == resolvedComponents(Color(palette.defaultTintColor)))
+            let pink = resolvedComponents(theme.pink)
+            #expect(pink == resolvedComponents(Color.retroPink))
+            if let previousPink {
+                #expect(pink != previousPink)
+            }
+            previousPink = pink
         }
         #expect(theme.cyan == Color.retroCyan)
         #expect(theme.panelCornerRadius == RetroPauseChrome.panelCornerRadius)

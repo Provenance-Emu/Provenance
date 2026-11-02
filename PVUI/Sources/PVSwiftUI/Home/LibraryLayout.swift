@@ -9,7 +9,7 @@ import SwiftUI
 enum LibraryLayout {
     /// Bottom inset that keeps scrolling content clear of the page-dots index.
     /// Applied once per page; don't stack it with other bottom padding.
-    static let pageIndexClearance: CGFloat = 64
+    static let pageIndexClearance: CGFloat = 16
 }
 
 /// Column count for the SwiftUI library grids.
@@ -31,14 +31,14 @@ enum LibraryGrid {
 
     private static let maximumColumns = 16
 
-    /// Cover width aimed for on a phone-width grid, giving four columns.
-    private static let compactCellWidth: CGFloat = 80
+    /// Cover width aimed for on a phone-width grid, giving three columns.
+    private static let compactCellWidth: CGFloat = 105
     /// Cover width aimed for on an iPad-width grid — the size the artwork is
     /// laid out for, and what `DesktopLibraryMetrics.contentMaxWidth` assumes.
     private static let regularCellWidth: CGFloat = 140
     /// Grid widths the two cell sizes apply at; in between, the target grows
     /// with the width so the column count never jumps backwards.
-    private static let compactWidth: CGFloat = 430
+    private static let compactWidth: CGFloat = 440
     private static let regularWidth: CGFloat = 820
 
     #if os(tvOS)
@@ -48,22 +48,22 @@ enum LibraryGrid {
     #endif
 
     /// Columns the grid uses at `width` before any user adjustment.
-    static func automaticColumns(forWidth width: CGFloat) -> Int {
+    static func automaticColumns(forWidth width: CGFloat, compactHeight: Bool = false) -> Int {
         #if os(tvOS)
         return tvColumns
         #else
         let measured = width > 0 ? width : unmeasuredWidth
         let progress = min(1, max(0, (measured - compactWidth) / (regularWidth - compactWidth)))
-        let cellWidth = compactCellWidth + (regularCellWidth - compactCellWidth) * progress
+        let cellWidth = compactHeight ? 120 : compactCellWidth + (regularCellWidth - compactCellWidth) * progress
         let available = measured - spacing * 2
         return max(2, Int((available + spacing) / (cellWidth + spacing)))
         #endif
     }
 
     /// Columns to lay out at `width` with the user's `adjustment` applied.
-    static func columns(forWidth width: CGFloat, adjustment: Int) -> Int {
+    static func columns(forWidth width: CGFloat, adjustment: Int, compactHeight: Bool = false) -> Int {
         let clamped = min(adjustmentRange.upperBound, max(adjustmentRange.lowerBound, adjustment))
-        return min(maximumColumns, max(1, automaticColumns(forWidth: width) + clamped))
+        return min(maximumColumns, max(1, automaticColumns(forWidth: width, compactHeight: compactHeight) + clamped))
     }
 }
 

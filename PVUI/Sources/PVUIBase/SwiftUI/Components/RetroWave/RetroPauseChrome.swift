@@ -27,12 +27,12 @@ public enum RetroPauseChrome {
     public static let panelCornerRadius: CGFloat = radiusMD
 
     /// Panel border stroke width.
-    public static let panelStrokeLineWidth: CGFloat = 1.5
+    public static let panelStrokeLineWidth: CGFloat = 1
 
-    /// Purple → pink diagonal stroke used on the pause menu panel.
+    /// A precise cool rim with a restrained secondary accent.
     public static var panelBorderGradient: LinearGradient {
         LinearGradient(
-            colors: [Color.retroPurple.opacity(0.65), Color.retroPink.opacity(0.65)],
+            colors: [Color.retroBlue.opacity(0.65), Color.retroPurple.opacity(0.55)],
             startPoint: .topLeading,
             endPoint: .bottomTrailing
         )
@@ -78,7 +78,7 @@ public enum RetroPauseChrome {
         #if os(tvOS)
         return 13
         #else
-        return 9
+        return 11
         #endif
     }
 
@@ -105,7 +105,7 @@ public struct RetroPausePanelBackground: View {
 
     public var body: some View {
         RoundedRectangle(cornerRadius: RetroPauseChrome.panelCornerRadius)
-            .fill(isDark ? Color.black.opacity(RetroPauseChrome.panelFillOpacityDark) : Color.white.opacity(RetroPauseChrome.panelFillOpacityLight))
+            .fill(Color.retroDarkBlue.opacity(isDark ? RetroPauseChrome.panelFillOpacityDark : RetroPauseChrome.panelFillOpacityLight))
             .overlay(
                 RoundedRectangle(cornerRadius: RetroPauseChrome.panelCornerRadius)
                     .strokeBorder(RetroPauseChrome.panelBorderGradient, lineWidth: RetroPauseChrome.panelStrokeLineWidth)

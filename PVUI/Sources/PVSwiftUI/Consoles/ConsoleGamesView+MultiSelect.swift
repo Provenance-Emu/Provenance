@@ -226,6 +226,7 @@ extension ConsoleGamesView {
                 .font(.caption.weight(.semibold))
                 .padding(.horizontal, 10)
                 .padding(.vertical, 5)
+                .frame(minWidth: 44, minHeight: 44)
                 .background(
                     RoundedRectangle(cornerRadius: 6)
                         .fill(gamesViewModel.isMultiSelectMode
@@ -240,6 +241,7 @@ extension ConsoleGamesView {
                         )
                 )
                 .foregroundColor(gamesViewModel.isMultiSelectMode ? .retroPink : .retroBlue)
+                .contentShape(Rectangle())
         }
     }
 

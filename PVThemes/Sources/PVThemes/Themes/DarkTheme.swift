@@ -31,7 +31,7 @@ struct DarkThemePalette: UXThemePalette {
     public var group: String { "Provenance" }
 
 #if !os(tvOS)
-    public var statusBarColor: UIColor { .grey.g1C }
+    public var statusBarColor: UIColor? { .grey.g1C }
 #endif
     public var defaultTintColor: UIColor { .Provenance.blue }
     
