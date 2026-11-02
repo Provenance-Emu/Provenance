@@ -197,6 +197,8 @@ public struct PVLibraryRootView: View {
                     .toolbar(.hidden, for: .navigationBar)
                     #endif
                 }
+                // Paging children must not draw or receive taps over the library header.
+                .clipped()
             }
             .background(RetroTheme.RetroBackgroundView().environmentObject(themeManager))
         } menu: {

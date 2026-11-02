@@ -75,6 +75,9 @@ enum ConsoleGamesKeyboardNavigation {
 // swiftlint:disable:next type_body_length
 struct ConsoleGamesView: SwiftUI.View {
 
+    @State private var biosOverlayHeight: CGFloat = 0
+    @Environment(\.libraryBottomOverlayClearance) private var floatingSelectorClearance
+
     @StateObject internal var gamesViewModel: ConsoleGamesViewModel
     @ObservedObject var viewModel: PVRootViewModel
     @ObservedRealmObject var console: PVSystem
@@ -330,8 +333,8 @@ struct ConsoleGamesView: SwiftUI.View {
                         .id("section_allgames")
                         .padding(.horizontal, 24)
                 }
-                /// Clear the page-dots index. BiosesView sits below the scroll view and insets itself.
-                .padding(.bottom, LibraryLayout.pageIndexClearance)
+                // Keep the final row reachable above the floating BIOS and system controls.
+                .padding(.bottom, LibraryLayout.pageIndexClearance + biosOverlayHeight + floatingSelectorClearance)
                 /// Measured inside the desktop column, whose outer frame spans the window.
                 .libraryGridWidth($gridWidth)
                 .desktopLibraryContentColumn()
@@ -456,9 +459,12 @@ struct ConsoleGamesView: SwiftUI.View {
                     // NOT clamped: the scroll view stays full-window so the pointer can scroll
                     // from the gutters. Its content is clamped inside `gamesScrollView` instead.
                     gamesScrollView
-
-                    biosesView
-                        .desktopLibraryContentColumn()
+                        .overlay(alignment: .bottom) {
+                            biosesView
+                                .desktopLibraryContentColumn()
+                                .onGeometryChange(for: CGFloat.self) { $0.size.height } action: { biosOverlayHeight = $0 }
+                                .padding(.bottom, floatingSelectorClearance)
+                        }
                 }
                 // Normalize-Titles preview sheet
                 .sheet(isPresented: $gamesViewModel.showNormalizeTitlePreview) {

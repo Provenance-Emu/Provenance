@@ -491,9 +491,11 @@ struct ConsolesWrapperView: SwiftUI.View {
         }
         #if os(iOS)
         .tabViewStyle(.page(indexDisplayMode: .never))
-        .safeAreaInset(edge: .top, spacing: 0) {
-            if UIDevice.current.userInterfaceIdiom == .phone && verticalSizeClass != .compact {
+        .environment(\.libraryBottomOverlayClearance, floatingSelectorClearance)
+        .overlay(alignment: .bottom) {
+            if floatingSelectorClearance > 0 {
                 FloatingSystemSelector(items: systemSelectorItems, selection: binding)
+                    .padding(.bottom, 6)
             }
         }
         #else
@@ -509,6 +511,10 @@ struct ConsolesWrapperView: SwiftUI.View {
     }
 
     #if os(iOS)
+    private var floatingSelectorClearance: CGFloat {
+        UIDevice.current.userInterfaceIdiom == .phone && verticalSizeClass != .compact ? LibraryLayout.systemSelectorClearance : 0
+    }
+
     private var systemSelectorItems: [FloatingSystemSelectorItem] {
         var items: [FloatingSystemSelectorItem] = []
         if showFeatureFlagsDebug {

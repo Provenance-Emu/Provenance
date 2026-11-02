@@ -10,6 +10,20 @@ enum LibraryLayout {
     /// Bottom inset that keeps scrolling content clear of the page-dots index.
     /// Applied once per page; don't stack it with other bottom padding.
     static let pageIndexClearance: CGFloat = 16
+    /// Scroll clearance for the portrait phone's floating console shortcuts.
+    static let systemSelectorClearance: CGFloat = 64
+}
+
+private struct LibraryBottomOverlayClearanceKey: EnvironmentKey {
+    static let defaultValue: CGFloat = 0
+}
+
+extension EnvironmentValues {
+    /// Extra scrollable space below the last game row for floating library controls.
+    var libraryBottomOverlayClearance: CGFloat {
+        get { self[LibraryBottomOverlayClearanceKey.self] }
+        set { self[LibraryBottomOverlayClearanceKey.self] = newValue }
+    }
 }
 
 /// Column count for the SwiftUI library grids.
