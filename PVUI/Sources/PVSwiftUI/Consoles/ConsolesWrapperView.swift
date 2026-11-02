@@ -456,6 +456,9 @@ struct ConsolesWrapperView: SwiftUI.View {
         return TabView(selection: binding) {
             if showFeatureFlagsDebug {
                 RetroDebugView()
+                    #if os(iOS)
+                    .contentMargins(.bottom, floatingSelectorClearance, for: .scrollContent)
+                    #endif
                     .tabItem {
                         Label("Debug", systemImage: "bug")
                     }
@@ -470,6 +473,9 @@ struct ConsolesWrapperView: SwiftUI.View {
 
                         FileRecoveryTestView()
                     }
+                    #if os(iOS)
+                    .padding(.bottom, floatingSelectorClearance)
+                    #endif
                 }
                 .tabItem {
                     Label("Test", systemImage: "test")

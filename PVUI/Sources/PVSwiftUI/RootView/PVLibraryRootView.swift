@@ -198,6 +198,7 @@ public struct PVLibraryRootView: View {
                     #endif
                 }
                 // Paging children must not draw or receive taps over the library header.
+                .contentShape(Rectangle())
                 .clipped()
             }
             .background(RetroTheme.RetroBackgroundView().environmentObject(themeManager))
