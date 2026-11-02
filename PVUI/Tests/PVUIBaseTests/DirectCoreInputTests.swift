@@ -16,6 +16,25 @@ import PVSystems
 
 /// An Atari 2600 core that records every button edge it receives.
 private final class Recording2600Core: PVEmulatorCore, PV2600SystemResponderClient {
+    // Reconnection reads lifecycle state even though this input recorder has no native engine.
+    private var testIsRunning = false
+    override var isRunning: Bool {
+        get { testIsRunning }
+        set { testIsRunning = newValue }
+    }
+
+    private weak var testRenderDelegate: (any PVCoreBridge.PVRenderDelegate)?
+    override var renderDelegate: (any PVCoreBridge.PVRenderDelegate)? {
+        get { testRenderDelegate }
+        set { testRenderDelegate = newValue }
+    }
+
+    private var testSystemIdentifier: String?
+    override var systemIdentifier: String? {
+        get { testSystemIdentifier }
+        set { testSystemIdentifier = newValue }
+    }
+
     private(set) var edges: [(button: PV2600Button, pressed: Bool)] = []
 
     func didPush(_ button: PV2600Button, forPlayer player: Int) { edges.append((button, true)) }

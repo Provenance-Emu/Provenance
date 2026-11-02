@@ -6,6 +6,14 @@ import SkinKitManager
 import PVSystems
 @testable import PVUIBase
 
+/// Supplies identity without an emulator bridge for this view-hierarchy-only fixture.
+private final class SkinContainerCore: PVEmulatorCore {
+    override var systemIdentifier: String? {
+        get { nil }
+        set { }
+    }
+}
+
 @Suite("Live skin container")
 @MainActor
 struct DeltaSkinContainerViewTests {
@@ -32,7 +40,7 @@ struct DeltaSkinContainerViewTests {
 
     @Test("Changing skins keeps the mounted hosting view and native render sibling")
     func swapKeepsRenderHierarchy() throws {
-        let core = PVEmulatorCore()
+        let core = SkinContainerCore()
         let container = DeltaSkinContainerView.create(
             game: PVGame(), core: core, inputHandler: DeltaSkinInputHandler(emulatorCore: core),
             preselectedSkinIdentifier: "first", onSkinLoaded: {}, onRefreshRequested: {})
