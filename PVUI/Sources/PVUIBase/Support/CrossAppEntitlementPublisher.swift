@@ -1,47 +1,18 @@
+// Same-device, same-team Plus recognition. This bridge is not a cross-device
+// restore service: keychain items are not synchronizable, and StoreKit only
+// supplies purchases for the purchasing app.
 //
-//  CrossAppEntitlementPublisher.swift
-//  PVUIBase
-//
-//  Two-way cross-app entitlement bridge over a shared same-team keychain
-//  access group, so a purchase in one of Joe's apps unlocks the sibling app's
-//  premium tier. No server, works offline, survives reinstalls.
-//
-//  Contract (mirrored in iFly's CrossAppEntitlement.swift and documented in
-//  iFly's docs/dev/ecosystem-protocol.md):
-//
-//    access group: $(AppIdentifierPrefix)com.joemattiello.shared
-//    service:      "com.joemattiello.shared.entitlements"
-//    accounts:     "provenance.plus"  (written by Provenance, read by iFly)
-//                  "ifly.pro"         (written by iFly, read by Provenance)
-//    value (v1 JSON): {"v":1,"period":"monthly|yearly|lifetime",
-//                      "status":"active","expiresAt":<unix secs, absent=lifetime>,
-//                      "updatedAt":<unix secs>}
-//      A lapsed monthly/yearly entitlement MUST NOT grant the sibling app's
-//      premium forever, so the seller-of-record publishes the StoreKit expiry
-//      and the READER self-expires it (+7d renewal grace) even if the selling
-//      app is never reopened. Legacy readers/writers still accept the bare
-//      string "active" (treated as lifetime); we emit it only if JSON encoding
-//      fails.
-//
-//  Requires the `keychain-access-groups` entitlement to include the shared
-//  group (added to the -AppStore entitlements alongside this file). Keychain
-//  access is best-effort: a failure only costs the cross-app perk.
-//
-//  This file holds both halves:
-//    * `CrossAppEntitlementPublisher` — publishes `provenance.plus`.
-//      Ownership comes from FreemiumKit (`purchasedTier`); the period/expiry in
-//      the payload come from StoreKit `currentEntitlements`. Mirrored at launch
-//      (twice — the second pass catches StoreKit's async entitlement load) and
-//      on every foreground. Deletes are deferred until that load settles so a
-//      short launch can't clear a real owner's mirror.
-//    * `CrossAppEntitlementReader` — reads `ifly.pro` and, when it grants,
-//      unlocks Provenance Plus via FreemiumKit's tier override so every
-//      existing Plus gate (`PaidFeatureView`, `PaidStatusView`, `purchasedTier`
-//      checks) honors it with no per-gate changes.
-//
-//  Trust model: any same-team binary can write these items — exactly the
-//  boundary we want (only Joe's apps sign with this team).
-//
+// Shared contract with iFly and iCube:
+// group $(AppIdentifierPrefix)com.joemattiello.shared
+// service com.joemattiello.shared.entitlements
+// seller-owned accounts provenance.plus / ifly.pro
+// v1 JSON: v, period (monthly/yearly/lifetime), status (active/grace/expired),
+// expiresAt (Unix seconds, required for subscriptions, absent for lifetime),
+// updatedAt (Unix seconds). Legacy bare "active" remains supported.
+// Readers preserve the existing seven-day subscription renewal grace.
+// Only verified direct StoreKit ownership is published: sibling and debug
+// grants never become independent lifetime ownership. Completion of the
+// StoreKit sequence settles loading; no fixed launch timer clears ownership.
 
 import Foundation
 import Security
@@ -142,45 +113,59 @@ public enum CrossAppEntitlementPublisher {
     /// StoreKit product identifiers for Plus all share this prefix.
     private static let plusProductIDPrefix = "provenance.plus"
 
-    /// Mirror the current Plus state into the shared keychain. Call at app
-    /// launch and on foreground; safe to call repeatedly.
+    /// Refresh direct verified ownership before publishing. Completion of the
+    /// StoreKit sequence, rather than a fixed launch delay, settles ownership.
     @MainActor
     public static func publishPlusState() {
-        #if canImport(FreemiumKit)
-        let tierOwned = FreemiumKit.shared.purchasedTier != nil
-        #else
-        let tierOwned = false
-        #endif
-        let siblingGranted = CrossAppEntitlementReader.didGrantPlusFromSibling
-        let allowClear = storeKitSettled
-        Task { await mirrorPlusState(tierOwned: tierOwned, siblingGranted: siblingGranted, allowClear: allowClear) }
-    }
-
-    /// Launch-time convenience: publish now, then once more after StoreKit's
-    /// async entitlement load has had time to settle.
-    @MainActor
-    public static func publishPlusStateAtLaunch() {
-        publishPlusState()
-        Task { @MainActor in
-            try? await Task.sleep(nanoseconds: storeKitSettleDelay)
-            storeKitSettled = true
-            publishPlusState()
+        if reconciliationTask == nil {
+            reconciliationTask = Task {
+                while !Task.isCancelled {
+                    try? await Task.sleep(nanoseconds: 60_000_000_000)
+                    guard !Task.isCancelled else { return }
+                    await refresh()
+                }
+            }
         }
+        if updatesTask == nil {
+            updatesTask = Task {
+                for await result in StoreKit.Transaction.updates {
+                    guard case .verified(let transaction) = result,
+                          transaction.productID.hasPrefix(plusProductIDPrefix) else { continue }
+                    await refresh()
+                }
+            }
+        }
+        Task { await refresh() }
     }
 
-    /// How long to wait for StoreKit's async `currentEntitlements` load before
-    /// the catch-up publish pass.
-    private static let storeKitSettleDelay: UInt64 = 8_000_000_000
-
-    /// Flipped by the delayed launch pass once FreemiumKit/StoreKit have had
-    /// time to load. Until then `mirrorPlusState` must never DELETE the shared
-    /// item: `purchasedTier` is nil while StoreKit is still loading, so a
-    /// launch shorter than the settle delay would clear a real owner's mirror
-    /// and silently break the sibling crossover until the next long run.
-    /// Writes are always allowed — a positive ownership signal is trustworthy
-    /// at any time.
     @MainActor
-    private static var storeKitSettled = false
+    public static func publishPlusStateAtLaunch() { publishPlusState() }
+
+    @MainActor
+    private static var updatesTask: Task<Void, Never>?
+    @MainActor
+    private static var reconciliationTask: Task<Void, Never>?
+
+    public private(set) static var storeKitSettled = false
+
+    @MainActor
+    public static func refresh() async {
+        CloudSyncUpsellView.reconcileFreeSyncScope()
+        let entitlement = await currentPlusEntitlement()
+        if let entitlement {
+            let mirror = Mirror(period: entitlement.period, status: "active", expiresAt: entitlement.expiresAt)
+            let encoder = JSONEncoder()
+            encoder.dateEncodingStrategy = .secondsSince1970
+            if let data = try? encoder.encode(mirror), let value = String(data: data, encoding: .utf8) {
+                SharedEntitlementKeychain.write(account: account, value: value)
+            }
+        } else {
+            SharedEntitlementKeychain.delete(account: account)
+        }
+        storeKitSettled = true
+        CrossAppEntitlementReader.applySiblingGrantIfNeeded(directlyOwned: entitlement != nil)
+        CloudSyncUpsellView.reconcileFreeSyncScope()
+    }
 
     // MARK: - v1 mirror payload
 
@@ -194,70 +179,32 @@ public enum CrossAppEntitlementPublisher {
         var updatedAt: Date = Date()
     }
 
-    /// Write (or clear) the shared `provenance.plus` item.
-    ///
-    /// `tierOwned` is FreemiumKit's view of Plus. When we granted Plus
-    /// ourselves off a sibling app's `ifly.pro` mirror, FreemiumKit's tier is
-    /// *contaminated by that grant* — republishing it would loop iFly Pro
-    /// straight back out as Provenance Plus and grant it forever. In that case
-    /// StoreKit's `currentEntitlements` is the only uncontaminated ownership
-    /// signal, so a real purchase still publishes and a pure cross-app grant
-    /// does not. We deliberately do NOT gate on the grant latch alone: at
-    /// launch `purchasedTier` is nil until StoreKit finishes loading, so a user
-    /// who owns both would otherwise never publish their real Plus.
-    ///
-    /// `allowClear` gates the delete paths on StoreKit having settled (see
-    /// `storeKitSettled`): a "not owned" verdict computed before the async
-    /// entitlement load finishes is not evidence of non-ownership, so acting
-    /// on it would poison a valid mirror. Positive publishes are never gated.
-    private static func mirrorPlusState(tierOwned: Bool, siblingGranted: Bool, allowClear: Bool) async {
-        // Cheap path for free users: nothing can make `owned` true below, so
-        // don't spin up a StoreKit entitlement query on every foreground.
-        guard tierOwned || siblingGranted else {
-            if allowClear { SharedEntitlementKeychain.delete(account: account) }
-            return
-        }
-        let entitlement = await currentPlusEntitlement()
-        let owned = siblingGranted ? (entitlement != nil) : tierOwned
-        guard owned else {
-            if allowClear { SharedEntitlementKeychain.delete(account: account) }
-            return
-        }
-        let mirror = Mirror(period: entitlement?.period,
-                            status: "active",
-                            expiresAt: entitlement?.expiresAt)
-        let encoder = JSONEncoder()
-        encoder.dateEncodingStrategy = .secondsSince1970
-        if let data = try? encoder.encode(mirror),
-           let json = String(data: data, encoding: .utf8) {
-            SharedEntitlementKeychain.write(account: account, value: json)
-        } else {
-            // Degraded v0 fallback (reader treats it as lifetime).
-            SharedEntitlementKeychain.write(account: account,
-                                            value: SharedEntitlementKeychain.activeValue)
-        }
-    }
-
-    /// The active Provenance Plus entitlement from StoreKit, if any: its period
-    /// and expiry (nil expiry = lifetime, or FreemiumKit-only state with no
-    /// matching StoreKit transaction — e.g. a promotional/dev grant).
-    private static func currentPlusEntitlement() async -> (period: String?, expiresAt: Date?)? {
+    /// Only verified, unrevoked matching transactions may be published. A
+    /// debug/promo tier or a sibling mirror is not an independent purchase.
+    private static func currentPlusEntitlement() async -> (period: String, expiresAt: Date?)? {
+        var best: (period: String, expiresAt: Date?)?
         for await result in StoreKit.Transaction.currentEntitlements {
             guard case .verified(let transaction) = result,
-                  transaction.productID.hasPrefix(plusProductIDPrefix) else { continue }
-            return (period(forProductID: transaction.productID), transaction.expirationDate)
+                  transaction.revocationDate == nil,
+                  transaction.productID.hasPrefix(plusProductIDPrefix),
+                  let period = period(forProductID: transaction.productID) else { continue }
+            if period == "lifetime", transaction.expirationDate == nil { return (period, nil) }
+            guard let expiry = transaction.expirationDate, expiry.addingTimeInterval(CrossAppEntitlementReader.renewalGrace) > Date() else { continue }
+            if best == nil || expiry > (best?.expiresAt ?? .distantPast) { best = (period, expiry) }
         }
-        return nil
+        return best
     }
 
     /// Derive the subscription period from the product identifier, e.g.
     /// `provenance.plus.monthly1`, `provenance.plus.annually.lite1`,
     /// `provenance.plus.lifetime1`.
     private static func period(forProductID id: String) -> String? {
-        if id.contains("lifetime") { return "lifetime" }
-        if id.contains("monthly") { return "monthly" }
-        if id.contains("annually") || id.contains("yearly") { return "yearly" }
-        return nil
+        switch id {
+        case "provenance.plus.lifetime1": return "lifetime"
+        case "provenance.plus.monthly1", "provenance.plus.monthly.lite1": return "monthly"
+        case "provenance.plus.annually1", "provenance.plus.annually.lite1": return "yearly"
+        default: return nil
+        }
     }
 }
 
@@ -279,12 +226,12 @@ public enum CrossAppEntitlementReader {
     /// Statuses that still confer the entitlement (subject to expiry below).
     private static let grantingStatuses: Set<String> = ["active", "grace"]
 
-    /// True once we've unlocked Plus off a sibling app's mirror this launch.
+    /// True while an active sibling mirror supplies the tier override.
     /// Read by `CrossAppEntitlementPublisher` to avoid mirroring a tier it
     /// granted itself, and by `PlusEntitlement.isUnlocked`. Main-thread only.
     public private(set) static var didGrantPlusFromSibling = false
 
-    /// v1 mirror payload (see the file header contract). `expiresAt` nil = lifetime.
+    /// v1 mirror payload; only an explicit lifetime period may omit expiry.
     struct Mirror: Decodable {
         var v: Int
         var period: String?          // "monthly" | "yearly" | "lifetime"
@@ -314,9 +261,14 @@ public enum CrossAppEntitlementReader {
     /// grace window is testable.
     static func grantsPlus(rawValue: String?, now: Date) -> Bool {
         guard let rawValue, let mirror = decode(rawValue) else { return false }
-        guard grantingStatuses.contains(mirror.status) else { return false }
-        guard let expiresAt = mirror.expiresAt else { return true }   // lifetime
-        return now < expiresAt.addingTimeInterval(renewalGrace)
+        guard mirror.v == 0 || mirror.v == 1, grantingStatuses.contains(mirror.status) else { return false }
+        switch mirror.period {
+        case "lifetime": return mirror.expiresAt == nil
+        case "monthly", "yearly":
+            guard let expiry = mirror.expiresAt else { return false }
+            return now < expiry.addingTimeInterval(renewalGrace)
+        default: return false
+        }
     }
 
     /// Is there a currently-granting `ifly.pro` mirror in the shared keychain?
@@ -334,21 +286,21 @@ public enum CrossAppEntitlementReader {
     /// `PaidFeatureView` / `PaidStatusView` read FreemiumKit-internal state and
     /// can't be routed through an app-level accessor.
     ///
-    /// We never pass `nil` to clear the override: it's undocumented whether
-    /// that restores the real tier or forces "no tier" (which would clobber a
-    /// real purchase). Revocation therefore takes effect on the next launch,
-    /// where the grant simply isn't re-applied.
+    /// Reconcile a previous sibling override against the completed direct
+    /// ownership snapshot so expiry/refunds do not leave a sticky grant.
     @MainActor
-    public static func applySiblingGrantIfNeeded() {
+    public static func applySiblingGrantIfNeeded(directlyOwned: Bool = false) {
         #if canImport(FreemiumKit)
-        guard !didGrantPlusFromSibling else { return }
-        // Already Plus (real purchase, promo, or a dev/sideload override) —
-        // nothing to grant, and overriding would contaminate the publisher.
-        guard FreemiumKit.shared.purchasedTier == nil else { return }
-        guard iFlyProActive else { return }
-        didGrantPlusFromSibling = true
-        FreemiumKit.shared.overrideForDebug(purchasedTier: plusTier)
-        ILOG("CrossAppEntitlement: active iFly Pro found — unlocking Provenance Plus")
+        let active = iFlyProActive
+        if didGrantPlusFromSibling {
+            // Both interpretations of override(nil) are safe after a completed
+            // direct StoreKit snapshot: restore a real purchase explicitly.
+            FreemiumKit.shared.overrideForDebug(purchasedTier: directlyOwned || active ? plusTier : nil)
+            didGrantPlusFromSibling = active && !directlyOwned
+        } else if active && !directlyOwned && FreemiumKit.shared.purchasedTier == nil {
+            didGrantPlusFromSibling = true
+            FreemiumKit.shared.overrideForDebug(purchasedTier: plusTier)
+        }
         #endif
     }
 }
@@ -381,7 +333,7 @@ public enum PlusEntitlement {
     /// they punish real subscribers.
     public static var isSettled: Bool {
         #if canImport(FreemiumKit)
-        return FreemiumKit.shared.purchasesLoaded || isUnlocked
+        return CrossAppEntitlementPublisher.storeKitSettled || FreemiumKit.shared.purchasesLoaded || isUnlocked
         #else
         return true
         #endif
