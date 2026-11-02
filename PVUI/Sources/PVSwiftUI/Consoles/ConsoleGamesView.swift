@@ -276,6 +276,10 @@ struct ConsoleGamesView: SwiftUI.View {
         }
     }
 
+    private var floatingControlsClearance: CGFloat {
+        LibraryLayout.pageIndexClearance + biosOverlayHeight + floatingSelectorClearance
+    }
+
     @ViewBuilder
     var gamesScrollView: some View {
         ScrollViewWithOffset(
@@ -334,7 +338,7 @@ struct ConsoleGamesView: SwiftUI.View {
                         .padding(.horizontal, 24)
                 }
                 // Keep the final row reachable above the floating BIOS and system controls.
-                .padding(.bottom, LibraryLayout.pageIndexClearance + biosOverlayHeight + floatingSelectorClearance)
+                .padding(.bottom, floatingControlsClearance)
                 /// Measured inside the desktop column, whose outer frame spans the window.
                 .libraryGridWidth($gridWidth)
                 .desktopLibraryContentColumn()
@@ -351,8 +355,9 @@ struct ConsoleGamesView: SwiftUI.View {
         .overlay(
             Group {
                 if !gamesViewModel.searchText.isEmpty {
-                    VStack {
+                    ScrollView {
                         searchResultsView()
+                            .padding(.bottom, floatingControlsClearance)
                             .desktopLibraryContentColumn()
                     }
                     .background(themeManager.currentPalette.gameLibraryBackground.swiftUIColor)
