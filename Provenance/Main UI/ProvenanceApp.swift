@@ -256,6 +256,7 @@ struct ProvenanceApp: App {
         .onChange(of: scenePhase, initial: true) { _, newPhase in
             appServices.handleScenePhaseChange(newPhase)
             if newPhase == .active {
+                CrossAppEntitlementPublisher.publishPlusState()
 
                 // Start bootup sequence
                 appState.startBootupSequence()
