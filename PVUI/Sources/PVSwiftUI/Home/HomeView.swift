@@ -31,6 +31,7 @@ import FreemiumKit
 // larger change. Remove this disable when that split happens.
 // swiftlint:disable:next type_body_length
 struct HomeView: SwiftUI.View {
+    @Environment(\.libraryBottomOverlayClearance) private var floatingSelectorClearance
 
     //    var gameLibrary: PVGameLibrary<RealmDatabaseDriver>!
 
@@ -297,7 +298,7 @@ struct HomeView: SwiftUI.View {
                     }
                 )
             }
-            .padding(.bottom, LibraryLayout.pageIndexClearance)
+            .padding(.bottom, LibraryLayout.pageIndexClearance + floatingSelectorClearance)
         }
         .background {
             RetroTheme.RetroBackgroundView()

@@ -456,6 +456,9 @@ struct ConsolesWrapperView: SwiftUI.View {
         return TabView(selection: binding) {
             if showFeatureFlagsDebug {
                 RetroDebugView()
+                    #if os(iOS)
+                    .contentMargins(.bottom, floatingSelectorClearance, for: .scrollContent)
+                    #endif
                     .tabItem {
                         Label("Debug", systemImage: "bug")
                     }
@@ -470,6 +473,9 @@ struct ConsolesWrapperView: SwiftUI.View {
 
                         FileRecoveryTestView()
                     }
+                    #if os(iOS)
+                    .padding(.bottom, floatingSelectorClearance)
+                    #endif
                 }
                 .tabItem {
                     Label("Test", systemImage: "test")
@@ -491,9 +497,11 @@ struct ConsolesWrapperView: SwiftUI.View {
         }
         #if os(iOS)
         .tabViewStyle(.page(indexDisplayMode: .never))
-        .safeAreaInset(edge: .top, spacing: 0) {
-            if UIDevice.current.userInterfaceIdiom == .phone && verticalSizeClass != .compact {
+        .environment(\.libraryBottomOverlayClearance, floatingSelectorClearance)
+        .overlay(alignment: .bottom) {
+            if floatingSelectorClearance > 0 {
                 FloatingSystemSelector(items: systemSelectorItems, selection: binding)
+                    .padding(.bottom, 6)
             }
         }
         #else
@@ -509,6 +517,10 @@ struct ConsolesWrapperView: SwiftUI.View {
     }
 
     #if os(iOS)
+    private var floatingSelectorClearance: CGFloat {
+        UIDevice.current.userInterfaceIdiom == .phone && verticalSizeClass != .compact ? LibraryLayout.systemSelectorClearance : 0
+    }
+
     private var systemSelectorItems: [FloatingSystemSelectorItem] {
         var items: [FloatingSystemSelectorItem] = []
         if showFeatureFlagsDebug {
