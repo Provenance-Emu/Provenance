@@ -213,8 +213,8 @@ public struct SupportNagView: View {
                     .freemiumKitColorReset()
                     #endif
 
-                    // Dismiss button - appears after delay
-                    if showDismiss {
+                    // Optional support requests are immediately dismissible.
+                    Group {
                         Button(action: {
                             #if !os(tvOS)
                             HapticFeedbackService.shared.playSelection()
@@ -231,6 +231,13 @@ public struct SupportNagView: View {
                         .buttonStyle(PlainButtonStyle())
                         .transition(.opacity)
                     }
+                    Button("Don't ask again") {
+                        SupportNagManager.neverAskAgain()
+                        SupportNagManager.recordDismissal()
+                        onDismiss()
+                        dismiss()
+                    }
+                    .buttonStyle(PlainButtonStyle())
                 }
                 .padding(.horizontal, 24)
                 .padding(.top, 4)
@@ -241,12 +248,7 @@ public struct SupportNagView: View {
         }
         .onAppear {
             glowOpacity = 1.0
-            // Delay showing dismiss button by 2.5 seconds
-            DispatchQueue.main.asyncAfter(deadline: .now() + 2.5) {
-                withAnimation(.easeIn(duration: 0.3)) {
-                    showDismiss = true
-                }
-            }
+
         }
     }
 
@@ -279,7 +281,6 @@ public struct SupportNagView: View {
     }
 
     @State private var glowOpacity: Double = 0.5
-    @State private var showDismiss: Bool = false
 }
 
 #if DEBUG

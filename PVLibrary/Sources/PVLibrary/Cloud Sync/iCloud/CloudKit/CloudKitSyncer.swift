@@ -862,19 +862,20 @@ public class CloudKitSyncer: SyncProvider {
             return
         }
 
+        // Scope only ROM payloads: save-state and battery/progress protection stays free.
+        // Check before using an already-fetched CKAsset as well as before fetching one.
+        let isROMRecord = record.recordType == CloudKitSyncer.RecordType.rom || record.recordType == "Game"
+            || dirLower == "roms" || dirLower.hasPrefix("roms/")
+        if isROMRecord && !CloudSyncContentAccess.effectiveScope(for: Defaults[.cloudKitSyncContentType]).allowsAutomaticROMFileTransfers {
+            await createDatabaseEntryFromRecord(record, directory: directory, filename: filename)
+            syncLog.event(.download, item: "record/\(filename)", status: .ok, detail: "metadata scope — skipped automatic ROM payload")
+            return
+        }
+
         // File is missing locally — check if we already have the asset data
         // (e.g. from an on-demand fetch or subscription notification)
         if let fileAsset = record["fileData"] as? CKAsset, let fileURL = fileAsset.fileURL {
             await downloadFile(from: fileURL, to: directory, filename: filename, record: record)
-            return
-        }
-
-        // metadataOnly devices (e.g. tvOS) should not download file assets during
-        // background sync — only create database entries so the library populates.
-        // Files are fetched on-demand when the user taps a game.
-        if Defaults[.cloudKitSyncContentType] == .metadataOnly {
-            await createDatabaseEntryFromRecord(record, directory: directory, filename: filename)
-            syncLog.event(.download, item: "record/\(filename)", status: .ok, detail: "metadataOnly — skipped asset download")
             return
         }
 

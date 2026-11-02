@@ -1386,6 +1386,26 @@ public struct CloudSyncSettingsView: View {
 
     /// Content type selection settings
     private var contentTypeSection: some View {
+        #if os(tvOS)
+        contentTypeOptions
+        #else
+        VStack(alignment: .leading, spacing: 12) {
+            Button("Use Free Save, Progress & Settings Sync") {
+                currentiCloudSyncContentType = .metadataOnly
+            }
+            Text("Free sync skips automatic ROM file transfers. Your existing cloud data is retained.")
+                .font(.caption)
+            PaidFeatureView {
+                contentTypeOptions
+            } lockedView: {
+                Text("Whole-ROM library automation is included with Provenance Plus.")
+            }
+            .freemiumKitColorReset()
+        }
+        #endif
+    }
+
+    private var contentTypeOptions: some View {
         VStack(alignment: .leading, spacing: 16) {
             Text("cloud_sync.content.title", bundle: .module)
                 .cloudSyncSectionTitle()

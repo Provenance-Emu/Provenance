@@ -436,6 +436,10 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
     ///
     /// `.removeDuplicates()` prevents back-to-back `true→true` fires (which happened
     /// when `setPauseEmulation(false)` was called twice) from double-starting the timer.
+    /// Called only after a running game has returned to its presenting library.
+    var onSuccessfulReturnToLibrary: (() -> Void)?
+    private var hasRunSuccessfully = false
+
     private func observeRunningState() {
         runningCancellable = core.publisher(for: \.isRunning, options: [.new])
             .removeDuplicates()
@@ -443,6 +447,7 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
             .sink { [weak self] isRunning in
                 guard let self else { return }
                 if isRunning {
+                    self.hasRunSuccessfully = true
                     self.hideBootHUDIfNeeded()
                     self.playTimeTracker?.didResume()
                     /// Cores like RetroArch/Dolphin/Citra/PPSSPP overwrite our pause-button
@@ -2064,7 +2069,11 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
         }
         fpsHUDView.removeFromSuperview()
 
-        dismiss(animated: true, completion: completion)
+        let returnedToLibrary = hasRunSuccessfully && completion == nil ? onSuccessfulReturnToLibrary : nil
+        dismiss(animated: true) {
+            completion?()
+            returnedToLibrary?()
+        }
         view?.removeFromSuperview()
         removeFromParent()
         staticSelf = nil

@@ -200,7 +200,7 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
             // PHASE 2: Queue background downloads with intelligent prioritization
             // When content type is metadataOnly (default on tvOS), skip bulk ROM downloads.
             // Games still appear in the library with a cloud badge and download on-demand when launched.
-            if Defaults[.cloudKitSyncContentType] == .metadataOnly {
+            if CloudSyncContentAccess.effectiveScope(for: Defaults[.cloudKitSyncContentType]) == .metadataOnly {
                 syncLog.event(.download, item: "loadAllFromCloud/phase2", status: .skipped, detail: "metadataOnly — \(gamesNeedingDownload.count) games visible, downloads on-demand only")
             } else if !gamesNeedingDownload.isEmpty {
                 syncLog.event(.download, item: "loadAllFromCloud/phase2", status: .inProgress, detail: "\(gamesNeedingDownload.count) games queued")
@@ -807,6 +807,8 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
     }
 
     public func uploadGame(_ md5: String) async throws {
+        // Import/file notifications can reach this route without the manager's content filter.
+        guard CloudSyncContentAccess.effectiveScope(for: Defaults[.cloudKitSyncContentType]).allowsAutomaticROMFileTransfers else { return }
         let game = try await withRealm { realm -> PVGame in
             guard let liveGame = realm.object(ofType: PVGame.self, forPrimaryKey: md5.uppercased()),
                   !liveGame.isInvalidated else {
@@ -1418,7 +1420,7 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
         // Use optional catch as .unknownItem is expected if the record was truly deleted (though less likely with soft delete)
         var fetchedRecord: CKRecord?
         do {
-            fetchedRecord = try await fetchRecord(recordID: recordID, includeAssets: true)
+            fetchedRecord = try await fetchRecord(recordID: recordID, includeAssets: CloudSyncContentAccess.effectiveScope(for: Defaults[.cloudKitSyncContentType]).allowsAutomaticROMFileTransfers)
         } catch let error as CKError where error.code == .unknownItem {
             CloudSyncManager.syncLog.event(.sync, item: "rom/\(recordID.recordName)", status: .notFound, detail: "may have been hard deleted")
             // If truly not found, we might need to delete locally if we have it?
@@ -1480,7 +1482,7 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
                     #if os(tvOS)
                     VLOG("tvOS: Skipping auto-download for \(md5). On-demand only.")
                     #else
-                    if recordDeclaresAssetPresence(record) {
+                    if CloudSyncContentAccess.effectiveScope(for: Defaults[.cloudKitSyncContentType]).allowsAutomaticROMFileTransfers, recordDeclaresAssetPresence(record) {
                         VLOG("Local game \(md5) is not marked as downloaded. Triggering download...")
                         Task.detached { [self] in
                             do {

@@ -13,17 +13,7 @@ import PVSettings
 
 /// Manages showing the support nag screen at appropriate intervals
 public struct SupportNagManager {
-    /// First nag at launch 10 to catch engaged users earlier
-    private static let firstNagThreshold = 10
-
-    /// Second nag at launch 25
-    private static let secondNagThreshold = 25
-
-    /// After launch 25, nag every 15 launches
-    private static let recurringInterval = 15
-
-    /// Minimum time between nag screens (to prevent spam)
-    private static let minimumTimeBetweenNags: TimeInterval = 4 * 24 * 60 * 60 // 4 days
+    private static let neverAskAgainKey = "org.provenance.supportNag.neverAskAgain"
 
     /// Increment the game launch counter and check if we should show the nag screen
     /// - Returns: True if the nag screen should be shown
@@ -33,6 +23,11 @@ public struct SupportNagManager {
         guard AppState.shared.isAppStore else {
             return false
         }
+
+        guard !UserDefaults.standard.bool(forKey: neverAskAgainKey) else { return false }
+        #if canImport(FreemiumKit)
+        guard PlusEntitlement.isSettled else { return false }
+        #endif
 
         var launchCount = Defaults[.gameLaunchCount]
         launchCount += 1
@@ -45,33 +40,15 @@ public struct SupportNagManager {
         }
         #endif
 
-        // Determine if we should show based on adaptive schedule
-        let shouldShow: Bool
-        if launchCount == firstNagThreshold {
-            shouldShow = true
-        } else if launchCount == secondNagThreshold {
-            shouldShow = true
-        } else if launchCount > secondNagThreshold {
-            shouldShow = (launchCount - secondNagThreshold) % recurringInterval == 0
-        } else {
-            shouldShow = false
-        }
+        guard SupportNagSchedule.isEligible(completedSessions: launchCount,
+                                             lastShown: Defaults[.lastSupportNagShown], now: Date()) else { return false }
+        Defaults[.lastSupportNagShown] = Date()
+        return true
+    }
 
-        if shouldShow {
-            // Check if we've shown the nag recently
-            if let lastShown = Defaults[.lastSupportNagShown] {
-                let timeSinceLastNag = Date().timeIntervalSince(lastShown)
-                if timeSinceLastNag < minimumTimeBetweenNags {
-                    return false
-                }
-            }
-
-            // Update the last shown time
-            Defaults[.lastSupportNagShown] = Date()
-            return true
-        }
-
-        return false
+    /// Permanently suppress optional support prompts on this installation.
+    public static func neverAskAgain() {
+        UserDefaults.standard.set(true, forKey: neverAskAgainKey)
     }
 
     /// Record that the user dismissed the nag screen
@@ -87,5 +64,19 @@ public struct SupportNagManager {
     /// Get the number of times the user has dismissed the nag
     public static var dismissCount: Int {
         Defaults[.nagDismissCount]
+    }
+}
+
+/// Preserves the existing frequency while moving the counter to successful completed sessions.
+enum SupportNagSchedule {
+    static func isEligible(completedSessions: Int, lastShown: Date?, now: Date) -> Bool {
+        let firstThreshold = 10
+        let secondThreshold = 25
+        let recurringInterval = 15
+        let minimumInterval: TimeInterval = 4 * 24 * 60 * 60
+        let scheduled = completedSessions == firstThreshold || completedSessions == secondThreshold ||
+            (completedSessions > secondThreshold && (completedSessions - secondThreshold) % recurringInterval == 0)
+        guard scheduled else { return false }
+        return lastShown.map { now.timeIntervalSince($0) >= minimumInterval } ?? true
     }
 }

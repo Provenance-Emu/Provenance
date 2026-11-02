@@ -622,6 +622,15 @@ public enum CloudKitSyncContentType: String, Codable, Equatable, UserDefaultsRep
     /// Sync only metadata (no files)
     case metadataOnly = "metadataOnly"
 
+    /// Automatic ROM payload transfers are separate from free metadata and save protection.
+    public var allowsAutomaticROMFileTransfers: Bool {
+        self == .all || self == .romsOnly
+    }
+
+    public var includesSaveProgress: Bool {
+        self != .romsOnly
+    }
+
     public var description: String {
         switch self {
         case .all:
@@ -644,7 +653,7 @@ public enum CloudKitSyncContentType: String, Codable, Equatable, UserDefaultsRep
         case .romsOnly:
             return "Sync only ROM files and game library"
         case .metadataOnly:
-            return "Sync game metadata, artwork, and save states (skips large ROM and BIOS files)"
+            return "Sync game metadata, artwork, and save states (skips automatic ROM file transfers)"
         }
     }
 }
