@@ -62,6 +62,7 @@ enum StreamingMultipartUpload {
                 headerBuffer.append(chunk)
                 if let headers = MultipartParsing.parseLeadingPartHeaders(from: headerBuffer, boundary: boundary) {
                     parsedHeaders = true
+                    scanner = headers.scanner
                     filename = headers.filename
                     guard let name = filename else { throw UploadError.invalidMultipart }
                     let sanitized = URL(fileURLWithPath: name).lastPathComponent
@@ -123,6 +124,8 @@ enum MultipartParsing {
         let bodyPrefix: Data
         /// True when the closing boundary was already found inside `bodyPrefix`.
         let isComplete: Bool
+        /// Retains body bytes held back while parsing the first network chunk.
+        let scanner: MultipartStreamScanner
     }
 
     static func boundary(from contentType: String) -> String? {
@@ -180,7 +183,8 @@ enum MultipartParsing {
         return LeadingPartHeaders(
             filename: filename,
             bodyPrefix: scan.writeChunk,
-            isComplete: scan.finished
+            isComplete: scan.finished,
+            scanner: scanner
         )
     }
 }

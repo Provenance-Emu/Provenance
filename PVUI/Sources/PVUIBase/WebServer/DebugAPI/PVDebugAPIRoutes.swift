@@ -28,9 +28,11 @@
 //    GET  /api/debug/shader                current + available Metal filters
 //    POST /api/debug/shader {filter: none|simpleCRT|complexCRT|lcd|…}
 //    POST /api/debug/pixelate {enabled: Bool}
+//    POST /api/debug/input {button: up|down|left|right|a|b|start|select, duration_ms: 100} (NES, player 0)
 //
 
 import Foundation
+import PVCoreBridge
 import PVLibrary
 import PVLogging
 import PVSettings
@@ -43,6 +45,7 @@ import PVWebServer
 public enum PVDebugAPIRoutes {
 
     private static var registered = false
+    private static var inputInProgress = false
 
     /// Registers every handler with `PVDebugAPIRegistry`. Idempotent; a no-op
     /// when the debug API is disabled (the router wouldn't mount them anyway).
@@ -99,6 +102,16 @@ public enum PVDebugAPIRoutes {
         registry.register("POST", "/api/debug/dismiss") { _ in
             await MainActor.run {
                 guard var base = keyWindow()?.rootViewController else { return .error("no key window", status: 503) }
+                var dismissed: [String] = []
+                let coordinator = SceneCoordinator.shared
+                if coordinator.alertState.isPresented {
+                    coordinator.alertState.hide()
+                    dismissed.append("RetroAlertState")
+                }
+                if coordinator.alertNavigationStack.isPresented {
+                    coordinator.alertNavigationStack.dismiss()
+                    dismissed.append("RetroAlertNavigationStack")
+                }
                 // Never dismiss the emulator itself (that strands a running core —
                 // use /exit); only what is stacked above it.
                 var chain: [UIViewController] = []
@@ -112,7 +125,7 @@ public enum PVDebugAPIRoutes {
                     chain = Array(chain.suffix(from: emulatorIndex + 1))
                 }
                 if !chain.isEmpty { base.dismiss(animated: false) }
-                return .ok(["dismissed": chain.map { String(describing: type(of: $0)) }])
+                return .ok(["dismissed": dismissed + chain.map { String(describing: type(of: $0)) }])
             }
         }
 
@@ -150,6 +163,10 @@ public enum PVDebugAPIRoutes {
         }
         registry.register("POST", "/api/debug/resume") { _ in
             await MainActor.run { setPaused(false) }
+        }
+
+        registry.register("POST", "/api/debug/input") { request in
+            await pressNESButton(request)
         }
 
         registry.register("POST", "/api/debug/savestate") { _ in
@@ -272,10 +289,15 @@ public enum PVDebugAPIRoutes {
         if let coreID, !coreID.isEmpty {
             core = database.object(ofType: PVCore.self, wherePrimaryKeyEquals: coreID)
             if core == nil { return .error("unknown core '\(coreID)'", status: 404) }
+            guard availableCores(for: game).contains(where: { $0.identifier == coreID }) else {
+                return .error("core '\(coreID)' is not available for this game", status: 409)
+            }
         } else {
             // Unattended: never stop at the multi-core picker.
             core = defaultCore(for: game)
         }
+
+        guard let core else { return .error("no compatible installed core for this game", status: 409) }
 
         let row: [String: Any] = ["md5": game.md5Hash, "title": game.title, "system": game.systemIdentifier]
         ILOG("PVDebugAPIRoutes: boot \(game.title) [\(game.systemIdentifier)] core=\(coreID ?? "default")")
@@ -286,12 +308,8 @@ public enum PVDebugAPIRoutes {
     /// The user's preferred core, else the first core the launcher's picker would
     /// list (same filter and `corePickerOrder` as `GameLaunchingViewController`).
     private static func defaultCore(for game: PVGame) -> PVCore? {
-        guard let system = game.system else { return nil }
-        let unsupportedCores = Defaults[.unsupportedCores]
-        let cores = system.cores.filter {
-            (!$0.disabled || unsupportedCores) && $0.hasCoreClass && !(AppState.shared.isAppStore && $0.appStoreDisabled)
-        }
-        if let preferred = game.userPreferredCoreID ?? system.userPreferredCoreID,
+        let cores = availableCores(for: game)
+        if let preferred = game.userPreferredCoreID ?? game.system?.userPreferredCoreID,
            let core = cores.first(where: { $0.identifier == preferred }) {
             return core
         }
@@ -302,10 +320,55 @@ public enum PVDebugAPIRoutes {
         }.first
     }
 
+    private static func availableCores(for game: PVGame) -> [PVCore] {
+        guard let system = game.system else { return [] }
+        let unsupportedCores = Defaults[.unsupportedCores]
+        return system.cores.filter {
+            (!$0.disabled || unsupportedCores) && $0.hasCoreClass && !(AppState.shared.isAppStore && $0.appStoreDisabled)
+        }
+    }
+
     private static func setPaused(_ paused: Bool) -> PVDebugAPIResponse {
         guard let core = AppState.shared.emulationUIState.core else { return .error("no game running", status: 409) }
         core.setPauseEmulation(paused)
         return .ok(["paused": core.isEmulationPaused])
+    }
+
+    /// A bounded pulse, with release guaranteed even if the request is cancelled.
+    private static func pressNESButton(_ request: PVDebugAPIRequest) async -> PVDebugAPIResponse {
+        let buttons: [String: PVNESButton] = [
+            "up": .up, "down": .down, "left": .left, "right": .right,
+            "a": .a, "b": .b, "start": .start, "select": .select
+        ]
+        let name = request.value("button")?.lowercased() ?? ""
+        guard let button = buttons[name] else {
+            return .error("unknown NES button (up, down, left, right, a, b, start, select)")
+        }
+        let durationText = request.value("duration_ms") ?? "100"
+        guard let duration = UInt64(durationText), (16...500).contains(duration) else {
+            return .error("duration_ms must be an integer from 16 to 500")
+        }
+        guard request.value("player") == nil || request.value("player") == "0" else {
+            return .error("only player 0 is supported")
+        }
+        guard let core = AppState.shared.emulationUIState.core,
+              let responder = core as? PVNESSystemResponderClient else {
+            return .error("no NES game running", status: 409)
+        }
+        guard !core.isEmulationPaused else { return .error("resume the game before input", status: 409) }
+        guard !inputInProgress else { return .error("input pulse already in progress", status: 409) }
+        inputInProgress = true
+        responder.didPush(button, forPlayer: 0)
+        defer {
+            responder.didRelease(button, forPlayer: 0)
+            inputInProgress = false
+        }
+        do {
+            try await Task.sleep(nanoseconds: duration * 1_000_000)
+        } catch {
+            return .error("input pulse cancelled", status: 409)
+        }
+        return .ok(["button": name, "player": 0, "duration_ms": duration] as [String: Any])
     }
 
     private static func saveOrLoad(save: Bool) async -> PVDebugAPIResponse {
