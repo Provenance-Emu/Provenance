@@ -844,7 +844,7 @@ public class CloudSyncManager { // swiftlint:disable:this type_body_length
             let hasLocalFile = game.isDownloaded && game.file?.url != nil &&
                 FileManager.default.fileExists(atPath: game.file?.url?.path ?? "")
 
-            if hasLocalFile {
+            if hasLocalFile && CloudSyncContentAccess.effectiveScope(for: Defaults[.cloudKitSyncContentType]).allowsAutomaticROMFileTransfers {
                 // Full upload with ROM and artwork
                 try await romsSyncer.uploadGame(md5)
                 success = true
@@ -929,12 +929,14 @@ public class CloudSyncManager { // swiftlint:disable:this type_body_length
                 let hasLocalFile = game.isDownloaded && game.file?.url != nil &&
                     FileManager.default.fileExists(atPath: game.file?.url?.path ?? "")
 
-                if hasLocalFile {
+                let success: Bool
+                if hasLocalFile && CloudSyncContentAccess.effectiveScope(for: Defaults[.cloudKitSyncContentType]).allowsAutomaticROMFileTransfers {
                     try await romsSyncer.uploadGame(md5)
+                    success = true
                 } else {
-                    _ = try await romsSyncer.updateArtworkOnly(for: game, artworkKey: game.customArtworkURL)
+                    success = try await romsSyncer.updateArtworkOnly(for: game, artworkKey: game.customArtworkURL)
                 }
-                successCount += 1
+                if success { successCount += 1 }
 
                 // Small delay between uploads to avoid rate limiting
                 try? await Task.sleep(nanoseconds: 100_000_000) // 100ms
@@ -1102,6 +1104,9 @@ public class CloudSyncManager { // swiftlint:disable:this type_body_length
             await BackgroundActivity.run("CloudKit integrity audit", onExpiration: { [weak self] in
                 Task { @MainActor in self?.integrityAuditTask?.cancel() }
             }) {
+                // The automatic integrity audit fetches ROM assets. Recheck after the delay;
+                // the separate explicit manual audit remains available to every user.
+                guard CloudSyncContentAccess.effectiveScope(for: Defaults[.cloudKitSyncContentType]).allowsAutomaticROMFileTransfers else { return }
                 // First, audit assets (quick check for missing files)
                 await romSyncer.auditCloudAssets()
 

@@ -45,6 +45,8 @@ struct ProvenanceApp: App {
     init() {
         // SkinKit's hooks (storage, case skins, theme, settings) before anything touches a skin.
         SkinKitSetup.configure()
+        // Publish distribution/pending ownership before services can admit background ROM I/O.
+        CloudSyncUpsellView.reconcileFreeSyncScope()
         PVApplicationServices.shared.start()
     }
 

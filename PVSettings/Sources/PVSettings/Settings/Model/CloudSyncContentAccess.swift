@@ -4,7 +4,12 @@ import Foundation
 public enum CloudSyncContentAccess {
     private final class State: @unchecked Sendable {
         let lock = NSLock()
+        #if os(tvOS)
         var restrictROMAutomation = false
+        #else
+        // Cold/background launches admit metadata until distribution/ownership is published.
+        var restrictROMAutomation = true
+        #endif
     }
     private static let state = State()
 

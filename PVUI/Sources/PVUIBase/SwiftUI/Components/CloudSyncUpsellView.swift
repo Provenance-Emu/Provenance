@@ -69,10 +69,8 @@ public struct CloudSyncUpsellView: View {
             set: { newValue in
                 guard !isOwnershipPending else { return }
                 if newValue {
-                    // Free save/progress sync must never silently enable whole-ROM mirroring.
-                    if !isPremium && !isTvOS {
-                        Defaults[.cloudKitSyncContentType] = .metadataOnly
-                    }
+                    // Runtime ownership scope restricts ROM automation without replacing the saved preference.
+                    Self.reconcileFreeSyncScope()
                     iCloudSyncMode = .cloudKit
                 }
                 iCloudSyncEnabled = newValue
@@ -83,16 +81,18 @@ public struct CloudSyncUpsellView: View {
     /// Publish runtime scope before and after ownership refresh without changing saved preferences.
     @MainActor
     public static func reconcileFreeSyncScope() {
-        #if canImport(FreemiumKit)
         #if os(tvOS)
         let isTV = true
         #else
         let isTV = false
         #endif
+        #if canImport(FreemiumKit)
         CloudSyncContentAccess.updateOwnership(
             isTV: isTV, isAppStore: AppState.shared.isInstalledFromAppStore,
             isSettled: PlusEntitlement.isSettled, hasPlus: PlusEntitlement.isUnlocked
         )
+        #else
+        CloudSyncContentAccess.updateOwnership(isTV: isTV, isAppStore: false, isSettled: true, hasPlus: false)
         #endif
     }
 
