@@ -142,20 +142,18 @@ extension ConsoleGamesView {
                     state.onSelectAll = { [weak gamesViewModel] in
                         guard let gamesViewModel else { return }
                         Task { @MainActor in
-                            let query = gamesViewModel.searchText.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
-                            let visibleGames = gamesViewModel.allGamesModels.filter {
-                                query.isEmpty || $0.title.lowercased().contains(query)
-                            }
+                            let visibleGames = LibraryGameFilter.games(
+                                gamesViewModel.allGamesModels, matching: gamesViewModel.searchText, title: \.title
+                            )
                             gamesViewModel.selectAllVisible(visibleGames)
                         }
                     }
                     state.onDeselectAll = { [weak gamesViewModel] in
                         guard let gamesViewModel else { return }
                         Task { @MainActor in
-                            let query = gamesViewModel.searchText.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
-                            let visibleGames = gamesViewModel.allGamesModels.filter {
-                                query.isEmpty || $0.title.lowercased().contains(query)
-                            }
+                            let visibleGames = LibraryGameFilter.games(
+                                gamesViewModel.allGamesModels, matching: gamesViewModel.searchText, title: \.title
+                            )
                             gamesViewModel.deselectAllVisible(visibleGames)
                         }
                     }
