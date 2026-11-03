@@ -103,6 +103,11 @@ extension PVEmulatorViewController {
 
         // Get both screens
         let screens = mainGroup.screens.sorted { screen1, screen2 in
+            // Source identity wins: an alternate layout can put the console's bottom screen in the upper slot.
+            if let input1 = screen1.inputFrame, let input2 = screen2.inputFrame,
+               !input1.isEmpty, !input2.isEmpty, input1.midY != input2.midY {
+                return input1.midY < input2.midY
+            }
             guard let frame1 = screen1.outputFrame, let frame2 = screen2.outputFrame else {
                 return false
             }
@@ -194,7 +199,9 @@ extension PVEmulatorViewController {
     /// so their internal layout matches the skin instead of guessing inside the union. Returns false
     /// when the bridge has no such method; the caller then positions the union frame as before.
     @discardableResult
-    internal func applyDualScreenFramesToPositioningBridge(_ frames: [CGRect]) -> Bool {
+    /// - Parameter identityOrdered: `frames` are already `[top, bottom]` by source identity (from
+    ///   `dualScreenViewportRects()`), so the bridge keeps that order instead of inferring it from geometry.
+    internal func applyDualScreenFramesToPositioningBridge(_ frames: [CGRect], identityOrdered: Bool = false) -> Bool {
         guard frames.count >= 2,
               let bridge = core.bridge as? EmulatorCoreViewportPositioning,
               bridge.applyDualScreenRenderFramesInTouchView != nil,
@@ -206,7 +213,7 @@ extension PVEmulatorViewController {
         // Effect screens (blurred backdrops) are larger than the game screens: keep the two smallest.
         let screens = Array(frames.sorted { $0.width * $0.height < $1.width * $1.height }.prefix(2))
         // The 3DS top screen is the wider one (5:3 against 4:3); when the aspects tie, the upper one is the top.
-        let ordered = screens.sorted { a, b in
+        let ordered = identityOrdered ? Array(frames.prefix(2)) : screens.sorted { a, b in
             let ra = a.width / max(a.height, 1), rb = b.width / max(b.height, 1)
             return abs(ra - rb) > 0.05 ? ra > rb : a.minY < b.minY
         }
@@ -355,7 +362,7 @@ extension PVEmulatorViewController {
 
         if lastAppliedViewportFrame != frame {
             // Special handling for emuThreeDS - it uses touchViewController directly
-            if let rects = dualScreenViewportRects(), applyDualScreenFramesToPositioningBridge([rects.top, rects.bottom]) {
+            if let rects = dualScreenViewportRects(), applyDualScreenFramesToPositioningBridge([rects.top, rects.bottom], identityOrdered: true) {
                 // Both frames went to the core's own layout.
             } else if core.coreIdentifier?.contains("emuThree") == true || core.coreIdentifier?.contains("3DS") == true || core.coreIdentifier?.contains("azahar") == true {
                 applyDualScreenViewportForEmuThree(frame: frame)

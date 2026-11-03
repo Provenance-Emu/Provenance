@@ -479,13 +479,16 @@ extension PVEmulatorViewController: PVViewportLayoutDelegate {
         // reads) and fall back to our own for detached/preview hierarchies.
         let bottomInset = view.window?.safeAreaInsets.bottom ?? view.safeAreaInsets.bottom
         let displayType: DeltaSkinDisplayType = bottomInset > 0 ? .edgeToEdge : .standard
+        // Same stored alt-layout choice EmulatorWithSkinView draws with, so the viewport uses the
+        // active set's screens (see PVEmulatorViewController+AltRepresentations).
         return DeltaSkinTraits(device: device,
                                displayType: displayType,
                                orientation: orientation,
                                // A skin's `gameOverrides` are matched by md5, crc, ROM filename, then title.
                                gameIdentifiers: game.map {
                                    DeltaSkinTraits.gameOverrideKeys(md5: $0.md5Hash, crc: $0.crc, romFileName: $0.file?.fileName, title: $0.title)
-                               } ?? [])
+                               } ?? [],
+                               usesAltRepresentations: usesAltRepresentations(for: currentSkin))
     }
 
     /// Simple frame validation
@@ -931,7 +934,7 @@ extension PVEmulatorViewController: PVViewportLayoutDelegate {
         // out itself (Azahar) wants both skin screens instead, or it ends up squeezed into one.
         if core.supportsDualScreens, viewport.applyDualScreenRenderFramesInTouchView != nil {
             if let rects = dualScreenViewportRects(),
-               applyDualScreenFramesToPositioningBridge([rects.top, rects.bottom]) {
+               applyDualScreenFramesToPositioningBridge([rects.top, rects.bottom], identityOrdered: true) {
                 logViewportApply("RA-dual:\(reason)", frame: rects.top.union(rects.bottom))
                 ensureGPUViewVisibilityAndZOrder()
                 return
@@ -1120,6 +1123,8 @@ extension PVEmulatorViewController: PVViewportLayoutDelegate {
             return
         }
         revealHostGPUView()
+        // A dedicated external display owns the GPU view as its window's root view: leave it there.
+        guard secondaryWindow == nil else { return }
 
         if let skinContainerView = view.subviews.first(where: { $0 is DeltaSkinContainerView }) {
             view.insertSubview(gameScreenView, belowSubview: skinContainerView)
