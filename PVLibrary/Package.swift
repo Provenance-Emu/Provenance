@@ -245,6 +245,7 @@ let package = Package(
             dependencies: [
                 .product(name: "PVSystems", package: "PVSystems"),
                 "PVLibrary",
+                "PVLogging",
                 "PVFeatureFlags",
                 "PVRealm",
                 .product(name: "PVLookup", package: "PVLookup"),

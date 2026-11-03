@@ -195,6 +195,7 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
         if let sharedInputHandler { return sharedInputHandler }
         let inputHandler = DeltaSkinInputHandler(emulatorCore: core, emulatorController: self)
         installMetalDualScreenSwap(on: inputHandler)
+        installAltRepresentationsToggle(on: inputHandler)
         inputHandler.menuButtonHandler = { [weak self] in
             self?.showMenu(nil)
         }
@@ -237,9 +238,12 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
         return vc
     }()
 
-    /// The classic on-screen controller. Made only by `addControllerOverlay()`; nil while a
-    /// skin or the touch overlay supplies the controls.
-    public private(set) var controllerViewController: (any ControllerVC)?
+    #if os(iOS) && !targetEnvironment(macCatalyst)
+    /// Quick actions for desktop input mode, where no skin or touch overlay is on screen.
+    var quickActionBar: EmulatorQuickActionBar?
+    /// The system volume HUD (`Defaults[.volumeHUD]`), shown over every session.
+    var volumeHUD: SubtleVolume?
+    #endif
 
     #if os(tvOS)
     override public var preferredUserInterfaceStyle: UIUserInterfaceStyle { ThemeManager.shared.currentPalette.dark ? .dark : .light }
@@ -436,6 +440,10 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
     ///
     /// `.removeDuplicates()` prevents back-to-back `true→true` fires (which happened
     /// when `setPauseEmulation(false)` was called twice) from double-starting the timer.
+    /// Called only after a running game has returned to its presenting library.
+    var onSuccessfulReturnToLibrary: (() -> Void)?
+    private var hasRunSuccessfully = false
+
     private func observeRunningState() {
         runningCancellable = core.publisher(for: \.isRunning, options: [.new])
             .removeDuplicates()
@@ -443,6 +451,7 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
             .sink { [weak self] isRunning in
                 guard let self else { return }
                 if isRunning {
+                    self.hasRunSuccessfully = true
                     self.hideBootHUDIfNeeded()
                     self.playTimeTracker?.didResume()
                     /// Cores like RetroArch/Dolphin/Citra/PPSSPP overwrite our pause-button
@@ -511,9 +520,12 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
         NSSetUncaughtExceptionHandler(nil)
         staticSelf = nil
         gpuViewController.dismiss(animated: false)
-        controllerViewController?.dismiss(animated: false)
         core.touchViewController = nil
         #if os(iOS) && !targetEnvironment(macCatalyst) && !os(macOS)
+        // deinit is nonisolated, but UIViewController always deinits on the main thread.
+        MainActor.assumeIsolated {
+            quickActionBar?.invalidate()
+        }
         let (trackpadView, cursorHost) = takeVirtualMouseCleanupHandles()
         let lightGunView = takeLightGunCleanupHandle()
         Task { @MainActor in
@@ -743,27 +755,36 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
         }
     }
 
-    private func addControllerOverlay() {
-        if controllerViewController == nil, let system = game.system {
-            controllerViewController = PVCoreFactory.controllerViewController(forSystem: system, core: core)
-        }
-        if let aController = controllerViewController {
-            addChild(aController)
-        }
-        if let aView = controllerViewController?.view {
-            view.addSubview(aView)
-            ILOG("controllerViewController \(controllerViewController), core: \(core)")
-            /// For RetroArch and PPSSPP cores, always attach the core's view hierarchy to `self`
-            /// This ensures a stable container, regardless of skin mode, and avoids layout issues
-            /// when switching between DeltaSkins and legacy controller overlays.
-            if core.coreIdentifier?.contains("libretro") == true || core.coreIdentifier?.contains("ppsspp") == true {
-                core.touchViewController = self
-            } else {
-                core.touchViewController = controllerViewController
-            }
-        }
-        controllerViewController?.didMove(toParent: self)
+    #if os(iOS) && !targetEnvironment(macCatalyst)
+    /// Shows the system volume level as a thin bar along the top edge (`Defaults[.volumeHUD]`).
+    private func installVolumeHUDIfNeeded() {
+        guard Defaults[.volumeHUD], volumeHUD == nil else { return }
+        let hud = SubtleVolume(style: .roundedLine)
+        hud.barTintColor = .white
+        hud.barBackgroundColor = UIColor.white.withAlphaComponent(0.3)
+        hud.animation = .slideDown
+        hud.layer.cornerRadius = Self.volumeHUDHeight / 2
+        NotificationCenter.default.addObserver(hud, selector: #selector(SubtleVolume.resume),
+                                               name: UIApplication.didBecomeActiveNotification, object: nil)
+        view.addSubview(hud)
+        volumeHUD = hud
+        layoutVolumeHUD()
     }
+
+    private static let volumeHUDHeight: CGFloat = 3
+    private static let volumeHUDTopPadding: CGFloat = 10
+    /// The bar spans the middle 60% of the width.
+    private static let volumeHUDWidthFraction: CGFloat = 0.6
+
+    private func layoutVolumeHUD() {
+        guard let volumeHUD else { return }
+        let insets = view.safeAreaInsets
+        let available = view.bounds.width - insets.left - insets.right
+        let width = available * Self.volumeHUDWidthFraction
+        volumeHUD.frame = CGRect(x: insets.left + (available - width) / 2, y: insets.top + Self.volumeHUDTopPadding,
+                                 width: width, height: Self.volumeHUDHeight)
+    }
+    #endif
 
     private func initMenuButton() {
         let alpha = CGFloat(Defaults[.controllerOpacity])
@@ -803,7 +824,6 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
 
         // Set up Delta Skin
         setupDeltaSkinDirectly()
-        observeExplicitSkinRemoval()
         observeLiveSkinSelection()
 
         // Install toast overlay AFTER skin setup so it renders above all emulator views
@@ -1073,21 +1093,17 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
             #endif
         }
         #if os(iOS) && !targetEnvironment(macCatalyst) && !os(macOS)
-        // Do not show legacy controller overlay when DeltaSkins are enabled
+        // No skin layer (desktop input mode): libretro and PPSSPP still want this VC as their
+        // stable host, which the fallback below deliberately leaves to this path.
         if !isDeltaSkinEnabled {
-            addControllerOverlay()
-            /// Apply auto-hide for a controller that was ALREADY connected before this
-            /// view controller existed. `updateOnScreenControlsVisibility()` is otherwise
-            /// only driven by connect/disconnect/reassign notifications, none of which
-            /// fire when the controller was paired before the game launched — so the OSD
-            /// stayed visible for the whole session (issue #3630). Must run after
-            /// `addControllerOverlay()`: `setOnScreenControlsHidden` no-ops while the
-            /// overlay's view has no superview.
-            ///
-            /// The DeltaSkin path has its own equivalent call in the `onSkinLoaded`
-            /// handler, which is why only the legacy overlay was affected.
-            updateOnScreenControlsVisibility()
+            if core.coreIdentifier?.contains("libretro") == true || core.coreIdentifier?.contains("ppsspp") == true {
+                core.touchViewController = self
+            }
+            if GamepadManager.isDesktopInputMode, quickActionBar == nil {
+                quickActionBar = EmulatorQuickActionBar(host: self)
+            }
         }
+        installVolumeHUDIfNeeded()
         initMenuButton()
         // Install cursor overlay + touch trackpad for mouse-supporting cores, then wire
         // all virtual-input toggle closures and honour keyboard auto-show config.
@@ -1108,24 +1124,16 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
         /// So a nil host doesn't degrade rendering — the core silently never starts
         /// at all: no view, no crash, no log.
         ///
-        /// The sole assignment used to live in `addControllerOverlay()`, which is
-        /// compiled `#if os(iOS)` and skipped entirely when DeltaSkins are enabled.
-        /// On tvOS always, and on every skinned iOS session, those cores got no host
-        /// and never booted.
-        ///
-        /// Scoped deliberately:
-        /// * A **fallback**, not an override — when the legacy overlay is installed
-        ///   it stays the host, leaving that path byte-for-byte unchanged.
-        /// * libretro and ppsspp are **excluded**. They don't gate view creation on
+        /// libretro and ppsspp are **excluded**. They don't gate view creation on
         ///   this (RetroArch attaches via `gpuViewController`; PPSSPP uses it only
         ///   for optional Auto Layout constraints in `refreshScreenSize`), so handing
         ///   them a newly non-nil host would re-attach CocoaView or activate
-        ///   constraints that are dormant today. They already get an explicit `self`
-        ///   from `addControllerOverlay()` on the path where that is wanted.
+        ///   constraints that are dormant today. They get an explicit `self` above
+        ///   when no skin layer is up.
         let coreID = core.coreIdentifier ?? ""
         if core.touchViewController == nil, !coreManagesOwnHosting {
             core.touchViewController = self
-            ILOG("No controller-overlay host for \(coreID); hosting core views on the emulator VC")
+            ILOG("Hosting core views for \(coreID) on the emulator VC")
         }
 
         configureFPSCounterPreferenceObservationIfNeeded()
@@ -1892,6 +1900,9 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
         super.viewDidLayoutSubviews()
         #if os(iOS)
         layoutMenuButton()
+        #if !targetEnvironment(macCatalyst)
+        layoutVolumeHUD()
+        #endif
 
         /// Update safe area insets for cores that support it
         if let safeAreaCore = core as? EmulatorCoreSafeAreaSupport {
@@ -2016,12 +2027,6 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
         stopAchievements()
 
         gpuViewController.dismiss(animated: false)
-        if let view = controllerViewController?.view {
-            for subview in view.subviews {
-                subview.removeFromSuperview()
-            }
-        }
-        controllerViewController?.dismiss(animated: false)
         core.touchViewController = nil
         #if os(iOS)
         for controller in PVControllerManager.shared.controllers {
@@ -2064,7 +2069,11 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
         }
         fpsHUDView.removeFromSuperview()
 
-        dismiss(animated: true, completion: completion)
+        let returnedToLibrary = hasRunSuccessfully && completion == nil ? onSuccessfulReturnToLibrary : nil
+        dismiss(animated: true) {
+            completion?()
+            returnedToLibrary?()
+        }
         view?.removeFromSuperview()
         removeFromParent()
         staticSelf = nil
@@ -2407,7 +2416,11 @@ extension PVEmulatorViewController {
             device: currentDevice,
             displayType: displayType,
             orientation: currentOrientation == .landscape ? .landscape : .portrait,
-            gameIdentifier: game?.title
+            // A skin's `gameOverrides` are matched by md5, crc, ROM filename, then title.
+            gameIdentifiers: game.map {
+                DeltaSkinTraits.gameOverrideKeys(md5: $0.md5Hash, crc: $0.crc, romFileName: $0.file?.fileName, title: $0.title)
+            } ?? [],
+            usesAltRepresentations: usesAltRepresentations(for: skin)
         )
 
         DLOG("Creating skin view with traits: \(traits)")
@@ -2418,6 +2431,7 @@ extension PVEmulatorViewController {
             emulatorController: self
         )
         installMetalDualScreenSwap(on: inputHandler)
+        installAltRepresentationsToggle(on: inputHandler)
 
         // Store the input handler for reuse
         sharedInputHandler = inputHandler
@@ -2662,15 +2676,6 @@ extension PVEmulatorViewController {
             return
         }
 
-        // Cores that only use a skin the player picked fall back to the classic on-screen
-        // controller unless the overlay covers the game.
-        if core.requiresExplicitSkinSelection && !programmaticOverlayCoversGame {
-            await MainActor.run {
-                restoreClassicControlsAfterSkin()
-            }
-            return
-        }
-
         // Clean up any existing skin views and hosting controllers
         await MainActor.run {
             radicalCleanup()
@@ -2690,50 +2695,6 @@ extension PVEmulatorViewController {
         await MainActor.run {
             NotificationCenter.default.post(name: NSNotification.Name("DeltaSkinChanged"), object: nil)
             NotificationCenter.default.post(name: NSNotification.Name("DeltaSkinInputHandlerReconnect"), object: nil)
-        }
-    }
-
-    /// Swaps an active skin back to the classic on-screen controller, for cores with
-    /// `requiresExplicitSkinSelection`.
-    ///
-    /// Does nothing while no skin is up, so a classic session stays untouched:
-    /// `radicalCleanup()` would remove the controller overlay, and with it the render view
-    /// of a self-hosting core (Dolphin) that lives inside that overlay.
-    private func restoreClassicControlsAfterSkin() {
-        guard currentSkin != nil || skinContainerView != nil else {
-            DLOG("skins: no skin active, keeping the classic controller")
-            return
-        }
-        // The overlay replaces the classic controller for games it covers.
-        guard !programmaticOverlayCoversGame else {
-            DLOG("skins: programmatic overlay covers this game, not restoring the classic controller")
-            return
-        }
-        ILOG("skins: skin removed, restoring the classic controller")
-
-        radicalCleanup()
-        currentSkin = nil
-
-        // Hand the core's render view back its full-screen layout (re-attaching it if
-        // the cleanup detached it).
-        (core.bridge as? EmulatorCoreViewportPositioning)?.setUseCustomRenderViewLayout(false)
-        gpuViewController.useCustomPositioning = false
-        if let gpuView = gpuViewController.view {
-            gpuView.frame = view.bounds
-            gpuView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
-        }
-
-        #if os(iOS) && !targetEnvironment(macCatalyst)
-        if let controllerView = controllerViewController?.view {
-            controllerView.frame = view.bounds
-            controllerView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
-        }
-        addControllerOverlay()
-        updateOnScreenControlsVisibility()
-        #endif
-
-        if let menuButton {
-            view.bringSubviewToFront(menuButton)
         }
     }
 
@@ -2775,6 +2736,12 @@ extension PVEmulatorViewController {
         if let mb = menuButton {
             preservedViews.insert(ObjectIdentifier(mb))
         }
+        #if os(iOS) && !targetEnvironment(macCatalyst)
+        if let volumeHUD {
+            preservedViews.insert(ObjectIdentifier(volumeHUD))
+        }
+        quickActionBar?.views.forEach { preservedViews.insert(ObjectIdentifier($0)) }
+        #endif
         // Preserve the toast overlay container (parent of the hosting controller's view)
         if let toastContainer = toastHostingController?.view.superview {
             preservedViews.insert(ObjectIdentifier(toastContainer))
@@ -3108,8 +3075,7 @@ extension PVEmulatorViewController {
 
     /// Ensure proper z-order of views in the hierarchy.
     ///
-    /// Works for both DeltaSkin mode (with a skin container) and legacy
-    /// PVControllerViewController mode (no skin container).
+    /// Works with and without a skin container (desktop input mode has none).
     private func ensureProperZOrder() {
         guard let gpuView = gpuViewController.view else { return }
 
@@ -3418,7 +3384,7 @@ extension PVEmulatorViewController {
         if !core.isOn {
             return
         }
-        ILOG("[INPUT-DIAG] appWillEnterForeground: isShowingMenu=\(isShowingMenu), presentedVC=\(String(describing: presentedViewController)), menuPresentationVC=\(String(describing: menuPresentationViewController)), controllerVC=\(controllerViewController != nil), controllerVC.view.userInteraction=\(controllerViewController?.view.isUserInteractionEnabled ?? false), controllerVC.view.superview=\(controllerViewController?.view.superview != nil), controllerVC.view.window=\(controllerViewController?.view.window != nil)")
+        ILOG("[INPUT-DIAG] appWillEnterForeground: isShowingMenu=\(isShowingMenu), presentedVC=\(String(describing: presentedViewController)), menuPresentationVC=\(String(describing: menuPresentationViewController))")
         Task.detached { @MainActor in
             self.playTimeTracker?.updateLastPlayedTime()
         }
@@ -3465,9 +3431,9 @@ extension PVEmulatorViewController {
             core.setPauseEmulation(true)
         }
 
-        ILOG("[INPUT-DIAG] appWillResignActive: isShowingMenu=\(isShowingMenu), controllerVC=\(controllerViewController != nil), controllerVC.view.userInteraction=\(controllerViewController?.view.isUserInteractionEnabled ?? false), skinContainer.userInteraction=\(skinContainerView?.isUserInteractionEnabled ?? false), skinHostingControllers=\(skinHostingControllers.count)")
+        ILOG("[INPUT-DIAG] appWillResignActive: isShowingMenu=\(isShowingMenu), skinContainer.userInteraction=\(skinContainerView?.isUserInteractionEnabled ?? false), skinHostingControllers=\(skinHostingControllers.count)")
 
-        ILOG("[INPUT-DIAG] appWillResignActive: isShowingMenu=\(isShowingMenu), presentedVC=\(String(describing: presentedViewController)), menuPresentationVC=\(String(describing: menuPresentationViewController)), controllerVC=\(controllerViewController != nil), controllerVC.view.userInteraction=\(controllerViewController?.view.isUserInteractionEnabled ?? false), controllerVC.view.superview=\(controllerViewController?.view.superview != nil), controllerVC.view.window=\(controllerViewController?.view.window != nil)")
+        ILOG("[INPUT-DIAG] appWillResignActive: isShowingMenu=\(isShowingMenu), presentedVC=\(String(describing: presentedViewController)), menuPresentationVC=\(String(describing: menuPresentationViewController))")
 
         // Re-arm the one-shot touch diagnostics for all input pipeline layers
         InputDiagnostics.resetAll()
@@ -3547,7 +3513,7 @@ extension PVEmulatorViewController {
         let skinHostCount = skinHostingControllers.count
         let controllerCount = PVControllerManager.shared.controllers.count
         let inputHandlerNil = sharedInputHandler == nil
-        ILOG("[INPUT-DIAG] appDidBecomeActive: isShowingMenu=\(isShowingMenu), presentedVC=\(String(describing: presentedViewController)), menuPresentationVC=\(String(describing: menuPresentationViewController)), controllerVC=\(controllerViewController != nil), controllerVC.view.userInteraction=\(controllerViewController?.view.isUserInteractionEnabled ?? false), controllerVC.view.superview=\(controllerViewController?.view.superview != nil), controllerVC.view.window=\(controllerViewController?.view.window != nil)")
+        ILOG("[INPUT-DIAG] appDidBecomeActive: isShowingMenu=\(isShowingMenu), presentedVC=\(String(describing: presentedViewController)), menuPresentationVC=\(String(describing: menuPresentationViewController))")
         ILOG("[INPUT-DIAG] appDidBecomeActive: view.userInteraction=\(view.isUserInteractionEnabled), gestureRecognizers=\(gestureCount), sharedInputHandler=\(inputHandlerNil ? "nil" : "valid"), skinHostingControllers=\(skinHostCount), GCControllers=\(controllerCount)")
         // Log skin container state
         if let skinContainer = skinContainerView {
@@ -3596,7 +3562,7 @@ extension PVEmulatorViewController {
 
         // Comprehensive state dump for touch-pipeline debugging
         ILOG("[INPUT-DIAG] appDidBecomeActive: isShowingMenu=\(isShowingMenu), presentedVC=\(presentedViewController != nil ? String(describing: type(of: presentedViewController!)) : "nil"), menuPresentationVC=\(menuPresentationViewController != nil)")
-        ILOG("[INPUT-DIAG] appDidBecomeActive: view.userInteraction=\(view.isUserInteractionEnabled), controllerVC=\(controllerViewController != nil), controllerVC.view.userInteraction=\(controllerViewController?.view.isUserInteractionEnabled ?? false), controllerVC.view.window=\(controllerViewController?.view.window != nil)")
+        ILOG("[INPUT-DIAG] appDidBecomeActive: view.userInteraction=\(view.isUserInteractionEnabled)")
         ILOG("[INPUT-DIAG] appDidBecomeActive: skinContainer.userInteraction=\(skinContainerView?.isUserInteractionEnabled ?? false), skinContainer.hidden=\(skinContainerView?.isHidden ?? true), skinHostingControllers=\(skinHostingControllers.count), sharedInputHandler=\(sharedInputHandler != nil)")
         for (i, hc) in skinHostingControllers.enumerated() {
             ILOG("[INPUT-DIAG] appDidBecomeActive: skinHostingController[\(i)]: view.userInteraction=\(hc.view.isUserInteractionEnabled), view.window=\(hc.view.window != nil), view.hidden=\(hc.view.isHidden)")
@@ -3657,20 +3623,6 @@ extension PVEmulatorViewController {
     /// interactive. Logs diagnostic state so we can see exactly what was
     /// broken if the bug persists.
     func ensureOSDTouchesEnabled() {
-        // Controller overlay (built-in OSD or DeltaSkin hosting VC)
-        if let cvc = controllerViewController {
-            let cvcView = cvc.view
-            let wasDisabled = cvcView?.isUserInteractionEnabled == false
-            cvcView?.isUserInteractionEnabled = true
-            if wasDisabled {
-                ILOG("ensureOSDTouchesEnabled: controllerVC view was disabled — re-enabled")
-            }
-            // Ensure it's in front of the GPU view
-            if let cvcSuper = cvcView?.superview, let cv = cvcView {
-                cvcSuper.bringSubviewToFront(cv)
-            }
-        }
-
         // The main view itself
         if !view.isUserInteractionEnabled {
             ILOG("ensureOSDTouchesEnabled: main view was disabled — re-enabled")
@@ -3689,7 +3641,7 @@ extension PVEmulatorViewController {
         // Ensure controller input routing is in game mode
         enableControllerInput(false)
 
-        DLOG("ensureOSDTouchesEnabled: controllerVC=\(controllerViewController != nil), presentedVC=\(presentedViewController != nil), isShowingMenu=\(isShowingMenu)")
+        DLOG("ensureOSDTouchesEnabled: presentedVC=\(presentedViewController != nil), isShowingMenu=\(isShowingMenu)")
 
         // Comprehensive view-hierarchy dump to trace where touches might be blocked
         ILOG("[INPUT-DIAG] ensureOSDTouchesEnabled: view hierarchy dump (subview count=\(view.subviews.count)):")

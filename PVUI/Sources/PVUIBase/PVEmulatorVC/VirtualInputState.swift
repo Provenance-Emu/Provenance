@@ -14,7 +14,7 @@
 /// hierarchy via `.environmentObject(_:)` so that overlay views can observe
 /// state changes reactively without any coupling to the view controller.
 ///
-/// UIKit code (e.g. `PVControllerViewController`) can subscribe to changes via
+/// UIKit code (e.g. `EmulatorQuickActionBar`) can subscribe to changes via
 /// Combine (`$isKeyboardVisible.sink { … }`).
 ///
 /// Copyright © 2026 Provenance Emu. All rights reserved.

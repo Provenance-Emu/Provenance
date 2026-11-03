@@ -121,7 +121,6 @@ extension Defaults.Keys {
     /// other's layout.
     static let gameLibraryCollectionZoom = Key<Float>("gameLibraryCollectionZoom", default: 1.0)
 
-    static let buttonTints = Key<Bool>("buttonTints", default: true)
     static let use8BitdoM30 = Key<Bool>("use8BitdoM30", default: false)
 
 #if os(tvOS)
@@ -157,7 +156,6 @@ public extension Defaults.Keys {
 public extension Defaults.Keys {
 #if canImport(UIKit)
     static let myiCadeControllerSetting = Key<iCadeControllerSetting>("myiCadeControllerSetting", default: .disabled)
-    static let allRightShoulders = Key<Bool>("allRightShoulders", default: false)
 #endif
     static let controllerOpacity = Key<Double>("controllerOpacity", default: 0.8)
     /// Scale multiplier for the on-screen controller overlay.
@@ -622,6 +620,15 @@ public enum CloudKitSyncContentType: String, Codable, Equatable, UserDefaultsRep
     /// Sync only metadata (no files)
     case metadataOnly = "metadataOnly"
 
+    /// Automatic ROM payload transfers are separate from free metadata and save protection.
+    public var allowsAutomaticROMFileTransfers: Bool {
+        self == .all || self == .romsOnly
+    }
+
+    public var includesSaveProgress: Bool {
+        self != .romsOnly
+    }
+
     public var description: String {
         switch self {
         case .all:
@@ -644,7 +651,7 @@ public enum CloudKitSyncContentType: String, Codable, Equatable, UserDefaultsRep
         case .romsOnly:
             return "Sync only ROM files and game library"
         case .metadataOnly:
-            return "Sync game metadata, artwork, and save states (skips large ROM and BIOS files)"
+            return "Sync game metadata, artwork, and save states (skips automatic ROM file transfers)"
         }
     }
 }
@@ -1028,6 +1035,12 @@ public extension Defaults.Keys {
     /// false; user must opt in via Advanced Settings.
     static let caseCompanionSkins = Key<Bool>("caseCompanionSkins", default: false)
 
+    /// Shows skins the catalog tags `mature` in the skin store. Off by default (SkinKit#13).
+    static let showMatureSkins = Key<Bool>("showMatureSkins", default: false)
+
+    /// Developer setting: shows `sample`-tagged test skins in the skin store (SkinKit#17).
+    static let showTestSkins = Key<Bool>("showTestSkins", default: false)
+
     /// ReplayKit live broadcast / cast button in the pause menu.
     /// Early support — broadcast quality + reconnect handling iterating.
     static let liveBroadcast = Key<Bool>("liveBroadcast", default: false)
@@ -1097,16 +1110,6 @@ public extension Defaults.Keys {
 #else
     static let iCloudSync = Key<Bool>("iCloudSync", default: false)
 #endif
-#if os(macOS) || targetEnvironment(macCatalyst)
-    static let movableButtons = Key<Bool>("movableButtons", default: true)
-    static let onscreenJoypad = Key<Bool>("onscreenJoypad", default: false)
-    static let onscreenJoypadWithKeyboard = Key<Bool>("onscreenJoypadWithKeyboard", default: false)
-#elseif os(iOS)
-    static let movableButtons = Key<Bool>("movableButtons", default: true)
-    static let onscreenJoypad = Key<Bool>("onscreenJoypad", default: true)
-    static let onscreenJoypadWithKeyboard = Key<Bool>("onscreenJoypadWithKeyboard", default: true)
-#endif
-
     #if os(tvOS) || os(macOS) || targetEnvironment(macCatalyst)
     static let skinMode = makeSkinModeKey(defaultValue: .off)
     #else

@@ -95,7 +95,7 @@ extension PVEmulatorViewController {
                 try await PVRecordingManager.shared.startRecording()
                 AppState.shared.emulationUIState.isRecording = true
                 #if os(iOS)
-                notifyOSDRecordingStateChanged()
+                notifyRecordingStateChanged()
                 showCameraOverlayIfEnabled()
                 #endif
                 ILOG("[Recording] Recording started")
@@ -132,7 +132,7 @@ extension PVEmulatorViewController {
                 #endif
                 AppState.shared.emulationUIState.isRecording = false
                 #if os(iOS)
-                notifyOSDRecordingStateChanged()
+                notifyRecordingStateChanged()
                 ILOG("[Recording] Recording stopped and preview presented")
                 #elseif os(tvOS)
                 // On tvOS, defer resuming emulation until the "Recording Saved" alert is dismissed.
@@ -147,7 +147,7 @@ extension PVEmulatorViewController {
                 #endif
                 AppState.shared.emulationUIState.isRecording = false
                 #if os(iOS)
-                notifyOSDRecordingStateChanged()
+                notifyRecordingStateChanged()
                 #endif
                 ELOG("[Recording] Could not stop recording: \(error.localizedDescription)")
                 if core.isOn { core.setPauseEmulation(false) }
@@ -168,7 +168,7 @@ extension PVEmulatorViewController {
         #endif
         AppState.shared.emulationUIState.isRecording = false
         #if os(iOS)
-        notifyOSDRecordingStateChanged()
+        notifyRecordingStateChanged()
         #endif
         ILOG("[Recording] Recording discarded via VC")
     }
@@ -243,10 +243,11 @@ extension PVEmulatorViewController {
     #endif
 
     #if os(iOS)
-    /// Notifies the OSD controller to refresh its record button appearance.
-    /// Must be called on the main actor since `OSDRecordingObserver` is `@MainActor`-isolated.
-    @MainActor private func notifyOSDRecordingStateChanged() {
-        (controllerViewController as? OSDRecordingObserver)?.updateRecordButtonAppearance()
+    /// Refreshes the desktop quick-action bar's record button.
+    @MainActor private func notifyRecordingStateChanged() {
+        #if !targetEnvironment(macCatalyst)
+        quickActionBar?.updateRecordButtonAppearance()
+        #endif
     }
     #endif
 }

@@ -13,6 +13,7 @@
 import SwiftUI
 import PVLogging
 import PVSettings
+import PVPrimitives
 
 #if canImport(PVUIBase)
 import PVUIBase
@@ -26,6 +27,7 @@ public enum LocalNetworkOnboarding {
     /// Whether the alert should be presented for the active platform/session.
     public static var shouldPresent: Bool {
         #if os(iOS) || targetEnvironment(macCatalyst)
+        guard !LaunchArgument.screenshotMode.isEnabled else { return false }
         return !Defaults[.localNetworkOnboardingShown]
         #else
         return false

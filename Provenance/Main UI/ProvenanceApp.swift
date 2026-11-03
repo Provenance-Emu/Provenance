@@ -45,6 +45,8 @@ struct ProvenanceApp: App {
     init() {
         // SkinKit's hooks (storage, case skins, theme, settings) before anything touches a skin.
         SkinKitSetup.configure()
+        // Publish distribution/pending ownership before services can admit background ROM I/O.
+        CloudSyncUpsellView.reconcileFreeSyncScope()
         PVApplicationServices.shared.start()
     }
 
@@ -256,6 +258,7 @@ struct ProvenanceApp: App {
         .onChange(of: scenePhase, initial: true) { _, newPhase in
             appServices.handleScenePhaseChange(newPhase)
             if newPhase == .active {
+                CrossAppEntitlementPublisher.publishPlusState()
 
                 // Start bootup sequence
                 appState.startBootupSequence()

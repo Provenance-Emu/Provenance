@@ -44,6 +44,10 @@ open class DeltaSkinInputHandler: ObservableObject {
     /// core handle the swap itself.
     var frontendScreenSwapHandler: ((_ swapped: Bool) -> Bool)?
 
+    /// Flips the skin's alternate layout (Ignited's `altRepresentations`) for the running game.
+    /// Installed by the emulator view controller (`installAltRepresentationsToggle(on:)`).
+    var altRepresentationsToggleHandler: (() -> Void)?
+
     /// `true` while the frontend renderer shows each DS screen in the other one's
     /// skin slot. The skin's stylus area follows the DS bottom screen.
     @Published public internal(set) var dsScreensSwapped = false
@@ -135,6 +139,14 @@ open class DeltaSkinInputHandler: ObservableObject {
 
         // Check for special commands first (do not auto-unpause here)
         let lowercasedId = buttonId.lowercased()
+
+        // Ignited's layout toggle. SkinKitUI's skin views call `toggleAltRepresentations()` directly and
+        // never send this token here; this covers any other caller. Its release is dropped via
+        // `TouchInputClassifier.frontendFunctionTokens`.
+        if lowercasedId == "togglealtrepresentations" {
+            toggleAltRepresentations()
+            return
+        }
 
         // Handle menu button
         if lowercasedId.contains("menu") {
@@ -1053,14 +1065,14 @@ open class DeltaSkinInputHandler: ObservableObject {
                 if let responder = core as? PVGameCubeSystemResponderClient {
                     let button: PVGCButton = isLeftStick ? .leftAnalog : .rightAnalog
                     responder.didMoveJoystick(button, withXValue: CGFloat(x), withYValue: CGFloat(y), forPlayer: 0)
-                    DLOG("Forwarded joystick event via PVGameCubeControllerViewController: button=\(button.stringValue), x=\(x), y=\(y)")
+                    DLOG("Forwarded joystick event via PVGameCubeSystemResponderClient: button=\(button.stringValue), x=\(x), y=\(y)")
                     return
                 }
             case .Wii:
                 if let responder = core as? PVWiiSystemResponderClient {
                     let button: PVWiiMoteButton = isLeftStick ? .leftAnalog : .rightAnalog
                     responder.didMoveJoystick(button, withXValue: CGFloat(x), withYValue: CGFloat(y), forPlayer: 0)
-                    DLOG("Forwarded joystick event via PVWiiControllerViewController: button=\(button.stringValue), x=\(x), y=\(y)")
+                    DLOG("Forwarded joystick event via PVWiiSystemResponderClient: button=\(button.stringValue), x=\(x), y=\(y)")
                     return
                 }
             default:
@@ -2613,5 +2625,15 @@ extension DeltaSkinInputHandler: @preconcurrency DeltaSkinInputHandling {
     /// Roles come from `TouchInputClassifier`, which matches what `buttonPressed` intercepts.
     public func touchRole(forToken token: String) -> TouchInputRole {
         TouchInputClassifier.role(forToken: token)
+    }
+
+    /// The skin's `toggleAltRepresentations` button: the emulator view controller flips and persists the
+    /// alternate layout for this game, then re-runs the skin and dual-screen layout.
+    public func toggleAltRepresentations() {
+        if let handler = altRepresentationsToggleHandler {
+            handler()
+        } else {
+            NotificationCenter.default.post(name: DeltaSkinAltRepresentationsToggle.requestedNotification, object: self)
+        }
     }
 }
