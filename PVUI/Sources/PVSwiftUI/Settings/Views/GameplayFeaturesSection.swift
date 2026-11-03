@@ -21,6 +21,7 @@ internal struct GameplayFeaturesSection: View {
     @Default(.clipBufferingEnabled) var clipBufferingEnabled
     @Default(.liveBroadcast) var liveBroadcast
     @Default(.airPlayMenu) var airPlayMenu
+    @Default(.showMatureSkins) var showMatureSkins
 
     var body: some View {
         Section {
@@ -60,6 +61,13 @@ internal struct GameplayFeaturesSection: View {
                             showChevron: false)
             }
             #endif
+
+            ThemedToggle(isOn: $showMatureSkins) {
+                SettingsRow(title: "Show mature skins",
+                            subtitle: "Include skins the catalog marks as mature in the skin store.",
+                            icon: .sfSymbol("eye.trianglebadge.exclamationmark"),
+                            showChevron: false)
+            }
 
             ThemedToggle(isOn: $clipBufferingEnabled) {
                 SettingsRow(title: "Gameplay Clips",
