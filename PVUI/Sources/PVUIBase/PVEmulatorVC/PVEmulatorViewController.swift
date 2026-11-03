@@ -195,6 +195,7 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
         if let sharedInputHandler { return sharedInputHandler }
         let inputHandler = DeltaSkinInputHandler(emulatorCore: core, emulatorController: self)
         installMetalDualScreenSwap(on: inputHandler)
+        installAltRepresentationsToggle(on: inputHandler)
         inputHandler.menuButtonHandler = { [weak self] in
             self?.showMenu(nil)
         }
@@ -2407,7 +2408,8 @@ extension PVEmulatorViewController {
             device: currentDevice,
             displayType: displayType,
             orientation: currentOrientation == .landscape ? .landscape : .portrait,
-            gameIdentifier: game?.title
+            gameIdentifier: game?.title,
+            usesAltRepresentations: usesAltRepresentations(for: skin)
         )
 
         DLOG("Creating skin view with traits: \(traits)")
@@ -2418,6 +2420,7 @@ extension PVEmulatorViewController {
             emulatorController: self
         )
         installMetalDualScreenSwap(on: inputHandler)
+        installAltRepresentationsToggle(on: inputHandler)
 
         // Store the input handler for reuse
         sharedInputHandler = inputHandler

@@ -479,10 +479,13 @@ extension PVEmulatorViewController: PVViewportLayoutDelegate {
         // reads) and fall back to our own for detached/preview hierarchies.
         let bottomInset = view.window?.safeAreaInsets.bottom ?? view.safeAreaInsets.bottom
         let displayType: DeltaSkinDisplayType = bottomInset > 0 ? .edgeToEdge : .standard
+        // Same stored alt-layout choice EmulatorWithSkinView draws with, so the viewport uses the
+        // active set's screens (see PVEmulatorViewController+AltRepresentations).
         return DeltaSkinTraits(device: device,
                                displayType: displayType,
                                orientation: orientation,
-                               gameIdentifier: game?.title)
+                               gameIdentifier: game?.title,
+                               usesAltRepresentations: usesAltRepresentations(for: currentSkin))
     }
 
     /// Simple frame validation

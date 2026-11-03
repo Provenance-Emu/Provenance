@@ -35,7 +35,8 @@ public enum TouchInputClassifier {
         "haptics", "togglehaptics", "toggle_haptics",
         "controllers", "controllersettings", "controller_settings",
         "orientation", "orientationlock", "orientation_lock", "toggleorientation",
-        "resolution", "cycleresolution", "cycle_resolution"
+        "resolution", "cycleresolution", "cycle_resolution",
+        "togglealtrepresentations"
     ]
 
     /// Substrings `DeltaSkinInputHandler.buttonPressed` matches with `contains` (menu, quick save / load,
