@@ -26,6 +26,8 @@ struct EmulatorWithSkinView: View {
     /// ROM MD5 of the game, `nil` when unknown; keys the overlay's per-game layout.
     let gameMD5: String?
     let gameCRC: String
+    /// ROM file name (with extension), `nil` when the game has no file; a skin's `gameOverrides` may key on it.
+    let gameRomFileName: String?
 
     private var gameSkinKeys: [String] { [gameId ?? "", gameMD5 ?? "", gameCRC].filter { !$0.isEmpty } }
 
@@ -65,6 +67,9 @@ struct EmulatorWithSkinView: View {
 
     // State for D-pad/joystick toggle in default skin
     @State internal var useJoystick = false
+
+    /// Bumped when the stored alt-layout choice (`altRepresentations`) changes, so the body re-reads it.
+    @State private var altRepresentationsRevision: Int = 0
 
     // Notification observer tokens — removed on disappear to prevent duplicates
     @State private var orientationObserver: NSObjectProtocol?
@@ -111,6 +116,7 @@ struct EmulatorWithSkinView: View {
         self.gameId = game.id
         self.gameMD5 = game.md5Hash.isEmpty ? nil : game.md5Hash
         self.gameCRC = game.crc
+        self.gameRomFileName = game.file?.fileName
 
         self.coreInstance = coreInstance
         self.onSkinLoaded = onSkinLoaded
@@ -314,6 +320,13 @@ struct EmulatorWithSkinView: View {
                 // Filter changes propagate naturally via state to DeltaSkinView's filters parameter
                 // No need to force view recreation - this was causing AG::precondition_failure crashes
                 ILOG("skins: Filter changed to: \(selectedFilterName ?? "none")")
+            }
+            // The skin's toggleAltRepresentations button flipped the layout set: rebuild the traits. DeltaSkinView
+            // reloads its artwork, buttons and screens on the trait change.
+            .onReceive(NotificationCenter.default.publisher(
+                for: DeltaSkinSelectionManager.altRepresentationsChangedNotification
+            ).receive(on: DispatchQueue.main)) { _ in
+                altRepresentationsRevision &+= 1
             }
             // The thin libretro wrapper only knows its real geometry/aspect once the core
             // has booted (`retro_get_system_av_info` runs on the wrapper's boot thread), so
@@ -616,8 +629,23 @@ struct EmulatorWithSkinView: View {
             orientation: isLandscape ? .landscape : .portrait,
             iPadModel: iPadModel,
             externalDisplay: .none,
-            gameIdentifier: gameTitle
+            // A skin's `gameOverrides` are matched by md5, crc, ROM filename, then title.
+            gameIdentifiers: DeltaSkinTraits.gameOverrideKeys(
+                md5: gameMD5,
+                crc: gameCRC,
+                romFileName: gameRomFileName,
+                title: gameTitle
+            ),
+            usesAltRepresentations: usesAltRepresentations
         )
+    }
+
+    /// Whether the loaded skin's alternate layout (Ignited's `altRepresentations`) is on for this game. The
+    /// emulator view controller's `skinRenderTraits()` reads the same stored value for the viewport.
+    private var usesAltRepresentations: Bool {
+        _ = altRepresentationsRevision   // re-evaluated when the choice changes
+        guard let skin = skinLoader.selectedSkin, skin.hasAltRepresentations else { return false }
+        return DeltaSkinSelectionManager.shared.usesAltRepresentations(skinIdentifier: skin.identifier, gameIds: gameSkinKeys)
     }
 
     // MARK: - Filter Handling

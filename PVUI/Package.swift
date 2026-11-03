@@ -42,7 +42,6 @@ let package = Package(
         .package(url: "https://github.com/Provenance-Emu/PVLookup.git", from: "1.0.0"),
         /// Skin model, manager, catalog and skin views, shared with iFly and iCube.
         /// Keep both direct dependencies and all consumer resolver files on the tested SkinKit release.
-        /// TODO before merge: move to the SkinKit release that ships variant families (SkinKit#17).
         .package(url: "https://github.com/Provenance-Emu/SkinKit", exact: "0.2.0"),
         .package(path: "../PVLogging"),
         .package(path: "../PVPatreon"),

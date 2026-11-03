@@ -469,6 +469,7 @@ extension PVEmulatorViewController {
         // The emulator controller (self) handles special commands like quicksave/quickload
         let inputHandler = DeltaSkinInputHandler(emulatorCore: core, emulatorController: self)
         installMetalDualScreenSwap(on: inputHandler)
+        installAltRepresentationsToggle(on: inputHandler)
 
         // CRITICAL: Store this input handler in the shared property so it can be accessed
         // throughout the emulator controller, especially for skin changes
