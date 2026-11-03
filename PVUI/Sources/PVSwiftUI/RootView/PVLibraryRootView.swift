@@ -63,16 +63,15 @@ public struct PVLibraryRootView: View {
                 }
             }
             .modifier(LibrarySidebarSheetPresenter(viewModel: navigation.viewModel))
-            .sheet(item: $navigation.sheet, onDismiss: navigation.didDismissSheet) { sheet in
-                NavigationStack {
-                    sheetContent(sheet)
-                }
-                .environmentObject(navigation.updatesController)
-                .environmentObject(SettingsNavigator.shared)
-                #if canImport(FreemiumKit)
-                .environmentObject(FreemiumKit.shared)
-                #endif
+            .sheet(item: presentedBinding(.sheet), onDismiss: navigation.didDismissSheet) { sheet in
+                presentedSheet(sheet)
             }
+            #if os(iOS)
+            // Settings covers the screen on iPad; a sheet there is a small centered card.
+            .fullScreenCover(item: presentedBinding(.fullScreen), onDismiss: navigation.didDismissSheet) { sheet in
+                presentedSheet(sheet)
+            }
+            #endif
             .confirmationDialog("Select Import Source", isPresented: $navigation.showsImportSources, titleVisibility: .visible) {
                 #if !os(tvOS)
                 Button("Cloud & Local Files") { navigation.showsFileImporter = true }
@@ -328,6 +327,37 @@ public struct PVLibraryRootView: View {
         }
     }
     #endif
+}
+
+// MARK: - Sheet presentation
+
+extension PVLibraryRootView {
+    /// The current sheet when it is presented in `style`, else `nil`, so exactly one of the sheet and
+    /// full-screen presenters shows `navigation.sheet`. A presenter only writes `nil` back when it owns the
+    /// current item: SwiftUI may report a dismissal from the presenter that is handing over to the other.
+    private func presentedBinding(_ style: SettingsPresentationStyle) -> Binding<PVLibraryNavigation.Sheet?> {
+        Binding(
+            get: {
+                guard let sheet = navigation.sheet, sheet.presentationStyle == style else { return nil }
+                return sheet
+            },
+            set: { newValue in
+                if newValue == nil, navigation.sheet?.presentationStyle != style { return }
+                navigation.sheet = newValue
+            }
+        )
+    }
+
+    private func presentedSheet(_ sheet: PVLibraryNavigation.Sheet) -> some View {
+        NavigationStack {
+            sheetContent(sheet)
+        }
+        .environmentObject(navigation.updatesController)
+        .environmentObject(SettingsNavigator.shared)
+        #if canImport(FreemiumKit)
+        .environmentObject(FreemiumKit.shared)
+        #endif
+    }
 }
 
 /// Observe the sheet owner directly; navigation's nested ObservableObject does not forward its changes.

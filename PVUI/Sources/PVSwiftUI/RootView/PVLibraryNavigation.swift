@@ -21,6 +21,11 @@ final class PVLibraryNavigation: ObservableObject, PVMenuDelegate, PVRootDelegat
     enum Sheet: String, Identifiable {
         case settings, imports, freeROMs, saves, corePicker
         var id: String { rawValue }
+
+        /// Settings covers the screen on iPad; every other sheet keeps the standard presentation.
+        var presentationStyle: SettingsPresentationStyle {
+            self == .settings ? .current : .sheet
+        }
     }
 
     let viewModel = PVRootViewModel()

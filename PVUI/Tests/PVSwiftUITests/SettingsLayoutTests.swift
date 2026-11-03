@@ -116,3 +116,23 @@ struct SettingsLayoutTests {
         #expect(SettingsLayoutRules.compactSidebarMinimumWidth >= SettingsLayoutRules.regularSidebarMinimumWidth)
     }
 }
+
+// MARK: - Presentation
+
+@Suite("SettingsPresentationStyle")
+struct SettingsPresentationStyleTests {
+
+    @Test("iPad covers the screen, iPhone keeps the sheet")
+    func styleByDevice() {
+        #expect(SettingsPresentationStyle.style(isPad: true) == .fullScreen)
+        #expect(SettingsPresentationStyle.style(isPad: false) == .sheet)
+    }
+
+    @Test("Only Settings changes presentation")
+    func onlySettingsIsAdaptive() {
+        for sheet in [PVLibraryNavigation.Sheet.imports, .freeROMs, .saves, .corePicker] {
+            #expect(sheet.presentationStyle == .sheet)
+        }
+        #expect(PVLibraryNavigation.Sheet.settings.presentationStyle == SettingsPresentationStyle.current)
+    }
+}
