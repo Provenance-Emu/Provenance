@@ -143,4 +143,14 @@ struct CrossAppEntitlementReaderTests {
     func renewalGraceIsSevenDays() {
         #expect(CrossAppEntitlementReader.renewalGrace == 7 * 24 * 60 * 60)
     }
+    @Test("Incomplete or unknown version mirrors never become lifetime")
+    func incompleteSubscriptionDenied() {
+        for period in ["monthly", "yearly", "unknown"] {
+            #expect(!CrossAppEntitlementReader.grantsPlus(rawValue: Self.v1JSON(status: "active", period: period, expiresAt: nil), now: Self.now))
+        }
+        #expect(!CrossAppEntitlementReader.grantsPlus(rawValue: Self.v1JSON(status: "active", period: nil, expiresAt: nil), now: Self.now))
+        #expect(!CrossAppEntitlementReader.grantsPlus(rawValue: Self.v1JSON(status: "active", period: "lifetime", expiresAt: nil, v: 99), now: Self.now))
+        #expect(!CrossAppEntitlementReader.grantsPlus(rawValue: Self.v1JSON(status: "active", period: "lifetime", expiresAt: Self.now), now: Self.now))
+    }
+
 }

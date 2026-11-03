@@ -23,9 +23,6 @@ public struct CloudSyncUpsellView: View {
     /// Optional hook to present upgrade flow for non-premium users.
     public let onUpgrade: (() -> Void)?
 
-    @State private var disabledDueToPremiumLoss = false
-    @State private var showPremiumLossAlert = false
-
     public init(hasCachedCloudData: Bool = false,
                 onOpenSettings: @escaping () -> Void,
                 onUpgrade: (() -> Void)? = nil) {
@@ -44,6 +41,14 @@ public struct CloudSyncUpsellView: View {
     private var isPremium: Bool { true }
     #endif
 
+    private var isOwnershipPending: Bool {
+        #if canImport(FreemiumKit)
+        return !isTvOS && AppState.shared.isInstalledFromAppStore && !PlusEntitlement.isSettled
+        #else
+        return false
+        #endif
+    }
+
     private var isTvOS: Bool {
         #if os(tvOS)
         return true
@@ -56,20 +61,39 @@ public struct CloudSyncUpsellView: View {
         CloudSyncUpsellView.cachedRecordTotal()
     }
 
-    private static let premiumStateKey = "org.provenance.cloudsync.lastPremiumState"
-    private static let premiumLossPromptKey = "org.provenance.cloudsync.lastPremiumLossPrompt"
     private static let recordCountsKey = "org.provenance.cloudsync.cloudkit.lastRecordCounts"
 
     private var cloudKitToggleBinding: Binding<Bool> {
         Binding(
             get: { iCloudSyncEnabled },
             set: { newValue in
-                iCloudSyncEnabled = newValue
+                guard !isOwnershipPending else { return }
                 if newValue {
+                    // Runtime ownership scope restricts ROM automation without replacing the saved preference.
+                    Self.reconcileFreeSyncScope()
                     iCloudSyncMode = .cloudKit
                 }
+                iCloudSyncEnabled = newValue
             }
         )
+    }
+
+    /// Publish runtime scope before and after ownership refresh without changing saved preferences.
+    @MainActor
+    public static func reconcileFreeSyncScope() {
+        #if os(tvOS)
+        let isTV = true
+        #else
+        let isTV = false
+        #endif
+        #if canImport(FreemiumKit)
+        CloudSyncContentAccess.updateOwnership(
+            isTV: isTV, isAppStore: AppState.shared.isInstalledFromAppStore,
+            isSettled: PlusEntitlement.isSettled, hasPlus: PlusEntitlement.isUnlocked
+        )
+        #else
+        CloudSyncContentAccess.updateOwnership(isTV: isTV, isAppStore: false, isSettled: true, hasPlus: false)
+        #endif
     }
 
     public static func detectCachedCloudData() -> Bool {
@@ -96,10 +120,8 @@ public struct CloudSyncUpsellView: View {
             descriptionText
             if isTvOS {
                 tvOSActions
-            } else if isPremium {
-                premiumActions
             } else {
-                nonPremiumActions
+                syncActions
             }
         }
         .padding(.horizontal, 14)
@@ -120,37 +142,6 @@ public struct CloudSyncUpsellView: View {
                 )
         )
         .shadow(color: .retroPink.opacity(0.35), radius: 6, x: 0, y: 0)
-        .onAppear {
-            guard !isTvOS else { return }
-            #if canImport(FreemiumKit)
-            // On App Store builds, isPremium is false until StoreKit's async
-            // entitlement load settles. Skip the premium-state bookkeeping
-            // (which force-disables iCloud sync) until then, or a real
-            // subscriber cold-launching into an empty library loses sync.
-            guard !AppState.shared.isInstalledFromAppStore || PlusEntitlement.isSettled else { return }
-            #endif
-            let lastPremium = UserDefaults.standard.bool(forKey: Self.premiumStateKey)
-            if lastPremium != isPremium {
-                UserDefaults.standard.set(isPremium, forKey: Self.premiumStateKey)
-            }
-            if lastPremium && !isPremium {
-                iCloudSyncEnabled = false
-                disabledDueToPremiumLoss = true
-                if UserDefaults.standard.object(forKey: Self.premiumLossPromptKey) == nil {
-                    showPremiumLossAlert = true
-                    UserDefaults.standard.set(Date(), forKey: Self.premiumLossPromptKey)
-                }
-            }
-            if !isPremium && iCloudSyncEnabled {
-                iCloudSyncEnabled = false
-                disabledDueToPremiumLoss = true
-            }
-        }
-        .alert("Cloud Sync Disabled", isPresented: $showPremiumLossAlert) {
-            Button("OK", role: .cancel) { showPremiumLossAlert = false }
-        } message: {
-            Text("Provenance Plus is inactive, so CloudKit sync was turned off. Reactivate Plus to sync again.")
-        }
     }
 
     private var header: some View {
@@ -180,14 +171,10 @@ public struct CloudSyncUpsellView: View {
             } else if isPremium {
                 Text("Sync your library with iCloud (CloudKit).")
             } else {
-                Text("CloudKit sync is included with Provenance Plus.")
+                Text("Save, progress and settings sync is free. Whole-ROM library automation is a separate Plus option.")
             }
 
-            if disabledDueToPremiumLoss {
-                Text("Cloud sync was turned off because Provenance Plus is inactive.")
-                    .font(.caption)
-                    .foregroundColor(.retroPink)
-            } else if let total = cachedRecordTotal {
+            if let total = cachedRecordTotal {
                 Text("We found \(total) items in CloudKit. Enable sync to restore them.")
                     .font(.caption)
                     .foregroundColor(.retroBlue)
@@ -211,13 +198,14 @@ public struct CloudSyncUpsellView: View {
         }
     }
 
-    private var premiumActions: some View {
+    private var syncActions: some View {
         VStack(spacing: 8) {
             Toggle(isOn: cloudKitToggleBinding) {
-                Text("Enable CloudKit Sync")
+                Text(isPremium || isTvOS ? "Enable CloudKit Sync" : "Enable Free Save & Settings Sync")
                     .foregroundColor(themeManager.currentPalette.gameLibraryText.swiftUIColor)
             }
             .toggleStyle(RetroTheme.RetroToggleStyle())
+            .disabled(isOwnershipPending)
 
             if iCloudSyncEnabled {
                 Text("CloudKit sync is on. Manage advanced options in Settings.")
@@ -228,25 +216,6 @@ public struct CloudSyncUpsellView: View {
             HStack {
                 primaryButton(title: iCloudSyncEnabled ? "Open Cloud Sync Settings" : "Configure Cloud Sync") {
                     onOpenSettings()
-                }
-                Spacer()
-            }
-        }
-    }
-
-    private var nonPremiumActions: some View {
-        VStack(spacing: 8) {
-            Text("Unlock Provenance Plus to sync with CloudKit.")
-                .font(.subheadline)
-                .foregroundColor(.retroPink)
-
-            HStack {
-                primaryButton(title: "Learn More") {
-                    if let onUpgrade {
-                        onUpgrade()
-                    } else {
-                        onOpenSettings()
-                    }
                 }
                 Spacer()
             }

@@ -47,7 +47,7 @@ struct DebugAPISettingsView: View {
                         }
                     }
 
-                    PremiumThemedToggle(isOn: $authEnabled) {
+                    ThemedToggle(isOn: $authEnabled) {
                         SettingsRow(title: "Require Password",
                                     subtitle: "HTTP Basic Auth, username \"\(PVDebugAPIPrefs.username)\". With no password set, every request is refused.",
                                     icon: .sfSymbol("lock"),

@@ -32,7 +32,8 @@ struct DescriptiveError: Error, LocalizedError {
     var errorDescription: String? { description }
 }
 
-public class CloudKitRomsSyncer: NSObject, RomsSyncing {
+// The legacy implementation predates the size rule; scope its existing debt like CloudSyncManager.
+public class CloudKitRomsSyncer: NSObject, RomsSyncing { // swiftlint:disable:this type_body_length
 
     // MARK: - SyncProvider Conformance Properties
     public var directories: Set<String> = ["ROMs"] // TODO: Initialize properly, e.g., with system identifiers this syncer handles
@@ -200,7 +201,7 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
             // PHASE 2: Queue background downloads with intelligent prioritization
             // When content type is metadataOnly (default on tvOS), skip bulk ROM downloads.
             // Games still appear in the library with a cloud badge and download on-demand when launched.
-            if Defaults[.cloudKitSyncContentType] == .metadataOnly {
+            if CloudSyncContentAccess.effectiveScope(for: Defaults[.cloudKitSyncContentType]) == .metadataOnly {
                 syncLog.event(.download, item: "loadAllFromCloud/phase2", status: .skipped, detail: "metadataOnly — \(gamesNeedingDownload.count) games visible, downloads on-demand only")
             } else if !gamesNeedingDownload.isEmpty {
                 syncLog.event(.download, item: "loadAllFromCloud/phase2", status: .inProgress, detail: "\(gamesNeedingDownload.count) games queued")
@@ -519,29 +520,32 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
         return false
     }
 
-    /// Fetches a single CKRecord by its ID from a specific database.
-    /// Returns nil (not throws) when the record simply doesn't exist in that database.
-    private func fetchRecord(recordID: CKRecord.ID, includeAssets: Bool, from db: CKDatabase) async throws -> CKRecord? {
+    /// Artwork is free metadata; only explicit full-asset requests include ROM payloads.
+    static func recordFetchKeys(includeAssets: Bool, includeArtwork: Bool) -> [CKRecord.FieldKey] {
+        let metadataKeys = [
+            CloudKitSchema.ROMFields.md5,
+            CloudKitSchema.ROMFields.title,
+            CloudKitSchema.ROMFields.systemIdentifier,
+            CloudKitSchema.ROMFields.fileSize,
+            CloudKitSchema.SaveStateFields.directory,
+            CloudKitSchema.SaveStateFields.filename,
+            CloudKitSchema.ROMFields.originalFilename,
+            CloudKitSchema.ROMFields.originalArtworkURL,
+            CloudKitSchema.ROMFields.customArtworkURL,
+            CloudKitSchema.ROMFields.isDeleted
+        ]
+        var keys = metadataKeys
+        if includeAssets {
+            keys += [CloudKitSchema.ROMFields.fileData, CloudKitSchema.ROMFields.isArchive, CloudKitSchema.ROMFields.relatedFilenames]
+        }
+        if includeAssets || includeArtwork { keys.append(CloudKitSchema.ROMFields.customArtworkAsset) }
+        return keys
+    }
+
+    private func fetchRecord(recordID: CKRecord.ID, includeAssets: Bool, includeArtwork: Bool, from db: CKDatabase) async throws -> CKRecord? {
         try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<CKRecord?, Error>) in
             let op = CKFetchRecordsOperation(recordIDs: [recordID])
-            let metadataKeys = [
-                CloudKitSchema.ROMFields.md5,
-                CloudKitSchema.ROMFields.title,
-                CloudKitSchema.ROMFields.systemIdentifier,
-                CloudKitSchema.ROMFields.fileSize,
-                CloudKitSchema.SaveStateFields.directory,
-                CloudKitSchema.SaveStateFields.filename,
-                CloudKitSchema.ROMFields.originalFilename,
-                CloudKitSchema.ROMFields.originalArtworkURL,
-                CloudKitSchema.ROMFields.customArtworkURL,
-                CloudKitSchema.ROMFields.isDeleted
-            ]
-            op.desiredKeys = includeAssets ? metadataKeys + [
-                CloudKitSchema.ROMFields.fileData,
-                CloudKitSchema.ROMFields.isArchive,
-                CloudKitSchema.ROMFields.relatedFilenames,
-                CloudKitSchema.ROMFields.customArtworkAsset
-            ] : metadataKeys
+            op.desiredKeys = Self.recordFetchKeys(includeAssets: includeAssets, includeArtwork: includeArtwork)
             var fetched: CKRecord?
             op.perRecordResultBlock = { _, result in
                 if case let .success(r) = result { fetched = r }
@@ -574,11 +578,13 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
     /// - Parameters:
     ///   - recordID: The CloudKit record identifier.
     ///   - includeAssets: When true, also fetches asset fields required for downloads.
+    ///   - includeArtwork: Fetch custom cover assets without downloading the ROM payload.
     ///   - bypassEmulationPause: When true, allows a metadata-only fetch while the emulator UI session has paused heavy sync I/O (not core `setPauseEmulation`).
     ///     Use only for small CloudKit operations such as conflict resolution; do not combine with `includeAssets: true` during an active emulator session.
     public func fetchRecord(
         recordID: CKRecord.ID,
         includeAssets: Bool = false,
+        includeArtwork: Bool = false,
         bypassEmulationPause: Bool = false
     ) async throws -> CKRecord? {
         if !bypassEmulationPause, await MainActor.run(body: { CloudSyncManager.shared.isPausedForEmulation }) {
@@ -588,7 +594,7 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
 
         return try await runOnQueue { [self] in
             // Try primary database first
-            if let record = try await fetchRecord(recordID: recordID, includeAssets: includeAssets, from: database) {
+            if let record = try await fetchRecord(recordID: recordID, includeAssets: includeAssets, includeArtwork: includeArtwork, from: database) {
                 VLOG("Fetched record from primary container: \(record.recordID.recordName)")
                 return record
             }
@@ -598,7 +604,7 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
             // so badContainer errors are caught and the fallback is disabled for the session.
             for fallbackDB in fallbackDatabases {
                 do {
-                    if let record = try await fetchRecord(recordID: recordID, includeAssets: includeAssets, from: fallbackDB) {
+                    if let record = try await fetchRecord(recordID: recordID, includeAssets: includeAssets, includeArtwork: includeArtwork, from: fallbackDB) {
                         DLOG("Fetched record from fallback container: \(record.recordID.recordName)")
                         return record
                     }
@@ -807,6 +813,8 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
     }
 
     public func uploadGame(_ md5: String) async throws {
+        // Import/file notifications can reach this route without the manager's content filter.
+        guard CloudSyncContentAccess.effectiveScope(for: Defaults[.cloudKitSyncContentType]).allowsAutomaticROMFileTransfers else { return }
         let game = try await withRealm { realm -> PVGame in
             guard let liveGame = realm.object(ofType: PVGame.self, forPrimaryKey: md5.uppercased()),
                   !liveGame.isInvalidated else {
@@ -1418,7 +1426,7 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
         // Use optional catch as .unknownItem is expected if the record was truly deleted (though less likely with soft delete)
         var fetchedRecord: CKRecord?
         do {
-            fetchedRecord = try await fetchRecord(recordID: recordID, includeAssets: true)
+            fetchedRecord = try await fetchRecord(recordID: recordID, includeAssets: CloudSyncContentAccess.effectiveScope(for: Defaults[.cloudKitSyncContentType]).allowsAutomaticROMFileTransfers, includeArtwork: true)
         } catch let error as CKError where error.code == .unknownItem {
             CloudSyncManager.syncLog.event(.sync, item: "rom/\(recordID.recordName)", status: .notFound, detail: "may have been hard deleted")
             // If truly not found, we might need to delete locally if we have it?
@@ -1480,7 +1488,7 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
                     #if os(tvOS)
                     VLOG("tvOS: Skipping auto-download for \(md5). On-demand only.")
                     #else
-                    if recordDeclaresAssetPresence(record) {
+                    if CloudSyncContentAccess.effectiveScope(for: Defaults[.cloudKitSyncContentType]).allowsAutomaticROMFileTransfers, recordDeclaresAssetPresence(record) {
                         VLOG("Local game \(md5) is not marked as downloaded. Triggering download...")
                         Task.detached { [self] in
                             do {
@@ -2139,7 +2147,7 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
                     let md5 = game.md5Hash
                     do {
                         let recordID = CloudKitSchema.RecordIDGenerator.romRecordID(md5: md5)
-                        guard let record = try await fetchRecord(recordID: recordID, includeAssets: true) else { continue }
+                        guard let record = try await fetchRecord(recordID: recordID, includeArtwork: true) else { continue }
                         guard let liveGame = RomDatabase.sharedInstance.game(withMD5: md5) else { continue }
                         try await downloadCustomArtworkAsset(from: record, for: liveGame)
                         cachedGameIds.insert(md5)
@@ -2308,7 +2316,7 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
                     ) { [weak self] in
                         guard let self else { return }
                         let recordID = CloudKitSchema.RecordIDGenerator.romRecordID(md5: md5)
-                        guard let record = try await self.fetchRecord(recordID: recordID, includeAssets: true) else { return }
+                        guard let record = try await self.fetchRecord(recordID: recordID, includeArtwork: true) else { return }
                         guard let liveGame = RomDatabase.sharedInstance.game(withMD5: md5) else { return }
                         try await self.downloadCustomArtworkAsset(from: record, for: liveGame)
                         await MainActor.run {
@@ -2533,7 +2541,7 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
         guard !info.skipped else { return }
 
         // Download custom artwork asset if available.
-        // Remote-change zone fetches may omit CKAsset payloads, so fall back to an asset-inclusive fetch.
+        // Remote-change zone fetches may omit artwork. Fetch that asset without the ROM payload.
         // Re-fetch game on background realm for artwork methods that need a PVGame reference.
         do {
             let hasCustomArtworkURL = (record[CloudKitSchema.ROMFields.customArtworkURL] as? String)?.isEmpty == false
@@ -2545,7 +2553,7 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
 
             if let artworkGame {
                 if hasCustomArtworkURL && !hasCustomArtworkAsset {
-                    if let full = try await fetchRecord(recordID: record.recordID, includeAssets: true) {
+                    if let full = try await fetchRecord(recordID: record.recordID, includeArtwork: true) {
                         try await downloadCustomArtworkAsset(from: full, for: artworkGame)
                     } else {
                         try await downloadCustomArtworkAsset(from: record, for: artworkGame)
@@ -3802,7 +3810,7 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
                 let pausedForEmulation = await MainActor.run(body: { CloudSyncManager.shared.isPausedForEmulation })
                 if pausedForEmulation || Task.isCancelled { return }
                 let recordID = CloudKitSchema.RecordIDGenerator.romRecordID(md5: md5)
-                guard let record = try? await self.fetchRecord(recordID: recordID, includeAssets: true) else { return }
+                guard let record = try? await self.fetchRecord(recordID: recordID, includeArtwork: true) else { return }
                 guard let liveGame = RomDatabase.sharedInstance.game(withMD5: md5) else { return }
                 try? await self.downloadCustomArtworkAsset(from: record, for: liveGame)
             }

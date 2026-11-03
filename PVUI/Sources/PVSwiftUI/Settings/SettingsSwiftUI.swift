@@ -1727,23 +1727,14 @@ private struct AudioSection: View {
                                      })
             }
             #endif
-            // Add the new navigation link wrapped in PaidFeatureView
-            PaidFeatureView {
-                NavigationLink(destination: AudioEngineSettingsView()) {
-                    SettingsRow(title: "Audio Engine",
-                                subtitle: "Configure audio engine, buffer and latency settings.",
-                                icon: .sfSymbol("waveform.circle"))
-                }
-                #if os(tvOS)
-                .retroFocusButtonStyle(showBorder: false)
-                #endif
-            } lockedView: {
+            NavigationLink(destination: AudioEngineSettingsView()) {
                 SettingsRow(title: "Audio Engine",
-                            subtitle: "Unlock to configure advanced audio settings.",
-                            icon: .sfSymbol("lock.fill"),
-                            showChevron: false)
+                            subtitle: "Configure audio engine, buffer and latency settings.",
+                            icon: .sfSymbol("waveform.circle"))
             }
-            .freemiumKitColorReset()
+            #if os(tvOS)
+            .retroFocusButtonStyle(showBorder: false)
+            #endif
         }
     }
 }
@@ -2492,27 +2483,13 @@ private struct LibrarySection2: View {
             }
             #endif
 
-            #if os(tvOS)
             NavigationLink(destination: CloudSyncSettingsView()) {
                 SettingsRow(title: "Cloud Sync Settings",
-                            subtitle: "Manage CloudKit and iCloud Drive sync settings.",
+                            subtitle: "Manage free save, progress and settings sync, and library sync options.",
                             icon: .sfSymbol("icloud"))
             }
+            #if os(tvOS)
             .retroFocusButtonStyle(showBorder: false)
-            #else
-            PaidFeatureView {
-                NavigationLink(destination: CloudSyncSettingsView()) {
-                    SettingsRow(title: "Cloud Sync Settings",
-                                subtitle: "Manage CloudKit and iCloud Drive sync settings.",
-                                icon: .sfSymbol("icloud"))
-                }
-            } lockedView: {
-                SettingsRow(title: "Cloud Sync Settings",
-                            subtitle: "Unlock to access CloudKit and iCloud Drive sync settings.",
-                            icon: .sfSymbol("lock.fill"),
-                            showChevron: false)
-            }
-            .freemiumKitColorReset()
             #endif
 
             NavigationLink(destination: BackupRestoreView()) {
