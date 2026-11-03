@@ -675,11 +675,6 @@ struct PauseTileMenuView: View {
             // Dismiss the menu so the user can interact with the mouse overlay.
             dismissAction(true)
             #endif
-        case "controlsVisibilityToggle":
-            #if os(iOS)
-            emulatorVC.toggleOnScreenControlsVisibility()
-            rebuildSections()
-            #endif
         case "jitStatus":
             break // read-only
 
@@ -747,8 +742,8 @@ struct PauseTileMenuView: View {
 
         // MARK: Recording / broadcast / clip
         // Recording, broadcasting, and clip export are Provenance Plus
-        // features on App Store builds (matches the HUD record button gate
-        // in PVControllerViewController). Stop actions stay ungated so a
+        // features on App Store builds (matches the record button gate in
+        // EmulatorQuickActionBar). Stop actions stay ungated so a
         // lapsed subscriber can always end an in-progress session.
         case "recording":
             #if os(iOS)
