@@ -931,7 +931,7 @@ extension PVEmulatorViewController: PVViewportLayoutDelegate {
         // out itself (Azahar) wants both skin screens instead, or it ends up squeezed into one.
         if core.supportsDualScreens, viewport.applyDualScreenRenderFramesInTouchView != nil {
             if let rects = dualScreenViewportRects(),
-               applyDualScreenFramesToPositioningBridge([rects.top, rects.bottom]) {
+               applyDualScreenFramesToPositioningBridge([rects.top, rects.bottom], identityOrdered: true) {
                 logViewportApply("RA-dual:\(reason)", frame: rects.top.union(rects.bottom))
                 ensureGPUViewVisibilityAndZOrder()
                 return
@@ -1120,6 +1120,8 @@ extension PVEmulatorViewController: PVViewportLayoutDelegate {
             return
         }
         revealHostGPUView()
+        // A dedicated external display owns the GPU view as its window's root view: leave it there.
+        guard secondaryWindow == nil else { return }
 
         if let skinContainerView = view.subviews.first(where: { $0 is DeltaSkinContainerView }) {
             view.insertSubview(gameScreenView, belowSubview: skinContainerView)

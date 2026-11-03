@@ -65,19 +65,22 @@ extension PVEmulatorViewController {
         clearReceivedScreenFrames()
         lastAppliedViewportFrame = nil
 
+        // Dedicated external display: the GPU view is that window's root view and keeps filling it. The
+        // device-sized skin geometry below does not apply to it and would pull the view back under the skin.
+        if let externalView = secondaryWindow?.rootViewController?.view {
+            externalView.setNeedsLayout()
+            externalView.layoutIfNeeded()
+            return
+        }
+
         applyDualScreenViewport()   // falls back to applyViewportFromCurrentSkin() for single-screen cores
 
         // The SwiftUI skin re-renders asynchronously; run the layout again once its new screens have settled.
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.15) { [weak self] in
-            guard let self else { return }
+            guard let self, self.secondaryWindow == nil else { return }
             self.lastAppliedViewportFrame = nil
             self.applyDualScreenViewport()
             NotificationCenter.default.post(name: .deltaSkinForceRecalculate, object: nil)
-            // Dedicated external display: the GPU view lives in the secondary window; lay it out again.
-            if let externalView = self.secondaryWindow?.rootViewController?.view {
-                externalView.setNeedsLayout()
-                externalView.layoutIfNeeded()
-            }
         }
     }
 }
