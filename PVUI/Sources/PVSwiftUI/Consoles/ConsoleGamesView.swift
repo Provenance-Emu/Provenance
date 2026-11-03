@@ -1429,6 +1429,15 @@ extension ConsoleGamesView {
         .padding(.bottom, 4)
     }
 
+    /// The compact bar replaces the separate system heading only on iOS.
+    private var compactSystemSummary: (title: String, subtitle: String)? {
+        #if os(iOS)
+        (console.name, "\(allGamesModels.count) games · \(console.manufacturer)")
+        #else
+        nil
+        #endif
+    }
+
     private var compactFilterText: Binding<String>? {
         #if os(iOS)
         showSearchbar ? $gamesViewModel.searchText : nil
@@ -1470,8 +1479,8 @@ extension ConsoleGamesView {
             settingsContext: .console(console),
             usesCompactMenu: true,
             gameCount: allGamesModels.count,
-            pageTitle: console.name,
-            pageSubtitle: "\(allGamesModels.count) games · \(console.manufacturer)",
+            pageTitle: compactSystemSummary?.title,
+            pageSubtitle: compactSystemSummary?.subtitle,
             filterText: compactFilterText,
             toggleFilterAction: { self.rootDelegate?.showUnderConstructionAlert() },
             toggleSortAction: { viewModel.sortGamesAscending.toggle() },
