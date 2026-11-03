@@ -7,6 +7,8 @@
 //
 
 import XCTest
+import Combine
+import PVLogging
 import RealmSwift
 import PVPrimitives
 @testable import PVLibrary
@@ -305,34 +307,79 @@ final class PVWebFileEventObserverTests: XCTestCase {
 
     // MARK: - No-op / edge cases
 
-    /// Posting a delete notification when no game matches the path should be a no-op.
+    /// An unknown ROM path must not delete another system's game with the same filename.
     func testDeleteUnknownPathIsNoop() throws {
+        let realm = try Realm(configuration: realmConfig)
+        let filename = "unknown-\(UUID().uuidString).sfc"
+        let knownRelative = "SNES/\(filename)"
+        let unknownRelative = "NES/\(filename)"
+        let game = PVGame()
+        game.title = "Existing game"
+        game.romPath = knownRelative
+        try realm.write { realm.add(game) }
+
+        // Observe the worker's actual no-match decision after its Realm query, not a
+        // timer or the synchronous invocation hook. This is not a completion callback.
+        let noMatch = expectation(description: "delete worker found no matching romPath")
+        let message = "PVWebFileEventObserver: no game matched romPath '\(unknownRelative)' — skipping delete"
+        let logs = PVLogPublisher.shared.logPublisher
+            .filter { $0.file == "PVWebFileEventObserver.swift" && $0.message == message }
+            .prefix(1)
+            .sink { _ in noMatch.fulfill() }
+        defer { logs.cancel() }
+        var deliveredPath: String?
+        observer._testOnDeleteHandlerInvoked = { deliveredPath = $0 }
         observer.start()
 
-        let exp = XCTestExpectation(description: "no-op completes")
-        DispatchQueue.global(qos: .utility).asyncAfter(deadline: .now() + 0.3) { exp.fulfill() }
-
+        let unknownPath = romsPrefix + unknownRelative
         NotificationCenter.default.post(
             name: Notification.Name.pvWebServerFileDeleted,
             object: nil,
-            userInfo: ["filePath": "/some/nonexistent/rom.sfc"]
+            userInfo: ["filePath": unknownPath]
         )
-        wait(for: [exp], timeout: 1)
+        XCTAssertEqual(deliveredPath, unknownPath, "queue:nil notification delivery is synchronous")
+        wait(for: [noMatch], timeout: 15)
+        realm.refresh()
+        XCTAssertEqual(realm.objects(PVGame.self).count, 1)
+        XCTAssertEqual(realm.objects(PVGame.self).first?.romPath, knownRelative,
+                       "An unknown path must not delete a same-named ROM in another system")
     }
 
-    /// Posting a move notification when no game matches the source path should be a no-op.
+    /// An unknown move source must not rename another system's game with the same filename.
     func testMoveUnknownPathIsNoop() throws {
+        let realm = try Realm(configuration: realmConfig)
+        let filename = "unknown-\(UUID().uuidString).sfc"
+        let knownRelative = "SNES/\(filename)"
+        let unknownRelative = "NES/\(filename)"
+        let game = PVGame()
+        game.title = "Existing game"
+        game.romPath = knownRelative
+        try realm.write { realm.add(game) }
+
+        let noMatch = expectation(description: "move worker found no matching source romPath")
+        let message = "PVWebFileEventObserver: no game found for moved path '\(unknownRelative)'"
+        let logs = PVLogPublisher.shared.logPublisher
+            .filter { $0.file == "PVWebFileEventObserver.swift" && $0.message == message }
+            .prefix(1)
+            .sink { _ in noMatch.fulfill() }
+        defer { logs.cancel() }
+        var deliveredPaths: [String]?
+        observer._testOnMoveHandlerInvoked = { deliveredPaths = [$0, $1] }
         observer.start()
 
-        let exp = XCTestExpectation(description: "no-op completes")
-        DispatchQueue.global(qos: .utility).asyncAfter(deadline: .now() + 0.3) { exp.fulfill() }
-
+        let fromPath = romsPrefix + unknownRelative
+        let toPath = romsPrefix + "NES/renamed-\(filename)"
         NotificationCenter.default.post(
             name: Notification.Name.pvWebServerFileMoved,
             object: nil,
-            userInfo: ["fromPath": "/some/old.sfc", "toPath": "/some/new.sfc"]
+            userInfo: ["fromPath": fromPath, "toPath": toPath]
         )
-        wait(for: [exp], timeout: 1)
+        XCTAssertEqual(deliveredPaths, [fromPath, toPath], "The hook proves delivery, not worker completion")
+        wait(for: [noMatch], timeout: 15)
+        realm.refresh()
+        XCTAssertEqual(realm.objects(PVGame.self).count, 1)
+        XCTAssertEqual(realm.objects(PVGame.self).first?.romPath, knownRelative,
+                       "An unknown source must not move a same-named ROM in another system")
     }
 
     /// Missing or malformed userInfo keys must not crash the observer.
