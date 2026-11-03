@@ -25,6 +25,8 @@ struct EmulatorWithSkinView: View {
     /// ROM MD5 of the game, `nil` when unknown; keys the overlay's per-game layout.
     let gameMD5: String?
     let gameCRC: String
+    /// ROM file name (with extension), `nil` when the game has no file; a skin's `gameOverrides` may key on it.
+    let gameRomFileName: String?
 
     private var gameSkinKeys: [String] { [gameId ?? "", gameMD5 ?? "", gameCRC].filter { !$0.isEmpty } }
 
@@ -110,6 +112,7 @@ struct EmulatorWithSkinView: View {
         self.gameId = game.id
         self.gameMD5 = game.md5Hash.isEmpty ? nil : game.md5Hash
         self.gameCRC = game.crc
+        self.gameRomFileName = game.file?.fileName
 
         self.coreInstance = coreInstance
         self.onSkinLoaded = onSkinLoaded
@@ -613,7 +616,13 @@ struct EmulatorWithSkinView: View {
             orientation: isLandscape ? .landscape : .portrait,
             iPadModel: iPadModel,
             externalDisplay: .none,
-            gameIdentifier: gameTitle
+            // A skin's `gameOverrides` are matched by md5, crc, ROM filename, then title.
+            gameIdentifiers: DeltaSkinTraits.gameOverrideKeys(
+                md5: gameMD5,
+                crc: gameCRC,
+                romFileName: gameRomFileName,
+                title: gameTitle
+            )
         )
     }
 

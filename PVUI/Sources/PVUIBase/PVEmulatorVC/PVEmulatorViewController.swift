@@ -2407,7 +2407,10 @@ extension PVEmulatorViewController {
             device: currentDevice,
             displayType: displayType,
             orientation: currentOrientation == .landscape ? .landscape : .portrait,
-            gameIdentifier: game?.title
+            // A skin's `gameOverrides` are matched by md5, crc, ROM filename, then title.
+            gameIdentifiers: game.map {
+                DeltaSkinTraits.gameOverrideKeys(md5: $0.md5Hash, crc: $0.crc, romFileName: $0.file?.fileName, title: $0.title)
+            } ?? []
         )
 
         DLOG("Creating skin view with traits: \(traits)")

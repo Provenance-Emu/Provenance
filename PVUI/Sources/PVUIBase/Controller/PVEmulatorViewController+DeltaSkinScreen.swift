@@ -482,7 +482,10 @@ extension PVEmulatorViewController: PVViewportLayoutDelegate {
         return DeltaSkinTraits(device: device,
                                displayType: displayType,
                                orientation: orientation,
-                               gameIdentifier: game?.title)
+                               // A skin's `gameOverrides` are matched by md5, crc, ROM filename, then title.
+                               gameIdentifiers: game.map {
+                                   DeltaSkinTraits.gameOverrideKeys(md5: $0.md5Hash, crc: $0.crc, romFileName: $0.file?.fileName, title: $0.title)
+                               } ?? [])
     }
 
     /// Simple frame validation
