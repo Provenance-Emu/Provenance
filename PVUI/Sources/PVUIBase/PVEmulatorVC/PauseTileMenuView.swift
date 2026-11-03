@@ -1958,15 +1958,29 @@ struct PauseTileMenuView: View {
         DispatchQueue.main.asyncAfter(deadline: .now() + after, execute: block)
     }
 
-    // swiftlint:disable cyclomatic_complexity function_body_length
-    /// Dispatches a system-specific button (Start/Select/Coin/etc.) by casting
-    /// the running core to the appropriate `PV<System>SystemResponderClient`
-    /// and calling `didPush(...)`/`didRelease(...)` for the encoded player.
+    /// Dispatches a system-specific button (Start/Select/Coin/etc.) tile press.
     ///
-    /// Tile IDs are `systemButton_pN_<btn>` and the button strings come from
-    /// `SystemMenuButton.id`.
+    /// The pause menu keeps the core paused, so the press/release pair below
+    /// would never be sampled by level-sampled cores (Stella, thin libretro):
+    /// `withCoreRunningForInput` resumes the core for the sample window, the
+    /// same way hardware switches and the coin slot are handled.
     private func dispatchSystemButton(tileID: String) {
         guard let parsed = SystemButtonTileProvider.parse(tileID: tileID) else { return }
+        guard emulatorVC.core.isOn else { return }
+        withCoreRunningForInput {
+            pressSystemButton(parsed)
+        }
+    }
+
+    // swiftlint:disable cyclomatic_complexity function_body_length
+    /// Presses a system-specific button by casting the running core to the
+    /// appropriate `PV<System>SystemResponderClient` and calling
+    /// `didPush(...)`/`didRelease(...)` for the encoded player.
+    ///
+    /// Tile IDs are `systemButton_pN_<btn>` and the button strings come from
+    /// `SystemMenuButton.id`. Call through `dispatchSystemButton` so the core
+    /// is running while the press is held.
+    private func pressSystemButton(_ parsed: (player: Int, buttonId: String)) {
         let player = parsed.player
         let btn = parsed.buttonId
         let core = emulatorVC.core
@@ -2209,14 +2223,11 @@ struct PauseTileMenuView: View {
                 fireMomentaryRelease { r.didRelease(.select, forPlayer: player) }
             case "coin":
                 // Coin has no physical-controller equivalent, so this entry is
-                // the only way to trigger it. The core is paused by the menu, so
-                // resume it long enough to sample the press (see helper).
-                guard emulatorVC.core.isOn else { return }
-                withCoreRunningForInput {
-                    r.didPush(.coin, forPlayer: player)
-                    fireMomentaryRelease(after: HardwareSwitchTiming.coinPressDuration) {
-                        r.didRelease(.coin, forPlayer: player)
-                    }
+                // the only way to trigger it. It needs a longer press than the
+                // other buttons to register.
+                r.didPush(.coin, forPlayer: player)
+                fireMomentaryRelease(after: HardwareSwitchTiming.coinPressDuration) {
+                    r.didRelease(.coin, forPlayer: player)
                 }
             default: break
             }
