@@ -946,14 +946,18 @@ class GameImporterDatabaseService : GameImporterDatabaseServicing {
                 throw GameImporterError.failedToMoveROM(error)
             }
         }
-        // Dual-write: mirror into SwiftData after Realm context exits (epic #2510).
-        await GameImporterSwiftDataBridge.shared?.saveGame(frozenGame)
-
-        // Index the newly-imported game in Spotlight so it surfaces immediately
-        // in Siri / Spotlight search without waiting for the next full reindex.
-        #if canImport(CoreSpotlight) && (os(iOS) || os(macOS) || targetEnvironment(macCatalyst))
-        await indexGameInSpotlight(frozenGame)
-        #endif
+        // Realm is authoritative. Optional mirroring/indexing must not hold the
+        // import queue open if a secondary store or the Spotlight daemon stalls.
+        Task.detached(priority: .utility) {
+            DLOG("GameImporter: Starting post-import SwiftData mirror for \(frozenGame.md5Hash)")
+            await GameImporterSwiftDataBridge.shared?.saveGame(frozenGame)
+            DLOG("GameImporter: Completed post-import SwiftData mirror for \(frozenGame.md5Hash)")
+            #if canImport(CoreSpotlight) && (os(iOS) || os(macOS) || targetEnvironment(macCatalyst))
+            DLOG("GameImporter: Starting post-import Spotlight index for \(frozenGame.md5Hash)")
+            await self.indexGameInSpotlight(frozenGame)
+            DLOG("GameImporter: Completed post-import Spotlight index for \(frozenGame.md5Hash)")
+            #endif
+        }
     }
 
     #if canImport(CoreSpotlight) && (os(iOS) || os(macOS) || targetEnvironment(macCatalyst))

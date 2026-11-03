@@ -37,6 +37,8 @@ struct GameItemViewCell<Presentable: GameItemPresentable>: View, Equatable {
         lhs.game.trueArtworkURL == rhs.game.trueArtworkURL &&
         lhs.game.publishDate == rhs.game.publishDate &&
         lhs.game.rating == rhs.game.rating &&
+        lhs.game.discCount == rhs.game.discCount &&
+        lhs.game.isPatchVariant == rhs.game.isPatchVariant &&
         lhs.game.hasCloudAssets == rhs.game.hasCloudAssets &&
         lhs.game.isDownloaded == rhs.game.isDownloaded &&
         lhs.game.boxartAspectRatio == rhs.game.boxartAspectRatio &&
@@ -45,11 +47,13 @@ struct GameItemViewCell<Presentable: GameItemPresentable>: View, Equatable {
         lhs.shelfRowHeightScale == rhs.shelfRowHeightScale &&
         lhs.constrainHeight == rhs.constrainHeight &&
         lhs.viewType == rhs.viewType &&
-        lhs.isFocused == rhs.isFocused
+        lhs.isFocused == rhs.isFocused &&
+        lhs.discCountOverride == rhs.discCountOverride
     }
 
     /// Use plain property instead of @ObservedRealmObject for performance
     let game: Presentable
+    @ScaledMetric(relativeTo: .caption) private var textScale: CGFloat = 1
     @Default(.showGameTitles) private var showGameTitles
     @Default(.iCloudSync) private var iCloudSyncEnabled
     var artwork: SwiftImage?
@@ -60,7 +64,9 @@ struct GameItemViewCell<Presentable: GameItemPresentable>: View, Equatable {
     /// Controller/keyboard focus from the parent; together with the system focus environment and pointer hover,
     /// this decides whether the title is allowed to scroll.
     var isFocused: Bool = false
+    var discCountOverride: Int?
     @Environment(\.isFocused) private var isSystemFocused
+    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
     /// Optional so the title `MarqueeText` only lays out once — after the
     /// real artwork width is measured. Previously this defaulted to
     /// `PVRowHeight`, which caused MarqueeText to set up its scrolling
@@ -84,7 +90,7 @@ struct GameItemViewCell<Presentable: GameItemPresentable>: View, Equatable {
     }
 
     private var discCount: Int {
-        game.discCount
+        discCountOverride ?? game.discCount
     }
 
     private var shouldShowCloudIndicator: Bool {
@@ -98,15 +104,15 @@ struct GameItemViewCell<Presentable: GameItemPresentable>: View, Equatable {
     }
 
     private var cloudSyncIndicatorSize: CGFloat {
-        max(14, 24 * compactShelfChromeFactor)
+        max(14, 20 * compactShelfChromeFactor)
     }
 
     private var cloudSyncIndicatorOuterPadding: CGFloat {
-        max(2, 6 * compactShelfChromeFactor)
+        max(2, 3 * compactShelfChromeFactor)
     }
 
     private var artworkToTitleSpacing: CGFloat {
-        max(2, 8 * compactShelfChromeFactor)
+        max(2, 4 * compactShelfChromeFactor)
     }
 
     private var glowColor: Color {
@@ -121,16 +127,27 @@ struct GameItemViewCell<Presentable: GameItemPresentable>: View, Equatable {
                 /// Use a ViewBuilder function to cache the artwork view
                 artworkView
                     .overlay(alignment: .topTrailing) {
-                        if shouldShowCloudIndicator {
-                            CloudSyncIndicatorView(
-                                isDownloaded: game.isDownloaded,
-                                hasCloudAssets: game.hasCloudAssets,
-                                isDownloading: isDownloading,
-                                syncEnabled: iCloudSyncEnabled,
-                                size: cloudSyncIndicatorSize
-                            )
-                            .padding(cloudSyncIndicatorOuterPadding)
+                        VStack(alignment: .trailing, spacing: 3) {
+                            if shouldShowCloudIndicator {
+                                CloudSyncIndicatorView(
+                                    isDownloaded: game.isDownloaded,
+                                    hasCloudAssets: game.hasCloudAssets,
+                                    isDownloading: isDownloading,
+                                    syncEnabled: iCloudSyncEnabled,
+                                    size: cloudSyncIndicatorSize
+                                )
+                            }
+                            if discCount > 1 {
+                                DiscIndicatorView(count: discCount)
+                                    .scaleEffect(compactShelfChromeFactor, anchor: .topTrailing)
+                            }
                         }
+                        .padding(cloudSyncIndicatorOuterPadding)
+                    }
+                    .overlay(alignment: .topLeading) {
+                        PatchTileBadge(isPatchVariant: game.isPatchVariant, md5: game.md5)
+                            .scaleEffect(compactShelfChromeFactor, anchor: .topLeading)
+                            .padding(cloudSyncIndicatorOuterPadding)
                     }
                     .padding(.bottom, artworkToTitleSpacing) /// Add padding between artwork and text
 
@@ -252,14 +269,14 @@ struct GameItemViewCell<Presentable: GameItemPresentable>: View, Equatable {
     }
 
     private var titleFont: Font {
-        .system(size: viewType.titleFontSize, weight: .bold, design: .monospaced)
+        .system(size: viewType.titleFontSize * textScale, weight: .medium)
     }
 
     /// Cached text view
     @ViewBuilder
     private var textView: some View {
         // Title and date container
-        VStack(alignment: .leading, spacing: 0) { /// No spacing between title and date
+        VStack(alignment: .leading, spacing: 2) {
             // Only build MarqueeText once we know its target width.
             // Otherwise MarqueeText is laid out + animation-restarted at the
             // wrong width when the real measurement arrives, which causes
@@ -268,7 +285,7 @@ struct GameItemViewCell<Presentable: GameItemPresentable>: View, Equatable {
                 // A MarqueeText per cell costs two GeometryReaders, a Task and scene-phase
                 // observation, so only the cell the user is on gets one; the rest truncate.
                 Group {
-                    if isFocused || isSystemFocused || glowIntensity > 0 {
+                    if !dynamicTypeSize.isAccessibilitySize && (isFocused || isSystemFocused || glowIntensity > 0) {
                         MarqueeText(text: game.title,
                                     font: titleFont,
                                     delay: 1.0,
@@ -280,39 +297,47 @@ struct GameItemViewCell<Presentable: GameItemPresentable>: View, Equatable {
                             .lineLimit(1)
                             .truncationMode(.tail)
                             .frame(maxWidth: .infinity, alignment: .leading)
-                            .frame(height: marqueeTitleHeight)
+                            .frame(height: marqueeTitleHeight * textScale)
                     }
                 }
                 .foregroundColor(textColor)
                 .frame(maxWidth: textMaxWidth, alignment: .leading)
-                .padding(.bottom, -2) /// Negative padding to remove default spacing
+                .frame(height: marqueeTitleHeight * textScale)
+
             } else {
                 // Reserve the slot so the cell's vertical layout doesn't
                 // jump when the title appears on the next frame.
                 Color.clear
-                    .frame(height: viewType.titleFontSize * 1.2)
+                    .frame(height: marqueeTitleHeight * textScale)
             }
 
             // Date and rating container
             HStack {
-                Text(game.publishDate ?? " ")
-                    .font(.system(size: viewType.subtitleFontSize, weight: .medium, design: .monospaced))
-                    .foregroundColor(textColor.opacity(0.8))
-                    .lineLimit(1)
+                if let date = game.publishDate, !date.isEmpty {
+                    Text(date)
+                        .font(.system(size: viewType.subtitleFontSize * textScale, weight: .medium))
+                        .foregroundColor(textColor.opacity(0.8))
+                        .lineLimit(1)
+                }
 
                 Spacer()
 
                 /// Only show stars if game is rated
-                if game.rating >= 0 {
-                    Text(String(repeating: "⭐️", count: game.rating))
-                        .font(.system(size: viewType.subtitleFontSize - 2))
-                        .lineLimit(1)
+                if game.rating > 0 {
+                    HStack(spacing: 1) {
+                        ForEach(0..<min(5, game.rating), id: \.self) { _ in
+                            Image(systemName: "star.fill")
+                        }
+                    }
+                    .font(.system(size: 8))
+                    .foregroundStyle(Color.retroYellow)
+                    .accessibilityLabel("Rating: \(game.rating) stars")
                 }
             }
             .frame(maxWidth: .infinity, alignment: .leading)
-            .padding(.top, -2) /// Negative padding to remove default spacing
+
         }
-        .frame(height: viewType.subtitleFontSize + 2) /// Reduced fixed height for text container
+
     }
 }
 

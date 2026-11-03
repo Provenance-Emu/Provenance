@@ -299,8 +299,7 @@ public extension PVEmulatorViewController {
                 await MainActor.run {
                     guard !token.isCancelled else { return }
                     self.core.gameSpeed = .normal
-                    // Sync the OSD fast-forward button so it doesn't remain highlighted.
-                    (self.controllerViewController as? OSDFastForwardObserver)?.syncFastForwardDisplay()
+                    self.syncFastForwardDisplay()
                 }
             }
         }
@@ -404,7 +403,14 @@ public extension PVEmulatorViewController {
             }
         }
         core.gameSpeed = speed
-        (controllerViewController as? OSDFastForwardObserver)?.syncFastForwardDisplay()
+        syncFastForwardDisplay()
+    }
+
+    /// Keeps the desktop quick-action bar's fast-forward button in step with the core's speed.
+    @MainActor private func syncFastForwardDisplay() {
+        #if os(iOS) && !targetEnvironment(macCatalyst)
+        quickActionBar?.syncFastForwardDisplay()
+        #endif
     }
 
     // MARK: - Rewind guard

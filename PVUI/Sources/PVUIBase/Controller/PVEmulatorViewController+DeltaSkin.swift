@@ -55,19 +55,6 @@ extension PVEmulatorViewController {
         return DeltaSkinSelectionManager.shared.hasExplicitPackagedSkinSelection(for: systemId, gameIds: [game.id, game.md5Hash, game.crc])
     }
 
-    /// For cores with `requiresExplicitSkinSelection`: when the player clears their skin pick
-    /// from a picker that only stores the preference (e.g. the skin browser), swap back to the
-    /// classic controller rather than letting the skin view fall back to the generated one.
-    func observeExplicitSkinRemoval() {
-        guard core.requiresExplicitSkinSelection else { return }
-        NotificationCenter.default.addObserver(
-            self,
-            selector: #selector(handleSkinSelectionChangedForExplicitCore(_:)),
-            name: DeltaSkinSelectionManager.selectionChangedNotification,
-            object: nil
-        )
-    }
-
     /// Applies a pause-menu or library skin pick to the running game when it matches this session.
     ///
     /// Session, game, and system writes all post ``DeltaSkinSelectionManager.selectionChangedNotification``.
@@ -129,19 +116,6 @@ extension PVEmulatorViewController {
         return core.systemIdentifier ?? ""
     }
 
-    @objc private func handleSkinSelectionChangedForExplicitCore(_ notification: Notification) {
-        DispatchQueue.main.async { [weak self] in
-            guard let self, self.currentSkin != nil || self.skinContainerView != nil else { return }
-            guard !self.hasExplicitSkinSelectionForGame else { return }
-            // Clearing the pick falls back to the overlay inside the skin view, not to the classic pad.
-            guard !self.programmaticOverlayCoversGame else { return }
-            Task { @MainActor in
-                // No-op when no skin is up, so a duplicate call from the menu path is harmless.
-                try? await self.resetToBuiltInControls()
-            }
-        }
-    }
-
     /// Set up the DeltaSkin view if enabled in settings
     @objc public func setupDeltaSkinView() async throws {
         ILOG("skins: setupDeltaSkinView() called")
@@ -159,9 +133,6 @@ extension PVEmulatorViewController {
 
             // Now create and add the skin view
             await addSkinView()
-
-            // Hide the standard controls
-             hideStandardControls()
 
             scheduleMenuButtonFallback()
 
@@ -645,18 +616,6 @@ extension PVEmulatorViewController {
 
         ILOG("skins: Skin view setup complete, printing view hierarchy")
         printViewHierarchy()
-    }
-
-    /// Hide the standard controller buttons
-    private func hideStandardControls() {
-        // Find the controller view controller
-        for childVC in children {
-            if let controllerVC = childVC as? any ControllerVC {
-                // Hide the entire controller view
-                controllerVC.view.isHidden = true
-                ILOG("Hidden standard controller view")
-            }
-        }
     }
 
     // MARK: - Rotation Handling

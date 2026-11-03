@@ -12,21 +12,6 @@ import PVLibrary
 import RealmSwift
 import PVThemes
 
-/// Padding and scale for `DiscIndicatorView` on compact horizontal shelves (reduced `shelfRowHeightScale`).
-private enum CompactShelfDiscOverlay {
-    static let compactPadding: CGFloat = 2
-    static let fullPadding: CGFloat = 4
-    static let compactScale: CGFloat = 0.82
-
-    static func padding(constrainHeight: Bool, shelfRowHeightScale: CGFloat) -> CGFloat {
-        constrainHeight && shelfRowHeightScale < 1.0 ? compactPadding : fullPadding
-    }
-
-    static func scale(constrainHeight: Bool, shelfRowHeightScale: CGFloat) -> CGFloat {
-        constrainHeight && shelfRowHeightScale < 1.0 ? compactScale : 1.0
-    }
-}
-
 /// Thumbnail already in the memory cache for `url`, if any. Synchronous so a recycled cell
 /// renders its artwork on the first frame instead of after an async load.
 private func residentArtwork(forURL url: String) -> SwiftImage? {
@@ -85,10 +70,6 @@ public struct GameItemView: SwiftUI.View {
         self.action = action
     }
 
-    private var shouldShowDiscIndicator: Bool {
-        cachedDiscCount > 1
-    }
-
     /// Gate the focus ring on *any* navigation input being available, not just a
     /// physical gamepad. On Mac ("Designed for iPad") the keyboard drives navigation
     /// and `isControllerConnected` is `false`, so keying off it left keyboard users
@@ -104,14 +85,9 @@ public struct GameItemView: SwiftUI.View {
             } label: {
                 switch viewType {
                 case .cell:
-                    GameItemViewCell(game: game, artwork: artwork, constrainHeight: constrainHeight, shelfRowHeightScale: shelfRowHeightScale, viewType: viewType, isFocused: shouldShowFocus)
-                        .overlay(alignment: .topTrailing) {
-                            if shouldShowDiscIndicator {
-                                DiscIndicatorView(count: cachedDiscCount)
-                                    .padding(CompactShelfDiscOverlay.padding(constrainHeight: constrainHeight, shelfRowHeightScale: shelfRowHeightScale))
-                                    .scaleEffect(CompactShelfDiscOverlay.scale(constrainHeight: constrainHeight, shelfRowHeightScale: shelfRowHeightScale), anchor: .topTrailing)
-                            }
-                        }
+                    GameItemViewCell(game: game, artwork: artwork, constrainHeight: constrainHeight,
+                                     shelfRowHeightScale: shelfRowHeightScale, viewType: viewType,
+                                     isFocused: shouldShowFocus, discCountOverride: cachedDiscCount)
                 case .row:
                     GameItemViewRow(game: game, artwork: artwork, constrainHeight: constrainHeight, viewType: viewType)
                 }
@@ -262,10 +238,6 @@ public struct GameItemPresentableView<Presentable: GameItemPresentable>: SwiftUI
         gamepadManager.isNavigationInputAvailable && isFocused
     }
 
-    private var shouldShowDiscIndicator: Bool {
-        game.discCount > 1
-    }
-
     public var body: some SwiftUI.View {
         if !game.isInvalidated {
             Button {
@@ -274,18 +246,6 @@ public struct GameItemPresentableView<Presentable: GameItemPresentable>: SwiftUI
                 switch viewType {
                 case .cell:
                     GameItemViewCell(game: game, artwork: artwork, constrainHeight: constrainHeight, shelfRowHeightScale: shelfRowHeightScale, viewType: viewType, isFocused: shouldShowFocus)
-                        .overlay(alignment: .topTrailing) {
-                            if shouldShowDiscIndicator {
-                                DiscIndicatorView(count: game.discCount)
-                                    .padding(CompactShelfDiscOverlay.padding(constrainHeight: constrainHeight, shelfRowHeightScale: shelfRowHeightScale))
-                                    .scaleEffect(CompactShelfDiscOverlay.scale(constrainHeight: constrainHeight, shelfRowHeightScale: shelfRowHeightScale), anchor: .topTrailing)
-                            }
-                        }
-                        .overlay(alignment: .topLeading) {
-                            PatchTileBadge(isPatchVariant: game.isPatchVariant, md5: game.md5)
-                                .padding(CompactShelfDiscOverlay.padding(constrainHeight: constrainHeight, shelfRowHeightScale: shelfRowHeightScale))
-                                .scaleEffect(CompactShelfDiscOverlay.scale(constrainHeight: constrainHeight, shelfRowHeightScale: shelfRowHeightScale), anchor: .topLeading)
-                        }
                 case .row:
                     GameItemViewRow(game: game, artwork: artwork, constrainHeight: constrainHeight, viewType: viewType)
                 }
@@ -402,13 +362,16 @@ struct FocusEffectsModifier: ViewModifier {
 
 /// "PATCH" capsule for library tiles that are patched copies (ROM hacks, translations).
 struct PatchIndicatorView: View {
+    var compact = false
+
     var body: some View {
         HStack(spacing: 2) {
-            Image(systemName: "bandage")
+            if !compact { Image(systemName: "bandage") }
             Text("PATCH")
         }
-        .font(.system(size: 11, weight: .bold))
-        .padding(4)
+        .font(.system(size: compact ? 7 : 8, weight: .semibold))
+        .lineLimit(1)
+        .padding(compact ? 2 : 3)
         .background(Material.ultraThin)
         .clipShape(Capsule())
         .accessibilityLabel("Patched copy")
@@ -417,14 +380,17 @@ struct PatchIndicatorView: View {
 
 struct DiscIndicatorView: View {
     let count: Int
+    var compact = false
 
     var body: some View {
         HStack(spacing: 2) {
             Image(systemName: "opticaldisc")
             Text("\(count)")
         }
-        .font(.system(size: 12, weight: .bold))
-        .padding(4)
+        .font(.system(size: compact ? 8 : 10, weight: .semibold))
+        .lineLimit(1)
+        .minimumScaleFactor(0.7)
+        .padding(compact ? 2 : 3)
         .background(Material.ultraThin)
         .clipShape(Capsule())
     }

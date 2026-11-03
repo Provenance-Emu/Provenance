@@ -11,10 +11,6 @@ import SkinKitUI
 /// MultiTouchView fires but DeltaSkinInputHandler doesn't means the touch
 /// reached UIKit but died before the SwiftUI skin handler forwarded it.
 public enum InputDiagnostics {
-    /// OSD JSButton touch layer
-    public static var hasLoggedJSButton: Bool = false
-    /// OSD JSDPad touch layer
-    public static var hasLoggedJSDPad: Bool = false
     /// DeltaSkin MultiTouchView (UIKit backing view for SwiftUI skin). The view lives in SkinKitUI,
     /// which keeps the flag.
     public static var hasLoggedMultiTouch: Bool {
@@ -26,8 +22,6 @@ public enum InputDiagnostics {
 
     /// Re-arm all flags. Called from `appWillResignActive`.
     public static func resetAll() {
-        hasLoggedJSButton = false
-        hasLoggedJSDPad = false
         hasLoggedMultiTouch = false
         hasLoggedDeltaSkinPress = false
     }

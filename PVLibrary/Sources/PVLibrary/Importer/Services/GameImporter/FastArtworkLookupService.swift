@@ -79,36 +79,13 @@ public actor FastArtworkLookupService {
 
         ILOG("FastArtworkLookupService: Fast lookup for '\(title)' (MD5: \(md5))")
 
-        let timeoutNanoseconds = fastTimeoutNanoseconds
-        let timeoutSleep = self.timeoutSleep
-
-        // Race lookup against the timer, then cancel the loser. The group drains its
-        // search wrapper before returning, so lookup providers must honor cancellation.
-        let searchTask = Task {
+        return await ArtworkLookupDeadline.value(timeoutNanoseconds: fastTimeoutNanoseconds, timeoutSleep: timeoutSleep) {
             do {
                 return try await self.performExactSearch(title: title, md5: md5, systemID: systemID)
             } catch {
                 WLOG("FastArtworkLookupService: search error for '\(title)': \(error.localizedDescription)")
-                return nil as String?
-            }
-        }
-
-        return await withTaskGroup(of: String?.self) { group in
-            // Wrap the unstructured search task so it participates in the race
-            group.addTask { await searchTask.value }
-
-            // Timeout sentinel — races against the search task
-            group.addTask {
-                try? await timeoutSleep(timeoutNanoseconds)
                 return nil
             }
-
-            // Return whichever completes first (search result or timeout nil),
-            // then cancel the search task so it doesn't linger in the background.
-            let result = await group.next() ?? nil
-            group.cancelAll()
-            searchTask.cancel()
-            return result
         }
     }
 
@@ -121,6 +98,7 @@ public actor FastArtworkLookupService {
     ///   3. ROM MD5 → ROM metadata title → artwork search
     private func performExactSearch(title: String, md5: String, systemID: SystemIdentifier?) async throws -> String? {
 
+        try Task.checkCancellation()
         // Step 1: exact title with system (most precise)
         if let sysID = systemID,
            let results = try await lookup.searchArtwork(byGameName: title, systemID: sysID, artworkTypes: .boxFront),
@@ -130,6 +108,7 @@ public actor FastArtworkLookupService {
             return best.url.absoluteString
         }
 
+        try Task.checkCancellation()
         // Step 2: exact title without system filter (broader)
         if let results = try await lookup.searchArtwork(byGameName: title, systemID: nil, artworkTypes: .boxFront),
            !results.isEmpty {
@@ -138,6 +117,7 @@ public actor FastArtworkLookupService {
             return best.url.absoluteString
         }
 
+        try Task.checkCancellation()
         // Step 3: MD5 → ROM metadata title → artwork search
         if !md5.isEmpty {
             if let romMetadata = try? await lookup.searchROM(byMD5: md5),

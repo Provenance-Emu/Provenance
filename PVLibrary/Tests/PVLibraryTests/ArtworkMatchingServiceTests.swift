@@ -123,13 +123,15 @@ private actor MockArtworkMatchingLookupCounting: ArtworkMatchingLookupProvider {
 /// Suspends until the test supplies a result or the service cancels the lookup.
 private actor MockArtworkMatchingLookupSuspended: ArtworkMatchingLookupProvider {
     private let started: XCTestExpectation
+    private let cancelled: XCTestExpectation?
     private let results: AsyncStream<[ArtworkMetadata]?>
     private let continuation: AsyncStream<[ArtworkMetadata]?>.Continuation
     private(set) var cancellationObserved = false
     private(set) var searchCount = 0
 
-    init(started: XCTestExpectation) {
+    init(started: XCTestExpectation, cancelled: XCTestExpectation? = nil) {
         self.started = started
+        self.cancelled = cancelled
         let pair = AsyncStream<[ArtworkMetadata]?>.makeStream()
         results = pair.stream
         continuation = pair.continuation
@@ -149,6 +151,7 @@ private actor MockArtworkMatchingLookupSuspended: ArtworkMatchingLookupProvider 
             try Task.checkCancellation()
         } catch {
             cancellationObserved = true
+            cancelled?.fulfill()
             throw error
         }
         return result ?? nil
@@ -162,13 +165,15 @@ private actor MockArtworkMatchingLookupSuspended: ArtworkMatchingLookupProvider 
 /// A manually fired timer. No sub-second wall-clock assertion depends on CI load.
 private actor ManualArtworkTimeout {
     private let scheduled: XCTestExpectation
+    private let cancelled: XCTestExpectation?
     private let ticks: AsyncStream<Void>
     private let continuation: AsyncStream<Void>.Continuation
     private(set) var requestedNanoseconds: UInt64?
     private(set) var cancellationObserved = false
 
-    init(scheduled: XCTestExpectation) {
+    init(scheduled: XCTestExpectation, cancelled: XCTestExpectation? = nil) {
         self.scheduled = scheduled
+        self.cancelled = cancelled
         let pair = AsyncStream<Void>.makeStream()
         ticks = pair.stream
         continuation = pair.continuation
@@ -183,6 +188,7 @@ private actor ManualArtworkTimeout {
             try Task.checkCancellation()
         } catch {
             cancellationObserved = true
+            cancelled?.fulfill()
             throw error
         }
     }
@@ -191,6 +197,31 @@ private actor ManualArtworkTimeout {
         continuation.yield(())
         continuation.finish()
     }
+}
+
+/// Ignores task cancellation until explicitly released, like a blocking lookup provider.
+private actor MockArtworkMatchingLookupUncooperative: ArtworkMatchingLookupProvider {
+    private let started: XCTestExpectation
+    private var continuation: CheckedContinuation<[ArtworkMetadata]?, Never>?
+    private var released = false
+
+    init(started: XCTestExpectation) { self.started = started }
+
+    func searchArtwork(byGameName name: String, systemID: SystemIdentifier?, artworkTypes: ArtworkType?) async throws -> [ArtworkMetadata]? {
+        started.fulfill()
+        if released { return nil }
+        return await withCheckedContinuation { continuation = $0 }
+    }
+
+    func release() {
+        released = true
+        continuation?.resume(returning: nil)
+        continuation = nil
+    }
+
+    func getArtwork(forGameID gameID: String, artworkTypes: ArtworkType?) async throws -> [ArtworkMetadata]? { nil }
+    func getArtworkURLs(forRom rom: ROMMetadata) async throws -> [URL]? { nil }
+    func searchROM(byMD5 md5: String) async throws -> ROMMetadata? { nil }
 }
 
 // MARK: - ArtworkMatchingServiceTests
@@ -469,7 +500,8 @@ final class ArtworkMatchingServiceTests: XCTestCase {
         let lookupStarted = expectation(description: "lookup started")
         let timeoutScheduled = expectation(description: "timeout scheduled")
         let completed = expectation(description: "timeout returned without a lookup result")
-        let mock = MockArtworkMatchingLookupSuspended(started: lookupStarted)
+        let lookupCancelled = expectation(description: "lookup observed cancellation")
+        let mock = MockArtworkMatchingLookupSuspended(started: lookupStarted, cancelled: lookupCancelled)
         let timeout = ManualArtworkTimeout(scheduled: timeoutScheduled)
         let timeoutNs: UInt64 = 100_000_000
         let service = FastArtworkLookupService(lookup: mock, timeoutNanoseconds: timeoutNs,
@@ -486,7 +518,7 @@ final class ArtworkMatchingServiceTests: XCTestCase {
         let requestedTimeout = await timeout.requestedNanoseconds
         XCTAssertEqual(requestedTimeout, timeoutNs)
         await timeout.fire()
-        await fulfillment(of: [completed], timeout: 10)
+        await fulfillment(of: [completed, lookupCancelled], timeout: 10)
         let cancelled = await mock.cancellationObserved
         let searches = await mock.searchCount
         // Release a broken implementation as well, so a regression fails rather than hanging.
@@ -503,8 +535,9 @@ final class ArtworkMatchingServiceTests: XCTestCase {
         let lookupStarted = expectation(description: "lookup started")
         let timeoutScheduled = expectation(description: "timeout scheduled")
         let completed = expectation(description: "lookup returned before timer fired")
+        let timerCancelled = expectation(description: "timer observed cancellation")
         let mock = MockArtworkMatchingLookupSuspended(started: lookupStarted)
-        let timeout = ManualArtworkTimeout(scheduled: timeoutScheduled)
+        let timeout = ManualArtworkTimeout(scheduled: timeoutScheduled, cancelled: timerCancelled)
         let expected = "https://example.com/cover.jpg"
         let service = FastArtworkLookupService(lookup: mock,
                                               timeoutSleep: { try await timeout.sleep(nanoseconds: $0) })
@@ -515,7 +548,7 @@ final class ArtworkMatchingServiceTests: XCTestCase {
         }
         await fulfillment(of: [lookupStarted, timeoutScheduled], timeout: 10)
         await mock.finish(with: [makeArtwork(urlString: expected)])
-        await fulfillment(of: [completed], timeout: 10)
+        await fulfillment(of: [completed, timerCancelled], timeout: 10)
         let cancelled = await timeout.cancellationObserved
         await timeout.fire()
         operation.cancel()
@@ -524,4 +557,27 @@ final class ArtworkMatchingServiceTests: XCTestCase {
         XCTAssertEqual(result, expected)
         XCTAssertTrue(cancelled, "A successful lookup must cancel the pending timer")
     }
+    func testFindArtwork_timeoutReleasesCallerBeforeUncooperativeProvider() async {
+        let lookupStarted = expectation(description: "uncooperative lookup started")
+        let timeoutScheduled = expectation(description: "timeout scheduled")
+        let returned = expectation(description: "caller released before provider")
+        let mock = MockArtworkMatchingLookupUncooperative(started: lookupStarted)
+        let timeout = ManualArtworkTimeout(scheduled: timeoutScheduled)
+        let service = FastArtworkLookupService(lookup: mock, timeoutNanoseconds: 100_000_000,
+                                              timeoutSleep: { try await timeout.sleep(nanoseconds: $0) })
+        let operation = Task {
+            let result = await service.findArtwork(exactTitle: "Blocked Game", md5: "", systemID: nil)
+            returned.fulfill()
+            return result
+        }
+        await fulfillment(of: [lookupStarted, timeoutScheduled], timeout: 10)
+        await timeout.fire()
+        await fulfillment(of: [returned], timeout: 10)
+        // Release only after checking the deadline, including on failure, to avoid leaked tasks.
+        await mock.release()
+        operation.cancel()
+        let result = await operation.value
+        XCTAssertNil(result)
+    }
+
 }

@@ -173,10 +173,7 @@ Run all three in one session. Filter on each prefix in turn or use `CHEEVOS-DIAG
 
 ## Release Blockers
 
-- [ ] Legacy UIKit Controller PVControllerViewController.swift
-      - [ ] Has top bar of buttons, needs complete rewrite
-      - [ ] Touch mouse/keyboard blocks rest of touches
-      - [ ] Tapping the "toggle controller buttons visible" button, the other controller buttons ignore the alpha settings and also doesn't hide joysticks (is that a setting though?)
+- [X] Legacy UIKit Controller PVControllerViewController.swift — removed; the touch overlay replaces it, and desktop input mode's top bar is `EmulatorQuickActionBar`
 - [X] `RetroSaveSelectionAlertView.swift` sometimes when downloading a cloud save, it doesn't boot after download, tapping again boots though (#334b463ec8)
 - [ ] RetroArch and Menu buttons showing when using thin wrapper — mostly guarded already; never runtime-reproduced. Verify on device, likely no-op.
 - [X] tvOS test removing PVRetroArchCore from build — DONE. ProvenanceTV / ProvenanceTV-Lite schemes have 0 PVRetroArch refs; `PVCoreFactory` forces thin whenever the thick class is absent (so tvOS can't load thick even if the setting is on). This also moots the 3 tvOS RetroArch MFi controller bugs below (they were thick-RA-only).

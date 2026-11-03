@@ -2341,15 +2341,10 @@ private struct TestRumbleButton: View {
 private struct OnScreenControllerSection: View {
     @Default(.controllerOpacity) var controllerOpacity
     @Default(.controllerScale) var controllerScale
-    @Default(.buttonTints) var buttonTints
-    @Default(.allRightShoulders) var allRightShoulders
     @Default(.buttonVibration) var buttonVibration
     @Default(.stickyButtonsEnabled) var stickyButtonsEnabled
     @Default(.missingButtonsAlwaysOn) var missingButtonsAlwaysOn
-    @Default(.onscreenJoypad) var onscreenJoypad
-    @Default(.onscreenJoypadWithKeyboard) var onscreenJoypadWithKeyboard
     @Default(.hideOnScreenControlsWithController) var hideOnScreenControlsWithController
-    @Default(.movableButtons) var movableButtons
 
     var body: some View {
         Section {
@@ -2400,16 +2395,6 @@ private struct OnScreenControllerSection: View {
                             subtitle: "Hide on-screen controls when a physical game controller is connected.",
                             icon: .sfSymbol("gamecontroller"))
             }
-            ThemedToggle(isOn: $buttonTints) {
-                SettingsRow(title: "Button Colors",
-                            subtitle: "Show colored buttons matching original hardware.",
-                            icon: .sfSymbol("paintpalette"))
-            }
-            ThemedToggle(isOn: $allRightShoulders) {
-                SettingsRow(title: "All Right Shoulder Buttons",
-                            subtitle: "Show all shoulder buttons on the right side.",
-                            icon: .sfSymbol("l.joystick.tilt.right"))
-            }
             ThemedToggle(isOn: $buttonVibration) {
                 SettingsRow(title: "Haptic Feedback",
                             subtitle: "Vibrate when pressing on-screen buttons.",
@@ -2419,22 +2404,6 @@ private struct OnScreenControllerSection: View {
                 SettingsRow(title: "Missing Buttons Always On",
                             subtitle: "Always show buttons not present on original hardware.",
                             icon: .sfSymbol("l.rectangle.roundedbottom"))
-            }
-
-            ThemedToggle(isOn: $onscreenJoypad) {
-                SettingsRow(title: "On-Screen Joystick",
-                            subtitle: "Show a touch Joystick pad on supported systems.",
-                            icon: .sfSymbol("l.joystick.tilt.left.fill"))
-            }
-            ThemedToggle(isOn: $onscreenJoypadWithKeyboard) {
-                SettingsRow(title: "On-Screen Joypad with Keyboard",
-                            subtitle: "Show a touch Joystick pad on supported systems when the P1 controller is 'Keyboard'. Useful on iPad OS for systems with an analog joystick (N64, PSX, etc.)",
-                            icon: .sfSymbol("keyboard.badge.eye"))
-            }
-            ThemedToggle(isOn: $movableButtons) {
-                SettingsRow(title: "Movable Buttons",
-                            subtitle: "Allow player to move on screen controller buttons. Tap with 3-fingers 3 times to toggle.",
-                            icon: .sfSymbol("arrow.up.and.down.and.arrow.left.and.right"))
             }
             ThemedToggle(isOn: $stickyButtonsEnabled) {
                 SettingsRow(title: "Sticky Buttons",

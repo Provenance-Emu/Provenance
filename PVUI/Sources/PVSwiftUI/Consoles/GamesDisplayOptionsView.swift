@@ -76,6 +76,8 @@ struct GamesDisplayOptionsView: SwiftUI.View {
 
     /// Puts the display controls in one menu when the phone needs room for games.
     var usesCompactMenu = false
+    var gameCount: Int?
+    var importGamesAction: (() -> Void)?
 
     var toggleFilterAction: () -> Void
     var toggleSortAction: () -> Void
@@ -122,7 +124,34 @@ struct GamesDisplayOptionsView: SwiftUI.View {
     var body: some SwiftUI.View {
         Group {
             if usesCompactMenu {
-                compactOptionsMenu
+                HStack(spacing: 12) {
+                    if let gameCount {
+                        Text("\(gameCount) Games")
+                            .font(.system(size: 11, weight: .medium))
+                            .foregroundStyle(.secondary)
+                    }
+                    Spacer(minLength: 0)
+                    if let importGamesAction {
+                        Button(action: importGamesAction) {
+                            Label("Import", systemImage: "plus")
+                                .font(.system(size: 11, weight: .medium))
+                                .frame(minHeight: 44)
+                                .contentShape(Rectangle())
+                        }
+                        .buttonStyle(.plain)
+                    }
+                    compactOptionsMenu
+                    Button(action: toggleViewTypeAction) {
+                        Image(systemName: viewModel.viewGamesAsGrid ? "square.grid.2x2" : "list.bullet")
+                            .font(.system(size: 16, weight: .medium))
+                            .frame(width: 44, height: 44)
+                            .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 14))
+                            .overlay { RoundedRectangle(cornerRadius: 14).strokeBorder(iconTint.opacity(0.3), lineWidth: 0.7) }
+                    }
+                    .buttonStyle(.plain)
+                    .accessibilityLabel(viewModel.viewGamesAsGrid ? "Show List" : "Show Grid")
+                }
+                .foregroundStyle(iconTint)
             } else {
                 HStack(spacing: spacing) {
                     // Display options menu (consolidated)
@@ -180,11 +209,10 @@ struct GamesDisplayOptionsView: SwiftUI.View {
             }
             logStatusMenu
         } label: {
-            Image(systemName: "slider.horizontal.3")
-                .font(.system(size: 17, weight: .medium))
+            Label("Sort", systemImage: "arrow.up.arrow.down")
+                .font(.system(size: 11, weight: .medium))
                 .foregroundStyle(iconTint)
-                .shadow(color: iconTint.opacity(0.4), radius: 2)
-                .frame(width: 44, height: 44)
+                .frame(minWidth: 60, minHeight: 44)
                 .contentShape(Rectangle())
         }
         .accessibilityLabel("Library Options")

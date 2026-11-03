@@ -10,6 +10,7 @@ import PVLogging
 import RealmSwift
 import Defaults
 import PVSettings
+import PVPrimitives
 import PVTouchOverlay
 import SkinKitCore
 import SkinKitManager
@@ -196,22 +197,24 @@ struct EmulatorWithSkinView: View {
                 #endif
 
                 #if DEBUG
-                // Debug toggle button
-                VStack {
-                    Spacer()
-                    HStack {
+                // Keep developer controls out of native screenshot captures.
+                if !LaunchArgument.screenshotMode.isEnabled {
+                    VStack {
                         Spacer()
-                        Button(action: {
-                            showDebugOverlay.toggle()
-                        }) {
-                            Image(systemName: showDebugOverlay ? "ladybug.fill" : "ladybug")
-                                .font(.system(size: 20))
-                                .foregroundColor(.white)
-                                .padding(8)
-                                .background(Color.black.opacity(0.5))
-                                .clipShape(Circle())
+                        HStack {
+                            Spacer()
+                            Button(action: {
+                                showDebugOverlay.toggle()
+                            }) {
+                                Image(systemName: showDebugOverlay ? "ladybug.fill" : "ladybug")
+                                    .font(.system(size: 20))
+                                    .foregroundColor(.white)
+                                    .padding(8)
+                                    .background(Color.black.opacity(0.5))
+                                    .clipShape(Circle())
+                            }
+                            .padding()
                         }
-                        .padding()
                     }
                 }
                 #endif

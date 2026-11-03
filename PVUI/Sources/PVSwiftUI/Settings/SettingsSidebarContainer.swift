@@ -107,6 +107,8 @@ struct SettingsSidebarContainer<PaneContent: View>: View {
                     Text("settings.done", bundle: .module)
                         .font(.body.weight(.semibold))
                         .foregroundColor(.retroPink)
+                        .frame(minWidth: 44, minHeight: 44)
+                        .contentShape(Rectangle())
                 }
                 .buttonStyle(.plain)
             }
@@ -121,12 +123,15 @@ struct SettingsSidebarContainer<PaneContent: View>: View {
                     Text("settings.help", bundle: .module)
                         .font(.body.weight(.semibold))
                         .foregroundColor(.retroBlue)
+                        .frame(minWidth: 44, minHeight: 44)
+                        .contentShape(Rectangle())
                 }
                 .buttonStyle(.plain)
             }
         }
-        .padding(.horizontal)
-        .padding(.vertical, 10)
+        .padding(.horizontal, 24)
+        .padding(.top, 16)
+        .padding(.bottom, 10)
         .background(surfaceColor.opacity(0.6))
         .overlay(alignment: .bottom) {
             LinearGradient(colors: [.retroPink, .retroPurple, .retroBlue], startPoint: .leading, endPoint: .trailing)

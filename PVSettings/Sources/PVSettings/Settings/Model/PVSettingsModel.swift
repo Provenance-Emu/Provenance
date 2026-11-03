@@ -121,7 +121,6 @@ extension Defaults.Keys {
     /// other's layout.
     static let gameLibraryCollectionZoom = Key<Float>("gameLibraryCollectionZoom", default: 1.0)
 
-    static let buttonTints = Key<Bool>("buttonTints", default: true)
     static let use8BitdoM30 = Key<Bool>("use8BitdoM30", default: false)
 
 #if os(tvOS)
@@ -157,7 +156,6 @@ public extension Defaults.Keys {
 public extension Defaults.Keys {
 #if canImport(UIKit)
     static let myiCadeControllerSetting = Key<iCadeControllerSetting>("myiCadeControllerSetting", default: .disabled)
-    static let allRightShoulders = Key<Bool>("allRightShoulders", default: false)
 #endif
     static let controllerOpacity = Key<Double>("controllerOpacity", default: 0.8)
     /// Scale multiplier for the on-screen controller overlay.
@@ -1106,16 +1104,6 @@ public extension Defaults.Keys {
 #else
     static let iCloudSync = Key<Bool>("iCloudSync", default: false)
 #endif
-#if os(macOS) || targetEnvironment(macCatalyst)
-    static let movableButtons = Key<Bool>("movableButtons", default: true)
-    static let onscreenJoypad = Key<Bool>("onscreenJoypad", default: false)
-    static let onscreenJoypadWithKeyboard = Key<Bool>("onscreenJoypadWithKeyboard", default: false)
-#elseif os(iOS)
-    static let movableButtons = Key<Bool>("movableButtons", default: true)
-    static let onscreenJoypad = Key<Bool>("onscreenJoypad", default: true)
-    static let onscreenJoypadWithKeyboard = Key<Bool>("onscreenJoypadWithKeyboard", default: true)
-#endif
-
     #if os(tvOS) || os(macOS) || targetEnvironment(macCatalyst)
     static let skinMode = makeSkinModeKey(defaultValue: .off)
     #else
