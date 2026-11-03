@@ -1026,6 +1026,12 @@ public extension Defaults.Keys {
     /// false; user must opt in via Advanced Settings.
     static let caseCompanionSkins = Key<Bool>("caseCompanionSkins", default: false)
 
+    /// Shows skins the catalog tags `mature` in the skin store. Off by default (SkinKit#13).
+    static let showMatureSkins = Key<Bool>("showMatureSkins", default: false)
+
+    /// Developer setting: shows `sample`-tagged test skins in the skin store (SkinKit#17).
+    static let showTestSkins = Key<Bool>("showTestSkins", default: false)
+
     /// ReplayKit live broadcast / cast button in the pause menu.
     /// Early support — broadcast quality + reconnect handling iterating.
     static let liveBroadcast = Key<Bool>("liveBroadcast", default: false)
