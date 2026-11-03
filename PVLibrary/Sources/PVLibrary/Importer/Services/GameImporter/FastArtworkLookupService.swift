@@ -79,7 +79,7 @@ public actor FastArtworkLookupService {
 
         ILOG("FastArtworkLookupService: Fast lookup for '\(title)' (MD5: \(md5))")
 
-        return await ArtworkLookupDeadline.value(timeoutNanoseconds: fastTimeoutNanoseconds, timeoutSleep: timeoutSleep) {
+        return await ArtworkLookupDeadline.value(timeoutNanoseconds: fastTimeoutNanoseconds, sleep: timeoutSleep) {
             do {
                 return try await self.performExactSearch(title: title, md5: md5, systemID: systemID)
             } catch {

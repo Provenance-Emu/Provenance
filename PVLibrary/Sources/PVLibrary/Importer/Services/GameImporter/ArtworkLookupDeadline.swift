@@ -5,7 +5,7 @@ import Foundation
 enum ArtworkLookupDeadline {
     static func value(
         timeoutNanoseconds: UInt64,
-        timeoutSleep: @escaping @Sendable (UInt64) async throws -> Void = { try await Task.sleep(nanoseconds: $0) },
+        sleep: @escaping @Sendable (UInt64) async throws -> Void = { try await Task.sleep(nanoseconds: $0) },
         operation: @escaping @Sendable () async -> String?
     ) async -> String? {
         let race = Race()
@@ -18,7 +18,7 @@ enum ArtworkLookupDeadline {
                 })
                 race.add(Task.detached {
                     do {
-                        try await timeoutSleep(timeoutNanoseconds)
+                        try await sleep(timeoutNanoseconds)
                         race.finish(nil)
                     } catch {
                         // The lookup finished or its caller was cancelled.
