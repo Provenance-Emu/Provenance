@@ -57,6 +57,53 @@ final class EmulatorQuickActionBar: NSObject {
     private var cancellables: Set<AnyCancellable> = []
     private let feedbackGenerator = UISelectionFeedbackGenerator()
 
+    /// One quick-action button.
+    enum Action: Equatable {
+        case record, quickSave, quickLoad, fastForward, keyboard, mouse
+
+        var systemImage: String {
+            switch self {
+            case .record: "record.circle"
+            case .quickSave: "square.and.arrow.down"
+            case .quickLoad: "arrow.counterclockwise"
+            case .fastForward: "forward.fill"
+            case .keyboard: "keyboard"
+            case .mouse: "cursorarrow"
+            }
+        }
+
+        var label: String {
+            switch self {
+            case .record: "Record"
+            case .quickSave: "Quick Save"
+            case .quickLoad: "Quick Load"
+            case .fastForward: "Fast Forward"
+            case .keyboard: "Toggle Virtual Keyboard"
+            case .mouse: "Toggle Virtual Mouse"
+            }
+        }
+    }
+
+    /// What the running core and app support, which decides the buttons.
+    struct Capabilities {
+        var supportsSaveStates: Bool
+        var supportsKeyboard: Bool
+        var supportsMouse: Bool
+        var recordingAvailable: Bool
+    }
+
+    /// The buttons in each row, left to right. Fast-forward is always there.
+    nonisolated static func rows(for capabilities: Capabilities) -> (leading: [Action], trailing: [Action]) {
+        var trailing: [Action] = []
+        if capabilities.recordingAvailable { trailing.append(.record) }
+        if capabilities.supportsSaveStates { trailing += [.quickSave, .quickLoad] }
+        trailing.append(.fastForward)
+        var leading: [Action] = []
+        if capabilities.supportsKeyboard { leading.append(.keyboard) }
+        if capabilities.supportsMouse { leading.append(.mouse) }
+        return (leading, trailing)
+    }
+
     /// Views `radicalCleanup()` must keep.
     var views: [UIView] { [tapZone, trailingRow, leadingRow] }
 
@@ -94,32 +141,14 @@ final class EmulatorQuickActionBar: NSObject {
             row.spacing = Layout.spacing
         }
 
-        // Trailing row, right to left: fast-forward, quick load, quick save, record.
-        var trailing: [UIButton] = []
-        if PVRecordingManager.shared.isAvailable {
-            let button = makeButton(systemImage: "record.circle", label: "Record", action: #selector(recordTapped))
-            recordButton = button
-            trailing.append(button)
-        }
-        if core.supportsSaveStates {
-            trailing.append(makeButton(systemImage: "square.and.arrow.down", label: "Quick Save", action: #selector(quickSaveTapped)))
-            trailing.append(makeButton(systemImage: "arrow.counterclockwise", label: "Quick Load", action: #selector(quickLoadTapped)))
-        }
-        let fastForward = makeButton(systemImage: "forward.fill", label: "Fast Forward", action: #selector(fastForwardTapped))
-        fastForwardButton = fastForward
-        trailing.append(fastForward)
-        trailing.forEach(trailingRow.addArrangedSubview)
-
-        if (core as? KeyboardResponder)?.gameSupportsKeyboard == true {
-            let button = makeButton(systemImage: "keyboard", label: "Toggle Virtual Keyboard", action: #selector(keyboardTapped))
-            keyboardButton = button
-            leadingRow.addArrangedSubview(button)
-        }
-        if (core as? MouseResponder)?.gameSupportsMouse == true {
-            let button = makeButton(systemImage: "cursorarrow", label: "Toggle Virtual Mouse", action: #selector(mouseTapped))
-            mouseButton = button
-            leadingRow.addArrangedSubview(button)
-        }
+        let rows = Self.rows(for: Capabilities(
+            supportsSaveStates: core.supportsSaveStates,
+            supportsKeyboard: (core as? KeyboardResponder)?.gameSupportsKeyboard == true,
+            supportsMouse: (core as? MouseResponder)?.gameSupportsMouse == true,
+            recordingAvailable: PVRecordingManager.shared.isAvailable
+        ))
+        rows.trailing.map(makeButton).forEach(trailingRow.addArrangedSubview)
+        rows.leading.map(makeButton).forEach(leadingRow.addArrangedSubview)
 
         // The strip goes in first so a click on a button reaches the button.
         for subview in views {
@@ -140,6 +169,29 @@ final class EmulatorQuickActionBar: NSObject {
 
         syncFastForwardDisplay()
         updateRecordButtonAppearance()
+    }
+
+    private func makeButton(_ action: Action) -> UIButton {
+        let button = makeButton(systemImage: action.systemImage, label: action.label, action: selector(for: action))
+        switch action {
+        case .record: recordButton = button
+        case .fastForward: fastForwardButton = button
+        case .keyboard: keyboardButton = button
+        case .mouse: mouseButton = button
+        case .quickSave, .quickLoad: break
+        }
+        return button
+    }
+
+    private func selector(for action: Action) -> Selector {
+        switch action {
+        case .record: #selector(recordTapped)
+        case .quickSave: #selector(quickSaveTapped)
+        case .quickLoad: #selector(quickLoadTapped)
+        case .fastForward: #selector(fastForwardTapped)
+        case .keyboard: #selector(keyboardTapped)
+        case .mouse: #selector(mouseTapped)
+        }
     }
 
     private func makeButton(systemImage: String, label: String, action: Selector) -> UIButton {
