@@ -394,6 +394,7 @@ run = """python3 Scripts/tests/test_check_pbxproj_sources.py \
   && python3 Scripts/tests/test_topshelf_registration.py \
   && python3 Scripts/tests/test_skinkit_alignment.py \
   && python3 Scripts/tests/test_build_failure_logs.py \
+  && python3 Scripts/tests/test_capture_device_screenshots.py \
   && python3 -m unittest discover -s Scripts/maint -p 'test_*.py' \
   && python3 -m unittest discover -s Scripts/cores/tests -p 'test_*.py' \
   && bash Scripts/tests/test-get-modules-validation.sh \
