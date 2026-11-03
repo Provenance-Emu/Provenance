@@ -50,8 +50,8 @@ extension PVAtari800: PV5200SystemResponderClient {
 // The underlying ObjC `PVAtari800Bridge` already implements every requirement of
 // `PVA8SystemResponderClient` (button + keyboard + mouse). The Swift wrapper needs to
 // explicitly declare conformance and forward each method to the bridge so that
-// `PVCoreFactory.controllerViewController(forSystem:)` (case `.Atari8bit`) succeeds
-// instead of hitting `fatalError("Core doesn't implement PVA8SystemResponderClient")`.
+// skin, touch-overlay and keyboard input, which reach the core through
+// `PVA8SystemResponderClient`, arrive at the bridge.
 // Follows the same pattern as `PVDosBoxCore` / `PVSNES9xEmulatorCore`.
 extension PVAtari800: PVA8SystemResponderClient {
 
