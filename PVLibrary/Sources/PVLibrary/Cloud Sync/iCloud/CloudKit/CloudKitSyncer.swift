@@ -25,7 +25,8 @@ import Defaults
 /// CloudKit-based sync provider for all OS's
 /// Implements the SyncProvider protocol to provide a consistent interface
 /// with the `iCloudContainerSyncer` used on iOS/macOS
-public class CloudKitSyncer: SyncProvider {
+// The legacy implementation predates the size rule; scope its existing debt like CloudSyncManager.
+public class CloudKitSyncer: SyncProvider { // swiftlint:disable:this type_body_length
     // MARK: - Local Schema Definitions (Replacing CloudKitSchema)
 
     // Record Types
@@ -1036,8 +1037,6 @@ public class CloudKitSyncer: SyncProvider {
         // Extract the filename from the record - try multiple possible field names
         var filename: String?
         if let filenameValue = record["filename"] as? String {
-            filename = filenameValue
-        } else if let filenameValue = record["filename"] as? String {
             filename = filenameValue
         } else {
             let recordName = record.recordID.recordName

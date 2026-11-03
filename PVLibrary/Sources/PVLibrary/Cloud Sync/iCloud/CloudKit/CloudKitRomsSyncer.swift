@@ -32,7 +32,8 @@ struct DescriptiveError: Error, LocalizedError {
     var errorDescription: String? { description }
 }
 
-public class CloudKitRomsSyncer: NSObject, RomsSyncing {
+// The legacy implementation predates the size rule; scope its existing debt like CloudSyncManager.
+public class CloudKitRomsSyncer: NSObject, RomsSyncing { // swiftlint:disable:this type_body_length
 
     // MARK: - SyncProvider Conformance Properties
     public var directories: Set<String> = ["ROMs"] // TODO: Initialize properly, e.g., with system identifiers this syncer handles

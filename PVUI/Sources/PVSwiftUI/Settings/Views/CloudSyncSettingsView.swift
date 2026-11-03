@@ -27,6 +27,9 @@ import CloudKit
 import PVUIBase
 import PVFileSystem
 import Foundation
+#if canImport(FreemiumKit)
+import FreemiumKit
+#endif
 
 /// A view that displays unified cloud sync settings with tabs for CloudKit and iCloud Drive.
 /// This view combines functionality from both CloudKit and iCloud Drive sync views into a single
@@ -1395,12 +1398,16 @@ public struct CloudSyncSettingsView: View {
             }
             Text("Free sync skips automatic ROM file transfers. Your existing cloud data is retained.")
                 .font(.caption)
+            #if canImport(FreemiumKit)
             PaidFeatureView {
                 contentTypeOptions
             } lockedView: {
                 Text("Whole-ROM library automation is included with Provenance Plus.")
             }
             .freemiumKitColorReset()
+            #else
+            contentTypeOptions
+            #endif
         }
         #endif
     }
