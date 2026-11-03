@@ -147,6 +147,8 @@ public enum CrossAppEntitlementPublisher {
     private static var reconciliationTask: Task<Void, Never>?
 
     public private(set) static var storeKitSettled = false
+    /// Latest verified seller snapshot, independent of FreemiumKit UI refresh timing.
+    public private(set) static var directlyOwnsPlus = false
 
     @MainActor
     public static func refresh() async {
@@ -162,6 +164,7 @@ public enum CrossAppEntitlementPublisher {
         } else {
             SharedEntitlementKeychain.delete(account: account)
         }
+        directlyOwnsPlus = entitlement != nil
         storeKitSettled = true
         CrossAppEntitlementReader.applySiblingGrantIfNeeded(directlyOwned: entitlement != nil)
         CloudSyncUpsellView.reconcileFreeSyncScope()
@@ -319,7 +322,7 @@ public enum PlusEntitlement {
     /// SwiftUI `body`.
     public static var isUnlocked: Bool {
         #if canImport(FreemiumKit)
-        if FreemiumKit.shared.purchasedTier != nil { return true }
+        if CrossAppEntitlementPublisher.directlyOwnsPlus || FreemiumKit.shared.purchasedTier != nil { return true }
         return CrossAppEntitlementReader.didGrantPlusFromSibling
         #else
         return false
