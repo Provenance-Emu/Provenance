@@ -24,7 +24,7 @@ let package = Package(
         /// `TouchInputRole` and `SkinTouchSelection` live in SkinKitUI, shared with the skin view.
         /// Keep this exact release aligned with PVUI and the other SkinKit consumers.
         // TEMPORARY: SkinKit core/alt-representations. Moves to `exact: "0.2.0"` right before merge.
-        .package(url: "https://github.com/Provenance-Emu/SkinKit", revision: "9790931f4465c5f8e7c174c112d48516d5a294f8")
+        .package(url: "https://github.com/Provenance-Emu/SkinKit", revision: "278115e42e3464e5ef192c2ea37ca06ef123360c")
     ],
     targets: [
         .target(
