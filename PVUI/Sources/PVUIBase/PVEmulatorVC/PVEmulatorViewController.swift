@@ -3060,8 +3060,7 @@ extension PVEmulatorViewController {
 
     /// Ensure proper z-order of views in the hierarchy.
     ///
-    /// Works for both DeltaSkin mode (with a skin container) and legacy
-    /// PVControllerViewController mode (no skin container).
+    /// Works with and without a skin container (desktop input mode has none).
     private func ensureProperZOrder() {
         guard let gpuView = gpuViewController.view else { return }
 

@@ -358,9 +358,7 @@ def render(native: dict[str, SystemReport]) -> str:
     active = {s: r for s, r in native.items() if r.entries}
     if not active:
         lines.append(
-            "_No scanned file binds GameController inputs directly; GameController "
-            "binding lives in the Controller VC layer "
-            "(`PVUI/Sources/PVUIBase/Controller/Systems/*ControllerViewController.swift`)._\n"
+            "_No scanned file binds GameController inputs directly._\n"
         )
         return "\n".join(lines) + "\n"
 

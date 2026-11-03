@@ -134,9 +134,6 @@ extension PVEmulatorViewController {
             // Now create and add the skin view
             await addSkinView()
 
-            // Hide the standard controls
-             hideStandardControls()
-
             scheduleMenuButtonFallback()
 
             // Log skin setup info
@@ -619,18 +616,6 @@ extension PVEmulatorViewController {
 
         ILOG("skins: Skin view setup complete, printing view hierarchy")
         printViewHierarchy()
-    }
-
-    /// Hide the standard controller buttons
-    private func hideStandardControls() {
-        // Find the controller view controller
-        for childVC in children {
-            if let controllerVC = childVC as? any ControllerVC {
-                // Hide the entire controller view
-                controllerVC.view.isHidden = true
-                ILOG("Hidden standard controller view")
-            }
-        }
     }
 
     // MARK: - Rotation Handling
