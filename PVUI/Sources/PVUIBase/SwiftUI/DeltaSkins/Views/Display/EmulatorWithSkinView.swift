@@ -68,6 +68,9 @@ struct EmulatorWithSkinView: View {
     // State for D-pad/joystick toggle in default skin
     @State internal var useJoystick = false
 
+    /// Bumped when the stored alt-layout choice (`altRepresentations`) changes, so the body re-reads it.
+    @State private var altRepresentationsRevision: Int = 0
+
     // Notification observer tokens — removed on disappear to prevent duplicates
     @State private var orientationObserver: NSObjectProtocol?
     @State private var skinChangeObserver: NSObjectProtocol?
@@ -317,6 +320,13 @@ struct EmulatorWithSkinView: View {
                 // Filter changes propagate naturally via state to DeltaSkinView's filters parameter
                 // No need to force view recreation - this was causing AG::precondition_failure crashes
                 ILOG("skins: Filter changed to: \(selectedFilterName ?? "none")")
+            }
+            // The skin's toggleAltRepresentations button flipped the layout set: rebuild the traits. DeltaSkinView
+            // reloads its artwork, buttons and screens on the trait change.
+            .onReceive(NotificationCenter.default.publisher(
+                for: DeltaSkinSelectionManager.altRepresentationsChangedNotification
+            ).receive(on: DispatchQueue.main)) { _ in
+                altRepresentationsRevision &+= 1
             }
             // The thin libretro wrapper only knows its real geometry/aspect once the core
             // has booted (`retro_get_system_av_info` runs on the wrapper's boot thread), so
@@ -625,8 +635,17 @@ struct EmulatorWithSkinView: View {
                 crc: gameCRC,
                 romFileName: gameRomFileName,
                 title: gameTitle
-            )
+            ),
+            usesAltRepresentations: usesAltRepresentations
         )
+    }
+
+    /// Whether the loaded skin's alternate layout (Ignited's `altRepresentations`) is on for this game. The
+    /// emulator view controller's `skinRenderTraits()` reads the same stored value for the viewport.
+    private var usesAltRepresentations: Bool {
+        _ = altRepresentationsRevision   // re-evaluated when the choice changes
+        guard let skin = skinLoader.selectedSkin, skin.hasAltRepresentations else { return false }
+        return DeltaSkinSelectionManager.shared.usesAltRepresentations(skinIdentifier: skin.identifier, gameIds: gameSkinKeys)
     }
 
     // MARK: - Filter Handling
