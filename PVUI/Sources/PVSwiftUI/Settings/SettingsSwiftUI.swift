@@ -2647,6 +2647,8 @@ private struct LibrarySection2: View {
 }
 
 private struct AdvancedSection: View {
+    @Default(.showTestSkins) private var showTestSkins
+
     var body: some View {
         Group {
             #if canImport(FreemiumKit)
@@ -2656,6 +2658,13 @@ private struct AdvancedSection: View {
             AdvancedTogglesView()
 
             SettingsSubheading(title: "Developer Tools")
+
+            ThemedToggle(isOn: $showTestSkins) {
+                SettingsRow(title: "Show test skins",
+                            subtitle: "Show sample-tagged test skins in the skin store.",
+                            icon: .sfSymbol("testtube.2"),
+                            showChevron: false)
+            }
 
             NavigationLink(destination: AppGroupFileBrowserView()) {
                 SettingsRow(title: "App Group File Browser",

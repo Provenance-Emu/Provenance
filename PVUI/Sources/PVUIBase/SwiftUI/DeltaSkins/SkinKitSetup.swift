@@ -44,6 +44,7 @@ public enum SkinKitSetup {
         configureRendering()
         configureSystems()
         configureTheme()
+        configureContentVisibility()
         seedCatalogCache()
     }
 
@@ -184,6 +185,27 @@ public enum SkinKitSetup {
         }
         theme.sectionHeaderTypography = { AnyView($0.retroPauseSectionHeaderTypography()) }
         SkinKitTheme.current = theme
+    }
+
+    // MARK: - Content visibility
+
+    /// Keeps the store's visibility rules in step with Settings: `sample`-tagged test skins behind
+    /// the developer "Show test skins" toggle, `mature`-tagged skins behind "Show mature skins".
+    /// SkinKit reads `SkinContentVisibility.current` each time it filters the catalog.
+    private static func configureContentVisibility() {
+        applyContentVisibility()
+        Task {
+            for await _ in Defaults.updates([.showTestSkins, .showMatureSkins], initial: false) {
+                applyContentVisibility()
+            }
+        }
+    }
+
+    static func applyContentVisibility() {
+        SkinContentVisibility.current = SkinContentVisibility(
+            showTestSkins: Defaults[.showTestSkins],
+            showMatureSkins: Defaults[.showMatureSkins]
+        )
     }
 
     // MARK: - Catalog
