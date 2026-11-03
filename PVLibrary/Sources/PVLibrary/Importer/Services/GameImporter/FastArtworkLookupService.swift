@@ -46,17 +46,22 @@ public actor FastArtworkLookupService {
     private let lookup: any ArtworkMatchingLookupProvider
     /// Timeout for the fast path (nanoseconds). Configurable via internal init for testing.
     private let fastTimeoutNanoseconds: UInt64
+    /// Injectable wait lets tests drive the timeout race without measuring scheduler latency.
+    private let timeoutSleep: @Sendable (UInt64) async throws -> Void
 
     // MARK: Init (private — use shared or inject for tests)
     private init() {
         self.lookup = PVLookup.shared
         self.fastTimeoutNanoseconds = 2_000_000_000 // 2 seconds
+        self.timeoutSleep = { try await Task.sleep(nanoseconds: $0) }
     }
 
     /// Internal init for dependency injection (used by tests).
-    init(lookup: any ArtworkMatchingLookupProvider, timeoutNanoseconds: UInt64 = 2_000_000_000) {
+    init(lookup: any ArtworkMatchingLookupProvider, timeoutNanoseconds: UInt64 = 2_000_000_000,
+         timeoutSleep: @escaping @Sendable (UInt64) async throws -> Void = { try await Task.sleep(nanoseconds: $0) }) {
         self.lookup = lookup
         self.fastTimeoutNanoseconds = timeoutNanoseconds
+        self.timeoutSleep = timeoutSleep
     }
 
     // MARK: Public API
@@ -75,11 +80,10 @@ public actor FastArtworkLookupService {
         ILOG("FastArtworkLookupService: Fast lookup for '\(title)' (MD5: \(md5))")
 
         let timeoutNanoseconds = fastTimeoutNanoseconds
+        let timeoutSleep = self.timeoutSleep
 
-        // Use an unstructured Task for the search so it can be cancelled independently
-        // once the timeout fires. withTaskGroup awaits all child tasks before returning,
-        // so wrapping the unstructured task's value lets us return as soon as either
-        // the search completes or the sentinel fires — then cancel the search task.
+        // Race lookup against the timer, then cancel the loser. The group drains its
+        // search wrapper before returning, so lookup providers must honor cancellation.
         let searchTask = Task {
             do {
                 return try await self.performExactSearch(title: title, md5: md5, systemID: systemID)
@@ -95,7 +99,7 @@ public actor FastArtworkLookupService {
 
             // Timeout sentinel — races against the search task
             group.addTask {
-                try? await Task.sleep(nanoseconds: timeoutNanoseconds)
+                try? await timeoutSleep(timeoutNanoseconds)
                 return nil
             }
 
