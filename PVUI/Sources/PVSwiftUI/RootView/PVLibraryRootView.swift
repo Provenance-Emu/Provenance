@@ -189,17 +189,23 @@ public struct PVLibraryRootView: View {
 
     private var libraryContent: some View {
         PVLibraryDrawerHost(viewModel: navigation.viewModel) {
-            VStack(spacing: 0) {
-                LibraryHeader(viewModel: navigation.viewModel, navigation: navigation)
-                NavigationStack {
-                    ConsolesWrapperView(consolesWrapperViewDelegate: navigation.tabs, viewModel: navigation.viewModel, rootDelegate: navigation)
-                    #if !os(tvOS)
-                    .toolbar(.hidden, for: .navigationBar)
+            GeometryReader { geometry in
+                VStack(spacing: 0) {
+                    LibraryHeader(viewModel: navigation.viewModel, navigation: navigation)
+                    NavigationStack {
+                        ConsolesWrapperView(consolesWrapperViewDelegate: navigation.tabs, viewModel: navigation.viewModel, rootDelegate: navigation)
+                            .environment(\.libraryBottomSafeAreaInset, geometry.safeAreaInsets.bottom)
+                        #if !os(tvOS)
+                        .toolbar(.hidden, for: .navigationBar)
+                        #endif
+                    }
+                    #if os(iOS)
+                    .ignoresSafeArea(.container, edges: .bottom)
                     #endif
+                    // Paging children must not draw or receive taps over the library header.
+                    .contentShape(Rectangle())
+                    .clipped()
                 }
-                // Paging children must not draw or receive taps over the library header.
-                .contentShape(Rectangle())
-                .clipped()
             }
             .background(RetroTheme.RetroBackgroundView().environmentObject(themeManager))
         } menu: {
@@ -365,15 +371,8 @@ private struct LibraryHeader: View {
     #endif
 
     var body: some View {
-        HStack(spacing: 10) {
-            Button {
-                viewModel.toggleMenu()
-            } label: {
-                Image(systemName: "line.3.horizontal")
-                    .frame(width: LibraryChrome.controlSize, height: LibraryChrome.controlSize)
-                    .background(Color.retroDarkBlue.opacity(0.7), in: Circle())
-            }
-            .accessibilityLabel("Open Library Menu")
+        HStack(spacing: 4) {
+            headerAction("line.3.horizontal", title: "Open Library Menu", action: viewModel.toggleMenu)
 
             Menu {
                 ForEach(LibraryDestination.allCases) { destination in
@@ -409,29 +408,26 @@ private struct LibraryHeader: View {
             #else
             Spacer(minLength: 0)
             #endif
-            Button {
-                navigation.didTapHome()
-                viewModel.showsLibrarySearch.toggle()
-            } label: {
-                Image(systemName: "magnifyingglass").frame(width: 44, height: 44).contentShape(Circle())
-            }
-            .accessibilityLabel("Search Games")
-            .background(.ultraThinMaterial, in: Circle())
-            .overlay { Circle().strokeBorder(Color.retroBlue.opacity(0.38), lineWidth: 1) }
-
-            Button { navigation.didTapAddGames() } label: {
-                Image(systemName: "plus").frame(width: 44, height: 44).contentShape(Circle())
-            }
-            .accessibilityLabel("Add Games")
-            .background(.ultraThinMaterial, in: Circle())
-            .overlay { Circle().strokeBorder(Color.retroBlue.opacity(0.38), lineWidth: 1) }
+            headerAction("tray.and.arrow.down", title: "Import Queue", action: navigation.didTapImports)
+            headerAction("gearshape", title: "Settings", action: navigation.didTapSettings)
+            headerAction("plus", title: "Add Games", action: navigation.didTapAddGames)
         }
         .buttonStyle(.plain)
-        .font(.system(size: 20, weight: .medium))
+        .font(.system(size: 16, weight: .medium))
         .foregroundStyle(Color(themeManager.currentPalette.gameLibraryText))
-        .padding(.horizontal, 24)
-        .padding(.vertical, 4)
-        .background(Color.retroBlack.opacity(0.85))
+        .padding(.horizontal, 12)
+        .background(Color.retroBlack.opacity(0.85).ignoresSafeArea(.container, edges: .top))
+    }
+
+    private func headerAction(_ symbol: String, title: String, action: @escaping () -> Void) -> some View {
+        Button(action: action) {
+            Image(systemName: symbol)
+                .frame(width: 32, height: 32)
+                .background(.ultraThinMaterial, in: Circle())
+                .frame(width: LibraryChrome.controlSize, height: LibraryChrome.controlSize)
+                .contentShape(Rectangle())
+        }
+        .accessibilityLabel(title)
     }
 }
 

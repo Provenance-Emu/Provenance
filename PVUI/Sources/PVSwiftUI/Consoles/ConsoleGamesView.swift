@@ -154,6 +154,10 @@ struct ConsoleGamesView: SwiftUI.View {
         gamesViewModel.allGamesModels
     }
 
+    var filteredGamesModels: [GameCellModel] {
+        LibraryGameFilter.games(allGamesModels, matching: gamesViewModel.searchText, title: \.title)
+    }
+
     var favoritesModels: [GameCellModel] {
         gamesViewModel.favoritesModels
     }
@@ -282,60 +286,23 @@ struct ConsoleGamesView: SwiftUI.View {
 
     @ViewBuilder
     var gamesScrollView: some View {
-        ScrollViewWithOffset(
-            offsetChanged: { offset in
-                // Throttle scroll updates to reduce overhead
-                let scrollDistance = abs(offset - gamesViewModel.previousScrollOffset)
-
-                // Only process if scroll distance is significant (reduces update frequency)
-                guard scrollDistance > 8 else { return }
-
-                // Detect scroll direction
-                let scrollingDown = offset < gamesViewModel.previousScrollOffset
-
-                // Hide search bar when scrolling down, show when scrolling up.
-                // Only assign on an actual flip so a steady scroll doesn't invalidate this view per tick.
-                if scrollingDown && offset < -10 {
-                    if gamesViewModel.isSearchBarVisible {
-                        withAnimation(.easeInOut(duration: 0.3)) {
-                            gamesViewModel.isSearchBarVisible = false
-                        }
-                    }
-                } else if !scrollingDown && scrollDistance > 10 {
-                    if !gamesViewModel.isSearchBarVisible {
-                        withAnimation(.easeInOut(duration: 0.3)) {
-                            gamesViewModel.isSearchBarVisible = true
-                        }
-                    }
-                }
-
-                gamesViewModel.previousScrollOffset = offset
-            }
-        ) {
+        ScrollViewWithOffset {
             ScrollViewReader { proxy in
                 LazyVStack(spacing: 0) {
-                    // Add search bar with visibility control
-                    if allGamesModels.count > 8 && showSearchbar {
-                        PVSearchBar(text: $gamesViewModel.searchText)
-                            .opacity(gamesViewModel.isSearchBarVisible ? 1 : 0)
-                            .frame(height: gamesViewModel.isSearchBarVisible ? nil : 0)
-                            .animation(.easeInOut(duration: 0.3), value: gamesViewModel.isSearchBarVisible)
-                            .padding(.horizontal, 8)
-                            .padding(.bottom, 8)
+                    if gamesViewModel.searchText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+                        continueSection()
+                            .id("section_continues")
+                            .padding(.horizontal, 12)
+                        favoritesSection()
+                            .id("section_favorites")
+                            .padding(.horizontal, 12)
+                        recentlyPlayedSection()
+                            .id("section_recent")
+                            .padding(.horizontal, 12)
                     }
-
-                    continueSection()
-                        .id("section_continues")
-                        .padding(.horizontal, 24)
-                    favoritesSection()
-                        .id("section_favorites")
-                        .padding(.horizontal, 24)
-                    recentlyPlayedSection()
-                        .id("section_recent")
-                        .padding(.horizontal, 24)
                     gamesSection()
                         .id("section_allgames")
-                        .padding(.horizontal, 24)
+                        .padding(.horizontal, 12)
                 }
                 // Keep the final row reachable above the floating BIOS and system controls.
                 .padding(.bottom, floatingControlsClearance)
@@ -352,19 +319,6 @@ struct ConsoleGamesView: SwiftUI.View {
                 }
             }
         }
-        .overlay(
-            Group {
-                if !gamesViewModel.searchText.isEmpty {
-                    ScrollView {
-                        searchResultsView()
-                            .padding(.bottom, floatingControlsClearance)
-                            .desktopLibraryContentColumn()
-                    }
-                    .background(themeManager.currentPalette.gameLibraryBackground.swiftUIColor)
-                }
-            }
-        )
-        .padding(.bottom, 4)
     }
 
     @ViewBuilder
@@ -374,7 +328,7 @@ struct ConsoleGamesView: SwiftUI.View {
                 .padding(.horizontal, 8)
                 .padding(.bottom, 8)
         } else {
-            emptyView
+            Color.clear.frame(height: 0).allowsHitTesting(false)
         }
     }
 
@@ -439,15 +393,12 @@ struct ConsoleGamesView: SwiftUI.View {
                     // clamps them all. The group keeps the outer stack's 4pt spacing inside and
                     // out, so it is layout-identical off-Mac, where the modifier is identity.
                     VStack(spacing: 4) {
-                        if verticalSizeClass == .compact {
-                            HStack(spacing: 0) {
-                                systemHeading
-                                displayOptionsView().frame(maxWidth: 420)
-                            }
-                        } else {
-                            systemHeading
-                            displayOptionsView()
-                        }
+                        #if os(iOS)
+                        displayOptionsView()
+                        #else
+                        systemHeading
+                        displayOptionsView()
+                        #endif
 
                         importProgressView
 
@@ -1044,10 +995,16 @@ struct ConsoleGamesView: SwiftUI.View {
             // Multi-select batch-action toolbar — overlays at the bottom in select mode
             multiSelectToolbar
         }
+        #if os(tvOS)
         .modifier(ConditionalSearchModifier(
             isEnabled: allGamesModels.count > 8,
             searchText: $gamesViewModel.searchText
         ))
+        #endif
+        .onChange(of: gamesViewModel.searchText) { _, _ in clearNavigationFocus() }
+        .onChange(of: showSearchbar) { _, visible in
+            if !visible { gamesViewModel.searchText = "" }
+        }
         // ROM drag & drop import — iOS/iPadOS/macCatalyst only (#3406)
 #if os(iOS)
         .romDropTarget()
@@ -1451,62 +1408,6 @@ struct ConsoleGamesView: SwiftUI.View {
     //    )
     //}
 
-    /// Optimized search results using ViewModel cache
-    private func filteredSearchResults() -> [GameCellModel] {
-        let query = gamesViewModel.searchText.trimmingCharacters(in: .whitespacesAndNewlines)
-        guard !query.isEmpty else { return [] }
-        let lowered = query.lowercased()
-        return allGamesModels.filter { $0.title.lowercased().contains(lowered) }
-    }
-
-    @ViewBuilder
-    private func searchResultsView() -> some View {
-        VStack(alignment: .leading) {
-            Text(String(localized: "Search Results"))
-                .font(.title2)
-                .foregroundColor(themeManager.currentPalette.gameLibraryText.swiftUIColor)
-                .padding(.horizontal)
-
-            LazyVStack(spacing: 0) {
-                let results = filteredSearchResults()
-                if results.isEmpty {
-                    Text(String(localized: "NO GAMES FOUND"))
-                        .font(.system(size: 20, weight: .bold))
-                        .foregroundColor(RetroTheme.retroBlue)
-                        .shadow(color: RetroTheme.retroBlue.opacity(0.7), radius: 3, x: 0, y: 0)
-                        .padding()
-                } else {
-                    ForEach(results, id: \.id) { game in
-                        multiSelectOverlay(md5: game.md5) {
-                            GameItemPresentableView(
-                                game: game,
-                                constrainHeight: true,
-                                viewType: .row,
-                                sectionContext: .allGames,
-                                isFocused: focusBinding(itemId: game.id, section: .allGames)
-                            ) {
-                                gameAction(for: game.md5)()
-                            }
-                        }
-                        .id(gameIdentityKey(id: game.id, artworkURL: game.trueArtworkURL))
-                        .focusableIfAvailable()
-                        .contextMenu {
-                            GameContextMenu(
-                                md5: game.md5,
-                                rootDelegate: rootDelegate,
-                                contextMenuDelegate: self
-                            )
-                        }
-                        #if os(iOS)
-                        .romDragSource(gameMD5: game.md5)
-                        #endif
-                        GamesDividerView()
-                    }
-                }
-            }
-        }
-    }
-
 }
 
 // MARK: - View Components
@@ -1526,6 +1427,23 @@ extension ConsoleGamesView {
         .padding(.horizontal, 24)
         .padding(.top, 12)
         .padding(.bottom, 4)
+    }
+
+    /// The compact bar replaces the separate system heading only on iOS.
+    private var compactSystemSummary: (title: String, subtitle: String)? {
+        #if os(iOS)
+        (console.name, "\(allGamesModels.count) games · \(console.manufacturer)")
+        #else
+        nil
+        #endif
+    }
+
+    private var compactFilterText: Binding<String>? {
+        #if os(iOS)
+        showSearchbar ? $gamesViewModel.searchText : nil
+        #else
+        nil
+        #endif
     }
 
     @ViewBuilder
@@ -1561,12 +1479,14 @@ extension ConsoleGamesView {
             settingsContext: .console(console),
             usesCompactMenu: true,
             gameCount: allGamesModels.count,
-            importGamesAction: { (rootDelegate as? PVMenuDelegate)?.didTapAddGames() },
+            pageTitle: compactSystemSummary?.title,
+            pageSubtitle: compactSystemSummary?.subtitle,
+            filterText: compactFilterText,
             toggleFilterAction: { self.rootDelegate?.showUnderConstructionAlert() },
             toggleSortAction: { viewModel.sortGamesAscending.toggle() },
             toggleViewTypeAction: { viewModel.viewGamesAsGrid.toggle() }
         )
-        .padding(.horizontal, 24)
+        .padding(.horizontal, 12)
         .allowsHitTesting(true)
     }
 
@@ -1618,7 +1538,11 @@ extension ConsoleGamesView {
     @ViewBuilder
     private func gamesSection() -> some View {
         Group {
-            if allGamesModels.isEmpty {
+            if !gamesViewModel.searchText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty && filteredGamesModels.isEmpty {
+                Text("No games match this filter")
+                    .foregroundStyle(.secondary)
+                    .padding()
+            } else if allGamesModels.isEmpty {
                 if AppState.shared.isSimulator && ProcessInfo.processInfo.arguments.contains("-PVShowEmptySystems") {
                     let fakeGames = PVGame.mockGenerate(systemID: console.identifier)
                     if viewModel.viewGamesAsGrid {
@@ -1643,9 +1567,9 @@ extension ConsoleGamesView {
                     titleBar()
 
                     if viewModel.viewGamesAsGrid {
-                        showGamesGrid(allGamesModels)
+                        showGamesGrid(filteredGamesModels)
                     } else {
-                        showGamesList(allGamesModels)
+                        showGamesList(filteredGamesModels)
                     }
                 }
             }

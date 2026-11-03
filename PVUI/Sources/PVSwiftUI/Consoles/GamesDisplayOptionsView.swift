@@ -78,6 +78,10 @@ struct GamesDisplayOptionsView: SwiftUI.View {
     var usesCompactMenu = false
     var gameCount: Int?
     var importGamesAction: (() -> Void)?
+    var pageTitle: String?
+    var pageSubtitle: String?
+    var filterText: Binding<String>?
+    @FocusState private var isFilterFocused: Bool
 
     var toggleFilterAction: () -> Void
     var toggleSortAction: () -> Void
@@ -124,13 +128,45 @@ struct GamesDisplayOptionsView: SwiftUI.View {
     var body: some SwiftUI.View {
         Group {
             if usesCompactMenu {
-                HStack(spacing: 12) {
-                    if let gameCount {
+                HStack(spacing: 0) {
+                    if let pageTitle {
+                        VStack(alignment: .leading, spacing: 2) {
+                            if let filterText {
+                                TextField("Filter \(pageTitle)", text: filterText)
+                                    .focused($isFilterFocused)
+                                    .onSubmit { isFilterFocused = false }
+                                    #if os(iOS)
+                                    .textInputAutocapitalization(.never)
+                                    .autocorrectionDisabled()
+                                    .submitLabel(.done)
+                                    #endif
+                                    .accessibilityLabel("Filter \(pageTitle) games")
+                            } else {
+                                Text(pageTitle).lineLimit(1)
+                            }
+                            if let pageSubtitle {
+                                Text(pageSubtitle)
+                                    .font(.caption)
+                                    .foregroundStyle(.secondary)
+                                    .lineLimit(1)
+                            }
+                        }
+                        .font(.subheadline.weight(.semibold))
+                        .frame(maxWidth: .infinity, minHeight: 44, alignment: .leading)
+                        if let filterText, !filterText.wrappedValue.isEmpty {
+                            Button {
+                                filterText.wrappedValue = ""
+                            } label: {
+                                Image(systemName: "xmark.circle.fill").frame(width: 44, height: 44)
+                            }
+                            .accessibilityLabel("Clear filter")
+                        }
+                    } else if let gameCount {
                         Text("\(gameCount) Games")
                             .font(.system(size: 11, weight: .medium))
                             .foregroundStyle(.secondary)
                     }
-                    Spacer(minLength: 0)
+                    if pageTitle == nil { Spacer(minLength: 0) }
                     if let importGamesAction {
                         Button(action: importGamesAction) {
                             Label("Import", systemImage: "plus")
@@ -145,13 +181,19 @@ struct GamesDisplayOptionsView: SwiftUI.View {
                         Image(systemName: viewModel.viewGamesAsGrid ? "square.grid.2x2" : "list.bullet")
                             .font(.system(size: 16, weight: .medium))
                             .frame(width: 44, height: 44)
-                            .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 14))
-                            .overlay { RoundedRectangle(cornerRadius: 14).strokeBorder(iconTint.opacity(0.3), lineWidth: 0.7) }
+                            .contentShape(Rectangle())
                     }
                     .buttonStyle(.plain)
                     .accessibilityLabel(viewModel.viewGamesAsGrid ? "Show List" : "Show Grid")
                 }
                 .foregroundStyle(iconTint)
+                .padding(.horizontal, pageTitle == nil ? 0 : 10)
+                .padding(.vertical, pageTitle == nil ? 0 : 4)
+                .background {
+                    if pageTitle != nil {
+                        RoundedRectangle(cornerRadius: 12).fill(.ultraThinMaterial)
+                    }
+                }
             } else {
                 HStack(spacing: spacing) {
                     // Display options menu (consolidated)
@@ -209,10 +251,10 @@ struct GamesDisplayOptionsView: SwiftUI.View {
             }
             logStatusMenu
         } label: {
-            Label("Sort", systemImage: "arrow.up.arrow.down")
-                .font(.system(size: 11, weight: .medium))
+            Image(systemName: "slider.horizontal.3")
+                .font(.system(size: 16, weight: .medium))
                 .foregroundStyle(iconTint)
-                .frame(minWidth: 60, minHeight: 44)
+                .frame(width: 44, height: 44)
                 .contentShape(Rectangle())
         }
         .accessibilityLabel("Library Options")

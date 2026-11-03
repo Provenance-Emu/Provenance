@@ -14,7 +14,7 @@ final class LibrarySearchStateTests: XCTestCase {
                 model.showsLibrarySearch.toggle()
 
                 XCTAssertTrue(model.librarySearch.query.isEmpty)
-                XCTAssertFalse(model.librarySearch.isFieldVisible(gameCount: count, prefersSearchbar: preference))
+                XCTAssertEqual(model.librarySearch.isFieldVisible(gameCount: count, prefersSearchbar: preference), preference)
             }
         }
     }
