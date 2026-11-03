@@ -31,11 +31,14 @@ extension ConsoleGamesView {
     }
 
     internal var availableSections: [HomeSectionType] {
-        [
+        if !gamesViewModel.searchText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+            return filteredGamesModels.isEmpty ? [] : [.allGames]
+        }
+        return [
             (showRecentSaveStates && !recentSaveStateIdsForNavigation.isEmpty) ? .recentSaveStates : nil,
             (showFavorites && !favoritesModels.isEmpty) ? .favorites : nil,
             (showRecentGames && !recentlyPlayedModels.isEmpty) ? .recentlyPlayedGames : nil,
-            !allGamesModels.isEmpty ? .allGames : nil
+            !filteredGamesModels.isEmpty ? .allGames : nil
         ].compactMap { $0 }
     }
 
@@ -51,7 +54,7 @@ extension ConsoleGamesView {
         case .recentlyPlayedGames:
             return recentlyPlayedModels.first(where: { $0.id == itemId })
         case .allGames:
-            return allGamesModels.first(where: { $0.id == itemId })
+            return filteredGamesModels.first(where: { $0.id == itemId })
         case .recentSaveStates, .mostPlayed:
             return nil
         }
@@ -252,24 +255,24 @@ extension ConsoleGamesView {
         switch section {
         case .allGames:
             let columnCount = navigationColumnCount
-            if let currentIndex = allGamesModels.firstIndex(where: { $0.id == gamesViewModel.focusedItemInSection }) {
+            if let currentIndex = filteredGamesModels.firstIndex(where: { $0.id == gamesViewModel.focusedItemInSection }) {
                 if direction > 0 {
                     // Moving up
                     let newIndex = currentIndex - columnCount
                     if newIndex >= 0 {
                         Task {
-                            await gamesViewModel.updateFocus(section: section, item: allGamesModels[newIndex].id)
+                            await gamesViewModel.updateFocus(section: section, item: filteredGamesModels[newIndex].id)
                         }
                     } else {
                         // We're at the first row
                         if let nextSection = getNextSection(from: section, direction: direction) {
                             if nextSection == .allGames {
                                 // If next section is the same section, wrap to bottom
-                                let totalRows = (allGamesModels.count + columnCount - 1) / columnCount
+                                let totalRows = (filteredGamesModels.count + columnCount - 1) / columnCount
                                 let currentColumn = currentIndex % columnCount
-                                let lastRowIndex = min(allGamesModels.count - 1, ((totalRows - 1) * columnCount) + currentColumn)
+                                let lastRowIndex = min(filteredGamesModels.count - 1, ((totalRows - 1) * columnCount) + currentColumn)
                                 Task {
-                                    await gamesViewModel.updateFocus(section: section, item: allGamesModels[lastRowIndex].id)
+                                    await gamesViewModel.updateFocus(section: section, item: filteredGamesModels[lastRowIndex].id)
                                 }
                             } else {
                                 // Move to next section
@@ -285,9 +288,9 @@ extension ConsoleGamesView {
                 } else {
                     // Moving down
                     let newIndex = currentIndex + columnCount
-                    if newIndex < allGamesModels.count {
+                    if newIndex < filteredGamesModels.count {
                         Task {
-                            await gamesViewModel.updateFocus(section: section, item: allGamesModels[newIndex].id)
+                            await gamesViewModel.updateFocus(section: section, item: filteredGamesModels[newIndex].id)
                         }
                     } else {
                         // We're at the last row
@@ -297,7 +300,7 @@ extension ConsoleGamesView {
                                 Task {
                                     await gamesViewModel.updateFocus(
                                         section: section,
-                                        item: allGamesModels[currentIndex % columnCount].id
+                                        item: filteredGamesModels[currentIndex % columnCount].id
                                     )
                                 }
                             } else {
@@ -375,7 +378,7 @@ extension ConsoleGamesView {
         case .recentlyPlayedGames:
             return recentlyPlayedModels.map { $0.id }
         case .allGames:
-            return allGamesModels.map { $0.id }
+            return filteredGamesModels.map { $0.id }
         case .mostPlayed:
             return []
         }

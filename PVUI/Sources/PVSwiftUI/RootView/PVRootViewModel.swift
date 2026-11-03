@@ -47,8 +47,8 @@ final class LibrarySearchState: ObservableObject {
     }
     @Published var query = ""
 
-    func isFieldVisible(gameCount: Int, prefersSearchbar: Bool) -> Bool {
-        isPresented || (gameCount > 8 && prefersSearchbar)
+    func isFieldVisible(gameCount _: Int, prefersSearchbar: Bool) -> Bool {
+        isPresented || prefersSearchbar
     }
 }
 

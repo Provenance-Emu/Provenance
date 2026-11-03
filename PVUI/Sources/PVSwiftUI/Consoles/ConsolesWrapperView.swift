@@ -56,6 +56,8 @@ class ConsolesWrapperViewDelegate: ObservableObject {
 
 @available(iOS 14, tvOS 14, *)
 struct ConsolesWrapperView: SwiftUI.View {
+    @Environment(\.libraryBottomSafeAreaInset) private var bottomSafeAreaInset
+
     /// Stable value type for tab metadata so view state does not retain live
     /// database objects between refreshes.
     private struct ConsoleTabItem: Identifiable, Hashable {
@@ -497,11 +499,11 @@ struct ConsolesWrapperView: SwiftUI.View {
         }
         #if os(iOS)
         .tabViewStyle(.page(indexDisplayMode: .never))
-        .environment(\.libraryBottomOverlayClearance, floatingSelectorClearance)
+        .environment(\.libraryBottomOverlayClearance, max(floatingSelectorClearance, bottomSafeAreaInset))
         .overlay(alignment: .bottom) {
             if floatingSelectorClearance > 0 {
                 FloatingSystemSelector(items: systemSelectorItems, selection: binding)
-                    .padding(.bottom, 6)
+                    .padding(.bottom, 6 + bottomSafeAreaInset)
             }
         }
         #else
@@ -518,7 +520,7 @@ struct ConsolesWrapperView: SwiftUI.View {
 
     #if os(iOS)
     private var floatingSelectorClearance: CGFloat {
-        UIDevice.current.userInterfaceIdiom == .phone && verticalSizeClass != .compact ? LibraryLayout.systemSelectorClearance : 0
+        UIDevice.current.userInterfaceIdiom == .phone && verticalSizeClass != .compact ? LibraryLayout.systemSelectorClearance + bottomSafeAreaInset : 0
     }
 
     private var systemSelectorItems: [FloatingSystemSelectorItem] {

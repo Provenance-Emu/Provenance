@@ -31,8 +31,8 @@ struct FloatingSystemSelector: View {
                     }
             }
         }
-        .frame(height: 52)
-        .padding(.horizontal, 24)
+        .frame(height: 48)
+        .padding(.horizontal, 12)
         .accessibilityElement(children: .contain)
     }
 
@@ -42,22 +42,17 @@ struct FloatingSystemSelector: View {
                 Button {
                     selection = item.id
                 } label: {
-                    ZStack(alignment: .bottom) {
+                    VStack(spacing: 2) {
                         item.icon.resizable().renderingMode(.template).scaledToFit()
-                            .frame(width: 44, height: 32)
-                            .foregroundStyle(selection == item.id ? Color.retroBlue : Color(themeManager.currentPalette.gameLibraryText).opacity(0.35))
-                            .compositingGroup()
+                            .frame(width: 32, height: 24)
+                            .foregroundStyle(selection == item.id ? Color.retroBlue : Color(themeManager.currentPalette.gameLibraryText).opacity(0.5))
                             .shadow(color: selection == item.id ? Color.retroBlue.opacity(0.3) : .clear, radius: 1.5)
-                            .frame(maxHeight: .infinity, alignment: .top)
                         Text(item.title)
-                            .font(.system(size: 11, weight: .medium))
+                            .font(.system(size: 10, weight: .medium))
                             .lineLimit(1)
                             .foregroundStyle(Color(themeManager.currentPalette.gameLibraryText).opacity(selection == item.id ? 1 : 0.7))
-                            .padding(.top, 3)
-                            .frame(maxWidth: .infinity)
-                            .background(LinearGradient(colors: [.clear, .retroBlack.opacity(0.9)], startPoint: .top, endPoint: .bottom))
                     }
-                    .frame(width: 70, height: 44)
+                    .frame(width: 56, height: 44)
                     .contentShape(Rectangle())
                 }
                 .buttonStyle(.plain)

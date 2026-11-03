@@ -68,12 +68,16 @@ struct HomeView: SwiftUI.View {
     private var recentlyPlayedGames: [GameCellModel] { homeViewModel.recentlyPlayedModels }
     private var favorites: [GameCellModel] { homeViewModel.favoritesModels }
     private var mostPlayed: [GameCellModel] { homeViewModel.mostPlayedModels }
-    private var allGames: [GameCellModel] {
+    private var unfilteredGames: [GameCellModel] {
         switch viewModel.libraryDestination {
         case .home: return homeViewModel.allGamesModels
         case .favorites: return favorites
         case .recentlyPlayed: return recentlyPlayedGames
         }
+    }
+
+    private var allGames: [GameCellModel] {
+        LibraryGameFilter.games(unfilteredGames, matching: searchText, title: \.title)
     }
 
     @State private var gamepadCancellable: AnyCancellable?
@@ -114,9 +118,8 @@ struct HomeView: SwiftUI.View {
     private var searchText: String { librarySearch.query }
 
     private var isSearchFieldVisible: Bool {
-        librarySearch.isFieldVisible(gameCount: allGames.count, prefersSearchbar: showSearchbar)
+        librarySearch.isFieldVisible(gameCount: unfilteredGames.count, prefersSearchbar: showSearchbar)
     }
-
 
     init(
         gameLibrary: PVGameLibrary<RealmDatabaseDriver>? = nil,
@@ -166,7 +169,9 @@ struct HomeView: SwiftUI.View {
     }
 
     private var availableSections: [HomeSectionType] {
-        if viewModel.libraryDestination != .home { return allGames.isEmpty ? [] : [.allGames] }
+        if viewModel.libraryDestination != .home || !searchText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+            return allGames.isEmpty ? [] : [.allGames]
+        }
         return [
             (showRecentSaveStates && !recentSaveStateIDs.isEmpty) ? .recentSaveStates : nil,
             (showRecentGames && !recentlyPlayedGames.isEmpty) ? .recentlyPlayedGames : nil,
@@ -233,14 +238,6 @@ struct HomeView: SwiftUI.View {
                                 displayOptionsView()
                                 .padding(.horizontal, 10)
                             }
-                            // Search bar inside scroll — no auto-hide, just scrolls with content
-                            if isSearchFieldVisible {
-                                PVSearchBar(text: $librarySearch.query)
-                                    // Desktop aligns the field to the same gutter as the
-                                    // shelves and grid; touch keeps its wider 16pt inset.
-                                    .padding(.horizontal, DesktopLibraryMetrics.isDesktop ? DesktopLibraryMetrics.columnGutter : 16)
-                                    .padding(.bottom, 8)
-                            }
                             if bootupStateManager.isBootupCompleted && isLibraryCompletelyEmpty {
                                 cloudSyncUpsell()
                                     .padding(.horizontal)
@@ -249,7 +246,7 @@ struct HomeView: SwiftUI.View {
                                     .padding(.horizontal)
                                     .padding(.vertical, 4)
                             }
-                            if viewModel.libraryDestination == .home {
+                            if viewModel.libraryDestination == .home && searchText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
                                 continuesSection()
                                     .id("section_continues")
                                 favoritesSection()
@@ -266,7 +263,11 @@ struct HomeView: SwiftUI.View {
                                     .padding(.horizontal, 10)
                                     .padding(.vertical, 8)
                             }
-                            if viewModel.viewGamesAsGrid {
+                            if allGames.isEmpty && !searchText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+                                Text("No games match this filter")
+                                    .foregroundStyle(.secondary)
+                                    .padding()
+                            } else if viewModel.viewGamesAsGrid {
                                 showGamesGrid(allGames)
                                     .id("section_allgames")
                             } else {
@@ -274,6 +275,7 @@ struct HomeView: SwiftUI.View {
                                     .id("section_allgames")
                             }
                         }
+                        .padding(.bottom, LibraryLayout.pageIndexClearance + floatingSelectorClearance)
                         /// Measured inside the desktop column, whose outer frame spans the window.
                         .libraryGridWidth($gridWidth)
                         .desktopLibraryContentColumn()
@@ -286,19 +288,7 @@ struct HomeView: SwiftUI.View {
                         }
                     }
                 }
-                .overlay(
-                    Group {
-                        if isSearchFieldVisible && !searchText.isEmpty {
-                            ScrollView {
-                                searchResultsView()
-                                    .desktopLibraryContentColumn()
-                            }
-                            .background(themeManager.currentPalette.gameLibraryBackground.swiftUIColor)
-                        }
-                    }
-                )
             }
-            .padding(.bottom, LibraryLayout.pageIndexClearance + floatingSelectorClearance)
         }
         .background {
             RetroTheme.RetroBackgroundView()
@@ -320,6 +310,10 @@ struct HomeView: SwiftUI.View {
         }
         .onChange(of: viewModel.sortGamesAscending) { newValue in
             homeViewModel.sortAscending = newValue
+        }
+        .onChange(of: searchText) { _, _ in
+            focusedSection = nil
+            focusedItemInSection = nil
         }
         .onChange(of: isSearchFieldVisible) { _, visible in
             if !visible { librarySearch.query = "" }
@@ -724,7 +718,6 @@ struct HomeView: SwiftUI.View {
         return columns
     }
 
-
     private func handleMenuToggle() {
         // Implement menu toggle logic here
         DLOG("Menu toggle requested")
@@ -753,8 +746,10 @@ struct HomeView: SwiftUI.View {
             },
             settingsContext: .home,
             usesCompactMenu: true,
-            gameCount: allGames.count,
-            importGamesAction: { (rootDelegate as? PVMenuDelegate)?.didTapAddGames() },
+            gameCount: unfilteredGames.count,
+            pageTitle: viewModel.libraryDestination == .home ? String(localized: "Library") : viewModel.libraryDestination.title,
+            pageSubtitle: "\(unfilteredGames.count) games",
+            filterText: isSearchFieldVisible ? $librarySearch.query : nil,
             toggleFilterAction: { self.rootDelegate?.showUnderConstructionAlert() },
             toggleSortAction: {
                 viewModel.sortGamesAscending.toggle()
@@ -1305,67 +1300,6 @@ struct HomeView: SwiftUI.View {
         }
     }
 
-    /// Function to filter games based on search text
-    private func filteredSearchResults() -> [GameCellModel] {
-        guard !searchText.isEmpty else { return [] }
-
-        let searchTextLowercased = searchText.lowercased()
-        return allGames.filter { model in
-            model.title.lowercased().contains(searchTextLowercased)
-        }
-    }
-
-    @ViewBuilder
-    private func searchResultsView() -> some View {
-        VStack(alignment: .leading) {
-            Text(String(localized: "Search Results"))
-                .font(.title2)
-                .foregroundColor(themeManager.currentPalette.gameLibraryText.swiftUIColor)
-                .padding(.horizontal)
-
-            LazyVStack(spacing: 0) {
-                let results = filteredSearchResults()
-                if results.isEmpty {
-                    Text(String(localized: "NO GAMES FOUND"))
-                        .font(.system(size: 20, weight: .bold))
-                        .foregroundColor(RetroTheme.retroBlue)
-                        .shadow(color: RetroTheme.retroBlue.opacity(0.7), radius: 3, x: 0, y: 0)
-                        .padding()
-                } else {
-                    ForEach(results, id: \.id) { model in
-                        GameItemPresentableView(
-                            game: model,
-                            constrainHeight: true,
-                            viewType: .row,
-                            sectionContext: .allGames,
-                            isFocused: Binding(
-                                get: {
-                                    focusedSection == .allGames &&
-                                    focusedItemInSection == model.id
-                                },
-                                set: {
-                                    if $0 {
-                                        focusedSection = .allGames
-                                        focusedItemInSection = model.id
-                                    }
-                                }
-                            )
-                        ) {
-                            launchGame(md5: model.md5)
-                        }
-                        .focusableIfAvailable()
-                        .contextMenu {
-                            GameContextMenu(md5: model.md5, rootDelegate: rootDelegate, contextMenuDelegate: self)
-                        }
-                        #if os(iOS)
-                        .saveStateDropTarget(gameId: model.md5)
-                        #endif
-                        GamesDividerView()
-                    }
-                }
-            }
-        }
-    }
 }
 #endif
 

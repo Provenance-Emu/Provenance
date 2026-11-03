@@ -3,6 +3,7 @@
 //  PVUI
 //
 
+import Foundation
 import SwiftUI
 
 /// Shared layout metrics for the Home and per-console library pages.
@@ -11,7 +12,7 @@ enum LibraryLayout {
     /// Applied once per page; don't stack it with other bottom padding.
     static let pageIndexClearance: CGFloat = 16
     /// Scroll clearance for the portrait phone's floating console shortcuts.
-    static let systemSelectorClearance: CGFloat = 64
+    static let systemSelectorClearance: CGFloat = 56
 }
 
 private struct LibraryBottomOverlayClearanceKey: EnvironmentKey {
@@ -19,10 +20,22 @@ private struct LibraryBottomOverlayClearanceKey: EnvironmentKey {
 }
 
 extension EnvironmentValues {
+    /// Physical bottom inset captured before the library extends its scrolling viewport.
+    @Entry var libraryBottomSafeAreaInset: CGFloat = 0
+
     /// Extra scrollable space below the last game row for floating library controls.
     var libraryBottomOverlayClearance: CGFloat {
         get { self[LibraryBottomOverlayClearanceKey.self] }
         set { self[LibraryBottomOverlayClearanceKey.self] = newValue }
+    }
+}
+
+/// Filters only the supplied page's games; navigation and global search stay independent.
+enum LibraryGameFilter {
+    static func games<Game>(_ games: [Game], matching query: String, title: KeyPath<Game, String>) -> [Game] {
+        let query = query.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !query.isEmpty else { return games }
+        return games.filter { $0[keyPath: title].localizedStandardContains(query) }
     }
 }
 
