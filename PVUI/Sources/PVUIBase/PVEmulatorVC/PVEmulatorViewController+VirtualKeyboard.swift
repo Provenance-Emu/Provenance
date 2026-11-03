@@ -365,9 +365,6 @@ extension PVEmulatorViewController {
         // it is the interactive layer for button input — raise it above the trackpad.
         // Exception: when virtual mouse is active, trackpad must be raised above the skin
         // container afterwards so it can intercept game-viewport touches.
-        // Fall back to the standard controller overlay in all other cases (skins off,
-        // skin mode on but container not yet loaded, native core, etc.) so touches
-        // are never blocked by a view that isn't there.
         if isDeltaSkinEnabled, let skinContainer = skinContainerView {
             view.bringSubviewToFront(skinContainer)
             keepOverlayMenuButtonInFront()
@@ -376,9 +373,14 @@ extension PVEmulatorViewController {
             if isVirtualMouseVisible, let trackpad = touchTrackpadView {
                 view.bringSubviewToFront(trackpad)
             }
-        } else if let controllerView = controllerViewController?.view {
-            view.bringSubviewToFront(controllerView)
         }
+        #if os(iOS) && !targetEnvironment(macCatalyst)
+        // Desktop input mode has no skin layer; its quick actions sit above the game instead.
+        quickActionBar?.bringToFront()
+        if let volumeHUD {
+            view.bringSubviewToFront(volumeHUD)
+        }
+        #endif
         // Keyboard container above whichever interactive layer is active.
         // KeyboardPassthroughView passes non-keyboard-area touches back through.
         if let keyboardContainer = virtualKeyboardContainer {

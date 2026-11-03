@@ -116,50 +116,17 @@ extension PVEmulatorViewController {
         #endif
     }
 
-    /// Sets the hidden state of both on-screen control paths.
+    /// Shows or hides the on-screen controls (the skin layer, which also hosts the touch overlay).
     ///
     /// - Parameter hidden: `true` to hide on-screen controls, `false` to show them.
     private func setOnScreenControlsHidden(_ hidden: Bool) {
         #if os(iOS) && !targetEnvironment(macCatalyst)
-        // DeltaSkin overlay
         if isDeltaSkinEnabled {
             skinContainerView?.isHidden = hidden
             DLOG("On-screen controls (DeltaSkin): \(hidden ? "hidden" : "visible")")
             hideOrShowMenuButton()
         }
-
-        // Legacy OSD overlay
-        if let controllerView = controllerViewController?.view, controllerView.superview != nil {
-            // Self-hosting cores (Dolphin, Azahar, EmuThree) add their render view
-            // inside the overlay they are hosted by, so hiding that view blanks the
-            // game while a controller is connected. Hide only the buttons there.
-            if core.touchViewController?.view === controllerView,
-               let osd = controllerViewController as? OSDControlsVisibilityObserver {
-                if osd.isOnScreenControlsVisible == hidden {
-                    osd.toggleOnScreenControlsVisibility()
-                }
-                DLOG("On-screen controls (OSD buttons, core hosted in overlay): \(hidden ? "hidden" : "visible")")
-            } else {
-                controllerView.isHidden = hidden
-                DLOG("On-screen controls (OSD): \(hidden ? "hidden" : "visible")")
-            }
-        }
         #endif
-    }
-
-    /// Whether the classic on-screen touch controls are currently visible.
-    /// Backs the pause menu's "Show/Hide Controls" row; `nil` when the active
-    /// controller VC doesn't support visibility toggling (e.g. DeltaSkins, which
-    /// have their own show/hide mechanism).
-    public var isOnScreenControlsVisible: Bool? {
-        (controllerViewController as? OSDControlsVisibilityObserver)?.isOnScreenControlsVisible
-    }
-
-    /// Toggles the classic on-screen touch controls' visibility, routed through
-    /// `OSDControlsVisibilityObserver` rather than a notification so the call site
-    /// (the pause menu) is directly traceable to what it affects.
-    public func toggleOnScreenControlsVisibility() {
-        (controllerViewController as? OSDControlsVisibilityObserver)?.toggleOnScreenControlsVisibility()
     }
 
     /// A remap changed: hand the controllers to the core again so a native core picks
@@ -292,12 +259,7 @@ extension PVEmulatorViewController {
             gpuView.frame = view.bounds
             gpuView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
 
-            if let controllerView = controllerViewController?.view {
-                view.insertSubview(gpuView, belowSubview: controllerView)
-            } else {
-                // Fallback: reattach GPU view even when controller view is unavailable.
-                view.addSubview(gpuView)
-            }
+            view.addSubview(gpuView)
         }
 
         // Complete the containment cycle; this triggers viewDidMove and appearance callbacks.
