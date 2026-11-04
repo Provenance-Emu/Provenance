@@ -47,11 +47,11 @@ public enum PVPhysicalProfilePad: String, Sendable {
     /// Whether the system's face element names ("Button A" …) are the printed labels
     /// rather than positions. True for the SNES pad: Apple's "Button A" is the button
     /// marked A (right), so binding it positionally swapped A/B and X/Y in every core
-    /// (tester-confirmed with Contra III). The N64 and Mega Drive pads probably follow the
-    /// same rule (Nintendo-built profiles; Joy-Cons need the same swap in
-    /// `PVRemappableController`), but neither profile is verified, so they keep the
-    /// positional reading until one is.
-    public var namesFacesByLabel: Bool { self == .snes }
+    /// (tester-confirmed with Contra III). True for the N64 pad too: read positionally,
+    /// its "Button B" drove extended B, which Mupen reads as C-Down, so N64 B was dead
+    /// until remapped (tester-confirmed). The Mega Drive pad probably follows the same
+    /// rule but is unverified, so it keeps the positional reading until it is.
+    public var namesFacesByLabel: Bool { self == .snes || self == .n64 }
 }
 
 /// Resolves a physical-profile element name to a synthesized input.
