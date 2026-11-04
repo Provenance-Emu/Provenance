@@ -50,7 +50,8 @@ enum SettingsLayoutRules {
     /// The content column is capped at this reading width and centred when the sidebar is shown.
     static let contentMaxWidth: CGFloat = 700
     /// A regular-width container narrower than this still gets the tab strip: below it the content beside
-    /// the sidebar would be under ~380pt (e.g. an iPad form sheet).
+    /// the sidebar would be under ~380pt (e.g. a narrow Stage Manager window). Settings itself fills the
+    /// window on iPad (`SettingsPresentation`), so a full-screen iPad always clears this.
     static let regularSidebarMinimumWidth: CGFloat = 600
     /// A compact-width container this wide gets the sidebar anyway. Every notched iPhone in landscape clears
     /// it once the safe-area insets are taken off (~724-750pt); iPhone SE landscape (667pt) does not.

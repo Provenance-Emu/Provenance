@@ -1603,9 +1603,10 @@ struct PauseTileMenuView: View {
         // which makes Settings (a deep nested form) hard to read and
         // navigate with the focus engine. Use `.fullScreenCover` for the
         // App Settings on tvOS — same pattern already used for
-        // `showingLogViewer` above. iOS keeps the standard sheet, which
-        // sizes correctly there. The settings view's own "Done" button
-        // calls `dismissAction` so the user can leave the cover.
+        // `showingLogViewer` above. iOS goes through `settingsPresentation`:
+        // a sheet on iPhone, a full-screen cover on iPad, where the sheet
+        // was a cramped ~540pt form sheet (#3780). The settings view's own
+        // "Done" button calls `dismissAction` so the user can leave the cover.
         #if os(tvOS)
         .fullScreenCover(isPresented: $showingAppSettings) {
             if let appSettings = PauseMenuViewRegistry.appSettingsView(dismissAction: {
@@ -1617,7 +1618,7 @@ struct PauseTileMenuView: View {
             }
         }
         #else
-        .sheet(isPresented: $showingAppSettings) {
+        .settingsPresentation(isPresented: $showingAppSettings) {
             if let appSettings = PauseMenuViewRegistry.appSettingsView(dismissAction: {
                 showingAppSettings = false
             }) {

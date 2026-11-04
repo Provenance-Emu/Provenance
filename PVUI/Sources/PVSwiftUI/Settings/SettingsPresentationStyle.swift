@@ -8,9 +8,7 @@
 //
 
 import Foundation
-#if os(iOS)
-import UIKit
-#endif
+import PVUIBase
 
 enum SettingsPresentationStyle: Equatable {
     /// A standard `.sheet`: full height on iPhone, a centered card on iPad.
@@ -28,11 +26,10 @@ enum SettingsPresentationStyle: Equatable {
     }
 
     /// The style on the running device. tvOS never leaves `.sheet`.
+    ///
+    /// `SettingsPresentation.fillsScreen` (PVUIBase) is the one rule shared with the pause-menu and
+    /// menu-bar entry points, so every path to Settings sizes the same way.
     static var current: SettingsPresentationStyle {
-        #if os(iOS)
-        return style(isPad: UIDevice.current.userInterfaceIdiom == .pad)
-        #else
-        return .sheet
-        #endif
+        SettingsPresentation.fillsScreen ? .fullScreen : .sheet
     }
 }
