@@ -25,9 +25,8 @@ import UIKit
 import FreemiumKit
 #endif
 
-@available(iOS 14, tvOS 14, *)
-public struct
-SideMenuView: SwiftUI.View {
+/// The library menu's contents; `PVLibraryDrawer` and the pinned iPad sidebar present it.
+public struct SideMenuView: SwiftUI.View {
 
     private weak var delegate: PVMenuDelegate?
 
@@ -51,15 +50,11 @@ SideMenuView: SwiftUI.View {
     @EnvironmentObject var freemiumKit: FreemiumKit
 #endif
 
-
     @FocusState private var focusedItem: String?
 
     @Namespace private var menuNamespace
 
-
     @State private var gamepadCancellable: AnyCancellable?
-
-
 
     @ObservedObject private var featureFlags = PVFeatureFlagsManager.shared
 
@@ -75,7 +70,6 @@ SideMenuView: SwiftUI.View {
         return false
         #endif
     }
-
 
     /// The library's netplay lobby (rooms nearby, host a game).
     @Default(.netplayEnabled) private var netplayEnabled
@@ -287,7 +281,9 @@ SideMenuView: SwiftUI.View {
 
                 // Home first
 
-                MenuItemView(icon: .named("prov_home_icon", PVUIBase.BundleLoader.myBundle), rowTitle: "Home", isFocused: focusedItem == "home", isActive: viewModel.selectedConsole == nil && viewModel.libraryDestination == .home) {
+                MenuItemView(icon: .named("prov_home_icon", PVUIBase.BundleLoader.myBundle), rowTitle: "Home",
+                             isFocused: focusedItem == "home",
+                             isActive: viewModel.selectedConsole == nil && viewModel.libraryDestination == .home) {
                     delegate?.didTapHome()
                 }
                 .focusable()

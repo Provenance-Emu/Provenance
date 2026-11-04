@@ -38,8 +38,8 @@ public protocol PVMenuDelegate: AnyObject {
 
 // MARK: - Default Library Management Implementations
 
-/// Default implementations post the existing NSNotification names so all existing
-/// observers (PVAppDelegate) continue to work without any changes.
+/// Default implementations post the existing NSNotification names so the
+/// application services that observe them keep working without any changes.
 public extension PVMenuDelegate {
 
     func didTapScanROMs() {

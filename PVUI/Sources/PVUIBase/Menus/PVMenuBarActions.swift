@@ -82,7 +82,7 @@ public extension UIApplication {
     /// While a game is running `PVEmulatorViewController.pvMenuShowSettings(_:)`
     /// sits nearer the first responder and wins, presenting Settings over the
     /// emulator. Everywhere else this posts `PVShowSettings`, which the main-UI
-    /// roots observe (`RetroMainView` in single-page mode, `PVRootViewController`
+    /// roots observe (`RetroMainView` in single-page mode, `PVLibraryRootView`
     /// in paged mode, `TVMediaMainView` on tvOS) to show Settings. Selecting a
     /// destination the app is already showing is a no-op, so repeated ⌘, cannot
     /// stack duplicate Settings screens.

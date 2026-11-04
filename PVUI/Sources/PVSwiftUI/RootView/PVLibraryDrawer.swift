@@ -19,6 +19,36 @@ enum LibraryDrawerLayout {
     static func hiddenTravel(width: CGFloat, sideInset: CGFloat) -> CGFloat {
         width + shadowOverflow + max(0, sideInset)
     }
+
+    /// A drag counts as horizontal once it has travelled further sideways than vertically.
+    static func isHorizontal(_ translation: CGSize) -> Bool {
+        abs(translation.width) > abs(translation.height)
+    }
+
+    /// The projected travel a fling needs before the panel commits to opening or closing.
+    static func commitDistance(width: CGFloat) -> CGFloat {
+        min(width / 3, dismissalDistance)
+    }
+
+    /// `direction` is 1 for left-to-right layouts and -1 for right-to-left.
+    static func shouldOpen(predictedEnd: CGSize, translation: CGSize, width: CGFloat, direction: CGFloat) -> Bool {
+        isHorizontal(translation) && predictedEnd.width * direction > commitDistance(width: width)
+    }
+
+    static func shouldClose(predictedEnd: CGSize, translation: CGSize, width: CGFloat, direction: CGFloat) -> Bool {
+        isHorizontal(translation) && predictedEnd.width * direction < -commitDistance(width: width)
+    }
+
+    /// Fraction of the panel an in-flight opening drag has revealed, clamped to 0...1.
+    static func revealProgress(dragTranslation: CGFloat, width: CGFloat, direction: CGFloat) -> Double {
+        guard width > 0 else { return 0 }
+        return Double(min(1, max(0, dragTranslation * direction / width)))
+    }
+
+    /// Offset of an open panel being dragged shut: never past fully open, never past its own width.
+    static func openPanelOffset(dragTranslation: CGFloat, width: CGFloat, direction: CGFloat) -> CGFloat {
+        direction * min(0, max(-width, dragTranslation * direction))
+    }
 }
 
 /// Keeps the library mounted while animating only a panel transform and scrim opacity.
@@ -116,7 +146,7 @@ struct PVLibraryDrawer<Content: View, Menu: View>: View {
         #if !os(tvOS)
         guard width > 0 else { return 0 }
         if isPresented { return 1 }
-        return reduceMotion ? 0 : Double(min(1, max(0, dragTranslation * direction / width)))
+        return reduceMotion ? 0 : LibraryDrawerLayout.revealProgress(dragTranslation: dragTranslation, width: width, direction: direction)
         #else
         return isPresented ? 1 : 0
         #endif
@@ -126,7 +156,7 @@ struct PVLibraryDrawer<Content: View, Menu: View>: View {
         #if !os(tvOS)
         if reduceMotion { return 0 }
         if isPresented {
-            return direction * min(0, max(-width, dragTranslation * direction))
+            return LibraryDrawerLayout.openPanelOffset(dragTranslation: dragTranslation, width: width, direction: direction)
         }
         return -direction * LibraryDrawerLayout.hiddenTravel(width: width, sideInset: sideInset) * (1 - revealProgress(width: width))
         #else
@@ -138,25 +168,24 @@ struct PVLibraryDrawer<Content: View, Menu: View>: View {
     private func openGesture(width: CGFloat) -> some Gesture {
         DragGesture(minimumDistance: 16)
             .updating($dragTranslation) { value, state, _ in
-                guard abs(value.translation.width) > abs(value.translation.height) else { return }
+                guard LibraryDrawerLayout.isHorizontal(value.translation) else { return }
                 state = value.translation.width
             }
             .onEnded { value in
-                guard value.predictedEndTranslation.width * direction > min(width / 3, LibraryDrawerLayout.dismissalDistance),
-                      abs(value.translation.width) > abs(value.translation.height) else { return }
-                isPresented = true
+                if LibraryDrawerLayout.shouldOpen(predictedEnd: value.predictedEndTranslation, translation: value.translation, width: width, direction: direction) {
+                    isPresented = true
+                }
             }
     }
 
     private func closeGesture(width: CGFloat) -> some Gesture {
         DragGesture(minimumDistance: 16)
             .updating($dragTranslation) { value, state, _ in
-                guard abs(value.translation.width) > abs(value.translation.height) else { return }
+                guard LibraryDrawerLayout.isHorizontal(value.translation) else { return }
                 state = value.translation.width
             }
             .onEnded { value in
-                guard abs(value.translation.width) > abs(value.translation.height) else { return }
-                if value.predictedEndTranslation.width * direction < -min(width / 3, LibraryDrawerLayout.dismissalDistance) {
+                if LibraryDrawerLayout.shouldClose(predictedEnd: value.predictedEndTranslation, translation: value.translation, width: width, direction: direction) {
                     isPresented = false
                 }
             }

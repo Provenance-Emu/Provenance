@@ -316,7 +316,7 @@ struct UITestingApp: SwiftUI.App {
     /// Route a `provenance://` URL the same way the main app does: library-level
     /// routes go through `NavigationRouter` (registered `RouteProvider`s such as
     /// `LibraryNavigator.routeProvider`), everything else falls back to `ScreenNavigator`.
-    /// `PVRootViewController` observes both and performs the actual navigation.
+    /// `PVLibraryRootView` observes both and performs the actual navigation.
     @discardableResult
     private func handle(deepLink url: URL) -> Bool {
         ILOG("UITestingApp: handling deep link \(url.absoluteString)")

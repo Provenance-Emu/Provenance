@@ -109,9 +109,8 @@ public enum ScreenDestination: Equatable {
 public final class ScreenNavigator: ObservableObject {
     public static let shared = ScreenNavigator()
 
-    // TODO: (Milestone 3) Wire this to the root view hierarchy — observe via
-    // `.onReceive(ScreenNavigator.shared.$destination)` in PVRootViewController,
-    // ContentView, or RetroMainView to make deep-link navigation functional end-to-end.
+    /// `PVLibraryRootView` observes this with `.onReceive(ScreenNavigator.shared.$destination)`
+    /// and hands each destination to `PVLibraryNavigation.handle(_:)`.
     @Published public private(set) var destination: ScreenDestination?
 
     private init() {}

@@ -6,7 +6,7 @@
 //  `-SCREENSHOT_MODE` and pointing it at a screen via a
 //  `-deepLink provenance://screen/<path>` launch argument. The app replays the
 //  deep link through NavigationRouter / ScreenNavigator once bootup completes,
-//  and PVRootViewController performs the navigation.
+//  and PVLibraryRootView performs the navigation.
 //
 //  Launching per screen (instead of opening the URL from Safari) works on tvOS,
 //  where there is no browser, and never depends on the Safari UI.
