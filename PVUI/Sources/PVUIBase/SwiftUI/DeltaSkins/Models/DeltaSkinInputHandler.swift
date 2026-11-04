@@ -100,6 +100,39 @@ open class DeltaSkinInputHandler: ObservableObject {
         }
     }
 
+    /// What a skin element id in the restart family does.
+    enum RestartAction: Equatable {
+        /// Reload the game from the start (`PVEmulatorCore.resetEmulation`).
+        case restartEmulation
+        /// Press the console's own Reset input, which the core already exposes.
+        case pressConsoleReset
+    }
+
+    /// Systems whose console has a Reset switch the core takes as a button: the 2600, 5200 and 7800
+    /// responder enums (`PV2600Button`, `PV5200Button`, `PV7800Button`) all declare `.reset`, and the
+    /// cores map it. Other systems' reset-like buttons are a Start or a keyboard key, not a console switch.
+    private static let consoleResetSystems: Set<SystemIdentifier> = [.Atari2600, .Atari5200, .Atari7800]
+
+    /// Decides what a skin element id does when it is `restart`, `reset` or `reboot` (any case).
+    /// `reset` presses the console Reset input where the system has one; `restart` and `reboot` always
+    /// restart the game, as does `reset` on systems without a reset input. `nil` for any other id.
+    nonisolated static func restartAction(forButtonId buttonId: String, system: SystemIdentifier?) -> RestartAction? {
+        switch buttonId.lowercased() {
+        case "restart", "reboot":
+            return .restartEmulation
+        case "reset":
+            if let system, consoleResetSystems.contains(system) { return .pressConsoleReset }
+            return .restartEmulation
+        default:
+            return nil
+        }
+    }
+
+    /// The loaded core's system, when it is a known one.
+    private var currentSystemIdentifier: SystemIdentifier? {
+        emulatorCore?.systemIdentifier.flatMap { SystemIdentifier(rawValue: $0) }
+    }
+
     /// Per-session position memory for the current system's console switches.
     private var hardwareSwitchLatch: (system: SystemIdentifier, latch: HardwareSwitchLatch)?
 
@@ -198,8 +231,9 @@ open class DeltaSkinInputHandler: ObservableObject {
             return
         }
 
-        // Restart / Reset
-        if lowercasedId == "restart" || lowercasedId == "reset" || lowercasedId == "reboot" {
+        // Restart / Reboot / Reset. A console with a physical Reset switch takes `reset` as that
+        // input instead, so it falls through to the gameplay path below (press now, release later).
+        if Self.restartAction(forButtonId: lowercasedId, system: currentSystemIdentifier) == .restartEmulation {
             restartButtonPressed()
             return
         }
@@ -348,8 +382,10 @@ open class DeltaSkinInputHandler: ObservableObject {
         // Screenshot IDs may be partial matches (e.g. "screenshotButton") — suppress release
         if lowercasedId.contains("screenshot") { return }
 
-        // Extended function buttons fire only on press — skip release
-        if Self.extendedFunctionIds.contains(lowercasedId) { return }
+        // Extended function buttons fire only on press — skip release. The console Reset switch is a
+        // held input, so its release goes to the core.
+        let isConsoleReset = Self.restartAction(forButtonId: lowercasedId, system: currentSystemIdentifier) == .pressConsoleReset
+        if Self.extendedFunctionIds.contains(lowercasedId) && !isConsoleReset { return }
 
         // Skip special button releases for toggle-style buttons
         if lowercasedId.contains("menu") ||
