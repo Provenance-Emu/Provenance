@@ -159,7 +159,8 @@ public struct SystemSelectionView: View {
                     lineWidth: isFocused ? 2 : 1
                 )
         )
-        .focusable()
+        // Not `.focusable()`: the Button is already a focus target, and wrapping it in a second one
+        // makes Select on tvOS land on the wrapper instead of running the action.
         .focused($focusedSystem, equals: system)
         .scaleEffect(isFocused ? 1.01 : 1.0)
         .animation(Animation.spring(response: 0.25, dampingFraction: 0.8), value: isFocused)

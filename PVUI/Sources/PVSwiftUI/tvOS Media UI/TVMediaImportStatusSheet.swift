@@ -92,10 +92,8 @@ struct TVMediaImportStatusSheet: View {
             #if os(tvOS)
             .navigationDestination(item: $systemSelectionItemID) { id in
                 if let item = viewModel.importQueueItems.first(where: { $0.id == id }) {
-                    SystemSelectionView(item: item, onSystemSelected: { system, queueItem in
-                        if gameImporter.processingState == .idle {
-                            gameImporter.startProcessing()
-                        }
+                    SystemSelectionView(item: item, onSystemSelected: { _, queueItem in
+                        gameImporter.resumeAfterSystemSelection(for: queueItem)
                     })
                 } else {
                     Text("This import is no longer in the queue.")
@@ -119,7 +117,9 @@ struct TVMediaImportStatusSheet: View {
                     }
                     Button("Delete", role: .destructive) {
                         Task {
-                            if let index = viewModel.importQueueItems.firstIndex(where: { $0.id == item.id }) {
+                            // Index into the importer's live queue, not the view model's copy, which lags it.
+                            let queue = await gameImporter.importQueue
+                            if let index = queue.firstIndex(where: { $0.id == item.id }) {
                                 await gameImporter.removeImports(at: IndexSet(integer: index))
                             }
                         }
