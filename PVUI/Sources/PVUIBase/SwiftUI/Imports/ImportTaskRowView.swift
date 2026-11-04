@@ -251,6 +251,14 @@ struct ImportTaskRowView: View {
         }
     }
 
+#if os(tvOS)
+    /// tvOS offers a system for every item the importer could not place, including a plain
+    /// `.failure` (no system detected). iOS keeps its narrower `needsSystemSelection`.
+    private var tvOSCanChooseSystem: Bool {
+        ImportQueueResolver.canChooseSystem(for: item)
+    }
+#endif
+
     var mainView: some View {
         let base = ZStack {
             // Background with retrowave styling
@@ -312,14 +320,15 @@ struct ImportTaskRowView: View {
     private func tvOSMainRow(base: some View) -> some View {
         HStack(alignment: .center, spacing: 12) {
             Group {
-                if needsSystemSelection {
-                    /// `.borderless` tends to activate more reliably than `.plain` with the Siri Remote; `.focusable` keeps `@FocusState` in sync for the retro border.
+                if tvOSCanChooseSystem {
+                    /// `.borderless` tends to activate more reliably than `.plain` with the Siri Remote.
+                    /// No `.focusable` here: a Button is already focusable, and wrapping it in a
+                    /// second focusable container takes focus (and the select press) away from it.
                     Button(action: { onRequestSystemSelection?() }) {
                         base
                             .contentShape(Rectangle())
                     }
                     .buttonStyle(.borderless)
-                    .focusable(true)
                     .focused($isFocusedTV)
                     .scaleEffect(isFocusedTV ? 1.04 : 1.0)
                     .tvOSDisableFocusEffect()
@@ -358,7 +367,6 @@ struct ImportTaskRowView: View {
                         )
                 }
                 .buttonStyle(.borderless)
-                .focusable(true)
                 .focused($isFocusedRemove)
                 .scaleEffect(isFocusedRemove ? 1.04 : 1.0)
                 .tvOSDisableFocusEffect()

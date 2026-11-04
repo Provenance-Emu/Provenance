@@ -30,6 +30,11 @@ public struct SystemSelectionView: View {
 
     private var isAppStore: Bool { AppState.shared.isAppStore }
 
+    /// The conflict's own candidates, or every system for an item detection could not place.
+    private var offeredSystems: [SystemIdentifier] {
+        ImportQueueResolver.offeredSystems(candidates: item.systems, fallback: PVEmulatorConfiguration.availableSystemIdentifiers)
+    }
+
     private func supportLevel(for systemID: SystemIdentifier) -> CoreSupportLevel {
         guard let pvSystem = PVEmulatorConfiguration.system(forIdentifier: systemID) else {
             return .noCores
@@ -63,7 +68,7 @@ public struct SystemSelectionView: View {
                         .foregroundStyle(.white.opacity(0.5))
                         .lineLimit(1)
 
-                    Text("\(item.systems.count) possible systems")
+                    Text("\(offeredSystems.count) possible systems")
                         .font(.system(size: 14, weight: .medium))
                         .foregroundStyle(.white.opacity(0.4))
                 }
@@ -74,7 +79,7 @@ public struct SystemSelectionView: View {
                 // System list
                 ScrollView {
                     LazyVStack(spacing: 16) {
-                        ForEach(item.systems.sorted(), id: \.self) { system in
+                        ForEach(offeredSystems, id: \.self) { system in
                             systemRow(system)
                         }
                     }
@@ -159,7 +164,9 @@ public struct SystemSelectionView: View {
                     lineWidth: isFocused ? 2 : 1
                 )
         )
+#if !os(tvOS)
         .focusable()
+#endif
         .focused($focusedSystem, equals: system)
         .scaleEffect(isFocused ? 1.01 : 1.0)
         .animation(Animation.spring(response: 0.25, dampingFraction: 0.8), value: isFocused)

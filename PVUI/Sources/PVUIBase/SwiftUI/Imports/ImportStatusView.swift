@@ -63,8 +63,10 @@ public struct ImportStatusView: View {
 #if os(tvOS)
     /// Removes one queue item by id (tvOS has no list swipe-to-delete).
     private func deleteItem(withId id: ImportQueueItem.ID) {
-        guard let index = viewModel.queueItems.firstIndex(where: { $0.id == id }) else { return }
-        deleteItems(at: IndexSet(integer: index))
+        Task {
+            await ImportQueueResolver.remove(itemWithID: id, from: gameImporter)
+            await viewModel.refreshQueueItems()
+        }
     }
 
     /// Destination for `systemSelectionItemId` navigation; queue may have changed while presented.
@@ -86,8 +88,16 @@ public struct ImportStatusView: View {
 
     // Define the system selection handler
     private func handleSystemSelection(_ system: SystemIdentifier, for item: ImportQueueItem) {
+        guard let delegate else {
+            // The tvOS media UI presents this view without a delegate; the choice still has to
+            // reach the importer or the item stays where it was.
+            Task { @MainActor in
+                await ImportQueueResolver.resumeProcessing(of: item, with: gameImporter)
+            }
+            return
+        }
         // Forward to the delegate
-        delegate?.didSelectSystem(system, for: item)
+        delegate.didSelectSystem(system, for: item)
     }
 
     // Animation states for retrowave effects

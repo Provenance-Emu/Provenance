@@ -38,9 +38,6 @@ struct TVMediaImportStatusSheet: View {
     /// Drives `navigationDestination` for system selection rows.
     @State private var systemSelectionItemID: UUID?
 
-    /// Tracks which import item the user tapped to show the action dialog.
-    @State private var actionItem: ImportQueueItem?
-    
     init(gameImporter: any GameImporting, updatesController: PVGameLibraryUpdatesController, onDismiss: @escaping () -> Void) {
         self.gameImporter = gameImporter
         self.updatesController = updatesController
@@ -75,7 +72,12 @@ struct TVMediaImportStatusSheet: View {
 
                                 // Import queue items
                                 ForEach(viewModel.importQueueItems) { item in
-                                    importItemRow(item)
+                                    TVMediaImportQueueRow(
+                                        item: item,
+                                        focusedItemID: $focusedItemID,
+                                        onChooseSystem: { systemSelectionItemID = item.id },
+                                        onRemove: { remove(item) }
+                                    )
                                 }
                             }
                             .padding(.horizontal, 60)
@@ -89,12 +91,11 @@ struct TVMediaImportStatusSheet: View {
             .tvMediaOnExitCommand {
                 onDismiss()
             }
-            #if os(tvOS)
             .navigationDestination(item: $systemSelectionItemID) { id in
                 if let item = viewModel.importQueueItems.first(where: { $0.id == id }) {
-                    SystemSelectionView(item: item, onSystemSelected: { system, queueItem in
-                        if gameImporter.processingState == .idle {
-                            gameImporter.startProcessing()
+                    SystemSelectionView(item: item, onSystemSelected: { _, queueItem in
+                        Task { @MainActor in
+                            await ImportQueueResolver.resumeProcessing(of: queueItem, with: gameImporter)
                         }
                     })
                 } else {
@@ -102,33 +103,18 @@ struct TVMediaImportStatusSheet: View {
                         .foregroundStyle(.white.opacity(0.6))
                 }
             }
-            #endif
-            .confirmationDialog(
-                actionItem?.url.lastPathComponent ?? "",
-                isPresented: Binding(
-                    get: { actionItem != nil },
-                    set: { if !$0 { actionItem = nil } }
-                ),
-                titleVisibility: .visible
-            ) {
-                if let item = actionItem {
-                    if case .conflict = item.status {
-                        Button("Select System") {
-                            systemSelectionItemID = item.id
-                        }
-                    }
-                    Button("Delete", role: .destructive) {
-                        Task {
-                            if let index = viewModel.importQueueItems.firstIndex(where: { $0.id == item.id }) {
-                                await gameImporter.removeImports(at: IndexSet(integer: index))
-                            }
-                        }
-                    }
-                }
-            }
         }
     }
-    
+
+    /// Deletes by id against the importer's own queue; the sheet's list is only a snapshot of it.
+    private func remove(_ item: ImportQueueItem) {
+        let importer = gameImporter
+        let id = item.id
+        Task {
+            await ImportQueueResolver.remove(itemWithID: id, from: importer)
+        }
+    }
+
     private var header: some View {
         HStack {
             VStack(alignment: .leading, spacing: 6) {
@@ -270,113 +256,139 @@ struct TVMediaImportStatusSheet: View {
                 )
         )
     }
-    
-    @ViewBuilder
-    private func importItemRow(_ item: ImportQueueItem) -> some View {
-        let isFocused = focusedItemID == item.id.uuidString
-        
-        Button {
-            actionItem = item
-        } label: {
-            HStack(spacing: 18) {
-                statusIcon(for: item.status)
-                    .frame(width: 36, height: 36)
-                
-                VStack(alignment: .leading, spacing: 4) {
-                    Text(item.url.lastPathComponent)
-                        .font(.system(size: 16, weight: .semibold))
-                        .foregroundStyle(.white)
-                        .lineLimit(1)
-                    
-                    HStack(spacing: 10) {
-                        Text(statusText(for: item.status))
-                            .font(.system(size: 12, weight: .medium))
-                            .foregroundStyle(statusColor(for: item.status).opacity(0.9))
-                        
-                        if let system = item.targetSystem() {
-                            Text(verbatim: "→ \(system.rawValue)")
-                                .font(.system(size: 11, weight: .medium))
-                                .foregroundStyle(.white.opacity(0.5))
-                        }
-                    }
-                }
-                
-                Spacer()
+}
 
-                if case .conflict = item.status {
-                    Text("Select System")
-                        .font(.system(size: 12, weight: .bold))
-                        .foregroundStyle(Color.retroBlue.opacity(0.7))
-                }
+// MARK: - Import Queue Row
 
-                Image(systemName: "ellipsis")
-                    .font(.system(size: 16, weight: .medium))
-                    .foregroundStyle(.white.opacity(0.4))
+/// One queue entry: the row itself (a button that opens the system picker when the importer
+/// could not place the file) and a delete button beside it.
+///
+/// Both are plain `Button`s that sit directly in the layout. The previous design opened a
+/// `confirmationDialog` from a single row button and ran the chosen action as the dialog
+/// dismissed; on tvOS that action could be dropped, and pushing the system picker from it
+/// raced the dialog's own dismissal.
+@available(tvOS 16.0, iOS 17.0, *)
+private struct TVMediaImportQueueRow: View {
+    /// Observed so the row follows the item's status as it is re-queued, processed or fails.
+    @ObservedObject var item: ImportQueueItem
+    var focusedItemID: FocusState<String?>.Binding
+    let onChooseSystem: () -> Void
+    let onRemove: () -> Void
+
+    private var rowFocusID: String { item.id.uuidString }
+    private var removeFocusID: String { "remove-\(item.id.uuidString)" }
+    private var canChooseSystem: Bool { ImportQueueResolver.canChooseSystem(for: item) }
+
+    var body: some View {
+        HStack(spacing: 12) {
+            if canChooseSystem {
+                Button(action: onChooseSystem) {
+                    rowContent
+                }
+                .buttonStyle(TVMediaCardButtonStyle())
+                .tvOSDisableFocusEffect()
+                .modifier(TVMediaImportRowChrome(isFocused: focusedItemID.wrappedValue == rowFocusID))
+                .focused(focusedItemID, equals: rowFocusID)
+            } else {
+                rowContent
+                    .modifier(TVMediaImportRowChrome(isFocused: false))
             }
-            .padding(.horizontal, 20)
-            .padding(.vertical, 16)
+
+            removeButton
+        }
+    }
+
+    private var removeButton: some View {
+        let isFocused = focusedItemID.wrappedValue == removeFocusID
+        return Button(action: onRemove) {
+            Image(systemName: "trash")
+                .font(.system(size: 22, weight: .semibold))
+                .foregroundStyle(Color.retroPink)
+                .frame(width: 72, height: 72)
         }
         .buttonStyle(TVMediaCardButtonStyle())
         .tvOSDisableFocusEffect()
-        .background(
-            RoundedRectangle(cornerRadius: 14, style: .continuous)
-                .fill(Color.white.opacity(isFocused ? 0.06 : 0.03))
-        )
-        .overlay(
-            RoundedRectangle(cornerRadius: 14, style: .continuous)
-                .strokeBorder(
-                    isFocused ?
-                    LinearGradient(
-                        colors: [Color.retroPink.opacity(0.7), Color.retroBlue.opacity(0.5)],
-                        startPoint: .topLeading,
-                        endPoint: .bottomTrailing
-                    ) :
-                        LinearGradient(
-                            colors: [Color.clear, Color.clear],
-                            startPoint: .top,
-                            endPoint: .bottom
-                        ),
-                    lineWidth: isFocused ? 2 : 0
-                )
-        )
-        .focused($focusedItemID, equals: item.id.uuidString)
-        .scaleEffect(isFocused ? 1.01 : 1.0)
-        .animation(Animation.spring(response: 0.25, dampingFraction: 0.8), value: isFocused)
+        .modifier(TVMediaImportRowChrome(isFocused: isFocused))
+        .focused(focusedItemID, equals: removeFocusID)
     }
-    
+
+    private var rowContent: some View {
+        HStack(spacing: 18) {
+            statusIcon
+                .frame(width: 36, height: 36)
+
+            VStack(alignment: .leading, spacing: 4) {
+                Text(item.url.lastPathComponent)
+                    .font(.system(size: 16, weight: .semibold))
+                    .foregroundStyle(.white)
+                    .lineLimit(1)
+
+                HStack(spacing: 10) {
+                    Text(statusText)
+                        .font(.system(size: 12, weight: .medium))
+                        .foregroundStyle(statusColor.opacity(0.9))
+
+                    if let system = item.userChosenSystem ?? item.targetSystem() {
+                        Text(verbatim: "→ \(system.rawValue)")
+                            .font(.system(size: 11, weight: .medium))
+                            .foregroundStyle(.white.opacity(0.5))
+                    }
+                }
+            }
+
+            Spacer()
+
+            if canChooseSystem {
+                Text("Select System")
+                    .font(.system(size: 12, weight: .bold))
+                    .foregroundStyle(Color.retroBlue.opacity(0.7))
+                Image(systemName: "chevron.right")
+                    .font(.system(size: 14, weight: .medium))
+                    .foregroundStyle(.white.opacity(0.4))
+            }
+        }
+        .padding(.horizontal, 20)
+        .padding(.vertical, 16)
+        .frame(maxWidth: .infinity, alignment: .leading)
+    }
+
     @ViewBuilder
-    private func statusIcon(for status: ImportQueueItem.ImportStatus) -> some View {
+    private var statusIcon: some View {
         ZStack {
             Circle()
-                .fill(statusColor(for: status).opacity(0.15))
-            
-            switch status {
+                .fill(statusColor.opacity(0.15))
+
+            switch item.status {
             case .queued:
                 Image(systemName: "clock")
                     .font(.system(size: 16, weight: .medium))
-                    .foregroundStyle(statusColor(for: status))
+                    .foregroundStyle(statusColor)
             case .processing, .extracting:
                 ProgressView()
-                    .progressViewStyle(CircularProgressViewStyle(tint: statusColor(for: status)))
+                    .progressViewStyle(CircularProgressViewStyle(tint: statusColor))
                     .scaleEffect(0.7)
             case .success:
                 Image(systemName: "checkmark")
                     .font(.system(size: 16, weight: .bold))
-                    .foregroundStyle(statusColor(for: status))
-            case .failure, .conflict:
-                Image(systemName: status == .conflict ? "exclamationmark.triangle" : "xmark")
+                    .foregroundStyle(statusColor)
+            case .failure:
+                Image(systemName: "xmark")
                     .font(.system(size: 16, weight: .medium))
-                    .foregroundStyle(statusColor(for: status))
+                    .foregroundStyle(statusColor)
+            case .conflict:
+                Image(systemName: "exclamationmark.triangle")
+                    .font(.system(size: 16, weight: .medium))
+                    .foregroundStyle(statusColor)
             case .partial:
                 Image(systemName: "hourglass")
                     .font(.system(size: 16, weight: .medium))
-                    .foregroundStyle(statusColor(for: status))
+                    .foregroundStyle(statusColor)
             }
         }
     }
-    
-    private func statusColor(for status: ImportQueueItem.ImportStatus) -> Color {
-        switch status {
+
+    private var statusColor: Color {
+        switch item.status {
         case .queued: return .white.opacity(0.5)
         case .processing, .extracting: return Color.retroBlue
         case .success: return Color.retroGreen
@@ -385,9 +397,9 @@ struct TVMediaImportStatusSheet: View {
         case .partial: return .yellow
         }
     }
-    
-    private func statusText(for status: ImportQueueItem.ImportStatus) -> String {
-        switch status {
+
+    private var statusText: String {
+        switch item.status {
         case .queued: return "Queued"
         case .processing: return "Processing..."
         case .extracting: return "Extracting..."
@@ -396,5 +408,37 @@ struct TVMediaImportStatusSheet: View {
         case .conflict: return "Needs system selection"
         case .partial(let expectedFiles): return "Waiting for \(expectedFiles.count) files"
         }
+    }
+}
+
+/// The retrowave card background and focus border shared by a row's controls.
+private struct TVMediaImportRowChrome: ViewModifier {
+    let isFocused: Bool
+
+    func body(content: Content) -> some View {
+        content
+            .background(
+                RoundedRectangle(cornerRadius: 14, style: .continuous)
+                    .fill(Color.white.opacity(isFocused ? 0.06 : 0.03))
+            )
+            .overlay(
+                RoundedRectangle(cornerRadius: 14, style: .continuous)
+                    .strokeBorder(
+                        isFocused ?
+                        LinearGradient(
+                            colors: [Color.retroPink.opacity(0.7), Color.retroBlue.opacity(0.5)],
+                            startPoint: .topLeading,
+                            endPoint: .bottomTrailing
+                        ) :
+                            LinearGradient(
+                                colors: [Color.clear, Color.clear],
+                                startPoint: .top,
+                                endPoint: .bottom
+                            ),
+                        lineWidth: isFocused ? 2 : 0
+                    )
+            )
+            .scaleEffect(isFocused ? 1.01 : 1.0)
+            .animation(Animation.spring(response: 0.25, dampingFraction: 0.8), value: isFocused)
     }
 }

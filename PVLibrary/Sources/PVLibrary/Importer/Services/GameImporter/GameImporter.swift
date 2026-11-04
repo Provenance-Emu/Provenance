@@ -3432,7 +3432,7 @@ public final class GameImporter: GameImporting, ObservableObject {
         // Only do system detection for non-BIOS files
         ILOG("About to determine systems for: \(fileName)")
         let systemsStartTime = Date()
-        let systems: [SystemIdentifier]
+        var systems: [SystemIdentifier]
         do {
             systems = try await gameImporterSystemsService.determineSystems(for: item)
             let systemsDuration = Date().timeIntervalSince(systemsStartTime)
@@ -3441,21 +3441,30 @@ public final class GameImporter: GameImporting, ObservableObject {
                 throw GameImporterError.noSystemMatched
             }
         } catch {
-            // Handle system determination failure
-            ELOG("Failed to determine systems for Import Item: \(item.url.lastPathComponent) - \(error.localizedDescription)")
+            // A system the user picked for an item we could not identify (a homebrew ROM,
+            // a multi-file disc set) stands in for the detection that found nothing.
+            // Failing here again would make the manual pick a no-op.
+            guard item.userChosenSystem != nil else {
+                // Handle system determination failure
+                ELOG("Failed to determine systems for Import Item: \(item.url.lastPathComponent) - \(error.localizedDescription)")
 
-            // Set status on main actor for thread safety
-            await MainActor.run {
-                item.status = .failure(error: GameImporterError.noSystemMatched)
+                // Set status on main actor for thread safety
+                await MainActor.run {
+                    item.status = .failure(error: GameImporterError.noSystemMatched)
+                }
+
+                // Clean up file if it's in imports directory
+                await cleanupFailedImportFile(item.url)
+
+                throw GameImporterError.noSystemMatched
             }
-
-            // Clean up file if it's in imports directory
-            await cleanupFailedImportFile(item.url)
-
-            throw GameImporterError.noSystemMatched
+            WLOG("Could not determine systems for \(item.url.lastPathComponent); using the user's choice instead")
+            systems = []
         }
 
-        //update item's candidate systems with the result of determineSystems
+        // Update the item's candidate systems with the result of determineSystems,
+        // adding the user's own choice when detection did not offer it
+        systems = item.systems(applyingUserChoiceTo: systems)
         item.systems = systems
 
         //this might be a conflict if we can't infer what to do
