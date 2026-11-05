@@ -4,15 +4,35 @@
 //
 
 import Foundation
+import PVUIBase
 import SwiftUI
+#if os(iOS)
+import UIKit
+#endif
 
 /// Shared layout metrics for the Home and per-console library pages.
 enum LibraryLayout {
     /// Bottom inset that keeps scrolling content clear of the page-dots index.
     /// Applied once per page; don't stack it with other bottom padding.
     static let pageIndexClearance: CGFloat = 16
-    /// Scroll clearance for the portrait phone's floating console shortcuts.
-    static let systemSelectorClearance: CGFloat = 56
+    static let controlHeight: CGFloat = 44
+    static let systemSelectorBottomGap: CGFloat = 4
+    /// Room for the selector and a small gap below the last scrollable row.
+    static let systemSelectorClearance = controlHeight + systemSelectorBottomGap + 6
+    static let chromeBorder = Color.retroBlue.opacity(0.28)
+
+    @MainActor
+    static func usesCompactPhoneChrome(_ verticalSizeClass: UserInterfaceSizeClass?) -> Bool {
+        #if os(iOS)
+        UIDevice.current.userInterfaceIdiom == .phone && verticalSizeClass != .compact
+        #else
+        false
+        #endif
+    }
+
+    static func gameCountText(_ count: Int) -> String {
+        count == 1 ? String(localized: "1 game") : String(localized: "\(count) games")
+    }
 }
 
 private struct LibraryBottomOverlayClearanceKey: EnvironmentKey {

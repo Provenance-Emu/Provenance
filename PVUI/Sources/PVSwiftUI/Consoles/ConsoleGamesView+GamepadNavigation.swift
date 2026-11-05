@@ -34,12 +34,14 @@ extension ConsoleGamesView {
         if !gamesViewModel.searchText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
             return filteredGamesModels.isEmpty ? [] : [.allGames]
         }
-        return [
-            (showRecentSaveStates && !recentSaveStateIdsForNavigation.isEmpty) ? .recentSaveStates : nil,
-            (showFavorites && !favoritesModels.isEmpty) ? .favorites : nil,
-            (showRecentGames && !recentlyPlayedModels.isEmpty) ? .recentlyPlayedGames : nil,
-            !filteredGamesModels.isEmpty ? .allGames : nil
-        ].compactMap { $0 }
+        let saves: HomeSectionType? = showRecentSaveStates && !recentSaveStateIdsForNavigation.isEmpty ? .recentSaveStates : nil
+        let games: HomeSectionType? = filteredGamesModels.isEmpty ? nil : .allGames
+        let shelves: [HomeSectionType?] = [
+            showFavorites && !favoritesModels.isEmpty ? .favorites : nil,
+            showRecentGames && !recentlyPlayedModels.isEmpty ? .recentlyPlayedGames : nil
+        ]
+        let sections = usesCompactPhoneChrome ? [saves, games] + shelves : [saves] + shelves + [games]
+        return sections.compactMap { $0 }
     }
 
     /// The `GameCellModel` currently focused, if the focused section is a game section.

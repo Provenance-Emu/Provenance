@@ -27,6 +27,7 @@ struct HomeContinueItemView: SwiftUI.View {
     @ObservedObject private var themeManager = ThemeManager.shared
     let height: CGFloat
     let hideSystemLabel: Bool
+    let usesCompactRow: Bool
     var action: () -> Void
     let isFocused: Bool
     weak var rootDelegate: PVRootDelegate?
@@ -55,14 +56,13 @@ struct HomeContinueItemView: SwiftUI.View {
     private enum StackLayout {
         /// Pixel offset between adjacent ghost cards.
         static let cardOffset: CGFloat = 4
-        /// Extra padding around the ZStack to accommodate ghost card overhang.
-        static let overhangPadding: CGFloat = 8
     }
 
     /// Convenience initializer that extracts data from ContinueItemModel.
     init(model: ContinueItemModel,
          height: CGFloat,
          hideSystemLabel: Bool,
+         usesCompactRow: Bool = false,
          action: @escaping () -> Void,
          isFocused: Bool,
          rootDelegate: PVRootDelegate?) {
@@ -72,6 +72,7 @@ struct HomeContinueItemView: SwiftUI.View {
         self.isInvalidated = false
         self.height = height
         self.hideSystemLabel = hideSystemLabel
+        self.usesCompactRow = usesCompactRow
         self.action = action
         self.isFocused = isFocused
         self.rootDelegate = rootDelegate
@@ -94,14 +95,19 @@ struct HomeContinueItemView: SwiftUI.View {
 
     private let resolver: () -> PVSaveState?
 
+    private var stackOverhang: CGFloat {
+        guard !usesCompactRow else { return 0 }
+        return CGFloat(min(2, max(0, stackDepth - 1))) * StackLayout.cardOffset
+    }
+
     var body: some SwiftUI.View {
         if !isInvalidated {
             ZStack(alignment: .topTrailing) {
                 // Ghost cards conveying stack depth (rendered behind the main card).
-                if stackDepth >= 3 {
+                if !usesCompactRow && stackDepth >= 3 {
                     ghostCard(depthIndex: 2)
                 }
-                if stackDepth >= 2 {
+                if !usesCompactRow && stackDepth >= 2 {
                     ghostCard(depthIndex: 1)
                 }
 
@@ -109,8 +115,7 @@ struct HomeContinueItemView: SwiftUI.View {
                 mainCard
             }
             // Accommodate the ghost card overhang so cards aren't clipped.
-            .padding(.trailing, stackDepth >= 3 ? StackLayout.overhangPadding : (stackDepth >= 2 ? StackLayout.overhangPadding / 2 : 0))
-            .padding(.bottom, stackDepth >= 3 ? StackLayout.overhangPadding : (stackDepth >= 2 ? StackLayout.overhangPadding / 2 : 0))
+            .padding([.trailing, .bottom], stackOverhang)
             .sheet(isPresented: $showFilmstrip) {
                 if #available(iOS 16, tvOS 16, *) {
                     filmstripSheet
@@ -156,49 +161,11 @@ struct HomeContinueItemView: SwiftUI.View {
         Button {
             action()
         } label: {
-            ZStack(alignment: .top) {
-                // Screenshot / artwork
-                CachedAsyncImageView(
-                    url: imageURL,
-                    fallbackImage: UIImage.missingArtworkImage(gameTitle: gameTitle ?? "Deleted", ratio: 1),
-                    height: height,
-                    zoomFactor: CRTEffects.zoomFactor
-                )
-                .overlay(
-                    Group {
-                        if isVisible {
-                            if isFocused {
-                                OptimizedRetroEffects()
-                            } else {
-                                LightweightRetroEffects()
-                            }
-                        }
-                    }
-                )
+            if usesCompactRow {
+                compactRow
+            } else {
+                standardPreview
             }
-            .frame(height: height)
-            .clipShape(RoundedRectangle(cornerRadius: RetroPauseChrome.menuCellCornerRadius()))
-            // Focus border aligned with `PauseTileMenuView` cell stroke when focused.
-            .overlay(
-                RoundedRectangle(cornerRadius: RetroPauseChrome.menuCellCornerRadius())
-                    .strokeBorder(
-                        (themeManager.currentPalette.defaultTintColor.swiftUIColor ?? Color.retroCyan)
-                            .opacity(isFocused ? RetroPauseChrome.menuCellStrokeOpacityFocused : 0),
-                        lineWidth: isFocused ? RetroPauseChrome.menuCellStrokeWidthFocused : 0
-                    )
-            )
-            .shadow(
-                color: isFocused
-                    ? (themeManager.currentPalette.defaultTintColor.swiftUIColor ?? Color.retroCyan)
-                        .opacity(RetroPauseChrome.menuCellFocusShadowOpacity)
-                    : Color.clear,
-                radius: isFocused ? RetroPauseChrome.menuCellFocusShadowRadius : 0,
-                x: 0,
-                y: 3
-            )
-            .scaleEffect(isFocused ? 1.05 : 1.0)
-            .brightness(isFocused ? 0.1 : 0)
-            .animation(.easeInOut(duration: 0.15), value: isFocused)
         }
         // Long-press to expand the session filmstrip.
         .simultaneousGesture(
@@ -289,6 +256,93 @@ struct HomeContinueItemView: SwiftUI.View {
                     .padding(6)
             }
         }
+    }
+
+    private var compactRow: some View {
+        let shape = RoundedRectangle(cornerRadius: 11)
+        let palette = themeManager.currentPalette
+        return HStack(spacing: 8) {
+            VStack(alignment: .leading, spacing: 2) {
+                Text("Resume")
+                    .font(.caption2.weight(.semibold))
+                    .foregroundStyle(Color(palette.gameLibraryText).opacity(0.78))
+                Text(gameTitle ?? String(localized: "Deleted"))
+                    .font(.subheadline.weight(.semibold))
+                    .foregroundStyle(Color(palette.gameLibraryText))
+                    .lineLimit(1)
+            }
+            Spacer(minLength: 0)
+            if stackDepth <= 1 {
+                Image(systemName: "chevron.right")
+                    .font(.caption.weight(.semibold))
+                    .foregroundStyle(Color(palette.gameLibraryText).opacity(0.65))
+                    .accessibilityHidden(true)
+            }
+        }
+        .padding(.leading, 78)
+        .padding(.trailing, stackDepth > 1 ? 58 : 12)
+        .frame(height: height)
+        .background {
+            CachedAsyncImageView(
+                url: imageURL,
+                fallbackImage: UIImage.missingArtworkImage(gameTitle: gameTitle ?? "Deleted", ratio: 1),
+                height: height,
+                zoomFactor: 1,
+                backdropColor: Color(palette.gameLibraryHeaderBackground)
+            )
+        }
+        .clipShape(shape)
+        .overlay {
+            shape.strokeBorder(isFocused ? Color.retroBlue : LibraryLayout.chromeBorder)
+                .allowsHitTesting(false)
+        }
+        .contentShape(shape)
+    }
+
+    private var standardPreview: some View {
+        ZStack(alignment: .top) {
+            // Screenshot / artwork
+            CachedAsyncImageView(
+                url: imageURL,
+                fallbackImage: UIImage.missingArtworkImage(gameTitle: gameTitle ?? "Deleted", ratio: 1),
+                height: height,
+                zoomFactor: CRTEffects.zoomFactor
+            )
+            .overlay(
+                Group {
+                    if isVisible {
+                        if isFocused {
+                            OptimizedRetroEffects()
+                        } else {
+                            LightweightRetroEffects()
+                        }
+                    }
+                }
+            )
+        }
+        .frame(height: height)
+        .clipShape(RoundedRectangle(cornerRadius: RetroPauseChrome.menuCellCornerRadius()))
+        // Focus border aligned with `PauseTileMenuView` cell stroke when focused.
+        .overlay(
+            RoundedRectangle(cornerRadius: RetroPauseChrome.menuCellCornerRadius())
+                .strokeBorder(
+                    (themeManager.currentPalette.defaultTintColor.swiftUIColor ?? Color.retroCyan)
+                        .opacity(isFocused ? RetroPauseChrome.menuCellStrokeOpacityFocused : 0),
+                    lineWidth: isFocused ? RetroPauseChrome.menuCellStrokeWidthFocused : 0
+                )
+        )
+        .shadow(
+            color: isFocused
+                ? (themeManager.currentPalette.defaultTintColor.swiftUIColor ?? Color.retroCyan)
+                    .opacity(RetroPauseChrome.menuCellFocusShadowOpacity)
+                : Color.clear,
+            radius: isFocused ? RetroPauseChrome.menuCellFocusShadowRadius : 0,
+            x: 0,
+            y: 3
+        )
+        .scaleEffect(isFocused ? 1.05 : 1.0)
+        .brightness(isFocused ? 0.1 : 0)
+        .animation(.easeInOut(duration: 0.15), value: isFocused)
     }
 
     // MARK: - Stack Badge

@@ -612,7 +612,12 @@ struct HomeContinueSection: SwiftUI.View {
 #endif
     }
     
+    private var usesCompactRow: Bool {
+        LibraryLayout.usesCompactPhoneChrome(verticalSizeClass)
+    }
+
     var adjustedHeight: CGFloat {
+        if usesCompactRow { return 54 }
         #if os(iOS)
         if UIDevice.current.userInterfaceIdiom == .phone {
             return isLandscapePhone ? 112 : 156
@@ -666,6 +671,7 @@ struct HomeContinueSection: SwiftUI.View {
                                     isLandscapePhone: isLandscapePhone,
                                     gridColumns: gridColumns,
                                     adjustedHeight: adjustedHeight,
+                                    usesCompactRow: usesCompactRow,
                                     hideSystemLabel: consoleIdentifier != nil,
                                     rootDelegate: rootDelegate,
                                     parentFocusedSection: $parentFocusedSection,
@@ -675,7 +681,7 @@ struct HomeContinueSection: SwiftUI.View {
                                 .id(pageIndex)
                                 .tag(pageIndex)
                             }
-                        } else {
+                        } else if !usesCompactRow {
                             EmptyContinuesView()
                         }
                     }
@@ -683,25 +689,9 @@ struct HomeContinueSection: SwiftUI.View {
                 }
                 .frame(height: adjustedHeight)
                 
-                // Footer and page indicator overlay
-                ZStack {
-                    // Footer at bottom — use cachedCurrentSaveState to avoid a live Realm
-                    // lookup on every body re-render.
-                    ContinuesFooterView(
-                        saveState: cachedCurrentSaveState,
-                        hideSystemLabel: consoleIdentifier != nil
-                    )
-                    .zIndex(0) // Ensure footer is behind
-                    
-                    // Page Indicator floating over footer
-                    if pageCount > 1 {
-                        CustomPageIndicator(
-                            numberOfPages: pageCount,
-                            currentPage: viewModel.currentPage
-                        )
-                        .zIndex(1) // Ensure indicator is in front
-                        .offset(y: -35) // Position it over the footer
-                    }
+                // Compact rows contain their own text; the full-size card still uses the footer.
+                if !usesCompactRow {
+                    standardFooter
                 }
             }
             .background(
@@ -714,11 +704,24 @@ struct HomeContinueSection: SwiftUI.View {
                         .opacity(themeManager.currentPalette.dark ? 0.15 : 0.1)
                 }
             )
-            .overlay(
-                RoundedRectangle(cornerRadius: RetroPauseChrome.panelCornerRadius)
-                    .strokeBorder(RetroPauseChrome.panelBorderGradient, lineWidth: RetroPauseChrome.panelStrokeLineWidth)
-            )
-            .clipShape(RoundedRectangle(cornerRadius: RetroPauseChrome.panelCornerRadius))
+            .overlay {
+                if !usesCompactRow {
+                    RoundedRectangle(cornerRadius: RetroPauseChrome.panelCornerRadius)
+                        .strokeBorder(RetroPauseChrome.panelBorderGradient, lineWidth: RetroPauseChrome.panelStrokeLineWidth)
+                }
+            }
+            .clipShape(.rect(cornerRadius: usesCompactRow ? 11 : RetroPauseChrome.panelCornerRadius))
+        }
+        .overlay(alignment: .bottom) {
+            if usesCompactRow && pageCount > 1 {
+                Text("\(viewModel.currentPage + 1) / \(pageCount)")
+                    .font(.system(size: 9, weight: .medium).monospacedDigit())
+                    .foregroundStyle(Color(themeManager.currentPalette.gameLibraryText).opacity(0.74))
+                    .padding(.trailing, 8)
+                    .padding(.bottom, 3)
+                    .frame(maxWidth: .infinity, alignment: .trailing)
+                    .allowsHitTesting(false)
+            }
         }
         .onAppear {
             setupGamepadHandling()
@@ -980,6 +983,20 @@ struct HomeContinueSection: SwiftUI.View {
         DLOG("HomeContinueSection: Final state - Page: \(newPage), Item: \(items[nextIndex]), Items per page: \(itemsPerPage)")
     }
     
+    private var standardFooter: some View {
+        ZStack {
+            // Use cached metadata to avoid a live Realm lookup during layout.
+            ContinuesFooterView(
+                saveState: cachedCurrentSaveState,
+                hideSystemLabel: consoleIdentifier != nil
+            )
+            if pageCount > 1 {
+                CustomPageIndicator(numberOfPages: pageCount, currentPage: viewModel.currentPage)
+                    .offset(y: -35)
+            }
+        }
+    }
+
     private func handlePageChange(_ newPage: Int) {
         let itemsPerPage = isLandscapePhone ? 2 : 1
         let items = limitedItems.map { $0.id }
@@ -1059,6 +1076,7 @@ private struct SaveStatesGridView: View {
     let isLandscapePhone: Bool
     let gridColumns: [GridItem]
     let adjustedHeight: CGFloat
+    let usesCompactRow: Bool
     let hideSystemLabel: Bool
     weak var rootDelegate: PVRootDelegate?
     
@@ -1074,6 +1092,7 @@ private struct SaveStatesGridView: View {
                     model: saveState,
                     height: adjustedHeight,
                     hideSystemLabel: hideSystemLabel,
+                    usesCompactRow: usesCompactRow,
                     action: {
                         if let resolved = saveState.resolver() {
                             Task.detached { @MainActor in
@@ -1096,7 +1115,7 @@ private struct SaveStatesGridView: View {
                 }
             }
         }
-        .padding(.horizontal) // Add padding inside the container
+        .padding(.horizontal, usesCompactRow ? 0 : 16)
         .onAppear {
             // Check if we need to load more save states when this page appears
             if pageIndex >= viewModel.pageCount - ContinuesSectionViewModel.loadMoreThreshold && !viewModel.hasLoadedAllSaveStates {

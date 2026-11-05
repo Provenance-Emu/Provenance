@@ -503,7 +503,7 @@ struct ConsolesWrapperView: SwiftUI.View {
         .overlay(alignment: .bottom) {
             if floatingSelectorClearance > 0 {
                 FloatingSystemSelector(items: systemSelectorItems, selection: binding)
-                    .padding(.bottom, 6 + bottomSafeAreaInset)
+                    .padding(.bottom, LibraryLayout.systemSelectorBottomGap + bottomSafeAreaInset)
             }
         }
         #else
@@ -520,7 +520,7 @@ struct ConsolesWrapperView: SwiftUI.View {
 
     #if os(iOS)
     private var floatingSelectorClearance: CGFloat {
-        UIDevice.current.userInterfaceIdiom == .phone && verticalSizeClass != .compact ? LibraryLayout.systemSelectorClearance + bottomSafeAreaInset : 0
+        LibraryLayout.usesCompactPhoneChrome(verticalSizeClass) ? LibraryLayout.systemSelectorClearance + bottomSafeAreaInset : 0
     }
 
     private var systemSelectorItems: [FloatingSystemSelectorItem] {
