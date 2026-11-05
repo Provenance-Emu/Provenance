@@ -9,9 +9,9 @@ final class PVPhysicalProfileMappingTests: XCTestCase {
         XCTAssertEqual(PVPhysicalProfileMapping.input(forElementNamed: "Left Thumbstick"), .leftThumbstick)
         XCTAssertEqual(PVPhysicalProfileMapping.input(forElementNamed: "Button Options"), .options)
         XCTAssertEqual(PVPhysicalProfileMapping.input(forElementNamed: "Right Trigger"), .rightTrigger)
-        // Standard names are positional except a labelled pad's faces (SNES, below);
-        // the N64 pad keeps the positional reading.
-        XCTAssertEqual(PVPhysicalProfileMapping.input(forElementNamed: "Button B", pad: .n64), .buttonB)
+        // Standard names are positional except a labelled pad's faces (SNES, N64, below).
+        XCTAssertEqual(PVPhysicalProfileMapping.input(forElementNamed: "Button B", pad: .generic), .buttonB)
+        XCTAssertEqual(PVPhysicalProfileMapping.input(forElementNamed: "Button B", pad: .megaDrive), .buttonB)
     }
 
     func testPadDetection() {
@@ -152,7 +152,7 @@ final class PVPhysicalProfileMappingTests: XCTestCase {
         }
         XCTAssertTrue(PVPhysicalProfilePad.snes.namesFacesByLabel)
         XCTAssertFalse(PVPhysicalProfilePad.generic.namesFacesByLabel)
-        XCTAssertFalse(PVPhysicalProfilePad.n64.namesFacesByLabel)
+        XCTAssertTrue(PVPhysicalProfilePad.n64.namesFacesByLabel)
         XCTAssertFalse(PVPhysicalProfilePad.megaDrive.namesFacesByLabel)
         XCTAssertEqual(PVPhysicalProfileMapping.input(forElementNamed: "Button A", pad: .generic), .buttonA)
     }
@@ -167,6 +167,24 @@ final class PVPhysicalProfileMappingTests: XCTestCase {
         XCTAssertTrue(trigger.isSatisfied(by: [.options, .menu]))
         XCTAssertTrue(trigger.isSatisfied(by: [.options, .menu, .dpad]))
         XCTAssertEqual(trigger.inputs, [.options, .menu])
+    }
+
+    /// Apple's "Button B" on the Switch Online N64 pad is the button marked B. Mupen (native and
+    /// thin) reads N64 B from extended X, so it must land there; read positionally it drove
+    /// extended B (C-Down) and N64 B did nothing until the tester remapped X to B.
+    func testN64AppleFaceNamesAgreeWithLabelsAndHIDIndices() {
+        let faces: [(apple: String, label: String, hid: String, expected: PVSynthesizedInput)] = [
+            ("Button A", "A", "Button 1", .buttonA),
+            ("Button B", "B", "Button 0", .buttonX),
+        ]
+        for face in faces {
+            for name in [face.apple, face.label, face.hid] {
+                XCTAssertEqual(PVPhysicalProfileMapping.input(forElementNamed: name, pad: .n64), face.expected, "N64 \(name)")
+            }
+        }
+        let bindings = PVPhysicalProfileMapping.bindings(forElementNames: ["Button A", "Button B", "Direction Pad", "Button Menu", "Button Home"], pad: .n64)
+        XCTAssertEqual(bindings["Button A"], .buttonA)
+        XCTAssertEqual(bindings["Button B"], .buttonX)
     }
 
     func testPadsWithHomePauseOnHome() throws {

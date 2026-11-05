@@ -63,8 +63,13 @@ public struct ImportStatusView: View {
 #if os(tvOS)
     /// Removes one queue item by id (tvOS has no list swipe-to-delete).
     private func deleteItem(withId id: ImportQueueItem.ID) {
-        guard let index = viewModel.queueItems.firstIndex(where: { $0.id == id }) else { return }
-        deleteItems(at: IndexSet(integer: index))
+        // Look the index up in the importer's live queue: the view's copy lags it while items finish.
+        Task {
+            let queue = await gameImporter.importQueue
+            guard let index = queue.firstIndex(where: { $0.id == id }) else { return }
+            await gameImporter.removeImports(at: IndexSet(integer: index))
+            await viewModel.refreshQueueItems()
+        }
     }
 
     /// Destination for `systemSelectionItemId` navigation; queue may have changed while presented.
@@ -86,8 +91,12 @@ public struct ImportStatusView: View {
 
     // Define the system selection handler
     private func handleSystemSelection(_ system: SystemIdentifier, for item: ImportQueueItem) {
-        // Forward to the delegate
-        delegate?.didSelectSystem(system, for: item)
+        // Forward to the delegate; the tvOS media UI presents this view without one.
+        if let delegate {
+            delegate.didSelectSystem(system, for: item)
+        } else {
+            gameImporter.resumeAfterSystemSelection(for: item)
+        }
     }
 
     // Animation states for retrowave effects
@@ -288,9 +297,6 @@ public struct ImportStatusView: View {
                                             )
                                             .shadow(color: RetroTheme.retroPurple.opacity(glowOpacity), radius: 3, x: 0, y: 0)
                                     }
-#if os(tvOS)
-                                    .focusable(true)
-#endif
                                 }
 #endif
                             })
@@ -319,7 +325,11 @@ public struct ImportStatusView: View {
 #endif
 
                                 Button(action: {
-                                    delegate?.forceImportsAction()
+                                    if let delegate {
+                                        delegate.forceImportsAction()
+                                    } else {
+                                        Task { await gameImporter.requeueAndStartProcessing() }
+                                    }
                                 }) {
                                     Text("BEGIN")
                                         .font(.system(size: 14, weight: .bold))
@@ -336,9 +346,8 @@ public struct ImportStatusView: View {
                                         )
                                         .shadow(color: RetroTheme.retroBlue.opacity(glowOpacity), radius: 3, x: 0, y: 0)
                                 }
-#if os(tvOS)
-                                .focusable(true)
-#endif
+                                // No `.focusable(true)` here: on tvOS it wraps the Button in its own
+                                // focus target, so Select on the Siri Remote never reaches the action.
                             })
                             .importQueueToolbarBackground()
                         }

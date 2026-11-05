@@ -307,12 +307,13 @@ public final class RetroLogViewModel: ObservableObject {
         }
 
         /// `device_info.txt` first so the header reads at the top, then the rest alphabetically.
-        /// JSON covers `manifest.json` and the MetricKit crash payloads a bundle may carry.
+        /// JSON covers the manifest and the MetricKit crash payloads a bundle may carry.
+        let deviceInfoName = IncomingLogFile.bundleDeviceInfoName
         let textEntries = archive
             .filter { ["txt", "log", "json"].contains(($0.path as NSString).pathExtension.lowercased()) }
             .sorted { lhs, rhs in
-                if lhs.path.hasSuffix("device_info.txt") != rhs.path.hasSuffix("device_info.txt") {
-                    return lhs.path.hasSuffix("device_info.txt")
+                if lhs.path.hasSuffix(deviceInfoName) != rhs.path.hasSuffix(deviceInfoName) {
+                    return lhs.path.hasSuffix(deviceInfoName)
                 }
                 return lhs.path < rhs.path
             }

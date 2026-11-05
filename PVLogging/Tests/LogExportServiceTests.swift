@@ -265,7 +265,7 @@ struct LogExportTextTests {
         let text = try String(contentsOf: result.url, encoding: .utf8)
         #expect(text.hasPrefix(LogExportHeader.title))
         let headerRange = try #require(text.range(of: "App: Provenance 3.4.0"))
-        let logsRange = try #require(text.range(of: "=== App Logs (2 entries) ==="))
+        let logsRange = try #require(text.range(of: IncomingLogFile.appLogsHeader))
         let firstRange = try #require(text.range(of: "[INFO] (general) first"))
         let secondRange = try #require(text.range(of: "[ERROR] (general) second"))
         #expect(headerRange.lowerBound < logsRange.lowerBound)
@@ -303,7 +303,7 @@ struct LogExportTextTests {
         let result = try fixture.service.export(entries: [makeEntry("only")], options: options, header: makeHeader(options: options))
         let text = try String(contentsOf: result.url, encoding: .utf8)
         #expect(!text.contains(LogExportHeader.title))
-        #expect(text.hasPrefix("=== App Logs (1 entries) ==="))
+        #expect(IncomingLogFile.isExportedLogText(text))
     }
 }
 
@@ -326,9 +326,9 @@ struct LogExportZipTests {
 
         let fm = FileManager.default
         #expect(staged.directory.lastPathComponent == "bundle")
-        #expect(fm.fileExists(atPath: staged.directory.appendingPathComponent("manifest.json").path))
+        #expect(fm.fileExists(atPath: staged.directory.appendingPathComponent(IncomingLogFile.bundleManifestName).path))
         #expect(fm.fileExists(atPath: staged.directory.appendingPathComponent("device_info.txt").path))
-        #expect(fm.fileExists(atPath: staged.directory.appendingPathComponent("app_logs.log").path))
+        #expect(fm.fileExists(atPath: staged.directory.appendingPathComponent("app_logs.txt").path))
         #expect(fm.fileExists(atPath: staged.directory.appendingPathComponent("session_logs/session_a.log").path))
         #expect(fm.fileExists(atPath: staged.directory.appendingPathComponent("crash_reports/crash-1.json").path))
         #expect(fm.fileExists(atPath: staged.directory.appendingPathComponent("core_logs/sub/core.log").path),
@@ -337,7 +337,7 @@ struct LogExportZipTests {
         let deviceInfo = try String(contentsOf: staged.directory.appendingPathComponent("device_info.txt"), encoding: .utf8)
         #expect(deviceInfo == header.render())
 
-        let appLogs = try String(contentsOf: staged.directory.appendingPathComponent("app_logs.log"), encoding: .utf8)
+        let appLogs = try String(contentsOf: staged.directory.appendingPathComponent("app_logs.txt"), encoding: .utf8)
         #expect(appLogs.contains("[INFO] (general) one"))
     }
 
@@ -351,14 +351,14 @@ struct LogExportZipTests {
         let staged = try fixture.service.stage(entries: [makeEntry("one")], options: options, header: header, baseName: "m")
         defer { try? FileManager.default.removeItem(at: staged.directory.deletingLastPathComponent()) }
 
-        let data = try Data(contentsOf: staged.directory.appendingPathComponent("manifest.json"))
+        let data = try Data(contentsOf: staged.directory.appendingPathComponent(IncomingLogFile.bundleManifestName))
         let manifest = try LogExportManifest.decoder().decode(LogExportManifest.self, from: data)
 
         // ISO 8601 drops sub-second precision, so compare field by field rather than whole-struct.
         #expect(manifest.version == LogExportManifest.currentVersion)
         #expect(manifest.header == header)
         #expect(manifest.files.map(\.path) == staged.manifest.files.map(\.path))
-        #expect(manifest.files.map(\.path) == ["device_info.txt", "app_logs.log", "session_logs/session_a.log"])
+        #expect(manifest.files.map(\.path) == ["device_info.txt", "app_logs.txt", "session_logs/session_a.log"])
         #expect(manifest.files.map(\.kind) == [LogExportManifest.deviceInfoKind, LogExportManifest.appLogsKind, "session"])
         #expect(manifest.files.map(\.size) == staged.manifest.files.map(\.size))
         let session = try #require(manifest.files.last)
@@ -380,9 +380,11 @@ struct LogExportZipTests {
 
         let fm = FileManager.default
         #expect(!fm.fileExists(atPath: staged.directory.appendingPathComponent("device_info.txt").path))
-        #expect(!fm.fileExists(atPath: staged.directory.appendingPathComponent("app_logs.log").path))
+        #expect(!fm.fileExists(atPath: staged.directory.appendingPathComponent("app_logs.txt").path))
         #expect(!fm.fileExists(atPath: staged.directory.appendingPathComponent("session_logs").path))
         #expect(staged.manifest.files.map(\.path) == ["crash_reports/c.json"])
+        let entries = try fm.contentsOfDirectory(atPath: staged.directory.path)
+        #expect(IncomingLogFile.classify(fileExtension: "zip", archiveEntryPaths: entries) == .logBundle)
     }
 
 #if canImport(Darwin)
@@ -398,7 +400,7 @@ struct LogExportZipTests {
 
         #expect(result.format == .zip)
         #expect(result.url.pathExtension == "zip")
-        #expect(result.includedPaths == ["device_info.txt", "app_logs.log", "session_logs/session_a.log"])
+        #expect(result.includedPaths == ["device_info.txt", "app_logs.txt", "session_logs/session_a.log"])
         let size = try #require(try result.url.resourceValues(forKeys: [.fileSizeKey]).fileSize)
         #expect(size > 0)
 
@@ -412,7 +414,7 @@ struct LogExportZipTests {
 
 #if os(macOS)
         let listing = try runUnzipListing(of: result.url)
-        #expect(listing.contains("manifest.json"))
+        #expect(listing.contains(IncomingLogFile.bundleManifestName))
         #expect(listing.contains("session_logs/session_a.log"))
 #endif
     }

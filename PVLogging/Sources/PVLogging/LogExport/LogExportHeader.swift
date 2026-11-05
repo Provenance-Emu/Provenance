@@ -59,7 +59,7 @@ public struct LogExportHeader: Codable, Equatable, Sendable {
     // MARK: - Rendering
 
     /// First line of every export; the importer and humans both key off it.
-    public static let title = "=== Provenance Log Export ==="
+    public static let title = IncomingLogFile.exportHeader
 
     /// Renders the header as `Key: value` lines under `title`.
     public func render() -> String {

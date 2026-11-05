@@ -1,5 +1,5 @@
 {
-  "originHash" : "e875a0f7807f9714704f55f17a2d04e2ffb45e93cb7427e1fb0ca6d4f1218711",
+  "originHash" : "397d5a6a9c60addb41e40e1522a7658f764e10ae1dfc7c5fd2eb17e27ffeaa89",
   "pins" : [
     {
       "identity" : "bitbytedata",
@@ -47,12 +47,39 @@
       }
     },
     {
+      "identity" : "pvlookup",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/Provenance-Emu/PVLookup.git",
+      "state" : {
+        "revision" : "25cbe7c83ec2ef5ecb31fbb04c1ddd3453dc13f6",
+        "version" : "1.0.0"
+      }
+    },
+    {
+      "identity" : "pvpatchengine",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/Provenance-Emu/PVPatchEngine.git",
+      "state" : {
+        "revision" : "bc34403e969977df567954a06bc55d48769f5033",
+        "version" : "1.0.1"
+      }
+    },
+    {
+      "identity" : "pvsystems",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/Provenance-Emu/PVSystems.git",
+      "state" : {
+        "revision" : "da78a58c2125ebb629848e4ffc2b0ae7d6bd3b4a",
+        "version" : "1.0.0"
+      }
+    },
+    {
       "identity" : "realm-core",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/realm/realm-core.git",
       "state" : {
-        "revision" : "15493076ad9fef22c16cc64cbfbf9e5b65c385f9",
-        "version" : "20.1.0"
+        "revision" : "b4192c46305570577c4d08df790fddec5ab3aa04",
+        "version" : "20.1.5"
       }
     },
     {
@@ -60,8 +87,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/realm/realm-swift.git",
       "state" : {
-        "revision" : "6260534683132eb981338c7c39fd5e69205876e6",
-        "version" : "20.0.3"
+        "revision" : "a40ced79265b644a896e393b0f3a37e7916e7de3",
+        "version" : "20.0.6"
       }
     },
     {

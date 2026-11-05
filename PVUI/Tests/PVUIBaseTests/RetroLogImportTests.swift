@@ -52,12 +52,13 @@ final class RetroLogImportTests: XCTestCase {
         let result = try vm.exportLogs(options: options)
 
         XCTAssertEqual(result.url.pathExtension, "zip")
-        XCTAssertEqual(result.includedPaths, ["device_info.txt", "app_logs.log"])
+        XCTAssertEqual(result.includedPaths, [IncomingLogFile.bundleDeviceInfoName, IncomingLogFile.bundleAppLogsName])
 
+        XCTAssertEqual(LogFileRouter.classify(fileURL: result.url), .logBundle)
         try await vm.importLog(from: result.url)
         let joined = (vm.importedSession?.lines.map(\.text) ?? []).joined(separator: "\n")
         XCTAssertTrue(joined.contains(LogExportHeader.title))
-        XCTAssertTrue(joined.contains("manifest.json"))
+        XCTAssertTrue(joined.contains(IncomingLogFile.bundleManifestName))
     }
 
     func testImportPlainTextPopulatesSessionAndName() async throws {

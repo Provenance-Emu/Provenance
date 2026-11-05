@@ -406,25 +406,10 @@ class PVThinLibretroCore: PVEmulatorCore, @unchecked Sendable {
     private func applyPlatformDefaults() {
         let coreId = (coreIdentifier ?? "").lowercased()
 
-        // MelonDS: enable touch mode for DS. On tvOS there is no touchscreen
-        // and the user can't easily swap to the bottom screen, so flip the
-        // default layout from upstream's "Top/Bottom" (256×384 portrait
-        // framebuffer — letterboxed to slivers on a 16:9 TV) to "Left/Right"
-        // (512×192 widescreen-ish framebuffer) which fills more of the
-        // screen. The upstream key + value strings come from melonDS
-        // libretro core_options (see src/libretro/libretro.cpp
-        // in the upstream melonDS repo, ~line 185 and 322).
-        if coreId.contains("melonds") {
-            setDefaultOption("melonds_touch_mode", value: "Touch")
-            #if os(tvOS)
-            setDefaultOption("melonds_screen_layout", value: "Left/Right")
-            // The melonds_ds fork (rsn8887 / kivutar) uses the same option
-            // names with a `melondsds_` prefix. Setting both is harmless if
-            // only one core is loaded — setDefaultOption() is a no-op when
-            // the key isn't registered.
-            setDefaultOption("melondsds_screen_layout", value: "Left/Right")
-            setDefaultOption("melondsds_touch_mode", value: "Touch")
-            #endif
+        // melonDS (legacy `melonds` and melonDS DS `melondsds`): the option keys and
+        // value spellings differ per core, so the table lives in `melonDSDefaults`.
+        for (key, value) in Self.melonDSDefaults(coreIdentifier: coreId, isTVOS: Self.isTVOSPlatform) {
+            setDefaultOption(key, value: value)
         }
 
         // DeSmuME: enable touch mode for DS. Same rationale as melonDS —
@@ -847,6 +832,44 @@ class PVThinLibretroCore: PVEmulatorCore, @unchecked Sendable {
     }
 
     private static let dosMouseInputOption = "dosbox_pure_mouse_input"
+
+    /// `true` when built for tvOS. A property so the platform split stays testable
+    /// through `melonDSDefaults(coreIdentifier:isTVOS:)`.
+    private static var isTVOSPlatform: Bool {
+        #if os(tvOS)
+        return true
+        #else
+        return false
+        #endif
+    }
+
+    /// Default DS options for the melonDS cores, selected by the loaded core.
+    ///
+    /// Both cores ship (`melonds` and `melondsds` in cores.yml) and both use `melonds_*`
+    /// keys, but they name the screen layout differently and spell its values differently:
+    /// - Legacy melonDS: `melonds_screen_layout`, capitalised values ("Left/Right").
+    /// - melonDS DS (JesseTG): per-slot `melonds_screen_layout1` (the slot in effect at
+    ///   boot, see `NDSCoreFamily`), lowercase values ("left-right").
+    ///
+    /// Touch mode is "Touch" for both, as before. On tvOS there is no touchscreen and the
+    /// bottom screen is hard to reach, so the layout goes from upstream's "Top/Bottom"
+    /// (a 256x384 framebuffer, letterboxed to slivers on a 16:9 TV) to side by side.
+    ///
+    /// Neither core has a `melondsds_*` key; the old code wrote them anyway and, for
+    /// melonDS DS, wrote the legacy layout key, which that core never reads.
+    /// Returns nothing for any other core.
+    static func melonDSDefaults(coreIdentifier: String, isTVOS: Bool) -> [(key: String, value: String)] {
+        guard let family = NDSCoreFamily(coreIdentifier: coreIdentifier) else { return [] }
+        let touchMode = (key: "melonds_touch_mode", value: "Touch")
+        switch family {
+        case .melonDS:
+            return isTVOS ? [touchMode, (key: family.layoutOptionKey, value: "Left/Right")] : [touchMode]
+        case .melonDSDS:
+            return isTVOS ? [touchMode, (key: family.layoutOptionKey, value: "left-right")] : [touchMode]
+        case .desmume:
+            return []
+        }
+    }
 
     /// Set a core option only if it hasn't been set yet (preserves user overrides).
     private func setDefaultOption(_ key: String, value: String) {

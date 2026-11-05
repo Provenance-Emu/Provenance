@@ -10,7 +10,7 @@ import Foundation
 
 // MARK: - Manifest
 
-/// `manifest.json` inside a zip export: what was included and where it came from.
+/// The Provenance log manifest inside a zip export: what was included and where it came from.
 public struct LogExportManifest: Codable, Equatable, Sendable {
     public struct Entry: Codable, Equatable, Sendable {
         /// Path inside the bundle, relative to its root folder.
@@ -205,7 +205,7 @@ public struct LogExportService: Sendable {
         }
         if options.includeAppLogs {
             let body = entries.map { Self.format($0, includeSourceLocation: options.includeSourceLocation) }
-            parts.append("=== App Logs (\(entries.count) entries) ===\n" + body.joined(separator: "\n") + "\n")
+            parts.append(IncomingLogFile.appLogsHeader + "\n" + body.joined(separator: "\n") + "\n")
             sections.append(LogExportManifest.appLogsKind)
         }
 
@@ -249,10 +249,6 @@ public struct LogExportService: Sendable {
         let manifest: LogExportManifest
     }
 
-    static let manifestFileName = "manifest.json"
-    static let deviceInfoFileName = "device_info.txt"
-    static let appLogsFileName = "app_logs.log"
-
     /// Lays the bundle out in a temp folder named `baseName`, ready to be zipped.
     func stage(entries: [LogEntry],
                options: LogExportOptions,
@@ -266,7 +262,7 @@ public struct LogExportService: Sendable {
         var manifestEntries: [LogExportManifest.Entry] = []
 
         if options.includeDeviceInfo {
-            let path = Self.deviceInfoFileName
+            let path = IncomingLogFile.bundleDeviceInfoName
             let text = header.render()
             try text.write(to: root.appendingPathComponent(path), atomically: true, encoding: .utf8)
             manifestEntries.append(.init(path: path, kind: LogExportManifest.deviceInfoKind,
@@ -274,7 +270,7 @@ public struct LogExportService: Sendable {
         }
 
         if options.includeAppLogs {
-            let path = Self.appLogsFileName
+            let path = IncomingLogFile.bundleAppLogsName
             let text = entries
                 .map { Self.format($0, includeSourceLocation: options.includeSourceLocation) }
                 .joined(separator: "\n") + "\n"
@@ -297,7 +293,7 @@ public struct LogExportService: Sendable {
 
         let manifest = LogExportManifest(header: header, files: manifestEntries)
         let data = try LogExportManifest.encoder().encode(manifest)
-        try data.write(to: root.appendingPathComponent(Self.manifestFileName), options: .atomic)
+        try data.write(to: root.appendingPathComponent(IncomingLogFile.bundleManifestName), options: .atomic)
         return StagedBundle(directory: root, manifest: manifest)
     }
 

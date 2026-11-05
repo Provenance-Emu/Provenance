@@ -31,8 +31,14 @@ struct ProvenanceApp: App {
     @ObservedObject private var sceneCoordinator = SceneCoordinator.shared
 
 #if !os(tvOS)
-    /// A `.log` file opened from another app, shown in the log viewer.
+    /// A log file (`.log`, an exported `.zip` bundle, or an exported `.txt`)
+    /// opened from another app, shown in the log viewer.
     @State private var openedLogURL: URL?
+
+    /// A log file that arrived during a cold launch, held until bootup completes
+    /// so the viewer is presented over the finished root view rather than the
+    /// splash — the same deferral the ROM import path uses (`openEmulatorSceneWhenReady`).
+    @State private var pendingLogURL: URL?
 
     private var isShowingOpenedLog: Binding<Bool> {
         Binding(
@@ -240,6 +246,14 @@ struct ProvenanceApp: App {
                         // CRITICAL: Now that bootup is complete, handle any pending emulator scene requests
                         openEmulatorSceneIfNeeded()
 
+#if !os(tvOS)
+                        // A log file opened at cold launch waited for the root view; show it now.
+                        if let pending = pendingLogURL {
+                            pendingLogURL = nil
+                            openedLogURL = pending
+                        }
+#endif
+
                         // Home Screen Quick Action taps are handled by HomeScreenShortcutService
                         // via PVSceneDelegate — no need to check pendingShortcutItem here.
                     }
@@ -413,6 +427,23 @@ extension ProvenanceApp {
             sceneCoordinator.openEmulatorScene()
         }
     }
+
+#if !os(tvOS)
+    /// Presents the log viewer on `url` once the root view exists.
+    ///
+    /// Warm launch: bootup is already complete, so the full-screen cover presents
+    /// straight away. Cold launch (the file URL is the reason the app started):
+    /// the URL is parked in `pendingLogURL` and the bootup-completion observer
+    /// presents it, mirroring how `openEmulatorSceneWhenReady` defers ROM opens.
+    private func showLogViewerWhenReady(for url: URL) {
+        if appState.bootupState == .completed {
+            openedLogURL = url
+        } else {
+            ILOG("ProvenanceApp: Bootup not complete, deferring log viewer for \(url.lastPathComponent)")
+            pendingLogURL = url
+        }
+    }
+#endif
 
     // Safe method to open emulator scene only when bootup is complete
     private func openEmulatorSceneWhenReady() {
@@ -607,12 +638,18 @@ extension ProvenanceApp {
         }
 
 #if !os(tvOS)
-        // Log files (exported by Provenance or any other `.log`) open in the log viewer,
-        // never the ROM importer.
-        if fileExtension == "log" {
-            ILOG("ProvenanceApp: Opening log file: \(filename)")
-            openedLogURL = url
+        // Log files open in the log viewer, never the ROM importer: any `.log`, an
+        // exported `.zip` bundle (recognised by its device_info.txt / app_logs.txt /
+        // retroarch_logs entries, since `.zip` is also a ROM archive), or a `.txt`
+        // that starts with the export header. Only the ZIP's central directory or
+        // the first bytes of the text are read to decide.
+        switch LogFileRouter.classify(fileURL: url) {
+        case .plainLog, .logBundle:
+            ILOG("ProvenanceApp: Opening log file in the log viewer: \(filename)")
+            showLogViewerWhenReady(for: url)
             return
+        case .other:
+            break
         }
 #endif
 

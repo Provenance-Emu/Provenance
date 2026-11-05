@@ -13,7 +13,7 @@ public struct LogExportOptions: Codable, Equatable, Sendable {
     public enum Format: String, Codable, CaseIterable, Sendable {
         /// One plain-text `.log` file: header, then every selected source concatenated.
         case text
-        /// A `.zip` bundle with `manifest.json`, `device_info.txt` and the selected files.
+        /// A `.zip` bundle with a Provenance log manifest, `device_info.txt` and the selected files.
         case zip
 
         /// File extension the export is written with.
