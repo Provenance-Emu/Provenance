@@ -19,13 +19,12 @@ extension PVEmulatorViewController {
             return nil
         }
 
-        let fpsLabelWasHidden = fpsLabel.isHidden
-        let fpsHUDViewWasHidden = fpsHUDView.isHidden
-        fpsLabel.isHidden = true
-        fpsHUDView.isHidden = true
+        /// Keep the performance HUD out of the capture.
+        let performanceHUD = feature(PerformanceHUDFeature.self)
+        let performanceHUDWasHidden = performanceHUD?.isHidden ?? false
+        performanceHUD?.isHidden = true
         defer {
-            fpsLabel.isHidden = fpsLabelWasHidden
-            fpsHUDView.isHidden = fpsHUDViewWasHidden
+            performanceHUD?.isHidden = performanceHUDWasHidden
         }
 
         guard let targetView = screenshotTargetView() else { return nil }

@@ -75,7 +75,7 @@ public
 // types is a separate, larger change, out of scope here. Remove this disable once
 // that split happens.
 // swiftlint:disable:next type_body_length
-final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmualatorControllerProtocol, PVAudioDelegate {
+final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, EmulatorSessionHost, PVAudioDelegate {
     public let core: PVEmulatorCore
     @ThreadSafe
     public var game: PVGame!
@@ -111,8 +111,6 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
     var skinCancellables = Set<AnyCancellable>()
     // Store cancellables for skin loading observation
     var skinLoadingCancellable: AnyCancellable?
-    /// Observes the FPS counter preference and updates the in-game HUD live.
-    private var showFPSCountCancellable: AnyCancellable?
     var scalingModeCancellable: AnyCancellable?
 
     // Store the current skin for rotation handling
@@ -232,7 +230,7 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
 
     // RTL: do not flip — the emulator screen renders pixel-accurate game content.
     // Mirroring the GPU viewport would produce a horizontally inverted image, breaking gameplay.
-    private(set) lazy var gpuViewController: PVGPUViewController = {
+    public private(set) lazy var gpuViewController: PVGPUViewController = {
         let vc: PVGPUViewController = PVMetalViewController(withEmulatorCore: core)
         vc.resetFirstFrameTracking()
         return vc
@@ -272,84 +270,13 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
         return engineOption.makeAudioEngine()
     }()
 
-    var fpsTimer: Timer?
-    /// Theme-change observer token for the performance HUD.
-    /// Must not be `private` because the HUD is configured from a separate extension file.
-    var themeDidChangeObserver: NSObjectProtocol?
-    /// Container for the performance HUD.
-    lazy var fpsHUDView: UIView = {
-        let view = UIView()
-        view.translatesAutoresizingMaskIntoConstraints = false
-        view.isUserInteractionEnabled = false
-        view.layer.cornerRadius = 8
-        if #available(iOS 13.0, tvOS 13.0, *) {
-            view.layer.cornerCurve = .continuous
-        }
-        view.layer.masksToBounds = true
-        return view
-    }()
-    /// Applies the current theme to the performance HUD.
-    /// Not `private` because the HUD is configured from a separate extension file.
-    func applyFPSHUDTheme() {
-        let palette = ThemeManager.shared.currentPalette
-        let bg = palette.settingsCellBackground ?? palette.gameLibraryBackground
-        let fg = palette.settingsCellText ?? palette.gameLibraryText
+    /// The session's optional capabilities (performance HUD, …), in hook order.
+    /// Populated from `EmulatorFeatureCatalog.all` in `init`; `attach()` runs at the
+    /// end of `viewDidLoad`, `detach()` from `quit()` after the emulation loop exits.
+    let features = EmulatorFeatureRegistry()
 
-        fpsHUDView.backgroundColor = bg.withAlphaComponent(palette.dark ? 0.55 : 0.70)
-        fpsHUDView.layer.borderWidth = 1.0 / UIScreen.main.scale
-        fpsHUDView.layer.borderColor = palette.defaultTintColor.withAlphaComponent(palette.dark ? 0.25 : 0.15).cgColor
-
-        fpsLabel.textColor = fg
-        fpsLabel.shadowColor = UIColor.black.withAlphaComponent(palette.dark ? 0.45 : 0.25)
-        fpsLabel.shadowOffset = .init(width: 0, height: 1)
-    }
-    lazy var fpsLabel: UILabel = {
-        let fpsLabel = UILabel()
-        fpsLabel.translatesAutoresizingMaskIntoConstraints = false
-        fpsLabel.backgroundColor = .clear
-        fpsLabel.textAlignment = .right // RTL: do not flip — FPS counter is always pinned to the right edge (not trailing) regardless of locale
-        fpsLabel.lineBreakMode = .byClipping
-        fpsLabel.isOpaque = false
-        fpsLabel.numberOfLines = 5
-        fpsLabel.adjustsFontSizeToFitWidth = false
-        #if os(tvOS)
-        fpsLabel.font = .monospacedSystemFont(ofSize: 22, weight: .regular)
-        #else
-        fpsLabel.font = .monospacedSystemFont(ofSize: 12, weight: .regular)
-        #endif
-        return fpsLabel
-    }()
-
-    /// Shows or hides the in-game FPS/CPU/Mem HUD based on user preference.
-    /// Note: Skip-layout cores (e.g. RetroArch rendering its own view) do not use this HUD.
-    @MainActor
-    private func applyFPSCounterVisibilityPreference(_ enabled: Bool) {
-        guard !core.skipLayout else { return }
-
-        if enabled {
-            initFPSLabel()
-            fpsHUDView.alpha = 1.0
-        } else {
-            fpsTimer?.invalidate()
-            fpsTimer = nil
-            if let themeDidChangeObserver {
-                NotificationCenter.default.removeObserver(themeDidChangeObserver)
-                self.themeDidChangeObserver = nil
-            }
-            fpsHUDView.removeFromSuperview()
-        }
-    }
-
-    private func configureFPSCounterPreferenceObservationIfNeeded() {
-        guard showFPSCountCancellable == nil else { return }
-        showFPSCountCancellable = Defaults.publisher(.showFPSCount)
-            .receive(on: DispatchQueue.main)
-            .sink { [weak self] change in
-                guard let self else { return }
-                Task { @MainActor in
-                    self.applyFPSCounterVisibilityPreference(change.newValue)
-                }
-            }
+    public func feature<T: EmulatorSessionFeature>(_ type: T.Type) -> T? {
+        features.feature(type)
     }
 
     var secondaryScreen: UIScreen?
@@ -371,13 +298,18 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
             guard core.isOn, !isQuitting else { return }
             core.setPauseEmulation(isShowingMenu)
             setLiveActivityPaused(isShowingMenu)
+            if isShowingMenu {
+                features.sessionDidPause(.menu)
+            } else {
+                features.sessionDidResume()
+            }
         }
     }
 
     /// Set to true when quit is in progress to prevent pause/unpause calls
     /// that can crash RetroArch's runloop during teardown. Readable by the
     /// autosave timer (in +Saves), which must not start a save mid-quit.
-    private(set) var isQuitting: Bool = false
+    public private(set) var isQuitting: Bool = false
 
     /// Dedup guard for the core-crashed alert. A runaway core that throws
     /// every frame would otherwise spam alerts.
@@ -434,6 +366,8 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
         // Initialize play time tracker and start observing core running state via Combine.
         playTimeTracker = PlayTimeTracker(game: game)
         observeRunningState()
+
+        features.register(EmulatorFeatureCatalog.all, host: self)
     }
 
     /// Observes `core.isRunning` via Combine instead of raw KVO.
@@ -871,6 +805,8 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
                 }
             }
         }
+
+        features.attach()
     }
 
     private func setupGPUView() {
@@ -1136,11 +1072,6 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
             ILOG("Hosting core views for \(coreID) on the emulator VC")
         }
 
-        configureFPSCounterPreferenceObservationIfNeeded()
-        Task { @MainActor in
-            self.applyFPSCounterVisibilityPreference(Defaults[.showFPSCount])
-        }
-
         hideOrShowMenuButton()
         // Hide on-screen controls if a physical controller is already connected at launch
         updateOnScreenControlsVisibility()
@@ -1337,6 +1268,8 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
                 state.isOn = true
             }
         }
+
+        features.coreDidStart()
     }
 
     #if os(tvOS)
@@ -1525,6 +1458,8 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
             self?.reestablishPauseHandlers()
         }
         #endif
+
+        features.hostDidAppear()
     }
 
     override public func viewWillDisappear(_ animated: Bool) {
@@ -1558,6 +1493,8 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
         if isMovingFromParent || isBeingDismissed {
             AppState.shared.currentPlayActivity = nil
         }
+
+        features.hostWillDisappear(leaving: isMovingFromParent || isBeingDismissed)
     }
 
     override public func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
@@ -1950,6 +1887,8 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
         refreshLightGunLayout()
         #endif
         #endif
+
+        features.hostDidLayout()
     }
 
     #if os(iOS) && !targetEnvironment(macCatalyst)
@@ -2017,6 +1956,9 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
         // End Live Activity before the core shuts down.
         endLiveActivity()
 
+        // Features that must finish before the core stops (registration order).
+        await features.willStopCore()
+
         // Joins the emulation loop off the main thread, so a last frame that
         // waits on main cannot deadlock the quit.
         await core.stopEmulationAfterLoopExits()
@@ -2025,6 +1967,9 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
         // rc_client_do_frame while we destroy the rc_client (rcheevos is
         // RC_NO_THREADS=1 — a concurrent tick during teardown is a use-after-free).
         stopAchievements()
+
+        // Tear down session features in reverse registration order, symmetric with attach().
+        features.detach()
 
         gpuViewController.dismiss(animated: false)
         core.touchViewController = nil
@@ -2057,17 +2002,8 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
             await EmulationState.shared.setIsOn(false)
         }
 
-        fpsTimer?.invalidate()
-        fpsTimer = nil
-        showFPSCountCancellable?.cancel()
-        showFPSCountCancellable = nil
         scalingModeCancellable?.cancel()
         scalingModeCancellable = nil
-        if let themeDidChangeObserver {
-            NotificationCenter.default.removeObserver(themeDidChangeObserver)
-            self.themeDidChangeObserver = nil
-        }
-        fpsHUDView.removeFromSuperview()
 
         let returnedToLibrary = hasRunSuccessfully && completion == nil ? onSuccessfulReturnToLibrary : nil
         dismiss(animated: true) {

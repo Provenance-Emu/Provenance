@@ -648,7 +648,7 @@ struct PauseTileMenuView: View {
             let next = speeds[(currentIndex + 1) % speeds.count]
             applyGameSpeed(next)
         case "fpsCounterToggle":
-            showFPSCount.toggle()
+            _ = emulatorVC.features.handlePauseMenuTile(id: tile.id)
             rebuildSections()
         case "rewindToggle":
             guard let coreClass = type(of: emulatorVC.core) as? CoreOptional.Type,
