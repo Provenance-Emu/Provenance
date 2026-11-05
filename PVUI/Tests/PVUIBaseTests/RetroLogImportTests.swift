@@ -31,14 +31,33 @@ final class RetroLogImportTests: XCTestCase {
 
     /// Text exports use `.log` so a shared log reopens in Provenance (`public.log`).
     func testTextExportUsesLogExtensionAndReimports() async throws {
-        let vm = RetroLogViewModel()
-        let exported = try XCTUnwrap(vm.exportLogsAsText())
-        defer { try? FileManager.default.removeItem(at: exported) }
+        let vm = RetroLogViewModel(exportService: LogExportService(outputDirectory: tempDir))
+        let options = LogExportOptions(format: .text, includeSessionFiles: false,
+                                       includeCrashReports: false, includeCoreLogs: false)
+        let exported = try vm.exportLogs(options: options).url
 
         XCTAssertEqual(exported.pathExtension, "log")
 
         try await vm.importLog(from: exported)
         XCTAssertEqual(vm.importedSession?.name, exported.lastPathComponent)
+        XCTAssertEqual(vm.importedSession?.sourceURL, exported)
+        XCTAssertEqual(vm.importedSession?.lines.first?.text, LogExportHeader.title)
+    }
+
+    /// Zip exports carry a manifest and reopen through the same importer.
+    func testZipExportReimportsWithManifest() async throws {
+        let vm = RetroLogViewModel(exportService: LogExportService(outputDirectory: tempDir))
+        let options = LogExportOptions(format: .zip, includeSessionFiles: false,
+                                       includeCrashReports: false, includeCoreLogs: false)
+        let result = try vm.exportLogs(options: options)
+
+        XCTAssertEqual(result.url.pathExtension, "zip")
+        XCTAssertEqual(result.includedPaths, ["device_info.txt", "app_logs.log"])
+
+        try await vm.importLog(from: result.url)
+        let joined = (vm.importedSession?.lines.map(\.text) ?? []).joined(separator: "\n")
+        XCTAssertTrue(joined.contains(LogExportHeader.title))
+        XCTAssertTrue(joined.contains("manifest.json"))
     }
 
     func testImportPlainTextPopulatesSessionAndName() async throws {
