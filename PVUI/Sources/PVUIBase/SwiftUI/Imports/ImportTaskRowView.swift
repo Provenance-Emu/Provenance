@@ -321,9 +321,9 @@ struct ImportTaskRowView: View {
         HStack(alignment: .center, spacing: 12) {
             Group {
                 if tvOSCanChooseSystem {
-                    /// `.borderless` tends to activate more reliably than `.plain` with the Siri Remote.
-                    /// No `.focusable` here: a Button is already focusable, and wrapping it in a
-                    /// second focusable container takes focus (and the select press) away from it.
+                    /// `.borderless` tends to activate more reliably than `.plain` with the Siri Remote. A Button is
+                    /// already focusable; adding `.focusable(true)` wraps it in a second focus target that takes
+                    /// Select, so the action never fires (#3724). `.focused` alone keeps the retro border in sync.
                     Button(action: { onRequestSystemSelection?() }) {
                         base
                             .contentShape(Rectangle())

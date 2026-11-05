@@ -744,9 +744,6 @@ public struct PVSettingsView: View {
             }
         }
         .navigationViewStyle(StackNavigationViewStyle())
-        #if os(iOS)
-        .modifier(SettingsSheetSizing())
-        #endif
         .environment(\.colorScheme, themeManager.currentPalette.dark ? .dark : .light)
         #if os(tvOS)
         .environment(\.settingsSubpageDepth, $settingsSubpageDepth)

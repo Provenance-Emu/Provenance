@@ -90,6 +90,10 @@ extension PVEmulatorViewController {
 
         let controller = PVMenuSettingsHostingController(settingsView: settingsView)
         host = controller
+        // Same sizing as the library and pause-menu entry points (#3780).
+        if SettingsPresentation.fillsScreen {
+            controller.modalPresentationStyle = .fullScreen
+        }
 
         // Present from the topmost presented controller: presenting from `self`
         // while the pause menu is up fails silently ("already presenting").

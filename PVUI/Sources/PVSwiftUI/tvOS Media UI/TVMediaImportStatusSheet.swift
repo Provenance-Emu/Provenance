@@ -94,9 +94,7 @@ struct TVMediaImportStatusSheet: View {
             .navigationDestination(item: $systemSelectionItemID) { id in
                 if let item = viewModel.importQueueItems.first(where: { $0.id == id }) {
                     SystemSelectionView(item: item, onSystemSelected: { _, queueItem in
-                        Task { @MainActor in
-                            await ImportQueueResolver.resumeProcessing(of: queueItem, with: gameImporter)
-                        }
+                        gameImporter.resumeAfterSystemSelection(for: queueItem)
                     })
                 } else {
                     Text("This import is no longer in the queue.")

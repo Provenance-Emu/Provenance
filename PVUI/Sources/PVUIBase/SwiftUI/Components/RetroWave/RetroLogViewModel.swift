@@ -166,7 +166,8 @@ public final class RetroLogViewModel: ObservableObject {
     /// Builds a device/app info header string.
     @MainActor
     private func buildDeviceInfo() -> String {
-        var info = "=== Provenance Log Export ===\n"
+        // `IncomingLogFile` keys off this header when a shared export is opened back in the app.
+        var info = IncomingLogFile.exportHeader + "\n"
         info += "Date: \(DateFormatter.localizedString(from: Date(), dateStyle: .full, timeStyle: .long))\n"
         let bundle = Bundle.main
         if let version = bundle.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String,
@@ -212,7 +213,7 @@ public final class RetroLogViewModel: ObservableObject {
             content += buildDeviceInfo() + "\n\n"
         }
         if options.includeAppLogs && !displayedLogs.isEmpty {
-            content += "=== App Logs ===\n"
+            content += IncomingLogFile.appLogsHeader + "\n"
             content += displayedLogs.map { formatEntry($0) }.joined(separator: "\n")
         }
 
@@ -244,19 +245,21 @@ public final class RetroLogViewModel: ObservableObject {
         do {
             try fm.createDirectory(at: tempDir, withIntermediateDirectories: true)
 
+            // Entry names are the bundle's signature: `IncomingLogFile.isLogBundle` routes a
+            // reopened export to the log viewer instead of the ROM importer by them.
             if options.includeDeviceInfo {
-                let infoURL = tempDir.appendingPathComponent("device_info.txt")
+                let infoURL = tempDir.appendingPathComponent(IncomingLogFile.bundleDeviceInfoName)
                 try buildDeviceInfo().write(to: infoURL, atomically: true, encoding: .utf8)
             }
 
             if options.includeAppLogs {
                 let logsText = displayedLogs.map { formatEntry($0) }.joined(separator: "\n")
-                let logsURL = tempDir.appendingPathComponent("app_logs.txt")
+                let logsURL = tempDir.appendingPathComponent(IncomingLogFile.bundleAppLogsName)
                 try logsText.write(to: logsURL, atomically: true, encoding: .utf8)
             }
 
             if options.includeRetroArchLogs, let raDir = retroArchLogsDirectory {
-                let destRADir = tempDir.appendingPathComponent("retroarch_logs")
+                let destRADir = tempDir.appendingPathComponent(IncomingLogFile.bundleRetroArchDirectory)
                 try fm.copyItem(at: raDir, to: destRADir)
             }
 
@@ -366,11 +369,12 @@ public final class RetroLogViewModel: ObservableObject {
         }
 
         /// `device_info.txt` first so the header reads at the top, then the rest alphabetically.
+        let deviceInfoName = IncomingLogFile.bundleDeviceInfoName
         let textEntries = archive
             .filter { ["txt", "log"].contains(($0.path as NSString).pathExtension.lowercased()) }
             .sorted { lhs, rhs in
-                if lhs.path.hasSuffix("device_info.txt") != rhs.path.hasSuffix("device_info.txt") {
-                    return lhs.path.hasSuffix("device_info.txt")
+                if lhs.path.hasSuffix(deviceInfoName) != rhs.path.hasSuffix(deviceInfoName) {
+                    return lhs.path.hasSuffix(deviceInfoName)
                 }
                 return lhs.path < rhs.path
             }

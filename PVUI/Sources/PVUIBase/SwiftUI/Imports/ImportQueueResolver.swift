@@ -51,19 +51,4 @@ public enum ImportQueueResolver {
         }
         await importer.removeImports(at: offsets)
     }
-
-    /// Gets the importer working on an item the user just chose a system for. Setting
-    /// `userChosenSystem` re-queues the item and nudges the importer; this also starts it
-    /// when it is idle and runs the item directly when the importer is paused.
-    @MainActor
-    public static func resumeProcessing(of item: ImportQueueItem, with importer: any GameImporting) async {
-        switch importer.processingState {
-        case .idle:
-            importer.startProcessing()
-        case .paused:
-            await (importer as? GameImporter)?.processItem(item)
-        case .processing:
-            break
-        }
-    }
 }

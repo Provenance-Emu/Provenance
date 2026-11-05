@@ -2174,7 +2174,9 @@
       "version": "Nightly",
       "license": "GPL-3.0-or-later",
       "licenseURL": "https://github.com/libretro/81-libretro/blob/master/LICENSE",
-      "copyrightHolder": null,
+      "copyrightHolder": [
+        "Copyright © Michael D Wynne"
+      ],
       "upstreamProjectURL": null,
       "forkNotes": null,
       "appStoreCompatible": null,
@@ -2190,7 +2192,9 @@
       "version": "nightly",
       "license": "GPL-3.0-or-later",
       "licenseURL": "https://github.com/libretro/bsnes-mercury/blob/master/LICENSE",
-      "copyrightHolder": null,
+      "copyrightHolder": [
+        "Copyright © Near, Alcaro"
+      ],
       "upstreamProjectURL": null,
       "forkNotes": null,
       "appStoreCompatible": null,
@@ -2206,7 +2210,9 @@
       "version": "Nightly",
       "license": "LicenseRef-NonCommercial",
       "licenseURL": "https://github.com/libretro/fbalpha2012/blob/master/docs/COPYING",
-      "copyrightHolder": null,
+      "copyrightHolder": [
+        "Copyright © Team FB Alpha"
+      ],
       "upstreamProjectURL": null,
       "forkNotes": null,
       "appStoreCompatible": null,
@@ -2223,7 +2229,9 @@
       "version": "Nightly",
       "license": "LicenseRef-NonCommercial",
       "licenseURL": "https://github.com/libretro/fbalpha2012/blob/master/docs/COPYING",
-      "copyrightHolder": null,
+      "copyrightHolder": [
+        "Copyright © Team FB Alpha"
+      ],
       "upstreamProjectURL": null,
       "forkNotes": null,
       "appStoreCompatible": null,
@@ -2239,7 +2247,9 @@
       "version": "Nightly",
       "license": "LicenseRef-NonCommercial",
       "licenseURL": "https://github.com/libretro/fmsx-libretro/blob/HEAD/LICENSE",
-      "copyrightHolder": null,
+      "copyrightHolder": [
+        "Copyright © 2005-2017 Marat Fayzullin"
+      ],
       "upstreamProjectURL": null,
       "forkNotes": null,
       "appStoreCompatible": null,
@@ -2256,7 +2266,9 @@
       "version": "Nightly",
       "license": "GPL-3.0-or-later",
       "licenseURL": "https://github.com/libretro/FreeChaF/blob/master/LICENSE",
-      "copyrightHolder": null,
+      "copyrightHolder": [
+        "Copyright © 2017-2018 David Richardson"
+      ],
       "upstreamProjectURL": null,
       "forkNotes": null,
       "appStoreCompatible": null,
@@ -2272,7 +2284,9 @@
       "version": "Nightly",
       "license": "GPL-3.0-or-later",
       "licenseURL": "https://github.com/libretro/FreeIntv/blob/master/LICENSE",
-      "copyrightHolder": null,
+      "copyrightHolder": [
+        "Copyright © 2017-2018 David Richardson"
+      ],
       "upstreamProjectURL": null,
       "forkNotes": null,
       "appStoreCompatible": null,
@@ -2288,7 +2302,9 @@
       "version": "Nightly",
       "license": "GPL-2.0-or-later",
       "licenseURL": "https://github.com/libretro/gambatte-libretro/blob/HEAD/COPYING",
-      "copyrightHolder": null,
+      "copyrightHolder": [
+        "Copyright © 2007 Sindre Aamås (Sinamas)"
+      ],
       "upstreamProjectURL": null,
       "forkNotes": null,
       "appStoreCompatible": null,
@@ -2305,7 +2321,9 @@
       "version": "Nightly",
       "license": "GPL-3.0-or-later",
       "licenseURL": "https://github.com/drhelius/Gearcoleco/blob/main/LICENSE",
-      "copyrightHolder": null,
+      "copyrightHolder": [
+        "Copyright © Nacho Sanchez"
+      ],
       "upstreamProjectURL": null,
       "forkNotes": null,
       "appStoreCompatible": null,
@@ -2321,7 +2339,9 @@
       "version": "Nightly",
       "license": "GPL-2.0-or-later",
       "licenseURL": "https://github.com/libretro/gpsp/blob/HEAD/COPYING",
-      "copyrightHolder": null,
+      "copyrightHolder": [
+        "Copyright © Exophase"
+      ],
       "upstreamProjectURL": null,
       "forkNotes": null,
       "appStoreCompatible": null,
@@ -2337,7 +2357,9 @@
       "version": "Nightly",
       "license": "Zlib",
       "licenseURL": "https://github.com/libretro/libretro-handy/blob/master/lynx/license.txt",
-      "copyrightHolder": null,
+      "copyrightHolder": [
+        "Copyright © 2004 K. Wilkins"
+      ],
       "upstreamProjectURL": null,
       "forkNotes": null,
       "appStoreCompatible": null,
@@ -2353,7 +2375,9 @@
       "version": "Nightly",
       "license": "GPL-2.0-or-later",
       "licenseURL": "https://github.com/libretro/beetle-pce-libretro/blob/HEAD/COPYING",
-      "copyrightHolder": null,
+      "copyrightHolder": [
+        "Copyright © Mednafen Team"
+      ],
       "upstreamProjectURL": null,
       "forkNotes": null,
       "appStoreCompatible": null,
@@ -2371,7 +2395,9 @@
       "version": "Nightly",
       "license": "GPL-2.0-or-later",
       "licenseURL": "https://github.com/libretro/beetle-pce-fast-libretro/blob/HEAD/COPYING",
-      "copyrightHolder": null,
+      "copyrightHolder": [
+        "Copyright © Mednafen Team"
+      ],
       "upstreamProjectURL": null,
       "forkNotes": null,
       "appStoreCompatible": null,
@@ -2388,7 +2414,9 @@
       "version": "Nightly",
       "license": "GPL-2.0-or-later",
       "licenseURL": "https://github.com/libretro/beetle-pcfx-libretro/blob/HEAD/COPYING",
-      "copyrightHolder": null,
+      "copyrightHolder": [
+        "Copyright © Mednafen Team"
+      ],
       "upstreamProjectURL": null,
       "forkNotes": null,
       "appStoreCompatible": null,
@@ -2404,7 +2432,9 @@
       "version": "Nightly",
       "license": "GPL-3.0-or-later",
       "licenseURL": "https://github.com/libretro/beetle-bsnes-libretro/blob/HEAD/COPYING",
-      "copyrightHolder": null,
+      "copyrightHolder": [
+        "Copyright © byuu, Mednafen Team"
+      ],
       "upstreamProjectURL": null,
       "forkNotes": null,
       "appStoreCompatible": null,
@@ -2420,7 +2450,9 @@
       "version": "Nightly",
       "license": "GPL-2.0-or-later",
       "licenseURL": "https://github.com/libretro/beetle-wswan-libretro/blob/HEAD/COPYING",
-      "copyrightHolder": null,
+      "copyrightHolder": [
+        "Copyright © Dox, Mednafen Team"
+      ],
       "upstreamProjectURL": null,
       "forkNotes": null,
       "appStoreCompatible": null,
@@ -2437,7 +2469,9 @@
       "version": "Nightly",
       "license": "LGPL-3.0-only",
       "licenseURL": "https://github.com/libretro/neocd_libretro/blob/master/LICENSE.md",
-      "copyrightHolder": null,
+      "copyrightHolder": [
+        "Copyright © Elta"
+      ],
       "upstreamProjectURL": null,
       "forkNotes": null,
       "appStoreCompatible": null,
@@ -2453,7 +2487,9 @@
       "version": "Nightly",
       "license": "Artistic-2.0",
       "licenseURL": "https://github.com/libretro/libretro-o2em/blob/HEAD/COPYING",
-      "copyrightHolder": null,
+      "copyrightHolder": [
+        "Copyright © Daniel Boris, Andre de la Rocha, Arlindo M. de Oliveira"
+      ],
       "upstreamProjectURL": null,
       "forkNotes": null,
       "appStoreCompatible": null,
@@ -2469,7 +2505,9 @@
       "version": "Nightly",
       "license": "GPL-2.0-or-later",
       "licenseURL": "https://github.com/libretro/libretro-uae/blob/master/COPYING",
-      "copyrightHolder": null,
+      "copyrightHolder": [
+        "Copyright © UAE Team"
+      ],
       "upstreamProjectURL": null,
       "forkNotes": null,
       "appStoreCompatible": null,
@@ -2485,7 +2523,9 @@
       "version": "Nightly",
       "license": "GPL-2.0-or-later",
       "licenseURL": "https://github.com/libretro/libretro-uae/blob/master/COPYING",
-      "copyrightHolder": null,
+      "copyrightHolder": [
+        "Copyright © UAE Team"
+      ],
       "upstreamProjectURL": null,
       "forkNotes": null,
       "appStoreCompatible": null,
@@ -2501,7 +2541,9 @@
       "version": "Nightly",
       "license": "LGPL-2.1-or-later",
       "licenseURL": "https://github.com/libretro/QuickNES_Core/blob/master/LICENSE",
-      "copyrightHolder": null,
+      "copyrightHolder": [
+        "Copyright © blargg, kode54"
+      ],
       "upstreamProjectURL": null,
       "forkNotes": null,
       "appStoreCompatible": null,
@@ -2517,7 +2559,9 @@
       "version": "Nightly",
       "license": "MIT",
       "licenseURL": "https://github.com/libretro/sameduck/blob/SameDuck-libretro/LICENSE",
-      "copyrightHolder": null,
+      "copyrightHolder": [
+        "Copyright © 2015-2020 Lior Halphon"
+      ],
       "upstreamProjectURL": null,
       "forkNotes": null,
       "appStoreCompatible": null,
@@ -2533,7 +2577,9 @@
       "version": "Nightly",
       "license": "GPL-3.0-or-later",
       "licenseURL": "https://github.com/libretro/scummvm/blob/HEAD/COPYING",
-      "copyrightHolder": null,
+      "copyrightHolder": [
+        "Copyright © ScummVM Team"
+      ],
       "upstreamProjectURL": null,
       "forkNotes": null,
       "appStoreCompatible": null,
@@ -2549,7 +2595,9 @@
       "version": "Nightly",
       "license": "GPL-2.0-or-later",
       "licenseURL": "https://github.com/libretro/smsplus-gx/blob/master/docs/license",
-      "copyrightHolder": null,
+      "copyrightHolder": [
+        "Copyright © Charles MacDonald, gameblabla"
+      ],
       "upstreamProjectURL": null,
       "forkNotes": null,
       "appStoreCompatible": null,
@@ -2566,7 +2614,9 @@
       "version": "Nightly",
       "license": "LicenseRef-Snes9x",
       "licenseURL": "https://github.com/libretro/snes9x2002/blob/master/src/copyright.h",
-      "copyrightHolder": null,
+      "copyrightHolder": [
+        "Copyright © Snes9x Team, PocketSNES Team, Toadking"
+      ],
       "upstreamProjectURL": null,
       "forkNotes": null,
       "appStoreCompatible": null,
@@ -2582,7 +2632,9 @@
       "version": "Nightly",
       "license": "LicenseRef-Snes9x",
       "licenseURL": "https://github.com/libretro/snes9x2005/blob/master/copyright",
-      "copyrightHolder": null,
+      "copyrightHolder": [
+        "Copyright © Snes9x Team, dking, BassAceGold, ShadauxCat, Nebuleon"
+      ],
       "upstreamProjectURL": null,
       "forkNotes": null,
       "appStoreCompatible": null,
@@ -2598,7 +2650,9 @@
       "version": "Nightly",
       "license": "LicenseRef-Snes9x",
       "licenseURL": "https://github.com/libretro/snes9x2005/blob/master/copyright",
-      "copyrightHolder": null,
+      "copyrightHolder": [
+        "Copyright © Snes9x Team, dking, BassAceGold, ShadauxCat, Nebuleon"
+      ],
       "upstreamProjectURL": null,
       "forkNotes": null,
       "appStoreCompatible": null,
@@ -2614,7 +2668,9 @@
       "version": "Nightly",
       "license": "LicenseRef-Snes9x",
       "licenseURL": "https://github.com/libretro/snes9x2010/blob/master/LICENSE.txt",
-      "copyrightHolder": null,
+      "copyrightHolder": [
+        "Copyright © Snes9x Team, Squarepusher"
+      ],
       "upstreamProjectURL": null,
       "forkNotes": null,
       "appStoreCompatible": null,
@@ -2630,7 +2686,9 @@
       "version": "Nightly",
       "license": "GPL-2.0-or-later",
       "licenseURL": "https://github.com/stella-emu/stella/blob/HEAD/License.txt",
-      "copyrightHolder": null,
+      "copyrightHolder": [
+        "Copyright © Stephen Anthony, Bradford Mott, Eckhard Stolberg, Brian Watson"
+      ],
       "upstreamProjectURL": null,
       "forkNotes": null,
       "appStoreCompatible": null,
@@ -2646,7 +2704,9 @@
       "version": "Nightly",
       "license": "GPL-2.0-or-later",
       "licenseURL": "https://github.com/libretro/stella2023/blob/master/License.txt",
-      "copyrightHolder": null,
+      "copyrightHolder": [
+        "Copyright © Stephen Anthony, Bradford Mott, Eckhard Stolberg, Brian Watson"
+      ],
       "upstreamProjectURL": null,
       "forkNotes": null,
       "appStoreCompatible": null,
@@ -2662,7 +2722,9 @@
       "version": "Nightly",
       "license": "GPL-2.0-or-later",
       "licenseURL": "https://github.com/libretro/vba-next/blob/master/LICENSE",
-      "copyrightHolder": null,
+      "copyrightHolder": [
+        "Copyright © Forgotten, VBA-M Team, Squarepusher"
+      ],
       "upstreamProjectURL": null,
       "forkNotes": null,
       "appStoreCompatible": null,

@@ -22,6 +22,8 @@ public enum GameSystemMover {
         guard let sourceURL = PVEmulatorConfiguration.path(forGame: game) else {
             throw CocoaError(.fileNoSuchFile)
         }
+        let gameMD5 = game.md5Hash
+        let systemIdentifier = system.identifier
         let oldRomPath = game.romPath
         let oldSystemIdentifier = game.systemIdentifier
         let oldFileURL = game.file?.url
@@ -39,14 +41,7 @@ public enum GameSystemMover {
         var movedGame: PVGame?
         do {
             try realm.write {
-                let thawedGame: PVGame? = game.thaw() ?? realm.object(ofType: PVGame.self, forPrimaryKey: game.md5Hash)
-                guard let thawedGame, !thawedGame.isInvalidated else {
-                    ELOG("GameSystemMover: could not resolve live game for '\(game.title)' (md5: \(game.md5Hash))")
-                    return
-                }
-                let liveSystem = system.isFrozen ? (system.thaw() ?? realm.object(ofType: PVSystem.self, forPrimaryKey: system.identifier)) : system
-                guard let liveSystem else {
-                    ELOG("GameSystemMover: could not resolve live system '\(system.identifier)'")
+                guard let (thawedGame, liveSystem) = resolveLiveObjects(gameMD5: gameMD5, systemIdentifier: systemIdentifier, in: realm) else {
                     return
                 }
                 thawedGame.system = liveSystem
@@ -83,5 +78,22 @@ public enum GameSystemMover {
             oldRelatedFiles: oldRelatedFiles
         )
         RomDatabase.addGameToCache(movedGame)
+    }
+
+    /// Resolves the live game and system to edit inside `realm`'s write transaction.
+    ///
+    /// The tvOS media UI hands over frozen objects, and `thaw()` returns an object from whichever
+    /// Realm instance matches the frozen one, or nil when its snapshot is stale. Neither is
+    /// guaranteed to be the `realm` being written, so resolve both by primary key in it instead.
+    static func resolveLiveObjects(gameMD5: String, systemIdentifier: String, in realm: Realm) -> (game: PVGame, system: PVSystem)? {
+        guard let liveGame = realm.object(ofType: PVGame.self, forPrimaryKey: gameMD5), !liveGame.isInvalidated else {
+            ELOG("GameSystemMover: could not resolve live game (md5: \(gameMD5))")
+            return nil
+        }
+        guard let liveSystem = realm.object(ofType: PVSystem.self, forPrimaryKey: systemIdentifier), !liveSystem.isInvalidated else {
+            ELOG("GameSystemMover: could not resolve live system '\(systemIdentifier)'")
+            return nil
+        }
+        return (liveGame, liveSystem)
     }
 }
