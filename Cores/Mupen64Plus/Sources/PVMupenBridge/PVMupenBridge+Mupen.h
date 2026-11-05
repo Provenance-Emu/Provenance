@@ -52,6 +52,13 @@ void ConfigureRICE();
 
 @interface PVMupenBridge (Mupen)
 - (void)OE_addHandlerForType:(m64p_core_param)paramType usingBlock:(BOOL(^)(m64p_core_param paramType, int newValue))block;
+/// Claim/release the engine's single save slot; call only on its callback queue.
+- (BOOL)OE_claimSaveStateRequest:(id)request;
+- (void)OE_releaseSaveStateRequest:(id)request;
+/// Enqueue save-request work on the same queue as state-change handlers.
+- (void)OE_performCallbackOperation:(dispatch_block_t)operation afterDelay:(NSTimeInterval)delay;
+/// Remove only this request's handler, without mutating a set during callback delivery.
+- (void)OE_removeHandlerForType:(m64p_core_param)paramType usingBlock:(BOOL(^)(m64p_core_param, int))block;
 @end
 
 NS_ASSUME_NONNULL_END

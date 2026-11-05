@@ -166,6 +166,7 @@ static char *MupenGetGBCartRAM(void *cb_data, int controller_num) {
 
     dispatch_queue_t _callbackQueue;
     NSMutableDictionary *_callbackHandlers;
+    id _saveStateRequest;
 
     m64p_dynlib_handle core_handle;
 
@@ -279,6 +280,33 @@ static char *MupenGetGBCartRAM(void *cb_data, int controller_num) {
         }
 
         [callbacks addObject:block];
+    });
+}
+
+- (BOOL)OE_claimSaveStateRequest:(id)request {
+    dispatch_assert_queue(_callbackQueue);
+    if (_saveStateRequest) return NO;
+    _saveStateRequest = request;
+    return YES;
+}
+
+- (void)OE_releaseSaveStateRequest:(id)request {
+    dispatch_assert_queue(_callbackQueue);
+    if (_saveStateRequest == request) _saveStateRequest = nil;
+}
+
+- (void)OE_performCallbackOperation:(dispatch_block_t)operation afterDelay:(NSTimeInterval)delay {
+    if (delay <= 0) {
+        dispatch_async(_callbackQueue, operation);
+    } else {
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delay * NSEC_PER_SEC)), _callbackQueue, operation);
+    }
+}
+
+- (void)OE_removeHandlerForType:(m64p_core_param)paramType usingBlock:(BOOL(^)(m64p_core_param, int))block {
+    if (!block) return;
+    dispatch_async(_callbackQueue, ^{
+        [_callbackHandlers[@(paramType)] removeObject:block];
     });
 }
 
