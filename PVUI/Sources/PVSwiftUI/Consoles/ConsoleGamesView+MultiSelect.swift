@@ -220,26 +220,41 @@ extension ConsoleGamesView {
                 }
             }
         } label: {
-            Text(gamesViewModel.isMultiSelectMode ? "Done" : "Select")
-                .font(.caption.weight(.semibold))
-                .padding(.horizontal, 10)
-                .padding(.vertical, 5)
-                .frame(minWidth: 44, minHeight: 44)
-                .background(
-                    RoundedRectangle(cornerRadius: 6)
-                        .fill(gamesViewModel.isMultiSelectMode
-                              ? Color.retroPink.opacity(0.2)
-                              : Color.retroPurple.opacity(0.15))
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 6)
-                                .strokeBorder(gamesViewModel.isMultiSelectMode
-                                              ? Color.retroPink
-                                              : Color.retroBlue,
-                                              lineWidth: 1)
-                        )
-                )
-                .foregroundColor(gamesViewModel.isMultiSelectMode ? .retroPink : .retroBlue)
-                .contentShape(Rectangle())
+            if usesCompactPhoneChrome {
+                Text(gamesViewModel.isMultiSelectMode ? "Done" : "Select")
+                    .font(.caption.weight(.semibold))
+                    .foregroundStyle(gamesViewModel.isMultiSelectMode ? Color.retroPink : Color.retroBlue)
+                    .padding(.horizontal, 10)
+                    .padding(.vertical, 6)
+                    .background {
+                        let shape = RoundedRectangle(cornerRadius: 8)
+                        shape.fill(Color.retroPurple.opacity(0.12))
+                            .overlay { shape.strokeBorder(LibraryLayout.chromeBorder) }
+                    }
+                    .frame(minWidth: 44, minHeight: 44)
+                    .contentShape(Rectangle())
+            } else {
+                Text(gamesViewModel.isMultiSelectMode ? "Done" : "Select")
+                    .font(.caption.weight(.semibold))
+                    .padding(.horizontal, 10)
+                    .padding(.vertical, 5)
+                    .frame(minWidth: 44, minHeight: 44)
+                    .background(
+                        RoundedRectangle(cornerRadius: 6)
+                            .fill(gamesViewModel.isMultiSelectMode
+                                  ? Color.retroPink.opacity(0.2)
+                                  : Color.retroPurple.opacity(0.15))
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 6)
+                                    .strokeBorder(gamesViewModel.isMultiSelectMode
+                                                  ? Color.retroPink
+                                                  : Color.retroBlue,
+                                                  lineWidth: 1)
+                            )
+                    )
+                    .foregroundColor(gamesViewModel.isMultiSelectMode ? .retroPink : .retroBlue)
+                    .contentShape(Rectangle())
+            }
         }
     }
 

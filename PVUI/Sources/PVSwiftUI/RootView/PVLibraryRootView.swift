@@ -446,13 +446,28 @@ private struct LibraryHeader: View {
         .font(.system(size: 16, weight: .medium))
         .foregroundStyle(Color(themeManager.currentPalette.gameLibraryText))
         .padding(.horizontal, 12)
-        .background(Color.retroBlack.opacity(0.85).ignoresSafeArea(.container, edges: .top))
+        .background {
+            if LibraryLayout.usesCompactPhoneChrome(verticalSizeClass) {
+                let surface = Color(themeManager.currentPalette.gameLibraryBackground)
+                LinearGradient(
+                    stops: [.init(color: surface, location: 0), .init(color: surface, location: 0.65), .init(color: .clear, location: 1)],
+                    startPoint: .top,
+                    endPoint: .bottom
+                )
+                .ignoresSafeArea(.container, edges: .top)
+            } else {
+                Color.retroBlack.opacity(0.85).ignoresSafeArea(.container, edges: .top)
+            }
+        }
     }
 
     private func headerAction(_ symbol: String, title: String, action: @escaping () -> Void) -> some View {
         Button(action: action) {
             Image(systemName: symbol)
-                .frame(width: 32, height: 32)
+                .frame(
+                    width: LibraryLayout.usesCompactPhoneChrome(verticalSizeClass) ? 28 : 32,
+                    height: LibraryLayout.usesCompactPhoneChrome(verticalSizeClass) ? 28 : 32
+                )
                 .background(.ultraThinMaterial, in: Circle())
                 .frame(width: LibraryChrome.controlSize, height: LibraryChrome.controlSize)
                 .contentShape(Rectangle())

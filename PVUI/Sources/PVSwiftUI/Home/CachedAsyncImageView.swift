@@ -41,6 +41,7 @@ struct CachedAsyncImageView: View {
     let fallbackImage: UIImage
     let height: CGFloat
     let zoomFactor: CGFloat
+    var backdropColor: Color?
 
     @Environment(\.displayScale) private var displayScale
     @State private var loadedImage: UIImage?
@@ -57,7 +58,9 @@ struct CachedAsyncImageView: View {
 
     var body: some View {
         Group {
-            if let image = loadedImage {
+            if let backdropColor {
+                compactImage(backdropColor: backdropColor)
+            } else if let image = loadedImage {
                 Image(uiImage: image)
                     .resizable()
                     .aspectRatio(contentMode: .fill)
@@ -84,6 +87,38 @@ struct CachedAsyncImageView: View {
                 await loadImageIfNeeded()
             }
         }
+    }
+
+    /// Draw the same downsampled screenshot twice, so the backdrop needs no additional decode.
+    private func compactImage(backdropColor: Color) -> some View {
+        GeometryReader { geometry in
+            let image = Image(uiImage: loadedImage ?? fallbackImage).resizable()
+            ZStack(alignment: .leading) {
+                backdropColor
+                if loadedImage != nil {
+                    image.scaledToFill()
+                        .frame(width: geometry.size.width, height: height)
+                        .blur(radius: 15)
+                        .clipped()
+                        .overlay {
+                            LinearGradient(
+                                colors: [backdropColor.opacity(0.52), backdropColor.opacity(0.94)],
+                                startPoint: .leading,
+                                endPoint: .trailing
+                            )
+                        }
+                }
+                image.scaledToFit()
+                    .frame(width: 62, height: 38)
+                    .background(backdropColor.opacity(0.8), in: .rect(cornerRadius: 7))
+                    .clipShape(.rect(cornerRadius: 7))
+                    .padding(.leading, 7)
+            }
+            .frame(width: geometry.size.width, height: height)
+            .clipped()
+        }
+        .frame(height: height)
+        .accessibilityHidden(true)
     }
 
     private func loadImageIfNeeded() async {

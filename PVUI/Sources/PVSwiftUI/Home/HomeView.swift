@@ -172,13 +172,15 @@ struct HomeView: SwiftUI.View {
         if viewModel.libraryDestination != .home || !searchText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
             return allGames.isEmpty ? [] : [.allGames]
         }
-        return [
-            (showRecentSaveStates && !recentSaveStateIDs.isEmpty) ? .recentSaveStates : nil,
-            (showRecentGames && !recentlyPlayedGames.isEmpty) ? .recentlyPlayedGames : nil,
-            (showFavorites && !favorites.isEmpty) ? .favorites : nil,
-            !mostPlayed.isEmpty ? .mostPlayed : nil,
-            !allGames.isEmpty ? .allGames : nil
-        ].compactMap { $0 }
+        let saves: HomeSectionType? = showRecentSaveStates && !recentSaveStateIDs.isEmpty ? .recentSaveStates : nil
+        let games: HomeSectionType? = allGames.isEmpty ? nil : .allGames
+        let shelves: [HomeSectionType?] = [
+            showFavorites && !favorites.isEmpty ? .favorites : nil,
+            showRecentGames && !recentlyPlayedGames.isEmpty ? .recentlyPlayedGames : nil,
+            mostPlayed.isEmpty ? nil : .mostPlayed
+        ]
+        let sections = usesCompactPhoneLayout ? [saves, games] + shelves : [saves] + shelves + [games]
+        return sections.compactMap { $0 }
     }
 
     private var isLibraryCompletelyEmpty: Bool {
@@ -206,6 +208,10 @@ struct HomeView: SwiftUI.View {
         #else
         false
         #endif
+    }
+
+    private var usesCompactPhoneLayout: Bool {
+        LibraryLayout.usesCompactPhoneChrome(verticalSizeClass)
     }
 
     var body: some SwiftUI.View {
@@ -246,22 +252,28 @@ struct HomeView: SwiftUI.View {
                                     .padding(.horizontal)
                                     .padding(.vertical, 4)
                             }
-                            if viewModel.libraryDestination == .home && searchText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+                            let showsShelves = viewModel.libraryDestination == .home && searchText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+                            if showsShelves {
                                 continuesSection()
                                     .id("section_continues")
-                                favoritesSection()
-                                    .id("section_favorites")
-                                recentlyPlayedSection()
-                                    .id("section_recent")
-                                mostPlayedSection()
+                                if !usesCompactPhoneLayout {
+                                    gameShelves
+                                }
                             }
                             if usesCompactChrome && !allGames.isEmpty {
-                                Text(viewModel.libraryDestination == .home ? String(localized: "All Games") : viewModel.libraryDestination.title)
-                                    .foregroundStyle(themeManager.currentPalette.gameLibraryText.swiftUIColor.opacity(0.72))
-                                    .retroPauseSectionHeaderTypography()
-                                    .frame(maxWidth: .infinity, alignment: .leading)
-                                    .padding(.horizontal, 10)
-                                    .padding(.vertical, 8)
+                                HStack(spacing: 8) {
+                                    Text(viewModel.libraryDestination == .home ? String(localized: "All Games") : viewModel.libraryDestination.title)
+                                        .foregroundStyle(themeManager.currentPalette.gameLibraryText.swiftUIColor.opacity(0.86))
+                                        .font(.subheadline.weight(.semibold))
+                                    if usesCompactPhoneLayout {
+                                        Text(LibraryLayout.gameCountText(unfilteredGames.count))
+                                            .font(.caption)
+                                            .foregroundStyle(.secondary)
+                                    }
+                                }
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                                .padding(.horizontal, 10)
+                                .padding(.vertical, 3)
                             }
                             if allGames.isEmpty && !searchText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
                                 Text("No games match this filter")
@@ -273,6 +285,9 @@ struct HomeView: SwiftUI.View {
                             } else {
                                 showGamesList(allGames)
                                     .id("section_allgames")
+                            }
+                            if showsShelves && usesCompactPhoneLayout {
+                                gameShelves
                             }
                         }
                         .padding(.bottom, LibraryLayout.pageIndexClearance + floatingSelectorClearance)
@@ -748,7 +763,7 @@ struct HomeView: SwiftUI.View {
             usesCompactMenu: true,
             gameCount: unfilteredGames.count,
             pageTitle: viewModel.libraryDestination == .home ? String(localized: "Library") : viewModel.libraryDestination.title,
-            pageSubtitle: "\(unfilteredGames.count) games",
+            pageSubtitle: LibraryLayout.gameCountText(unfilteredGames.count),
             filterText: isSearchFieldVisible ? $librarySearch.query : nil,
             toggleFilterAction: { self.rootDelegate?.showUnderConstructionAlert() },
             toggleSortAction: {
@@ -1093,43 +1108,68 @@ struct HomeView: SwiftUI.View {
     }
 
     @ViewBuilder
+    private var gameShelves: some View {
+        favoritesSection().id("section_favorites")
+        recentlyPlayedSection().id("section_recent")
+        mostPlayedSection()
+    }
+
+    private var recentSaveCards: some View {
+        HomeContinueSection(
+            rootDelegate: rootDelegate,
+            consoleIdentifier: nil,
+            parentFocusedSection: $focusedSection,
+            parentFocusedItem: $focusedItemInSection
+        )
+    }
+
+    @ViewBuilder
     private func continuesSection() -> some View {
         if showRecentSaveStates && !recentSaveStateIDs.isEmpty {
-            VStack(alignment: .leading, spacing: 0) {
-                // Section header with title and "Show All" button
-                HStack {
-                    Text(String(localized: "RECENT SAVES"))
-                        .foregroundColor(themeManager.currentPalette.gameLibraryText.swiftUIColor.opacity(0.72))
-                        .retroPauseSectionHeaderTypography()
-                    Spacer()
-                    if !recentSaveStates.isEmpty {
-                        Button {
-                            showAllSavesBrowser = true
-                        } label: {
-                            Text(String(localized: "Show All"))
-                                .retroPauseSectionHeaderTypography()
-                                .foregroundColor(themeManager.currentPalette.defaultTintColor.swiftUIColor)
-                        }
-                        .buttonStyle(.plain)
+            if usesCompactPhoneLayout {
+                HStack(spacing: 4) {
+                    recentSaveCards
+                    Button {
+                        showAllSavesBrowser = true
+                    } label: {
+                        Image(systemName: "clock.arrow.circlepath")
+                            .frame(width: 44, height: 44)
+                            .contentShape(Rectangle())
                     }
+                    .buttonStyle(.plain)
+                    .accessibilityLabel("Show All Saves")
                 }
                 .padding(.horizontal, 10)
-                .padding(.top, usesCompactChrome ? 0 : 20)
-                .padding(.bottom, usesCompactChrome ? 2 : 14)
-
-                HomeContinueSection(
-                    rootDelegate: rootDelegate,
-                    consoleIdentifier: nil,
-                    parentFocusedSection: Binding(
-                        get: { self.focusedSection },
-                        set: { self.focusedSection = $0 }
-                    ),
-                    parentFocusedItem: Binding(
-                        get: { self.focusedItemInSection },
-                        set: { self.focusedItemInSection = $0 }
-                    )
-                )
+            } else {
+                standardContinuesSection
             }
+        }
+    }
+
+    private var standardContinuesSection: some View {
+        VStack(alignment: .leading, spacing: 0) {
+            // Section header with title and "Show All" button
+            HStack {
+                Text(String(localized: "RECENT SAVES"))
+                    .foregroundColor(themeManager.currentPalette.gameLibraryText.swiftUIColor.opacity(0.72))
+                    .retroPauseSectionHeaderTypography()
+                Spacer()
+                if !recentSaveStates.isEmpty {
+                    Button {
+                        showAllSavesBrowser = true
+                    } label: {
+                        Text(String(localized: "Show All"))
+                            .retroPauseSectionHeaderTypography()
+                            .foregroundColor(themeManager.currentPalette.defaultTintColor.swiftUIColor)
+                    }
+                    .buttonStyle(.plain)
+                }
+            }
+            .padding(.horizontal, 10)
+            .padding(.top, usesCompactChrome ? 0 : 20)
+            .padding(.bottom, usesCompactChrome ? 2 : 14)
+
+            recentSaveCards
         }
     }
 
