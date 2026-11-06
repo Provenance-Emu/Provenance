@@ -923,56 +923,7 @@ struct HomeView: SwiftUI.View {
             return
         }
 
-        // Handle navigation within current section first
-        let items = getItemsForSection(currentSection)
-        if let currentItem = focusedItemInSection,
-           let currentIndex = items.firstIndex(of: currentItem) {
-
-            if currentSection == .allGames {
-                // Grid navigation. Derive the step from the same `itemsPerRow` the
-                // `LazyVGrid` in `showGamesGrid` uses — a hardcoded guess desyncs focus
-                // from the drawn grid the moment the user changes the library zoom.
-                // In list mode there is exactly one item per row.
-                let itemsPerRow = viewModel.viewGamesAsGrid ? self.itemsPerRow : 1
-                if yValue > 0 { // Moving up
-                    let newIndex = currentIndex - itemsPerRow
-                    if newIndex >= 0 {
-                        focusedItemInSection = items[newIndex]
-                        DLOG("🎮 HomeView: Moving up in grid to index: \(newIndex)")
-                        return
-                    }
-                    // If we can't move up in the grid, try moving to previous section
-                    if let prevSection = getPreviousSection(from: currentSection) {
-                        focusedSection = prevSection
-                        focusedItemInSection = getLastItemInSection(prevSection)
-                        DLOG("🎮 HomeView: Moving to previous section: \(prevSection)")
-                    }
-                } else { // Moving down
-                    let newIndex = currentIndex + itemsPerRow
-                    if newIndex < items.count {
-                        focusedItemInSection = items[newIndex]
-                        DLOG("🎮 HomeView: Moving down in grid to index: \(newIndex)")
-                    }
-                }
-            } else {
-                // Linear navigation for non-grid sections
-                handleVerticalNavigationWithinSection(currentSection, direction: yValue)
-            }
-        }
-    }
-
-    private func getPreviousSection(from currentSection: HomeSectionType) -> HomeSectionType? {
-        let sections = availableSections
-        guard let currentIndex = sections.firstIndex(of: currentSection),
-              currentIndex > 0 else { return nil }
-        return sections[currentIndex - 1]
-    }
-
-    private func getNextSection(from currentSection: HomeSectionType) -> HomeSectionType? {
-        let sections = availableSections
-        guard let currentIndex = sections.firstIndex(of: currentSection),
-              currentIndex < sections.count - 1 else { return nil }
-        return sections[currentIndex + 1]
+        handleVerticalNavigationWithinSection(currentSection, direction: yValue)
     }
 
     private func handleHorizontalNavigation(_ xValue: Float) {
@@ -1290,8 +1241,10 @@ struct HomeView: SwiftUI.View {
                         }
                     }
                 } else { // Moving down
-                    let newIndex = currentIndex + itemsPerRow
-                    if newIndex < games.count {
+                    let lastIndex = games.count - 1
+                    if currentIndex / itemsPerRow < lastIndex / itemsPerRow {
+                        // The next row may end before the current column.
+                        let newIndex = min(currentIndex + itemsPerRow, lastIndex)
                         focusedItemInSection = games[newIndex].id
                         DLOG("Moving down in grid to index: \(newIndex)")
                     } else {
