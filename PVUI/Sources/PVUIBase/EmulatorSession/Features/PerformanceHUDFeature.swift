@@ -249,7 +249,7 @@ public final class PerformanceHUDFeature: EmulatorSessionFeature {
         let metrics = Self.metrics(emulationFPS: core.emulationFPS,
                                    frameInterval: core.frameInterval,
                                    drawTimeMilliseconds: gpu.timeSinceLastDraw * 1000,
-                                   gpuFPS: (gpu as? PVMetalViewController)?.framesPerSecond ?? 0,
+                                   gpuFPS: Double((gpu as? PVMetalViewController)?.framesPerSecond ?? 0),
                                    renderFPS: core.renderFPS)
         let memory = Self.memoryUsage()
         label.text = Self.labelText(metrics, cpuPercent: Self.cpuUsage(), memoryUsed: memory.used, memoryTotal: memory.total)
