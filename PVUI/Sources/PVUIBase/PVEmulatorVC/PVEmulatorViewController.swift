@@ -453,7 +453,9 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, Emulato
         }
         NSSetUncaughtExceptionHandler(nil)
         staticSelf = nil
-        gpuViewController.dismiss(animated: false)
+        MainActor.assumeIsolated {
+            gpuViewController.dismiss(animated: false)
+        }
         core.touchViewController = nil
         #if os(iOS) && !targetEnvironment(macCatalyst) && !os(macOS)
         // deinit is nonisolated, but UIViewController always deinits on the main thread.
