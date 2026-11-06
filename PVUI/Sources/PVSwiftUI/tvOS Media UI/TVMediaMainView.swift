@@ -774,7 +774,9 @@ struct TVMediaMainView: View {
                     gameActions.systemPickerGame = nil
                     libraryModel.refresh()
                 } }
-            ))
+            ), onMoveCompleted: { newSystem, result in
+                handleSystemMove(of: game, to: newSystem, result: result)
+            })
         case .renameGame:
             EmptyView()
         case .gameInfo:
@@ -868,6 +870,30 @@ struct TVMediaMainView: View {
             #else
             EmptyView()
             #endif
+        }
+    }
+
+    /// Called by the system picker once a move was attempted. A success reloads both systems'
+    /// shelves, since `libraryModel.refresh()` only reloads the system and favorites lists;
+    /// a failure is shown, because the picker closes either way.
+    private func handleSystemMove(of game: PVGame, to system: PVSystem, result: Result<Void, Error>) {
+        let oldIdentifier = game.systemIdentifier
+        let newIdentifier = system.identifier
+        let newName = system.name
+        let title = game.title
+        Task { @MainActor in
+            switch result {
+            case .success:
+                await libraryModel.refreshAfterGameMove(from: oldIdentifier, to: newIdentifier)
+            case .failure(let error):
+                // The picker is still dismissing; an alert presented now is dropped.
+                try? await Task.sleep(for: .milliseconds(500))
+                SceneCoordinator.shared.alertState.show(
+                    title: "Move Failed",
+                    message: "\(title) could not be moved to \(newName): \(error.localizedDescription)",
+                    type: .error
+                )
+            }
         }
     }
 
@@ -994,6 +1020,15 @@ final class TVMediaLibraryModel: ObservableObject {
     func refreshAfterGameRename(systemIdentifier: String) async {
         await loadFavorites()
         await loadGamesForSystemAsync(identifier: systemIdentifier)
+    }
+
+    /// Reloads what a system move changed: both systems' game lists and the favorites.
+    func refreshAfterGameMove(from oldIdentifier: String, to newIdentifier: String) async {
+        await loadFavorites()
+        await loadGamesForSystemAsync(identifier: oldIdentifier)
+        if newIdentifier != oldIdentifier {
+            await loadGamesForSystemAsync(identifier: newIdentifier)
+        }
     }
 
     func selectSystem(identifier: String) {
@@ -1213,8 +1248,18 @@ final class TVMediaGameActions: ObservableObject, GameContextMenuDelegate {
     }
 
     func gameContextMenu(_ menu: GameContextMenu, didRequestMoveToSystemFor game: PVGame) {
+        let frozen = game.isFrozen ? game : game.freeze()
         Task { @MainActor in
-            systemPickerGame = game.isFrozen ? game : game.freeze()
+            // A request whose presentation was dropped leaves the same game set, so setting it
+            // again would not fire onChange; clearing it first also clears the stale modal.
+            if systemPickerGame != nil {
+                systemPickerGame = nil
+                try? await Task.sleep(for: .milliseconds(100))
+            }
+            // tvOS drops a presentation requested while the long-press menu is still
+            // dismissing (see the netplay lobby request above).
+            try? await Task.sleep(for: .milliseconds(250))
+            systemPickerGame = frozen
         }
     }
 
