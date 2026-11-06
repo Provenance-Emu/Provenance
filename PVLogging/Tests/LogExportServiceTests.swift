@@ -305,6 +305,22 @@ struct LogExportTextTests {
         #expect(!text.contains(LogExportHeader.title))
         #expect(IncomingLogFile.isExportedLogText(text))
     }
+
+    @Test("Text export keeps the valid prefix when its limit splits a UTF-8 character")
+    func truncatesAtUTF8Boundary() throws {
+        let fixture = try ExportFixture()
+        let prefix = "First line\n" + String(repeating: "x", count: LogExportService.maxInlinedBytes - 12)
+        try fixture.write(prefix + "🎮\n", to: "session.log", in: fixture.locations.sessionLogsDirectory)
+        let options = LogExportOptions(format: .text, includeAppLogs: false, includeDeviceInfo: false,
+                                       includeCrashReports: false, includeCoreLogs: false)
+
+        let result = try fixture.service.export(entries: [], options: options)
+        let text = try String(contentsOf: result.url, encoding: .utf8)
+
+        #expect(text.contains(prefix))
+        #expect(text.contains("(truncated after"))
+        #expect(!text.contains("(skipped: not UTF-8"))
+    }
 }
 
 // MARK: - Zip export
@@ -383,6 +399,12 @@ struct LogExportZipTests {
         #expect(!fm.fileExists(atPath: staged.directory.appendingPathComponent("app_logs.txt").path))
         #expect(!fm.fileExists(atPath: staged.directory.appendingPathComponent("session_logs").path))
         #expect(staged.manifest.files.map(\.path) == ["crash_reports/c.json"])
+        let data = try Data(contentsOf: staged.directory.appendingPathComponent(IncomingLogFile.bundleManifestName))
+        let json = try #require(JSONSerialization.jsonObject(with: data) as? [String: Any])
+        #expect(json["header"] == nil)
+        let manifest = try LogExportManifest.decoder().decode(LogExportManifest.self, from: data)
+        #expect(manifest.header == nil)
+        #expect(manifest.files.allSatisfy { $0.sourcePath == nil })
         let entries = try fm.contentsOfDirectory(atPath: staged.directory.path)
         #expect(IncomingLogFile.classify(fileExtension: "zip", archiveEntryPaths: entries) == .logBundle)
     }

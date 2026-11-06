@@ -33,10 +33,11 @@ public struct LogExportManifest: Codable, Equatable, Sendable {
     public static let currentVersion = 1
 
     public let version: Int
-    public let header: LogExportHeader
+    /// Device and app details, included only when requested.
+    public let header: LogExportHeader?
     public let files: [Entry]
 
-    public init(version: Int = LogExportManifest.currentVersion, header: LogExportHeader, files: [Entry]) {
+    public init(version: Int = LogExportManifest.currentVersion, header: LogExportHeader?, files: [Entry]) {
         self.version = version
         self.header = header
         self.files = files
@@ -171,7 +172,7 @@ public struct LogExportService: Sendable {
 
         case .zip:
             let staged = try stage(entries: entries, options: options, header: resolvedHeader, baseName: baseName)
-            defer { try? fileManager.removeItem(at: staged.directory) }
+            defer { try? fileManager.removeItem(at: staged.directory.deletingLastPathComponent()) }
             let url = outputDirectory.appendingPathComponent("\(baseName).\(options.format.fileExtension)")
             try? fileManager.removeItem(at: url)
             try zip(directory: staged.directory, to: url)
@@ -232,11 +233,20 @@ public struct LogExportService: Sendable {
             return "(unreadable)"
         }
         defer { try? handle.close() }
-        let data = (try? handle.read(upToCount: Self.maxInlinedBytes)) ?? Data()
-        guard let text = String(data: data, encoding: .utf8) else {
+        var data = (try? handle.read(upToCount: Self.maxInlinedBytes)) ?? Data()
+        let truncated = file.size > Int64(Self.maxInlinedBytes)
+        var decoded = String(data: data, encoding: .utf8)
+        if truncated {
+            // The byte limit can leave at most three bytes of a partial UTF-8 character.
+            for _ in 0..<3 where decoded == nil && !data.isEmpty {
+                data.removeLast()
+                decoded = String(data: data, encoding: .utf8)
+            }
+        }
+        guard let text = decoded else {
             return "(skipped: not UTF-8 text, \(file.size) bytes)"
         }
-        if file.size > Int64(Self.maxInlinedBytes) {
+        if truncated {
             return text + "\n(truncated after \(Self.maxInlinedBytes) of \(file.size) bytes)"
         }
         return text
@@ -254,9 +264,15 @@ public struct LogExportService: Sendable {
                options: LogExportOptions,
                header: LogExportHeader,
                baseName: String) throws -> StagedBundle {
-        let root = fileManager.temporaryDirectory
+        let stagingDirectory = fileManager.temporaryDirectory
             .appendingPathComponent("ProvenanceLogExportStaging-\(UUID().uuidString)", isDirectory: true)
-            .appendingPathComponent(baseName, isDirectory: true)
+        let root = stagingDirectory.appendingPathComponent(baseName, isDirectory: true)
+        var staged = false
+        defer {
+            if !staged {
+                try? fileManager.removeItem(at: stagingDirectory)
+            }
+        }
         try fileManager.createDirectory(at: root, withIntermediateDirectories: true)
 
         var manifestEntries: [LogExportManifest.Entry] = []
@@ -286,14 +302,21 @@ public struct LogExportService: Sendable {
             let destination = root.appendingPathComponent(folder, isDirectory: true).appendingPathComponent(relative)
             try fileManager.createDirectory(at: destination.deletingLastPathComponent(), withIntermediateDirectories: true)
             // The current session file is open for writing; copying still captures what has been flushed.
-            try fileManager.copyItem(at: file.url, to: destination)
+            do {
+                try fileManager.copyItem(at: file.url, to: destination)
+            } catch let error as CocoaError where error.code == .fileNoSuchFile || error.code == .fileReadNoSuchFile {
+                // A session file can rotate between enumeration and copy.
+                continue
+            }
             manifestEntries.append(.init(path: "\(folder)/\(relative)", kind: file.kind.rawValue,
-                                         size: file.size, modificationDate: file.modificationDate, sourcePath: file.url.path))
+                                         size: file.size, modificationDate: file.modificationDate,
+                                         sourcePath: options.includeDeviceInfo ? file.url.path : nil))
         }
 
-        let manifest = LogExportManifest(header: header, files: manifestEntries)
+        let manifest = LogExportManifest(header: options.includeDeviceInfo ? header : nil, files: manifestEntries)
         let data = try LogExportManifest.encoder().encode(manifest)
         try data.write(to: root.appendingPathComponent(IncomingLogFile.bundleManifestName), options: .atomic)
+        staged = true
         return StagedBundle(directory: root, manifest: manifest)
     }
 
