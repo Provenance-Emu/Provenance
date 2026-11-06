@@ -280,6 +280,10 @@ struct ConsoleGamesView: SwiftUI.View {
         }
     }
 
+    var usesCompactPhoneChrome: Bool {
+        LibraryLayout.usesCompactPhoneChrome(verticalSizeClass)
+    }
+
     private var floatingControlsClearance: CGFloat {
         LibraryLayout.pageIndexClearance + biosOverlayHeight + floatingSelectorClearance
     }
@@ -289,20 +293,19 @@ struct ConsoleGamesView: SwiftUI.View {
         ScrollViewWithOffset {
             ScrollViewReader { proxy in
                 LazyVStack(spacing: 0) {
-                    if gamesViewModel.searchText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
-                        continueSection()
-                            .id("section_continues")
-                            .padding(.horizontal, 12)
-                        favoritesSection()
-                            .id("section_favorites")
-                            .padding(.horizontal, 12)
-                        recentlyPlayedSection()
-                            .id("section_recent")
-                            .padding(.horizontal, 12)
+                    let isUnfiltered = gamesViewModel.searchText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+                    if isUnfiltered {
+                        continueSection().id("section_continues")
+                        if !usesCompactPhoneChrome {
+                            gameShelves
+                        }
                     }
                     gamesSection()
                         .id("section_allgames")
                         .padding(.horizontal, 12)
+                    if isUnfiltered && usesCompactPhoneChrome {
+                        gameShelves
+                    }
                 }
                 // Keep the final row reachable above the floating BIOS and system controls.
                 .padding(.bottom, floatingControlsClearance)
@@ -319,6 +322,16 @@ struct ConsoleGamesView: SwiftUI.View {
                 }
             }
         }
+    }
+
+    @ViewBuilder
+    private var gameShelves: some View {
+        favoritesSection()
+            .id("section_favorites")
+            .padding(.horizontal, 12)
+        recentlyPlayedSection()
+            .id("section_recent")
+            .padding(.horizontal, 12)
     }
 
     @ViewBuilder
@@ -1432,7 +1445,7 @@ extension ConsoleGamesView {
     /// The compact bar replaces the separate system heading only on iOS.
     private var compactSystemSummary: (title: String, subtitle: String)? {
         #if os(iOS)
-        (console.name, "\(allGamesModels.count) games · \(console.manufacturer)")
+        (console.name, "\(LibraryLayout.gameCountText(allGamesModels.count)) · \(console.manufacturer)")
         #else
         nil
         #endif
@@ -1500,9 +1513,12 @@ extension ConsoleGamesView {
                     parentFocusedSection: $gamesViewModel.focusedSection,
                     parentFocusedItem: $gamesViewModel.focusedItemInSection
                 )
-                HomeDividerView()
+                if !usesCompactPhoneChrome {
+                    HomeDividerView()
+                }
             }
         }
+        .padding(.horizontal, 12)
     }
 
     @ViewBuilder
@@ -1580,25 +1596,30 @@ extension ConsoleGamesView {
     private func titleBar() -> some View {
         HStack(spacing: 10) {
             VStack(alignment: .leading, spacing: 3) {
-                Text("All \(console.name) games")
+                Text(usesCompactPhoneChrome ? console.name : String(localized: "All \(console.name) games"))
                     .font(.system(size: 16, weight: .semibold))
                     .foregroundStyle(Color(themeManager.currentPalette.gameLibraryText))
-                if console.releaseYear > 1970 {
+                if !usesCompactPhoneChrome && console.releaseYear > 1970 {
                     Text("\(console.manufacturer) · \(String(console.releaseYear))")
                         .font(.caption)
                         .foregroundStyle(.secondary)
                 }
             }
-            Spacer(minLength: 0)
-            Text("\(allGamesModels.count)")
+            if !usesCompactPhoneChrome {
+                Spacer(minLength: 0)
+            }
+            Text(usesCompactPhoneChrome ? LibraryLayout.gameCountText(allGamesModels.count) : "\(allGamesModels.count)")
                 .font(.caption)
                 .foregroundStyle(.secondary)
+            if usesCompactPhoneChrome {
+                Spacer(minLength: 0)
+            }
             #if !os(tvOS)
             multiSelectToggleButton
             #endif
         }
         .frame(minHeight: 44)
-        .padding(.vertical, 6)
+        .padding(.vertical, usesCompactPhoneChrome ? 0 : 6)
         .contentShape(Rectangle())
     }
 

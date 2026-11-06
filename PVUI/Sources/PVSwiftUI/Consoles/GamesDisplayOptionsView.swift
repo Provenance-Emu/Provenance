@@ -82,6 +82,11 @@ struct GamesDisplayOptionsView: SwiftUI.View {
     var pageSubtitle: String?
     var filterText: Binding<String>?
     @FocusState private var isFilterFocused: Bool
+    @Environment(\.verticalSizeClass) private var verticalSizeClass
+
+    private var usesSingleLine: Bool {
+        LibraryLayout.usesCompactPhoneChrome(verticalSizeClass)
+    }
 
     var toggleFilterAction: () -> Void
     var toggleSortAction: () -> Void
@@ -132,19 +137,26 @@ struct GamesDisplayOptionsView: SwiftUI.View {
                     if let pageTitle {
                         VStack(alignment: .leading, spacing: 2) {
                             if let filterText {
-                                TextField("Filter \(pageTitle)", text: filterText)
-                                    .focused($isFilterFocused)
-                                    .onSubmit { isFilterFocused = false }
+                                HStack(spacing: 6) {
+                                    if usesSingleLine {
+                                        Image(systemName: "magnifyingglass")
+                                            .accessibilityHidden(true)
+                                    }
+                                    TextField("Filter \(pageTitle)", text: filterText)
+                                        .focused($isFilterFocused)
+                                        .onSubmit { isFilterFocused = false }
                                     #if os(iOS)
-                                    .textInputAutocapitalization(.never)
-                                    .autocorrectionDisabled()
-                                    .submitLabel(.done)
+                                        .textInputAutocapitalization(.never)
+                                        .autocorrectionDisabled()
+                                        .submitLabel(.done)
                                     #endif
-                                    .accessibilityLabel("Filter \(pageTitle) games")
+                                        .accessibilityLabel("Filter \(pageTitle) games")
+                                }
+                                .foregroundStyle(usesSingleLine ? Color.primary : iconTint)
                             } else {
                                 Text(pageTitle).lineLimit(1)
                             }
-                            if let pageSubtitle {
+                            if !usesSingleLine, let pageSubtitle {
                                 Text(pageSubtitle)
                                     .font(.caption)
                                     .foregroundStyle(.secondary)
@@ -188,10 +200,16 @@ struct GamesDisplayOptionsView: SwiftUI.View {
                 }
                 .foregroundStyle(iconTint)
                 .padding(.horizontal, pageTitle == nil ? 0 : 10)
-                .padding(.vertical, pageTitle == nil ? 0 : 4)
+                .padding(.vertical, pageTitle == nil || usesSingleLine ? 0 : 4)
                 .background {
                     if pageTitle != nil {
-                        RoundedRectangle(cornerRadius: 12).fill(.ultraThinMaterial)
+                        let shape = RoundedRectangle(cornerRadius: 12)
+                        if usesSingleLine {
+                            shape.fill(Color(themeManager.currentPalette.gameLibraryHeaderBackground))
+                                .overlay { shape.strokeBorder(LibraryLayout.chromeBorder) }
+                        } else {
+                            shape.fill(.ultraThinMaterial)
+                        }
                     }
                 }
             } else {
