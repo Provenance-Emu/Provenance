@@ -251,6 +251,14 @@ struct ImportTaskRowView: View {
         }
     }
 
+#if os(tvOS)
+    /// tvOS offers a system for every item the importer could not place, including a plain
+    /// `.failure` (no system detected). iOS keeps its narrower `needsSystemSelection`.
+    private var tvOSCanChooseSystem: Bool {
+        ImportQueueResolver.canChooseSystem(for: item)
+    }
+#endif
+
     var mainView: some View {
         let base = ZStack {
             // Background with retrowave styling
@@ -312,7 +320,7 @@ struct ImportTaskRowView: View {
     private func tvOSMainRow(base: some View) -> some View {
         HStack(alignment: .center, spacing: 12) {
             Group {
-                if needsSystemSelection {
+                if tvOSCanChooseSystem {
                     /// `.borderless` tends to activate more reliably than `.plain` with the Siri Remote. A Button is
                     /// already focusable; adding `.focusable(true)` wraps it in a second focus target that takes
                     /// Select, so the action never fires (#3724). `.focused` alone keeps the retro border in sync.

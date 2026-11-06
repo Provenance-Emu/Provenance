@@ -2726,7 +2726,8 @@ public final class GameImporter: GameImporting, ObservableObject {
         // Detect ROM patch files (IPS, BPS, UPS, xdelta, etc.)
         if isPatch(item) { return .patch }
 
-        if !item.url.pathExtension.isEmpty { return .game } // Default to .game if has an extension and not other types
+        // A manual system choice also lets an extensionless ROM use the normal game import path.
+        if !item.url.pathExtension.isEmpty || item.userChosenSystem != nil { return .game }
         return .unknown
     }
 
@@ -3432,30 +3433,20 @@ public final class GameImporter: GameImporting, ObservableObject {
         // Only do system detection for non-BIOS files
         ILOG("About to determine systems for: \(fileName)")
         let systemsStartTime = Date()
-        let systems: [SystemIdentifier]
+        let detectedSystems: [SystemIdentifier]
         do {
-            systems = try await gameImporterSystemsService.determineSystems(for: item)
-            let systemsDuration = Date().timeIntervalSince(systemsStartTime)
-            ILOG("Determined systems for \(fileName) in \(String(format: "%.2f", systemsDuration))s: \(systems.map { $0.rawValue }.joined(separator: ", "))")
-            guard !systems.isEmpty else {
-                throw GameImporterError.noSystemMatched
-            }
-        } catch {
-            // Handle system determination failure
-            ELOG("Failed to determine systems for Import Item: \(item.url.lastPathComponent) - \(error.localizedDescription)")
+            detectedSystems = try await gameImporterSystemsService.determineSystems(for: item)
+        } catch GameImporterError.noSystemMatched {
+            detectedSystems = []
+        }
+        let systemsDuration = Date().timeIntervalSince(systemsStartTime)
+        ILOG("Determined systems for \(fileName) in \(String(format: "%.2f", systemsDuration))s: \(detectedSystems.map { $0.rawValue }.joined(separator: ", "))")
 
-            // Set status on main actor for thread safety
-            await MainActor.run {
-                item.status = .failure(error: GameImporterError.noSystemMatched)
-            }
-
-            // Clean up file if it's in imports directory
+        let systems = item.systems(applyingUserChoiceTo: detectedSystems)
+        guard !systems.isEmpty else {
             await cleanupFailedImportFile(item.url)
-
             throw GameImporterError.noSystemMatched
         }
-
-        //update item's candidate systems with the result of determineSystems
         item.systems = systems
 
         //this might be a conflict if we can't infer what to do
