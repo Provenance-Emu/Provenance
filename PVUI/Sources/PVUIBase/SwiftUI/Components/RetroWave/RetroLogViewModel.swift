@@ -51,7 +51,11 @@ public final class RetroLogViewModel: ObservableObject {
 
     // MARK: - Initialization
 
-    public init(exportService: LogExportService = LogExportService(outputDirectory: RetroLogViewModel.defaultExportDirectory)) {
+    public convenience init() {
+        self.init(exportService: LogExportService(outputDirectory: Self.defaultExportDirectory))
+    }
+
+    public init(exportService: LogExportService) {
         self.exportService = exportService
 
         // Load initial logs
