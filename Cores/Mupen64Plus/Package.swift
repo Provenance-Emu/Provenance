@@ -333,6 +333,7 @@ let pvMupen64PlusCoreTarget: Target = .target(
     name: "PVMupen64PlusCore",
     dependencies: pvMupen64PlusCoreDeps,
     path: "Sources/Plugins/Core/",
+    exclude: ["include copy"],
     sources: pvMupen64PlusCoreSources,
 //            publicHeadersPath: "./include/"
     cSettings: pvMupen64PlusCoreCSettings
