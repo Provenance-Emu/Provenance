@@ -37,4 +37,62 @@ final class ImportQueueItemSystemChoiceTests: XCTestCase {
         item.systems = item.systems(applyingUserChoiceTo: [])
         XCTAssertEqual(item.targetSystem(), .DOS)
     }
+
+    func testExtensionlessROMWithManualChoiceReachesGameMove() async {
+        let item = await processExtensionlessROM(detectionError: .noSystemMatched)
+        guard case .failure(let error) = item.status else {
+            return XCTFail("Expected the test mover to stop the import")
+        }
+        XCTAssertTrue(error is MoveProbe.ReachedGameMove)
+    }
+
+    func testManualChoicePreservesDetectionErrors() async {
+        let item = await processExtensionlessROM(detectionError: .couldNotCalculateMD5)
+        guard case .failure(let error) = item.status else {
+            return XCTFail("Expected the original detection error")
+        }
+        XCTAssertEqual((error as? GameImporterError)?.errorCode, GameImporterError.couldNotCalculateMD5.errorCode)
+    }
+
+    private func processExtensionlessROM(detectionError: GameImporterError) async -> ImportQueueItem {
+        let importer = GameImporter(FileManager.default,
+                                    MoveProbe(),
+                                    GameImporterDatabaseService(),
+                                    FailingDetection(error: detectionError),
+                                    ArtworkImporter(),
+                                    DefaultCDFileHandler())
+        let url = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
+        let item = ImportQueueItem(url: url, fileType: .unknown)
+        item.userChosenSystem = .SNES
+        await importer.processItem(item)
+        return item
+    }
+
+    private final class FailingDetection: GameImporterSystemsService {
+        let error: GameImporterError
+
+        init(error: GameImporterError) {
+            self.error = error
+            super.init()
+        }
+
+        override func determineSystems(for item: ImportQueueItem) async throws -> [SystemIdentifier] {
+            throw error
+        }
+    }
+
+    private struct MoveProbe: GameImporterFileServicing {
+        struct ReachedGameMove: Error {}
+
+        func moveImportItem(toAppropriateSubfolder item: ImportQueueItem) async throws {
+            guard item.fileType == .game, item.targetSystem() == .SNES else {
+                throw GameImporterError.unsupportedFile
+            }
+            throw ReachedGameMove()
+        }
+
+        func moveToConflictsFolder(_ item: ImportQueueItem, conflictsPath: URL) async throws {}
+
+        func removeImportItemFile(_ item: ImportQueueItem) throws {}
+    }
 }
