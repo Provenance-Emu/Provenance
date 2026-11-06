@@ -498,7 +498,7 @@ jobs:
       - name: Clean up keychain
         if: always()
         run: |
-          security list-keychains -d user -s $(security list-keychains -d user | tr -d '"' | grep -v signing.keychain-db) || true
+          # Delete only this job's keychain; preserve peer jobs in the shared search list.
           security delete-keychain "$RUNNER_TEMP/signing.keychain-db" 2>/dev/null || true
           # Persistent self-hosted runner: don't leave the archive log behind to be
           # mistaken for the next job's.

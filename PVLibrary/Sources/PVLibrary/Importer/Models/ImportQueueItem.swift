@@ -356,6 +356,19 @@ public class ImportQueueItem: Identifiable, ObservableObject, Sendable {
         return nil
     }
 
+    /// The candidate systems for this item once the user's manual pick is applied to what
+    /// detection found. Detection runs again each time an item is requeued, and it knows
+    /// nothing of the user's choice: for a file it cannot identify (a homebrew ROM, a
+    /// multi-file disc set) it finds nothing, and the item would fail again whatever
+    /// system was picked. A pick that detection also found changes nothing, because
+    /// `targetSystem()` already honours it among several candidates.
+    public func systems(applyingUserChoiceTo determined: [SystemIdentifier]) -> [SystemIdentifier] {
+        guard let chosen = userChosenSystem, !determined.contains(chosen) else {
+            return determined
+        }
+        return [chosen]
+    }
+
     private var cache = Cache()
 
     public func fileSize() -> Int64? {

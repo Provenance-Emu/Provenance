@@ -1,0 +1,186 @@
+#include "@@TYPES_HEADER@@"
+#import <Foundation/Foundation.h>
+#import <dispatch/dispatch.h>
+
+static BOOL engineReady = NO;
+static int rejected = 0, commands = 0, callbacks = 0;
+static int liveState = M64EMU_STOPPED;
+static m64p_error CoreDoCommand(m64p_command command, int arg, void *data) {
+    if (command == M64CMD_CORE_STATE_QUERY) {
+        *(int *)data = liveState;
+        return M64ERR_SUCCESS;
+    }
+    commands++;
+    if (rejected > 0) {
+        rejected--;
+        return M64ERR_INVALID_STATE;
+    }
+    return engineReady ? M64ERR_SUCCESS : M64ERR_INVALID_STATE;
+}
+@interface BaseBridge : NSObject
+- (BOOL)saveStateToFileAtPath:(NSString *)path error:(NSError **)error;
+- (void)saveStateToFileAtPath:(NSString *)path completionHandler:(void (^)(NSError *))block;
+@end
+@implementation BaseBridge
+- (BOOL)saveStateToFileAtPath:(NSString *)path error:(NSError **)error {
+    return NO;
+}
+- (void)saveStateToFileAtPath:(NSString *)path completionHandler:(void (^)(NSError *))block {
+    NSError *error = nil;
+    [self saveStateToFileAtPath:path error:&error];
+    if (block)
+        block(error);
+}
+@end
+@interface PVMupenBridge : BaseBridge {
+  @public
+    dispatch_queue_t _callbackQueue;
+    NSMutableDictionary *_callbackHandlers;
+    id _saveStateRequest;
+    int _emulatorState;
+}
+@property(nonatomic, getter=isEmulationPaused) BOOL paused;
+- (void)setPauseEmulation:(BOOL)flag;
+- (BOOL)OE_claimSaveStateRequest:(id)request;
+- (void)OE_releaseSaveStateRequest:(id)request;
+- (void)OE_performCallbackOperation:(dispatch_block_t)operation afterDelay:(NSTimeInterval)delay;
+- (void)OE_removeHandlerForType:(m64p_core_param)paramType usingBlock:(BOOL (^)(m64p_core_param, int))block;
+- (void)OE_addHandlerForType:(m64p_core_param)param usingBlock:(BOOL (^)(m64p_core_param, int))block;
+- (oneway void)OE_didReceiveStateChangeForParamType:(m64p_core_param)param value:(int)value;
+@end
+@implementation PVMupenBridge
+- (instancetype)init {
+    if (self = [super init]) {
+        _callbackQueue = dispatch_queue_create("validation.mupen.callbacks", DISPATCH_QUEUE_SERIAL);
+        _callbackHandlers = [NSMutableDictionary new];
+        _emulatorState = 0;
+        self.paused = YES;
+    }
+    return self;
+}
+- (void)setPauseEmulation:(BOOL)flag {
+    self.paused = flag;
+}
+// @@REGISTRY@@
+@end
+// @@SAVE_REQUEST@@
+static void overlap(PVMupenBridge *bridge, BOOL accepted) {
+    engineReady = accepted;
+    liveState = accepted ? M64EMU_RUNNING : M64EMU_STOPPED;
+    __block int successes = 0, busyErrors = 0;
+    [bridge saveStateToFileAtPath:@"first.state"
+                completionHandler:^(NSError *error) {
+                  if (error || !NSThread.isMainThread)
+                      exit(2);
+                  successes++;
+                }];
+    [bridge saveStateToFileAtPath:@"second.state"
+                completionHandler:^(NSError *error) {
+                  if (!error || !NSThread.isMainThread || ![error.userInfo[NSFilePathErrorKey] isEqual:@"second.state"])
+                      exit(2);
+                  busyErrors++;
+                }];
+    dispatch_sync(bridge->_callbackQueue, ^{
+                  });
+    if (!accepted) {
+        engineReady = YES;
+        liveState = M64EMU_RUNNING;
+        [bridge OE_didReceiveStateChangeForParamType:M64CORE_EMU_STATE value:M64EMU_RUNNING];
+        dispatch_sync(bridge->_callbackQueue, ^{
+                      });
+    }
+    [bridge OE_didReceiveStateChangeForParamType:M64CORE_STATE_SAVECOMPLETE value:1];
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 100 * NSEC_PER_MSEC), dispatch_get_main_queue(), ^{
+      __block NSUInteger retained = 0;
+      __block BOOL active = NO;
+      dispatch_sync(bridge->_callbackQueue, ^{
+        for (NSSet *s in bridge->_callbackHandlers.allValues)
+            retained += s.count;
+        active = bridge->_saveStateRequest != nil;
+      });
+      printf("successes=%d busyErrors=%d commands=%d retainedHandlers=%lu active=%d\n", successes, busyErrors, commands, (unsigned long)retained, active);
+      exit(successes == 1 && busyErrors == 1 && commands == (accepted ? 1 : 2) && retained == 0 && !active ? 0 : 4);
+    });
+    CFRunLoopRun();
+}
+int main(int argc, char **argv) {
+    @autoreleasepool {
+        NSString *scenario = [NSString stringWithUTF8String:argv[1]];
+        PVMupenBridge *bridge = [PVMupenBridge new];
+        if ([scenario hasPrefix:@"busy-"]) {
+            overlap(bridge, [scenario isEqualToString:@"busy-accepted"]);
+            return 0;
+        }
+        BOOL terminal = [scenario isEqualToString:@"terminal-stop"], never = [scenario isEqualToString:@"no-ready-event"],
+             failure = [scenario isEqualToString:@"failure"], nilBlock = [scenario isEqualToString:@"nil"],
+             acceptedStop = [scenario isEqualToString:@"accepted-stop"], acceptedSlow = [scenario isEqualToString:@"accepted-slow"],
+             unpaused = [scenario isEqualToString:@"unpaused"];
+        BOOL cached = [scenario isEqualToString:@"cached-ready"];
+        if (cached || nilBlock || acceptedStop || acceptedSlow || unpaused) {
+            engineReady = YES;
+            liveState = M64EMU_RUNNING;
+            bridge->_emulatorState = M64EMU_RUNNING;
+            rejected = cached ? 1 : 0;
+        }
+        if (unpaused)
+            bridge.paused = NO;
+        void (^completion)(NSError *) = ^(NSError *error) {
+          callbacks++;
+          if (!NSThread.isMainThread || (error != nil) != (failure || terminal || never || acceptedStop)) {
+              printf("FAIL completion semantics main=%d error=%s expectedError=%d\n", NSThread.isMainThread, error.description.UTF8String,
+                     (failure || terminal || never || acceptedStop));
+              exit(2);
+          }
+          if (!acceptedStop && bridge.isEmulationPaused == unpaused) {
+              puts("FAIL pause semantics");
+              exit(2);
+          }
+        };
+        [bridge saveStateToFileAtPath:@"own.state" completionHandler:nilBlock ? nil : completion];
+        dispatch_sync(bridge->_callbackQueue, ^{
+                      });
+        if (!cached && !terminal && !never && !nilBlock && !acceptedStop && !acceptedSlow && !unpaused) {
+            engineReady = YES;
+            liveState = M64EMU_RUNNING;
+            [bridge OE_didReceiveStateChangeForParamType:M64CORE_EMU_STATE value:M64EMU_RUNNING];
+            dispatch_sync(bridge->_callbackQueue, ^{
+                          });
+        }
+        if (terminal || acceptedStop) {
+            liveState = M64EMU_STOPPED;
+            bridge.paused = YES;
+            [bridge OE_didReceiveStateChangeForParamType:M64CORE_EMU_STATE value:M64EMU_STOPPED];
+            dispatch_sync(bridge->_callbackQueue, ^{
+                          });
+        }
+        double delay = (never || acceptedSlow) ? 5.2 : 0.05;
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delay * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+          int before = commands;
+          if (terminal || never || acceptedStop) {
+              engineReady = YES;
+              liveState = M64EMU_RUNNING;
+              [bridge OE_didReceiveStateChangeForParamType:M64CORE_EMU_STATE value:M64EMU_RUNNING];
+          } else {
+              [bridge OE_didReceiveStateChangeForParamType:M64CORE_STATE_SAVECOMPLETE value:failure ? 0 : 1];
+              [bridge OE_didReceiveStateChangeForParamType:M64CORE_STATE_SAVECOMPLETE value:1];
+          }
+          dispatch_sync(bridge->_callbackQueue, ^{
+                        });
+          dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 100 * NSEC_PER_MSEC), dispatch_get_main_queue(), ^{
+            __block NSUInteger retained = 0;
+            dispatch_sync(bridge->_callbackQueue, ^{
+              for (NSSet *s in bridge->_callbackHandlers.allValues)
+                  retained += s.count;
+            });
+            printf("callbacks=%d commands=%d retainedHandlers=%lu\n", callbacks, commands, (unsigned long)retained);
+            if (callbacks != (nilBlock ? 0 : 1) || retained != 0 || ((terminal || never || acceptedStop) && commands != before)) {
+                puts("FAIL count/cleanup/late-save");
+                exit(4);
+            }
+            puts("PASS");
+            exit(0);
+          });
+        });
+        CFRunLoopRun();
+    }
+}
