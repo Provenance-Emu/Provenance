@@ -51,7 +51,13 @@ public final class RetroLogViewModel: ObservableObject {
 
     // MARK: - Initialization
 
-    public init() {
+    public convenience init() {
+        self.init(exportService: LogExportService(outputDirectory: Self.defaultExportDirectory))
+    }
+
+    public init(exportService: LogExportService) {
+        self.exportService = exportService
+
         // Load initial logs
         logs = PVLogPublisher.shared.getRecentLogs(minLevel: minLogLevel)
 
@@ -143,132 +149,60 @@ public final class RetroLogViewModel: ObservableObject {
 
     // MARK: - Export
 
-    /// Options controlling what to include in a log export.
-    public struct LogExportOptions {
-        public var includeAppLogs: Bool
-        public var includeDeviceInfo: Bool
-        public var includeRetroArchLogs: Bool
+    /// Builds exports. Packaging, header rendering and source enumeration live in
+    /// `PVLogging.LogExportService` so they are unit-tested without a workspace build.
+    public let exportService: LogExportService
 
-        public init(includeAppLogs: Bool = true, includeDeviceInfo: Bool = true, includeRetroArchLogs: Bool = true) {
-            self.includeAppLogs = includeAppLogs
-            self.includeDeviceInfo = includeDeviceInfo
-            self.includeRetroArchLogs = includeRetroArchLogs
-        }
-    }
+    /// Exports older than this are swept from the output folder before a new one is written.
+    private static let staleExportAge: TimeInterval = 24 * 60 * 60
 
-    /// Returns the RetroArch logs directory URL, or nil if it doesn't exist on disk.
-    public var retroArchLogsDirectory: URL? {
-        guard let docDir = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first else { return nil }
-        let dir = docDir.appendingPathComponent("RetroArch/logs")
-        return FileManager.default.fileExists(atPath: dir.path) ? dir : nil
-    }
-
-    /// Builds a device/app info header string.
-    @MainActor
-    private func buildDeviceInfo() -> String {
-        // `IncomingLogFile` keys off this header when a shared export is opened back in the app.
-        var info = IncomingLogFile.exportHeader + "\n"
-        info += "Date: \(DateFormatter.localizedString(from: Date(), dateStyle: .full, timeStyle: .long))\n"
-        let bundle = Bundle.main
-        if let version = bundle.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String,
-           let build = bundle.object(forInfoDictionaryKey: "CFBundleVersion") as? String {
-            info += "App Version: \(version) (\(build))\n"
+    /// Where exports land. iOS shares them through the system share sheet, so the temp
+    /// folder is fine; tvOS has no share sheet, so they go under the WebDAV browse root
+    /// (`Caches`, see `PVModernWebServer`) where a computer on the LAN can pick them up.
+    static var defaultExportDirectory: URL {
+#if os(tvOS)
+        if let caches = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first {
+            return caches.appendingPathComponent("Logs/Exports", isDirectory: true)
         }
-#if os(iOS)
-        info += "Device: \(UIDevice.current.model)\n"
-        info += "OS: \(UIDevice.current.systemName) \(UIDevice.current.systemVersion)\n"
-        // "Designed for iPad" on a Mac reports Device: iPad / OS: iPadOS, which
-        // hides the real host from every log a Mac user sends us. The old
-        // `targetEnvironment(macCatalyst)` arm was unreachable (Catalyst implies
-        // `os(iOS)`, so this `#elseif` could never be taken) and never shipped.
-        if ProcessInfo.processInfo.isiOSAppOnMac {
-            info += "Host: macOS (iOS app on Mac)\n"
-        }
-#elseif os(tvOS)
-        info += "Platform: tvOS\n"
 #endif
-        info += "Displayed Log Count: \(displayedLogs.count) (total in session: \(logs.count))\n"
-        return info
+        return LogExportService.defaultOutputDirectory
     }
 
-    /// Formats a single log entry as plain text.
-    private func formatEntry(_ log: LogEntry) -> String {
-        var text = "[\(log.formattedTimestamp)] [\(log.level.name.uppercased())]"
-        if !log.category.isEmpty { text += " (\(log.category))" }
-        if showFullDetails {
-            let fileName = (log.file as NSString).lastPathComponent
-            text += " [\(fileName):\(log.line)]"
-        }
-        text += " \(log.message)"
-        return text
+    /// Files on disk the exporter can include, re-read on every access.
+    public var availableExportSources: LogExportSourceSet {
+        exportService.availableSources()
     }
 
-    /// Exports the currently displayed logs as a plain-text file in the temp directory.
-    /// - Returns: URL of the created `.log` file (opens back in Provenance via `public.log`), or `nil` on failure.
+    /// Writes an export of the displayed logs plus whatever `options` selects.
+    ///
+    /// `includeSourceLocation` follows the viewer's detail toggle unless the caller sets it.
     /// Must be called from the main actor to safely read `displayedLogs`.
     @MainActor
-    public func exportLogsAsText(options: LogExportOptions = .init()) -> URL? {
-        var content = ""
-        if options.includeDeviceInfo {
-            content += buildDeviceInfo() + "\n\n"
-        }
-        if options.includeAppLogs && !displayedLogs.isEmpty {
-            content += IncomingLogFile.appLogsHeader + "\n"
-            content += displayedLogs.map { formatEntry($0) }.joined(separator: "\n")
-        }
-
-        let formatter = DateFormatter()
-        formatter.dateFormat = "yyyy-MM-dd_HH-mm-ss"
-        let filename = "provenance_logs_\(formatter.string(from: Date())).log"
-        let fileURL = FileManager.default.temporaryDirectory.appendingPathComponent(filename)
-
-        do {
-            try content.write(to: fileURL, atomically: true, encoding: .utf8)
-            return fileURL
-        } catch {
-            return nil
-        }
+    public func exportLogs(options: LogExportOptions) throws -> LogExportResult {
+        var resolved = options
+        if !resolved.includeSourceLocation { resolved.includeSourceLocation = showFullDetails }
+        exportService.removeExports(olderThan: Self.staleExportAge)
+        return try exportService.export(entries: displayedLogs, totalEntryCount: logs.count, options: resolved)
     }
 
-    /// Exports logs and optional RetroArch logs as a ZIP bundle in the temp directory.
-    /// - Returns: URL of the created `.zip` file, or `nil` on failure.
-    /// Must be called from the main actor to safely read `displayedLogs`.
-    @MainActor
-    public func exportLogsAsZip(options: LogExportOptions = .init()) -> URL? {
-        let fm = FileManager.default
-        let formatter = DateFormatter()
-        formatter.dateFormat = "yyyy-MM-dd_HH-mm-ss"
-        let timestamp = formatter.string(from: Date())
-        let tempDir = fm.temporaryDirectory.appendingPathComponent("pv_log_export_\(timestamp)")
-        let zipURL = fm.temporaryDirectory.appendingPathComponent("provenance_logs_\(timestamp).zip")
+    // MARK: - Log files
 
-        do {
-            try fm.createDirectory(at: tempDir, withIntermediateDirectories: true)
+    /// Session log files written by `PVLogFileManager`, newest first.
+    public func sessionLogFiles() -> [LogExportFile] {
+        availableExportSources.sessionFiles
+    }
 
-            // Entry names are the bundle's signature: `IncomingLogFile.isLogBundle` routes a
-            // reopened export to the log viewer instead of the ROM importer by them.
-            if options.includeDeviceInfo {
-                let infoURL = tempDir.appendingPathComponent(IncomingLogFile.bundleDeviceInfoName)
-                try buildDeviceInfo().write(to: infoURL, atomically: true, encoding: .utf8)
-            }
+    /// True while `url` is the session file being written; it can be viewed but not deleted.
+    public func isActiveSessionFile(_ url: URL) -> Bool {
+        PVLogFileManager.shared.isActiveSessionFile(url)
+    }
 
-            if options.includeAppLogs {
-                let logsText = displayedLogs.map { formatEntry($0) }.joined(separator: "\n")
-                let logsURL = tempDir.appendingPathComponent(IncomingLogFile.bundleAppLogsName)
-                try logsText.write(to: logsURL, atomically: true, encoding: .utf8)
-            }
-
-            if options.includeRetroArchLogs, let raDir = retroArchLogsDirectory {
-                let destRADir = tempDir.appendingPathComponent(IncomingLogFile.bundleRetroArchDirectory)
-                try fm.copyItem(at: raDir, to: destRADir)
-            }
-
-            try fm.zipDirectory(at: tempDir, to: zipURL)
-            try? fm.removeItem(at: tempDir)
-            return zipURL
-        } catch {
-            try? fm.removeItem(at: tempDir)
-            return nil
+    /// Deletes a session log file. Throws `PVLogFileManager.DeleteError.activeSessionFile`
+    /// for the file currently being written.
+    public func deleteSessionLogFile(at url: URL) throws {
+        try PVLogFileManager.shared.deleteFile(at: url)
+        if importedSession?.sourceURL == url {
+            closeImportedSession()
         }
     }
 
@@ -284,6 +218,14 @@ public final class RetroLogViewModel: ObservableObject {
         /// File name the session was read from, shown in the banner.
         public let name: String
         public let lines: [ImportedLogLine]
+        /// Where the session was read from, so deleting that file can close the view.
+        public let sourceURL: URL?
+
+        public init(name: String, lines: [ImportedLogLine], sourceURL: URL? = nil) {
+            self.name = name
+            self.lines = lines
+            self.sourceURL = sourceURL
+        }
     }
 
     /// Errors surfaced to the user when importing a log file fails.
@@ -332,7 +274,7 @@ public final class RetroLogViewModel: ObservableObject {
             return LogFileParsing.parseLines(text)
         }.value
 
-        importedSession = ImportedLogSession(name: name, lines: lines)
+        importedSession = ImportedLogSession(name: name, lines: lines, sourceURL: url)
     }
 
     /// Reads a plain-text log, refusing anything past `maxImportBytes`.
@@ -369,9 +311,10 @@ public final class RetroLogViewModel: ObservableObject {
         }
 
         /// `device_info.txt` first so the header reads at the top, then the rest alphabetically.
+        /// JSON covers the manifest and the MetricKit crash payloads a bundle may carry.
         let deviceInfoName = IncomingLogFile.bundleDeviceInfoName
         let textEntries = archive
-            .filter { ["txt", "log"].contains(($0.path as NSString).pathExtension.lowercased()) }
+            .filter { ["txt", "log", "json"].contains(($0.path as NSString).pathExtension.lowercased()) }
             .sorted { lhs, rhs in
                 if lhs.path.hasSuffix(deviceInfoName) != rhs.path.hasSuffix(deviceInfoName) {
                     return lhs.path.hasSuffix(deviceInfoName)
@@ -397,25 +340,5 @@ public final class RetroLogViewModel: ObservableObject {
 
         guard !sections.isEmpty else { throw LogImportError.noLogsInArchive }
         return sections.joined(separator: "\n\n")
-    }
-}
-
-// MARK: - FileManager + Simple Zip
-
-private extension FileManager {
-    /// Creates a ZIP archive at `destination` containing all files in `directory`.
-    /// Uses Foundation's built-in zip coordination (macOS/iOS 13+).
-    func zipDirectory(at directory: URL, to destination: URL) throws {
-        var coordinatorError: NSError?
-        var copyError: Error?
-        NSFileCoordinator().coordinate(readingItemAt: directory, options: .forUploading, error: &coordinatorError) { zippedURL in
-            do {
-                try self.copyItem(at: zippedURL, to: destination)
-            } catch {
-                copyError = error
-            }
-        }
-        if let error = coordinatorError { throw error }
-        if let error = copyError { throw error }
     }
 }

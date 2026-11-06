@@ -73,7 +73,7 @@ struct IncomingLogFileClassifyTests {
 
     @Test("A ROM archive is not a log bundle")
     func romZipIsOther() {
-        let paths = ["Game (USA).nes", "Game (USA).sfc", "readme.txt", "logo.png"]
+        let paths = ["Game (USA).nes", "Game (USA).sfc", "readme.txt", "logo.png", "manifest.json"]
         #expect(IncomingLogFile.classify(fileExtension: "zip", archiveEntryPaths: paths) == .other)
     }
 

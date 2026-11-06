@@ -20,8 +20,7 @@ public enum IncomingLogFile {
     public enum Kind: Equatable, Sendable {
         /// A plain-text log: any `.log`, or a `.txt` that starts with an export header.
         case plainLog
-        /// A ZIP produced by the log exporter (carries `device_info.txt`,
-        /// `app_logs.txt`, or a `retroarch_logs/` folder).
+        /// A ZIP produced by the log exporter, identified by its manifest or legacy entries.
         case logBundle
         /// Not a log; the existing import pipeline (ROMs, skins, …) handles it.
         case other
@@ -44,6 +43,9 @@ public enum IncomingLogFile {
 
     /// Section header that precedes the app log lines in a text export.
     public static let appLogsHeader = "=== App Logs ==="
+
+    /// Manifest that identifies an exported ZIP even when only on-disk logs are selected.
+    public static let bundleManifestName = "provenance_log_manifest.json"
 
     /// Device/app info file inside an exported ZIP bundle.
     public static let bundleDeviceInfoName = "device_info.txt"
@@ -109,7 +111,7 @@ public enum IncomingLogFile {
     /// is compared. Directory entries (trailing `/`) and `__MACOSX` resource-fork
     /// copies (`._name`) do not match.
     public static func isLogBundle(entryPaths: [String]) -> Bool {
-        let markerFiles = [bundleDeviceInfoName, bundleAppLogsName]
+        let markerFiles = [bundleManifestName, bundleDeviceInfoName, bundleAppLogsName]
         return entryPaths.contains { path in
             let components = path.split(separator: "/").map { $0.lowercased() }
             guard let last = components.last else { return false }
