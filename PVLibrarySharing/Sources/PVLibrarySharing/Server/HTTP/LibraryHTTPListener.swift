@@ -37,7 +37,11 @@ public final class LibraryHTTPListener: @unchecked Sendable {
     private let queue: DispatchQueue
     private var listener: NWListener?
     private var connections: [ObjectIdentifier: NWConnection] = [:]
+    /// The bound port, or `nil` before `start`, after `stop` and after the socket died.
     public private(set) var port: UInt16?
+    /// Called once, off the caller's thread, when a listener that was `.ready` fails on its
+    /// own (iOS defuncts suspended apps' sockets). `port` is already `nil` by then.
+    private let onUnexpectedStop: (@Sendable () -> Void)?
 
     /// - Parameters:
     ///   - name: For logs ("iFly dialect").
@@ -46,11 +50,13 @@ public final class LibraryHTTPListener: @unchecked Sendable {
     public init(
         name: String,
         interfaces: @escaping @Sendable () -> [LocalInterfaceAddress] = { LANFilter.currentInterfaces() },
+        onUnexpectedStop: (@Sendable () -> Void)? = nil,
         handler: @escaping ServerRequestHandler
     ) {
         self.name = name
         self.handler = handler
         self.interfaces = interfaces
+        self.onUnexpectedStop = onUnexpectedStop
         self.queue = DispatchQueue(label: "org.provenance-emu.library-sharing.listener.\(name)")
     }
 
@@ -108,7 +114,10 @@ public final class LibraryHTTPListener: @unchecked Sendable {
                     continuation.resume()
                 case .failed(let error), .waiting(let error):
                     guard !resumed else {
-                        if case .failed = state { WLOG("Library sharing: \(self?.name ?? "") listener failed: \(error)") }
+                        if case .failed = state, let listener {
+                            WLOG("Library sharing: \(self?.name ?? "") listener failed on :\(port.rawValue): \(error)")
+                            self?.listenerDied(listener)
+                        }
                         return
                     }
                     resumed = true
@@ -121,6 +130,29 @@ public final class LibraryHTTPListener: @unchecked Sendable {
             listener.start(queue: queue)
         }
     }
+
+    /// On `queue`. Drops the dead socket so `port` stops naming a port another app may take.
+    private func listenerDied(_ dead: NWListener) {
+        guard listener === dead else { return }
+        dead.cancel()
+        listener = nil
+        port = nil
+        connections.values.forEach { $0.cancel() }
+        connections.removeAll()
+        if let onUnexpectedStop {
+            DispatchQueue.global().async(execute: onUnexpectedStop)
+        }
+    }
+
+    #if DEBUG
+    /// Tests: what a post-`.ready` `.failed` does, without a way to kill the socket.
+    func simulateUnexpectedFailure() {
+        queue.sync {
+            guard let listener else { return }
+            listenerDied(listener)
+        }
+    }
+    #endif
 
     // MARK: - Connections (queue-confined)
 
