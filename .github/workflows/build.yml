@@ -186,44 +186,6 @@ jobs:
       - name: Initialize submodules
         run: ./Scripts/ci/ci-init-submodules.sh
 
-      # Cores marked `local: true` in cores.yml are custom Provenance builds that do
-      # not exist on the libretro buildbot, so get-modules.sh deliberately never
-      # downloads them. If one is absent, make_frameworks_retroarch.sh simply never
-      # packages it: no build error, just a core missing from the IPA.
-      #
-      # A missing core does not stop the build (the rest of the IPA is still worth
-      # having), but it is never silent: each one is an error annotation and is listed
-      # in the run summary, and on develop the alpha-release job marks the release
-      # incomplete and opens a tracking issue. testflight.yml hard-fails instead.
-      # GITHUB_TOKEN cannot read another private repo, hence a dedicated PAT.
-      - name: Fetch locally-built core dylibs
-        env:
-          GH_TOKEN: ${{ secrets.DYLIBS_TOKEN }}
-        run: |
-          if [ -n "${GH_TOKEN}" ]; then
-            ./CoresRetro/RetroArch/scripts/local-dylibs.sh fetch || true
-          else
-            echo "::warning::DYLIBS_TOKEN not set — skipping locally-built cores."
-          fi
-          MISSING=$(./CoresRetro/RetroArch/scripts/local-dylibs.sh list | awk '$2 == "MISSING" { print $1 }')
-          # Reported per build so alpha-release judges the IPAs from what they were
-          # actually built with, not from the store.
-          echo "${MISSING}" > "${RUNNER_TEMP}/missing-local-dylibs.txt"
-          if [ -n "${MISSING}" ]; then
-            echo "### ⚠️ Incomplete build: locally-built cores missing" >> "${GITHUB_STEP_SUMMARY}"
-            for d in ${MISSING}; do
-              echo "::error title=Missing local core::${d} is not in modules/, so this IPA ships without it"
-              echo "- \`${d}\`" >> "${GITHUB_STEP_SUMMARY}"
-            done
-          fi
-
-      - name: Upload missing local dylib report
-        uses: actions/upload-artifact@v4
-        with:
-          name: missing-local-dylibs-${{ matrix.IPA_NAME }}
-          path: ${{ runner.temp }}/missing-local-dylibs.txt
-          retention-days: 3
-
       # setup-xcode runs `sudo xcode-select -s`, which the self-hosted runner user
       # cannot do. On self-hosted the first step of this job selects Xcode via
       # DEVELOPER_DIR (vars.XCODE_PATH, default /Applications/Xcode.app = Xcode 27).
@@ -305,6 +267,53 @@ jobs:
           mkdir -p "$ARCHIVE_DIR"
           date +%s > "$ARCHIVE_DIR/timestamp.txt"
           echo "RetroArch modules restored from cache"
+
+      # Cores marked `local: true` in cores.yml are custom Provenance builds that do
+      # not exist on the libretro buildbot, so get-modules.sh deliberately never
+      # downloads them. If one is absent, make_frameworks_retroarch.sh simply never
+      # packages it: no build error, just a core missing from the IPA.
+      #
+      # A missing core does not stop the build (the rest of the IPA is still worth
+      # having), but it is never silent: each one is an error annotation and is listed
+      # in the run summary, and on develop the alpha-release job marks the release
+      # incomplete and opens a tracking issue. testflight.yml hard-fails instead.
+      # GITHUB_TOKEN cannot read another private repo, hence a dedicated PAT.
+      #
+      # This has to stay after the modules cache restore. actions/cache extracts over
+      # what is already on disk, and its paths include modules/, so fetching first let
+      # a cached copy replace the dylib in the store. Cached copies are dropped before
+      # the fetch so a failed download reports the core MISSING instead of quietly
+      # shipping the old one.
+      - name: Fetch locally-built core dylibs
+        env:
+          GH_TOKEN: ${{ secrets.DYLIBS_TOKEN }}
+        run: |
+          if [ -n "${GH_TOKEN}" ]; then
+            ./CoresRetro/RetroArch/scripts/local-dylibs.sh list | awk '$2 == "present" { print $1 }' | while read -r d; do
+              rm -f "CoresRetro/RetroArch/modules/${d}"
+            done
+            ./CoresRetro/RetroArch/scripts/local-dylibs.sh fetch || true
+          else
+            echo "::warning::DYLIBS_TOKEN not set — skipping locally-built cores."
+          fi
+          MISSING=$(./CoresRetro/RetroArch/scripts/local-dylibs.sh list | awk '$2 == "MISSING" { print $1 }')
+          # Reported per build so alpha-release judges the IPAs from what they were
+          # actually built with, not from the store.
+          echo "${MISSING}" > "${RUNNER_TEMP}/missing-local-dylibs.txt"
+          if [ -n "${MISSING}" ]; then
+            echo "### ⚠️ Incomplete build: locally-built cores missing" >> "${GITHUB_STEP_SUMMARY}"
+            for d in ${MISSING}; do
+              echo "::error title=Missing local core::${d} is not in modules/, so this IPA ships without it"
+              echo "- \`${d}\`" >> "${GITHUB_STEP_SUMMARY}"
+            done
+          fi
+
+      - name: Upload missing local dylib report
+        uses: actions/upload-artifact@v4
+        with:
+          name: missing-local-dylibs-${{ matrix.IPA_NAME }}
+          path: ${{ runner.temp }}/missing-local-dylibs.txt
+          retention-days: 3
 
       # NOTE: ~/Library/Developer/Xcode/DerivedData is deliberately NOT cached.
       # The key embeds github.sha, so every push writes a brand-new multi-GB
