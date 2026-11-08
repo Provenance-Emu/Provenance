@@ -47,8 +47,7 @@ class PVWebServerTests: XCTestCase {
     }
 
     func testBonjourAdvertisesBothExistingListeners() {
-        let server = PVModernWebServer(httpPort: 6080, webDAVPort: 6081)
-        let services = server.makeBonjourServices()
+        let services = PVModernWebServer.makeBonjourServices(httpPort: 6080, webDAVPort: 6081)
         XCTAssertEqual(services.count, 2)
         XCTAssertEqual(services.first { $0.type == "_http._tcp." }?.port, 6080)
         XCTAssertEqual(services.first { $0.type == "_webdav._tcp." }?.port, 6081)

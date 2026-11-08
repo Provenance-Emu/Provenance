@@ -286,9 +286,9 @@ final class RetroStatusControlViewModel: ObservableObject {
                     let host = await PVWebServerManager.shared.serverURL?.host
                     self.webServerIPAddress = host
                 }
-                if let port = await PVWebServerManager.shared.serverURL?.port {
-                    self.webServerPort = Int(port)
-                }
+                // The bound port, not `serverURL?.port`: that is nil for port 80, which left
+                // a stale 8080 on screen after the server moved back to 80.
+                self.webServerPort = await PVWebServerManager.shared.httpPort
             } else {
                 self.webServerIPAddress = nil
                 self.webServerPort = nil
@@ -384,8 +384,8 @@ final class RetroStatusControlViewModel: ObservableObject {
             let newRunningState = await PVWebServerManager.shared.isRunning
             if newRunningState != self.isWebServerRunning {
                 updateWebServerStatus()
-            } else if let port = await PVWebServerManager.shared.serverURL?.port {
-                self.webServerPort = Int(port)
+            } else {
+                self.webServerPort = await PVWebServerManager.shared.httpPort
             }
         }
     }

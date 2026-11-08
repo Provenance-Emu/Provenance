@@ -43,6 +43,40 @@ final class PVWebServerManagerLifecycleTests: XCTestCase {
         await manager.stop()
     }
 
+    func testUnexpectedListenerStopRestartsAndReportsTheNewPort() async throws {
+        let server = LifecycleServer()
+        let manager = PVWebServerManager(serverFactory: { server })
+        _ = try await manager.start()
+        let firstPort = await manager.httpPort
+        XCTAssertEqual(firstPort, 80)
+
+        // iOS killed the listener while suspended; another app now holds 80.
+        server.nextHTTPPort = 8080
+        server.dieUnexpectedly()
+        for _ in 0..<100 where server.startCount < 2 {
+            try await Task.sleep(nanoseconds: 10_000_000)
+        }
+        _ = try await manager.start()  // drains the queued restart
+        XCTAssertEqual(server.startCount, 2)
+        let port = await manager.httpPort
+        XCTAssertEqual(port, 8080, "the manager reports the port bound after the restart")
+        await manager.stop()
+    }
+
+    func testExplicitStopBeforeTheRestartRunsWins() async throws {
+        let server = LifecycleServer()
+        let manager = PVWebServerManager(serverFactory: { server })
+        _ = try await manager.start()
+        await manager.stop()
+        server.dieUnexpectedly()  // a stale report from the stopped server
+        try await Task.sleep(nanoseconds: 100_000_000)
+        XCTAssertEqual(server.startCount, 1)
+        let running = await manager.isRunning
+        XCTAssertFalse(running)
+        let port = await manager.httpPort
+        XCTAssertNil(port)
+    }
+
     func testFailedStartCleansUpAndAllowsRetry() async throws {
         let server = LifecycleServer(startSucceeds: false)
         let manager = PVWebServerManager(serverFactory: { server })
@@ -69,6 +103,11 @@ private final class LifecycleServer: PVWebServerProtocol, @unchecked Sendable {
     var isWebDAVServerRunning: Bool { running }
     var serverURL: URL? { nil }
     var webDAVURL: URL? { nil }
+    var nextHTTPPort = 80
+    private var httpPort: Int?
+    var boundHTTPPort: Int? { running ? httpPort : nil }
+    var boundWebDAVPort: Int? { running ? 81 : nil }
+    private var unexpectedStop: (@Sendable () -> Void)?
 
     init(startSucceeds: Bool = true) { self.startSucceeds = startSucceeds }
 
@@ -76,11 +115,24 @@ private final class LifecycleServer: PVWebServerProtocol, @unchecked Sendable {
         startCount += 1
         await Task.yield()
         running = startSucceeds
+        httpPort = running ? nextHTTPPort : nil
         return running
     }
 
     func stopServers() async {
         stopCount += 1
         running = false
+    }
+
+    func setUnexpectedStopHandler(_ handler: @escaping @Sendable () -> Void) {
+        unexpectedStop = handler
+    }
+
+    /// What `PVModernWebServer` does when a confirmed listener's task ends on its own.
+    func dieUnexpectedly() {
+        running = false
+        let handler = unexpectedStop
+        unexpectedStop = nil
+        handler?()
     }
 }
