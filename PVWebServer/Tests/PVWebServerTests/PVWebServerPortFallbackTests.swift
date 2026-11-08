@@ -15,13 +15,30 @@ final class PVWebServerPortFallbackTests: XCTestCase {
 
     // MARK: - Candidate order
 
-    func testDeviceCandidatesStartAtTheLowPairAndNeverOverlap() {
-        XCTAssertEqual(PVWebServerPorts.deviceUploadCandidates, [80, 8080, 8000, 8888, 9000])
-        XCTAssertEqual(PVWebServerPorts.deviceWebDAVCandidates.first, 81)
+    func testPortMap() {
+        XCTAssertEqual(PVWebServerPorts.deviceUploadCandidates, [80, 8180, 8182, 8184, 8186, 8188])
+        XCTAssertEqual(PVWebServerPorts.deviceWebDAVCandidates, [81, 8181, 8183, 8185, 8187, 8189])
+        XCTAssertEqual(PVWebServerPorts.desktopUploadCandidates, [8080, 8180, 8182, 8184, 8186, 8188])
+        XCTAssertEqual(PVWebServerPorts.desktopWebDAVCandidates, [8081, 8181, 8183, 8185, 8187, 8189])
+    }
+
+    func testFallbacksNeverTakeAnotherAppsHomePort() {
+        let lists = [
+            PVWebServerPorts.deviceUploadCandidates, PVWebServerPorts.deviceWebDAVCandidates,
+            PVWebServerPorts.desktopUploadCandidates, PVWebServerPorts.desktopWebDAVCandidates
+        ]
+        for list in lists {
+            let fallbacks = Set(list.dropFirst())
+            XCTAssertTrue(fallbacks.isDisjoint(with: PVWebServerPorts.ecosystemHomePorts), "\(list)")
+            XCTAssertTrue(fallbacks.allSatisfy(PVWebServerPorts.fallbackRange.contains), "\(list)")
+        }
+        // iFly falls back to 8092–8099 and iCube to 8190–8199: no overlap with ours.
+        XCTAssertTrue(Set(PVWebServerPorts.fallbackRange).isDisjoint(with: Set(8092...8099).union(8190...8199)))
+    }
+
+    func testUploadAndWebDAVNeverCompete() {
         XCTAssertTrue(Set(PVWebServerPorts.deviceUploadCandidates).isDisjoint(with: PVWebServerPorts.deviceWebDAVCandidates))
         XCTAssertTrue(Set(PVWebServerPorts.desktopUploadCandidates).isDisjoint(with: PVWebServerPorts.desktopWebDAVCandidates))
-        XCTAssertTrue(PVWebServerPorts.desktopUploadCandidates.allSatisfy { $0 >= 1024 })
-        XCTAssertTrue(PVWebServerPorts.desktopWebDAVCandidates.allSatisfy { $0 >= 1024 })
     }
 
     func testBindOrderDropsDuplicatesInvalidAndExcludedPorts() {

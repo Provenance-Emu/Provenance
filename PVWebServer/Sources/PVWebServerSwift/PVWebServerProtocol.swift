@@ -51,10 +51,11 @@ public extension Notification.Name {
 /// old compile-time Catalyst check never fired and the Mac tried to bind 80/81
 /// and failed. `ProcessInfo.isiOSAppOnMac` is the only runtime hook that sees it.
 ///
-/// The first choice is a preference, not a promise. iFly and iCube want port 80
-/// on the same device and whoever binds first owns it; the loser gets
-/// `EADDRINUSE`. So each listener walks its candidate list and keeps the first
-/// port it actually binds, and everything user-facing reads that bound port
+/// The first choice is a preference, not a promise. iFly and iCube run their own
+/// servers on the same device; whoever binds a port first owns it and the loser gets
+/// `EADDRINUSE`. Each app has its own home port (`ecosystemHomePorts`), and each
+/// listener walks its candidate list and keeps the first port it actually binds.
+/// Everything user-facing reads that bound port
 /// (`PVModernWebServer.boundHTTPPort` / `boundWebDAVPort`), never these constants.
 public enum PVWebServerPorts {
 
@@ -67,14 +68,29 @@ public enum PVWebServerPorts {
     /// WebDAV port used on iOS/tvOS hardware.
     public static let deviceWebDAV = 81
 
-    /// HTTP fallback order on hardware. Same list as iFly's and iCube's servers.
-    public static let deviceUploadCandidates = [deviceUpload, 8080, 8000, 8888, 9000]
-    /// WebDAV fallback order on hardware. Disjoint from the HTTP list so the two never compete.
-    public static let deviceWebDAVCandidates = [deviceWebDAV, 8081, 8001, 8889, 9001]
-    /// HTTP fallback order where low ports are root-only.
-    public static let desktopUploadCandidates = [desktopUpload, 8000, 8888, 9000]
-    /// WebDAV fallback order where low ports are root-only.
-    public static let desktopWebDAVCandidates = [desktopWebDAV, 8001, 8889, 9001]
+    /// Home ports of every app that can share the device (Joe's port map, 2026-11-08).
+    /// No fallback list may land on another app's home port, or the apps would take
+    /// each other's ports whenever one starts before the other.
+    ///
+    /// | App | Home | Fallback |
+    /// |---|---|---|
+    /// | Provenance upload / WebDAV | 80 / 81 on device, 8080 / 8081 on sim and Mac | 8180–8189 |
+    /// | Provenance library sharing | 8484 and up (one listener per dialect) | through 8515 |
+    /// | iFly (HTTP + WebDAV, one listener) | 8090 | 8092–8099 |
+    /// | iCube (`ROMUploadServer`, one listener) | 8091 | 8190–8199 |
+    public static let ecosystemHomePorts: Set<Int> = Set([80, 81, 8080, 8081, 8090, 8091]).union(8484...8515)
+
+    /// Provenance's fallback range, shared by upload (even) and WebDAV (odd).
+    public static let fallbackRange = 8180...8189
+
+    /// HTTP order on hardware: home port, then the even ports of `fallbackRange`.
+    public static let deviceUploadCandidates = [deviceUpload] + fallbackRange.filter { $0.isMultiple(of: 2) }
+    /// WebDAV order on hardware: home port, then the odd ports of `fallbackRange`.
+    public static let deviceWebDAVCandidates = [deviceWebDAV] + fallbackRange.filter { !$0.isMultiple(of: 2) }
+    /// HTTP order where low ports are root-only.
+    public static let desktopUploadCandidates = [desktopUpload] + fallbackRange.filter { $0.isMultiple(of: 2) }
+    /// WebDAV order where low ports are root-only.
+    public static let desktopWebDAVCandidates = [desktopWebDAV] + fallbackRange.filter { !$0.isMultiple(of: 2) }
 
     /// `true` when the host reserves ports below 1024 for root.
     public static var usesHighPorts: Bool {
