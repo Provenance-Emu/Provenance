@@ -65,6 +65,14 @@ public actor PVWebServerManager {
     /// Local WebDAV URL, if the server is running.
     public var webDAVURL: URL? { activeServer?.webDAVURL }
 
+    /// The HTTP port actually bound, while running. Not `serverURL?.port`: that is `nil`
+    /// for `http://ip/`, which means port 80. Port 80 is only a preference (iFly and iCube
+    /// want it too), so this can be 8080 or later.
+    public var httpPort: Int? { isRunning ? activeServer?.boundHTTPPort : nil }
+
+    /// The WebDAV port actually bound, while running.
+    public var webDAVPort: Int? { isRunning ? activeServer?.boundWebDAVPort : nil }
+
     /// Start both HTTP and WebDAV services.
     /// - Returns: `true` if both services started successfully.
     /// - Throws: Any error propagated from the server.
@@ -101,6 +109,10 @@ public actor PVWebServerManager {
             let ok = try await server.startServers()
             if ok {
                 activeServer = server
+                let id = ObjectIdentifier(server)
+                server.setUnexpectedStopHandler { [weak self] in
+                    Task { await self?.restartAfterUnexpectedStop(of: id) }
+                }
                 ILOG("[WebServerManager] Started Swift server — HTTP: \(server.serverURL?.absoluteString ?? "?"), DAV: \(server.webDAVURL?.absoluteString ?? "?")")
             } else {
                 // Tear down a partial start so a subsequent attempt can bind cleanly.
@@ -113,6 +125,25 @@ public actor PVWebServerManager {
             ELOG("[WebServerManager] startServers threw: \(error.localizedDescription)")
             throw error
         }
+    }
+
+    /// A listener died without `stop()` (iOS defuncts sockets of suspended apps). The server
+    /// already withdrew its adverts; bind again, possibly on another port if an app took
+    /// ours meanwhile. Runs in the lifecycle chain, so an explicit `stop()` queued first wins.
+    private func restartAfterUnexpectedStop(of id: ObjectIdentifier) async {
+        let previous = lifecycleOperation
+        let operation = Task {
+            await previous?.value
+            guard let active = activeServer, ObjectIdentifier(active) == id else { return }
+            WLOG("[WebServerManager] Listener stopped unexpectedly; restarting")
+            do {
+                _ = try await startIfNeeded()
+            } catch {
+                ELOG("[WebServerManager] Restart after unexpected stop failed: \(error.localizedDescription)")
+            }
+        }
+        lifecycleOperation = operation
+        await operation.value
     }
 
     private func stopIfNeeded() async {

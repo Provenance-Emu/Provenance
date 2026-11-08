@@ -42,7 +42,7 @@ private struct PVModernPropfindCacheEntry {
 
 /// Swift-native HTTP + WebDAV server using Hummingbird 2 / Swift NIO.
 /// Owned by `PVWebServerManager`; presentation does not control its lifetime.
-// FIXME: @unchecked Sendable — mutable state (_isHTTPRunning, httpServerTask, cachedIPAddress,
+// FIXME: @unchecked Sendable — mutable state (cachedIPAddress,
 // netService) can be accessed from multiple concurrent contexts if callers bypass
 // PVWebServerManager. Phase 2 should convert this to an `actor` or confine all
 // mutation behind a single executor. Until then, callers must route all access
@@ -51,12 +51,17 @@ public final class PVModernWebServer: @unchecked Sendable {
 
     // MARK: Configuration
 
-    /// HTTP file-uploader port — see `PVWebServerPorts` (80 on iOS/tvOS hardware,
-    /// 8080 in the Simulator and on macOS, which reserves low ports for root).
+    /// Preferred HTTP file-uploader port — see `PVWebServerPorts` (80 on iOS/tvOS
+    /// hardware, 8080 in the Simulator and on macOS, which reserves low ports for root).
+    /// The listener may end up elsewhere; `boundHTTPPort` is the port it holds.
     public let httpPort: Int
-    /// WebDAV port — see `PVWebServerPorts` (81 on iOS/tvOS hardware, 8081 in the
-    /// Simulator and on macOS).
+    /// Preferred WebDAV port — see `PVWebServerPorts` (81 on iOS/tvOS hardware, 8081 in
+    /// the Simulator and on macOS). `boundWebDAVPort` is the port it holds.
     public let webDAVPort: Int
+    /// HTTP ports tried in order until one binds. iFly and iCube want port 80 too.
+    public let httpPortCandidates: [Int]
+    /// WebDAV ports tried in order until one binds, skipping the HTTP listener's port.
+    public let webDAVPortCandidates: [Int]
     /// Default destination for `POST /upload` when no `path` query parameter
     /// is supplied. Defaults to `<browseRoot>/Imports`.
     public let uploadDirectory: URL
@@ -68,8 +73,10 @@ public final class PVModernWebServer: @unchecked Sendable {
 
     // MARK: State
 
-    private var httpServerTask: Task<Void, Error>?
-    private var webDAVServerTask: Task<Void, Error>?
+    /// Listener ports, tasks and the restart hook. Written from `startServers`, `stopServers`
+    /// and the listener tasks themselves (when a socket dies), so it sits behind a lock.
+    private let listenerLock = NSLock()
+    private(set) var listenerState = ListenerState()
     private var netServices: [NetService] = []
     private var cachedIPAddress: String?
     /// Stamped on init so `/stats` can report process uptime to the dashboard.
@@ -79,8 +86,8 @@ public final class PVModernWebServer: @unchecked Sendable {
     /// so connected browsers refresh in real time without polling.
     private let sseHub = SSEHub()
 
-    private var _isHTTPRunning: Bool = false
-    private var _isWebDAVRunning: Bool = false
+    private var _isHTTPRunning: Bool { boundHTTPPort != nil }
+    private var _isWebDAVRunning: Bool { boundWebDAVPort != nil }
 
     /// Short-lived PROPFIND bodies so a mount storm does not re-list the same folder.
     private let propfindCacheLock = NSLock()
@@ -89,15 +96,24 @@ public final class PVModernWebServer: @unchecked Sendable {
 
     // MARK: Init
 
+    /// - Parameters:
+    ///   - httpPort / webDAVPort: bind only this port (no fallback). Mostly for tests.
+    ///   - httpPorts / webDAVPorts: candidate lists, tried in order. Default: `PVWebServerPorts`.
     public init(uploadDirectory: URL? = nil,
                 browseRoot: URL? = nil,
                 httpPort: Int? = nil,
-                webDAVPort: Int? = nil) {
+                webDAVPort: Int? = nil,
+                httpPorts: [Int]? = nil,
+                webDAVPorts: [Int]? = nil) {
         // Match the legacy GCDWebServer defaults — see `PVWebServerPorts`, which
         // also covers "Designed for iPad" on a Mac (where low ports are root-only
         // but no compile-time platform flag reveals it).
-        self.httpPort   = httpPort   ?? PVWebServerPorts.upload
-        self.webDAVPort = webDAVPort ?? PVWebServerPorts.webDAV
+        let httpCandidates = httpPorts ?? httpPort.map { [$0] } ?? PVWebServerPorts.uploadCandidates
+        let webDAVCandidates = webDAVPorts ?? webDAVPort.map { [$0] } ?? PVWebServerPorts.webDAVCandidates
+        self.httpPortCandidates = httpCandidates
+        self.webDAVPortCandidates = webDAVCandidates
+        self.httpPort   = httpCandidates.first ?? PVWebServerPorts.upload
+        self.webDAVPort = webDAVCandidates.first ?? PVWebServerPorts.webDAV
 
         let resolvedBrowseRoot: URL = {
             if let browseRoot { return browseRoot }
@@ -126,39 +142,52 @@ extension PVModernWebServer: PVWebServerProtocol {
     public var isWWWServerRunning: Bool  { _isHTTPRunning }
     public var isWebDAVServerRunning: Bool { _isWebDAVRunning }
 
+    /// The port the HTTP listener holds, or `nil` while it is down.
+    public var boundHTTPPort: Int? { listenerLock.withLock { listenerState.ports[.http] } }
+
+    /// The port the WebDAV listener holds, or `nil` while it is down.
+    public var boundWebDAVPort: Int? { listenerLock.withLock { listenerState.ports[.webDAV] } }
+
     public var serverURL: URL? {
-        guard _isHTTPRunning, let ip = currentIPAddress() else { return nil }
-        let portSuffix = httpPort == 80 ? "" : ":\(httpPort)"
+        guard let port = boundHTTPPort, let ip = currentIPAddress() else { return nil }
+        let portSuffix = port == 80 ? "" : ":\(port)"
         return URL(string: "http://\(ip)\(portSuffix)/")
     }
 
     public var webDAVURL: URL? {
-        guard _isWebDAVRunning, let ip = currentIPAddress() else { return nil }
-        return URL(string: "http://\(ip):\(webDAVPort)/")
+        guard let port = boundWebDAVPort, let ip = currentIPAddress() else { return nil }
+        return URL(string: "http://\(ip):\(port)/")
+    }
+
+    public func setUnexpectedStopHandler(_ handler: @escaping @Sendable () -> Void) {
+        listenerLock.withLock { listenerState.unexpectedStopHandler = handler }
     }
 
     @discardableResult
     public func startServers() async throws -> Bool {
-        async let httpOK = startHTTPServer()
-        async let davOK = startWebDAVServer()
-        let results: (Bool, Bool)
+        let generation = listenerLock.withLock { listenerState.generation }
+        // One after the other, not concurrently: WebDAV must skip whatever port HTTP took.
+        let httpOK: Bool
+        let davOK: Bool
         do {
-            results = try await (httpOK, davOK)
+            httpOK = try await startHTTPServer(generation: generation)
+            davOK = httpOK ? try await startWebDAVServer(generation: generation) : false
         } catch {
             await stopServers()
             throw error
         }
 
-        guard results.0 && results.1 else {
+        guard httpOK && davOK else {
             await stopServers()
-            WLOG("[PVModernWebServer] start aborted (HTTP ok: \(results.0), WebDAV ok: \(results.1)); listeners torn down.")
+            WLOG("[PVModernWebServer] start aborted (HTTP ok: \(httpOK), WebDAV ok: \(davOK)); listeners torn down. "
+                 + "Tried HTTP \(httpPortCandidates), WebDAV \(webDAVPortCandidates).")
             return false
         }
 
         await startBonjourAdvertisement()
 
-        postStatusNotification(isRunning: true, type: "WebUploader", port: httpPort, url: serverURL)
-        postStatusNotification(isRunning: true, type: "WebDAV", port: webDAVPort, url: webDAVURL)
+        postStatusNotification(isRunning: true, type: "WebUploader", port: boundHTTPPort ?? httpPort, url: serverURL)
+        postStatusNotification(isRunning: true, type: "WebDAV", port: boundWebDAVPort ?? webDAVPort, url: webDAVURL)
 
 #if canImport(UIKit) && !os(watchOS)
         /// Use the main GCD queue instead of `MainActor.run` so `@MainActor` callers awaiting `PVWebServerManager.start()` cannot deadlock with this type’s isolation.
@@ -168,20 +197,68 @@ extension PVModernWebServer: PVWebServerProtocol {
     }
 
     public func stopServers() async {
-        httpServerTask?.cancel()
-        webDAVServerTask?.cancel()
-        httpServerTask = nil
-        webDAVServerTask = nil
+        let ended = listenerLock.withLock { listenerState.endAll() }
+        ended.tasks.forEach { $0.cancel() }
         await stopBonjourAdvertisement()
-        _isHTTPRunning = false
-        _isWebDAVRunning = false
 
-        postStatusNotification(isRunning: false, type: "WebUploader", port: httpPort, url: nil)
-        postStatusNotification(isRunning: false, type: "WebDAV", port: webDAVPort, url: nil)
+        postStatusNotification(isRunning: false, type: "WebUploader", port: ended.ports[.http] ?? httpPort, url: nil)
+        postStatusNotification(isRunning: false, type: "WebDAV", port: ended.ports[.webDAV] ?? webDAVPort, url: nil)
 
 #if canImport(UIKit) && !os(watchOS)
         await setIdleTimerDisabledOnMainQueue(false)
 #endif
+    }
+}
+
+// MARK: - Listener state
+
+extension PVModernWebServer {
+    enum Listener: String, Sendable {
+        case http = "HTTP"
+        case webDAV = "WebDAV"
+    }
+
+    /// Guarded by `listenerLock`.
+    struct ListenerState {
+        /// Bumped by every stop, so a listener task that exits afterwards knows it was told to.
+        var generation: UInt64 = 0
+        /// Confirmed bound ports. A listener is up exactly while it has an entry here.
+        var ports: [Listener: Int] = [:]
+        var tasks: [Listener: Task<Void, Error>] = [:]
+        var unexpectedStopHandler: (@Sendable () -> Void)?
+
+        /// Marks every listener down and starts a new generation.
+        mutating func endAll() -> (ports: [Listener: Int], tasks: [Task<Void, Error>]) {
+            generation &+= 1
+            let ended = (ports: ports, tasks: Array(tasks.values))
+            ports.removeAll()
+            tasks.removeAll()
+            return ended
+        }
+    }
+
+    /// A confirmed listener's task ended. If nobody asked it to (same generation, same port),
+    /// the socket died under us: iOS defuncts listeners of suspended apps, and another app
+    /// may have taken the port since. Take everything down so no advert keeps naming a port
+    /// this process may no longer hold, then let the owner restart.
+    func listenerEnded(_ listener: Listener, port: Int, generation: UInt64) async {
+        let outcome: (ended: (ports: [Listener: Int], tasks: [Task<Void, Error>]), handler: (@Sendable () -> Void)?)?
+        outcome = listenerLock.withLock {
+            guard listenerState.generation == generation, listenerState.ports[listener] == port else { return nil }
+            let handler = listenerState.unexpectedStopHandler
+            listenerState.unexpectedStopHandler = nil
+            return (listenerState.endAll(), handler)
+        }
+        guard let outcome else { return }
+        ELOG("[PVModernWebServer] \(listener.rawValue) listener on :\(port) stopped unexpectedly; taking the server down")
+        outcome.ended.tasks.forEach { $0.cancel() }
+        await stopBonjourAdvertisement()
+        postStatusNotification(isRunning: false, type: "WebUploader", port: outcome.ended.ports[.http] ?? httpPort, url: nil)
+        postStatusNotification(isRunning: false, type: "WebDAV", port: outcome.ended.ports[.webDAV] ?? webDAVPort, url: nil)
+#if canImport(UIKit) && !os(watchOS)
+        await setIdleTimerDisabledOnMainQueue(false)
+#endif
+        outcome.handler?()
     }
 }
 
@@ -202,14 +279,12 @@ private extension PVModernWebServer {
     }
 #endif
 
-    func startHTTPServer() async throws -> Bool {
-        return try await spawnAndConfirmBind(
-            label: "HTTP",
-            port: self.httpPort,
-            router: buildHTTPRouter(),
-            taskAssign: { [weak self] task in self?.httpServerTask = task },
-            runningFlag: { [weak self] running in self?._isHTTPRunning = running }
-        )
+    func startHTTPServer(generation: UInt64) async throws -> Bool {
+        let router = buildHTTPRouter()
+        let port = await PVWebServerPorts.firstBound(httpPortCandidates) { candidate in
+            try await spawnAndConfirmBind(.http, port: candidate, router: router, generation: generation)
+        }
+        return port != nil
     }
 
 }
@@ -608,8 +683,8 @@ private extension PVModernWebServer {
             "buildNumber":     buildNumber,
             "hostname":        hostname,
             "ipAddress":       currentIPAddress() ?? "",
-            "httpPort":        httpPort,
-            "webDAVPort":      webDAVPort,
+            "httpPort":        boundHTTPPort ?? httpPort,
+            "webDAVPort":      boundWebDAVPort ?? webDAVPort,
             "serverURL":       serverURL?.absoluteString ?? "",
             "webDAVURL":       webDAVURL?.absoluteString ?? "",
             "uptimeSeconds":   Int(uptime),
@@ -916,73 +991,86 @@ private let kWebDAVFieldNameOverwrite: HTTPField.Name? = HTTPField.Name("Overwri
 
 private extension PVModernWebServer {
 
-    func startWebDAVServer() async throws -> Bool {
+    func startWebDAVServer(generation: UInt64) async throws -> Bool {
         // WebDAV exposes the full browse root so Finder etc. can navigate
         // ROMs / BIOS / Save States subdirectories, matching the HTTP UI.
-        let dir = self.browseRoot
-        return try await spawnAndConfirmBind(
-            label: "WebDAV",
-            port: self.webDAVPort,
-            router: buildWebDAVRouter(uploadDirectory: dir),
-            taskAssign: { [weak self] task in self?.webDAVServerTask = task },
-            runningFlag: { [weak self] running in self?._isWebDAVRunning = running }
-        )
+        let router = buildWebDAVRouter(uploadDirectory: self.browseRoot)
+        let taken = Set([boundHTTPPort].compactMap { $0 })
+        let port = await PVWebServerPorts.firstBound(webDAVPortCandidates, excluding: taken) { candidate in
+            try await spawnAndConfirmBind(.webDAV, port: candidate, router: router, generation: generation)
+        }
+        return port != nil
     }
 
-    /// Boot one Hummingbird Application and only return `true` once it has
-    /// either signalled "bind succeeded" or the Task threw an early error.
-    /// Previously both startHTTPServer / startWebDAVServer set their running
-    /// flag optimistically before the NIO bind completed, so a port collision
-    /// silently presented as "server running" with a URL that nothing was
-    /// actually listening on.
+    /// Boot one Hummingbird Application and only return `true` once Hummingbird
+    /// reports the listening channel is up (`onServerRunning`), or `false` when the
+    /// Task threw early (port taken) or nothing happened within 2s.
+    ///
+    /// This used to confirm with a loopback `connect()` to the port. That succeeds
+    /// against ANY listener there, so with iFly or iCube already on port 80 Provenance
+    /// "confirmed" a bind it never made and advertised the other app's server.
     func spawnAndConfirmBind(
-        label: String,
+        _ listener: Listener,
         port: Int,
         router: Router<BasicRequestContext>,
-        taskAssign: @escaping (Task<Void, Error>) -> Void,
-        runningFlag: @escaping (Bool) -> Void
+        generation: UInt64
     ) async throws -> Bool {
+        let running = BindSignal()
         let app = Application(
             router: router,
             server: .http1(configuration: .init(additionalChannelHandlers: TCPNoDelayChannelHandler.make())),
             configuration: .init(
                 address: .hostname("0.0.0.0", port: port),
                 serverName: "Provenance"
-            )
+            ),
+            onServerRunning: { _ in running.set() }
         )
 
         // Track early failure via a shared box: the Hummingbird Task writes
         // any thrown error into it; the probe loop reads it each tick.
         // Swift's standard `Task` has no non-blocking "is it done?" API.
         let earlyError = EarlyErrorBox()
-        let task = Task<Void, Error> {
+        let task = Task<Void, Error> { [weak self] in
+            var thrown: Error?
             do {
                 try await app.run()
             } catch {
+                thrown = error
                 earlyError.set(error)
-                throw error
             }
+            // Any exit of a listener that came up: stopServers' cancel, or the socket dying.
+            if running.isSet {
+                await self?.listenerEnded(listener, port: port, generation: generation)
+            }
+            if let thrown { throw thrown }
         }
-        taskAssign(task)
 
         let probeDeadline = Date().addingTimeInterval(2.0)
         while Date() < probeDeadline {
             if let error = earlyError.get() {
-                ELOG("[PVModernWebServer] \(label) bind failed on port \(port): \(error.localizedDescription)")
-                runningFlag(false)
+                WLOG("[PVModernWebServer] \(listener.rawValue) couldn't bind port \(port): \(error.localizedDescription)")
                 return false
             }
-            if probePort(port) {
-                ILOG("[PVModernWebServer] \(label) bound on 0.0.0.0:\(port)")
-                runningFlag(true)
+            if running.isSet {
+                let current = listenerLock.withLock { () -> Bool in
+                    guard listenerState.generation == generation else { return false }
+                    listenerState.ports[listener] = port
+                    listenerState.tasks[listener] = task
+                    return true
+                }
+                guard current else {
+                    // stopServers ran while this bind was in flight.
+                    task.cancel()
+                    return false
+                }
+                ILOG("[PVModernWebServer] \(listener.rawValue) bound on 0.0.0.0:\(port)")
                 return true
             }
-            try? await Task.sleep(nanoseconds: 50_000_000)
+            try? await Task.sleep(nanoseconds: 20_000_000)
         }
 
-        WLOG("[PVModernWebServer] \(label) bind not confirmed within 2s on port \(port); aborting.")
+        WLOG("[PVModernWebServer] \(listener.rawValue) bind not confirmed within 2s on port \(port); trying the next port.")
         task.cancel()
-        runningFlag(false)
         return false
     }
 
@@ -1001,24 +1089,12 @@ private extension PVModernWebServer {
         }
     }
 
-    /// Cheap TCP-probe: returns true if a local connect to `127.0.0.1:port`
-    /// succeeds. Used to confirm Hummingbird has actually bound before the
-    /// manager reports the server as running.
-    func probePort(_ port: Int) -> Bool {
-        let fd = socket(AF_INET, SOCK_STREAM, 0)
-        guard fd >= 0 else { return false }
-        defer { close(fd) }
-        var addr = sockaddr_in()
-        addr.sin_family = sa_family_t(AF_INET)
-        addr.sin_port = in_port_t(UInt16(port).bigEndian)
-        addr.sin_addr.s_addr = inet_addr("127.0.0.1")
-        let addrLen = socklen_t(MemoryLayout<sockaddr_in>.size)
-        let result = withUnsafePointer(to: &addr) {
-            $0.withMemoryRebound(to: sockaddr.self, capacity: 1) { sockaddrPtr in
-                connect(fd, sockaddrPtr, addrLen)
-            }
-        }
-        return result == 0
+    /// Set from Hummingbird's `onServerRunning` once the listening channel is bound.
+    final class BindSignal: @unchecked Sendable {
+        private let lock = NSLock()
+        private var value = false
+        func set() { lock.withLock { value = true } }
+        var isSet: Bool { lock.withLock { value } }
     }
 
 }
@@ -1425,12 +1501,16 @@ private extension PVModernWebServer {
         // These records advertise existing listeners without binding another socket.
         await withCheckedContinuation { (continuation: CheckedContinuation<Void, Never>) in
             DispatchQueue.main.async {
-                self.netServices = self.makeBonjourServices()
-                self.netServices.forEach { $0.publish() }
+                // Read the bound ports on this hop: a listener that died meanwhile
+                // must not get a record naming a port another app may now hold.
+                if let http = self.boundHTTPPort, let dav = self.boundWebDAVPort {
+                    self.netServices = Self.makeBonjourServices(httpPort: http, webDAVPort: dav)
+                    self.netServices.forEach { $0.publish() }
+                    ILOG("[PVModernWebServer] Bonjour advertising HTTP \(http) and WebDAV \(dav)")
+                }
                 continuation.resume()
             }
         }
-        ILOG("[PVModernWebServer] Bonjour advertising HTTP \(httpPort) and WebDAV \(webDAVPort)")
     }
 
     func stopBonjourAdvertisement() async {
@@ -1445,8 +1525,8 @@ private extension PVModernWebServer {
 }
 
 extension PVModernWebServer {
-    /// Discovery records for the existing HTTP and WebDAV listeners.
-    func makeBonjourServices() -> [NetService] {
+    /// Discovery records for the HTTP and WebDAV listeners, on the ports they hold.
+    static func makeBonjourServices(httpPort: Int, webDAVPort: Int) -> [NetService] {
         [
             NetService(domain: "local.", type: "_http._tcp.", name: "Provenance", port: Int32(httpPort)),
             NetService(domain: "local.", type: "_webdav._tcp.", name: "Provenance", port: Int32(webDAVPort))
