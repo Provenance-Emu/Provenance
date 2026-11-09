@@ -41,6 +41,9 @@ concurrency:
 env:
   TUIST_VERSION: "4.200.0"
 
+permissions:
+  contents: read
+
 jobs:
   build:
     name: ${{ matrix.scheme }} (${{ matrix.destination }})

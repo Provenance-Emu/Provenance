@@ -50,12 +50,14 @@ on:
         type: string
 
 permissions:
-  contents: write
-  pull-requests: read
+  contents: read
 
 jobs:
   update-changelog:
     name: Refresh [Unreleased] section
+    permissions:
+      contents: write
+      pull-requests: read
     runs-on: ubuntu-latest
     timeout-minutes: 10
 

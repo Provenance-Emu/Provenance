@@ -26,9 +26,7 @@ on:
           - fix_rebase_conflict
 
 permissions:
-  contents: write
-  pull-requests: write
-  issues: write
+  contents: read
 
 jobs:
   # Only people with write access may drive the agent (GHSA-ghmr-j7fw-8g5g).
@@ -75,6 +73,10 @@ jobs:
     concurrency:
       group: cursor-agent-${{ github.event.inputs.pr_number || github.event.inputs.issue_number || github.event.issue.number }}
       cancel-in-progress: false
+    permissions:
+      contents: write
+      pull-requests: write
+      issues: write
     runs-on: ubuntu-latest
     timeout-minutes: 90
     env:

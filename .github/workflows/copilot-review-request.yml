@@ -10,10 +10,12 @@ on:
       - 'pr/**'
 
 permissions:
-  pull-requests: write
+  contents: read
 
 jobs:
   request-copilot-review:
+    permissions:
+      pull-requests: write
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:

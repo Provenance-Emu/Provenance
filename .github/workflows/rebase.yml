@@ -9,10 +9,7 @@ on:
     types: [created]
 
 permissions:
-  contents: write
-  pull-requests: write
-  issues: write
-  actions: write
+  contents: read
 
 jobs:
   rebase:
@@ -32,6 +29,10 @@ jobs:
       github.event.issue.pull_request != '' &&
       github.event.comment.body == '/rebase' &&
       contains(fromJSON('["OWNER","MEMBER","COLLABORATOR"]'), github.event.comment.author_association)
+    permissions:
+      contents: write
+      pull-requests: write
+      actions: write
     runs-on: ubuntu-latest
     steps:
       - name: Acknowledge

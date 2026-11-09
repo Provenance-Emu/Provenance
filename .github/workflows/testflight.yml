@@ -53,6 +53,9 @@ env:
   HOMEBREW_NO_INSTALL_CLEANUP: 1
   SWIFT_PACKAGE_ALLOW_WRITING_TO_DIRECTORY: ${{ github.workspace }}
 
+permissions:
+  contents: read
+
 jobs:
   # Resolve which platforms this run should archive. A job-level `if` cannot see
   # the matrix context, so the selection is computed here and fed to the matrix.

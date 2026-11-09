@@ -12,12 +12,14 @@ on:
   # Actions tab, or locally with `python3 Scripts/maint/maint.py run core-versions`.
 
 permissions:
-  contents: write
-  pull-requests: write
+  contents: read
 
 jobs:
   validate:
     name: Scan and Validate Core Versions
+    permissions:
+      contents: write
+      pull-requests: write
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository

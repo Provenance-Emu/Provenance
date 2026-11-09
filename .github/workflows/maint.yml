@@ -23,9 +23,7 @@ on:
       - '.github/workflows/maint.yml'
 
 permissions:
-  contents: write
-  pull-requests: write
-  issues: write
+  contents: read
 
 concurrency:
   group: maint-${{ github.event_name }}-${{ github.ref }}
@@ -67,6 +65,10 @@ jobs:
 
   maintain:
     if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+    permissions:
+      contents: write
+      pull-requests: write
+      issues: write
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:

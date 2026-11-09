@@ -15,12 +15,13 @@ on:
 
 permissions:
   contents: read
-  pull-requests: read
-  actions: write   # Needed to dispatch claude-code.yml and delete stale runs
 
 jobs:
   cleanup:
     name: Clean up stale action_required runs
+    permissions:
+      contents: read
+      actions: write  # Needed to delete stale runs
     runs-on: ubuntu-latest
     steps:
       - name: Delete stale action_required workflow runs
@@ -41,6 +42,10 @@ jobs:
 
   poll:
     name: Poll Copilot reviews on Agent PRs
+    permissions:
+      contents: read
+      pull-requests: read
+      actions: write  # Needed to dispatch claude-code.yml
     runs-on: ubuntu-latest
     steps:
       - name: Check Copilot reviews and dispatch Claude

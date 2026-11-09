@@ -34,10 +34,16 @@ concurrency:
   group: agent-validation-${{ github.head_ref || github.event.inputs.branch }}${{ github.event.inputs.triggered_by == 'rebase' && '-rebase' || '' }}
   cancel-in-progress: true
 
+permissions:
+  contents: read
+
 jobs:
   # Job 1: Fast lint on ubuntu (~1 min)
   lint:
     name: SwiftLint
+    permissions:
+      contents: read
+      pull-requests: read
     # The release binary needs libxml2.so.2, which ubuntu-26.04 no longer provides.
     runs-on: ubuntu-24.04
     timeout-minutes: 5
@@ -124,6 +130,9 @@ jobs:
   # job produces no jobs at all, which is the point.
   spm-changed:
     name: Detect changed SPM modules
+    permissions:
+      contents: read
+      pull-requests: read
     runs-on: ubuntu-latest
     timeout-minutes: 5
     outputs:
@@ -716,6 +725,9 @@ jobs:
   # Job 4: Check PR dependency ordering (lightweight, ubuntu)
   dependency-check:
     name: Check PR dependencies
+    permissions:
+      contents: read
+      pull-requests: write
     runs-on: ubuntu-latest
     timeout-minutes: 5
     # Only makes sense when we have a PR number

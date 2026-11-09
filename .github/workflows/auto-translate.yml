@@ -32,12 +32,14 @@ on:
         default: false
 
 permissions:
-  contents: write
-  pull-requests: write
+  contents: read
 
 jobs:
   translate:
     name: Detect & translate new strings
+    permissions:
+      contents: write
+      pull-requests: write
     runs-on: ubuntu-latest
     if: "!contains(github.event.head_commit.message, '[Auto-translation]')"
 

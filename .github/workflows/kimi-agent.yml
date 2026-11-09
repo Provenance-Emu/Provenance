@@ -23,10 +23,7 @@ on:
           - fix_ai_review
 
 permissions:
-  contents: write
-  pull-requests: write
-  issues: write
-  actions: write
+  contents: read
 
 concurrency:
   group: kimi-agent-${{ github.event.inputs.issue_number }}
@@ -35,6 +32,11 @@ concurrency:
 jobs:
   kimi-agent:
     name: Kimi Agent — Issue #${{ github.event.inputs.issue_number }}
+    permissions:
+      contents: write
+      pull-requests: write
+      issues: write
+      actions: write
     runs-on: ubuntu-latest
     timeout-minutes: 90
 

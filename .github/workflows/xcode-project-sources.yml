@@ -50,6 +50,9 @@ on:
       - '.github/workflows/xcode-project-sources.yml'
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 jobs:
   check:
     name: Unreferenced source files

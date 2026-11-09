@@ -20,8 +20,6 @@ on:
 
 permissions:
   contents: read
-  pull-requests: write
-  actions: write
 
 jobs:
   # ── Trigger 1: build-ipa label added to any PR ──────────────────────────────
@@ -32,6 +30,10 @@ jobs:
       github.event.action == 'labeled' &&
       github.event.label.name == 'build-ipa' &&
       github.event.pull_request.state == 'open'
+    permissions:
+      contents: read
+      pull-requests: write
+      actions: write
     runs-on: ubuntu-latest
     steps:
       - name: Acknowledge and dispatch build
@@ -75,6 +77,10 @@ jobs:
       github.event.action == 'ready_for_review' &&
       !startsWith(github.event.pull_request.title, '[Agent]') &&
       github.event.pull_request.author_association != 'OWNER'
+    permissions:
+      contents: read
+      pull-requests: write
+      actions: write
     runs-on: ubuntu-latest
     steps:
       - name: Dispatch build for external contributor PR
@@ -105,6 +111,10 @@ jobs:
       github.event.issue.pull_request != null &&
       github.event.comment.body == '/build' &&
       contains(fromJSON('["OWNER","MEMBER","COLLABORATOR"]'), github.event.comment.author_association)
+    permissions:
+      contents: read
+      pull-requests: write
+      actions: write
     runs-on: ubuntu-latest
     steps:
       - name: Get PR branch
