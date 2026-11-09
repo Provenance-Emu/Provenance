@@ -6,9 +6,13 @@
 //  through the routes in `PVHostedWebServer+Routes.swift`.
 //
 
-// swiftlint:disable function_body_length line_length file_length type_body_length
+import Foundation
+
+// swiftlint:disable file_length
+// swiftlint:disable:next type_body_length
 enum FileManagerPage {
 
+    // swiftlint:disable:next function_body_length
     static func html(defaultUploadPath: String) -> String {
         // Inject the default upload subpath as a JS constant so client-side
         // navigation can target it before any user interaction.
