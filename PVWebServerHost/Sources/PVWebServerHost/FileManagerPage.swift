@@ -6,7 +6,7 @@
 //  through the routes in `PVHostedWebServer+Routes.swift`.
 //
 
-// swiftlint:disable function_body_length line_length file_length
+// swiftlint:disable function_body_length line_length file_length type_body_length
 enum FileManagerPage {
 
     static func html(defaultUploadPath: String) -> String {
