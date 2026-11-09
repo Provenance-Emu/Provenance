@@ -819,7 +819,12 @@ extension EmulatorWithSkinView {
         #endif
 
         let preselected = usePreselected ? preselectedSkinIdentifier : nil
+        let effectiveIdentifier = preselected ?? DeltaSkinSelectionManager.shared.effectiveSkinIdentifier(
+            for: systemId, gameIds: gameSkinKeys, orientation: currentOrientation)
+        let allowsAutomaticSkin = ProgrammaticOverlaySupport.allowsAutomaticSkin(
+            mode: Defaults[.skinMode], requiresExplicitSelection: coreInstance.requiresExplicitSkinSelection)
         let prefersBuiltInOnly = !ProgrammaticOverlaySupport.allowsPackagedSkins(for: coreInstance)
+            || (effectiveIdentifier == nil && !allowsAutomaticSkin)
             || preselected == DeltaSkinSelectionManager.builtInSkinPreferenceToken
             || (preselected == nil && DeltaSkinSelectionManager.shared.prefersBuiltInControllerSkin(
                 for: systemId, gameIds: gameSkinKeys, orientation: currentOrientation))
@@ -927,7 +932,7 @@ extension EmulatorWithSkinView {
                     for: systemId, gameIds: gameKeysSnapshot, orientation: currentOrientation)
             }
 
-            if foundSkin == nil, !skipPackagedSkinFallback {
+            if foundSkin == nil, allowsAutomaticSkin, !skipPackagedSkinFallback {
                 if let gameType = DeltaSkinGameType(systemIdentifier: systemId),
                    await MainActor.run(body: { manager.skinsAreLoaded }),
                    let defaultSkin = await MainActor.run(body: {

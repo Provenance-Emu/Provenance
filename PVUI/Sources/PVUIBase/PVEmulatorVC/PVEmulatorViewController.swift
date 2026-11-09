@@ -2600,17 +2600,12 @@ extension PVEmulatorViewController {
     public func resetToBuiltInControls() async throws {
         DLOG("Resetting to the built-in controls")
 
-        if core.skipLayout, core.bridge is EmulatorCoreViewportPositioning,
-           let container = skinContainerView as? DeltaSkinContainerView {
+        // Update every live SwiftUI container in place. Published viewport frames can outlive
+        // an overlay, so they are not evidence that a Built-in selection was applied.
+        if let container = skinContainerView as? DeltaSkinContainerView {
             currentSkin = nil
             container.updateSkinIdentifier(nil)
-            return
-        }
-
-        // The programmatic overlay already is the built-in controls and lays itself out from
-        // its own geometry, so there is nothing to rebuild or swap (rotation, "Built-in" picks).
-        if isProgrammaticOverlayActive {
-            DLOG("skins: programmatic overlay is mounted, keeping it")
+            updateOnScreenControlsVisibility()
             return
         }
 
@@ -2628,7 +2623,7 @@ extension PVEmulatorViewController {
         }
 
         // With no packaged skin selected the skin container hosts the overlay.
-        try await setupDeltaSkinView()
+        try await setupDeltaSkinView(preselectedSkinIdentifier: DeltaSkinSelectionManager.builtInSkinPreferenceToken)
 
         await MainActor.run {
             NotificationCenter.default.post(name: NSNotification.Name("DeltaSkinChanged"), object: nil)

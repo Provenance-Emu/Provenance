@@ -63,6 +63,13 @@ struct DeltaSkinContainerViewTests {
 
         container.updateSkinIdentifier(nil)
         #expect(container.skinIdentifier == DeltaSkinSelectionManager.builtInSkinPreferenceToken)
+        #expect(container.skinRequestRevision == 3)
+
+        // Selecting Built-in again must still notify SwiftUI, even if stale viewport
+        // frames make the controller believe its previous overlay is already mounted.
+        container.updateSkinIdentifier(nil)
+        #expect(container.skinRequestRevision == 4)
+        #expect(container.skinIdentifier == DeltaSkinSelectionManager.builtInSkinPreferenceToken)
         #expect(container.subviews.first === hostingView)
         #expect(renderView.superview === host)
     }

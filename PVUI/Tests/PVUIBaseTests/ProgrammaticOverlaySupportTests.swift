@@ -9,10 +9,17 @@
 import Foundation
 import Testing
 import PVSystems
+import PVSettings
 @testable import PVUIBase
 
 @Suite("ProgrammaticOverlaySupport")
 struct ProgrammaticOverlaySupportTests {
+    @Test("Default mode never automatically chooses a packaged skin", arguments: [SkinMode.off, .selectedOnly, .always])
+    func automaticSkinPolicy(mode: SkinMode) {
+        #expect(ProgrammaticOverlaySupport.allowsAutomaticSkin(mode: mode, requiresExplicitSelection: false) == (mode == .always))
+        #expect(!ProgrammaticOverlaySupport.allowsAutomaticSkin(mode: mode, requiresExplicitSelection: true))
+    }
+
     @Test("The linked system wins; the persisted identifier is the fallback")
     func systemIdentifierResolution() {
         #expect(ProgrammaticOverlaySupport.systemIdentifier(linked: .SNES, persisted: SystemIdentifier.NES.rawValue)

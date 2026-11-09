@@ -25,6 +25,12 @@ enum ProgrammaticOverlaySupport {
         systemId != nil
     }
 
+    /// Only Always mode may choose an unselected packaged skin. Explicit-selection cores
+    /// must keep their built-in controller until the player picks a skin.
+    static func allowsAutomaticSkin(mode: SkinMode, requiresExplicitSelection: Bool) -> Bool {
+        mode == .always && !requiresExplicitSelection
+    }
+
     /// Whether a packaged skin may load. Classic mode (skins Off) and cores without skin
     /// support show only the overlay.
     @MainActor

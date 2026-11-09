@@ -118,6 +118,11 @@ extension PVEmulatorViewController {
 
     /// Set up the DeltaSkin view if enabled in settings
     @objc public func setupDeltaSkinView() async throws {
+        try await setupDeltaSkinView(preselectedSkinIdentifier: nil)
+    }
+
+    /// A forced request survives container recreation, including fallback from a failed skin.
+    func setupDeltaSkinView(preselectedSkinIdentifier: String?) async throws {
         ILOG("skins: setupDeltaSkinView() called")
 
         // Check if DeltaSkin is enabled
@@ -132,7 +137,7 @@ extension PVEmulatorViewController {
             observeOverlayScreenFrames()
 
             // Now create and add the skin view
-            await addSkinView()
+            await addSkinView(preselectedSkinIdentifier: preselectedSkinIdentifier)
 
             scheduleMenuButtonFallback()
 
@@ -445,7 +450,7 @@ extension PVEmulatorViewController {
     }
 
     /// Add the skin view to the view hierarchy
-    private func addSkinView() async {
+    private func addSkinView(preselectedSkinIdentifier overrideIdentifier: String?) async {
         guard isDeltaSkinEnabled else {
             ILOG("skins: Skipping addSkinView() - DeltaSkin not enabled")
             return
@@ -483,6 +488,7 @@ extension PVEmulatorViewController {
         }
 
         let preselectedSkinIdentifier: String? = await MainActor.run { [weak self] in
+            if let overrideIdentifier { return overrideIdentifier }
             guard let self, let sid = self.game.system?.systemIdentifier else { return nil }
             let orient = self.currentOrientation
             return DeltaSkinSelectionManager.shared.effectiveSkinIdentifier(
