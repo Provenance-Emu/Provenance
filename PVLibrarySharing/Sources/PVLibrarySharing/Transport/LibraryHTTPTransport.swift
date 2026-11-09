@@ -229,15 +229,18 @@ public struct URLSessionLibraryTransport: LibraryHTTPTransport {
     private let session: URLSession
     private let timeout: TimeInterval
     private let downloadIdleTimeout: TimeInterval
+    private let followsRedirects: Bool
 
     public init(
         session: URLSession = .shared,
         timeout: TimeInterval = URLSessionLibraryTransport.defaultTimeout,
-        downloadIdleTimeout: TimeInterval = URLSessionLibraryTransport.defaultDownloadIdleTimeout
+        downloadIdleTimeout: TimeInterval = URLSessionLibraryTransport.defaultDownloadIdleTimeout,
+        followsRedirects: Bool = true
     ) {
         self.session = session
         self.timeout = timeout
         self.downloadIdleTimeout = downloadIdleTimeout
+        self.followsRedirects = followsRedirects
     }
 
     public func download(
@@ -253,7 +256,9 @@ public struct URLSessionLibraryTransport: LibraryHTTPTransport {
         for (name, value) in ranged.headers {
             urlRequest.setValue(value, forHTTPHeaderField: name)
         }
-        let delegate = StreamingDownloadDelegate(sink: DownloadSink(file: file, resumeOffset: resumeOffset), progress: progress)
+        let delegate = StreamingDownloadDelegate(
+            sink: DownloadSink(file: file, resumeOffset: resumeOffset), progress: progress, followsRedirects: followsRedirects
+        )
         let configuration = URLSessionConfiguration.ephemeral
         configuration.timeoutIntervalForRequest = downloadIdleTimeout
         configuration.requestCachePolicy = .reloadIgnoringLocalCacheData
@@ -276,7 +281,7 @@ public struct URLSessionLibraryTransport: LibraryHTTPTransport {
         for (name, value) in request.headers {
             urlRequest.setValue(value, forHTTPHeaderField: name)
         }
-        let (data, response) = try await session.data(for: urlRequest)
+        let (data, response) = try await session.data(for: urlRequest, delegate: followsRedirects ? nil : LibraryRedirectPolicy())
         guard let http = response as? HTTPURLResponse else {
             throw LibrarySharingError.invalidResponse(status: 0)
         }
@@ -290,6 +295,14 @@ public struct URLSessionLibraryTransport: LibraryHTTPTransport {
     }
 }
 
+/// Credentials and login bodies must never be forwarded to a redirect target.
+private final class LibraryRedirectPolicy: NSObject, URLSessionTaskDelegate, @unchecked Sendable {
+    func urlSession(_ session: URLSession, task: URLSessionTask, willPerformHTTPRedirection response: HTTPURLResponse,
+                    newRequest request: URLRequest, completionHandler: @escaping (URLRequest?) -> Void) {
+        completionHandler(nil)
+    }
+}
+
 /// Streams a data task's body through a `DownloadSink` as it arrives, so a
 /// gigabyte image never sits in memory.
 private final class StreamingDownloadDelegate: NSObject, URLSessionDataDelegate, @unchecked Sendable {
@@ -300,9 +313,17 @@ private final class StreamingDownloadDelegate: NSObject, URLSessionDataDelegate,
     private var continuation: CheckedContinuation<LibraryDownloadResponse, Error>?
     private let progress: @Sendable (Int64) -> Void
 
-    init(sink: DownloadSink, progress: @escaping @Sendable (Int64) -> Void) {
+    private let followsRedirects: Bool
+
+    init(sink: DownloadSink, progress: @escaping @Sendable (Int64) -> Void, followsRedirects: Bool) {
         self.sink = sink
         self.progress = progress
+        self.followsRedirects = followsRedirects
+    }
+
+    func urlSession(_ session: URLSession, task: URLSessionTask, willPerformHTTPRedirection response: HTTPURLResponse,
+                    newRequest request: URLRequest, completionHandler: @escaping (URLRequest?) -> Void) {
+        completionHandler(followsRedirects ? request : nil)
     }
 
     func start(_ task: URLSessionDataTask, continuation: CheckedContinuation<LibraryDownloadResponse, Error>) {

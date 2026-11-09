@@ -7,6 +7,7 @@
 //
 
 #if os(iOS) || os(tvOS)
+import PVFeatureFlags
 import PVLibrarySharing
 import PVSystems
 import SwiftUI
@@ -14,6 +15,7 @@ import SwiftUI
 struct NearbyLibrariesView: View {
     @State private var model = NearbyLibrariesModel()
     @State private var showingAddServer = false
+    @ObservedObject private var featureFlags = PVFeatureFlagsManager.shared
     #if os(tvOS)
     @Environment(\.dismiss) private var dismiss
     #endif
@@ -54,21 +56,23 @@ struct NearbyLibrariesView: View {
                      + "Copied games are imported into your library; BIOS files and saves stay on the other device.")
             }
 
-            SwiftUI.Section {
-                ForEach(model.contentServers) { server in
-                    let peer = model.contentServerPeer(server)
-                    NavigationLink {
-                        NearbyPeerLibraryView(model: model.peerModel(for: peer))
-                    } label: {
-                        NearbyPeerRow(peer: peer, summary: model.loadedSummaries[peer.id] ?? server.username)
+            if featureFlags.contentServerLibraries {
+                SwiftUI.Section {
+                    ForEach(model.contentServers) { server in
+                        let peer = model.contentServerPeer(server)
+                        NavigationLink {
+                            NearbyPeerLibraryView(model: model.peerModel(for: peer))
+                        } label: {
+                            NearbyPeerRow(peer: peer, summary: model.loadedSummaries[peer.id] ?? server.username)
+                        }
                     }
+                    .onDelete { model.removeContentServers(at: $0) }
+                    Button("Add Content Server…") { showingAddServer = true }
+                } header: {
+                    Text("Content Servers")
+                } footer: {
+                    Text("An emulator-content-server on your network or at home. Provenance keeps a sign-in token in the Keychain, never your password.")
                 }
-                .onDelete { model.removeContentServers(at: $0) }
-                Button("Add Content Server…") { showingAddServer = true }
-            } header: {
-                Text("Content Servers")
-            } footer: {
-                Text("An emulator-content-server on your network or at home. Provenance keeps a sign-in token in the Keychain, never your password.")
             }
 
             if model.snapshot.localNetworkDenied {
@@ -96,9 +100,12 @@ struct NearbyLibrariesView: View {
         .navigationTitle("Nearby Libraries")
         // Keep the presenter outside List's transient section hosts as discovery updates the rows.
         .sheet(isPresented: $showingAddServer) {
-            AddContentServerView { url, username, password in
-                model.addContentServer(url: url, username: username, password: password)
+            AddContentServerView { url, username, password, token in
+                model.addContentServer(url: url, username: username, password: password, accessToken: token)
             }
+        }
+        .onChange(of: featureFlags.contentServerLibraries) { _, enabled in
+            if !enabled { showingAddServer = false }
         }
         #if os(iOS)
         .navigationBarTitleDisplayMode(.inline)
@@ -137,23 +144,15 @@ struct NearbyLibrariesSheet: View {
 /// URL, username and password for a content server. The password is used
 /// once to sign in and is not stored.
 private struct AddContentServerView: View {
-    let onAdd: (URL, String, String) -> Void
+    let onAdd: (URL, String, String, String?) -> Void
     @Environment(\.dismiss) private var dismiss
     @State private var address = ""
     @State private var username = ""
     @State private var password = ""
+    @State private var accessToken = ""
+    @State private var useToken = true
 
-    /// `ecs serve` listens on plain HTTP, port 8473, unless TLS is terminated in front of it.
-    static let defaultPort = 8473
-
-    private var url: URL? {
-        let trimmed = address.trimmingCharacters(in: .whitespaces)
-        let withScheme = trimmed.contains("://") ? trimmed : "http://" + trimmed
-        guard var components = URLComponents(string: withScheme), components.host?.isEmpty == false,
-              ["http", "https"].contains(components.scheme ?? "") else { return nil }
-        if components.port == nil, components.scheme == "http" { components.port = Self.defaultPort }
-        return components.url
-    }
+    private var url: URL? { try? ECSConnection.origin(for: address) }
 
     var body: some View {
         NavigationStack {
@@ -164,12 +163,18 @@ private struct AddContentServerView: View {
                     .textInputAutocapitalization(.never)
                     #endif
                     .autocorrectionDisabled()
-                TextField("Username", text: $username)
-                    #if os(iOS)
-                    .textInputAutocapitalization(.never)
-                    #endif
-                    .autocorrectionDisabled()
-                SecureField("Password", text: $password)
+                Toggle("Use access token", isOn: $useToken)
+                if useToken {
+                    SecureField("Read access token", text: $accessToken)
+                        .autocorrectionDisabled()
+                } else {
+                    TextField("Username", text: $username)
+                        #if os(iOS)
+                        .textInputAutocapitalization(.never)
+                        #endif
+                        .autocorrectionDisabled()
+                    SecureField("Password", text: $password)
+                }
             }
             .navigationTitle("Add Content Server")
             .toolbar {
@@ -178,10 +183,10 @@ private struct AddContentServerView: View {
                 }
                 ToolbarItem(placement: .confirmationAction) {
                     Button("Add") {
-                        if let url { onAdd(url, username, password) }
+                        if let url { onAdd(url, useToken ? "" : username, useToken ? "" : password, useToken ? accessToken : nil) }
                         dismiss()
                     }
-                    .disabled(url == nil || username.isEmpty || password.isEmpty)
+                    .disabled(url == nil || (useToken ? accessToken.isEmpty : (username.isEmpty || password.isEmpty)))
                 }
             }
         }
@@ -227,8 +232,17 @@ private struct NearbyPeerRow: View {
 struct NearbyPeerLibraryView: View {
     let model: NearbyPeerLibraryModel
     @State private var code = ""
+    @ObservedObject private var featureFlags = PVFeatureFlagsManager.shared
 
     var body: some View {
+        if model.peer.app == .contentServer && !featureFlags.contentServerLibraries {
+            ContentUnavailableView("Content Servers Disabled", systemImage: "server.rack")
+        } else {
+            library
+        }
+    }
+
+    private var library: some View {
         List {
             switch model.phase {
             case .idle, .loading:
@@ -260,6 +274,7 @@ struct NearbyPeerLibraryView: View {
                 catalogueSections
             }
         }
+        .searchable(text: Binding(get: { model.searchText }, set: { model.searchText = $0 }), prompt: "Search games")
         .navigationTitle(model.title)
         #if os(iOS)
         .navigationBarTitleDisplayMode(.inline)
@@ -282,9 +297,17 @@ struct NearbyPeerLibraryView: View {
 
     @ViewBuilder
     private var catalogueSections: some View {
+        if !model.serverLibraries.isEmpty {
+            SwiftUI.Section {
+                Picker("Library", selection: Binding(get: { model.selectedLibraryID }, set: { model.selectedLibraryID = $0; model.load() })) {
+                    Text("All libraries").tag("")
+                    ForEach(model.serverLibraries) { library in Text(library.name).tag(library.id) }
+                }
+            }
+        }
         if model.sections.isEmpty {
             SwiftUI.Section {
-                Text("\(model.title) isn't sharing any games Provenance can play.")
+                Text(model.searchText.isEmpty ? "\(model.title) isn't sharing any games Provenance can play." : "No games match your search.")
                     .foregroundStyle(.secondary)
             }
         }
@@ -297,7 +320,10 @@ struct NearbyPeerLibraryView: View {
                         inLibrary: model.isInLibrary(item),
                         copyState: model.copies[item.id],
                         peerName: model.title,
-                        onCopy: { model.copy(item) },
+                        canPlay: model.peer.app == .contentServer && model.canPlay(item),
+                        isContentServer: model.peer.app == .contentServer,
+                        onPlay: { model.play(item) },
+                        onCopy: { model.copy(item, playAfterImport: model.peer.app == .contentServer) },
                         onCancel: { model.cancelCopy(item) }
                     )
                     .task(id: item.id) { await model.loadArtwork(for: item) }
@@ -351,6 +377,9 @@ private struct NearbyItemRow: View {
     let inLibrary: Bool
     let copyState: NearbyCopyState?
     let peerName: String
+    let canPlay: Bool
+    let isContentServer: Bool
+    let onPlay: () -> Void
     let onCopy: () -> Void
     let onCancel: () -> Void
 
@@ -398,10 +427,12 @@ private struct NearbyItemRow: View {
         switch copyState {
         case .preparing(.waitingForApproval):
             return "Waiting for approval on \(peerName)…"
+        case .preparing(.loadingCatalogue):
+            return "Preparing game files…"
         case .preparing:
             return "Connecting…"
         case .downloading(let fraction):
-            return "Copying… \(Int(fraction * 100))% of \(size)"
+            return "Copying… \(Int(fraction * 100))%"
         case .verifying:
             return "Checking the copy…"
         case .completed:
@@ -422,13 +453,15 @@ private struct NearbyItemRow: View {
         } else if copyState == .importing {
             Image(systemName: "tray.and.arrow.down.fill")
                 .foregroundStyle(.secondary)
+        } else if canPlay && isContentServer {
+            Button("Play", action: onPlay)
         } else if inLibrary || copyState == .completed {
             Label("In your library", systemImage: "checkmark.circle.fill")
                 .labelStyle(.titleAndIcon)
                 .font(.caption)
                 .foregroundStyle(.green)
         } else {
-            Button(isFailure ? "Retry" : "Copy", action: onCopy)
+            Button(isFailure ? "Retry" : (isContentServer ? "Download & Play" : "Copy"), action: onCopy)
         }
     }
 }

@@ -10,11 +10,16 @@ private actor SafetySource: LibrarySource {
     var downloadCalls = 0
     var downloadEntered = false
     var blockDownload = false
+    private var enteredWaiter: CheckedContinuation<Void, Never>?
     var pending: CheckedContinuation<Void, Never>?
 
     init() {
         manifest = RemoteManifest(itemId: "game", files: [RemoteFile(kind: "gameFile", relativePath: "Software/game.rvz",
             sha256: sha256Hex(Data("abc".utf8)), size: 3)])
+    }
+    func waitForDownload() async {
+        if downloadEntered { return }
+        await withCheckedContinuation { enteredWaiter = $0 }
     }
     func setBlocked() { blockDownload = true }
     func unblock() { pending?.resume(); pending = nil }
@@ -28,6 +33,8 @@ private actor SafetySource: LibrarySource {
         downloadCalls += 1
         try bytes.write(to: partialFile)
         downloadEntered = true
+        enteredWaiter?.resume()
+        enteredWaiter = nil
         if blockDownload { await withCheckedContinuation { pending = $0 } }
         return LibraryDownloadResponse(status: 200, writtenFrom: 0, bytesOnDisk: Int64(bytes.count))
     }
@@ -60,10 +67,7 @@ final class ReceiveSafetyTests: XCTestCase {
         let puller = LibraryPuller(staging: .init(root: root), peerKey: "source")
         let item = item()
         let job = Task { try await puller.pull(item, from: source) { _ in } }
-        for _ in 0..<10000 {
-            if await source.downloadEntered { break }
-            await Task.yield()
-        }
+        await source.waitForDownload()
         job.cancel()
         await source.unblock()
         do { _ = try await job.value; XCTFail("Cancelled copy returned success") } catch is CancellationError {} catch { XCTFail("Unexpected \(error)") }

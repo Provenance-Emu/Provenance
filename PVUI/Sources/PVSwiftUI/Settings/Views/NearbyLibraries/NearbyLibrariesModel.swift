@@ -12,11 +12,13 @@
 import Combine
 import Foundation
 import Observation
+import PVFeatureFlags
 import PVLibrary
 import PVLibrarySharing
 import PVLogging
 import PVRealm
 import PVSystems
+import PVUIBase
 import RealmSwift
 import UIKit
 
@@ -86,20 +88,25 @@ final class NearbyLibrariesModel {
         }
     }
 
-    func addContentServer(url: URL, username: String, password: String) {
+    func addContentServer(url: URL, username: String, password: String, accessToken: String? = nil) {
+        guard PVFeatureFlags.shared.isEnabled(.contentServerLibraries) else { return }
         let server = ContentServer(url: url, username: username)
         contentServers.removeAll { $0.url == url }
         contentServers.append(server)
-        pendingPasswords[url] = password
+        pendingPasswords[url] = password.isEmpty ? nil : password
         // A re-added server signs in again with the new password.
-        KeychainECSTokenStore().setToken(nil, for: url)
+        KeychainECSTokenStore().setToken(accessToken, for: url)
+        peerModels[contentServerPeer(server).id]?.cancel()
         peerModels[contentServerPeer(server).id] = nil
         saveContentServers()
     }
 
     func removeContentServers(at offsets: IndexSet) {
         for server in offsets.map({ contentServers[$0] }) {
+            pendingPasswords[server.url] = nil
+            UserDefaults.standard.removeObject(forKey: "LibrarySharing.games." + contentServerPeer(server).id)
             KeychainECSTokenStore().setToken(nil, for: server.url)
+            peerModels[contentServerPeer(server).id]?.cancel()
             peerModels[contentServerPeer(server).id] = nil
         }
         contentServers.remove(atOffsets: offsets)
@@ -112,16 +119,17 @@ final class NearbyLibrariesModel {
 
     /// A content server presented as a peer, so the browse screen is shared.
     func contentServerPeer(_ server: ContentServer) -> DiscoveredPeer {
-        DiscoveredPeer(app: .contentServer, serviceName: server.url.host ?? server.url.absoluteString, advertisement: PeerAdvertisement(
+        DiscoveredPeer(app: .contentServer, serviceName: (server.url.host ?? "Content Server") + (server.url.port.map { ":\($0)" } ?? ""), advertisement: PeerAdvertisement(
             payloadVersion: 1, sessionId: "", sharesLibrary: true, peerId: server.url.absoluteString, urlCandidates: [server.url]
         ))
     }
 
     /// The source for a content server: the typed password once, then the Keychain token.
     func contentServerSource(for peer: DiscoveredPeer) -> ECSSource? {
-        guard let url = peer.baseURLs.first, let server = contentServers.first(where: { $0.url == url }) else { return nil }
+        guard let url = peer.baseURLs.first else { return nil }
+        let server = contentServers.first(where: { $0.url == url })
         return ECSSource(
-            server: url, username: server.username, password: pendingPasswords.removeValue(forKey: url),
+            server: url, username: server?.username ?? "", password: pendingPasswords.removeValue(forKey: url),
             deviceName: identity.name, systems: playableSystems, tokens: KeychainECSTokenStore()
         )
     }
@@ -158,6 +166,7 @@ final class NearbyLibrariesModel {
     }
 
     func start() {
+        loadLocalLibrary()
         discoveryLifetime.libraryVisible = true
         refreshBrowsing()
     }
@@ -310,6 +319,15 @@ final class NearbyPeerLibraryModel {
     let peer: DiscoveredPeer
     private(set) var phase: Phase = .idle
     private(set) var catalogue: RemoteCatalogue?
+    struct ServerLibrary: Identifiable {
+        let id: String
+        let name: String
+    }
+    private(set) var serverLibraries: [ServerLibrary] = []
+    var selectedLibraryID = ""
+    var searchText = ""
+    private(set) var importedGameIDs: [String: String] = [:]
+
     /// Set when a code entry was rejected, shown under the code field.
     private(set) var codeError: String?
     private(set) var artwork: [String: UIImage] = [:]
@@ -328,6 +346,9 @@ final class NearbyPeerLibraryModel {
     init(peer: DiscoveredPeer, owner: NearbyLibrariesModel) {
         self.peer = peer
         self.owner = owner
+        if peer.app == .contentServer {
+            importedGameIDs = UserDefaults.standard.dictionary(forKey: "LibrarySharing.games." + peer.id) as? [String: String] ?? [:]
+        }
         switch peer.app {
         case .iFly:
             source = IFlyContinuitySource(baseURLs: peer.baseURLs, identity: owner.identity)
@@ -356,7 +377,9 @@ final class NearbyPeerLibraryModel {
     /// Supported items grouped by system, in system order.
     var sections: [SystemSection] {
         guard let catalogue, let owner else { return [] }
-        let playable = catalogue.filtered(to: owner.playableSystems).items
+        let playable = catalogue.filtered(to: owner.playableSystems).items.filter {
+            searchText.isEmpty || $0.title.localizedCaseInsensitiveContains(searchText)
+        }
         return Dictionary(grouping: playable) { $0.systemIdentifier ?? .Unknown }
             .sorted { $0.key < $1.key }
             .map { group in
@@ -409,7 +432,7 @@ final class NearbyPeerLibraryModel {
     }
 
     func load() {
-        guard loadTask == nil else { return }
+        guard browsingAllowed, loadTask == nil else { return }
         phase = .loading(.connecting)
         loadTask = Task { [weak self] in
             await self?.runLoad()
@@ -419,7 +442,7 @@ final class NearbyPeerLibraryModel {
 
     /// Stops polling (consent or approval) when the view goes away.
     func cancel() {
-        if peer.app == .iCube { cancelManualCopies() }
+        if peer.app == .iCube || peer.app == .contentServer { cancelManualCopies() }
         owner?.peerDidDisappear(peer.id)
         loadTask?.cancel()
         loadTask = nil
@@ -429,12 +452,22 @@ final class NearbyPeerLibraryModel {
 
     private func runLoad() async {
         do {
-            let loaded = try await source.catalogue { [weak self] progress in
+            if let ecs = source as? ECSSource {
+                serverLibraries = try await ecs.libraries().map { ServerLibrary(id: $0.id, name: $0.name) }
+            }
+            let report: @Sendable (LibraryBrowseProgress) -> Void = { [weak self] progress in
                 Task { @MainActor in
                     guard let self, case .loading = self.phase else { return }
                     self.phase = .loading(progress)
                 }
             }
+            let loaded: RemoteCatalogue
+            if let ecs = source as? ECSSource {
+                loaded = try await ecs.catalogue(libraryID: selectedLibraryID.isEmpty ? nil : selectedLibraryID, progress: report)
+            } else {
+                loaded = try await source.catalogue(progress: report)
+            }
+            try Task.checkCancellation()
             if peer.app == .iCube, let peerID = peer.advertisement.peerId,
                await LibrarySharingService.shared.trust.peer(withId: peerID) == nil {
                 // Paired by a build that kept no record of the host's key, so copies
@@ -508,8 +541,8 @@ final class NearbyPeerLibraryModel {
     /// Copies `item` into staging, verified, then hands every game file to the
     /// importer with the mapped system. Tapping again after a failure resumes
     /// from the partial files and the cached pull manifest.
-    func copy(_ item: RemoteLibraryItem) {
-        guard copyTasks[item.id] == nil, let owner, let system = item.systemIdentifier else { return }
+    func copy(_ item: RemoteLibraryItem, playAfterImport: Bool = false) {
+        guard browsingAllowed, copyTasks[item.id] == nil, let owner, let system = item.systemIdentifier else { return }
         guard peer.app != .iCube || manualReceiveEligible else { return }
         let generation = UUID()
         copyGenerations[item.id] = generation
@@ -541,6 +574,37 @@ final class NearbyPeerLibraryModel {
                 }
                 if !pulled.skippedKinds.isEmpty {
                     ILOG("Nearby Libraries: \(item.title): left \(pulled.skippedKinds.joined(separator: ", ")) on the other device")
+                }
+                try Task.checkCancellation()
+                if source.app == .contentServer {
+                    try ECSDownloadedGame.validate(pulled)
+                    guard !GameImporter.shared.isPausedForEmulation else { throw CancellationError() }
+                    let queued = ImportQueueItem(url: pulled.primaryFile)
+                    queued.userChosenSystem = system
+                    queued.requiresContentBasedDuplicateCheck = true
+                    await GameImporter.shared.addImport(queued)
+                    let accepted = await GameImporter.shared.importQueue.contains { $0.id == queued.id }
+                    if accepted {
+                        self?.copies[item.id] = .importing
+                        GameImporter.shared.startProcessing()
+                        try await NearbyImportCompletion(item: queued).wait()
+                    }
+                    let computedMD5 = await queued.gameMD5Async()
+                    guard let gameID = queued.gameDatabaseID ?? computedMD5?.uppercased(),
+                          let realm = try? Realm(configuration: RealmConfiguration.realmConfig),
+                          let game = realm.object(ofType: PVGame.self, forPrimaryKey: gameID),
+                          game.systemIdentifier == system.rawValue else {
+                        throw LibrarySharingError.itemUnavailable
+                    }
+                    try Task.checkCancellation()
+                    self?.importedGameIDs[item.id] = game.md5Hash
+                    if let self { UserDefaults.standard.set(self.importedGameIDs, forKey: "LibrarySharing.games." + self.peer.id) }
+                    staging.markHandedOff(pulled.folder)
+                    self?.copies[item.id] = .completed
+                    if playAfterImport, self?.browsingAllowed == true { SceneCoordinator.shared.launchGame(game.freeze()) }
+                    self?.copyTasks[item.id] = nil
+                    self?.copyGenerations[item.id] = nil
+                    return
                 }
                 await GameImporter.shared.addImports(forPaths: pulled.gameFiles, targetSystem: system)
                 GameImporter.shared.startProcessing()
@@ -589,5 +653,26 @@ final class NearbyPeerLibraryModel {
         guard let data = try? await source.artwork(for: item), let image = UIImage(data: data) else { return }
         artwork[item.id] = image
     }
+}
+extension NearbyPeerLibraryModel {
+    private var browsingAllowed: Bool {
+        peer.app != .contentServer || PVFeatureFlags.shared.isEnabled(.contentServerLibraries)
+    }
+
+    func canPlay(_ item: RemoteLibraryItem) -> Bool { localGame(item) != nil }
+
+    func play(_ item: RemoteLibraryItem) {
+        guard browsingAllowed, let game = localGame(item) else { return }
+        SceneCoordinator.shared.launchGame(game.freeze())
+    }
+
+    private func localGame(_ item: RemoteLibraryItem) -> PVGame? {
+        guard let id = importedGameIDs[item.id] ?? item.md5?.uppercased(),
+              let realm = try? Realm(configuration: RealmConfiguration.realmConfig),
+              let game = realm.object(ofType: PVGame.self, forPrimaryKey: id),
+              game.systemIdentifier == item.systemIdentifier?.rawValue else { return nil }
+        return game
+    }
+
 }
 #endif

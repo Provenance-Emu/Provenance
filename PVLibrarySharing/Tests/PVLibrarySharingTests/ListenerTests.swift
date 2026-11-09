@@ -133,6 +133,27 @@ final class ListenerLoopbackTests: XCTestCase {
     /// A free-ish port well away from the app's 8484.
     private var firstPort: UInt16 { UInt16.random(in: 41_000...49_000) }
 
+    func testAuthenticatedRequestsNeverFollowRedirects() async throws {
+        let listener = LibraryHTTPListener(name: "redirect-test", interfaces: { [] }) { request in
+            if request.path == "/redirect" {
+                return ServerResponse(status: 302, headers: ["Location": "/unexpected"], body: .data(Data()))
+            }
+            return .error(500, "Redirect was followed")
+        }
+        self.listener = listener
+        let port = try await listener.start(firstPort: firstPort)
+        let url = try XCTUnwrap(URL(string: "http://127.0.0.1:\(port)/redirect"))
+        let request = LibraryHTTPRequest(url: url, headers: ["Authorization": "Bearer fixture-token"])
+        let transport = URLSessionLibraryTransport(session: URLSession(configuration: .ephemeral), followsRedirects: false)
+        let response = try await transport.send(request)
+        XCTAssertEqual(response.status, 302)
+        let partial = folder.appendingPathComponent("redirect.part")
+        let download = try await transport.download(request, to: partial, resumeOffset: 0) { _ in }
+        XCTAssertEqual(download.status, 302)
+        XCTAssertNil(download.writtenFrom)
+        XCTAssertFalse(FileManager.default.fileExists(atPath: partial.path))
+    }
+
     func testServesJSONBodiesKeepAliveAndRangedFilesOverRealSockets() async throws {
         let payload = Data((0..<600_000).map { UInt8($0 % 251) })
         let file = folder.appendingPathComponent("game.iso")

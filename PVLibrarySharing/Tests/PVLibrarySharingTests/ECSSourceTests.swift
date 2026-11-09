@@ -19,6 +19,10 @@ final class FakeContentServer: @unchecked Sendable {
     var maxPageSize = 2
     var canMintDeviceTokens = true
     var ignoresRange = false
+    var includeIndexedSource = false
+    var indexedDiscGroup = false
+    let cue = Data("FILE \"../tracks/Track.bin\" BINARY\n TRACK 01 MODE1/2352\n INDEX 01 00:00:00\n".utf8)
+    var repeatCursor = false
     private let lock = NSLock()
     private(set) var logins = 0
     private var validTokens: Set<String> = []
@@ -38,7 +42,9 @@ final class FakeContentServer: @unchecked Sendable {
         switch (request.method, request.path) {
         case ("GET", "/api/v1/capabilities"):
             return json(["protocol": ["major": major, "minor": 0, "path": "/api/v1"], "minClientVersion": "1.0",
-                         "features": [:], "limits": ["maxUploadBytes": 1, "maxPageSize": maxPageSize], "authentication": ["bearer"]])
+                         "features": ["rangeRequests": true, "multiRange": false, "resumableUploads": true, "changeFeed": true,
+                                      "guestGrants": true, "virtualFormats": [], "webdav": false, "natTraversal": false],
+                         "limits": ["maxUploadBytes": 1, "maxPageSize": maxPageSize], "authentication": ["bearer"]])
         case ("POST", "/api/v1/auth/login"):
             guard let body = request.body, let login = try? JSONSerialization.jsonObject(with: body) as? [String: String],
                   login["username"] == "joe", login["password"] == "hunter2" else {
@@ -57,9 +63,9 @@ final class FakeContentServer: @unchecked Sendable {
         }
         guard authorized(request) else { return .error(401, "Bearer token is required") }
         switch request.path {
-        case "/api/v1/libraries":
+        case "/api/v1/browse-libraries":
             return json(["items": [["id": "lib1", "name": "Library", "ownerId": "u1", "revision": 1, "createdAt": "x"]], "nextCursor": NSNull()])
-        case "/api/v1/items":
+        case "/api/v1/browse":
             let all: [[String: Any]] = [
                 ["id": "i1", "libraryId": "lib1", "systemIdentifier": "com.provenance.snes", "title": "Chrono Trigger", "md5": "aa"],
                 ["id": "i2", "libraryId": "lib1", "systemIdentifier": "com.provenance.dreamcast", "title": "Rez", "md5": NSNull()],
@@ -67,7 +73,18 @@ final class FakeContentServer: @unchecked Sendable {
             ]
             let start = Int(request.query["cursor"] ?? "0") ?? 0
             let end = min(start + maxPageSize, all.count)
-            return json(["items": Array(all[start..<end]), "nextCursor": end < all.count ? String(end) as Any : NSNull()])
+            let complete = all.map { $0.merging(["revision": 1, "createdAt": "x", "updatedAt": "x"]) { a, _ in a } }
+            var entries: [[String: Any]] = complete.map { ["entityType": "item", "id": $0["id", default: ""], "name": $0["title", default: ""], "canUpload": false, "canAdopt": false, "item": $0] }
+            if includeIndexedSource, start == 0 {
+                entries.append(["entityType": "source", "id": "source-1", "name": "Indexed game", "canUpload": false, "canAdopt": false,
+                                "source": ["id": "source-1", "rootId": "root", "name": indexedDiscGroup ? "Game.cue" : "Indexed.sfc", "kind": "rom", "size": indexedDiscGroup ? cue.count : rom.count,
+                                           "groupFileCount": indexedDiscGroup ? 2 : 0,
+                                           "systemId": "com.provenance.snes", "availability": "local", "medium": "disk",
+                                           "contentPath": "/api/v1/sources/source-1/content"]])
+            }
+            var selected = Array(entries[start..<end])
+            if includeIndexedSource, start == 0, let indexed = entries.last { selected.append(indexed) }
+            return json(["items": selected, "nextCursor": repeatCursor ? "0" : (end < all.count ? String(end) as Any : NSNull())])
         case "/api/v1/items/i1/manifest":
             return json(["version": 1, "itemId": "i1", "revision": 3, "files": [
                 ["id": "f1", "kind": "rom", "relativePath": "Chrono Trigger.sfc", "sha256": sha256Hex(rom), "md5": NSNull(), "crc": NSNull(),
@@ -75,7 +92,14 @@ final class FakeContentServer: @unchecked Sendable {
                 ["id": "f2", "kind": "bios", "relativePath": "bios.bin", "sha256": sha256Hex(bios), "md5": NSNull(), "crc": NSNull(),
                  "size": bios.count, "required": false, "contentPath": "/api/v1/files/f2/content"]
             ]])
-        case "/api/v1/files/f1/content":
+        case "/api/v1/sources/source-1/group":
+            return json(["sourceId": "source-1", "error": NSNull(), "files": [
+                ["id": "source-1", "name": "Game.cue", "relativePath": "disc/Game.cue", "size": cue.count, "availability": "local"],
+                ["id": "source-track", "name": "Track.bin", "relativePath": "tracks/Track.bin", "size": rom.count, "availability": "local"]
+            ]])
+        case "/api/v1/sources/source-1/content" where indexedDiscGroup:
+            return content(cue, request)
+        case "/api/v1/files/f1/content", "/api/v1/sources/source-1/content", "/api/v1/sources/source-track/content":
             return content(rom, request)
         case "/api/v1/files/f2/content":
             return content(bios, request)
@@ -107,6 +131,95 @@ final class ECSSourceTests: XCTestCase {
             server: server, username: "joe", password: password, deviceName: "Provenance on iPhone", systems: systems,
             tokens: tokens, transport: InProcessTransport { fake.handle($0) }
         )
+    }
+
+    func testCanonicalOriginsRejectCredentialsAndPaths() throws {
+        XCTAssertEqual(try ECSConnection.origin(for: " Example.COM ").absoluteString, "http://example.com:8473")
+        XCTAssertEqual(try ECSConnection.origin(for: "https://Example.COM/").absoluteString, "https://example.com")
+        for address in ["http://user:secret@host", "http://host/ui", "http://host?token=x", "file:///tmp", "http://host:99999"] {
+            XCTAssertThrowsError(try ECSConnection.origin(for: address))
+        }
+    }
+
+    func testLibraryPickerAndSelectedLibrary() async throws {
+        let ecs = source(FakeContentServer())
+        let libraries = try await ecs.libraries()
+        XCTAssertEqual(libraries.map(\.id), ["lib1"])
+        let selected = try await ecs.catalogue(libraryID: "lib1") { _ in }
+        XCTAssertEqual(selected.items.count, 3)
+        let absent = try await ecs.catalogue(libraryID: "missing") { _ in }
+        XCTAssertTrue(absent.items.isEmpty)
+    }
+
+    func testContentCannotUseAnotherPortOrScheme() async throws {
+        let ecs = source(FakeContentServer())
+        let staging = try makeTemporaryFolder()
+        defer { try? FileManager.default.removeItem(at: staging) }
+        for address in ["https://ecs.local:9999/api/v1/files/f1/content", "http://ecs.local:8443/api/v1/files/f1/content"] {
+            let file = RemoteFile(kind: "gameFile", relativePath: "x.sfc", sha256: "00", size: 1, contentPath: address)
+            do {
+                _ = try await ecs.download(file, of: RemoteManifest(itemId: "i1", files: [file]),
+                                           to: staging.appendingPathComponent("x.part"), resumeOffset: 0) { _ in }
+                XCTFail("expected unsafe path")
+            } catch { XCTAssertEqual(error as? LibrarySharingError, .unsafePath(address)) }
+        }
+    }
+
+    func testIndexedSourceUsesVerifiedStaging() async throws {
+        let fake = FakeContentServer()
+        fake.includeIndexedSource = true
+        let ecs = source(fake)
+        let catalogue = try await ecs.catalogue { _ in }
+        let indexed = try XCTUnwrap(catalogue.items.first { $0.id == "source:source-1" })
+        let manifest = try await ecs.pullManifest(for: indexed) { _ in }
+        XCTAssertEqual(manifest.gameFiles.first?.sha256, sha256Hex(fake.rom))
+        let staging = try makeTemporaryFolder()
+        defer { try? FileManager.default.removeItem(at: staging) }
+        let pulled = try await LibraryPuller(staging: LibraryStaging(root: staging), peerKey: "ecs").pull(indexed, from: ecs, manifest: manifest) { _ in }
+        XCTAssertEqual(try Data(contentsOf: pulled.primaryFile), fake.rom)
+        XCTAssertEqual(pulled.systemIdentifier, .SNES)
+    }
+
+    func testIndexedDiscGroupKeepsCompanions() async throws {
+        let fake = FakeContentServer()
+        fake.includeIndexedSource = true
+        fake.indexedDiscGroup = true
+        let ecs = source(fake)
+        let catalogue = try await ecs.catalogue { _ in }
+        let item = try XCTUnwrap(catalogue.items.first { $0.id == "source:source-1" })
+        let staging = try makeTemporaryFolder()
+        defer { try? FileManager.default.removeItem(at: staging) }
+        let pulled = try await LibraryPuller(staging: LibraryStaging(root: staging), peerKey: "ecs").pull(item, from: ecs) { _ in }
+        XCTAssertEqual(pulled.primaryFile.lastPathComponent, "Game.cue")
+        XCTAssertEqual(try Data(contentsOf: pulled.primaryFile), fake.cue)
+        XCTAssertEqual(pulled.gameFiles.count, 2)
+        XCTAssertNoThrow(try ECSDownloadedGame.validate(pulled))
+    }
+
+    func testRepeatedCursorFailsInsteadOfLooping() async throws {
+        let fake = FakeContentServer()
+        fake.repeatCursor = true
+        do {
+            _ = try await source(fake).catalogue { _ in }
+            XCTFail("expected invalid pagination")
+        } catch { XCTAssertEqual(error as? LibrarySharingError, .invalidResponse(status: 200)) }
+    }
+
+    func testDiscDescriptorsCannotReadOutsideDownloadedSet() throws {
+        let root = try makeTemporaryFolder()
+        defer { try? FileManager.default.removeItem(at: root) }
+        let cue = root.appendingPathComponent("Game.cue")
+        let track = root.appendingPathComponent("Track.bin")
+        try Data([1, 2, 3]).write(to: track)
+        let game = PulledGame(folder: root, gameFiles: [cue, track], primaryFile: cue, systemIdentifier: .PSX, skippedKinds: [])
+        try Data("FILE \"Track.bin\" BINARY\n".utf8).write(to: cue)
+        XCTAssertNoThrow(try ECSDownloadedGame.validate(game))
+        try Data("FILE \"../private.bin\" BINARY\n".utf8).write(to: cue)
+        XCTAssertThrowsError(try ECSDownloadedGame.validate(game))
+        let playlist = root.appendingPathComponent("Game.m3u")
+        try Data("|".utf8).write(to: playlist)
+        let empty = PulledGame(folder: root, gameFiles: [playlist], primaryFile: playlist, systemIdentifier: .PSX, skippedKinds: [])
+        XCTAssertThrowsError(try ECSDownloadedGame.validate(empty))
     }
 
     func testListsEveryPageAndFiltersLocally() async throws {

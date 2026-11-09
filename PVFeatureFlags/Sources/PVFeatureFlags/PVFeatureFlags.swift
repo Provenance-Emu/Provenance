@@ -49,6 +49,8 @@ public enum PVFeature: String, CaseIterable, Sendable {
     /// local network (read-only; copying is phase 2 of the cross-app sharing spec).
     /// Disabled by default; enable in Settings > Advanced > Feature Flags.
     case nearbyLibraries
+    /// Browse and download games from an Emulation Server in Nearby Libraries.
+    case contentServerLibraries
 }
 
 /// Enum representing supported OS platforms for feature flag filtering
@@ -585,6 +587,7 @@ public final class PVFeatureFlags: @unchecked Sendable {
     public var skinButtonReposition: Bool { featureStates[.skinButtonReposition] ?? false }
     public var airPlayMenu: Bool { featureStates[.airPlayMenu] ?? false }
     public var nearbyLibraries: Bool { featureStates[.nearbyLibraries] ?? false }
+    public var contentServerLibraries: Bool { featureStates[.contentServerLibraries] ?? false }
 
     // MARK: - Feature Queries
 
