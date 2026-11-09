@@ -212,8 +212,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Provenance-Emu/PVWebServer.git",
       "state" : {
-        "branch" : "feat/host-configuration",
-        "revision" : "b831188faa96b7ca146deb853bf59bf95aeabfe1"
+        "revision" : "98d6e1d412193628e0b93cac82070f0221d4bb9a",
+        "version" : "1.2.0"
       }
     },
     {
