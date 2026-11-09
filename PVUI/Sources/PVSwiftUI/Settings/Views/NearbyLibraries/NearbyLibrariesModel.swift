@@ -591,7 +591,7 @@ final class NearbyPeerLibraryModel {
                     }
                     let computedMD5 = await queued.gameMD5Async()
                     guard let gameID = queued.gameDatabaseID ?? computedMD5?.uppercased(),
-                          let realm = try? Realm(configuration: RealmConfiguration.realmConfig),
+                          let realm = try? await Realm(configuration: RealmConfiguration.realmConfig),
                           let game = realm.object(ofType: PVGame.self, forPrimaryKey: gameID),
                           game.systemIdentifier == system.rawValue else {
                         throw LibrarySharingError.itemUnavailable
