@@ -1632,7 +1632,8 @@ struct PauseTileMenuView: View {
             NavigationStack {
                 SystemSkinSelectionView(
                     system: activeSystemIdentifier.deltaSkinSystem,
-                    game: emulatorVC.game.deltaSkinGameContext
+                    game: emulatorVC.game.deltaSkinGameContext,
+                    emptySelectionMeansBuiltIn: ProgrammaticOverlaySupport.skinPickerDefaultsToBuiltIn(for: emulatorVC.core)
                 )
             }
         }

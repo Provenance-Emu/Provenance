@@ -13,17 +13,20 @@ import SwiftUI
 extension PVEmulatorViewController {
 
 #if os(iOS)
+    /// Top-left corner, stepped clear of the programmatic overlay's controls (the L shoulder
+    /// sits there in landscape).
     func layoutMenuButton() {
-        if let menuButton = self.menuButton {
-            let height: CGFloat = 42
-            let width: CGFloat = 42
-            menuButton.imageView?.contentMode = .center
-            let isLandscape = UIDevice.current.orientation.isLandscape
-            let leftInset: CGFloat = isLandscape ? view.safeAreaInsets.left : view.safeAreaInsets.left + 10
-            let topInset: CGFloat = isLandscape ? 10 : view.safeAreaInsets.top + 5
-            let frame = CGRect(x: leftInset, y: topInset, width: width, height: height)
-            menuButton.frame = frame
-        }
+        guard let menuButton = self.menuButton else { return }
+        menuButton.imageView?.contentMode = .center
+        // From the view's shape: device orientation is neither for face-up/face-down/unknown.
+        let isLandscape = view.bounds.width > view.bounds.height
+        let insets = view.safeAreaInsets
+        // Landscape matches `MenuButton.landscapeLeftMargin` so its clamp leaves the frame alone.
+        let leftInset = insets.left + (isLandscape ? MenuButton.landscapeLeftMargin : MenuButton.portraitLeftMargin)
+        let topInset: CGFloat = isLandscape ? 10 : insets.top + 5
+        let preferred = CGRect(origin: CGPoint(x: leftInset, y: topInset), size: MenuButtonPlacement.size)
+        menuButton.frame = MenuButtonPlacement.frame(preferred: preferred, avoiding: overlayControlFrames,
+                                                     within: view.bounds.inset(by: insets))
     }
 #endif
 

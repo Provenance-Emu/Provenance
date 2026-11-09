@@ -623,7 +623,8 @@ struct ConsoleGamesView: SwiftUI.View {
                 // System Skin Selection Modal
                 .sheet(isPresented: $showSystemSkinSelection) {
                     NavigationStack {
-                        SystemSkinSelectionView(system: console.enumValue.deltaSkinSystem)
+                        SystemSkinSelectionView(system: console.enumValue.deltaSkinSystem,
+                                                emptySelectionMeansBuiltIn: ProgrammaticOverlaySupport.skinPickerDefaultsToBuiltIn())
                         #if !os(tvOS)
                             .navigationBarTitleDisplayMode(.inline)
                         #endif
@@ -659,7 +660,8 @@ struct ConsoleGamesView: SwiftUI.View {
                     NavigationStack {
                         SystemSkinSelectionView(system: (state.game.system?.enumValue ?? console.enumValue).deltaSkinSystem,
                                                 game: state.game.warmUp().deltaSkinGameContext,
-                                                preferredScope: .game)
+                                                preferredScope: .game,
+                                                emptySelectionMeansBuiltIn: ProgrammaticOverlaySupport.skinPickerDefaultsToBuiltIn())
                         #if !os(tvOS)
                             .navigationBarTitleDisplayMode(.inline)
                         #endif
