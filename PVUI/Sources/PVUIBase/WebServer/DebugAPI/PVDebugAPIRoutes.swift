@@ -7,11 +7,10 @@
 //  captured unattended from a physical iPhone / iPad / Apple TV. Ported from
 //  iFly's `DebugAPIRoutes`; see `Scripts/capture_device_screenshots.py`.
 //
-//  Gating lives in PVWebServer (`PVDebugAPIPrefs`): the HTTP router only
+//  Gating lives in PVWebServerHost (`PVDebugAPIPrefs`): the server only
 //  mounts `/api/debug/*` on DEBUG builds or when the hidden Developer toggle
 //  is on, and every request passes the Basic-auth check before reaching a
-//  handler here. Served by the modern (Hummingbird) server only —
-//  The Swift-native server is the sole HTTP backend.
+//  handler here.
 //
 //  Routes:
 //    GET  /api/debug                      route index
@@ -38,8 +37,8 @@ import PVLogging
 import PVSettings
 import Defaults
 import UIKit
-#if canImport(PVWebServer)
-import PVWebServer
+#if canImport(PVWebServerHost)
+import PVWebServerHost
 
 @MainActor
 public enum PVDebugAPIRoutes {

@@ -11,7 +11,7 @@ import Combine
 import PVLibrary
 import SwiftUI
 import PVPrimitives
-import PVWebServer
+import PVWebServerHost
 
 /// Web server type enum
 public enum WebServerType {

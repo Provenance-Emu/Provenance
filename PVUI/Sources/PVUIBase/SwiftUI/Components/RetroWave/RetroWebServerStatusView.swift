@@ -8,7 +8,7 @@
 
 import SwiftUI
 import PVThemes
-import PVWebServer
+import PVWebServerHost
 import PVUIBase
 
 /// A view displaying web server status with retrowave styling

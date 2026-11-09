@@ -15,7 +15,7 @@ import PVFileSystem
 import PVThemes
 import Combine
 import PVUIBase
-import PVWebServer
+import PVWebServerHost
 import UniformTypeIdentifiers
 #if canImport(UIKit)
 import UIKit

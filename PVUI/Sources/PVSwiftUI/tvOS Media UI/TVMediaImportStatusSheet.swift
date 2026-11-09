@@ -18,8 +18,8 @@ import PVPrimitives
 import PVSystems
 import PVLogging
 
-#if canImport(PVWebServer)
-import PVWebServer
+#if canImport(PVWebServerHost)
+import PVWebServerHost
 #endif
 
 // MARK: - Import Status Sheet (Full Screen)

@@ -5,8 +5,8 @@
 //  Created by Agent on 2026-03-21.
 //  Copyright © 2026 Provenance Emu. All rights reserved.
 //
-//  Observes PVWebServer file-lifecycle notifications (delete/move) and
-//  updates Realm accordingly.  This decouples PVWebServer from PVLibrary
+//  Observes the web server's file-lifecycle notifications (delete/move) and
+//  updates Realm accordingly.  This decouples the server from PVLibrary
 //  while keeping both database integrity and CloudKit-awareness intact.
 //
 //  Integration:

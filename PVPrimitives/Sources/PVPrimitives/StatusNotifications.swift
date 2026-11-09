@@ -37,7 +37,7 @@ public extension Notification.Name {
 
     /// Fired when a file is deleted via the web UI or WebDAV.
     /// userInfo: `"filePath": String` — absolute path of the deleted file.
-    /// Raw value must match `PVWebServerFileDeletedNotification` in PVWebServer.m.
+    /// Raw value must match `PVWebServerFileDeletedNotificationName` in PVWebServer.
     static let pvWebServerFileDeleted = Notification.Name("PVWebServerFileDeletedNotification")
 
     /// A completed HTTP/WebDAV upload. userInfo: `"filePath": String` (absolute destination).
@@ -46,7 +46,7 @@ public extension Notification.Name {
 
     /// Fired when a file is moved/renamed via the web UI or WebDAV.
     /// userInfo: `"fromPath": String, "toPath": String` — absolute paths before and after.
-    /// Raw value must match `PVWebServerFileMovedNotification` in PVWebServer.m.
+    /// Raw value must match `PVWebServerFileMovedNotificationName` in PVWebServer.
     static let pvWebServerFileMoved   = Notification.Name("PVWebServerFileMovedNotification")
 
     // MARK: - Network Operations

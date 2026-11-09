@@ -740,7 +740,7 @@ public extension Defaults.Keys {
 public extension Defaults.Keys {
     /// Release-build opt-in for the `/api/debug/*` automation routes (DEBUG builds
     /// always enable them). Same key string as `PVDebugAPIPrefs.enabledKey` in
-    /// PVWebServer, which reads it with plain UserDefaults. Surfaced only behind the
+    /// PVWebServerHost, which reads it with plain UserDefaults. Surfaced only behind the
     /// hidden Developer unlock (Settings › Advanced › Debug API).
     static let debugAPIEnabled = Key<Bool>("debugAPIEnabled", default: false)
     /// Basic-auth password for the debug API. Same key as `PVDebugAPIPrefs.passwordKey`.

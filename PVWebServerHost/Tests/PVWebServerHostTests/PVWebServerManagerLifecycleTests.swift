@@ -1,6 +1,6 @@
 import Foundation
 import XCTest
-@testable import PVWebServer
+@testable import PVWebServerHost
 
 final class PVWebServerManagerLifecycleTests: XCTestCase {
     func testReopeningControlsKeepsRunningServer() async throws {
@@ -38,7 +38,7 @@ final class PVWebServerManagerLifecycleTests: XCTestCase {
         await server.stopServers()
         let restarted = try await manager.start()
         XCTAssertTrue(restarted)
-        XCTAssertTrue(server.isWWWServerRunning)
+        XCTAssertTrue(server.isRunning)
         XCTAssertEqual(server.startCount, 2)
         await manager.stop()
     }
@@ -99,14 +99,11 @@ private final class LifecycleServer: PVWebServerProtocol, @unchecked Sendable {
     private(set) var startCount = 0
     private(set) var stopCount = 0
     private var running = false
-    var isWWWServerRunning: Bool { running }
-    var isWebDAVServerRunning: Bool { running }
+    var isRunning: Bool { running }
     var serverURL: URL? { nil }
-    var webDAVURL: URL? { nil }
     var nextHTTPPort = 80
     private var httpPort: Int?
-    var boundHTTPPort: Int? { running ? httpPort : nil }
-    var boundWebDAVPort: Int? { running ? 81 : nil }
+    var boundPort: Int? { running ? httpPort : nil }
     private var unexpectedStop: (@Sendable () -> Void)?
 
     init(startSucceeds: Bool = true) { self.startSucceeds = startSucceeds }
@@ -128,7 +125,7 @@ private final class LifecycleServer: PVWebServerProtocol, @unchecked Sendable {
         unexpectedStop = handler
     }
 
-    /// What `PVModernWebServer` does when a confirmed listener's task ends on its own.
+    /// What `PVHostedWebServer` does when the engine's listener dies on its own.
     func dieUnexpectedly() {
         running = false
         let handler = unexpectedStop

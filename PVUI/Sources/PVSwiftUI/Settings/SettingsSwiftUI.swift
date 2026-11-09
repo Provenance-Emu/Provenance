@@ -30,8 +30,8 @@ import FreemiumKit
 #if canImport(SafariServices)
 import SafariServices
 #endif
-#if canImport(PVWebServer)
-import PVWebServer
+#if canImport(PVWebServerHost)
+import PVWebServerHost
 #endif
 
 // MARK: - tvOS Navigation Support
@@ -2417,7 +2417,7 @@ private struct LibrarySection: View {
 
     var body: some View {
         Section {
-            //#if canImport(PVWebServer)
+            //#if canImport(PVWebServerHost)
             //            Button(action: viewModel.launchWebServer) {
             //                SettingsRow(title: "Launch Web Server",
             //                            subtitle: "Transfer ROMs and saves over WiFi.",

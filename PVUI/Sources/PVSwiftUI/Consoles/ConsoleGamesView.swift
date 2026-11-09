@@ -20,7 +20,7 @@ import PVRealm
 import PVSettings
 import Combine
 import RealmSwift
-import PVWebServer
+import PVWebServerHost
 import UniformTypeIdentifiers
 
 struct ConsoleGamesFilterModeFlags: OptionSet {

@@ -1,6 +1,6 @@
 //
 //  PVDebugAPIPrefs.swift
-//  PVWebServer
+//  PVWebServerHost
 //
 //  Gate + auth policy for the `/api/debug/*` automation routes (on-device
 //  App Store screenshot capture, `Scripts/capture_device_screenshots.py`).

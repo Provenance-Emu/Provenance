@@ -4,7 +4,7 @@
 //
 //  One-time iOS retrowave alert that explains why iOS is asking for the
 //  Local Network permission. The system alert from `UILocalNetworkPrivacy`
-//  fires independently when Hummingbird / Bonjour first touches the network;
+//  fires independently when the web server / Bonjour first touches the network;
 //  this overlay just adds context so the user doesn't deny it on reflex.
 //
 //  Skipped entirely on tvOS / macOS (no local-network permission prompt).

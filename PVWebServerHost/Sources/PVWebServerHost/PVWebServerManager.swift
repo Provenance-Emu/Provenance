@@ -1,11 +1,11 @@
 //
 //  PVWebServerManager.swift
-//  PVWebServer
+//  PVWebServerHost
 //
 //  Created by Agent on 2026-03-21.
 //  Copyright © 2026 Provenance Emu. All rights reserved.
 //
-//  Owns the Swift HTTP/WebDAV server independently of presented controls.
+//  Owns the HTTP/WebDAV server independently of presented controls.
 //
 //  Usage:
 //    let ok = try await PVWebServerManager.shared.start()
@@ -18,8 +18,7 @@ import PVLogging
 
 // MARK: - PVWebServerManager
 
-/// Unified async/await entry point for starting and stopping the web servers.
-/// Uses the Swift-native Hummingbird backend for fresh installs and upgrades.
+/// Unified async/await entry point for starting and stopping the web server.
 public actor PVWebServerManager {
 
     // MARK: Singleton
@@ -37,7 +36,7 @@ public actor PVWebServerManager {
     // MARK: Init
 
     public init() {
-        serverFactory = { PVModernWebServer() }
+        serverFactory = { PVHostedWebServer() }
     }
 
     /// Internal dependency boundary for lifecycle tests without binding device ports.
@@ -47,34 +46,29 @@ public actor PVWebServerManager {
 
     // MARK: - Public API
 
-    /// Returns whether either server is currently running.
-    public var isRunning: Bool {
-        activeServer?.isWWWServerRunning == true && activeServer?.isWebDAVServerRunning == true
-    }
+    /// Returns whether the server is currently running.
+    public var isRunning: Bool { activeServer?.isRunning == true }
 
     /// Diagnostic description of the impl that will be / has been started.
     /// Read from `WebServerBootstrapTask` so the log shows which backend is
     /// in play even when `start()` later fails silently.
     public var implementationDescription: String {
-        "Modern (Hummingbird)"
+        "PVWebServer (Network.framework)"
     }
 
     /// Local HTTP file-uploader URL, if the server is running.
     public var serverURL: URL? { activeServer?.serverURL }
 
-    /// Local WebDAV URL, if the server is running.
-    public var webDAVURL: URL? { activeServer?.webDAVURL }
+    /// Local WebDAV URL, if the server is running. WebDAV shares the HTTP port.
+    public var webDAVURL: URL? { activeServer?.serverURL }
 
     /// The HTTP port actually bound, while running. Not `serverURL?.port`: that is `nil`
-    /// for `http://ip/`, which means port 80. Port 80 is only a preference (iFly and iCube
-    /// want it too), so this can be 8080 or later.
-    public var httpPort: Int? { isRunning ? activeServer?.boundHTTPPort : nil }
+    /// for `http://ip/`, which means port 80. Port 80 is only a preference, so this can be a
+    /// fallback port.
+    public var httpPort: Int? { isRunning ? activeServer?.boundPort : nil }
 
-    /// The WebDAV port actually bound, while running.
-    public var webDAVPort: Int? { isRunning ? activeServer?.boundWebDAVPort : nil }
-
-    /// Start both HTTP and WebDAV services.
-    /// - Returns: `true` if both services started successfully.
+    /// Start the HTTP and WebDAV service.
+    /// - Returns: `true` if it started.
     /// - Throws: Any error propagated from the server.
     @discardableResult
     public func start() async throws -> Bool {
@@ -113,7 +107,7 @@ public actor PVWebServerManager {
                 server.setUnexpectedStopHandler { [weak self] in
                     Task { await self?.restartAfterUnexpectedStop(of: id) }
                 }
-                ILOG("[WebServerManager] Started Swift server — HTTP: \(server.serverURL?.absoluteString ?? "?"), DAV: \(server.webDAVURL?.absoluteString ?? "?")")
+                ILOG("[WebServerManager] Started server at \(server.serverURL?.absoluteString ?? "?")")
             } else {
                 // Tear down a partial start so a subsequent attempt can bind cleanly.
                 await server.stopServers()
@@ -127,7 +121,7 @@ public actor PVWebServerManager {
         }
     }
 
-    /// A listener died without `stop()` (iOS defuncts sockets of suspended apps). The server
+    /// The listener died without `stop()` (iOS defuncts sockets of suspended apps). The server
     /// already withdrew its adverts; bind again, possibly on another port if an app took
     /// ours meanwhile. Runs in the lifecycle chain, so an explicit `stop()` queued first wins.
     private func restartAfterUnexpectedStop(of id: ObjectIdentifier) async {

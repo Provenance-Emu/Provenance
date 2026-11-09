@@ -7,7 +7,7 @@
 
 import Foundation
 import PVLibrary // For Notification names, Defaults keys, enums
-import PVWebServer // For PVWebServer status
+import PVWebServerHost // For the web server status
 import PVLogging // For Logging
 import Combine // For @Published and Cancellables
 import SwiftUI // For Color, etc.
@@ -249,7 +249,7 @@ final class RetroStatusControlViewModel: ObservableObject {
         // Request for progress updates
         nc.addObserver(self, selector: #selector(handleRequestProgressUpdates), name: Notification.Name("RequestProgressUpdates"), object: nil)
 
-        // --- Web Server Status --- (Using PVWebServer's notification)
+        // --- Web Server Status --- (Using the web server's notification)
         nc.addObserver(self, selector: #selector(handleWebServerStatusChanged(_:)), name: .webServerStatusChanged, object: nil)
 
         // --- Web Server Upload Progress ---
