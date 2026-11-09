@@ -321,6 +321,79 @@ class RegistryTests(RepoTestCase):
         self.assertIn("Scripts/orphan.py", report)
 
 
+class ScheduleWorktreeTests(RepoTestCase):
+    """The unattended schedule, against a repo with a real submodule."""
+
+    SUBMODULE = "sub"
+
+    def setUp(self):
+        super().setUp()
+        self.outside = tempfile.TemporaryDirectory()
+        self.addCleanup(self.outside.cleanup)
+        self.upstream = Path(self.outside.name) / "upstream"
+        self.upstream.mkdir()
+        self.sub_git(self.upstream, "init", "-q", "-b", "main")
+        self.sub_git(self.upstream, "commit", "-q", "--allow-empty", "-m", "first")
+        self.git("-c", "protocol.file.allow=always", "submodule", "add", "-q", str(self.upstream), self.SUBMODULE)
+        self.commit("add submodule")
+        self.pin = self.git("rev-parse", f"HEAD:{self.SUBMODULE}").strip()
+
+    def sub_git(self, cwd, *args):
+        identity = ("-c", "user.email=t@example.com", "-c", "user.name=Test",
+                    "-c", "commit.gpgsign=false", "-c", "core.hooksPath=/dev/null")
+        return subprocess.run(["git", *identity, *args], cwd=cwd, check=True, text=True,
+                              capture_output=True).stdout
+
+    def drift_submodule(self, root):
+        self.sub_git(root / self.SUBMODULE, "commit", "-q", "--allow-empty", "-m", "moved")
+
+    def test_a_drifted_submodule_alone_commits_nothing(self):
+        self.drift_submodule(self.root)
+        self.assertIn(self.SUBMODULE, self.git("status", "--porcelain"))
+        head = self.git("rev-parse", "HEAD")
+
+        self.assertFalse(maint.commit_schedule_outputs(self.root))
+
+        self.assertEqual(self.git("rev-parse", "HEAD"), head)
+        self.assertEqual(self.git("diff", "--cached", "--name-only"), "")
+
+    def test_a_commit_carries_outputs_but_not_the_submodule_pointer(self):
+        self.drift_submodule(self.root)
+        self.write("generated/out.txt", "fresh\n")
+
+        self.assertTrue(maint.commit_schedule_outputs(self.root))
+
+        self.assertEqual(self.git("show", "--name-only", "--format=", "HEAD"), "generated/out.txt\n")
+        self.assertEqual(self.git("rev-parse", f"HEAD:{self.SUBMODULE}").strip(), self.pin)
+
+    def test_a_commit_does_not_wait_on_signing(self):
+        self.git("config", "commit.gpgsign", "true")
+        self.git("config", "gpg.format", "openpgp")
+        self.git("config", "gpg.program", "false")
+        signed = subprocess.run(["git", "commit", "-q", "--allow-empty", "-m", "signed"], cwd=self.root,
+                                capture_output=True)
+        self.assertNotEqual(signed.returncode, 0, "signing should fail in this repo")
+        self.write("generated/out.txt", "fresh\n")
+
+        self.assertTrue(maint.commit_schedule_outputs(self.root))
+
+        self.assertEqual(self.git("log", "-1", "--format=%s"), "chore(maint): regenerate stale outputs\n")
+
+    def test_a_reused_worktree_loses_its_submodules(self):
+        self.git("update-ref", "refs/remotes/origin/develop", "HEAD")
+        worktree = Path(self.outside.name) / "worktree"
+        maint.prepare_schedule_worktree(worktree)
+        self.sub_git(worktree, "-c", "protocol.file.allow=always", "submodule", "update", "--init", "--quiet")
+        self.drift_submodule(worktree)
+        self.assertTrue((worktree / self.SUBMODULE / ".git").exists())
+
+        maint.prepare_schedule_worktree(worktree)
+
+        self.assertFalse((worktree / self.SUBMODULE / ".git").exists())
+        self.assertEqual(self.sub_git(worktree, "status", "--porcelain"), "")
+        self.assertEqual(self.sub_git(worktree, "branch", "--show-current").strip(), maint.SCHEDULE_BRANCH)
+
+
 def _in_unchecked_out_submodule(path):
     """True when `path` sits in a submodule this checkout never initialised
     (CI's maint job clones without submodules)."""

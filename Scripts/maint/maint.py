@@ -96,6 +96,7 @@ LAUNCHD_LABEL = "org.provenance-emu.maint"
 SCHEDULE_BRANCH = "maint/auto-local"
 SCHEDULE_WORKTREE = Path.home() / "Library" / "Caches" / "provenance-maint" / "worktree"
 SCHEDULE_LOG = Path.home() / "Library" / "Logs" / "provenance-maint.log"
+GITLINK_MODE = "160000"
 
 _DURATION_UNITS = {"m": 60, "h": 3600, "d": 86400, "w": 7 * 86400}
 
@@ -781,6 +782,49 @@ def schedule_uninstall() -> int:
     return 0
 
 
+def prepare_schedule_worktree(worktree: Path) -> None:
+    """Put the schedule's worktree on origin/develop with no submodules checked out."""
+    if (worktree / ".git").exists():
+        git("checkout", "--quiet", "--force", "-B", SCHEDULE_BRANCH, "origin/develop", cwd=worktree)
+        # `checkout` leaves an initialized submodule on its old commit and `clean` skips it,
+        # so a job that needs submodules would read stale sources.
+        git("submodule", "deinit", "--all", "--force", "--quiet", cwd=worktree)
+        git("clean", "-fdqx", cwd=worktree)  # including .maint/: start from a clean slate
+    else:
+        worktree.parent.mkdir(parents=True, exist_ok=True)
+        git("worktree", "prune")
+        git("worktree", "add", "--force", "-B", SCHEDULE_BRANCH, str(worktree), "origin/develop")
+
+
+def staged_gitlinks(cwd: Path) -> list[str]:
+    """Paths of the submodule pointers staged in `cwd`."""
+    fields = git("diff", "--cached", "--raw", "--no-renames", "--ignore-submodules=none", "-z", cwd=cwd).split("\0")
+    paths = []
+    for meta, path in zip(fields[0::2], fields[1::2]):
+        old_mode, new_mode = meta.lstrip(":").split()[:2]
+        if GITLINK_MODE in (old_mode, new_mode):
+            paths.append(path)
+    return paths
+
+
+def commit_schedule_outputs(worktree: Path) -> bool:
+    """Commit what the jobs regenerated. Returns False when that is nothing.
+
+    Nobody is there to approve a signing prompt, so the commit is unsigned. Submodule
+    pointers are left out: a submodule that drifted reads as a change, and committing
+    it would point the pull request at the wrong commit.
+    """
+    git("add", "-A", cwd=worktree)
+    if gitlinks := staged_gitlinks(worktree):
+        print(f"leaving submodule pointers out of the commit: {', '.join(gitlinks)}")
+        git("reset", "--quiet", "--", *gitlinks, cwd=worktree)
+    if not git("diff", "--cached", "--name-only", cwd=worktree).strip():
+        return False
+    git("commit", "--quiet", "--no-gpg-sign", "-m", "chore(maint): regenerate stale outputs",
+        "-m", "Run by the local maint schedule (Scripts/maint/maint.py schedule run).", cwd=worktree)
+    return True
+
+
 def schedule_run() -> int:
     """Run stale auto jobs in a dedicated worktree and open/update a pull request."""
     print(f"=== maint schedule run {time.strftime('%Y-%m-%d %H:%M:%S')}", flush=True)
@@ -790,22 +834,13 @@ def schedule_run() -> int:
             return 0
     git("fetch", "--quiet", "origin", "develop")
     worktree = SCHEDULE_WORKTREE
-    if (worktree / ".git").exists():
-        git("checkout", "--quiet", "--force", "-B", SCHEDULE_BRANCH, "origin/develop", cwd=worktree)
-        git("clean", "-fdqx", cwd=worktree)  # including .maint/: start from a clean slate
-    else:
-        worktree.parent.mkdir(parents=True, exist_ok=True)
-        git("worktree", "prune")
-        git("worktree", "add", "--force", "-B", SCHEDULE_BRANCH, str(worktree), "origin/develop")
+    prepare_schedule_worktree(worktree)
     tool = worktree / "Scripts" / "maint" / "maint.py"
     result = subprocess.run([sys.executable, str(tool), "run", "--stale", "--auto-only", "--keep-going",
                              "--report", str(worktree / ".maint" / "report.md")], cwd=worktree)
-    if not git("status", "--porcelain", cwd=worktree).strip():  # .maint/ is gitignored
+    if not commit_schedule_outputs(worktree):  # .maint/ is gitignored
         print("nothing changed")
         return result.returncode
-    git("add", "-A", cwd=worktree)
-    git("commit", "--quiet", "-m", "chore(maint): regenerate stale outputs",
-        "-m", "Run by the local maint schedule (Scripts/maint/maint.py schedule run).", cwd=worktree)
     git("push", "--quiet", "--force", "origin", f"{SCHEDULE_BRANCH}:{SCHEDULE_BRANCH}", cwd=worktree)
     body_path = worktree / ".maint" / "report.md"
     existing = subprocess.run(
