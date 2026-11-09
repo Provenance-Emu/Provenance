@@ -35,14 +35,16 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: write
-  # write (not read) so the job can open the consolidation pull request —
-  # develop is protected and cannot be pushed to directly.
-  pull-requests: write
+  contents: read
 
 jobs:
   consolidate:
     name: Absorb fragments into CHANGELOG.md
+    permissions:
+      contents: write
+      # write (not read) so the job can open the consolidation pull request —
+      # develop is protected and cannot be pushed to directly.
+      pull-requests: write
     runs-on: ubuntu-latest
     timeout-minutes: 10
 

@@ -26,6 +26,9 @@ concurrency:
   group: pvlibrary-tests-${{ github.event_name }}-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: true
 
+permissions:
+  contents: read
+
 jobs:
   test:
     name: PVLibrary Tests (iOS Simulator)

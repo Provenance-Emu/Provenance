@@ -23,10 +23,7 @@ on:
         type: string
 
 permissions:
-  issues: read
-  pull-requests: read
-  # projects: write  — Note: GITHUB_TOKEN needs 'project' scope; set in repo settings
-  #                    or use a PAT stored as PROJECT_TOKEN secret.
+  contents: read
 
 env:
   PROJECT_NUMBER: 1  # ← Update after running setup-github-project.sh
@@ -36,6 +33,11 @@ env:
 jobs:
   sync-to-project:
     name: Sync to Roadmap project
+    permissions:
+      issues: read
+      pull-requests: read
+      # projects: write  — Note: GITHUB_TOKEN needs 'project' scope; set in repo settings
+      #                    or use a PAT stored as PROJECT_TOKEN secret.
     runs-on: ubuntu-latest
     timeout-minutes: 5
     env:

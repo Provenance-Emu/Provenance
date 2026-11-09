@@ -22,11 +22,7 @@ on:
         required: true
 
 permissions:
-  contents: write
-  pull-requests: write
-  issues: write
-  actions: write
-  id-token: write
+  contents: read
 
 jobs:
   # Only people with write access may drive the agent (GHSA-ghmr-j7fw-8g5g).
@@ -102,6 +98,12 @@ jobs:
     concurrency:
       group: claude-code-${{ github.event.inputs.pr_number || github.event.issue.number || github.event.pull_request.number }}
       cancel-in-progress: false
+    permissions:
+      contents: write
+      pull-requests: write
+      issues: write
+      actions: write
+      id-token: write
     runs-on: ubuntu-latest
     timeout-minutes: 90
     steps:

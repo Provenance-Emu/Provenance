@@ -21,9 +21,6 @@ on:
 
 permissions:
   contents: read
-  pull-requests: write
-  issues: write
-  actions: write   # To dispatch claude-code.yml
 
 # Cancel an in-progress review if a new push arrives for the same branch/PR.
 concurrency:
@@ -36,6 +33,9 @@ jobs:
   # ─────────────────────────────────────────────────────────────────────────────
   triage:
     name: Find PR & select model
+    permissions:
+      contents: read
+      pull-requests: read
     runs-on: ubuntu-latest
     outputs:
       pr_number:    ${{ steps.triage.outputs.pr_number }}
@@ -136,6 +136,11 @@ jobs:
     name: Review (model ${{ needs.triage.outputs.model }})
     needs: triage
     if: needs.triage.outputs.should_review == 'true'
+    permissions:
+      contents: read
+      pull-requests: write
+      issues: write
+      actions: write  # To dispatch claude-code.yml
     runs-on: ubuntu-latest
     timeout-minutes: 30
 

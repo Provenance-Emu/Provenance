@@ -29,10 +29,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: write
-  pull-requests: write
-  issues: write
-  actions: write
+  contents: read
 
 concurrency:
   # Only one rebase run at a time. Cancel stale runs so the latest develop
@@ -51,6 +48,9 @@ jobs:
       (github.event_name == 'push' && github.ref == 'refs/heads/develop') ||
       (github.event_name == 'pull_request' && github.event.pull_request.merged == true) ||
       (github.event_name == 'workflow_dispatch')
+    permissions:
+      contents: read
+      pull-requests: read
     runs-on: ubuntu-latest
     timeout-minutes: 5
     outputs:
@@ -84,6 +84,10 @@ jobs:
     name: "Rebase PR #${{ matrix.pr.number }} (${{ matrix.pr.branch }})"
     needs: discover
     if: needs.discover.outputs.count != '0'
+    permissions:
+      contents: write
+      pull-requests: write
+      actions: write
     runs-on: ubuntu-latest
     timeout-minutes: 15
     strategy:

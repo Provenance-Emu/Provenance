@@ -11,8 +11,6 @@ on:
 
 permissions:
   contents: read
-  actions: write
-  pull-requests: read
 
 jobs:
   dispatch:
@@ -23,6 +21,10 @@ jobs:
       github.event.issue.pull_request != '' &&
       github.event.comment.body == '/ai-review' &&
       contains(fromJSON('["OWNER","MEMBER","COLLABORATOR"]'), github.event.comment.author_association)
+    permissions:
+      contents: read
+      actions: write
+      pull-requests: read
     runs-on: ubuntu-latest
     steps:
       - name: Dispatch ai-review.yml

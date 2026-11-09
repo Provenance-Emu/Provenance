@@ -17,12 +17,14 @@ on:
 
 permissions:
   contents: read
-  pull-requests: write
-  actions: read
 
 jobs:
   attach:
     name: Post IPA links to PR
+    permissions:
+      contents: read
+      pull-requests: write
+      actions: read
     runs-on: ubuntu-latest
     # Only run for pull_request triggered builds that succeeded.
     # Develop pushes use the alpha-release job; workflow_dispatch builds use post-to-pr.
