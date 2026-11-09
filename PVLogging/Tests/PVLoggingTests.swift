@@ -647,4 +647,51 @@ struct PVLogFileManagerTests {
         #expect(files.count <= mgr.maxFileCount)
         mgr.deleteAllFiles()
     }
+
+    @Test("deleteFile refuses the active session file")
+    func deleteFileRefusesActiveSession() throws {
+        let mgr = makeManager()
+        mgr.startLogging()
+        Thread.sleep(forTimeInterval: 0.1)
+        defer {
+            mgr.stopLogging()
+            Thread.sleep(forTimeInterval: 0.05)
+            mgr.deleteAllFiles()
+        }
+
+        let active = try #require(mgr.currentSessionURL)
+        #expect(mgr.isActiveSessionFile(active))
+        #expect(throws: PVLogFileManager.DeleteError.activeSessionFile) {
+            try mgr.deleteFile(at: active)
+        }
+        #expect(FileManager.default.fileExists(atPath: active.path))
+    }
+
+    @Test("deleteAllFiles keeps the active session file")
+    func deleteAllFilesKeepsActiveSession() throws {
+        let mgr = makeManager()
+        // An older, closed session that should be removed.
+        mgr.startLogging()
+        Thread.sleep(forTimeInterval: 0.05)
+        mgr.stopLogging()
+        Thread.sleep(forTimeInterval: 0.05)
+        // Session file names carry one-second resolution; make sure the next one differs.
+        Thread.sleep(forTimeInterval: 1.0)
+
+        mgr.startLogging()
+        Thread.sleep(forTimeInterval: 0.1)
+        defer {
+            mgr.stopLogging()
+            Thread.sleep(forTimeInterval: 0.05)
+            mgr.deleteAllFiles()
+        }
+        let active = try #require(mgr.currentSessionURL)
+        #expect(mgr.logFiles().count == 2)
+
+        mgr.deleteAllFiles()
+
+        // Compare resolved paths: the directory listing may come back as `/private/var/...`.
+        #expect(mgr.logFiles().map { $0.resolvingSymlinksInPath().path } == [active.resolvingSymlinksInPath().path])
+        #expect(!mgr.isActiveSessionFile(active.deletingLastPathComponent().appendingPathComponent("other.log")))
+    }
 }

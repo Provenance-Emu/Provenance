@@ -29,6 +29,9 @@ public struct RetroLogView: View {
     /// Controls presentation of the export options sheet
     @State private var showingExportSheet = false
 
+    /// Controls presentation of the session log file list
+    @State private var showingLogFiles = false
+
     #if !os(tvOS)
     /// Controls presentation of the log file importer
     @State private var showingImporter = false
@@ -56,6 +59,7 @@ public struct RetroLogView: View {
         case showDetails
         case clear
         case export
+        case logFiles
         case fullscreen
     }
     #endif
@@ -140,6 +144,9 @@ public struct RetroLogView: View {
         #endif
         .sheet(isPresented: $showingExportSheet) {
             LogExportSheet(viewModel: viewModel)
+        }
+        .sheet(isPresented: $showingLogFiles) {
+            LogFilesSheet(viewModel: viewModel)
         }
         #if os(tvOS)
         .sheet(isPresented: $showingLogLevelPicker) {
@@ -250,6 +257,15 @@ public struct RetroLogView: View {
                     accentColor: RetroTheme.retroBlue
                 ) {
                     showingExportSheet = true
+                }
+
+                // Session log files
+                headerButton(
+                    button: .logFiles,
+                    icon: "folder",
+                    accentColor: RetroTheme.retroBlue
+                ) {
+                    showingLogFiles = true
                 }
 
                 Spacer()
@@ -379,6 +395,22 @@ public struct RetroLogView: View {
                 }
                 .accessibilityLabel("Import Log File")
                 .accessibilityHint("Open a saved log file to view it in place of the live logs")
+
+                // Session log files button
+                Button(action: {
+                    showingLogFiles = true
+                }) {
+                    Image(systemName: "folder")
+                        .font(.system(size: 12))
+                        .foregroundColor(RetroTheme.retroBlue)
+                        .padding(6)
+                        .background(
+                            RoundedRectangle(cornerRadius: 4)
+                                .strokeBorder(RetroTheme.retroBlue, lineWidth: 1)
+                        )
+                }
+                .accessibilityLabel("Log Files")
+                .accessibilityHint("View, share or delete the log files saved on this device")
 
                 // Clear logs button
                 Button(action: {
@@ -562,180 +594,182 @@ public struct RetroLogView: View {
             }
         }
     }
+}
 
-    // MARK: - Log Entry Subview
-    private struct LogEntryRowContent: View {
-        let log: LogEntry
-        let viewModel: RetroLogViewModel
+// MARK: - Log Entry Row
 
-        @State private var isCopying = false
-        #if os(tvOS)
-        @FocusState private var isFocused: Bool
-        @State private var isExpanded: Bool = false
-        #endif
+/// One live log entry; file-scope so `RetroLogView` stays within the lint body limit.
+private struct LogEntryRowContent: View {
+    let log: LogEntry
+    let viewModel: RetroLogViewModel
 
-        // Split out of `body` so the row type-checks in reasonable time.
-        private var levelColor: Color { viewModel.logLevelColor(log.level) }
+    @State private var isCopying = false
+    #if os(tvOS)
+    @FocusState private var isFocused: Bool
+    @State private var isExpanded: Bool = false
+    #endif
 
-        private var headerRow: some View {
-            HStack {
-                Text(log.formattedTimestamp)
-                    .font(.system(size: 10, design: .monospaced))
-                    .foregroundColor(levelColor.opacity(0.8))
+    // Split out of `body` so the row type-checks in reasonable time.
+    private var levelColor: Color { viewModel.logLevelColor(log.level) }
 
-                Spacer()
+    private var headerRow: some View {
+        HStack {
+            Text(log.formattedTimestamp)
+                .font(.system(size: 10, design: .monospaced))
+                .foregroundColor(levelColor.opacity(0.8))
 
-                Text(log.level.name.uppercased())
-                    .font(.system(size: 10, weight: .bold, design: .monospaced))
-                    .foregroundColor(levelColor)
-                    .padding(.horizontal, 6)
-                    .padding(.vertical, 2)
-                    .background(Color.black.opacity(0.7))
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 4)
-                            .strokeBorder(levelColor.opacity(0.7), lineWidth: 1)
-                    )
-                    .shadow(color: levelColor.opacity(0.5), radius: 2, x: 0, y: 0)
-            }
-        }
+            Spacer()
 
-        private var cardBorderGradient: LinearGradient {
-            let colors: [Color] = isCopying
-                ? [RetroTheme.retroPink, RetroTheme.retroBlue]
-                : [levelColor.opacity(0.3), RetroTheme.retroDarkBlue.opacity(0.1)]
-            return LinearGradient(gradient: Gradient(colors: colors), startPoint: .topLeading, endPoint: .bottomTrailing)
-        }
-
-        private var cardBackground: some View {
-            RoundedRectangle(cornerRadius: 6)
-                .fill(Color.black.opacity(0.4))
+            Text(log.level.name.uppercased())
+                .font(.system(size: 10, weight: .bold, design: .monospaced))
+                .foregroundColor(levelColor)
+                .padding(.horizontal, 6)
+                .padding(.vertical, 2)
+                .background(Color.black.opacity(0.7))
                 .overlay(
-                    RoundedRectangle(cornerRadius: 6)
-                        .strokeBorder(cardBorderGradient, lineWidth: isCopying ? 2 : 1)
+                    RoundedRectangle(cornerRadius: 4)
+                        .strokeBorder(levelColor.opacity(0.7), lineWidth: 1)
                 )
+                .shadow(color: levelColor.opacity(0.5), radius: 2, x: 0, y: 0)
         }
+    }
 
-        #if os(tvOS)
-        private var focusBorderGradient: LinearGradient {
-            guard isFocused else {
-                return LinearGradient(colors: [.clear, .clear], startPoint: .leading, endPoint: .trailing)
-            }
-            return LinearGradient(
-                colors: [RetroTheme.retroPink.opacity(0.6), RetroTheme.retroBlue.opacity(0.4)],
-                startPoint: .topLeading,
-                endPoint: .bottomTrailing
-            )
-        }
-        #endif
+    private var cardBorderGradient: LinearGradient {
+        let colors: [Color] = isCopying
+            ? [RetroTheme.retroPink, RetroTheme.retroBlue]
+            : [levelColor.opacity(0.3), RetroTheme.retroDarkBlue.opacity(0.1)]
+        return LinearGradient(gradient: Gradient(colors: colors), startPoint: .topLeading, endPoint: .bottomTrailing)
+    }
 
-        var body: some View {
-            VStack(alignment: .leading, spacing: 4) {
-                // Header with timestamp and level
-                headerRow
-
-                // Message with glow effect based on log level
-                Text(log.message)
-                    .font(.system(size: 12, weight: .medium, design: .monospaced))
-                    .foregroundColor(.white)
-                    .shadow(color: levelColor.opacity(0.3), radius: 1, x: 0, y: 0)
-                    #if os(tvOS)
-                    .lineLimit(isExpanded || viewModel.showFullDetails ? nil : 3)
-                    #else
-                    .lineLimit(viewModel.showFullDetails ? nil : 3)
-                    #endif
-
-                // File and line if showing full details
-                #if os(tvOS)
-                if isExpanded || viewModel.showFullDetails {
-                    let file = log.file
-                    let line = log.line
-                    HStack(spacing: 4) {
-                        Image(systemName: "doc.text")
-                            .font(.system(size: 8))
-                            .foregroundColor(RetroTheme.retroBlue.opacity(0.7))
-
-                        Text("\(file):\(line)")
-                            .font(.system(size: 10, design: .monospaced))
-                            .foregroundColor(RetroTheme.retroBlue.opacity(0.7))
-                    }
-                }
-                #else
-                if viewModel.showFullDetails {
-                    let file = log.file
-                    let line = log.line
-                    HStack(spacing: 4) {
-                        Image(systemName: "doc.text")
-                            .font(.system(size: 8))
-                            .foregroundColor(RetroTheme.retroBlue.opacity(0.7))
-
-                        Text("\(file):\(line)")
-                            .font(.system(size: 10, design: .monospaced))
-                            .foregroundColor(RetroTheme.retroBlue.opacity(0.7))
-                    }
-                }
-                #endif
-            }
-            .padding(.vertical, 8)
-            .padding(.horizontal, 12)
-            .background(cardBackground)
-            .padding(.horizontal, 4)
-            .padding(.vertical, 2)
-            #if os(tvOS)
-            .contentShape(Rectangle())
-            .focusable()
-            .focused($isFocused)
-            .background(
-                RoundedRectangle(cornerRadius: 6)
-                    .fill(isFocused ? Color.white.opacity(0.05) : Color.clear)
-                    .animation(.easeInOut(duration: 0.15), value: isFocused)
-            )
+    private var cardBackground: some View {
+        RoundedRectangle(cornerRadius: 6)
+            .fill(Color.black.opacity(0.4))
             .overlay(
                 RoundedRectangle(cornerRadius: 6)
-                    .strokeBorder(focusBorderGradient, lineWidth: isFocused ? 2 : 0)
-                    .animation(.easeInOut(duration: 0.15), value: isFocused)
+                    .strokeBorder(cardBorderGradient, lineWidth: isCopying ? 2 : 1)
             )
-            .onTapGesture {
-                withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
-                    isExpanded.toggle()
-                }
-            }
-            .onPlayPauseCommand {
-                withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
-                    isExpanded.toggle()
+    }
+
+    #if os(tvOS)
+    private var focusBorderGradient: LinearGradient {
+        guard isFocused else {
+            return LinearGradient(colors: [.clear, .clear], startPoint: .leading, endPoint: .trailing)
+        }
+        return LinearGradient(
+            colors: [RetroTheme.retroPink.opacity(0.6), RetroTheme.retroBlue.opacity(0.4)],
+            startPoint: .topLeading,
+            endPoint: .bottomTrailing
+        )
+    }
+    #endif
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 4) {
+            // Header with timestamp and level
+            headerRow
+
+            // Message with glow effect based on log level
+            Text(log.message)
+                .font(.system(size: 12, weight: .medium, design: .monospaced))
+                .foregroundColor(.white)
+                .shadow(color: levelColor.opacity(0.3), radius: 1, x: 0, y: 0)
+                #if os(tvOS)
+                .lineLimit(isExpanded || viewModel.showFullDetails ? nil : 3)
+                #else
+                .lineLimit(viewModel.showFullDetails ? nil : 3)
+                #endif
+
+            // File and line if showing full details
+            #if os(tvOS)
+            if isExpanded || viewModel.showFullDetails {
+                let file = log.file
+                let line = log.line
+                HStack(spacing: 4) {
+                    Image(systemName: "doc.text")
+                        .font(.system(size: 8))
+                        .foregroundColor(RetroTheme.retroBlue.opacity(0.7))
+
+                    Text("\(file):\(line)")
+                        .font(.system(size: 10, design: .monospaced))
+                        .foregroundColor(RetroTheme.retroBlue.opacity(0.7))
                 }
             }
             #else
-            .onLongPressGesture(minimumDuration: 0.5) {
-                // Create a full log string with all details
-                var logText = ""
+            if viewModel.showFullDetails {
+                let file = log.file
+                let line = log.line
+                HStack(spacing: 4) {
+                    Image(systemName: "doc.text")
+                        .font(.system(size: 8))
+                        .foregroundColor(RetroTheme.retroBlue.opacity(0.7))
 
-                // Include timestamp and level
-                logText += "[\(log.formattedTimestamp)] [\(log.level.name.uppercased())] "
-
-                // Include category if available
-                if !log.category.isEmpty {
-                    logText += "(\(log.category)) "
-                }
-
-                // Include file and line if full details are shown
-                if viewModel.showFullDetails {
-                    let fileName = (log.file as NSString).lastPathComponent
-                    logText += "[\(fileName):\(log.line)] "
-                }
-
-                // Add the main message
-                logText += log.message
-
-                UIPasteboard.general.string = logText
-
-                // Visual feedback
-                isCopying = true
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
-                    isCopying = false
+                    Text("\(file):\(line)")
+                        .font(.system(size: 10, design: .monospaced))
+                        .foregroundColor(RetroTheme.retroBlue.opacity(0.7))
                 }
             }
-            #endif // !os(tvOS)
+            #endif
         }
+        .padding(.vertical, 8)
+        .padding(.horizontal, 12)
+        .background(cardBackground)
+        .padding(.horizontal, 4)
+        .padding(.vertical, 2)
+        #if os(tvOS)
+        .contentShape(Rectangle())
+        .focusable()
+        .focused($isFocused)
+        .background(
+            RoundedRectangle(cornerRadius: 6)
+                .fill(isFocused ? Color.white.opacity(0.05) : Color.clear)
+                .animation(.easeInOut(duration: 0.15), value: isFocused)
+        )
+        .overlay(
+            RoundedRectangle(cornerRadius: 6)
+                .strokeBorder(focusBorderGradient, lineWidth: isFocused ? 2 : 0)
+                .animation(.easeInOut(duration: 0.15), value: isFocused)
+        )
+        .onTapGesture {
+            withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
+                isExpanded.toggle()
+            }
+        }
+        .onPlayPauseCommand {
+            withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
+                isExpanded.toggle()
+            }
+        }
+        #else
+        .onLongPressGesture(minimumDuration: 0.5) {
+            // Create a full log string with all details
+            var logText = ""
+
+            // Include timestamp and level
+            logText += "[\(log.formattedTimestamp)] [\(log.level.name.uppercased())] "
+
+            // Include category if available
+            if !log.category.isEmpty {
+                logText += "(\(log.category)) "
+            }
+
+            // Include file and line if full details are shown
+            if viewModel.showFullDetails {
+                let fileName = (log.file as NSString).lastPathComponent
+                logText += "[\(fileName):\(log.line)] "
+            }
+
+            // Add the main message
+            logText += log.message
+
+            UIPasteboard.general.string = logText
+
+            // Visual feedback
+            isCopying = true
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+                isCopying = false
+            }
+        }
+        #endif // !os(tvOS)
     }
 }
 
@@ -777,7 +811,7 @@ extension RetroLogView {
                 .foregroundColor(RetroTheme.retroPink)
 
             VStack(alignment: .leading, spacing: 1) {
-                Text("VIEWING IMPORTED SESSION")
+                Text("VIEWING LOG FILE")
                     .font(.system(size: 10, weight: .bold, design: .monospaced))
                     .foregroundColor(RetroTheme.retroPink)
                 Text(name)

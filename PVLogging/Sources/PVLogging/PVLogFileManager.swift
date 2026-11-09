@@ -126,14 +126,35 @@ public final class PVLogFileManager: @unchecked Sendable {
             }
     }
 
-    /// Deletes a specific log file.
+    /// Errors from file deletion.
+    public enum DeleteError: LocalizedError, Equatable {
+        /// The file is the one being written this session; stop logging first.
+        case activeSessionFile
+
+        public var errorDescription: String? {
+            switch self {
+            case .activeSessionFile:
+                return "The current session's log file can't be deleted while logging is active."
+            }
+        }
+    }
+
+    /// True when `url` is the file currently being written.
+    public func isActiveSessionFile(_ url: URL) -> Bool {
+        guard let current = currentSessionURL else { return false }
+        // `/var/...` and `/private/var/...` name the same file on Apple platforms.
+        return current.resolvingSymlinksInPath().path == url.resolvingSymlinksInPath().path
+    }
+
+    /// Deletes a specific log file. Refuses the active session file.
     public func deleteFile(at url: URL) throws {
+        guard !isActiveSessionFile(url) else { throw DeleteError.activeSessionFile }
         try FileManager.default.removeItem(at: url)
     }
 
-    /// Deletes all log files in the logs directory.
+    /// Deletes all log files in the logs directory except the active session file.
     public func deleteAllFiles() {
-        for url in logFiles() {
+        for url in logFiles() where !isActiveSessionFile(url) {
             try? FileManager.default.removeItem(at: url)
         }
     }

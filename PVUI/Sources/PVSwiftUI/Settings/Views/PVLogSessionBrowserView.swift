@@ -67,9 +67,10 @@ final class PVLogSessionViewModel {
         }
     }
 
+    /// Deletes every closed session file; the active one is kept, so re-list instead of clearing.
     func deleteAllFiles() {
         PVLogFileManager.shared.deleteAllFiles()
-        logFiles.removeAll()
+        refresh()
     }
 }
 
@@ -188,7 +189,10 @@ public struct PVLogSessionBrowserView: View {
                 fileRow(entry)
             }
             .onDelete { offsets in
-                for i in offsets { viewModel.deleteFile(viewModel.logFiles[i]) }
+                // The active session file is refused by PVLogFileManager; skip it so the row stays.
+                for i in offsets where !viewModel.logFiles[i].isCurrentSession {
+                    viewModel.deleteFile(viewModel.logFiles[i])
+                }
             }
         }
         .scrollContentBackground(.hidden)
