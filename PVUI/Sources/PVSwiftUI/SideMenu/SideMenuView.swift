@@ -65,6 +65,8 @@ SideMenuView: SwiftUI.View {
 
     /// Focus id of the Nearby Libraries row (gamepad navigation).
     private static let nearbyItem = "nearby"
+    /// How much of the theme's menu colour covers the material behind the drawer.
+    private static let surfaceOpacity: Double = 0.72
 
     /// Nearby Libraries lives in Settings too; the library gets its own row so
     /// shared libraries on this network are one tap away.
@@ -212,10 +214,6 @@ SideMenuView: SwiftUI.View {
     @ViewBuilder
     private func addGamesSection() -> some View {
         Group {
-            Rectangle()
-                .fill(Color.retroCyan.opacity(0.15))
-                .frame(height: 1)
-
             MenuItemView(icon: .named("prov_add_games_icon", PVUIBase.BundleLoader.myBundle), rowTitle: "Add Games", isFocused: focusedItem == "addgames") {
                 delegate?.didTapAddGames()
             }
@@ -228,10 +226,6 @@ SideMenuView: SwiftUI.View {
     @ViewBuilder
     private func importQueueSection() -> some View {
         Group {
-            Rectangle()
-                .fill(Color.retroCyan.opacity(0.15))
-                .frame(height: 1)
-
             MenuItemView(icon: .sfSymbol("checklist"), rowTitle: "Import Queue", isFocused: focusedItem == "imports") {
                 delegate?.didTapImports()
             }
@@ -244,10 +238,6 @@ SideMenuView: SwiftUI.View {
     private func nearbyLibrariesSection() -> some View {
         if showsNearbyLibraries {
             Group {
-                Rectangle()
-                    .fill(Color.retroCyan.opacity(0.15))
-                    .frame(height: 1)
-
                 MenuItemView(icon: .sfSymbol("antenna.radiowaves.left.and.right"), rowTitle: "Nearby Libraries",
                              isFocused: focusedItem == Self.nearbyItem) {
                     viewModel.sidebarSheet = .nearbyLibraries
@@ -261,10 +251,6 @@ SideMenuView: SwiftUI.View {
     @ViewBuilder
     private func networkPlaySection() -> some View {
         if netplayEnabled {
-            Rectangle()
-                .fill(Color.retroCyan.opacity(0.15))
-                .frame(height: 1)
-
             MenuItemView(icon: .sfSymbol("network"), rowTitle: "Network Play", isFocused: focusedItem == "netplay") {
                 viewModel.sidebarSheet = .networkPlay
             }
@@ -280,10 +266,6 @@ SideMenuView: SwiftUI.View {
                 MenuSectionHeaderView(sectionTitle: "CONSOLES", sortable: consoles.count > 1, sortAscending: viewModel.sortConsolesAscending) {
                     viewModel.sortConsolesAscending.toggle()
                 }
-
-                Rectangle()
-                    .fill(Color.retroCyan.opacity(0.15))
-                    .frame(height: 1)
 
                 // Home first
 
@@ -305,9 +287,6 @@ SideMenuView: SwiftUI.View {
                 }
 
                 ForEach(sortedConsoles(), id: \.identifier) { console in
-                    Rectangle()
-                        .fill(Color.retroCyan.opacity(0.15))
-                        .frame(height: 1)
                     MenuItemView(
                         icon: .named(console.iconName, PVUIBase.BundleLoader.myBundle),
                         rowTitle: console.name,
@@ -388,7 +367,7 @@ SideMenuView: SwiftUI.View {
                 .buttonStyle(.plain)
                 .accessibilityLabel("Close Library Menu")
             }
-            .padding(.horizontal, 16)
+            .padding(.horizontal, LibraryLayout.chromeHorizontalInset)
             .padding(.vertical, 8)
             // The header colour runs up behind the status bar, so the clock sits on the header.
             .background(themeManager.currentPalette.menuHeaderBackground.swiftUIColor.ignoresSafeArea(.container, edges: .top))
@@ -400,8 +379,8 @@ SideMenuView: SwiftUI.View {
                 foreground: themeManager.currentPalette.dark ? .white : .black,
                 isMenuVisible: drawerState.isPresented
             )
-                .padding(.horizontal, 16)
-                .padding(.bottom, 12)
+                .padding(.horizontal, LibraryLayout.chromeHorizontalInset)
+                .padding(.bottom, LibraryLayout.chromeHorizontalInset)
                 .background(themeManager.currentPalette.menuHeaderBackground.swiftUIColor)
 
             ScrollViewReader { proxy in
@@ -417,7 +396,8 @@ SideMenuView: SwiftUI.View {
                             #if canImport(FreemiumKit)
                             PaidStatusView(style: .plain)
                                 .freemiumKitColorReset()
-                                .padding(10)
+                                .padding(.horizontal, LibraryLayout.chromeHorizontalInset)
+                                .padding(.vertical, 10)
                             #endif
                             consolesSection()
                             footerSection()
@@ -440,7 +420,9 @@ SideMenuView: SwiftUI.View {
             }
         }
         .foregroundStyle(themeManager.currentPalette.menuIconTint.swiftUIColor)
-        .background(themeManager.currentPalette.menuBackground.swiftUIColor)
+        // Translucent like the library dock: the page behind the drawer stays faintly visible.
+        .background(themeManager.currentPalette.menuBackground.swiftUIColor.opacity(Self.surfaceOpacity))
+        .background(.ultraThinMaterial)
         .onDisappear {
             gamepadCancellable?.cancel()
         }
@@ -496,12 +478,12 @@ private struct LibraryMenuSearchField: View {
             }
         }
         .font(.callout)
-        .padding(.horizontal, 12)
-        .frame(minHeight: 44)
-        .background(background, in: RoundedRectangle(cornerRadius: 12))
+        .padding(.horizontal, LibraryLayout.chromeHorizontalInset)
+        .frame(minHeight: LibraryLayout.controlHeight)
+        .background(background, in: RoundedRectangle(cornerRadius: LibraryLayout.dockCornerRadius))
         .overlay {
-            RoundedRectangle(cornerRadius: 12)
-                .strokeBorder(accent.opacity(0.4), lineWidth: 1)
+            RoundedRectangle(cornerRadius: LibraryLayout.dockCornerRadius)
+                .strokeBorder(LibraryLayout.chromeBorder)
         }
         .onChange(of: isMenuVisible) { _, visible in
             if !visible { isFocused = false }

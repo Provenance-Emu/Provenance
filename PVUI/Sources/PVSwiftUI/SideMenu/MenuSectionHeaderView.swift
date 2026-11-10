@@ -24,13 +24,8 @@ internal struct MenuSectionHeaderView: SwiftUI.View {
 
     var body: some SwiftUI.View {
         VStack(spacing: 0) {
-            /// Divider
-            Rectangle()
-                .fill(Color.retroCyan.opacity(0.15))
-                .frame(height: 1)
-            /// Spacer
             Spacer()
-            
+
             HStack(alignment: .bottom) {
                 Text(sectionTitle)
                     .foregroundColor(themeManager.currentPalette.menuSectionHeaderText.swiftUIColor)
@@ -45,12 +40,10 @@ internal struct MenuSectionHeaderView: SwiftUI.View {
                     }
                 }
             }
-            .padding(.horizontal, 16)
+            .padding(.horizontal, LibraryLayout.chromeHorizontalInset)
             .padding(.bottom, 4)
-            .background(themeManager.currentPalette.menuSectionHeaderBackground.swiftUIColor)
         }
         .frame(height: 40.0)
-        .background(themeManager.currentPalette.menuSectionHeaderBackground.swiftUIColor)
         .foregroundStyle(themeManager.currentPalette.menuSectionHeaderText.swiftUIColor)
         .tint(themeManager.currentPalette.menuSectionHeaderIconTint.swiftUIColor)
     }

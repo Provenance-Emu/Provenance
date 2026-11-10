@@ -949,7 +949,7 @@ struct SettingsRow: View {
         #if os(tvOS)
         return isFocused ? 2 : 1
         #else
-        return 1.5
+        return 1
         #endif
     }
 
@@ -2914,7 +2914,7 @@ private struct DeltaStylesLinkView: View {
                                         startPoint: .leading,
                                         endPoint: .trailing
                                     ),
-                                    lineWidth: 1.5
+                                    lineWidth: 1
                                 )
                         )
                 )
@@ -2968,7 +2968,7 @@ private struct DeltaStylesLinkView: View {
                                         startPoint: .leading,
                                         endPoint: .trailing
                                     ),
-                                    lineWidth: 1.5
+                                    lineWidth: 1
                                 )
                         )
                 )
@@ -3055,10 +3055,10 @@ struct PlusStatusBanner: View {
             .padding(.horizontal, 16)
             .padding(.vertical, 14)
             .background(
-                RoundedRectangle(cornerRadius: 14)
+                RoundedRectangle(cornerRadius: LibraryLayout.dockCornerRadius)
                     .fill(Color(themeManager.currentPalette.settingsCellBackground ?? themeManager.currentPalette.gameLibraryBackground))
                     .overlay(
-                        RoundedRectangle(cornerRadius: 14)
+                        RoundedRectangle(cornerRadius: LibraryLayout.dockCornerRadius)
                             .strokeBorder(
                                 LinearGradient(
                                     gradient: Gradient(colors: [
@@ -3069,7 +3069,7 @@ struct PlusStatusBanner: View {
                                     startPoint: .leading,
                                     endPoint: .trailing
                                 ),
-                                lineWidth: 1.5
+                                lineWidth: 1
                             )
                     )
             )
@@ -3110,10 +3110,10 @@ struct PlusStatusBanner: View {
             .padding(.horizontal, 16)
             .padding(.vertical, 14)
             .background(
-                RoundedRectangle(cornerRadius: 14)
+                RoundedRectangle(cornerRadius: LibraryLayout.dockCornerRadius)
                     .fill(Color(themeManager.currentPalette.settingsCellBackground ?? themeManager.currentPalette.gameLibraryBackground))
                     .overlay(
-                        RoundedRectangle(cornerRadius: 14)
+                        RoundedRectangle(cornerRadius: LibraryLayout.dockCornerRadius)
                             .strokeBorder(
                                 LinearGradient(
                                     gradient: Gradient(colors: [
@@ -3124,7 +3124,7 @@ struct PlusStatusBanner: View {
                                     startPoint: .leading,
                                     endPoint: .trailing
                                 ),
-                                lineWidth: 1.5
+                                lineWidth: 1
                             )
                     )
             )

@@ -25,22 +25,31 @@ struct MenuItemView: SwiftUI.View {
     @ObservedObject private var themeManager = ThemeManager.shared
     @ObservedObject private var gamepadManager = GamepadManager.shared
 
+    /// Gap between the menu's edge and a row's highlight.
+    static let highlightInset: CGFloat = 6
+    /// Opacity of the tint that fills the active or focused row.
+    private static let highlightFillOpacity: Double = 0.12
+
     private var shouldShowFocus: Bool {
         (isFocused && navigationInputAvailable) || !navigationInputAvailable
     }
-    
+
     private var navigationInputAvailable: Bool {
         gamepadManager.isNavigationInputAvailable
     }
-    
+
     private var shouldStroke: Bool {
         shouldShowFocus && navigationInputAvailable
     }
-    
+
+    private var highlightShape: RoundedRectangle {
+        RoundedRectangle(cornerRadius: RetroPauseChrome.menuCellCornerRadius())
+    }
+
     private var iconTint: Color {
         shouldShowFocus ? themeManager.currentPalette.menuIconTint.swiftUIColor : themeManager.currentPalette.menuIconTint.swiftUIColor.opacity(navigationInputAvailable ? 0.6 : 1.0)
     }
-    
+
     private var textTint: Color {
         shouldShowFocus ? themeManager.currentPalette.menuText.swiftUIColor : themeManager.currentPalette.menuText.swiftUIColor.opacity(navigationInputAvailable ? 0.6 : 1.0)
     }
@@ -76,18 +85,22 @@ struct MenuItemView: SwiftUI.View {
                 /// Space
                 Spacer()
             }
-            .frame(minHeight: 44)
-            .padding(.vertical, 2)
-            .padding(.horizontal, 10)
-            .background(
-                shouldShowFocus ?
-                themeManager.currentPalette.menuBackground.swiftUIColor.opacity(0.8) :
-                themeManager.currentPalette.menuBackground.swiftUIColor.opacity(navigationInputAvailable ? 0.3 : 1.0)
-            )
-            .overlay(
-                RoundedRectangle(cornerRadius: RetroPauseChrome.radiusSM)
-                    .stroke(shouldStroke ? themeManager.currentPalette.menuIconTint.swiftUIColor : .clear, lineWidth: 2)
-            )
+            .frame(minHeight: LibraryLayout.controlHeight)
+            .padding(.horizontal, LibraryLayout.chromeHorizontalInset - Self.highlightInset)
+            // The active or focused row gets a tinted, inset highlight with a hairline, not a full-width box.
+            .background {
+                if isActive || shouldStroke {
+                    highlightShape.fill(themeManager.currentPalette.menuIconTint.swiftUIColor.opacity(Self.highlightFillOpacity))
+                }
+            }
+            .overlay {
+                if shouldStroke {
+                    highlightShape.strokeBorder(themeManager.currentPalette.menuIconTint.swiftUIColor.opacity(RetroPauseChrome.menuCellStrokeOpacityFocused))
+                }
+            }
+            .padding(.horizontal, Self.highlightInset)
+            .padding(.vertical, 1)
+            .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
         .accessibilityAddTraits(isActive ? [.isSelected] : [])

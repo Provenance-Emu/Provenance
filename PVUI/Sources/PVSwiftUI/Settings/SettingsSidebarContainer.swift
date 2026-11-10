@@ -200,8 +200,18 @@ struct SettingsSidebarContainer<PaneContent: View>: View {
                         .id(pane)
                     }
                 }
-                .padding(.horizontal, 16)
+                .padding(.horizontal, LibraryLayout.chromeHorizontalInset)
                 .padding(.vertical, 8)
+            }
+            // Chips fade out at the ends, so the strip reads as scrollable instead of cut off.
+            .mask {
+                HStack(spacing: 0) {
+                    LinearGradient(colors: [.clear, .black], startPoint: .leading, endPoint: .trailing)
+                        .frame(width: LibraryLayout.chromeHorizontalInset)
+                    Color.black
+                    LinearGradient(colors: [.black, .clear], startPoint: .leading, endPoint: .trailing)
+                        .frame(width: SettingsChrome.tabStripTrailingFade)
+                }
             }
             .background(Color(themeManager.currentPalette.settingsHeaderBackground ?? themeManager.currentPalette.gameLibraryBackground))
             .onAppear { proxy.scrollTo(selectedPane, anchor: .center) }
@@ -225,9 +235,6 @@ struct SettingsSidebarContainer<PaneContent: View>: View {
         .background(
             Capsule().fill(isSelected ? Color.retroPink : surfaceColor)
         )
-        .overlay(
-            Capsule().strokeBorder(isSelected ? Color.retroPink : Color.clear, lineWidth: 1.5)
-        )
         .contentShape(Capsule())
     }
 
@@ -236,7 +243,7 @@ struct SettingsSidebarContainer<PaneContent: View>: View {
     private func contentPane(capsColumn: Bool) -> some View {
         VStack(spacing: 0) {
             SettingsSearchField(text: $searchQuery, isFocused: searchFocused)
-                .padding(.horizontal)
+                .padding(.horizontal, LibraryLayout.chromeHorizontalInset)
                 .padding(.top, 8)
                 .padding(.bottom, 4)
 
@@ -275,7 +282,8 @@ struct SettingsSidebarContainer<PaneContent: View>: View {
         let column = VStack(alignment: .leading, spacing: 24) {
             paneContent(selectedPane)
         }
-        .padding()
+        .padding(.horizontal, LibraryLayout.chromeHorizontalInset)
+        .padding(.vertical)
 
         if capsColumn {
             column
@@ -292,6 +300,20 @@ struct SettingsSidebarContainer<PaneContent: View>: View {
             selectedPane = pane
         }
     }
+}
+
+// MARK: - Chrome
+
+/// Strokes shared by the settings cards, search field and banners.
+enum SettingsChrome {
+    /// The retrowave pink-to-blue rim, at the weight of the library's chrome border.
+    static let hairline = LinearGradient(
+        colors: [Color.retroPink.opacity(0.3), Color.retroBlue.opacity(0.3)],
+        startPoint: .leading,
+        endPoint: .trailing
+    )
+    /// Wide enough that a chip under it is plainly cut by the fade, not by the screen edge.
+    static let tabStripTrailingFade: CGFloat = 28
 }
 
 // MARK: - Pane section
@@ -327,19 +349,12 @@ struct SettingsPaneSection<Content: View>: View {
             .padding(.vertical, 8)
             .frame(maxWidth: .infinity, alignment: .leading)
             .background(
-                RoundedRectangle(cornerRadius: 12)
+                RoundedRectangle(cornerRadius: LibraryLayout.dockCornerRadius)
                     .fill(cardColor.opacity(0.35))
             )
             .overlay(
-                RoundedRectangle(cornerRadius: 12)
-                    .strokeBorder(
-                        LinearGradient(
-                            colors: [Color.retroPink.opacity(0.3), Color.retroBlue.opacity(0.3)],
-                            startPoint: .leading,
-                            endPoint: .trailing
-                        ),
-                        lineWidth: 1
-                    )
+                RoundedRectangle(cornerRadius: LibraryLayout.dockCornerRadius)
+                    .strokeBorder(SettingsChrome.hairline)
             )
         }
         .id(title)

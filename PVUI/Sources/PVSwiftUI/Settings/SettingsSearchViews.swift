@@ -54,21 +54,14 @@ struct SettingsSearchField: View {
                 .accessibilityLabel("Clear search")
             }
         }
-        .padding(.horizontal, 12)
-        .padding(.vertical, 8)
+        .padding(.horizontal, LibraryLayout.chromeHorizontalInset)
+        .frame(minHeight: LibraryLayout.controlHeight)
         .background(
-            RoundedRectangle(cornerRadius: 8)
+            RoundedRectangle(cornerRadius: LibraryLayout.dockCornerRadius)
                 .fill(fieldBackground.opacity(0.6))
                 .overlay(
-                    RoundedRectangle(cornerRadius: 8)
-                        .strokeBorder(
-                            LinearGradient(
-                                gradient: Gradient(colors: [.retroPink, .retroBlue]),
-                                startPoint: .leading,
-                                endPoint: .trailing
-                            ),
-                            lineWidth: 1.5
-                        )
+                    RoundedRectangle(cornerRadius: LibraryLayout.dockCornerRadius)
+                        .strokeBorder(SettingsChrome.hairline)
                 )
         )
     }
