@@ -2,13 +2,13 @@
 //  AirPlayRoutePickerView.swift
 //  PVUI
 //
-//  SwiftUI wrappers for AVRoutePickerView so AirPlay can be surfaced
-//  in the tile pause menu and the classic RetroMenuView.
+//  SwiftUI wrapper for AVRoutePickerView so AirPlay can be surfaced
+//  in the tile pause menu.
 //
 //  Only compiled on iOS / macCatalyst — tvOS and macOS do not need
 //  an in-app AirPlay button (Control Center handles it there).
 //
-//  Part of #2684 — Add AirPlay button to pause menu / RetroMenuView
+//  Part of #2684 — Add AirPlay button to pause menu
 //
 
 #if os(iOS) || targetEnvironment(macCatalyst)
@@ -72,51 +72,6 @@ struct AirPlayPickerTrigger: UIViewRepresentable {
             if let button = firstButton(in: subview) { return button }
         }
         return nil
-    }
-}
-
-// MARK: - AirPlayMenuButton
-
-/// A self-contained AirPlay button styled to match the retro-menu aesthetic.
-/// It embeds an `AVRoutePickerView` directly so the system picker appears
-/// when tapped — no trigger binding required.
-///
-/// Usage in RetroMenuView:
-/// ```swift
-/// AirPlayMenuButton()
-/// ```
-struct AirPlayMenuButton: View {
-    /// Tint applied to the AVRoutePickerView icon (default: white).
-    var tintColor: Color = .white
-    /// Active (connected) tint color.
-    var activeTintColor: Color = .retroCyan
-
-    var body: some View {
-        _AVRoutePickerRepresentable(
-            tintColor: UIColor(tintColor),
-            activeTintColor: UIColor(activeTintColor)
-        )
-    }
-}
-
-// MARK: - Internal UIViewRepresentable
-
-/// Raw UIViewRepresentable wrapper — use `AirPlayMenuButton` instead.
-private struct _AVRoutePickerRepresentable: UIViewRepresentable {
-    var tintColor: UIColor
-    var activeTintColor: UIColor
-
-    func makeUIView(context: Context) -> AVRoutePickerView {
-        let view = AVRoutePickerView()
-        view.tintColor = tintColor
-        view.activeTintColor = activeTintColor
-        view.prioritizesVideoDevices = true
-        return view
-    }
-
-    func updateUIView(_ uiView: AVRoutePickerView, context: Context) {
-        uiView.tintColor = tintColor
-        uiView.activeTintColor = activeTintColor
     }
 }
 

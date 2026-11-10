@@ -62,9 +62,8 @@ extension PVGBEmulatorCore: GameWithCheat {
 
 extension PVGBEmulatorCore: CoreActions {
     public var coreActions: [CoreAction]? {
-        // Provide "Change Palette" for the classic RetroMenuView (cycling).
-        // The tile-based PauseTileMenuView uses PaletteProviding instead and
-        // filters out this action when the picker tile is shown.
+        // "Change Palette" cycles palettes. PauseTileMenuView uses PaletteProviding
+        // instead and filters out this action when the picker tile is shown.
         guard !isGameboyColor else { return nil }
         return [CoreAction(title: changePaletteLegacyActionTitle, options: nil)]
     }

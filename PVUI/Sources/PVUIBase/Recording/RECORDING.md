@@ -11,7 +11,7 @@ The feature is iOS-only (`#if os(iOS)`); tvOS is excluded as ReplayKit recording
 |------|------|
 | `PVRecordingManager.swift` | `@MainActor` singleton wrapping `RPScreenRecorder` start/stop/discard |
 | `PVEmulatorViewController+Recording.swift` | VC extension with `startScreenRecording()`, `stopScreenRecording()`, `discardScreenRecording()`, `toggleScreenRecording()` — the **only** place that updates `AppState` |
-| `RetroMenuView.swift` (`recordingButton`) | SwiftUI button in the States tab, reads recording state from `AppState.shared.emulationUIState.isRecording` |
+| `PauseTileMenuView.swift` / `PauseTileMenuViewModel.swift` | Recording tile in the pause menu; reads `emulatorVC.isRecording` |
 | `EmulationState.swift` | `isRecording: Bool` flag on `EmulationUIState` — the **single source of truth** for SwiftUI |
 
 ## Design Rules
@@ -30,7 +30,7 @@ Do **not** revert to completion-handler form — that pattern is replaced by Swi
 - **Set to `true`** only inside `startScreenRecording()` after `await PVRecordingManager.shared.startRecording()` succeeds
 - **Set to `false`** inside `stopScreenRecording()`, `discardScreenRecording()`, and on any error path
 - `PVRecordingManager.isRecording` is the manager's internal guard (prevents double-start/stop) — it must not be read directly by SwiftUI views
-- `RetroMenuView` reads **AppState**, not `PVRecordingManager.shared.isRecording`
+- The pause menu reads the view controller's `isRecording`, not `PVRecordingManager.shared.isRecording`
 
 ### NSObject
 `PVRecordingManager` does **not** inherit from `NSObject`.

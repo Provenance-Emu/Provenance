@@ -3,7 +3,7 @@
 //  PVUI
 //
 //  MIDI device picker sheet for the tile-based pause menu.
-//  Reuses MIDIPickerSectionView from RetroMenuView+MIDIPicker.swift.
+//  Reuses MIDIPickerSectionView from PauseMenuMIDIPicker.swift.
 //  Only shown when the active core supports MIDI (iOS/Mac only).
 //
 

@@ -10,7 +10,7 @@
 //  - Square tiles in a tight # grid with section headers for grouping
 //  - Dynamic column count based on available width
 //  - Works in skins / legacy UIKit controller layout
-//  - Retrowave neon aesthetic consistent with RetroMenuView
+//  - Retrowave neon aesthetic
 //  - iOS and tvOS compatible; controller/keyboard focus via FocusState
 //
 

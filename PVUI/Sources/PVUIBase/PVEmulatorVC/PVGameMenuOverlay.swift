@@ -17,14 +17,6 @@ import PVLibrary
 import FreemiumKit
 #endif
 
-// Menu categories
-enum MenuCategory {
-    case main, core, states, options
-    #if !os(tvOS) && !os(macOS) && !targetEnvironment(macCatalyst)
-    case skins
-    #endif
-}
-
 /// A custom menu overlay to replace UIAlertController for game menu options
 @MainActor class PVGameMenuOverlay: UIView {
 

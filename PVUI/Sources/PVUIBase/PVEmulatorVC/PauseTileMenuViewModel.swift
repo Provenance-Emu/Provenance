@@ -86,8 +86,7 @@ final class PauseTileMenuViewModel: ObservableObject {
         let supportsCheatCodes = (emulatorVC.core as? GameWithCheat)?.supportsCheatCode == true
         let shouldSave = Self.shouldSaveOnQuit(emulatorVC: emulatorVC)
 
-        // Resume + quit tiles are placed at the top (positions 0-2) to match
-        // RetroMenuView's ordering where quit is near the top of the main section.
+        // Resume + quit tiles are placed at the top (positions 0-2), so quit is near the top.
         var gameTiles: [PauseMenuTile] = [
             PauseMenuTile(
                 id: "resume",
@@ -562,10 +561,8 @@ final class PauseTileMenuViewModel: ObservableObject {
         #endif
 
         // MIDI device picker — shown when core supports MIDI (iOS only, not tvOS or macCatalyst).
-        // Note: RetroMenuView+MIDIPicker uses `#if canImport(CoreMIDI) && !os(tvOS)` and therefore
-        // includes macCatalyst. The tile menu intentionally excludes macCatalyst because the compact
-        // tile layout doesn't adapt well to pointer/keyboard workflows; users can still reach MIDI
-        // settings via the classic RetroMenuView on macCatalyst.
+        // Mac Catalyst is excluded: the compact tile layout doesn't adapt well to pointer/keyboard
+        // workflows (and Catalyst is not a shipping target).
         #if canImport(CoreMIDI) && !os(tvOS) && !targetEnvironment(macCatalyst)
         if emulatorVC.core.supportsMIDI {
             controlsTiles.append(PauseMenuTile(

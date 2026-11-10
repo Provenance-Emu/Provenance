@@ -3,7 +3,7 @@
 //  PVUI
 //
 //  Port device type picker sheet for the tile-based pause menu.
-//  Reuses PortDeviceRow from RetroMenuView+PortDevicePicker.swift.
+//  Reuses PortDeviceRow from PortDeviceRow.swift.
 //  Only shown when the active core conforms to PortDeviceConfigurable and has ports.
 //
 

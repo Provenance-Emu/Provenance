@@ -1,5 +1,5 @@
 //
-//  RetroMenuView+PortDevicePicker.swift
+//  PortDeviceRow.swift
 //  PVUI
 //
 //  Created by Claude (Agent) on 2026-03-17.
@@ -48,58 +48,6 @@ private enum PortDeviceRowMetrics {
     static let mainIconWidth: CGFloat = 24
     static let pickerIconWidth: CGFloat = 20
     #endif
-}
-
-// MARK: - RetroMenuView extension
-
-extension RetroMenuView {
-
-    /// Returns the core cast to PortDeviceConfigurable if it conforms, else nil.
-    var portDeviceCore: (any PortDeviceConfigurable)? {
-        emulatorVC.core as? (any PortDeviceConfigurable)
-    }
-
-    /// True when the core has controller port info to display.
-    var hasPortDeviceOptions: Bool {
-        guard let core = portDeviceCore else { return false }
-        return !core.controllerPortDescriptors.isEmpty
-    }
-
-    // Convenience accessor for palette without requiring private access to `palette`.
-    private var portDevicePalette: UXThemePalette { ThemeManager.shared.currentPalette }
-
-    /// Section shown inside the CORE tab when the core supports per-port device types.
-    @ViewBuilder
-    var portDevicePickerSection: some View {
-        let pal = portDevicePalette
-        if let core = portDeviceCore, !core.controllerPortDescriptors.isEmpty {
-            VStack(spacing: 8) {
-                // Section header
-                HStack(spacing: 5) {
-                    Image(systemName: "gamecontroller")
-                        .font(.system(size: PortDeviceRowMetrics.sectionIcon, weight: .bold))
-                    Text(String(localized: "PORT DEVICE TYPES"))
-                        .font(.system(size: PortDeviceRowMetrics.sectionLabel, weight: .bold, design: .monospaced))
-                        .tracking(1.5)
-                }
-                .foregroundColor((pal.settingsCellTextDetail?.swiftUIColor ?? pal.gameLibraryText.swiftUIColor).opacity(0.55))
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .padding(.top, 6)
-
-                ForEach(Array(core.controllerPortDescriptors.enumerated()), id: \.offset) { portIndex, descriptors in
-                    PortDeviceRow(
-                        portIndex: portIndex,
-                        descriptors: descriptors,
-                        currentDeviceType: core.currentDeviceType(forPort: portIndex),
-                        palette: pal,
-                        onSelect: { deviceType in
-                            core.setDeviceType(deviceType, forPort: portIndex)
-                        }
-                    )
-                }
-            }
-        }
-    }
 }
 
 // MARK: - PortDeviceRow

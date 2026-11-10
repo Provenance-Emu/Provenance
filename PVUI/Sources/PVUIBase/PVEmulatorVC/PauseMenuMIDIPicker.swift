@@ -1,11 +1,11 @@
 //
-//  RetroMenuView+MIDIPicker.swift
+//  PauseMenuMIDIPicker.swift
 //  PVUI
 //
 //  Created by Claude (Agent) on 2026-03-21.
 //  Copyright © 2026 Provenance Emu. All rights reserved.
 //
-//  MIDI device picker section for the pause / retro menu.
+//  MIDI device picker section for the pause menu.
 //
 //  Features:
 //  - Lists available MIDI input sources and output destinations
@@ -23,44 +23,6 @@ import PVThemes
 #if canImport(CoreMIDI) && !os(tvOS)
 import CoreMIDI
 #endif
-
-// MARK: - RetroMenuView extension
-
-extension RetroMenuView {
-
-    /// True when the active core reports MIDI peripheral support.
-    var coreSupportsMIDI: Bool {
-        emulatorVC.core.supportsMIDI
-    }
-
-    /// MIDI section shown inside the CORE tab when the core supports MIDI.
-    /// Only rendered on platforms that ship CoreMIDI.
-    @ViewBuilder
-    var midiPickerSection: some View {
-#if canImport(CoreMIDI) && !os(tvOS)
-        if coreSupportsMIDI {
-            MIDIPickerSectionView(palette: ThemeManager.shared.currentPalette)
-        }
-#else
-        EmptyView()
-#endif
-    }
-
-    /// MIDI on/off toggle shown in the CORE tab for libretro cores that use the
-    /// MIDI interface. The thin frontend applies the setting live.
-    @ViewBuilder
-    var midiToggleSection: some View {
-#if canImport(CoreMIDI) && !os(tvOS)
-        if isMIDIToggleCapable {
-            MIDIToggleView(palette: ThemeManager.shared.currentPalette)
-        } else {
-            EmptyView()
-        }
-#else
-        EmptyView()
-#endif
-    }
-}
 
 // MARK: - MIDIPickerSectionView
 
@@ -371,68 +333,6 @@ private struct AutoDetectButton: View {
                         lineWidth: 1
                     )
             )
-    }
-}
-
-// MARK: - MIDIToggleView
-
-/// Toggle that enables or disables MIDI input and output for the running libretro core.
-/// Writes to `Defaults[.retroArchMIDIEnabled]`; `PVThinLibretroCore` observes the key and
-/// applies it to the frontend's `retro_midi_interface` immediately and at every core start.
-struct MIDIToggleView: View {
-    let palette: UXThemePalette
-
-    @Default(.retroArchMIDIEnabled) private var midiEnabled
-
-    var body: some View {
-        VStack(spacing: 8) {
-            HStack(spacing: 6) {
-                Image(systemName: "pianokeys") // SF Symbols 4 — available iOS 16+; minimum target is iOS 17
-                    .font(.system(size: 10, weight: .bold))
-                Text(String(localized: "MIDI"))
-                    .font(.system(size: 11, weight: .bold, design: .monospaced))
-                    .tracking(1.5)
-                Spacer()
-            }
-            .foregroundColor(headerColor)
-            .padding(.top, 6)
-
-            Toggle(isOn: $midiEnabled) {
-                HStack(spacing: 8) {
-                    Image(systemName: midiEnabled ? "waveform.path" : "waveform.path.badge.minus")
-                        .font(.system(size: 13))
-                        .foregroundColor(palette.defaultTintColor.swiftUIColor)
-                        .frame(width: 22)
-                    VStack(alignment: .leading, spacing: 2) {
-                        Text(String(localized: "Enable MIDI"))
-                            .font(.system(size: 12, weight: .semibold, design: .monospaced))
-                            .foregroundColor(palette.gameLibraryText.swiftUIColor)
-                        Text(String(localized: "Some cores only check when the game starts"))
-                            .font(.system(size: 10, design: .monospaced))
-                            .foregroundColor(palette.gameLibraryText.swiftUIColor.opacity(0.5))
-                    }
-                }
-            }
-            .toggleStyle(SwitchToggleStyle(tint: palette.defaultTintColor.swiftUIColor))
-            .padding(.horizontal, 14)
-            .padding(.vertical, 9)
-            .background(
-                RoundedRectangle(cornerRadius: 10)
-                    .fill(palette.defaultTintColor.swiftUIColor.opacity(0.08))
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 10)
-                            .strokeBorder(
-                                palette.defaultTintColor.swiftUIColor.opacity(0.25),
-                                lineWidth: 1
-                            )
-                    )
-            )
-        }
-    }
-
-    private var headerColor: Color {
-        (palette.settingsCellTextDetail?.swiftUIColor ?? palette.gameLibraryText.swiftUIColor)
-            .opacity(0.55)
     }
 }
 
