@@ -87,9 +87,25 @@ extension PVEmulatorViewController {
         }
     }
 
-    @objc func controllerDidDisconnect(_: Notification?) {
+    @objc func controllerDidDisconnect(_ note: Notification?) {
         hideOrShowMenuButton()
         updateOnScreenControlsVisibility()
+        pauseIfLastGamepadDisconnected(note?.object as? GCController)
+    }
+
+    /// A game pauses when its last gamepad goes away (flat battery, sleep, out of range) instead of
+    /// playing on with nobody at the controls, as Apple's controller guidance asks.
+    /// The keyboard-backed controller (a snapshot) and the Siri Remote don't count.
+    private func pauseIfLastGamepadDisconnected(_ controller: GCController?) {
+        func isGamepad(_ candidate: GCController) -> Bool {
+            !candidate.isSnapshot && !candidate.isRemote
+                && (candidate.extendedGamepad != nil || candidate.microGamepad != nil)
+        }
+        guard let controller, isGamepad(controller) else { return }
+        let gamepadRemains = PVControllerManager.shared.controllers.contains { $0 !== controller && isGamepad($0) }
+        guard !gamepadRemains, core.isOn, !isShowingMenu else { return }
+        ILOG("Gamepad \(controller.vendorName ?? "unknown") disconnected — pausing")
+        isShowingMenu = true
     }
 
     // MARK: - Auto-hide on-screen controls when a physical controller is connected
@@ -101,19 +117,17 @@ extension PVEmulatorViewController {
     /// No-ops on tvOS and macCatalyst where on-screen touch controls are not used.
     func updateOnScreenControlsVisibility() {
         #if os(iOS) && !targetEnvironment(macCatalyst)
-        guard Defaults[.hideOnScreenControlsWithController] else {
-            // User disabled auto-hide — ensure overlays are visible
-            setOnScreenControlsHidden(false)
-            return
-        }
+        setOnScreenControlsHidden(controllerHidesOnScreenControls)
+        #endif
+    }
 
-        // Check for real physical controllers (exclude snapshots and keyboard-only)
-        let hasRealController = PVControllerManager.shared.controllers.contains { controller in
+    /// Auto-hide is on and a real gamepad is connected (snapshots, which include the
+    /// keyboard-backed controller, don't count). Layout passes use the same rule.
+    var controllerHidesOnScreenControls: Bool {
+        guard Defaults[.hideOnScreenControlsWithController] else { return false }
+        return PVControllerManager.shared.controllers.contains { controller in
             !controller.isSnapshot && (controller.extendedGamepad != nil || controller.microGamepad != nil)
         }
-
-        setOnScreenControlsHidden(hasRealController)
-        #endif
     }
 
     /// Shows or hides the on-screen controls (the skin layer, which also hosts the touch overlay).

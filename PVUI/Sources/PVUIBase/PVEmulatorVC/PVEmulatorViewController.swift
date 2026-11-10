@@ -239,6 +239,18 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, Emulato
         return vc
     }()
 
+    #if !os(tvOS)
+    /// iPad controller-style navigation drops the touch layer only when a gamepad or keyboard is
+    /// attached as the game starts; with neither, the player had no way to play. Fixed for the
+    /// session because the skin layer is built once at load; a gamepad connected later hides it
+    /// through `updateOnScreenControlsVisibility()`.
+    lazy var desktopInputSkipsTouchLayer: Bool = {
+        guard UIDevice.current.userInterfaceIdiom == .pad, GamepadManager.isDesktopInputMode else { return false }
+        let input = GamepadManager.shared
+        return input.hasPhysicalGamepad || input.isKeyboardConnected
+    }()
+    #endif
+
     #if os(iOS) && !targetEnvironment(macCatalyst)
     /// Quick actions for desktop input mode, where no skin or touch overlay is on screen.
     var quickActionBar: EmulatorQuickActionBar?
@@ -1874,9 +1886,7 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, Emulato
                 hostView.frame = skinContainer.bounds
             }
             // Respect auto-hide: only force-show if no physical controller is hiding the overlay
-            let shouldAutoHide = Defaults[.hideOnScreenControlsWithController]
-                && PVControllerManager.shared.controllers.contains { !$0.isSnapshot && ($0.extendedGamepad != nil || $0.microGamepad != nil) }
-            if !shouldAutoHide {
+            if !controllerHidesOnScreenControls {
                 skinContainer.isHidden = false
                 skinContainer.alpha = 1.0
             }

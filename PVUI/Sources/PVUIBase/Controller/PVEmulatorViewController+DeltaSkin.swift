@@ -24,8 +24,7 @@ extension PVEmulatorViewController {
         return false
         #else
         // The library's controller navigation setting only opts iPad into skinless play.
-        guard !ProcessInfo.processInfo.isiOSAppOnMac,
-              !(UIDevice.current.userInterfaceIdiom == .pad && GamepadManager.isDesktopInputMode) else { return false }
+        guard !ProcessInfo.processInfo.isiOSAppOnMac, !desktopInputSkipsTouchLayer else { return false }
         // The programmatic overlay covers every known system without a packaged skin, including
         // Classic mode, cores without skin support and explicit-selection cores (Dolphin).
         if programmaticOverlayCoversGame { return true }

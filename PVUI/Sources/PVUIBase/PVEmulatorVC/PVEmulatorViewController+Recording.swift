@@ -288,7 +288,13 @@ extension PVEmulatorViewController {
         // Mark as asked immediately so a swipe-dismiss / interruption (call, power-off)
         // does not cause the prompt to reappear on the next game launch.
         Defaults[.clipBufferingPermissionAsked] = true
-        present(PVAlert(
+        // It comes up seconds into the first game, so hold the game still until it's answered.
+        core.setPauseEmulation(true)
+        let resume: () -> Void = { [weak self] in
+            guard let self else { return }
+            self.core.setPauseEmulation(self.isShowingMenu)
+        }
+        var alert = PVAlert(
             title: "Save Gameplay Clips",
             message: """
                 Provenance can keep a rolling buffer of your gameplay so you can save recent clips at any time.
@@ -298,11 +304,14 @@ extension PVEmulatorViewController {
             actions: [
                 PVAlertAction("Enable Clips") { [weak self] in
                     Defaults[.clipBufferingEnabled] = true
+                    resume()
                     self?._beginClipBuffering()
                 },
-                .cancel("Not Now")
+                .cancel("Not Now") { resume() }
             ]
-        ))
+        )
+        alert.onDismissedWithoutAnswer = resume
+        present(alert)
     }
 
     private func _beginClipBuffering() {
