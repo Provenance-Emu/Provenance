@@ -6,9 +6,6 @@
 import Foundation
 import PVUIBase
 import SwiftUI
-#if os(iOS)
-import UIKit
-#endif
 
 /// Shared layout metrics for the Home and per-console library pages.
 enum LibraryLayout {
@@ -29,11 +26,8 @@ enum LibraryLayout {
 
     @MainActor
     static func usesCompactPhoneChrome(_ verticalSizeClass: UserInterfaceSizeClass?) -> Bool {
-        #if os(iOS)
-        UIDevice.current.userInterfaceIdiom == .phone && verticalSizeClass != .compact
-        #else
-        false
-        #endif
+        AdaptiveWindowRules.usesCompactPhoneChrome(
+            windowClass: AdaptiveWindow.shared.windowClass, vertical: verticalSizeClass)
     }
 
     static func gameCountText(_ count: Int) -> String {

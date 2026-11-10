@@ -203,11 +203,7 @@ struct HomeView: SwiftUI.View {
     }
 
     private var usesCompactChrome: Bool {
-        #if os(iOS)
-        UIDevice.current.userInterfaceIdiom == .phone
-        #else
-        false
-        #endif
+        AdaptiveWindow.shared.windowClass == .phone
     }
 
     private var usesCompactPhoneLayout: Bool {

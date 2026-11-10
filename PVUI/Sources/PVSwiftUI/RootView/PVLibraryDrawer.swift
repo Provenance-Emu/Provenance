@@ -165,6 +165,7 @@ struct PVLibraryDrawerHost<Content: View, Menu: View>: View {
     @ObservedObject private var drawerState: LibraryDrawerState
     @ObservedObject private var viewModel: PVRootViewModel
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
+    private let adaptiveWindow = AdaptiveWindow.shared
     @ViewBuilder let content: Content
     @ViewBuilder let menu: Menu
 
@@ -177,7 +178,8 @@ struct PVLibraryDrawerHost<Content: View, Menu: View>: View {
 
     private var isPinned: Bool {
         #if os(iOS)
-        UIDevice.current.userInterfaceIdiom == .pad && horizontalSizeClass == .regular
+        AdaptiveWindowRules.pinsLibrarySidebar(
+            windowClass: adaptiveWindow.windowClass, horizontal: horizontalSizeClass, width: adaptiveWindow.size.width)
         #else
         false
         #endif
@@ -185,6 +187,7 @@ struct PVLibraryDrawerHost<Content: View, Menu: View>: View {
 
     var body: some View {
         layout(isPinned: isPinned)
+            .reportsAdaptiveWindow()
             .onAppear { viewModel.usesPinnedSidebar = isPinned }
             .onChange(of: isPinned) { _, pinned in viewModel.usesPinnedSidebar = pinned }
     }

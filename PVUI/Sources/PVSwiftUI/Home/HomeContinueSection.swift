@@ -618,11 +618,9 @@ struct HomeContinueSection: SwiftUI.View {
 
     var adjustedHeight: CGFloat {
         if usesCompactRow { return 54 }
-        #if os(iOS)
-        if UIDevice.current.userInterfaceIdiom == .phone {
+        if AdaptiveWindow.shared.windowClass == .phone {
             return isLandscapePhone ? 112 : 156
         }
-        #endif
         return defaultHeight
     }
     

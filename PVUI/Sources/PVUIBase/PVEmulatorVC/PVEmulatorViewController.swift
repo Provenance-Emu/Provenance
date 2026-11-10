@@ -2182,8 +2182,12 @@ extension PVEmulatorViewController {
 
         let isValidOrientation = validOrientations.contains(deviceOrientation)
 
-        // Determine the current orientation from device or interface orientation
-        if isValidOrientation {
+        // Determine the current orientation from device or interface orientation.
+        // An unfolded phone's window is landscape-shaped with the device upright, so there
+        // the window decides.
+        if let shape = AdaptiveWindowShape.ofExpandedPhone(traits: traitCollection, size: view.bounds.size) {
+            currentOrientation = shape == .landscape ? .landscape : .portrait
+        } else if isValidOrientation {
             currentOrientation = deviceOrientation.isLandscape ? .landscape : .portrait
         } else {
             // Fallback to interface orientation

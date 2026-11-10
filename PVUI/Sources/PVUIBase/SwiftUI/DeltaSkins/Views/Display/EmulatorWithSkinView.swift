@@ -279,6 +279,12 @@ struct EmulatorWithSkinView: View {
             .onChange(of: skinRequestRevision) { _, _ in
                 loadSkinSafely(usePreselected: true)
             }
+            #if os(iOS)
+            .reportsAdaptiveWindow()
+            .onChange(of: AdaptiveWindow.shared.expandedPhoneShape, initial: true) { _, shape in
+                followExpandedPhoneShape(shape)
+            }
+            #endif
             .onDisappear {
                 // Cancel any in-flight skin loading task
                 activeSkinLoadTask?.cancel()
@@ -561,31 +567,47 @@ struct EmulatorWithSkinView: View {
             object: nil,
             queue: .main
         ) { _ in
-            let newOrientation = UIDevice.current.orientation
-            // Only act on real landscape/portrait changes, and only when the
-            // landscape vs portrait category actually flipped.  Going from
-            // faceDown → portrait (picking up the phone) used to trigger a
-            // full skin reload even though the effective orientation hadn't
-            // changed, causing a visible flicker mid-gameplay.
-            guard newOrientation.isLandscape || newOrientation.isPortrait else { return }
-            let wasLandscape = self.currentOrientation.isLandscape
-            let nowLandscape = newOrientation.isLandscape
-            guard wasLandscape != nowLandscape else { return }
-
-            self.currentOrientation = newOrientation
-            self.rotationCount += 1
-            // Reset so DeltaSkinLoaded fires again when skin view reappears after rotation.
-            self.skinRenderComplete = false
-            DLOG("🎮 EmulatorWithSkinView: Orientation changed to: \(nowLandscape ? "landscape" : "portrait"), rotation count: \(self.rotationCount)")
-
-            // Request a layout refresh after a brief delay, then reload the skin
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                self.onRefreshRequested()
-            }
-            Task { @MainActor in self.loadSkinSafely() }
+            // An unfolded phone's window decides (see `followExpandedPhoneShape`): the device
+            // can be upright while the window is landscape-shaped.
+            guard AdaptiveWindow.shared.expandedPhoneShape == nil else { return }
+            self.applyOrientation(UIDevice.current.orientation)
         }
 #endif
     }
+
+#if os(iOS)
+    /// Switches the skin between its portrait and landscape representations.
+    private func applyOrientation(_ newOrientation: UIDeviceOrientation) {
+        // Only act on real landscape/portrait changes, and only when the
+        // landscape vs portrait category actually flipped.  Going from
+        // faceDown → portrait (picking up the phone) used to trigger a
+        // full skin reload even though the effective orientation hadn't
+        // changed, causing a visible flicker mid-gameplay.
+        guard newOrientation.isLandscape || newOrientation.isPortrait else { return }
+        let wasLandscape = currentOrientation.isLandscape
+        let nowLandscape = newOrientation.isLandscape
+        guard wasLandscape != nowLandscape else { return }
+
+        currentOrientation = newOrientation
+        rotationCount += 1
+        // Reset so DeltaSkinLoaded fires again when skin view reappears after rotation.
+        skinRenderComplete = false
+        DLOG("🎮 EmulatorWithSkinView: Orientation changed to: \(nowLandscape ? "landscape" : "portrait"), rotation count: \(rotationCount)")
+
+        // Request a layout refresh after a brief delay, then reload the skin
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+            onRefreshRequested()
+        }
+        Task { @MainActor in loadSkinSafely() }
+    }
+
+    /// Follows the window's shape on an unfolded phone, which goes from portrait-shaped to
+    /// landscape-shaped (and back) by folding, with no device rotation to announce it.
+    private func followExpandedPhoneShape(_ shape: AdaptiveWindowShape?) {
+        guard let shape else { return }
+        applyOrientation(shape == .landscape ? .landscapeLeft : .portrait)
+    }
+#endif
 
     // MARK: - Skin Traits
 
@@ -807,7 +829,11 @@ extension EmulatorWithSkinView {
 
         // Capture UIKit values once on the main thread
         #if !os(tvOS)
-        let currentOrientation: SkinOrientation = UIDevice.current.orientation.isLandscape ? .landscape : .portrait
+        let currentOrientation: SkinOrientation = if let shape = AdaptiveWindow.shared.expandedPhoneShape {
+            shape == .landscape ? .landscape : .portrait
+        } else {
+            UIDevice.current.orientation.isLandscape ? .landscape : .portrait
+        }
         let currentDevice: DeltaSkinDevice = UIDevice.current.userInterfaceIdiom == .pad ? .ipad : .iphone
         #else
         let currentOrientation: SkinOrientation = .landscape
