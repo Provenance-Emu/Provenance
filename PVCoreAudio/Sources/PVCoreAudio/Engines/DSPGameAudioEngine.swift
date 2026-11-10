@@ -303,6 +303,10 @@ final public class DSPGameAudioEngine: AudioEngineProtocol {
               let reason = AVAudioSession.RouteChangeReason(rawValue: reasonValue)
         else { return }
 
+        // The core is held weakly: a route change after the game has quit finds it gone, and
+        // `startAudio()` would trap unwrapping it.
+        guard gameCore != nil else { return }
+
         switch reason {
         case .newDeviceAvailable, .oldDeviceUnavailable:
             // Note: `configureAudioSession()` and `startAudio()` swallow errors internally

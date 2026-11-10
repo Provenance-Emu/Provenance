@@ -103,8 +103,9 @@ public final class DirectoryWatcher: ObservableObject {
     /// Thread-safe guard for `extractingFiles`. Uses `OSAllocatedUnfairLock` (iOS 16+).
     private let extractingFilesLock = OSAllocatedUnfairLock<Void>()
     private let serialQueue = DispatchQueue(label: "org.provenance-emu.provenance.serialExtractorQueue")
-    /// Buffered events to replay after emulation pause
-    private var bufferedEvents: [URL] = []
+    /// Buffered events to replay after emulation pause. File-system events arrive on concurrent
+    /// tasks, so the list is only touched under its lock; it holds each URL once.
+    private let bufferedEvents = OSAllocatedUnfairLock<[URL]>(initialState: [])
     /// Track if we're currently flushing buffered events to avoid re-entrancy
     private var isFlushingBufferedEvents = false
     /// Track if paused for emulation
@@ -938,8 +939,14 @@ fileprivate extension DirectoryWatcher {
             let importerPaused = await MainActor.run { GameImporter.shared.isPausedForEmulation }
             let cloudSyncPaused = await MainActor.run { CloudSyncManager.shared.isPausedForEmulation }
             if isPausedForEmulation || cloudSyncPaused || importerPaused {
-                bufferedEvents.append(contentsOf: contents)
-                ILOG("Deferring directory events while emulation paused. Buffered total: \(bufferedEvents.count)")
+                let bufferedCount = bufferedEvents.withLock { buffered in
+                    // Every event lists the whole folder; keep one entry per file so a long
+                    // play session does not grow the buffer with each save.
+                    var seen = Set(buffered)
+                    buffered.append(contentsOf: contents.filter { seen.insert($0).inserted })
+                    return buffered.count
+                }
+                ILOG("Deferring directory events while emulation paused. Buffered total: \(bufferedCount)")
                 return
             }
 
@@ -958,16 +965,19 @@ fileprivate extension DirectoryWatcher {
             }
 
             // Merge any buffered events collected during pause
-            if !bufferedEvents.isEmpty {
+            let buffered = bufferedEvents.withLock { buffered in
+                defer { buffered.removeAll() }
+                return buffered
+            }
+            if !buffered.isEmpty {
                 var seenPaths = Set<String>()
-                let merged = filesOnly + bufferedEvents
+                let merged = filesOnly + buffered
                 filesOnly = merged.compactMap { url in
                     let path = url.path.lowercased()
                     guard !seenPaths.contains(path) else { return nil }
                     seenPaths.insert(path)
                     return url
                 }
-                bufferedEvents.removeAll()
             }
 
             for file in filesOnly {
@@ -1080,9 +1090,10 @@ fileprivate extension DirectoryWatcher {
             ILOG("Pause flags still set; deferring flush")
             return
         }
-        guard !bufferedEvents.isEmpty else { return }
+        let bufferedCount = bufferedEvents.withLock { $0.count }
+        guard bufferedCount > 0 else { return }
         isFlushingBufferedEvents = true
-        ILOG("Flushing \(bufferedEvents.count) buffered directory events after emulation resume for directory: \(watchedDirectory.path)")
+        ILOG("Flushing \(bufferedCount) buffered directory events after emulation resume for directory: \(watchedDirectory.path)")
         await handleFileSystemEvent()
         isFlushingBufferedEvents = false
     }
