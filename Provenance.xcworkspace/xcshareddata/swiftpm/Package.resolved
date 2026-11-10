@@ -300,8 +300,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Provenance-Emu/SkinKit",
       "state" : {
-        "revision" : "ea308abe31447a7dd50f4cbe4534aef108a75331",
-        "version" : "0.3.0"
+        "revision" : "f2524e2bdebdd84f45e16a9a14ec87fbab5e844b",
+        "version" : "0.3.1"
       }
     },
     {
