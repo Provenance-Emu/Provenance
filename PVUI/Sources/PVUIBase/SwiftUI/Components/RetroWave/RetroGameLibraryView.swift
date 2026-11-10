@@ -1600,7 +1600,8 @@ extension RetroGameLibraryView {
                     }
                 }
 
-                if let webDavURL = webDavURL {
+                // HTTP and WebDAV share one port, so this line only appears if they ever differ.
+                if let webDavURL, webDavURL != webServerURL {
                     HStack(spacing: 6) {
                         Text("DAV:")
                             .font(.system(size: 12, weight: .bold, design: .monospaced))
