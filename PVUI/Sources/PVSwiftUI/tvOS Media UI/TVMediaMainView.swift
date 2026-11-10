@@ -11,8 +11,8 @@ import PVPrimitives
 import PVLogging
 import PVCoreBridge
 
-#if canImport(PVWebServer)
-import PVWebServer
+#if canImport(PVWebServerHost)
+import PVWebServerHost
 #endif
 
 #if os(tvOS) || os(iOS)
@@ -2723,7 +2723,7 @@ struct TVMediaHomeView: View {
     @State private var isLoading = true
     @State private var currentSection: String? = "home_top"
     @State private var recentSaveLoadsRequested: Set<String> = []
-#if canImport(PVWebServer)
+#if canImport(PVWebServerHost)
     @State private var webServerURL: String?
 #endif
 
@@ -2889,7 +2889,7 @@ struct TVMediaHomeView: View {
         .task {
             await loadAllGames()
         }
-#if canImport(PVWebServer)
+#if canImport(PVWebServerHost)
         .onAppear {
             refreshWebServerURL()
         }
@@ -3009,7 +3009,7 @@ struct TVMediaHomeView: View {
                     .foregroundStyle(Color(themeManager.currentPalette.gameLibraryText).opacity(0.6))
                     .multilineTextAlignment(.center)
                     .frame(maxWidth: 500)
-#if canImport(PVWebServer)
+#if canImport(PVWebServerHost)
 
                 if let webServerURL {
                     Text(webServerURL)
@@ -3111,7 +3111,7 @@ struct TVMediaHomeView: View {
         _ = await saveStatesStore.loadRecent(forSystemID: systemID, limit: 6)
     }
 
-#if canImport(PVWebServer)
+#if canImport(PVWebServerHost)
     private func refreshWebServerURL() {
         Task { @MainActor in
             guard await PVWebServerManager.shared.isRunning else {
@@ -5898,7 +5898,7 @@ struct TVMediaROMInstructionsView: View {
     @ObservedObject private var themeManager = ThemeManager.shared
     let onDismiss: () -> Void
 
-    #if canImport(PVWebServer)
+    #if canImport(PVWebServerHost)
     @State private var webServerURL: String?
     #endif
 
@@ -6012,7 +6012,7 @@ struct TVMediaROMInstructionsView: View {
             }
         }
         #endif
-        #if canImport(PVWebServer)
+        #if canImport(PVWebServerHost)
         .onAppear { refreshWebServerURL() }
         .onReceive(NotificationCenter.default.publisher(for: Notification.Name("WebServerStatusChanged"))) { _ in
             refreshWebServerURL()
@@ -6057,7 +6057,7 @@ struct TVMediaROMInstructionsView: View {
             description: "Upload ROMs from any device on your local network using the built-in web server.",
             accentColor: .retroPink
         ) {
-            #if canImport(PVWebServer)
+            #if canImport(PVWebServerHost)
             if let url = webServerURL {
                 Text(url)
                     .font(.system(size: cardDescriptionFontSize, weight: .semibold, design: .monospaced))
@@ -6256,7 +6256,7 @@ struct TVMediaROMInstructionsView: View {
         #endif
     }
 
-    #if canImport(PVWebServer)
+    #if canImport(PVWebServerHost)
     private func refreshWebServerURL() {
         Task { @MainActor in
             guard await PVWebServerManager.shared.isRunning else {

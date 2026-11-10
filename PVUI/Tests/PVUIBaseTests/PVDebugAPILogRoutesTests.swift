@@ -2,8 +2,8 @@ import Foundation
 import XCTest
 @testable import PVLogging
 @testable import PVUIBase
-#if canImport(PVWebServer)
-import PVWebServer
+#if canImport(PVWebServerHost)
+import PVWebServerHost
 
 final class PVDebugAPILogRoutesTests: XCTestCase {
     private func entry(_ message: String, level: LogLevel = .info, category: String = "general", second: TimeInterval = 0) -> LogEntry {

@@ -10,16 +10,16 @@ import Foundation
 import PVLogging
 import PVUIBase
 
-#if canImport(PVWebServer)
-import PVWebServer
+#if canImport(PVWebServerHost)
+import PVWebServerHost
 #endif
 
 /// Registers the lifecycle service with
-/// `BackgroundServiceRegistry` for emulation pause/resume, and starts both
-/// the upload (HTTP) and WebDAV servers on every platform.
+/// `BackgroundServiceRegistry` for emulation pause/resume, and starts the
+/// HTTP and WebDAV server on every platform.
 ///
 /// On iOS / Catalyst the system Local Network permission alert fires when
-/// Hummingbird / Bonjour first touches the network; `LocalNetworkOnboardingView`
+/// the web server / Bonjour first touches the network; `LocalNetworkOnboardingView`
 /// in `MainView` displays an informational retrowave alert alongside it.
 ///
 /// Depends on `BootstrapKey.logging`. Provides `BootstrapKey.webServer`.
@@ -30,7 +30,7 @@ struct WebServerBootstrapTask: BootstrapTask {
     var provisions: [String] { [BootstrapKey.webServer] }
 
     func execute() async throws {
-#if canImport(PVWebServer)
+#if canImport(PVWebServerHost)
         // Touch the lifecycle service so it self-registers with
         // BackgroundServiceRegistry — that's how the web server gets
         // paused during emulation and resumed when the user returns home.
@@ -48,7 +48,7 @@ struct WebServerBootstrapTask: BootstrapTask {
                 let dav  = await PVWebServerManager.shared.webDAVURL?.absoluteString ?? "?"
                 ILOG("WebServerBootstrapTask: web server started — HTTP: \(http), WebDAV: \(dav)")
             } else {
-                WLOG("WebServerBootstrapTask: web server did not start (impl=\(impl)) — see PVModernWebServer log lines for the bind-confirm failure reason.")
+                WLOG("WebServerBootstrapTask: web server did not start (impl=\(impl)) — see the PVHostedWebServer log line for the reason.")
             }
         } catch {
             ELOG("WebServerBootstrapTask: failed to start web server (impl=\(impl)): \(error.localizedDescription)")

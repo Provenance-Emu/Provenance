@@ -62,7 +62,7 @@ public enum DevSettings {
 
     /// Local packages whose products the app links directly (Provenance-Lite (AppStore) minus cores).
     static let appLocalPackages: [String] = [
-        "PVEmulatorCore", "PVCoreAudio", "PVWebServer", "PVLibrary", "PVLogging", "PVThemes",
+        "PVEmulatorCore", "PVCoreAudio", "PVWebServerHost", "PVLibrary", "PVLogging", "PVThemes",
         "PVPlists", "PVSettings", "PVUI", "PVFeatureFlags", "PVJIT",
     ]
 
@@ -109,7 +109,7 @@ public enum DevSettings {
         .package(product: "ZipArchive"),
         .package(product: "PVEmulatorCore"),
         .package(product: "PVCoreAudio"),
-        .package(product: "PVWebServer"),
+        .package(product: "PVWebServerHost"),
         .package(product: "PVLibrary"),
         .package(product: "PVLogging"),
         .package(product: "MBProgressHUD"),

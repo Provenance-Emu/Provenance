@@ -24,7 +24,7 @@ import SwiftUI
 import Defaults
 import PVFeatureFlags
 import BackgroundTasks
-import PVWebServer
+import PVWebServerHost
 
 // Conditionally import PVJIT and JITManager if available
 #if canImport(PVJIT)

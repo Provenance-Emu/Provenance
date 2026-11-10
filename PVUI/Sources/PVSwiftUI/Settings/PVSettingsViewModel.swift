@@ -16,8 +16,8 @@ import PVShaders
 #if canImport(SafariServices)
 import SafariServices
 #endif
-#if canImport(PVWebServer)
-import PVWebServer
+#if canImport(PVWebServerHost)
+import PVWebServerHost
 #endif
 
 /// View Model for Settings

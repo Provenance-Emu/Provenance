@@ -158,7 +158,7 @@ public final class RetroLogViewModel: ObservableObject {
 
     /// Where exports land. iOS shares them through the system share sheet, so the temp
     /// folder is fine; tvOS has no share sheet, so they go under the WebDAV browse root
-    /// (`Caches`, see `PVModernWebServer`) where a computer on the LAN can pick them up.
+    /// (`Caches`, see `PVHostedWebServer`) where a computer on the LAN can pick them up.
     static var defaultExportDirectory: URL {
 #if os(tvOS)
         if let caches = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first {

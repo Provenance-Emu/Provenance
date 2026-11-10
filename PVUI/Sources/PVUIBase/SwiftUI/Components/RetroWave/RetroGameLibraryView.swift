@@ -14,8 +14,8 @@ import Combine
 import PVSystems
 import PVPrimitives
 
-#if canImport(PVWebServer)
-import PVWebServer
+#if canImport(PVWebServerHost)
+import PVWebServerHost
 #endif
 
 // Import for StatusMessageView
@@ -208,7 +208,7 @@ public struct RetroGameLibraryView: View {
                     }
                     #endif
 
-                    #if canImport(PVWebServer)
+                    #if canImport(PVWebServerHost)
                     RetroButton(title: "Web Server", isPrimary: true) {
                         showingImportOptionsAlert = false
                         // Use a slight delay to avoid SwiftUI sheet presentation issues
@@ -816,7 +816,7 @@ extension RetroGameLibraryView {
 
     /// Starts the web server for importing files
     fileprivate func startWebServer() {
-        #if canImport(PVWebServer)
+        #if canImport(PVWebServerHost)
         ILOG("RetroGameLibraryView: Starting web server for imports")
         Task { @MainActor in
             do {
@@ -1537,7 +1537,7 @@ extension RetroGameLibraryView {
     /// Updates the web server status
     /// Only fetches IP address when server is running to avoid expensive network interface enumeration
     private func updateWebServerStatus() {
-        #if canImport(PVWebServer)
+        #if canImport(PVWebServerHost)
         Task { @MainActor in
             let newRunningState = await PVWebServerManager.shared.isRunning
             if newRunningState {

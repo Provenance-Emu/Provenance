@@ -6,7 +6,7 @@
 //  Copyright © 2018 Provenance. All rights reserved.
 //
 
-import PVWebServer
+import PVWebServerHost
 
 // MARK: - Wiki / alert message (shared)
 

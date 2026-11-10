@@ -14,8 +14,8 @@ import PVLibrary
 import PVLogging
 import PVPrimitives
 
-#if canImport(PVWebServer)
-import PVWebServer
+#if canImport(PVWebServerHost)
+import PVWebServerHost
 
 @MainActor
 public final class PVWebServerLifecycleService: PausableService {

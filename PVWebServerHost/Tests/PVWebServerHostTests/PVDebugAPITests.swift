@@ -1,11 +1,11 @@
 //
 //  PVDebugAPITests.swift
-//  PVWebServerTests
+//  PVWebServerHostTests
 //
 
 import Foundation
 import XCTest
-@testable import PVWebServer
+@testable import PVWebServerHost
 
 final class PVDebugAPIPrefsTests: XCTestCase {
 
@@ -48,6 +48,15 @@ final class PVDebugAPIRegistryTests: XCTestCase {
         let response = await handler(PVDebugAPIRequest(method: "GET", path: "/api/debug/ping", query: [:], body: nil))
         XCTAssertEqual(response.status, 200)
         XCTAssertEqual(registry.routes, ["GET /api/debug/ping"])
+    }
+
+    func testObserverSeesExistingAndLaterRoutes() {
+        let registry = PVDebugAPIRegistry()
+        registry.register("get", "/api/debug/early") { _ in .ok() }
+        let seen = Recorded<String>()
+        registry.observeRoutes { method, path in seen.append("\(method) \(path)") }
+        registry.register("post", "/api/debug/late") { _ in .ok() }
+        XCTAssertEqual(seen.values, ["GET /api/debug/early", "POST /api/debug/late"])
     }
 
     func testRequestValuePrefersQueryThenJSONBody() {

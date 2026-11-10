@@ -10,8 +10,8 @@ import PVSettings
 #if canImport(UIKit)
 import UIKit
 #endif
-#if canImport(PVWebServer)
-import PVWebServer
+#if canImport(PVWebServerHost)
+import PVWebServerHost
 #endif
 #if canImport(FreemiumKit)
 import FreemiumKit
@@ -76,7 +76,7 @@ public struct PVLibraryRootView: View {
                 #if !os(tvOS)
                 Button("Cloud & Local Files") { navigation.showsFileImporter = true }
                 #endif
-                #if canImport(PVWebServer)
+                #if canImport(PVWebServerHost)
                 Button(isWebServerRunning ? "Web Server — Running" : "Web Server") { startWebServer() }
                 #endif
                 if PVFeatureFlagsManager.shared.featureStates[.inAppFreeROMs] == true {
@@ -118,7 +118,7 @@ public struct PVLibraryRootView: View {
             .onReceive(NotificationCenter.default.publisher(for: .pvShowSettings)) { _ in
                 navigation.didTapSettings()
             }
-            #if canImport(PVWebServer)
+            #if canImport(PVWebServerHost)
             .onReceive(NotificationCenter.default.publisher(for: .pvWebServerStatusChanged).receive(on: DispatchQueue.main)) { notification in
                 if let running = notification.userInfo?["isRunning"] as? Bool {
                     isWebServerRunning = running
@@ -151,7 +151,7 @@ public struct PVLibraryRootView: View {
                     ThemeManager.applySavedTheme()
                 }
                 #endif
-                #if canImport(PVWebServer)
+                #if canImport(PVWebServerHost)
                 isWebServerRunning = await PVWebServerManager.shared.isRunning
                 #endif
             }
@@ -279,7 +279,7 @@ public struct PVLibraryRootView: View {
         }
     }
 
-    #if canImport(PVWebServer)
+    #if canImport(PVWebServerHost)
     private func startWebServer() {
         Task {
             do {

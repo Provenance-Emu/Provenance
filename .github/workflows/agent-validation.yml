@@ -152,18 +152,14 @@ jobs:
           # Modules that build AND test standalone with `swift build` / `swift test`.
           # A module only belongs here if it does not need the Xcode workspace.
           #
-          # PVWebServer qualifies and is listed: it builds and tests standalone. Its
-          # 19 tests (path-traversal safety, WebDAV property building, serial file
-          # writing, notification/Combine plumbing) existed but had never run in CI,
-          # because the module was missing from this list rather than because the
-          # tests were missing. It pulls hummingbird + swift-nio, so its cold build
-          # is slower than the other entries — but it only runs on PRs that touch it.
+          # PVWebServerHost qualifies and is listed: it builds and tests standalone, and
+          # its tests drive a real listener on a random high port.
           #
           # PVLibrary is deliberately NOT listed: it cannot `swift build` standalone —
           # its realm-core dependency fails to compile under the Xcode 26 toolchain
           # ("'is_pod' cannot be specialized" in s2/util/math/vector3-inl.h). Adding it
           # would fail every PR that touches it. pvlibrary-test runs it under Xcode instead.
-          ALL="PVLogging PVSettings PVHashing PVPlists PVFeatureFlags PVObjCUtils PVCheevos PVWebServer"
+          ALL="PVLogging PVSettings PVHashing PVPlists PVFeatureFlags PVObjCUtils PVCheevos PVWebServerHost"
 
           json_all() {
             local out="" m

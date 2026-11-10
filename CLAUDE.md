@@ -108,7 +108,8 @@ The app is split into ~26 `PV*` Swift Package frameworks. Key modules:
 - **PVThemes** — UI Theming Support
 - **PVTouchOverlay** — Programmatic on-screen controller: layout families, live editor, shared touch primitives
 - **PVUI** — SwiftUI-based shared UI components
-- **PVWebServer** — Swift/Objective-C SwiftPM module for GCDWebServer and WIP new Swift webserver for webdav and http file management, future REST API
+- **PVWebServer** (separate repo, github.com/Provenance-Emu/PVWebServer, shared with iCube and iFly) — the Network.framework HTTP and WebDAV server, both on one port. Change it there, tag a release, then bump the requirement in `PVWebServerHost/Package.swift` and the pin in `Provenance.xcworkspace`'s `Package.resolved` by hand
+- **PVWebServerHost** — Provenance's side of the web server: `PVWebServerManager`, the port map, the file-manager page and its routes, the debug API. App code imports this, never `PVWebServer`, whose `PVWebServer` class shares the module's name
 
 ### Emulator Cores (`Cores/`)
 Each core lives in `Cores/<CoreName>/` and typically contains:
@@ -242,11 +243,8 @@ A second, generated workspace for fast iteration. `Provenance.xcodeproj` still s
   no per-arch source lists. Don't add x86_64 workarounds (stubs, generic-source fallbacks) here.
 - **The dev workspace has no committed Package.resolved, so it resolves the newest remote
   packages.** Anything that only works because `Provenance.xcworkspace`'s resolved file pins an
-  older version breaks here first. Known case: Hummingbird imports `ServiceContextModule` without
-  declaring it, and swift-service-context 1.4.0 / swift-distributed-tracing 1.6.0 (2026-10-12)
-  dropped it from `Tracing`'s dependency chain, so builds failed at random with "no such module
-  'ServiceContextModule'"; `PVWebServer/Package.swift` caps both packages. Fix such breaks with a
-  version cap in the declaring package, not with xcodebuild flags.
+  older version breaks here first. Fix such breaks with a version cap in the declaring package,
+  not with xcodebuild flags.
 - **Helpers:** `Tuist/ProjectDescriptionHelpers/` holds `CoreProduct` (the core table),
   `FocusedApp` (the target template plus `FocusedApp.all`), `LibretroCores` and `DevSettings`. Tuist
   only finds helpers at `<root>/Tuist/ProjectDescriptionHelpers`; don't add a `Dev/Tuist/`.

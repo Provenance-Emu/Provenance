@@ -73,7 +73,7 @@ included:
   - PVThemes
   - PVUI
   - PVUSBManager
-  - PVWebServer
+  - PVWebServerHost
   # Companion app
   - ProvenanceCompanion
   # Extensions (all first-party)

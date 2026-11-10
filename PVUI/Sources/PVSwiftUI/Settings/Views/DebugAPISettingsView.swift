@@ -13,8 +13,8 @@ import Defaults
 import PVSettings
 import PVThemes
 import PVUIBase
-#if canImport(PVWebServer)
-import PVWebServer
+#if canImport(PVWebServerHost)
+import PVWebServerHost
 #endif
 
 struct DebugAPISettingsView: View {
@@ -32,7 +32,7 @@ struct DebugAPISettingsView: View {
                 VStack(spacing: 12) {
                     SettingsSubheading(title: "Debug API")
 
-                    #if canImport(PVWebServer)
+                    #if canImport(PVWebServerHost)
                     if PVDebugAPIPrefs.isDebugBuild {
                         SettingsRow(title: "Debug API: always on",
                                     subtitle: "DEBUG build — /api/debug/* is registered on the web server.",
@@ -83,7 +83,7 @@ struct DebugAPISettingsView: View {
             }
         }
         .task {
-            #if canImport(PVWebServer)
+            #if canImport(PVWebServerHost)
             authEnabled = PVDebugAPIPrefs.authEnabled
             serverURL = await PVWebServerManager.shared.serverURL?.absoluteString
             #endif

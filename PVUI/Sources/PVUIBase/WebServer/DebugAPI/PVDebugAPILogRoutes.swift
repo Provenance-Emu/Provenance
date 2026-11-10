@@ -1,7 +1,7 @@
 import Foundation
 import PVLogging
-#if canImport(PVWebServer)
-import PVWebServer
+#if canImport(PVWebServerHost)
+import PVWebServerHost
 
 /// Read-only snapshots served through the existing Debug API's enablement and authentication gates.
 enum PVDebugAPILogRoutes {
