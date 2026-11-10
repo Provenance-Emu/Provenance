@@ -58,6 +58,40 @@ final class PVHostedWebServerDebugAPITests: LiveServerTestCase {
         XCTAssertEqual(allowed.status, 200)
     }
 
+    /// A client without the password must not learn which debug routes exist.
+    func testUnknownDebugPathsAreRefusedLikeKnownOnes() async throws {
+        let registry = PVDebugAPIRegistry()
+        registry.register("GET", "/api/debug/ping") { _ in .ok() }
+        try await startServer(debugAPI: DebugAPIAccess(registry: registry) { $0.header("Authorization") == "Basic good" })
+
+        for path in ["/api/debug/ping", "/api/debug/missing", "/api/debug/a/b"] {
+            let refused = try await send("GET", path)
+            XCTAssertEqual(refused.status, 401, path)
+        }
+        let missing = try await send("GET", "/api/debug/missing", headers: ["Authorization": "Basic good"])
+        XCTAssertEqual(missing.status, 404)
+        XCTAssertEqual(try object(missing.body)["ok"] as? Bool, false)
+        let wrongMethod = try await send("POST", "/api/debug", headers: ["Authorization": "Basic good"])
+        XCTAssertEqual(wrongMethod.status, 404)
+    }
+
+    func testDebugPathsNeverReachTheFilesUnderThem() async throws {
+        _ = try write("api/debug/keep.bin")
+        try await startServer(debugAPI: DebugAPIAccess(registry: PVDebugAPIRegistry()) { _ in false })
+        let refused = try await send("DELETE", "/api/debug/keep.bin")
+        XCTAssertEqual(refused.status, 401)
+        XCTAssertTrue(exists("api/debug/keep.bin"))
+    }
+
+    func testTheDebugPrefixEndsAtASegment() async throws {
+        _ = try write("api/debugger/notes.txt")
+        try await startServer(debugAPI: DebugAPIAccess(registry: PVDebugAPIRegistry()) { _ in false })
+        // WebDAV answers it, so the debug routes (which refuse everyone here) did not.
+        let result = try await send("DELETE", "/api/debugger/notes.txt")
+        XCTAssertEqual(result.status, 204)
+        XCTAssertFalse(exists("api/debugger/notes.txt"))
+    }
+
     func testOversizedDebugBodyIsRefused() async throws {
         let registry = PVDebugAPIRegistry()
         registry.register("POST", "/api/debug/echo") { _ in .ok() }

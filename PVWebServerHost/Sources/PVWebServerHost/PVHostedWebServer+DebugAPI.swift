@@ -36,17 +36,18 @@ extension PVHostedWebServer {
     /// Max JSON body accepted by a debug route.
     private static let debugAPIMaxBody = 1 * 1_024 * 1_024
     private static let debugAPIIndex = "/api/debug"
+    /// Every method a client might send. An unrouted method would fall through to WebDAV and be
+    /// answered from a folder named `api/debug` under the root.
+    private static let debugAPIMethods = ["GET", "POST", "PUT", "PATCH", "DELETE"]
 
-    /// The engine's routes match exact paths, so each registered path gets its own route, when
-    /// this server is created or whenever PVUIBase registers it later.
+    /// One route covers the index and everything below it, so a client is refused the same way
+    /// whether or not a path exists, and routes PVUIBase registers later need no mounting.
     func mountDebugAPI(_ access: DebugAPIAccess) {
-        let mount: @Sendable (String, String) -> Void = { [weak self] method, path in
-            self?.engine.addAsyncHandler(forMethod: method, path: path) { request in
-                await Self.dispatchDebugAPI(request, access: access)
-            }
+        let handler: WebRouteHandler = { request in await Self.dispatchDebugAPI(request, access: access) }
+        for method in Self.debugAPIMethods {
+            engine.addAsyncHandler(forMethod: method, path: Self.debugAPIIndex, handler: handler)
+            engine.addAsyncHandler(forMethod: method, pathPrefix: Self.debugAPIIndex, handler: handler)
         }
-        mount("GET", Self.debugAPIIndex)
-        access.registry.observeRoutes(mount)
     }
 
     private static func dispatchDebugAPI(
@@ -63,7 +64,7 @@ extension PVHostedWebServer {
 
         let method = request.method.uppercased()
         let path = request.path.count > 1 && request.path.hasSuffix("/") ? String(request.path.dropLast()) : request.path
-        if path == debugAPIIndex {
+        if path == debugAPIIndex, method == "GET" {
             return debugResponse(.ok(["routes": access.registry.routes]))
         }
         guard let handler = access.registry.handler(method: method, path: path) else {

@@ -80,7 +80,6 @@ public final class PVDebugAPIRegistry: @unchecked Sendable {
 
     private let lock = NSLock()
     private var handlers: [String: PVDebugAPIHandler] = [:]
-    private var routeObserver: (@Sendable (_ method: String, _ path: String) -> Void)?
 
     public init() {}
 
@@ -90,24 +89,8 @@ public final class PVDebugAPIRegistry: @unchecked Sendable {
 
     /// Register (or replace) the handler for `method path`, e.g. `GET /api/debug/screenshot`.
     public func register(_ method: String, _ path: String, handler: @escaping PVDebugAPIHandler) {
-        lock.lock()
+        lock.lock(); defer { lock.unlock() }
         handlers[Self.key(method, path)] = handler
-        let observer = routeObserver
-        lock.unlock()
-        observer?(method.uppercased(), path)
-    }
-
-    /// Calls `observer` for every registered route, now and as more arrive, so a running
-    /// server can route to them. Replaces the last observer: only one server runs at a time.
-    func observeRoutes(_ observer: @escaping @Sendable (_ method: String, _ path: String) -> Void) {
-        lock.lock()
-        routeObserver = observer
-        let existing = Array(handlers.keys)
-        lock.unlock()
-        for key in existing {
-            let parts = key.split(separator: " ", maxSplits: 1).map(String.init)
-            if parts.count == 2 { observer(parts[0], parts[1]) }
-        }
     }
 
     public func handler(method: String, path: String) -> PVDebugAPIHandler? {

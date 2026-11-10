@@ -50,15 +50,6 @@ final class PVDebugAPIRegistryTests: XCTestCase {
         XCTAssertEqual(registry.routes, ["GET /api/debug/ping"])
     }
 
-    func testObserverSeesExistingAndLaterRoutes() {
-        let registry = PVDebugAPIRegistry()
-        registry.register("get", "/api/debug/early") { _ in .ok() }
-        let seen = Recorded<String>()
-        registry.observeRoutes { method, path in seen.append("\(method) \(path)") }
-        registry.register("post", "/api/debug/late") { _ in .ok() }
-        XCTAssertEqual(seen.values, ["GET /api/debug/early", "POST /api/debug/late"])
-    }
-
     func testRequestValuePrefersQueryThenJSONBody() {
         let body = try? JSONSerialization.data(withJSONObject: ["md5": "abc", "slot": 3])
         let request = PVDebugAPIRequest(method: "POST", path: "/x", query: ["md5": "fromQuery"], body: body)

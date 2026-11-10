@@ -237,11 +237,9 @@ enum FileManagerPage {
                   </div>
                 </div>
                 <div class="server-url-row">
-                  <span class="quick-nav-label">Connect via:</span>
+                  <span class="quick-nav-label">Browser and WebDAV:</span>
                   <code id="server-url">—</code>
                   <button class="btn btn-default copy-btn" id="copy-url-btn">📋 Copy</button>
-                  <span class="quick-nav-label">WebDAV:</span>
-                  <code id="webdav-url">—</code>
                 </div>
               </div>
               <div class="qr-block" id="qr-block" title="Scan to open from your phone">
@@ -765,8 +763,6 @@ enum FileManagerPage {
 
                 const httpURL = s.serverURL || ('http://' + (s.ipAddress || '?') + ':' + s.httpPort + '/');
                 document.getElementById('server-url').textContent = httpURL;
-                document.getElementById('webdav-url').textContent =
-                  s.webDAVURL || ('http://' + (s.ipAddress || '?') + ':' + s.webDAVPort + '/');
 
                 // Refresh QR if the visible URL changed (cache-busts).
                 const qr = document.getElementById('qr-img');
