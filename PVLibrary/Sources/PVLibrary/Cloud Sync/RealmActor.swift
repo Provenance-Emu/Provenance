@@ -11,6 +11,10 @@ import PVRealm
 
 /// Convenience helpers for running Realm work safely on the main thread
 public enum RealmContext {
+    /// A commit holds a lock on the Realm file in the App Group; iOS kills a process suspended
+    /// with that lock (0xDEAD10CC), so each job keeps the process awake until it returns.
+    private static let activityReason = "Library database update"
+
     /// Runs the provided closure on the main thread with the shared Realm instance.
     /// Returns frozen objects that can be safely used on any thread.
     /// For async callers, use `await RealmContext.withRealm { ... }`
@@ -19,8 +23,10 @@ public enum RealmContext {
         _ operation: @escaping (Realm) throws -> T
     ) async throws -> T {
         try await MainActor.run {
-            let realm = RomDatabase.sharedInstance.realm
-            return try operation(realm)
+            try BackgroundActivity.runSync(Self.activityReason) {
+                let realm = RomDatabase.sharedInstance.realm
+                return try operation(realm)
+            }
         }
     }
 
@@ -42,8 +48,10 @@ public enum RealmContext {
         _ operation: @escaping (Realm) throws -> T
     ) async throws -> T {
         try await Task.detached(priority: .utility) {
-            let realm = try Realm(configuration: Realm.Configuration.defaultConfiguration)
-            return try operation(realm)
+            try BackgroundActivity.runSync(Self.activityReason) {
+                let realm = try Realm(configuration: Realm.Configuration.defaultConfiguration)
+                return try operation(realm)
+            }
         }.value
     }
 }

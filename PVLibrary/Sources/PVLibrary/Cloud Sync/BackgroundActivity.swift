@@ -42,6 +42,50 @@ public enum BackgroundActivity {
         defer { assertion.release() }
         return await work()
     }
+
+    /// Runs synchronous `work` while the process holds an expiring-activity assertion.
+    ///
+    /// Overlapping calls share one assertion, so many concurrent Realm jobs park one
+    /// thread between them, not one each.
+    public static func runSync<T>(_ reason: String, _ work: () throws -> T) rethrows -> T {
+        shared.begin(reason)
+        defer { shared.end() }
+        return try work()
+    }
+
+    private static let shared = SharedAssertion()
+}
+
+/// One expiring activity held for as long as any `runSync` caller is working.
+private final class SharedAssertion: @unchecked Sendable {
+    private let lock = NSLock()
+    private var users = 0
+    private var assertion: Assertion?
+
+    func begin(_ reason: String) {
+        lock.lock()
+        defer { lock.unlock() }
+        users += 1
+        guard users == 1 else { return }
+        let assertion = Assertion()
+        self.assertion = assertion
+        ProcessInfo.processInfo.performExpiringActivity(withReason: reason) { expired in
+            if expired {
+                assertion.release()
+            } else {
+                assertion.hold()
+            }
+        }
+    }
+
+    func end() {
+        lock.lock()
+        defer { lock.unlock() }
+        users -= 1
+        guard users == 0 else { return }
+        assertion?.release()
+        assertion = nil
+    }
 }
 
 private final class Assertion: @unchecked Sendable {

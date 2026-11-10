@@ -5,7 +5,7 @@ import SkinKitUI
 
 /// A simple wrapper view to avoid generic type inference issues
 struct EmulatorWrapperView: View {
-    let game: PVGame
+    let game: SkinGameSnapshot
     let coreInstance: PVEmulatorCore
     let onSkinLoaded: () -> Void
     let onRefreshRequested: () -> Void
@@ -27,6 +27,26 @@ struct EmulatorWrapperView: View {
     /// Explicit initializer — required because `@ObservedObject` + defaulted `let` fields do not produce a reliable memberwise `init` for all call sites.
     init(
         game: PVGame,
+        coreInstance: PVEmulatorCore,
+        onSkinLoaded: @escaping () -> Void,
+        onRefreshRequested: @escaping () -> Void,
+        preselectedSkinIdentifier: String?,
+        onInitialSkinResolutionComplete: (() -> Void)? = nil,
+        inputHandler: DeltaSkinInputHandler,
+        virtualInputState: VirtualInputState? = nil,
+        skinRequestRevision: Int = 0
+    ) {
+        self.init(
+            game: SkinGameSnapshot(game), coreInstance: coreInstance, onSkinLoaded: onSkinLoaded,
+            onRefreshRequested: onRefreshRequested, preselectedSkinIdentifier: preselectedSkinIdentifier,
+            onInitialSkinResolutionComplete: onInitialSkinResolutionComplete, inputHandler: inputHandler,
+            virtualInputState: virtualInputState, skinRequestRevision: skinRequestRevision
+        )
+    }
+
+    /// Rebuilds the view from an existing one's snapshot, without touching Realm again.
+    init(
+        game: SkinGameSnapshot,
         coreInstance: PVEmulatorCore,
         onSkinLoaded: @escaping () -> Void,
         onRefreshRequested: @escaping () -> Void,

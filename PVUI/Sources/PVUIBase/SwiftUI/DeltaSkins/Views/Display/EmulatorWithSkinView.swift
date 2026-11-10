@@ -95,9 +95,10 @@ struct EmulatorWithSkinView: View {
     /// Injected by `EmulatorWrapperView`.
     @EnvironmentObject private var virtualInputState: VirtualInputState
 
-    // Initialize with a game, extracting the necessary properties
+    /// Takes a snapshot, not the live `PVGame`: SwiftUI re-runs this initializer on every parent update,
+    /// and reading a Realm object that sync or a re-key has since deleted raises an Objective-C exception.
     init(
-        game: PVGame,
+        game: SkinGameSnapshot,
         coreInstance: PVEmulatorCore,
         onSkinLoaded: @escaping () -> Void,
         onRefreshRequested: @escaping () -> Void,
@@ -106,17 +107,12 @@ struct EmulatorWithSkinView: View {
         skinRequestRevision: Int = 0
     ) {
         self.gameTitle = game.title
-        self.systemName = game.system?.name
-
-        // Linked PVSystem is authoritative; fall back to persisted PVGame.systemIdentifier when the relationship is missing so skin reload notifications still match.
-        self.systemId = ProgrammaticOverlaySupport.systemIdentifier(linked: game.system?.systemIdentifier,
-                                                                     persisted: game.systemIdentifier)
-
-        // Get game ID for skin preferences (must match game.id used in skin selection)
+        self.systemName = game.systemName
+        self.systemId = game.systemId
         self.gameId = game.id
-        self.gameMD5 = game.md5Hash.isEmpty ? nil : game.md5Hash
+        self.gameMD5 = game.md5
         self.gameCRC = game.crc
-        self.gameRomFileName = game.file?.fileName
+        self.gameRomFileName = game.romFileName
 
         self.coreInstance = coreInstance
         self.onSkinLoaded = onSkinLoaded
@@ -1186,5 +1182,39 @@ extension EmulatorWithSkinView {
                 }
             }
         }
+    }
+}
+
+/// The game fields the skin views need, copied out of Realm once while the object is known to be valid.
+struct SkinGameSnapshot {
+    let title: String
+    let systemName: String?
+    let systemId: SystemIdentifier?
+    /// Must match the `game.id` used by skin selection.
+    let id: String
+    let md5: String?
+    let crc: String
+    let romFileName: String?
+
+    init(_ game: PVGame) {
+        guard !game.isInvalidated else {
+            title = ""
+            systemName = nil
+            systemId = nil
+            id = ""
+            md5 = nil
+            crc = ""
+            romFileName = nil
+            return
+        }
+        title = game.title
+        systemName = game.system?.name
+        // Linked PVSystem is authoritative; fall back to persisted PVGame.systemIdentifier when the relationship is missing so skin reload notifications still match.
+        systemId = ProgrammaticOverlaySupport.systemIdentifier(linked: game.system?.systemIdentifier,
+                                                               persisted: game.systemIdentifier)
+        id = game.id
+        md5 = game.md5Hash.isEmpty ? nil : game.md5Hash
+        crc = game.crc
+        romFileName = game.file?.fileName
     }
 }

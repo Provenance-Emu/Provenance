@@ -793,7 +793,11 @@ public final class GameImporter: GameImporting, ObservableObject {
         // caller that arrives after this suspension point will see the in-flight
         // task and await it instead of starting a second scan.
         let task = Task<Void, Error> {
-            await PVEmulatorConfiguration.updateSystems(fromPlists: [systemsPlistURL])
+            // Writes the systems into Realm at launch; a launch that is backgrounded straight away
+            // must not be suspended mid-commit.
+            await BackgroundActivity.run("Core and system setup") {
+                await PVEmulatorConfiguration.updateSystems(fromPlists: [systemsPlistURL])
+            }
 
             // Run filesystem I/O and the dynamic libretro scan on a background thread.
             // Neither operation is MainActor-safe — calling either on the main thread

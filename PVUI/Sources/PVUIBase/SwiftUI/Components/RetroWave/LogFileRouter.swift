@@ -18,8 +18,9 @@ public enum LogFileRouter {
     ///
     /// Reads nothing for a `.log` or an unrelated extension, only the central
     /// directory of a `.zip`, and only the first `IncomingLogFile.textPrefixByteCount`
-    /// bytes of a `.txt`, so it is safe to call from the URL handler on the main
-    /// thread. A security scope is opened around the reads when the URL needs one.
+    /// bytes of a `.txt`. Call it off the main thread all the same: finding a ZIP's
+    /// directory on a file provider's volume has run past the launch watchdog.
+    /// A security scope is opened around the reads when the URL needs one.
     public static func classify(fileURL url: URL) -> IncomingLogFile.Kind {
         let fileExtension = url.pathExtension
 

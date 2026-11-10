@@ -912,8 +912,9 @@ public class CloudSyncManager { // swiftlint:disable:this type_body_length
         var successCount = 0
 
         for md5 in gameMD5s {
+            // Frozen: a live object read off the main thread raises a Realm thread exception.
             guard let game = await MainActor.run(body: {
-                RomDatabase.sharedInstance.game(withMD5: md5)
+                RomDatabase.sharedInstance.game(withMD5: md5)?.freeze()
             }) else {
                 syncLog.event(.sync, item: "artwork/\(md5)", status: .notFound, detail: "Game not found for MD5")
                 continue

@@ -34,4 +34,49 @@ final class BackgroundActivityTests: XCTestCase {
         }
         XCTAssertEqual(total, (0..<50).reduce(0, +))
     }
+
+    func testRunSyncReturnsTheWorkResult() {
+        XCTAssertEqual(BackgroundActivity.runSync("test") { 42 }, 42)
+    }
+
+    func testRunSyncRethrows() {
+        struct Failure: Error {}
+        XCTAssertThrowsError(try BackgroundActivity.runSync("test") { throw Failure() })
+        // The shared assertion was released: a later call still runs.
+        XCTAssertEqual(BackgroundActivity.runSync("test") { 1 }, 1)
+    }
+
+    func testNestedRunSyncDoesNotDeadlock() {
+        let value = BackgroundActivity.runSync("outer") {
+            BackgroundActivity.runSync("inner") { 7 }
+        }
+        XCTAssertEqual(value, 7)
+    }
+
+    /// Overlapping jobs share one assertion; every job must still run and release it.
+    func testConcurrentRunSyncAllComplete() {
+        let counter = Counter()
+        DispatchQueue.concurrentPerform(iterations: 200) { index in
+            counter.add(BackgroundActivity.runSync("test") { index })
+        }
+        XCTAssertEqual(counter.total, (0..<200).reduce(0, +))
+        XCTAssertEqual(BackgroundActivity.runSync("test") { 3 }, 3)
+    }
+}
+
+private final class Counter: @unchecked Sendable {
+    private let lock = NSLock()
+    private var sum = 0
+
+    var total: Int {
+        lock.lock()
+        defer { lock.unlock() }
+        return sum
+    }
+
+    func add(_ value: Int) {
+        lock.lock()
+        defer { lock.unlock() }
+        sum += value
+    }
 }

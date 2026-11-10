@@ -637,37 +637,58 @@ extension ProvenanceApp {
             return
         }
 
-#if !os(tvOS)
-        // Log files open in the log viewer, never the ROM importer: any `.log`, an
-        // exported `.zip` bundle (recognised by its device_info.txt / app_logs.txt /
-        // retroarch_logs entries, since `.zip` is also a ROM archive), or a `.txt`
-        // that starts with the export header. Only the ZIP's central directory or
-        // the first bytes of the text are read to decide.
-        switch LogFileRouter.classify(fileURL: url) {
-        case .plainLog, .logBundle:
-            ILOG("ProvenanceApp: Opening log file in the log viewer: \(filename)")
-            showLogViewerWhenReady(for: url)
-            return
-        case .other:
-            break
-        }
-#endif
-
-        // ROM files: always copied (never moved) inside the security scope, since with
-        // LSSupportsOpeningDocumentsInPlace the URL can be the sender's original. A
-        // same-name file gets a unique name instead of being dropped; the multi-file
-        // import gate repairs any track reference that rename breaks.
-        do {
-            let copiedDestination = try IncomingFileReceiver.receive(url, into: Paths.romsImportPath)
-            let copiedFilename = filename
-            Task { @MainActor in
-                PVToastManager.post(.fileImported(fileName: copiedFilename))
+        // The file work runs off the main thread: reading a ZIP's directory or copying a disc
+        // image from a file provider can take longer than the watchdog lets this handler block.
+        Task { @MainActor in
+            switch await Self.receiveIncomingFile(url) {
+            case .log:
+                #if !os(tvOS)
+                ILOG("ProvenanceApp: Opening log file in the log viewer: \(filename)")
+                showLogViewerWhenReady(for: url)
+                #endif
+            case .rom(let copiedDestination):
+                PVToastManager.post(.fileImported(fileName: filename))
                 AppState.shared.appOpenAction = .openFile(copiedDestination)
-                self.openEmulatorSceneIfNeeded()
+                openEmulatorSceneIfNeeded()
+            case .failed:
+                break
             }
-        } catch {
-            ELOG("Unable to copy file from \(url.path) into \(Paths.romsImportPath.path) because \(error.localizedDescription)")
         }
+    }
+
+    private enum IncomingFile: Sendable {
+        case log
+        case rom(URL)
+        case failed
+    }
+
+    /// Classifies `url` and, unless it is a log, copies it into the import folder.
+    private static func receiveIncomingFile(_ url: URL) async -> IncomingFile {
+        await Task.detached(priority: .userInitiated) {
+#if !os(tvOS)
+            // Log files open in the log viewer, never the ROM importer: any `.log`, an
+            // exported `.zip` bundle (recognised by its device_info.txt / app_logs.txt /
+            // retroarch_logs entries, since `.zip` is also a ROM archive), or a `.txt`
+            // that starts with the export header. Only the ZIP's central directory or
+            // the first bytes of the text are read to decide.
+            switch LogFileRouter.classify(fileURL: url) {
+            case .plainLog, .logBundle:
+                return IncomingFile.log
+            case .other:
+                break
+            }
+#endif
+            // ROM files: always copied (never moved) inside the security scope, since with
+            // LSSupportsOpeningDocumentsInPlace the URL can be the sender's original. A
+            // same-name file gets a unique name instead of being dropped; the multi-file
+            // import gate repairs any track reference that rename breaks.
+            do {
+                return IncomingFile.rom(try IncomingFileReceiver.receive(url, into: Paths.romsImportPath))
+            } catch {
+                ELOG("Unable to copy file from \(url.path) into \(Paths.romsImportPath.path) because \(error.localizedDescription)")
+                return IncomingFile.failed
+            }
+        }.value
     }
 
     /// Handle the `provenance://install-skin?url=<encoded-url>` deep link.
