@@ -263,6 +263,10 @@ extension PVEmulatorViewController: PVViewportLayoutDelegate {
                 currentTargetFrame = immediateFrame
                 skinRendererProvidedViewportFrame = false
                 applyFrameToGPUView(immediateFrame, reason: "viewport-defined-immediate")
+                // The renderer may have broadcast its rect before this ran (rotation back to a
+                // portrait-only skin does), and it does not repeat an unchanged rect on its own.
+                // Ask for it again so the renderer, which drew the skin, always has the last word.
+                NotificationCenter.default.post(name: .deltaSkinForceRecalculate, object: nil)
             }
 
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) { [weak self] in
@@ -507,8 +511,8 @@ extension PVEmulatorViewController: PVViewportLayoutDelegate {
         return calculateFrameFromSkin()
     }
 
-    /// Calculate frame from skin - single, clear calculation path
-    /// Uses same calculation for bootup and rotation - accounts for safe areas
+    /// The game-screen rect computed from the skin's own data, for the moments before the skin
+    /// renderer has broadcast its rect. Same math as the renderer (`SkinViewportGeometry`).
     private func calculateFrameFromSkin() -> CGRect? {
         // The mounted overlay publishes the game frame itself; the skin mapping would
         // compete with it.
@@ -529,115 +533,32 @@ extension PVEmulatorViewController: PVViewportLayoutDelegate {
             return nil
         }
 
-        // Calculate layout accounting for safe areas
-        let safeInsets = view.safeAreaInsets
         let viewSize = view.bounds.size
-        let safeWidth = max(0, viewSize.width - safeInsets.left - safeInsets.right)
-        let safeHeight = max(0, viewSize.height - safeInsets.top - safeInsets.bottom)
-        let safeSize = CGSize(width: safeWidth, height: safeHeight)
+        let restsOnBottomEdge = traits.device == .iphone && traits.orientation == .portrait
 
-        // Calculate scale using safe area dimensions - consistent for all orientations.
-        // NOTE: the renderer scales a skin that declares NO screens/screenGroups against
-        // the loaded image's own size rather than `mappingSize`
-        // (`DeltaSkinView.calculateLayout`, effectiveImageSize). We have no synchronous
-        // access to that image here, so a `gameScreenFrame`-only legacy skin (VB, GameGear
-        // class) can get a transient frame anchored to a slightly different box than was
-        // drawn — corrected as soon as the renderer broadcasts, so it shows as a flicker.
-        let scale = calculateScale(viewSize: safeSize, mappingSize: mappingSize)
-        let scaledSize = CGSize(width: mappingSize.width * scale, height: mappingSize.height * scale)
-
-        // Calculate offset accounting for safe areas
-        let offset = calculateOffset(for: traits,
-                                    viewSize: viewSize,
-                                    safeInsets: safeInsets,
-                                    scaledSize: scaledSize)
-
-        // Get screen frame from skin
-        let screenFrame = getScreenFrame(from: skin, traits: traits, mappingSize: mappingSize)
-
-        // Diagnostic for on-device skin-layout triage: one line per calculation with all
-        // the intermediates, so a Console.app capture shows exactly which rect this
-        // fallback produced and from which representation. Uses ILOG (not DLOG) so it
-        // survives in release logs — see the flycast debugging note in CLAUDE.md.
-        let calcInputs = "orient=\(traits.orientation.rawValue) display=\(traits.displayType.rawValue) mapping=\(mappingSize) bounds=\(view.bounds.size) safeInsets=\(safeInsets)"
-        let calcOutputs = "safeSize=\(safeSize) scale=\(scale) scaledSize=\(scaledSize) offset=\(offset) screenFrame(norm)=\(screenFrame.map { "\($0)" } ?? "nil")"
-        ILOG("SKIN-CALC-DIAG: \(calcInputs) | \(calcOutputs)")
-
-        if let screenFrame {
-            // The screen rect is normalised (0-1) against `mappingSize`, i.e. it is a
-            // position *inside the skin image*. It must therefore be anchored to where
-            // the skin image was actually drawn, not to the centred fallback rect.
-            let skinOrigin = skinImageOrigin(for: traits,
-                                             viewSize: viewSize,
-                                             safeInsets: safeInsets,
-                                             scaledSize: scaledSize)
-            return CGRect(
-                x: skinOrigin.x + screenFrame.minX * scaledSize.width,
-                y: skinOrigin.y + screenFrame.minY * scaledSize.height,
-                width: screenFrame.width * scaledSize.width,
-                height: screenFrame.height * scaledSize.height
-            )
+        if let screenFrame = getScreenFrame(from: skin, traits: traits, mappingSize: mappingSize) {
+            // The screen rect is a position inside the skin image, so it is placed in the rect the
+            // renderer draws that image in. NOTE: the renderer scales a skin that declares NO
+            // screens/screenGroups against the loaded image's own size rather than `mappingSize`
+            // (`DeltaSkinView.calculateLayout`, effectiveImageSize). We have no synchronous access to
+            // that image here, so a `gameScreenFrame`-only legacy skin (VB, GameGear class) can get a
+            // transient frame the renderer's broadcast then corrects.
+            guard let skinImageFrame = SkinViewportGeometry.skinImageFrame(
+                containerSize: viewSize, mappingSize: mappingSize, restsOnBottomEdge: restsOnBottomEdge) else { return nil }
+            let frame = SkinViewportGeometry.screenFrame(screenFrame, mappingSize: mappingSize, in: skinImageFrame)
+            // One line per calculation, so a device log shows which rect this fallback produced and
+            // from which representation. ILOG so it survives in release logs.
+            ILOG("SKIN-CALC-DIAG: orient=\(traits.orientation.rawValue) display=\(traits.displayType.rawValue) "
+                 + "mapping=\(mappingSize) bounds=\(viewSize) | skinImage=\(skinImageFrame) screen(norm)=\(screenFrame) frame=\(frame)")
+            return frame
         }
 
-        // Default: center in available space
-        return CGRect(x: offset.x, y: offset.y, width: scaledSize.width, height: scaledSize.height)
-    }
-
-    /// Calculate scale for skin layout
-    /// Uses same calculation for bootup and rotation - consistent for all orientations
-    /// Scales to fit within available space while maintaining aspect ratio
-    private func calculateScale(viewSize: CGSize, mappingSize: CGSize) -> CGFloat {
-        // Always use the same calculation: scale to fit within available space
-        // This ensures consistent sizing regardless of orientation or device type
-        guard mappingSize.width > 0 && mappingSize.height > 0 else { return 1.0 }
-        let scaleX = viewSize.width / mappingSize.width
-        let scaleY = viewSize.height / mappingSize.height
-        return min(scaleX, scaleY)
-    }
-
-    /// Calculate offset for skin layout
-    /// Accounts for safe areas - uses same calculation for bootup and rotation
-    /// Centers the skin in the safe area for all orientations
-    private func calculateOffset(for traits: DeltaSkinTraits, viewSize: CGSize, safeInsets: UIEdgeInsets, scaledSize: CGSize) -> CGPoint {
-        let safeWidth = max(0, viewSize.width - safeInsets.left - safeInsets.right)
-        let safeHeight = max(0, viewSize.height - safeInsets.top - safeInsets.bottom)
-
-        // Center horizontally accounting for safe areas
-        let x = safeInsets.left + (safeWidth - scaledSize.width) / 2
-
-        // Center vertically in safe area for all orientations
-        // Screen frame position within skin will be handled by screenFrame.minY
-        let y = safeInsets.top + (safeHeight - scaledSize.height) / 2
-
-        return CGPoint(x: x, y: y)
-    }
-
-    /// The top-left corner, in view coordinates, of where the skin image is drawn.
-    ///
-    /// Mirrors `DeltaSkinView.calculateLayout(for:)` — the renderer centres the skin
-    /// horizontally in the safe area but, on **iPhone portrait**, anchors it to the
-    /// bottom of the screen (just above the home indicator) instead of centring it
-    /// vertically. Anchoring a skin-relative screen rect to the centred rect instead
-    /// puts the render view at a different height than the cutout it is supposed to
-    /// fill, which is exactly the "screen sits off the skin's screen area, clipped by
-    /// the skin body" symptom in portrait.
-    private func skinImageOrigin(for traits: DeltaSkinTraits,
-                                 viewSize: CGSize,
-                                 safeInsets: UIEdgeInsets,
-                                 scaledSize: CGSize) -> CGPoint {
-        let safeWidth = max(0, viewSize.width - safeInsets.left - safeInsets.right)
-        let safeHeight = max(0, viewSize.height - safeInsets.top - safeInsets.bottom)
-
-        let x = safeInsets.left + (safeWidth - scaledSize.width) / 2
-
-        let y: CGFloat
-        if traits.device == .iphone && traits.orientation == .portrait {
-            y = viewSize.height - scaledSize.height - safeInsets.bottom
-        } else {
-            y = safeInsets.top + (safeHeight - scaledSize.height) / 2
-        }
-
-        return CGPoint(x: x, y: y)
+        // No screen declared: the whole skin, centred in the safe area.
+        let safeInsets = view.safeAreaInsets
+        let insets = SkinViewportGeometry.Insets(top: safeInsets.top, left: safeInsets.left,
+                                                 bottom: safeInsets.bottom, right: safeInsets.right)
+        return SkinViewportGeometry.skinImageFrame(containerSize: viewSize, mappingSize: mappingSize,
+                                                   insets: insets, restsOnBottomEdge: false)
     }
 
     /// Check if skin has gameScreenFrame defined in JSON
@@ -659,7 +580,7 @@ extension PVEmulatorViewController: PVViewportLayoutDelegate {
         // Try screens array - the same game screen the renderer picks
         if let screens = skin.screens(for: traits),
            let outputFrame = DeltaSkinScreen.gameScreen(in: screens, mappingSize: mappingSize)?.outputFrame {
-            return normalizeFrame(outputFrame, mappingSize: mappingSize)
+            return SkinViewportGeometry.normalized(outputFrame, mappingSize: mappingSize)
         }
 
         // Try screen groups
@@ -667,7 +588,7 @@ extension PVEmulatorViewController: PVViewportLayoutDelegate {
            let group = groups.first,
            let screen = group.screens.first,
            let outputFrame = screen.outputFrame {
-            return normalizeFrame(outputFrame, mappingSize: mappingSize)
+            return SkinViewportGeometry.normalized(outputFrame, mappingSize: mappingSize)
         }
 
         // Try gameScreenFrame dictionary
@@ -680,29 +601,10 @@ extension PVEmulatorViewController: PVViewportLayoutDelegate {
            let y = frameDict["y"] as? CGFloat,
            let width = frameDict["width"] as? CGFloat,
            let height = frameDict["height"] as? CGFloat {
-            return normalizeFrame(CGRect(x: x, y: y, width: width, height: height), mappingSize: mappingSize)
+            return SkinViewportGeometry.normalized(CGRect(x: x, y: y, width: width, height: height), mappingSize: mappingSize)
         }
 
         return nil
-    }
-
-    /// Normalize frame to 0-1 coordinates using mappingSize.
-    /// Returns the frame unchanged when no component exceeds 1.0 (i.e. it is already
-    /// treated as being in normalized space). This heuristic only checks for values
-    /// greater than 1.0; small or negative values alone do not trigger normalization.
-    private func normalizeFrame(_ frame: CGRect, mappingSize: CGSize) -> CGRect {
-        // Already normalised — no component exceeds 1.0
-        guard frame.origin.x > 1.0 || frame.origin.y > 1.0 ||
-              frame.size.width > 1.0 || frame.size.height > 1.0 else {
-            return frame
-        }
-        guard mappingSize.width > 0 && mappingSize.height > 0 else { return frame }
-        return CGRect(
-            x: frame.minX / mappingSize.width,
-            y: frame.minY / mappingSize.height,
-            width: frame.width / mappingSize.width,
-            height: frame.height / mappingSize.height
-        )
     }
 
     // MARK: - Scaling Mode Within Skin Container
@@ -990,9 +892,9 @@ extension PVEmulatorViewController: PVViewportLayoutDelegate {
         (metalVC as PVGPUViewController).useCustomPositioning = true
 
         // Frames broadcast by the skin renderer are already in `self.view` coordinates:
-        // the skin's GeometryReader spans the full container (the renderer adds safe-area
-        // insets back explicitly rather than being laid out inside them), and the hosting
-        // view / skin container / self.view are all coincident. This conversion is
+        // the skin's GeometryReader spans the full container and sees no safe-area insets
+        // (`EmulatorWrapperView` ignores them), and the hosting view / skin container /
+        // self.view are all coincident. This conversion is
         // therefore an identity today — it is kept only so the frame still lands correctly
         // if the skin container ever stops filling `self.view`. Do NOT read it as evidence
         // that the renderer works in some other space.

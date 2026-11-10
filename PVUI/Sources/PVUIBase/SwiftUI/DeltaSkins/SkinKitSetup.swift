@@ -251,7 +251,20 @@ public enum SkinKitSetup {
 
 extension SystemIdentifier {
     /// This system as SkinKitUI's pickers and catalog views take it.
+    ///
+    /// Read from a table built once. SkinKit asks for a skin's system by game type every time it names
+    /// or groups a skin, and building the value walks every system for its related catalog codes: the
+    /// skin list did that twice per skin for each cell it drew (0.6 s a cell with 145 skins).
     public var deltaSkinSystem: DeltaSkinSystem {
+        Self.deltaSkinSystems[self] ?? makeDeltaSkinSystem()
+    }
+
+    private static let deltaSkinSystems: [SystemIdentifier: DeltaSkinSystem] = Dictionary(
+        SystemIdentifier.allCases.map { ($0, $0.makeDeltaSkinSystem()) },
+        uniquingKeysWith: { first, _ in first }
+    )
+
+    private func makeDeltaSkinSystem() -> DeltaSkinSystem {
         DeltaSkinSystem(
             id: skinSystemID,
             fullName: fullName,

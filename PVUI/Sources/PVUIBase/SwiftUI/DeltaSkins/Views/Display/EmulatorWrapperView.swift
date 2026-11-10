@@ -80,6 +80,8 @@ struct EmulatorWrapperView: View {
         .environmentObject(inputHandler)
         .deltaSkinInputHandler(inputHandler)
         .environmentObject(virtualInputState)
+        // The skin renderer therefore lays out with no safe-area insets, which
+        // `SkinViewportGeometry.rendererInsets` mirrors: change them together.
         .ignoresSafeArea(.all)
     }
 }
