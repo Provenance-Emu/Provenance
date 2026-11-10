@@ -23,9 +23,9 @@ extension PVEmulatorViewController {
         #if os(tvOS) || os(macOS) || targetEnvironment(macCatalyst)
         return false
         #else
-        // Mac ("Designed for iPad") and iPad-opted-in desktop input mode have no touch
-        // surface for the skin to render on; keyboard/gamepad drive input instead.
-        guard !GamepadManager.isDesktopInputMode else { return false }
+        // The library's controller navigation setting only opts iPad into skinless play.
+        guard !ProcessInfo.processInfo.isiOSAppOnMac,
+              !(UIDevice.current.userInterfaceIdiom == .pad && GamepadManager.isDesktopInputMode) else { return false }
         // The programmatic overlay covers every known system without a packaged skin, including
         // Classic mode, cores without skin support and explicit-selection cores (Dolphin).
         if programmaticOverlayCoversGame { return true }
@@ -198,6 +198,9 @@ extension PVEmulatorViewController {
             view.bringSubviewToFront(skinContainer)
             keepOverlayMenuButtonInFront()
         }
+        #if !os(tvOS)
+        bringVirtualInputOverlaysToFront()
+        #endif
 
         // For non-RetroArch cores, compute a fallback frame if the notification didn't arrive
         if core.coreIdentifier?.contains("libretro") != true, currentTargetFrame == nil {
@@ -636,6 +639,9 @@ extension PVEmulatorViewController {
         // Apply viewport - works the same for all cores
         ILOG("skins: Applying viewport from current skin")
         applyViewportFromCurrentSkin()
+        #if !os(tvOS)
+        bringVirtualInputOverlaysToFront()
+        #endif
 
         ILOG("skins: Skin view setup complete, printing view hierarchy")
         printViewHierarchy()

@@ -20,6 +20,11 @@ public enum OverlayScreenPlanner {
         case .topBand:
             let band = topBand(safe: safe, groups: groups)
             return [aspectFit(aspect, in: band)]
+        case .centeredTopBand:
+            let band = topBand(safe: safe, groups: groups)
+            var frame = aspectFit(aspect, in: band)
+            frame.origin.y = min(safe.midY - frame.height / 2, band.maxY - frame.height)
+            return [frame]
         case .centerColumn:
             let column = centerColumn(safe: safe, groups: groups)
             return [aspectFit(aspect, in: column)]

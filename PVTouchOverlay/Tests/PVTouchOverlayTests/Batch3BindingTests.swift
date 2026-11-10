@@ -170,13 +170,26 @@ struct Batch3BindingTests {
         }
     }
 
-    @Test("No batch 3 system forces landscape; each keeps the top band in portrait")
+    @Test("No batch 3 system forces landscape; the portrait picture stays above the controls")
     func topBand() throws {
         for system in SystemOverlayBindings.batch3Systems {
             let binding = try Self.binding(system)
             #expect(!binding.landscapeOnly && binding.landscapeOnlySubtypes.isEmpty, "\(system)")
-            #expect(try Self.template(system, .portrait).screenPolicy == .topBand, "\(system)")
+            let policy: OverlayScreenPolicy = system == .DOS ? .centeredTopBand : .topBand
+            #expect(try Self.template(system, .portrait).screenPolicy == policy, "\(system)")
         }
+    }
+
+    @Test("DOS portrait centers the picture as far down as the controls allow")
+    func dosPortraitViewport() throws {
+        let canvas = OverlayLayoutEngineTests.phonePortrait
+        let template = try Self.template(.DOS, .portrait)
+        let layout = OverlayLayoutEngine.resolve(template: template, canvas: canvas, overrides: .empty,
+                                                 gameAspect: 1.6, shownToggles: [])
+        let frame = try #require(layout.screenFrames.first)
+        let highestControl = try #require(layout.groups.map(\.frame.minY).min())
+        let expectedY = min(canvas.safeRect.midY, highestControl - OverlayScreenPlanner.gap - frame.height / 2)
+        #expect(abs(frame.midY - expectedY) < 0.5)
     }
 
     @Test("The binding lists do not overlap")

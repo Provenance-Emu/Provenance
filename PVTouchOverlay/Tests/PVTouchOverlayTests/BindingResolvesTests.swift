@@ -8,7 +8,7 @@ struct BindingResolvesTests {
     private static func screenCount(_ policy: OverlayScreenPolicy) -> Int {
         switch policy {
         case .dualStacked, .dualStacked3DS: return 2
-        case .topBand, .centerColumn, .fill: return 1
+        case .topBand, .centeredTopBand, .centerColumn, .fill: return 1
         }
     }
 

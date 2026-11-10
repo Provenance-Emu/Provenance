@@ -64,11 +64,10 @@ public final class TouchTrackpadView: UIView {
     /// the virtual keyboard panel — pass straight through to the views beneath.
     public weak var gameViewRef: UIView?
 
-    /// Explicit game-screen rect in the trackpad's own coordinate space.
+    /// Explicit game-screen rect in the trackpad's superview coordinate space.
     ///
-    /// When set (non-nil, non-empty), `hitTest` uses this rect directly instead of
-    /// deriving one from `gameViewRef` at call time.  The hosting view controller
-    /// should set this whenever the authoritative game-display rect is known —
+    /// `hitTest` uses this rect when `gameViewRef` is absent or its rect is empty.
+    /// The hosting view controller should set this whenever the authoritative game-display rect is known —
     /// e.g. after `applyFrameToGPUView` positions the GPU view — so that the
     /// trackpad always uses the correct viewport even before the first layout pass.
     ///

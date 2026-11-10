@@ -102,7 +102,6 @@ extension PVEmulatorViewController {
         /// so the trackpad stays confined to the game viewport, not the full view.
         let trackpad = TouchTrackpadView(frame: view.bounds)
         trackpad.mouseResponder = mouseCore
-        trackpad.gameViewRef = gpuViewController.view
         view.addSubview(trackpad)
         touchTrackpadView = trackpad
 
@@ -255,18 +254,18 @@ extension PVEmulatorViewController {
     /// Resolves the best viewport candidate for virtual mouse capture.
     ///
     /// Priority order:
-    /// 1) Skin/viewport delegate frame (`currentTargetFrame`)
-    /// 2) Live GPU frame
+    /// 1) Live GPU frame when the host draws the game
+    /// 2) Skin/viewport delegate frame for cores that draw into their own surface
     /// 3) Last known valid viewport cache
     /// 4) Full view fallback only for non-DeltaSkin layouts
     private func resolvedVirtualMouseViewportFrame() -> CGRect? {
-        if let targetFrame = currentTargetFrame, isTrustedVirtualMouseViewportFrame(targetFrame) {
-            return targetFrame
+        if let gpuView = gpuViewController.viewIfLoaded, gpuView.superview === view, hostGPUViewDrawsGame {
+            let frame = gpuView.convert(gpuView.bounds, to: view)
+            if isTrustedVirtualMouseViewportFrame(frame) { return frame }
         }
 
-        let gpuFrame = gpuViewController.view.frame
-        if isTrustedVirtualMouseViewportFrame(gpuFrame) {
-            return gpuFrame
+        if let targetFrame = currentTargetFrame, isTrustedVirtualMouseViewportFrame(targetFrame) {
+            return targetFrame
         }
 
         if let cachedFrame = lastValidMouseViewportFrame, isTrustedVirtualMouseViewportFrame(cachedFrame) {

@@ -2,6 +2,8 @@ import Foundation
 
 public enum OverlayScreenPolicy: String, Codable, Sendable, Hashable {
     case topBand, centerColumn, dualStacked, dualStacked3DS, fill
+    /// Centers the picture in the safe area as far as the bottom controls allow.
+    case centeredTopBand
 }
 
 public struct OverlayTemplate: Hashable, Codable, Sendable {

@@ -976,8 +976,6 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
             return
         }
 
-        let parentSafeAreaInsets = parent?.view.safeAreaInsets ?? .zero
-
         // Get screen rect and buffer size
         let screenRect = emulatorCore.screenRect
         let bufferSize = emulatorCore.bufferSize
@@ -1103,9 +1101,7 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
 
             /// Calculate center position
             let x = (parentSize.width - width) / 2
-            let y = traitCollection.userInterfaceIdiom == .phone && parentSize.height > parentSize.width ?
-            parentSafeAreaInsets.top + 40 : // below menu button
-            (parentSize.height - height) / 2 // centered
+            let y = (parentSize.height - height) / 2
 
             /// Create frame with calculated position and size
             let frame = CGRect(x: x, y: y, width: width, height: height)
@@ -1151,6 +1147,9 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
                     ILOG("Final MTKView frame (no scale): \(mtlView.frame)")
 #endif
                 }
+                #if !os(tvOS)
+                (parent as? PVEmulatorViewController)?.refreshVirtualMouseLayout()
+                #endif
             }
         }
 

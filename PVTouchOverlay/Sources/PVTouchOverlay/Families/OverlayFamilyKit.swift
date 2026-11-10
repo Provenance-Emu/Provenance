@@ -157,8 +157,9 @@ public enum OverlayFamilyKit {
                                         inset: CGPoint(x: edge + (landscape ? 30 : 20), y: 12))))
             groups = stackAboveSticks(groups, orientation: orientation)
         }
+        let portraitPolicy: OverlayScreenPolicy = binding.system == .DOS ? .centeredTopBand : .topBand
         return OverlayTemplate(padKind: padKind, orientation: orientation, groups: groups,
-                               screenPolicy: landscape ? .centerColumn : .topBand)
+                               screenPolicy: landscape ? .centerColumn : portraitPolicy)
     }
 
     /// For pads with two sticks along the bottom edge. Portrait: lifts the d-pad, face cluster and shoulders
