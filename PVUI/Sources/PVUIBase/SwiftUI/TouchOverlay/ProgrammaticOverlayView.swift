@@ -153,11 +153,23 @@ struct ProgrammaticOverlayView: View {
              + "screens=\(layout.screenFrames) groups: \(groups)")
     }
 
+    /// `EmulatorWrapperView` ignores the safe area for the whole emulator, so `geo` reports none and the
+    /// system row landed in the home-indicator strip (and the pad under the Dynamic Island in landscape),
+    /// where a touch goes home or to Siri instead. The window's insets keep the controls clear of both.
     private static func canvas(for geo: GeometryProxy) -> OverlayCanvas {
         let insets = geo.safeAreaInsets
+        let window = windowSafeAreaInsets()
         return OverlayCanvas(size: geo.size,
-                             safeArea: OverlayInsets(top: insets.top, left: insets.leading,
-                                                     bottom: insets.bottom, right: insets.trailing))
+                             safeArea: OverlayInsets(top: max(insets.top, window.top),
+                                                     left: max(insets.leading, window.left),
+                                                     bottom: max(insets.bottom, window.bottom),
+                                                     right: max(insets.trailing, window.right)))
+    }
+
+    private static func windowSafeAreaInsets() -> UIEdgeInsets {
+        let scenes = UIApplication.shared.connectedScenes.compactMap { $0 as? UIWindowScene }
+        let scene = scenes.first { $0.activationState == .foregroundActive } ?? scenes.first
+        return scene?.keyWindow?.safeAreaInsets ?? .zero
     }
 
     private func resolve(_ template: OverlayTemplate, on canvas: OverlayCanvas, editing: Bool) -> OverlayLayout {
