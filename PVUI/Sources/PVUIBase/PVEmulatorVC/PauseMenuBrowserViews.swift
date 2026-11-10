@@ -218,6 +218,9 @@ struct PauseMenuSaveStateBrowserView: View {
                                     (palette.settingsCellBackground?.swiftUIColor ?? Color(palette.gameLibraryBackground))
                                         .opacity(0.8)
                                 )
+                                #if !os(tvOS)
+                                .listRowSeparator(.hidden)
+                                #endif
                         }
                         .onDelete { indexSet in
                             for index in indexSet {
@@ -226,6 +229,9 @@ struct PauseMenuSaveStateBrowserView: View {
                         }
                     }
                     .listStyle(.plain)
+                    #if !os(tvOS)
+                    .scrollContentBackground(.hidden)
+                    #endif
                 }
             }
             .background(Color(palette.gameLibraryBackground))
