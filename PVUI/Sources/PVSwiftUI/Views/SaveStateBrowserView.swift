@@ -65,7 +65,7 @@ public struct SaveStateBrowserView: View {
     // MARK: - Body
 
     public var body: some View {
-        NavigationView {
+        NavigationStack {
             Group {
                 if computedGroups.isEmpty {
                     emptyStateView
@@ -75,7 +75,7 @@ public struct SaveStateBrowserView: View {
             }
             .navigationTitle("Save States")
             #if os(iOS)
-            .navigationBarTitleDisplayMode(.large)
+            .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     autosaveToggleButton
@@ -248,6 +248,12 @@ public struct SaveStateBrowserView: View {
                                     applyFilters()
                                 }
                             )
+                            .padding(LibraryLayout.chromeHorizontalInset)
+                            .libraryDockChrome()
+                            .listRowBackground(Color.clear)
+                            #if !os(tvOS)
+                            .listRowSeparator(.hidden)
+                            #endif
                         }
                     }
                 } header: {
@@ -266,6 +272,11 @@ public struct SaveStateBrowserView: View {
                 }
             }
         }
+        #if !os(tvOS)
+        .scrollContentBackground(.hidden)
+        #endif
+        .background(themeManager.currentPalette.gameLibraryBackground.swiftUIColor)
+        .scrollIndicatorsFlash(onAppear: true)
         #if os(iOS)
         .listStyle(.insetGrouped)
         #else

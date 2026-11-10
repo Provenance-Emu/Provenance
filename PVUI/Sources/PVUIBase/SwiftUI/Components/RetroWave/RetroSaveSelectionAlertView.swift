@@ -300,8 +300,6 @@ public struct RetroSaveSelectionAlertView: View {
     let onBack: (() -> Void)?
     let onCancel: () -> Void
 
-    @State private var glowOpacity: Double = 0.7
-
     #if os(tvOS)
     @FocusState private var focusedItemId: String?
     private let gridColumns = [GridItem(.flexible()), GridItem(.flexible()), GridItem(.flexible())]
@@ -344,7 +342,7 @@ public struct RetroSaveSelectionAlertView: View {
         self.onCancel = onCancel
     }
 
-    public var body: some View {
+    private var dialogContent: some View {
         VStack(spacing: 0) {
             headerSection
 
@@ -356,15 +354,23 @@ public struct RetroSaveSelectionAlertView: View {
 
             footerSection
         }
-        .frame(minWidth: 350, maxWidth: 600)
-        .background(alertBackground)
-        .clipShape(RoundedRectangle(cornerRadius: 16))
-        .overlay(alertBorder)
-        .shadow(color: Color.retroPink.opacity(glowOpacity), radius: 20, x: 0, y: 0)
-        .onAppear {
-            withAnimation(.easeInOut(duration: 1.5).repeatForever(autoreverses: true)) {
-                glowOpacity = 0.3
+    }
+
+    public var body: some View {
+        // Short windows scroll the whole dialog, keeping Start Fresh and Cancel reachable.
+        ViewThatFits(in: .vertical) {
+            dialogContent
+            ScrollView {
+                dialogContent
             }
+            .scrollBounceBehavior(.basedOnSize)
+        }
+        .frame(maxWidth: 600)
+        .retroChromeSurface()
+        // This modal keeps white text and neon accents over the dimmed game in every theme.
+        .environment(\.colorScheme, .dark)
+        .padding(.horizontal, RetroPauseChrome.chromeInset)
+        .onAppear {
             #if os(tvOS) || os(iOS)
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.15) {
                 focusedItemId = initialFocusID
@@ -443,7 +449,7 @@ public struct RetroSaveSelectionAlertView: View {
             }
         }
         .padding(.top, 24)
-        .padding(.horizontal, 20)
+        .padding(.horizontal, RetroPauseChrome.chromeInset)
         .padding(.bottom, 16)
     }
 
@@ -466,7 +472,7 @@ public struct RetroSaveSelectionAlertView: View {
             .focused($focusedItemId, equals: Self.startFreshFocusID)
             #endif
         }
-        .padding(.horizontal, 20)
+        .padding(.horizontal, RetroPauseChrome.chromeInset)
         .padding(.bottom, viewModel.saves.count > 1 ? 16 : 20)
     }
 
@@ -530,11 +536,11 @@ public struct RetroSaveSelectionAlertView: View {
                 RoundedRectangle(cornerRadius: 10)
                     .strokeBorder(
                         LinearGradient(
-                            colors: [.retroPink.opacity(0.6), .retroBlue.opacity(0.4)],
+                            colors: [RetroPauseChrome.chromeBorder, RetroPauseChrome.chromeBorder],
                             startPoint: .leading,
                             endPoint: .trailing
                         ),
-                        lineWidth: 1.5
+                        lineWidth: RetroPauseChrome.menuCellStrokeWidthUnfocused
                     )
             )
         }
@@ -581,7 +587,7 @@ public struct RetroSaveSelectionAlertView: View {
                     .foregroundColor(.white.opacity(0.5))
                 Spacer()
             }
-            .padding(.horizontal, 20)
+            .padding(.horizontal, RetroPauseChrome.chromeInset)
 
             ScrollView {
                 LazyVGrid(columns: gridColumns, spacing: 12) {
@@ -589,7 +595,7 @@ public struct RetroSaveSelectionAlertView: View {
                         saveGridItem(for: save)
                     }
                 }
-                .padding(.horizontal, 20)
+                .padding(.horizontal, RetroPauseChrome.chromeInset)
             }
             .frame(maxHeight: 250)
         }
@@ -754,7 +760,7 @@ public struct RetroSaveSelectionAlertView: View {
             .focused($focusedItemId, equals: Self.cancelFocusID)
             #endif
         }
-        .padding(.horizontal, 20)
+        .padding(.horizontal, RetroPauseChrome.chromeInset)
         .padding(.bottom, 20)
     }
 
@@ -924,35 +930,6 @@ public struct RetroSaveSelectionAlertView: View {
         }
     }
     #endif
-
-    private var alertBackground: some View {
-        ZStack {
-            LinearGradient(
-                gradient: Gradient(colors: [
-                    Color.retroBlack,
-                    Color.retroBlack.opacity(0.95)
-                ]),
-                startPoint: .top,
-                endPoint: .bottom
-            )
-            RetroAlertGridPattern()
-                .opacity(0.2)
-            RetroScanlineOverlay()
-                .opacity(0.05)
-        }
-    }
-
-    private var alertBorder: some View {
-        RoundedRectangle(cornerRadius: 16)
-            .strokeBorder(
-                LinearGradient(
-                    gradient: Gradient(colors: [.retroPink, .retroBlue]),
-                    startPoint: .topLeading,
-                    endPoint: .bottomTrailing
-                ),
-                lineWidth: 2
-            )
-    }
 }
 
 // MARK: - Circular Progress View

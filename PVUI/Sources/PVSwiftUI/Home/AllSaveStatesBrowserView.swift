@@ -138,7 +138,7 @@ public struct AllSaveStatesBrowserView: View {
         contentView
             .navigationTitle("All Save States")
             #if os(iOS)
-            .navigationBarTitleDisplayMode(.large)
+            .navigationBarTitleDisplayMode(.inline)
             #endif
             .toolbar { toolbarItems }
             .task {
@@ -279,7 +279,7 @@ public struct AllSaveStatesBrowserView: View {
                     Text(gameTitle)
                         .font(.headline.weight(.semibold))
                         .foregroundColor(themeManager.currentPalette.gameLibraryText.swiftUIColor)
-                        .lineLimit(1)
+                        .lineLimit(2)
                     if !systemName.isEmpty {
                         Text(systemName)
                             .font(.caption)
@@ -323,23 +323,25 @@ public struct AllSaveStatesBrowserView: View {
                 .focusable()
                 #endif
             }
-            .padding(.horizontal, 16)
+            .padding(.horizontal, LibraryLayout.chromeHorizontalInset)
 
             // Horizontal strip of save state cards
-            ScrollView(.horizontal, showsIndicators: false) {
+            ScrollView(.horizontal, showsIndicators: true) {
                 LazyHStack(spacing: 12) {
                     ForEach(saves) { item in
                         saveCard(for: item)
                     }
                 }
-                .padding(.horizontal, 16)
+                .padding(.horizontal, LibraryLayout.chromeHorizontalInset)
                 .padding(.vertical, 4)
                 #if os(tvOS)
                 .focusSection()
                 #endif
             }
         }
-        .padding(.bottom, 4)
+        .padding(.vertical, LibraryLayout.chromeHorizontalInset)
+        .libraryDockChrome()
+        .padding(.horizontal, LibraryLayout.chromeHorizontalInset)
     }
 
     @ViewBuilder

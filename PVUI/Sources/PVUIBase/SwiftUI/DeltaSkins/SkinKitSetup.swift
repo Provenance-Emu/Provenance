@@ -165,6 +165,11 @@ public enum SkinKitSetup {
         theme.black = .retroBlack
         theme.cyan = .retroCyan
         theme.radiusSM = RetroPauseChrome.radiusSM
+        theme.chromeBorder = RetroPauseChrome.chromeBorder
+        theme.chromeCornerRadius = RetroPauseChrome.chromeCornerRadius
+        theme.chromeInset = RetroPauseChrome.chromeInset
+        theme.controlHeight = RetroPauseChrome.controlHeight
+        theme.selectionStrokeWidth = RetroPauseChrome.menuCellStrokeWidthUnfocused
         theme.menuCellFillOpacityUnfocused = RetroPauseChrome.menuCellFillOpacityUnfocused
         theme.menuCellFillOpacityFocused = RetroPauseChrome.menuCellFillOpacityFocused
         theme.menuCellStrokeOpacityUnfocused = RetroPauseChrome.menuCellStrokeOpacityUnfocused

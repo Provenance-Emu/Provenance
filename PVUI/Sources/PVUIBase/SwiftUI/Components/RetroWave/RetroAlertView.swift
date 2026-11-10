@@ -55,9 +55,6 @@ public struct RetroAlertView<Content: View>: View {
     /// Content builder for buttons
     private let content: Content
 
-    /// Animation state for glow effect (subtle pulse; aligned with `RetroPauseChrome` panel family).
-    @State private var glowOpacity: Double = 0.5
-
     /// Animation state for loading spinner
     @State private var spinnerRotation: Double = 0
 
@@ -154,17 +151,12 @@ public struct RetroAlertView<Content: View>: View {
                         .opacity(0.05)
                 }
             )
-            .clipShape(RoundedRectangle(cornerRadius: RetroPauseChrome.panelCornerRadius))
+            .clipShape(RoundedRectangle(cornerRadius: RetroPauseChrome.chromeCornerRadius))
             .overlay(
-                RoundedRectangle(cornerRadius: RetroPauseChrome.panelCornerRadius)
+                RoundedRectangle(cornerRadius: RetroPauseChrome.chromeCornerRadius)
                     .strokeBorder(alertBorderGradient, lineWidth: RetroPauseChrome.panelStrokeLineWidth)
             )
-            .shadow(color: glowColor.opacity(glowOpacity), radius: 12, x: 0, y: 0)
             .onAppear {
-                withAnimation(.easeInOut(duration: 1.5).repeatForever(autoreverses: true)) {
-                    glowOpacity = 0.28
-                }
-
                 // Animate spinner for loading type
                 if alertType == .loading {
                     withAnimation(.linear(duration: 1.0).repeatForever(autoreverses: false)) {
@@ -270,30 +262,18 @@ public struct RetroAlertView<Content: View>: View {
         }
     }
 
-    /// Standard/loading alerts use the same purple→pink frame as `PauseTileMenuView`; semantic types keep tinted borders.
+    /// Standard alerts share the library hairline; semantic types keep their status colours.
     private var alertBorderGradient: LinearGradient {
         switch alertType {
         case .standard, .loading:
-            return RetroPauseChrome.panelBorderGradient
+            return LinearGradient(colors: [RetroPauseChrome.chromeBorder, RetroPauseChrome.chromeBorder],
+                                  startPoint: .leading, endPoint: .trailing)
         case .success, .error, .warning:
             return LinearGradient(
                 gradient: Gradient(colors: borderColors),
                 startPoint: .topLeading,
                 endPoint: .bottomTrailing
             )
-        }
-    }
-
-    private var glowColor: Color {
-        switch alertType {
-        case .standard, .loading:
-            return .retroPink
-        case .success:
-            return .green
-        case .error:
-            return .red
-        case .warning:
-            return .orange
         }
     }
 
@@ -327,7 +307,7 @@ public struct RetroTextField: View {
                     RoundedRectangle(cornerRadius: 8)
                         .strokeBorder(
                             LinearGradient(
-                                gradient: Gradient(colors: [.retroPink, .retroBlue]),
+                                gradient: Gradient(colors: [RetroPauseChrome.chromeBorder, RetroPauseChrome.chromeBorder]),
                                 startPoint: .leading,
                                 endPoint: .trailing
                             ),
@@ -455,8 +435,8 @@ public struct RetroAlertButton: View {
                 RoundedRectangle(cornerRadius: 8)
                     .strokeBorder(focusedBorderGradient, lineWidth: focusedBorderWidth)
             )
-            .scaleEffect(isHighlighted ? 1.08 : 1.0)
-            .shadow(color: isHighlighted ? focusedGlowColor.opacity(0.9) : shadowColor.opacity(0.4), radius: isHighlighted ? 15 : 5)
+            .scaleEffect(isHighlighted ? 1.03 : 1.0)
+            .shadow(color: isHighlighted ? focusedGlowColor.opacity(0.3) : .clear, radius: 4)
         }
         #if os(tvOS) || os(iOS)
         .focused($isFocused)
@@ -483,7 +463,7 @@ public struct RetroAlertButton: View {
     }
 
     private var focusedBorderWidth: CGFloat {
-        (isExternallyFocused ?? isFocused) ? 3 : 1
+        (isExternallyFocused ?? isFocused) ? RetroPauseChrome.menuCellStrokeWidthFocused : RetroPauseChrome.menuCellStrokeWidthUnfocused
     }
 
     private var focusedGlowColor: Color {
@@ -536,7 +516,7 @@ public struct RetroAlertButton: View {
         switch style {
         case .primary:
             return LinearGradient(
-                gradient: Gradient(colors: [.retroPink, .retroBlue]),
+                gradient: Gradient(colors: [RetroPauseChrome.chromeBorder, RetroPauseChrome.chromeBorder]),
                 startPoint: .leading,
                 endPoint: .trailing
             )
@@ -561,18 +541,6 @@ public struct RetroAlertButton: View {
         }
     }
 
-    private var shadowColor: Color {
-        switch style {
-        case .primary:
-            return .retroPink
-        case .secondary:
-            return .gray
-        case .destructive:
-            return .red
-        case .cancel:
-            return .retroBlue
-        }
-    }
 }
 
 /// Legacy button for backwards compatibility

@@ -426,39 +426,13 @@ public struct RetroSaveStateCard: View {
         self.action = action
     }
 
-    #if os(tvOS)
     private var focusBorderColor: Color {
-        isFocused ? Color.retroPink : Color.retroPink.opacity(0.6)
+        isFocused ? Color.retroPink : RetroPauseChrome.chromeBorder
     }
 
     private var focusBorderWidth: CGFloat {
-        isFocused ? 3 : 1
+        isFocused ? RetroPauseChrome.menuCellStrokeWidthFocused : RetroPauseChrome.menuCellStrokeWidthUnfocused
     }
-
-    private var focusShadowColor: Color {
-        isFocused ? Color.retroPink.opacity(0.8) : .black.opacity(0.4)
-    }
-
-    private var focusShadowRadius: CGFloat {
-        isFocused ? 10 : 6
-    }
-    #else
-    private var focusBorderColor: Color {
-        Color.retroPink.opacity(0.6)
-    }
-
-    private var focusBorderWidth: CGFloat {
-        1
-    }
-
-    private var focusShadowColor: Color {
-        .black.opacity(0.4)
-    }
-
-    private var focusShadowRadius: CGFloat {
-        6
-    }
-    #endif
 
     public var body: some View {
         ZStack(alignment: .bottomLeading) {
@@ -466,23 +440,14 @@ public struct RetroSaveStateCard: View {
             overlayText
         }
         .frame(width: cardSize.width, height: cardSize.height)
-        .background(
-            RoundedRectangle(cornerRadius: 14)
-                .fill(Color.retroBlack.opacity(0.4))
-        )
-        .overlay(
-            RoundedRectangle(cornerRadius: 14)
-                .strokeBorder(
-                    focusBorderColor,
-                    lineWidth: focusBorderWidth
-                )
-        )
-        .shadow(
-            color: focusShadowColor,
-            radius: focusShadowRadius,
-            x: 0,
-            y: 4
-        )
+        .retroChromeSurface()
+        .overlay {
+            if isFocused {
+                RoundedRectangle(cornerRadius: RetroPauseChrome.chromeCornerRadius)
+                    .strokeBorder(focusBorderColor, lineWidth: focusBorderWidth)
+                    .allowsHitTesting(false)
+            }
+        }
         #if os(tvOS)
         .scaleEffect(isFocused ? 1.05 : 1.0)
         .animation(.easeInOut(duration: 0.2), value: isFocused)
@@ -525,7 +490,7 @@ public struct RetroSaveStateCard: View {
         VStack(alignment: .leading, spacing: 4) {
             Text(item.gameTitle)
                 .font(.headline)
-                .lineLimit(1)
+                .lineLimit(2)
             Text(item.date, style: .relative)
                 .font(.caption)
                 .foregroundColor(.white.opacity(0.8))

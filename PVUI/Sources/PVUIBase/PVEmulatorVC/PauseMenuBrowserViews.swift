@@ -193,7 +193,7 @@ struct PauseMenuSaveStateBrowserView: View {
     private var palette: UXThemePalette { themeManager.currentPalette }
 
     var body: some View {
-        NavigationView {
+        NavigationStack {
             Group {
                 if saveStates.isEmpty {
                     VStack(spacing: 16) {
@@ -214,13 +214,12 @@ struct PauseMenuSaveStateBrowserView: View {
                     List {
                         ForEach(saveStates, id: \.id) { state in
                             saveStateRow(state)
-                                .listRowBackground(
-                                    (palette.settingsCellBackground?.swiftUIColor ?? Color(palette.gameLibraryBackground))
-                                        .opacity(0.8)
-                                )
+                                .listRowBackground(Color.clear)
                                 #if !os(tvOS)
                                 .listRowSeparator(.hidden)
                                 #endif
+                                .listRowInsets(EdgeInsets(top: 4, leading: RetroPauseChrome.chromeInset,
+                                                         bottom: 4, trailing: RetroPauseChrome.chromeInset))
                         }
                         .onDelete { indexSet in
                             for index in indexSet {
@@ -232,6 +231,7 @@ struct PauseMenuSaveStateBrowserView: View {
                     #if !os(tvOS)
                     .scrollContentBackground(.hidden)
                     #endif
+                    .scrollIndicatorsFlash(onAppear: true)
                 }
             }
             .background(Color(palette.gameLibraryBackground))
@@ -249,7 +249,7 @@ struct PauseMenuSaveStateBrowserView: View {
 #endif
         }
         .onAppear { reload() }
-        .preferredColorScheme(.dark)
+        .preferredColorScheme(palette.dark ? .dark : .light)
     }
 
     // MARK: - Row
@@ -300,8 +300,11 @@ struct PauseMenuSaveStateBrowserView: View {
                     .foregroundColor(palette.defaultTintColor.swiftUIColor)
             }
             .buttonStyle(.plain)
+            .frame(minWidth: RetroPauseChrome.controlHeight, minHeight: RetroPauseChrome.controlHeight)
+            .accessibilityLabel("Load save state")
         }
-        .padding(.vertical, 4)
+        .padding(RetroPauseChrome.chromeInset)
+        .retroChromeSurface()
     }
 
     // MARK: - Thumbnail
