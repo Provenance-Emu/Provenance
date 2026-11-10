@@ -61,7 +61,4 @@ public final class ThemeManager: ObservableObject {
             UIApplication.shared.refreshAppearance(animated: true)
         }
     }
-
-    @MainActor
-    static weak var statusBarView: UIView?
 }

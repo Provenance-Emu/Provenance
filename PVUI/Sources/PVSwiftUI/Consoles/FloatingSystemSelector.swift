@@ -16,6 +16,9 @@ struct FloatingSystemSelector: View {
     @ObservedObject private var themeManager = ThemeManager.shared
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
+    private static let edgeFade: CGFloat = 12
+    private static let minItemWidth: CGFloat = 48
+
     var body: some View {
         ScrollViewReader { proxy in
             ScrollView(.horizontal, showsIndicators: false) {
@@ -24,7 +27,17 @@ struct FloatingSystemSelector: View {
                         systemButton(item)
                     }
                 }
-                .padding(.horizontal, 5)
+                .padding(.horizontal, Self.edgeFade)
+            }
+            // Items fade out at the ends instead of being cut by the rounded corners.
+            .mask {
+                HStack(spacing: 0) {
+                    LinearGradient(colors: [.clear, .black], startPoint: .leading, endPoint: .trailing)
+                        .frame(width: Self.edgeFade)
+                    Color.black
+                    LinearGradient(colors: [.black, .clear], startPoint: .leading, endPoint: .trailing)
+                        .frame(width: Self.edgeFade)
+                }
             }
             .onChange(of: selection, initial: true) { _, value in
                 if reduceMotion {
@@ -38,14 +51,8 @@ struct FloatingSystemSelector: View {
             }
         }
         .frame(height: LibraryLayout.controlHeight)
-        .background(Color(themeManager.currentPalette.gameLibraryBackground), in: .rect(cornerRadius: 13))
-        .overlay {
-            RoundedRectangle(cornerRadius: 13)
-                .strokeBorder(LibraryLayout.chromeBorder)
-                .allowsHitTesting(false)
-        }
-        .clipShape(.rect(cornerRadius: 13))
-        .padding(.horizontal, 12)
+        .libraryDockChrome()
+        .padding(.horizontal, LibraryLayout.chromeHorizontalInset)
         .accessibilityElement(children: .contain)
         .accessibilityLabel("Systems")
     }
@@ -60,12 +67,16 @@ struct FloatingSystemSelector: View {
                 item.icon.resizable().renderingMode(.template).scaledToFit()
                     .frame(width: 25, height: 18)
                     .foregroundStyle(isSelected ? Color.retroBlue : textColor.opacity(0.65))
+                // Semibold in both states so selecting a system never changes the item's width.
                 Text(item.title)
-                    .font(.caption2.weight(isSelected ? .semibold : .medium))
+                    .font(.caption2.weight(.semibold))
                     .lineLimit(1)
+                    .fixedSize()
                     .foregroundStyle(textColor.opacity(isSelected ? 1 : 0.82))
             }
-            .frame(width: 51, height: 34)
+            .padding(.horizontal, 7)
+            .frame(minWidth: Self.minItemWidth)
+            .frame(height: 34)
             .background {
                 if isSelected {
                     RoundedRectangle(cornerRadius: 8)

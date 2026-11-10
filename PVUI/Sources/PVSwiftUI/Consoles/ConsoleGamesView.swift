@@ -77,6 +77,7 @@ struct ConsoleGamesView: SwiftUI.View {
 
     @State private var biosOverlayHeight: CGFloat = 0
     @Environment(\.libraryBottomOverlayClearance) private var floatingSelectorClearance
+    @Environment(\.libraryBottomSafeAreaInset) private var bottomSafeAreaInset
 
     @StateObject internal var gamesViewModel: ConsoleGamesViewModel
     @ObservedObject var viewModel: PVRootViewModel
@@ -284,6 +285,12 @@ struct ConsoleGamesView: SwiftUI.View {
         LibraryLayout.usesCompactPhoneChrome(verticalSizeClass)
     }
 
+    /// Lifts the BIOS tab onto the system selector. The page ends at the bottom safe area, which
+    /// the selector clearance also counts, so that inset comes back out.
+    private var biosDockOffset: CGFloat {
+        max(0, floatingSelectorClearance - bottomSafeAreaInset - LibraryLayout.systemSelectorContentGap)
+    }
+
     private var floatingControlsClearance: CGFloat {
         LibraryLayout.pageIndexClearance + biosOverlayHeight + floatingSelectorClearance
     }
@@ -337,9 +344,10 @@ struct ConsoleGamesView: SwiftUI.View {
     @ViewBuilder
     var biosesView: some View {
         if gamesViewModel.hasBioses {
+            // Same inset and gap as the system selector below, so the two read as one dock.
             BiosesView(console: console)
-                .padding(.horizontal, 8)
-                .padding(.bottom, 8)
+                .padding(.horizontal, LibraryLayout.chromeHorizontalInset)
+                .padding(.bottom, LibraryLayout.systemSelectorBottomGap)
         } else {
             Color.clear.frame(height: 0).allowsHitTesting(false)
         }
@@ -432,7 +440,7 @@ struct ConsoleGamesView: SwiftUI.View {
                             biosesView
                                 .desktopLibraryContentColumn()
                                 .onGeometryChange(for: CGFloat.self) { $0.size.height } action: { biosOverlayHeight = $0 }
-                                .padding(.bottom, floatingSelectorClearance)
+                                .padding(.bottom, biosDockOffset)
                         }
                 }
                 // Normalize-Titles preview sheet
@@ -1501,7 +1509,7 @@ extension ConsoleGamesView {
             toggleSortAction: { viewModel.sortGamesAscending.toggle() },
             toggleViewTypeAction: { viewModel.viewGamesAsGrid.toggle() }
         )
-        .padding(.horizontal, 12)
+        .padding(.horizontal, LibraryLayout.chromeHorizontalInset)
         .allowsHitTesting(true)
     }
 

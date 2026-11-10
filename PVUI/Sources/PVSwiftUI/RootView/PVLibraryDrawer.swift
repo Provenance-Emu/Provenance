@@ -68,17 +68,13 @@ struct PVLibraryDrawer<Content: View, Menu: View>: View {
 
     private func drawerOverlay(width: CGFloat, sideInset: CGFloat) -> some View {
         ZStack(alignment: .leading) {
-            Button {
-                isPresented = false
-            } label: {
-                Color.black.opacity((reduceTransparency ? 0.65 : 0.38) * revealProgress(width: width))
-                    .ignoresSafeArea()
-                    .contentShape(Rectangle())
-            }
-            .buttonStyle(.plain)
-            .accessibilityLabel("Close Library Menu")
-            .accessibilityHidden(true)
-            .allowsHitTesting(isPresented)
+            // A plain colour rather than a Button label, so the dimming also covers the status bar.
+            Color.black.opacity((reduceTransparency ? 0.65 : 0.38) * revealProgress(width: width))
+                .ignoresSafeArea()
+                .contentShape(Rectangle())
+                .onTapGesture { isPresented = false }
+                .accessibilityHidden(true)
+                .allowsHitTesting(isPresented)
 
             menu
                 #if !os(tvOS)

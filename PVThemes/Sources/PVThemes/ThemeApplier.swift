@@ -63,7 +63,6 @@ public extension ThemeManager {
         configureSegmentedControl(palette)
         configurePageControl(palette)
         configureSlider(palette)
-        configureStatusBar(palette)
         configureSwitches(palette)
         configureTabBar(palette)
         configureTableViews(palette)
@@ -73,49 +72,6 @@ public extension ThemeManager {
         configureUIWindow(palette)
 
         DLOG("Palette \(palette.name) application completed.")
-    }
-
-    /// Status Bar
-    /// - Parameter color: Color to set the status bar
-    @MainActor
-    private class func styleStatusBar(withColor color: UIColor) {
-        #if !os(tvOS) && !os(macOS)
-        guard let keyWindow = UIApplication.shared.connectedScenes.compactMap({ $0 as? UIWindowScene })
-            .flatMap(\.windows).first(where: \.isKeyWindow) else { return }
-        let statusBar: UIView
-        if let existing = statusBarView, existing.superview === keyWindow {
-            statusBar = existing
-        } else {
-            statusBarView?.removeFromSuperview()
-            statusBar = UIView()
-            statusBar.translatesAutoresizingMaskIntoConstraints = false
-            statusBar.isUserInteractionEnabled = false
-            statusBar.accessibilityElementsHidden = true
-            keyWindow.addSubview(statusBar)
-            // The safe-area edge follows rotation and status-bar visibility automatically.
-            NSLayoutConstraint.activate([
-                statusBar.leadingAnchor.constraint(equalTo: keyWindow.leadingAnchor),
-                statusBar.trailingAnchor.constraint(equalTo: keyWindow.trailingAnchor),
-                statusBar.topAnchor.constraint(equalTo: keyWindow.topAnchor),
-                statusBar.bottomAnchor.constraint(equalTo: keyWindow.safeAreaLayoutGuide.topAnchor)
-            ])
-            statusBarView = statusBar
-        }
-        statusBar.backgroundColor = color
-        #endif
-    }
-
-    /// Status Bar
-    /// - Parameter theme: current iOSTheme
-    @MainActor
-    private class func configureStatusBar(_ palette: any UXThemePalette) {
-        #if os(iOS)
-        // Configure status bar
-        if let statusBarColor = palette.statusBarColor {
-            styleStatusBar(withColor: statusBarColor)
-            DLOG("Status bar color: \(statusBarColor.debugDescription)")
-        }
-        #endif
     }
 
     /// UINavigation Bar

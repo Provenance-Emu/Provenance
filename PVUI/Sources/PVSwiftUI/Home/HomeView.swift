@@ -242,7 +242,6 @@ struct HomeView: SwiftUI.View {
                         LazyVStack {
                             if usesCompactChrome {
                                 displayOptionsView()
-                                .padding(.horizontal, 10)
                             }
                             if bootupStateManager.isBootupCompleted && isLibraryCompletelyEmpty {
                                 cloudSyncUpsell()
@@ -772,11 +771,9 @@ struct HomeView: SwiftUI.View {
             },
             toggleViewTypeAction: { viewModel.viewGamesAsGrid.toggle() }
         )
-        .padding(.vertical, 0)
-        .padding(.horizontal, 0)
-
         .clipShape(RoundedRectangle(cornerRadius: RetroPauseChrome.panelCornerRadius))
-        .padding(.horizontal, 24)
+        // On a phone the bar lines up with the console pages' bar and the system selector.
+        .padding(.horizontal, usesCompactChrome ? LibraryLayout.chromeHorizontalInset : 24)
         .padding(.vertical, usesCompactChrome ? 0 : 8)
     }
 

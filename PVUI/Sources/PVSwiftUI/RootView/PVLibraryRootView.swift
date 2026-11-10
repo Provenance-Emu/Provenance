@@ -206,7 +206,7 @@ public struct PVLibraryRootView: View {
                     .clipped()
                 }
             }
-            .background(RetroTheme.RetroBackgroundView().environmentObject(themeManager))
+            .background(RetroTheme.RetroBackgroundView().environmentObject(themeManager).ignoresSafeArea())
         } menu: {
             SideMenuView(gameLibrary: navigation.gameLibrary, viewModel: navigation.viewModel, delegate: navigation, rootDelegate: navigation)
         }
@@ -383,6 +383,8 @@ private struct LibrarySidebarSheetPresenter: ViewModifier {
 private enum LibraryChrome {
     static let cornerRadius: CGFloat = 16
     static let controlSize: CGFloat = 44
+    static let headerTopOpacity: Double = 0.78
+    static let headerMidOpacity: Double = 0.55
 }
 
 private struct LibraryHeader: View {
@@ -449,8 +451,13 @@ private struct LibraryHeader: View {
         .background {
             if LibraryLayout.usesCompactPhoneChrome(verticalSizeClass) {
                 let surface = Color(themeManager.currentPalette.gameLibraryBackground)
+                // Translucent all the way up: the library backdrop continues behind the status bar.
                 LinearGradient(
-                    stops: [.init(color: surface, location: 0), .init(color: surface, location: 0.65), .init(color: .clear, location: 1)],
+                    stops: [
+                        .init(color: surface.opacity(LibraryChrome.headerTopOpacity), location: 0),
+                        .init(color: surface.opacity(LibraryChrome.headerMidOpacity), location: 0.6),
+                        .init(color: .clear, location: 1)
+                    ],
                     startPoint: .top,
                     endPoint: .bottom
                 )

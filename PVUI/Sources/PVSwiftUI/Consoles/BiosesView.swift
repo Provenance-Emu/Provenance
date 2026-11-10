@@ -33,6 +33,7 @@ struct BiosesView: View {
         static let tabHeight: CGFloat = 30
         static let dragThreshold: CGFloat = 50
 #if os(iOS)
+        static let expandedFillOpacity: Double = 0.82
         /// Height of the "BIOS Guide" link row appended below the BIOS list.
         /// Must be included in `calculateContentHeight()` or the container clips it.
         static let guideRowHeight: CGFloat = 36
@@ -66,6 +67,14 @@ struct BiosesView: View {
                 .frame(height: isExpanded ? calculateContentHeight() : 0)
                 .animation(.spring(response: 0.4, dampingFraction: 0.7), value: isExpanded)
             }
+            #if os(iOS)
+            .background {
+                // Opaque enough to read the rows once open; the closed tab stays see-through.
+                Color(themeManager.currentPalette.gameLibraryBackground)
+                    .opacity(isExpanded ? Constants.expandedFillOpacity : 0)
+            }
+            .libraryDockChrome()
+            #else
             .background(
                 ZStack {
                     Color(themeManager.currentPalette.dark
@@ -81,6 +90,7 @@ struct BiosesView: View {
                     .strokeBorder(RetroPauseChrome.panelBorderGradient, lineWidth: RetroPauseChrome.panelStrokeLineWidth)
             )
             .clipShape(RoundedRectangle(cornerRadius: RetroPauseChrome.panelCornerRadius))
+            #endif
             .offset(y: dragOffset)
             .animation(.spring(response: 0.3, dampingFraction: 0.7), value: dragOffset)
             #if !os(tvOS)
@@ -119,40 +129,59 @@ struct BiosesView: View {
         }
     }
 
+    private var tabGradient: LinearGradient {
+        LinearGradient(
+            gradient: Gradient(colors: [
+                themeManager.currentPalette.defaultTintColor.swiftUIColor ?? RetroTheme.retroPink,
+                RetroTheme.retroPurple,
+                RetroTheme.retroBlue
+            ]),
+            startPoint: .leading,
+            endPoint: .trailing
+        )
+    }
+
+    private var tabGlow: Color {
+        (themeManager.currentPalette.defaultTintColor.swiftUIColor ?? RetroTheme.retroPink).opacity(0.7)
+    }
+
+    private var tabTitle: some View {
+        Text("BIOSes (\(console.bioses.count))")
+            .font(.system(size: 12, weight: .bold))
+            .foregroundStyle(tabGradient)
+    }
+
+    #if os(iOS)
+    /// One slim line, so the closed tab covers as little of the games as possible.
+    private var tabIndicator: some View {
+        HStack(spacing: 6) {
+            Image(systemName: "memorychip")
+                .font(.system(size: 12, weight: .bold))
+                .foregroundStyle(tabGradient)
+                .shadow(color: tabGlow, radius: 2)
+            tabTitle
+            Image(systemName: "chevron.up")
+                .font(.system(size: 10, weight: .bold))
+                .foregroundStyle(tabGradient)
+                .rotationEffect(.degrees(isExpanded ? 180 : 0))
+        }
+        .frame(maxWidth: .infinity)
+        .frame(height: Constants.tabHeight)
+        .contentShape(Rectangle())
+        .accessibilityElement(children: .combine)
+        .accessibilityAddTraits(.isButton)
+        .accessibilityValue(isExpanded ? "Expanded" : "Collapsed")
+    }
+    #else
     private var tabIndicator: some View {
         HStack {
             Spacer()
             VStack(spacing: 4) {
-                // Retrowave-styled icon
                 Image(systemName: "line.3.horizontal")
                     .font(.system(size: 16, weight: .bold))
-                    .foregroundStyle(
-                        LinearGradient(
-                            gradient: Gradient(colors: [
-                                themeManager.currentPalette.defaultTintColor.swiftUIColor ?? RetroTheme.retroPink,
-                                RetroTheme.retroPurple,
-                                RetroTheme.retroBlue
-                            ]),
-                            startPoint: .leading,
-                            endPoint: .trailing
-                        )
-                    )
-                    .shadow(color: (themeManager.currentPalette.defaultTintColor.swiftUIColor ?? RetroTheme.retroPink).opacity(0.7), radius: 2)
-
-                // Retrowave-styled text
-                Text("BIOSes (\(console.bioses.count))")
-                    .font(.system(size: 12, weight: .bold))
-                    .foregroundStyle(
-                        LinearGradient(
-                            gradient: Gradient(colors: [
-                                themeManager.currentPalette.defaultTintColor.swiftUIColor ?? RetroTheme.retroPink,
-                                RetroTheme.retroPurple,
-                                RetroTheme.retroBlue
-                            ]),
-                            startPoint: .leading,
-                            endPoint: .trailing
-                        )
-                    )
+                    .foregroundStyle(tabGradient)
+                    .shadow(color: tabGlow, radius: 2)
+                tabTitle
             }
             .frame(height: Constants.tabHeight)
             .padding(.vertical, 6)
@@ -161,6 +190,7 @@ struct BiosesView: View {
         // Add subtle pulse animation
         .modifier(PulseAnimation(isExpanded: isExpanded))
     }
+    #endif
 
     private var biosContent: some View {
         VStack(spacing: 0) {

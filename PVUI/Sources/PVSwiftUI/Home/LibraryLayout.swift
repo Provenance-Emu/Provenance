@@ -17,9 +17,15 @@ enum LibraryLayout {
     static let pageIndexClearance: CGFloat = 16
     static let controlHeight: CGFloat = 44
     static let systemSelectorBottomGap: CGFloat = 4
+    /// Space kept between the last scrollable row and the selector.
+    static let systemSelectorContentGap: CGFloat = 6
     /// Room for the selector and a small gap below the last scrollable row.
-    static let systemSelectorClearance = controlHeight + systemSelectorBottomGap + 6
+    static let systemSelectorClearance = controlHeight + systemSelectorBottomGap + systemSelectorContentGap
     static let chromeBorder = Color.retroBlue.opacity(0.28)
+    /// Corner radius shared by the controls docked at the bottom of a library page.
+    static let dockCornerRadius: CGFloat = 13
+    /// Horizontal inset shared by the bars above and below a library page's games.
+    static let chromeHorizontalInset: CGFloat = 12
 
     @MainActor
     static func usesCompactPhoneChrome(_ verticalSizeClass: UserInterfaceSizeClass?) -> Bool {
@@ -32,6 +38,16 @@ enum LibraryLayout {
 
     static func gameCountText(_ count: Int) -> String {
         count == 1 ? String(localized: "1 game") : String(localized: "\(count) games")
+    }
+}
+
+extension View {
+    /// Translucent surface for controls docked over the games: covers stay visible behind it.
+    func libraryDockChrome() -> some View {
+        let shape = RoundedRectangle(cornerRadius: LibraryLayout.dockCornerRadius)
+        return background(.ultraThinMaterial, in: shape)
+            .overlay { shape.strokeBorder(LibraryLayout.chromeBorder).allowsHitTesting(false) }
+            .clipShape(shape)
     }
 }
 

@@ -390,7 +390,8 @@ SideMenuView: SwiftUI.View {
             }
             .padding(.horizontal, 16)
             .padding(.vertical, 8)
-            .background(themeManager.currentPalette.menuHeaderBackground.swiftUIColor)
+            // The header colour runs up behind the status bar, so the clock sits on the header.
+            .background(themeManager.currentPalette.menuHeaderBackground.swiftUIColor.ignoresSafeArea(.container, edges: .top))
 
             LibraryMenuSearchField(
                 text: $searchText,

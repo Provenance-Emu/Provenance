@@ -417,6 +417,7 @@ struct GamesDisplayOptionsView: SwiftUI.View {
 
             // Consolidated log/status menu
             logStatusMenu
+                .labelStyle(.iconOnly)
         }
         .allowsHitTesting(true)
     }
@@ -463,14 +464,19 @@ struct GamesDisplayOptionsView: SwiftUI.View {
                 }
             }
             label: {
-                ZStack {
-                    Color.clear.frame(width: iconSize, height: iconSize)
-                    Image(systemName: "ellipsis.circle")
-                        .foregroundColor(iconTint)
-                        .font(iconFont)
-                        .shadow(color: iconTint.opacity(0.4), radius: 2)
+                // Titled, because a submenu row shows the title; the toolbar hides it with `.iconOnly`.
+                Label {
+                    Text("More")
+                } icon: {
+                    ZStack {
+                        Color.clear.frame(width: iconSize, height: iconSize)
+                        Image(systemName: "ellipsis.circle")
+                            .foregroundColor(iconTint)
+                            .font(iconFont)
+                            .shadow(color: iconTint.opacity(0.4), radius: 2)
+                    }
+                    .contentShape(Rectangle())
                 }
-                .contentShape(Rectangle())
             }
         } else {
             // TODO: Fallback version
