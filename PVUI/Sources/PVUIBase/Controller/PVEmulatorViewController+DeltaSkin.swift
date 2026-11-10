@@ -245,6 +245,9 @@ extension PVEmulatorViewController {
         center.removeObserver(self, name: .overlayEditingDidChange, object: nil)
         center.addObserver(self, selector: #selector(handleOverlayEditing(_:)),
                            name: .overlayEditingDidChange, object: nil)
+        center.removeObserver(self, name: .overlayControlFramesDidChange, object: nil)
+        center.addObserver(self, selector: #selector(handleOverlayControlFrames(_:)),
+                           name: .overlayControlFramesDidChange, object: nil)
         center.removeObserver(self, name: .controllerLayoutVariantDidChange, object: nil)
         center.addObserver(self, selector: #selector(handleControllerLayoutVariantChange(_:)),
                            name: .controllerLayoutVariantDidChange, object: nil)
@@ -356,6 +359,19 @@ extension PVEmulatorViewController {
             return
         }
         overlayScreenFramesDidChange(frames)
+    }
+
+    /// The overlay's controls moved (rotation, layout editor, pad change): keep the floating
+    /// menu button clear of them.
+    @objc private func handleOverlayControlFrames(_ notification: Notification) {
+        let frames = OverlayNotificationPayload.frames(from: notification.userInfo)
+        DispatchQueue.main.async { [weak self] in
+            guard let self, self.overlayControlFrames != frames else { return }
+            self.overlayControlFrames = frames
+            #if os(iOS)
+            self.layoutMenuButton()
+            #endif
+        }
     }
 
     /// A layout editor (overlay or DeltaSkin) pauses the game while it is open and resumes it

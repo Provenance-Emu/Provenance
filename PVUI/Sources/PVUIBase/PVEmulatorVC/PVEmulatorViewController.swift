@@ -725,12 +725,20 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, Emulato
     }
     #endif
 
+    private static let menuButtonDiscAlpha: CGFloat = 0.55
+    private static let menuButtonRimAlpha: CGFloat = 0.6
+
     private func initMenuButton() {
         let alpha = CGFloat(Defaults[.controllerOpacity])
         menuButton = MenuButton(type: .custom)
         menuButton?.autoresizingMask = [.flexibleLeftMargin, .flexibleRightMargin, .flexibleBottomMargin]
-        menuButton?.setImage(UIImage(named: "button-menu", in: Bundle.module, with: nil), for: .normal)
-        menuButton?.setImage(UIImage(named: "button-menu-pressed", in: Bundle.module, with: nil), for: .highlighted)
+        // White glyphs baked in: `ThemeApplier` sets `UIView.appearance().tintColor`, which
+        // replaces a tint set here once the button joins the window.
+        let glyph = { (name: String) in
+            UIImage(named: name, in: Bundle.module, with: nil)?.withTintColor(.white, renderingMode: .alwaysOriginal)
+        }
+        menuButton?.setImage(glyph("button-menu"), for: .normal)
+        menuButton?.setImage(glyph("button-menu-pressed"), for: .highlighted)
         // Commenting out title label for now (menu has changed to graphic only)
         // [self.menuButton setTitle:@"Menu" forState:UIControlStateNormal];
         // menuButton?.titleLabel?.font = UIFont.systemFont(ofSize: 12)
@@ -741,7 +749,6 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, Emulato
         menuButton?.layer.shadowOpacity = 0.75
         // A white glyph on a dark disc with a light rim reads on black bars and bright game
         // pictures alike; the theme tint (dark blue in the default theme) vanished on black.
-        menuButton?.tintColor = .white
         menuButton?.backgroundColor = UIColor.black.withAlphaComponent(Self.menuButtonDiscAlpha)
         menuButton?.layer.cornerRadius = MenuButtonPlacement.size.width / 2
         menuButton?.layer.borderWidth = 1

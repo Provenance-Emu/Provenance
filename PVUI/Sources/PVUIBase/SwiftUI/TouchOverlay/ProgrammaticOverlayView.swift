@@ -97,8 +97,10 @@ struct ProgrammaticOverlayView: View {
                 viewport.attach(to: coreInstance)
                 Self.log(layout, on: canvas, reason: "appear")
                 publish(layout.screenFrames)
+                Self.postControlFrames(Self.controlFrames(of: layout))
             }
             .onChange(of: layout.screenFrames) { _, frames in publish(frames) }
+            .onChange(of: Self.controlFrames(of: layout)) { _, frames in Self.postControlFrames(frames) }
             // The editor edits one orientation's layout against a fixed canvas; on rotation it
             // ends (edits stay saved) and the player re-enters it in the new orientation.
             .onChange(of: canvas.size) { _, _ in
@@ -139,6 +141,7 @@ struct ProgrammaticOverlayView: View {
             }
             viewport.detach(from: coreInstance)
             onScreenFrames([])
+            Self.postControlFrames([])
         }
     }
 
@@ -197,6 +200,19 @@ struct ProgrammaticOverlayView: View {
         guard let editController else { return }
         editController.done()
         self.editController = nil
+    }
+
+    /// Every drawn control except touch surfaces, which sit over the game picture like the screen.
+    static func controlFrames(of layout: OverlayLayout) -> [CGRect] {
+        layout.groups.flatMap(\.controls).compactMap { resolved in
+            if case .touchSurface = resolved.control.kind { return nil }
+            return resolved.frame
+        }
+    }
+
+    private static func postControlFrames(_ frames: [CGRect]) {
+        NotificationCenter.default.post(name: .overlayControlFramesDidChange, object: nil,
+                                        userInfo: OverlayNotificationPayload.userInfo(frames: frames))
     }
 
     /// The editor pauses the core while it is open (the VC owns the pause).

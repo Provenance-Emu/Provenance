@@ -21,6 +21,11 @@ public extension Notification.Name {
     /// non-empty payload therefore also means "the overlay is mounted".
     static let overlayScreenFramesDidChange = Notification.Name("PVOverlayScreenFramesDidChange")
 
+    /// The overlay's control frames changed, in the same `frames` payload as
+    /// `.overlayScreenFramesDidChange` (touch surfaces left out); none when the overlay goes away.
+    /// The view controller keeps the floating menu button clear of them.
+    static let overlayControlFramesDidChange = Notification.Name("PVOverlayControlFramesDidChange")
+
     /// A layout editor (overlay or DeltaSkin) opened or closed (see
     /// `OverlayNotificationPayload.editing(from:)`). The view controller pauses the core meanwhile.
     static let overlayEditingDidChange = Notification.Name("PVOverlayEditingDidChange")
