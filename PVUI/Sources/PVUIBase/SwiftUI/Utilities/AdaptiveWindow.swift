@@ -56,18 +56,14 @@ public enum AdaptiveWindowShape: Equatable, Sendable {
 }
 
 #if canImport(UIKit)
-public extension AdaptiveWindowShape {
-    /// The shape of an unfolded phone's window, and `nil` for every other window.
-    ///
-    /// Code that follows `UIDevice.current.orientation` keeps doing so wherever this is
-    /// `nil`, so no existing device changes behavior; an unfolded phone follows its window.
+public extension AdaptiveWindowClass {
+    /// The class of a window with these traits, for UIKit code that has a trait collection.
     @MainActor
-    static func ofExpandedPhone(traits: UITraitCollection, size: CGSize) -> AdaptiveWindowShape? {
-        let windowClass = AdaptiveWindowClass.resolve(
+    static func of(_ traits: UITraitCollection) -> AdaptiveWindowClass {
+        resolve(
             isPhoneIdiom: traits.userInterfaceIdiom == .phone,
             horizontal: sizeClass(traits.horizontalSizeClass),
             vertical: sizeClass(traits.verticalSizeClass))
-        return windowClass == .expandedPhone ? resolve(size) : nil
     }
 
     private static func sizeClass(_ sizeClass: UIUserInterfaceSizeClass) -> UserInterfaceSizeClass? {
@@ -76,6 +72,17 @@ public extension AdaptiveWindowShape {
         case .regular: .regular
         default: nil
         }
+    }
+}
+
+public extension AdaptiveWindowShape {
+    /// The shape of an unfolded phone's window, and `nil` for every other window.
+    ///
+    /// Code that follows `UIDevice.current.orientation` keeps doing so wherever this is
+    /// `nil`, so no existing device changes behavior; an unfolded phone follows its window.
+    @MainActor
+    static func ofExpandedPhone(traits: UITraitCollection, size: CGSize) -> AdaptiveWindowShape? {
+        AdaptiveWindowClass.of(traits) == .expandedPhone ? resolve(size) : nil
     }
 }
 #endif

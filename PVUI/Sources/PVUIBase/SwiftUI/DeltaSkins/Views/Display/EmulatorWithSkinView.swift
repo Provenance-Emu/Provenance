@@ -281,8 +281,13 @@ struct EmulatorWithSkinView: View {
             }
             #if os(iOS)
             .reportsAdaptiveWindow()
-            .onChange(of: AdaptiveWindow.shared.expandedPhoneShape, initial: true) { _, shape in
-                followExpandedPhoneShape(shape)
+            .onChange(of: AdaptiveWindow.shared.expandedPhoneShape, initial: true) { previous, shape in
+                followExpandedPhoneShape(shape, previous: previous)
+            }
+            // Folding changes which skin devices fit (see `SkinDevicePreference`), so pick again:
+            // a skin chosen for its iPad layout may have no iPhone one.
+            .onChange(of: AdaptiveWindow.shared.windowClass) { _, _ in
+                Task { @MainActor in loadSkinSafely() }
             }
             #endif
             .onDisappear {
@@ -603,8 +608,12 @@ struct EmulatorWithSkinView: View {
 
     /// Follows the window's shape on an unfolded phone, which goes from portrait-shaped to
     /// landscape-shaped (and back) by folding, with no device rotation to announce it.
-    private func followExpandedPhoneShape(_ shape: AdaptiveWindowShape?) {
-        guard let shape else { return }
+    /// On folding, the device's own orientation applies again.
+    private func followExpandedPhoneShape(_ shape: AdaptiveWindowShape?, previous: AdaptiveWindowShape?) {
+        guard let shape else {
+            if previous != nil { applyOrientation(UIDevice.current.orientation) }
+            return
+        }
         applyOrientation(shape == .landscape ? .landscapeLeft : .portrait)
     }
 #endif
@@ -622,14 +631,15 @@ struct EmulatorWithSkinView: View {
         #endif
 
         // Determine device type
-        let deviceType: DeltaSkinDevice
-        if UIDevice.current.userInterfaceIdiom == .pad {
-            deviceType = .ipad
-        } else if UIDevice.current.userInterfaceIdiom == .tv {
-            deviceType = .ipad // iPad landscape skins work best at TV scale; no real skins use "tv"
-        } else {
-            deviceType = .iphone
-        }
+        #if os(tvOS)
+        let deviceType: DeltaSkinDevice = .ipad // iPad landscape skins work best at TV scale; no real skins use "tv"
+        #else
+        // Must match `PVEmulatorViewController.skinRenderTraits()`, which picks the same way.
+        let deviceType = SkinDevicePreference.device(
+            for: skinLoader.selectedSkin,
+            orientation: isLandscape ? .landscape : .portrait,
+            among: SkinDevicePreference.currentCandidates)
+        #endif
 
         // Determine display type
         let displayType: DeltaSkinDisplayType
@@ -834,10 +844,10 @@ extension EmulatorWithSkinView {
         } else {
             UIDevice.current.orientation.isLandscape ? .landscape : .portrait
         }
-        let currentDevice: DeltaSkinDevice = UIDevice.current.userInterfaceIdiom == .pad ? .ipad : .iphone
+        let currentDevices = SkinDevicePreference.currentCandidates
         #else
         let currentOrientation: SkinOrientation = .landscape
-        let currentDevice: DeltaSkinDevice = .ipad
+        let currentDevices: [DeltaSkinDevice] = [.ipad]
         #endif
 
         let preselected = usePreselected ? preselectedSkinIdentifier : nil
@@ -902,20 +912,7 @@ extension EmulatorWithSkinView {
             var foundSkin: (any DeltaSkinProtocol)?
 
             func skinSupportsCurrentDevice(_ skin: DeltaSkinProtocol) -> Bool {
-                let device = currentDevice
-                let displayTypes: [DeltaSkinDisplayType] = [.standard, .edgeToEdge]
-                let orientations: [SkinOrientation] = [.portrait, .landscape]
-                for orientation in orientations {
-                    for display in displayTypes {
-                        let traits = DeltaSkinTraits(
-                            device: device,
-                            displayType: display,
-                            orientation: orientation.deltaSkinOrientation
-                        )
-                        if skin.supports(traits) { return true }
-                    }
-                }
-                return false
+                SkinDevicePreference.supportsAny(skin, among: currentDevices)
             }
 
             if let overrideId = preselected {

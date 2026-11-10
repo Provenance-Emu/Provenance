@@ -2169,13 +2169,11 @@ struct RetroMenuView: View {
             .task {
                 // Load preview image asynchronously with current device type
                 if previewImage == nil {
-                    let device: DeltaSkinDevice = {
-                        #if os(tvOS)
-                        return .tv
-                        #else
-                        return UIDevice.current.userInterfaceIdiom == .pad ? .ipad : .iphone
-                        #endif
-                    }()
+                    #if os(tvOS)
+                    let device: DeltaSkinDevice = .tv
+                    #else
+                    let device = SkinDevicePreference.device(for: skin, among: SkinDevicePreference.currentCandidates)
+                    #endif
                     previewImage = await DeltaSkinManager.shared.previewImage(for: skin, device: device)
                 }
             }
@@ -2653,50 +2651,24 @@ struct RetroMenuView: View {
         }
     }
 
-    /// Get the current device type
-    private var currentDevice: DeltaSkinDevice {
+    /// The skin devices this window can draw, best first (see `SkinDevicePreference`).
+    private var currentSkinDevices: [DeltaSkinDevice] {
         #if os(tvOS)
-        return .tv
+        return [.tv]
         #else
-        return UIDevice.current.userInterfaceIdiom == .pad ? .ipad : .iphone
+        return SkinDevicePreference.currentCandidates
         #endif
     }
 
     /// Check if a skin supports the current device (iPad on iPad, iPhone on iPhone)
     /// This is stricter than skinSupportsOrientation - it only checks the current device, no fallback
     private func skinSupportsCurrentDevice(_ skin: DeltaSkinProtocol) -> Bool {
-        let device = currentDevice
-        let displayTypes: [DeltaSkinDisplayType] = [.standard, .edgeToEdge]
-        let orientations: [SkinOrientation] = [.portrait, .landscape]
-
-        // Check if skin supports at least one orientation for the current device
-        for orientation in orientations {
-            for display in displayTypes {
-                let traits = DeltaSkinTraits(
-                    device: device,
-                    displayType: display,
-                    orientation: orientation.deltaSkinOrientation
-                )
-                if skin.supports(traits) { return true }
-            }
-        }
-        return false
+        SkinDevicePreference.supportsAny(skin, among: currentSkinDevices)
     }
 
     /// Check if a skin supports a given orientation for the current device
     private func skinSupportsOrientation(_ skin: DeltaSkinProtocol, orientation: SkinOrientation) -> Bool {
-        let device = currentDevice
-        // Try multiple display types and devices to robustly detect support
-        let displayTypes: [DeltaSkinDisplayType] = [.standard, .edgeToEdge]
-        for display in displayTypes {
-            let traits = DeltaSkinTraits(
-                device: device,
-                displayType: display,
-                orientation: orientation.deltaSkinOrientation
-            )
-            if skin.supports(traits) { return true }
-        }
-        return false
+        SkinDevicePreference.supportsAny(skin, among: currentSkinDevices, orientations: [orientation.deltaSkinOrientation])
     }
 
     private var retroSkinPickerSkinsForOrientation: [DeltaSkinProtocol] {

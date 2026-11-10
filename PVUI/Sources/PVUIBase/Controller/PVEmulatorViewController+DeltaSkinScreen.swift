@@ -55,26 +55,16 @@ extension PVEmulatorViewController: PVViewportLayoutDelegate {
 
     /// Check if skin supports current device
     private func skinSupportsCurrentDevice(_ skin: DeltaSkinProtocol) -> Bool {
-        #if os(tvOS)
-        let device: DeltaSkinDevice = .tv
-        #else
-        let device: DeltaSkinDevice = UIDevice.current.userInterfaceIdiom == .pad ? .ipad : .iphone
-        #endif
-        let displayTypes: [DeltaSkinDisplayType] = [.standard, .edgeToEdge]
-        let orientations: [SkinOrientation] = [.portrait, .landscape]
+        SkinDevicePreference.supportsAny(skin, among: skinDeviceCandidates)
+    }
 
-        // Check if skin supports at least one orientation for the current device
-        for orientation in orientations {
-            for display in displayTypes {
-                let traits = DeltaSkinTraits(
-                    device: device,
-                    displayType: display,
-                    orientation: orientation.deltaSkinOrientation
-                )
-                if skin.supports(traits) { return true }
-            }
-        }
-        return false
+    /// The skin devices this window can draw, best first (see `SkinDevicePreference`).
+    internal var skinDeviceCandidates: [DeltaSkinDevice] {
+        #if os(tvOS)
+        [.tv]
+        #else
+        SkinDevicePreference.candidates(for: traitCollection)
+        #endif
     }
 
     /// Handle skin loaded notification
@@ -472,12 +462,8 @@ extension PVEmulatorViewController: PVViewportLayoutDelegate {
     /// Orientation is derived from the settled view bounds rather than
     /// `UIDevice.current.orientation` so it can't report a transient/face-up value.
     internal func skinRenderTraits() -> DeltaSkinTraits {
-        #if os(tvOS)
-        let device: DeltaSkinDevice = .tv
-        #else
-        let device: DeltaSkinDevice = UIDevice.current.userInterfaceIdiom == .pad ? .ipad : .iphone
-        #endif
         let orientation: DeltaSkinOrientation = view.bounds.width > view.bounds.height ? .landscape : .portrait
+        let device = SkinDevicePreference.device(for: currentSkin, orientation: orientation, among: skinDeviceCandidates)
         // A non-zero bottom safe-area inset means a home-indicator device, which is what
         // the renderer keys `edgeToEdge` off. Prefer the window's inset (what the renderer
         // reads) and fall back to our own for detached/preview hierarchies.

@@ -2357,7 +2357,10 @@ extension PVEmulatorViewController {
     /// - Returns: A UIView containing the skin
     private func createSkinView(from skin: DeltaSkinProtocol) async throws -> UIView {
         /// Create traits based on the current device and orientation
-        let currentDevice: DeltaSkinDevice = UIDevice.current.userInterfaceIdiom == .pad ? .ipad : .iphone
+        let currentDevice = SkinDevicePreference.device(
+            for: skin,
+            orientation: currentOrientation == .landscape ? .landscape : .portrait,
+            among: skinDeviceCandidates)
 
         // Create display type based on the device
         // For iPhones with notches, use edgeToEdge
@@ -2787,16 +2790,11 @@ extension PVEmulatorViewController {
     private func validateSkinCanRender(skin: DeltaSkinProtocol, orientation: SkinOrientation) async -> Bool {
         // Check if the skin has a valid mappingSize for the current traits
         // This is what causes calculateLayout() to return nil
-        let device: DeltaSkinDevice = {
-            #if os(tvOS)
-            return .tv
-            #else
-            return UIDevice.current.userInterfaceIdiom == .pad ? .ipad : .iphone
-            #endif
-        }()
+        let candidates = skinDeviceCandidates
 
         let displayTypes: [DeltaSkinDisplayType] = [.edgeToEdge, .standard]
         let deltaOrientation = orientation.deltaSkinOrientation
+        let device = SkinDevicePreference.device(for: skin, orientation: deltaOrientation, among: candidates)
 
         // Check if skin has a valid mappingSize - this is what calculateLayout() needs
         for displayType in displayTypes {
@@ -2837,13 +2835,7 @@ extension PVEmulatorViewController {
         }
 
         let availableSkins = try await DeltaSkinManager.shared.skins(for: systemId)
-        let device: DeltaSkinDevice = {
-            #if os(tvOS)
-            return .tv
-            #else
-            return UIDevice.current.userInterfaceIdiom == .pad ? .ipad : .iphone
-            #endif
-        }()
+        let candidates = skinDeviceCandidates
 
         let displayTypes: [DeltaSkinDisplayType] = [.edgeToEdge, .standard]
         let deltaOrientation = orientation.deltaSkinOrientation
@@ -2860,6 +2852,7 @@ extension PVEmulatorViewController {
             }
 
             // Check if fallback skin supports this orientation and can render
+            let device = SkinDevicePreference.device(for: fallbackSkin, orientation: deltaOrientation, among: candidates)
             for displayType in displayTypes {
                 let traits = DeltaSkinTraits(
                     device: device,
@@ -2891,16 +2884,11 @@ extension PVEmulatorViewController {
     /// - Returns: A skin that supports the orientation, or nil when none does (the built-in controls apply)
     private func findSkinWithFallback(skin: DeltaSkinProtocol, orientation: SkinOrientation) async throws -> DeltaSkinProtocol? {
         // Check if the requested skin supports the current orientation
-        let device: DeltaSkinDevice = {
-            #if os(tvOS)
-            return .tv
-            #else
-            return UIDevice.current.userInterfaceIdiom == .pad ? .ipad : .iphone
-            #endif
-        }()
+        let candidates = skinDeviceCandidates
 
         let displayTypes: [DeltaSkinDisplayType] = [.standard, .edgeToEdge]
         let deltaOrientation = orientation.deltaSkinOrientation
+        let device = SkinDevicePreference.device(for: skin, orientation: deltaOrientation, among: candidates)
 
         // Check if skin supports this orientation AND has valid mappingSize
         var supportsOrientation = false
@@ -2954,9 +2942,10 @@ extension PVEmulatorViewController {
             }
 
             // Check if fallback skin supports this orientation AND has valid mappingSize
+            let fallbackDevice = SkinDevicePreference.device(for: fallbackSkin, orientation: deltaOrientation, among: candidates)
             for displayType in displayTypes {
                 let traits = DeltaSkinTraits(
-                    device: device,
+                    device: fallbackDevice,
                     displayType: displayType,
                     orientation: deltaOrientation
                 )
