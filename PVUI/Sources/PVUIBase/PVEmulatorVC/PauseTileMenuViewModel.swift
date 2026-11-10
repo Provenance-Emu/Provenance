@@ -771,10 +771,18 @@ final class PauseTileMenuViewModel: ObservableObject {
             let tiles: [PauseMenuTile] = [
                 PauseMenuTile(
                     id: "skins_choose",
-                    icon: "paintbrush.pointed.fill",
+                    icon: "paintbrush.pointed",
                     label: String(localized: "Choose Skin"),
                     description: String(localized: "Pick a controller skin for this session, game, or system."),
                     colorKey: .orange,
+                    dismissOnTap: false
+                ),
+                PauseMenuTile(
+                    id: Self.skinCatalogTileID,
+                    icon: "square.grid.2x2",
+                    label: String(localized: "Skin Catalog"),
+                    description: String(localized: "Browse and download skins for this system from the community catalog."),
+                    colorKey: .pink,
                     dismissOnTap: false
                 ),
                 PauseMenuTile(
@@ -874,6 +882,9 @@ final class PauseTileMenuViewModel: ObservableObject {
     /// PauseTileMenuView. Keep the trailing token in sync with
     /// `ScalingMode.rawValue` so `String(droppingPrefix:)` recovers the mode.
     static let scalingTilePrefix = "scaling_"
+
+    /// Skins submenu tile that opens the skin catalog directly.
+    static let skinCatalogTileID = "skins_catalog"
 
     /// Build a tile per `ScalingMode` case, marking the currently-active one
     /// with a green accent + ★ badge. The renderer reads `Defaults[.scalingMode]`

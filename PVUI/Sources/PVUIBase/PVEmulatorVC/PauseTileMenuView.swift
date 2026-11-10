@@ -50,6 +50,12 @@ enum PauseTilePanelMetrics {
 
     static let regularMaxHeight: CGFloat = 680
 
+    /// Height of the pinned title row on iOS.
+    static let headerHeight: CGFloat = 34
+    static let tvHeaderHeight: CGFloat = 56
+    /// How much shorter than the row the Resume capsule is drawn.
+    static let headerButtonInset: CGFloat = 6
+
     /// Fraction of the window width the panel occupies on macOS.
     ///
     /// 0.55 keeps the paused game visible on either side of the panel (the overlay
@@ -148,6 +154,7 @@ struct PauseTileMenuView: View {
     #endif
     @State private var showingMIDIPicker = false
     @State private var showingSystemSkinSelection = false
+    @State private var showingSkinCatalog = false
     @State private var showingButtonEffectPicker = false
     @State private var showingButtonSoundPicker = false
     @State private var showingPlusPaywall = false
@@ -761,6 +768,8 @@ struct PauseTileMenuView: View {
         // MARK: Skins submenu actions
         case "skins_choose", "skins_pick_for_system":
             showingSystemSkinSelection = true
+        case PauseTileMenuViewModel.skinCatalogTileID:
+            showingSkinCatalog = true
         case "skins_button_effect":
             showingButtonEffectPicker = true
         case "skins_button_sound":
@@ -1210,37 +1219,46 @@ struct PauseTileMenuView: View {
             .environment(\.colorScheme, .dark)
     }
 
+    /// One slim pinned row: it stays put while the grid scrolls, so it is kept short.
+    /// Buttons keep a 44 pt wide target; the row's height is the compromise.
     private var panelHeader: some View {
-        HStack(spacing: 8) {
+        let rowHeight = tvOSAdjusted(PauseTilePanelMetrics.headerHeight, tvOS: PauseTilePanelMetrics.tvHeaderHeight)
+        return HStack(spacing: 4) {
             if routeStack.count > 1 {
                 Button { _ = popRoute() } label: {
-                    Image(systemName: "chevron.left").frame(width: 44, height: 44)
+                    Image(systemName: "chevron.left")
+                        .frame(width: RetroPauseChrome.controlHeight, height: rowHeight)
+                        .contentShape(Rectangle())
                 }
                 .accessibilityLabel("Back")
             }
             Text(routeTitle)
-                .font(.system(size: tvOSAdjusted(18, tvOS: 22), weight: .medium, design: .rounded))
+                .font(.system(size: tvOSAdjusted(15, tvOS: 22), weight: .semibold, design: .rounded))
                 .foregroundStyle(Color.retroBlue)
                 .lineLimit(1)
+                .minimumScaleFactor(PauseTileMetrics.labelMinimumScale)
             Spacer(minLength: 0)
             Button { showsSearch.toggle() } label: {
-                Image(systemName: "magnifyingglass").frame(width: 44, height: 44)
+                Image(systemName: "magnifyingglass")
+                    .frame(width: RetroPauseChrome.controlHeight, height: rowHeight)
+                    .contentShape(Rectangle())
             }
             .accessibilityLabel("Search settings")
             Button { requestPauseMenuClose() } label: {
                 Text("Resume")
                     .font(.system(size: tvOSAdjusted(12, tvOS: 18), weight: .medium))
-                    .frame(minWidth: 88, minHeight: 44)
+                    .padding(.horizontal, RetroPauseChrome.chromeInset)
+                    .frame(height: rowHeight - PauseTilePanelMetrics.headerButtonInset)
                     .foregroundStyle(Color.retroGreen)
-                    .background(Color.retroGreen.opacity(RetroPauseChrome.menuCellFillOpacityUnfocused),
-                                in: RoundedRectangle(cornerRadius: RetroPauseChrome.menuCellCornerRadius()))
+                    .background(Color.retroGreen.opacity(RetroPauseChrome.menuCellFillOpacityUnfocused), in: Capsule())
+                    .frame(height: rowHeight)
+                    .contentShape(Rectangle())
             }
         }
         .buttonStyle(.plain)
         .foregroundStyle(Color.retroBlue)
         .padding(.horizontal, tvOSAdjusted(RetroPauseChrome.chromeInset, tvOS: 20))
-        .padding(.top, 8)
-        .padding(.bottom, 2)
+        .padding(.top, 4)
     }
 
     // MARK: - Section view
@@ -1688,6 +1706,24 @@ struct PauseTileMenuView: View {
                     game: emulatorVC.game.deltaSkinGameContext,
                     emptySelectionMeansBuiltIn: ProgrammaticOverlaySupport.skinPickerDefaultsToBuiltIn(for: emulatorVC.core)
                 )
+            }
+        }
+        // The catalog, filtered to the running system; a download can be applied to this game.
+        .sheet(isPresented: $showingSkinCatalog) {
+            NavigationStack {
+                SkinCatalogBrowserView(
+                    preselectedSystem: activeSystemIdentifier.skinCatalogSystemCode,
+                    activationContextSystemIdentifier: activeSystemIdentifier.deltaSkinSystem,
+                    activationContextGameId: emulatorVC.game?.id
+                )
+                #if !os(tvOS)
+                .navigationBarTitleDisplayMode(.inline)
+                #endif
+                .toolbar {
+                    ToolbarItem(placement: .confirmationAction) {
+                        Button("Done") { showingSkinCatalog = false }
+                    }
+                }
             }
         }
         .sheet(isPresented: $showingButtonEffectPicker) {

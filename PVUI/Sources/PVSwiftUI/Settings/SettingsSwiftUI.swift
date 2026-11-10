@@ -2786,7 +2786,7 @@ private struct DeltaSkinsSection: View {
                 SkinCatalogBrowserView()
                     .settingsSubpageTracking()
             } label: {
-                SettingsRow(title: "Skin Browser",
+                SettingsRow(title: "Skin Catalog",
                             subtitle: "Browse and download skins from the community catalog.",
                             icon: .sfSymbol("square.grid.2x2"))
             }

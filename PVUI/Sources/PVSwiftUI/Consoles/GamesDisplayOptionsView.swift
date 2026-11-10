@@ -542,7 +542,7 @@ struct GamesDisplayOptionsView: SwiftUI.View {
                     Haptics.impact(strength: .light)
                     catalogAction()
                 }) {
-                    Label("Browse Skin Catalog", systemImage: "arrow.down.circle")
+                    Label("Skin Catalog", systemImage: "square.grid.2x2")
                 }
             }
 
