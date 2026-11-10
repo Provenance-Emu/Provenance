@@ -42,6 +42,14 @@ enum PauseTilePanelMetrics {
     /// Total horizontal breathing room kept between the panel and the window edge.
     static let horizontalInset: CGFloat = 32
 
+    /// Total vertical breathing room kept between the panel and the safe area.
+    static let verticalInset: CGFloat = 24
+
+    /// Layouts at least this wide (iPad, Mac, tvOS) cap the panel at `regularMaxHeight`.
+    static let regularLayoutWidth: CGFloat = 600
+
+    static let regularMaxHeight: CGFloat = 680
+
     /// Fraction of the window width the panel occupies on macOS.
     ///
     /// 0.55 keeps the paused game visible on either side of the panel (the overlay
@@ -72,17 +80,27 @@ enum PauseTilePanelMetrics {
 enum PauseTileMetrics {
     #if os(tvOS)
     static let iconSize: CGFloat = 30
+    static let tileHeight: CGFloat = 112
     static let labelSize: CGFloat = 16
     static let badgeSize: CGFloat = 13
     static let sectionTitleSize: CGFloat = 16
     static let infoTextSize: CGFloat = 18
     #else
-    static let iconSize: CGFloat = 28
+    static let iconSize: CGFloat = 22
+    /// Glyph size where the horizontal size class is regular (iPad, Mac).
+    static let regularIconSize: CGFloat = 26
+    static let tileHeight: CGFloat = 72
+    static let regularTileHeight: CGFloat = 78
+    /// Floor for a tile at accessibility type sizes, where labels take three lines.
+    static let accessibilityTileHeight: CGFloat = 112
     static let labelSize: CGFloat = 11.5
     static let badgeSize: CGFloat = 9.5
     static let sectionTitleSize: CGFloat = 11
     static let infoTextSize: CGFloat = 12
     #endif
+    static let iconLabelGap: CGFloat = 2
+    /// Vertical room around the glyph, so symbols of different heights share a baseline.
+    static let iconSlotPadding: CGFloat = 4
     /// Long option names shrink this far before truncating.
     static let labelMinimumScale: CGFloat = 0.8
     /// Keeps a full-width value badge clear of the cell's leading edge.
@@ -144,7 +162,9 @@ struct PauseTileMenuView: View {
     /// Query string for global tile search.
     @State private var searchText: String = ""
     @State private var showsSearch = false
-    @ScaledMetric(relativeTo: .caption) private var tooltipHeight: CGFloat = 76
+    /// Whether rows remain below the scroll viewport.
+    @State private var hasMoreBelow = false
+    @ScaledMetric(relativeTo: .caption) private var tooltipHeight: CGFloat = 56
     @ScaledMetric(relativeTo: .caption) private var tooltipFontSize = PauseTileMetrics.infoTextSize
     /// Ranked search results across the full pause-menu tree.
     @State private var searchResults: [PauseMenuSearchResult] = []
@@ -196,6 +216,12 @@ struct PauseTileMenuView: View {
     /// can compute the actual column count per row without re-deriving from UIScreen.
     @State private var currentPanelWidth: CGFloat = 0
     #endif
+
+    /// Black laid over the panel's material: enough for white labels over a bright game.
+    private static let panelTintOpacity: Double = 0.55
+
+    /// Slack before the grid counts as scrolled to its end.
+    private static let scrollEndTolerance: CGFloat = 4
 
     /// Scroll anchor for the panel's title row.
     private static let panelTopID = "pauseMenu.panelTop"
@@ -1125,6 +1151,14 @@ struct PauseTileMenuView: View {
         return min(insetWidth, panelMaxWidth)
     }
 
+    /// A phone gives the panel all the height it has, so as few rows as possible sit
+    /// below the fold; wider layouts cap it and keep the game visible around it.
+    private func panelMaxHeight(in size: CGSize) -> CGFloat {
+        let available = max(0, size.height - PauseTilePanelMetrics.verticalInset)
+        guard size.width >= PauseTilePanelMetrics.regularLayoutWidth else { return available }
+        return min(PauseTilePanelMetrics.regularMaxHeight, available)
+    }
+
     // MARK: - Tile view
 
     @ViewBuilder
@@ -1132,7 +1166,6 @@ struct PauseTileMenuView: View {
         let accentColor = color(for: tile.colorKey)
         let opacity: Double = tile.isEnabled ? 1.0 : 0.4
         let isFocused = focusedTileID == tile.id
-
 
         Button {
             handle(tile)
@@ -1168,19 +1201,13 @@ struct PauseTileMenuView: View {
         }
     }
 
+    /// Translucent like the library dock: the paused game stays visible through the panel.
     private var panelBackground: some View {
-        RoundedRectangle(cornerRadius: 16)
-            .fill(.ultraThinMaterial)
-            .overlay {
-                RoundedRectangle(cornerRadius: 16)
-                    .fill(LinearGradient(colors: [.black.opacity(0.82), .black.opacity(0.94)],
-                                         startPoint: .topLeading, endPoint: .bottomTrailing))
-            }
-            .overlay {
-                RoundedRectangle(cornerRadius: 16)
-                    .strokeBorder(LinearGradient(colors: [.retroBlue.opacity(0.72), .retroPurple.opacity(0.65)],
-                                                 startPoint: .topLeading, endPoint: .bottomTrailing), lineWidth: 1)
-            }
+        let shape = RoundedRectangle(cornerRadius: RetroPauseChrome.chromeCornerRadius)
+        return shape.fill(.ultraThinMaterial)
+            .overlay { shape.fill(Color.black.opacity(Self.panelTintOpacity)) }
+            .overlay { shape.strokeBorder(RetroPauseChrome.chromeBorder) }
+            .environment(\.colorScheme, .dark)
     }
 
     private var panelHeader: some View {
@@ -1205,14 +1232,15 @@ struct PauseTileMenuView: View {
                     .font(.system(size: tvOSAdjusted(12, tvOS: 18), weight: .medium))
                     .frame(minWidth: 88, minHeight: 44)
                     .foregroundStyle(Color.retroGreen)
-                    .background(Color.retroGreen.opacity(0.12), in: RoundedRectangle(cornerRadius: 14))
+                    .background(Color.retroGreen.opacity(RetroPauseChrome.menuCellFillOpacityUnfocused),
+                                in: RoundedRectangle(cornerRadius: RetroPauseChrome.menuCellCornerRadius()))
             }
         }
         .buttonStyle(.plain)
         .foregroundStyle(Color.retroBlue)
-        .padding(.horizontal, tvOSAdjusted(12, tvOS: 20))
-        .padding(.top, 10)
-        .padding(.bottom, 6)
+        .padding(.horizontal, tvOSAdjusted(RetroPauseChrome.chromeInset, tvOS: 20))
+        .padding(.top, 8)
+        .padding(.bottom, 2)
     }
 
     // MARK: - Section view
@@ -1263,7 +1291,7 @@ struct PauseTileMenuView: View {
                         ForEach(0..<(cols - row.count), id: \.self) { _ in
                             Color.clear
                                 .frame(maxWidth: .infinity)
-                                .frame(height: 112)
+                                .frame(height: PauseTileMetrics.tileHeight)
                         }
                     }
                 }
@@ -1359,7 +1387,7 @@ struct PauseTileMenuView: View {
                     .fill(Color.white.opacity(0.08))
                     .overlay(
                         RoundedRectangle(cornerRadius: tvOSAdjusted(8, tvOS: 12))
-                            .strokeBorder(accent.opacity(0.55), lineWidth: 1)
+                            .strokeBorder(accent.opacity(RetroPauseChrome.menuCellStrokeOpacityUnfocused))
                     )
             )
         }
@@ -1389,7 +1417,7 @@ struct PauseTileMenuView: View {
                         .fill((isOn.wrappedValue ? Color.retroCyan : Color.white.opacity(0.20)).opacity(0.22))
                         .overlay(
                             Capsule()
-                                .strokeBorder(isOn.wrappedValue ? Color.retroCyan.opacity(0.95) : Color.white.opacity(0.45), lineWidth: 1.2)
+                                .strokeBorder(isOn.wrappedValue ? Color.retroCyan.opacity(0.95) : Color.white.opacity(0.45))
                         )
                         .frame(width: tvOSAdjusted(50, tvOS: 70), height: tvOSAdjusted(24, tvOS: 30))
                     Circle()
@@ -1406,7 +1434,7 @@ struct PauseTileMenuView: View {
                     .fill(Color.white.opacity(0.06))
                     .overlay(
                         RoundedRectangle(cornerRadius: tvOSAdjusted(8, tvOS: 12))
-                            .strokeBorder(Color.retroCyan.opacity(0.28), lineWidth: 1)
+                            .strokeBorder(RetroPauseChrome.chromeBorder)
                     )
             )
         }
@@ -1520,8 +1548,7 @@ struct PauseTileMenuView: View {
                                     ForEach(sections) { section in
                                         sectionView(section: section, cols: cols, spacing: spacing)
                                         if section.id != sections.last?.id {
-                                            Divider()
-                                                .background(Color.white.opacity(0.12))
+                                            RetroPauseChrome.chromeDivider.frame(height: 1)
                                         }
                                     }
                                 }
@@ -1536,8 +1563,34 @@ struct PauseTileMenuView: View {
                                 coreRouteFooterActionsView
                             }
                         }
-                        .padding(tvOSAdjusted(12, tvOS: 20))
+                        .padding([.horizontal, .top], tvOSAdjusted(RetroPauseChrome.chromeInset, tvOS: 20))
+                        // Lets the last row scroll clear of the bottom fade.
+                        .padding(.bottom, RetroPauseChrome.scrollEdgeFade)
+                        .background {
+                            GeometryReader { content in
+                                // A Bool, so the preference changes when the end is reached, not on every scrolled frame.
+                                let visibleBottom = content.bounds(of: .scrollView)?.maxY ?? content.size.height
+                                Color.clear.preference(key: PauseScrollHasMoreBelowKey.self,
+                                                       value: content.size.height - visibleBottom > Self.scrollEndTolerance)
+                            }
+                        }
                     }
+                    .onPreferenceChange(PauseScrollHasMoreBelowKey.self) { hasMoreBelow = $0 }
+                    // Rows fade out at the edges, the indicator flashes once and a chevron
+                    // marks rows below the fold, so it is clear the grid scrolls.
+                    .retroScrollEdgeFade()
+                    .scrollIndicatorsFlash(onAppear: true)
+                    .overlay(alignment: .bottom) {
+                        if hasMoreBelow {
+                            Image(systemName: "chevron.compact.down")
+                                .font(.system(size: tvOSAdjusted(20, tvOS: 28), weight: .medium))
+                                .foregroundStyle(.white.opacity(0.75))
+                                .allowsHitTesting(false)
+                                .accessibilityHidden(true)
+                                .transition(.opacity)
+                        }
+                    }
+                    .animation(.easeInOut(duration: 0.2), value: hasMoreBelow)
                     /// A submenu is a new page: start it at its top rather than
                     /// wherever the previous one happened to be scrolled.
                     .onChange(of: routeStack) { _ in
@@ -1553,14 +1606,14 @@ struct PauseTileMenuView: View {
                     #endif
                     } // ScrollViewReader
 
-                    // Info shelf — shows description for focused/long-pressed tile
-                    infoShelfView
+                    if showsInfoShelf {
+                        infoShelfView
+                    }
                 }
                 .background(panelBackground)
                 .frame(width: panelWidth)
-                .frame(maxHeight: min(geo.size.width < 600 ? 620 : 680, max(0, geo.size.height - 24)))
+                .frame(maxHeight: panelMaxHeight(in: geo.size))
                 .fixedSize(horizontal: false, vertical: true)
-                .shadow(color: .retroBlue.opacity(0.09), radius: 12, x: 0, y: 0)
                 .position(x: geo.size.width / 2, y: geo.size.height / 2)
                 #if os(iOS)
                 // Mirror the live panel width into @State so iOS controller
@@ -2347,38 +2400,48 @@ struct PauseTileMenuView: View {
 
     // MARK: - Info shelf
 
-    /// The reserved shelf stays the same height when focus changes, keeping the last row reachable.
+    /// Descriptions follow focus. tvOS always has a focused tile, so the shelf keeps its
+    /// room there; on iOS it takes room only while there is a description to show,
+    /// instead of leaving a blank band under the grid.
+    private var showsInfoShelf: Bool {
+        #if os(tvOS)
+        true
+        #else
+        infoText != nil
+        #endif
+    }
+
+    /// Description of the focused tile, under a rule at the foot of the panel.
     private var infoShelfView: some View {
-        ZStack(alignment: .bottom) {
-            Color.clear
+        HStack(spacing: 8) {
             if let text = infoText {
-                HStack(spacing: 8) {
-                    Image(systemName: "info.circle")
-                        .foregroundStyle(Color.retroBlue)
-                    Text(text)
-                        .font(.system(size: tooltipFontSize))
-                        .foregroundStyle(.white.opacity(0.85))
-                        .lineLimit(3)
-                        .fixedSize(horizontal: false, vertical: true)
-                }
-                .padding(12)
-                .frame(maxWidth: 480, minHeight: 54, alignment: .leading)
-                .background(Color.black.opacity(0.76), in: RoundedRectangle(cornerRadius: 18))
-                .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 18))
-                .overlay {
-                    RoundedRectangle(cornerRadius: 18)
-                        .strokeBorder(RetroPauseChrome.panelBorderGradient, lineWidth: 1)
-                }
+                Image(systemName: "info.circle")
+                    .foregroundStyle(Color.retroBlue)
+                Text(text)
+                    .foregroundStyle(.white.opacity(0.85))
+                    .lineLimit(3)
+                    .minimumScaleFactor(PauseTileMetrics.labelMinimumScale)
             }
         }
-        .frame(height: tvOSAdjusted(tooltipHeight, tvOS: 96))
-        .padding(.horizontal, tvOSAdjusted(20, tvOS: 28))
-        .padding(.top, 14)
-        .padding(.bottom, 12)
+        .font(.system(size: tooltipFontSize))
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .frame(height: tvOSAdjusted(tooltipHeight, tvOS: 84))
+        .padding(.horizontal, tvOSAdjusted(RetroPauseChrome.chromeInset, tvOS: 20))
+        .overlay(alignment: .top) {
+            RetroPauseChrome.chromeDivider.frame(height: 1)
+        }
     }
 
 }
 // swiftlint:enable type_body_length
+
+// MARK: - Scroll measurement
+
+/// Whether the tile grid has rows below its scroll viewport.
+private struct PauseScrollHasMoreBelowKey: PreferenceKey {
+    static let defaultValue = false
+    static func reduce(value: inout Bool, nextValue: () -> Bool) { value = value || nextValue() }
+}
 
 // MARK: - TileButtonStyle
 

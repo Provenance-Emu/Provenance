@@ -66,7 +66,7 @@ public enum RetroPauseChrome {
 
     public static let menuCellFillOpacityUnfocused: Double = 0.10
     public static let menuCellFillOpacityFocused: Double = 0.22
-    public static let menuCellStrokeOpacityUnfocused: Double = 0.35
+    public static let menuCellStrokeOpacityUnfocused: Double = 0.28
     public static let menuCellStrokeOpacityFocused: Double = 0.85
     public static let menuCellStrokeWidthUnfocused: CGFloat = 1
     public static let menuCellStrokeWidthFocused: CGFloat = 2
@@ -91,6 +91,21 @@ public enum RetroPauseChrome {
     }
 
     public static let sectionTitleMutedOpacity: Double = 0.45
+
+    // MARK: - Shared chrome (library, pause menu, save states, side menu, settings)
+
+    /// Hairline drawn around every translucent chrome surface.
+    public static let chromeBorder = Color.retroBlue.opacity(0.28)
+    /// Rule between rows or groups inside a chrome surface.
+    public static let chromeDivider = Color.white.opacity(0.1)
+    /// Corner radius of floating chrome: docks, panels, cards.
+    public static let chromeCornerRadius: CGFloat = 13
+    /// Inset between chrome and the screen edge, and between a panel and its content.
+    public static let chromeInset: CGFloat = 12
+    /// Minimum height of a tappable chrome control.
+    public static let controlHeight: CGFloat = 44
+    /// Height of the fade that shows a chrome scroll view continues past its edge.
+    public static let scrollEdgeFade: CGFloat = 24
 }
 
 // MARK: - Panel
@@ -176,6 +191,30 @@ public struct RetroPauseInsetPillBackground: View {
 // MARK: - View extensions
 
 extension View {
+    /// Translucent chrome surface with the shared hairline: whatever is behind stays visible.
+    public func retroChromeSurface(cornerRadius: CGFloat = RetroPauseChrome.chromeCornerRadius) -> some View {
+        let shape = RoundedRectangle(cornerRadius: cornerRadius)
+        return background(.ultraThinMaterial, in: shape)
+            .overlay { shape.strokeBorder(RetroPauseChrome.chromeBorder).allowsHitTesting(false) }
+            .clipShape(shape)
+    }
+
+    /// Fades a vertical scroll view's content out at its top and bottom edges, so rows
+    /// cut by the viewport read as "more this way" instead of as clipped.
+    /// Pad the scrolling content by `RetroPauseChrome.scrollEdgeFade` at the bottom so the last row can clear the fade.
+    public func retroScrollEdgeFade(top: CGFloat = RetroPauseChrome.chromeInset,
+                                    bottom: CGFloat = RetroPauseChrome.scrollEdgeFade) -> some View {
+        mask {
+            VStack(spacing: 0) {
+                LinearGradient(colors: [.clear, .black], startPoint: .top, endPoint: .bottom)
+                    .frame(height: top)
+                Color.black
+                LinearGradient(colors: [.black, .clear], startPoint: .top, endPoint: .bottom)
+                    .frame(height: bottom)
+            }
+        }
+    }
+
     /// Applies `RetroPausePanelBackground` behind the view; clip to `RetroPauseChrome.panelCornerRadius` if the content should match the rounded rect.
     public func retroPausePanelBackground(isDark: Bool) -> some View {
         background {

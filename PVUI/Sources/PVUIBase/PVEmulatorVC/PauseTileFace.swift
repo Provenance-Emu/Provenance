@@ -13,7 +13,7 @@ enum PauseTileLayout {
     }
 }
 
-/// Luminous tile face with crisp labels layered above the lower edge of the glyph.
+/// Tile face: a light glyph over its label, on a tinted translucent cell with a hairline rim.
 struct PauseTileFace: View {
     let label: String
     let icon: String
@@ -26,9 +26,12 @@ struct PauseTileFace: View {
 
     private var height: CGFloat {
         #if os(tvOS)
-        return 112
+        return PauseTileMetrics.tileHeight
         #else
-        return dynamicTypeSize.isAccessibilitySize ? max(112, labelSize * 3.6 + 33) : (horizontalSizeClass == .regular ? 72 : 68)
+        if dynamicTypeSize.isAccessibilitySize {
+            return max(PauseTileMetrics.accessibilityTileHeight, labelSize * 3.6 + 33)
+        }
+        return horizontalSizeClass == .regular ? PauseTileMetrics.regularTileHeight : PauseTileMetrics.tileHeight
         #endif
     }
 
@@ -36,47 +39,46 @@ struct PauseTileFace: View {
         #if os(tvOS)
         return PauseTileMetrics.iconSize
         #else
-        return horizontalSizeClass == .regular ? 32 : PauseTileMetrics.iconSize
+        return horizontalSizeClass == .regular ? PauseTileMetrics.regularIconSize : PauseTileMetrics.iconSize
         #endif
     }
 
+    private var shape: RoundedRectangle {
+        RoundedRectangle(cornerRadius: RetroPauseChrome.menuCellCornerRadius())
+    }
+
     var body: some View {
-        ZStack(alignment: .top) {
+        VStack(spacing: PauseTileMetrics.iconLabelGap) {
             Image(systemName: icon)
-                .font(.system(size: iconSize, weight: .semibold))
+                .font(.system(size: iconSize, weight: .regular))
                 .foregroundStyle(accent)
-                .shadow(color: accent.opacity(0.35), radius: 2)
-                .padding(.top, 9)
+                .shadow(color: accent.opacity(isFocused ? 0.6 : 0.3), radius: isFocused ? 5 : 2)
+                .frame(height: iconSize + PauseTileMetrics.iconSlotPadding)
                 .accessibilityHidden(true)
             Text(label)
                 .font(.system(size: labelSize, weight: .medium))
                 .foregroundStyle(.white)
                 .multilineTextAlignment(.center)
-                .lineLimit(3)
+                .lineLimit(dynamicTypeSize.isAccessibilitySize ? 3 : 2)
                 .minimumScaleFactor(PauseTileMetrics.labelMinimumScale)
-                .shadow(color: .black.opacity(0.85), radius: 0.35, y: 0.5)
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
-                .background {
-                    LinearGradient(colors: [.clear, .black.opacity(0.24), .clear], startPoint: .top, endPoint: .bottom)
-                }
-                .padding(.horizontal, 4)
-                .padding(.top, 27)
-                .padding(.bottom, 6)
-                .zIndex(1)
         }
+        .padding(.horizontal, 4)
+        .padding(.top, 8)
+        .padding(.bottom, 5)
         .frame(maxWidth: .infinity)
         .frame(height: height)
         .background {
-            RoundedRectangle(cornerRadius: 9)
-                .fill(LinearGradient(colors: [accent.opacity(isFocused ? 0.24 : 0.14), Color.black.opacity(0.8)],
-                                     startPoint: .topLeading, endPoint: .bottomTrailing))
+            shape.fill(accent.opacity(isFocused ? RetroPauseChrome.menuCellFillOpacityFocused
+                                                 : RetroPauseChrome.menuCellFillOpacityUnfocused))
         }
         .overlay {
-            RoundedRectangle(cornerRadius: 9)
-                .strokeBorder(LinearGradient(colors: [accent.opacity(isFocused ? 0.9 : 0.55), Color.retroPurple.opacity(0.3)],
-                                             startPoint: .topLeading, endPoint: .bottomTrailing), lineWidth: isFocused ? 1.5 : 1)
+            shape.strokeBorder(
+                accent.opacity(isFocused ? RetroPauseChrome.menuCellStrokeOpacityFocused
+                                         : RetroPauseChrome.menuCellStrokeOpacityUnfocused),
+                lineWidth: isFocused ? RetroPauseChrome.menuCellStrokeWidthFocused
+                                     : RetroPauseChrome.menuCellStrokeWidthUnfocused)
         }
-        .shadow(color: accent.opacity(isFocused ? 0.27 : 0.07), radius: isFocused ? 4.5 : 2.5)
         .overlay(alignment: .topTrailing) {
             if let badge {
                 Text(badge)
@@ -91,7 +93,7 @@ struct PauseTileFace: View {
                     .offset(y: -4)
             }
         }
-        .contentShape(RoundedRectangle(cornerRadius: 9))
+        .contentShape(shape)
         .accessibilityElement(children: .combine)
     }
 }

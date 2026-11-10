@@ -15,17 +15,17 @@ enum LibraryLayout {
     /// Bottom inset that keeps scrolling content clear of the page-dots index.
     /// Applied once per page; don't stack it with other bottom padding.
     static let pageIndexClearance: CGFloat = 16
-    static let controlHeight: CGFloat = 44
+    static let controlHeight = RetroPauseChrome.controlHeight
     static let systemSelectorBottomGap: CGFloat = 4
     /// Space kept between the last scrollable row and the selector.
     static let systemSelectorContentGap: CGFloat = 6
     /// Room for the selector and a small gap below the last scrollable row.
     static let systemSelectorClearance = controlHeight + systemSelectorBottomGap + systemSelectorContentGap
-    static let chromeBorder = Color.retroBlue.opacity(0.28)
+    static let chromeBorder = RetroPauseChrome.chromeBorder
     /// Corner radius shared by the controls docked at the bottom of a library page.
-    static let dockCornerRadius: CGFloat = 13
+    static let dockCornerRadius = RetroPauseChrome.chromeCornerRadius
     /// Horizontal inset shared by the bars above and below a library page's games.
-    static let chromeHorizontalInset: CGFloat = 12
+    static let chromeHorizontalInset = RetroPauseChrome.chromeInset
 
     @MainActor
     static func usesCompactPhoneChrome(_ verticalSizeClass: UserInterfaceSizeClass?) -> Bool {
@@ -44,10 +44,7 @@ enum LibraryLayout {
 extension View {
     /// Translucent surface for controls docked over the games: covers stay visible behind it.
     func libraryDockChrome() -> some View {
-        let shape = RoundedRectangle(cornerRadius: LibraryLayout.dockCornerRadius)
-        return background(.ultraThinMaterial, in: shape)
-            .overlay { shape.strokeBorder(LibraryLayout.chromeBorder).allowsHitTesting(false) }
-            .clipShape(shape)
+        retroChromeSurface(cornerRadius: LibraryLayout.dockCornerRadius)
     }
 }
 
