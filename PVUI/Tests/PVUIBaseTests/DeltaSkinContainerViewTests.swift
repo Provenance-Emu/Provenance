@@ -38,6 +38,27 @@ struct DeltaSkinContainerViewTests {
                                                             orientation: .portrait))
     }
 
+    @Test("The hosting controller follows its container between parents")
+    func hostingControllerContainment() throws {
+        let core = SkinContainerCore()
+        let container = DeltaSkinContainerView.create(
+            game: PVGame(), core: core, inputHandler: DeltaSkinInputHandler(emulatorCore: core),
+            onSkinLoaded: {}, onRefreshRequested: {})
+        let first = UIViewController()
+        let second = UIViewController()
+        first.loadViewIfNeeded()
+        second.loadViewIfNeeded()
+        first.view.addSubview(container)
+        let host = try #require(first.children.first)
+        #expect(host.view.superview === container)
+        container.removeFromSuperview()
+        #expect(first.children.isEmpty)
+        #expect(host.parent == nil)
+        second.view.addSubview(container)
+        #expect(second.children.count == 1)
+        #expect(second.children.first === host)
+    }
+
     @Test("Changing skins keeps the mounted hosting view and native render sibling")
     func swapKeepsRenderHierarchy() throws {
         let core = SkinContainerCore()

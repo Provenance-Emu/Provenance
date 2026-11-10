@@ -23,8 +23,9 @@ extension PVEmulatorViewController {
         #if os(tvOS) || os(macOS) || targetEnvironment(macCatalyst)
         return false
         #else
-        // The library's controller navigation setting only opts iPad into skinless play.
-        guard !ProcessInfo.processInfo.isiOSAppOnMac, !desktopInputSkipsTouchLayer else { return false }
+        // Keep the touch layer mounted on iPad too: a controller can disconnect mid-session.
+        // Hardware auto-hide controls visibility without removing the fallback controls.
+        guard !ProcessInfo.processInfo.isiOSAppOnMac else { return false }
         // The programmatic overlay covers every known system without a packaged skin, including
         // Classic mode, cores without skin support and explicit-selection cores (Dolphin).
         if programmaticOverlayCoversGame { return true }
@@ -433,11 +434,11 @@ extension PVEmulatorViewController {
             .delay(for: .seconds(1), scheduler: DispatchQueue.main)
             .sink { [weak self] _ in
                 guard let self else { return }
-                if !self.isShowingMenu {
+                if !self.isShowingMenu && !self.isClipBufferingPromptPresented {
                     DLOG("Skin load pipeline: resuming emulation")
                     self.core.setPauseEmulation(false)
                 } else {
-                    DLOG("Skin load pipeline: menu showing, staying paused")
+                    DLOG("Skin load pipeline: menu or clips prompt showing, staying paused")
                 }
                 self.skinLoadingCancellable = nil
             }

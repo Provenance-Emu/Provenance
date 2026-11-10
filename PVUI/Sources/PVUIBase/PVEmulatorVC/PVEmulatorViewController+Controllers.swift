@@ -97,15 +97,16 @@ extension PVEmulatorViewController {
     /// playing on with nobody at the controls, as Apple's controller guidance asks.
     /// The keyboard-backed controller (a snapshot) and the Siri Remote don't count.
     private func pauseIfLastGamepadDisconnected(_ controller: GCController?) {
-        func isGamepad(_ candidate: GCController) -> Bool {
-            !candidate.isSnapshot && !candidate.isRemote
-                && (candidate.extendedGamepad != nil || candidate.microGamepad != nil)
+        guard let controller, Self.isGameplayController(controller) else { return }
+        let disconnected = (controller as? PVPhysicalProfileController)?.base ?? controller
+        let gamepadRemains = PVControllerManager.shared.controllers.contains { candidate in
+            let physical = (candidate as? PVPhysicalProfileController)?.base ?? candidate
+            return physical !== disconnected && Self.isGameplayController(candidate)
         }
-        guard let controller, isGamepad(controller) else { return }
-        let gamepadRemains = PVControllerManager.shared.controllers.contains { $0 !== controller && isGamepad($0) }
-        guard !gamepadRemains, core.isOn, !isShowingMenu else { return }
+        guard !gamepadRemains, core.isOn, !isShowingMenu, !isQuitting else { return }
         ILOG("Gamepad \(controller.vendorName ?? "unknown") disconnected — pausing")
         isShowingMenu = true
+        showMenu(nil)
     }
 
     // MARK: - Auto-hide on-screen controls when a physical controller is connected
@@ -126,8 +127,17 @@ extension PVEmulatorViewController {
     var controllerHidesOnScreenControls: Bool {
         guard Defaults[.hideOnScreenControlsWithController] else { return false }
         return PVControllerManager.shared.controllers.contains { controller in
-            !controller.isSnapshot && (controller.extendedGamepad != nil || controller.microGamepad != nil)
+            Self.isGameplayController(controller)
         }
+    }
+
+    /// Resolve synthesized profiles to their hardware identity. A disconnect notification carries
+    /// the original controller even when the manager exposes its synthesized Nintendo profile.
+    private static func isGameplayController(_ controller: GCController) -> Bool {
+        let physical = (controller as? PVPhysicalProfileController)?.base ?? controller
+        return !physical.isSnapshot && !physical.isRemote
+            && (physical.extendedGamepad != nil || physical.microGamepad != nil
+                || PVPhysicalProfileController.isNeeded(for: physical))
     }
 
     /// Shows or hides the on-screen controls (the skin layer, which also hosts the touch overlay).

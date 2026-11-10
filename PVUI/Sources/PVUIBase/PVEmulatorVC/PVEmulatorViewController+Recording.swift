@@ -289,9 +289,12 @@ extension PVEmulatorViewController {
         // does not cause the prompt to reappear on the next game launch.
         Defaults[.clipBufferingPermissionAsked] = true
         // It comes up seconds into the first game, so hold the game still until it's answered.
+        isClipBufferingPromptPresented = true
         core.setPauseEmulation(true)
         let resume: () -> Void = { [weak self] in
             guard let self else { return }
+            self.isClipBufferingPromptPresented = false
+            guard self.core.isOn, !self.isQuitting else { return }
             self.core.setPauseEmulation(self.isShowingMenu)
         }
         var alert = PVAlert(

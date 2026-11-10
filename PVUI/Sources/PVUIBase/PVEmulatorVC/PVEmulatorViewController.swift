@@ -239,18 +239,6 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, Emulato
         return vc
     }()
 
-    #if !os(tvOS)
-    /// iPad controller-style navigation drops the touch layer only when a gamepad or keyboard is
-    /// attached as the game starts; with neither, the player had no way to play. Fixed for the
-    /// session because the skin layer is built once at load; a gamepad connected later hides it
-    /// through `updateOnScreenControlsVisibility()`.
-    lazy var desktopInputSkipsTouchLayer: Bool = {
-        guard UIDevice.current.userInterfaceIdiom == .pad, GamepadManager.isDesktopInputMode else { return false }
-        let input = GamepadManager.shared
-        return input.hasPhysicalGamepad || input.isKeyboardConnected
-    }()
-    #endif
-
     #if os(iOS) && !targetEnvironment(macCatalyst)
     /// Quick actions for desktop input mode, where no skin or touch overlay is on screen.
     var quickActionBar: EmulatorQuickActionBar?
@@ -307,11 +295,14 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, Emulato
     /// `scheduleMenuButtonFallback()`.
     var skinLoadGraceExpired = false
 
+    /// The first-run clips prompt owns a pause independently of the skin-loading timer and menu.
+    var isClipBufferingPromptPresented = false
+
     public var isShowingMenu: Bool = false {
         didSet {
             // Single authoritative pause toggle to avoid conflicting calls
             guard core.isOn, !isQuitting else { return }
-            core.setPauseEmulation(isShowingMenu)
+            core.setPauseEmulation(isShowingMenu || isClipBufferingPromptPresented)
             setLiveActivityPaused(isShowingMenu)
             if isShowingMenu {
                 features.sessionDidPause(.menu)
@@ -1195,7 +1186,11 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, Emulato
         /// Mirror the dispatch the scaling-mode observer in PVMetalViewController
         /// uses: under DeltaSkins `viewDidLayoutSubviews` early-returns before the
         /// scaling switch, so `setNeedsLayout()` alone would be a no-op there.
-        if isDeltaSkinEnabled {
+        if isProgrammaticOverlayActive {
+            // The overlay fitted its screen to the pre-boot aspect. Recompute that container
+            // before applying Aspect Fill, which would otherwise enlarge the stale rectangle.
+            NotificationCenter.default.post(name: .deltaSkinForceRecalculate, object: nil)
+        } else if isDeltaSkinEnabled {
             reapplyScalingModeForSkin()
         } else if gpuViewController.isViewLoaded {
             /// `isViewLoaded` on purpose: RetroArch `skipLayout` cores manage

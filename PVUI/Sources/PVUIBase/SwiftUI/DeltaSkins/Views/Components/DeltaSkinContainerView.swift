@@ -80,8 +80,30 @@ class DeltaSkinContainerView: UIView {
             skinRequestRevision: skinRequestRevision)
     }
 
+    override func willMove(toSuperview newSuperview: UIView?) {
+        if newSuperview !== superview, let controller = hostingController, controller.parent != nil {
+            controller.willMove(toParent: nil)
+            controller.removeFromParent()
+        }
+        super.willMove(toSuperview: newSuperview)
+    }
+
     override func didMoveToSuperview() {
         super.didMoveToSuperview()
+
+        // Hosting views need controller containment for appearance propagation, including when
+        // an emulator is mounted underneath a presented sheet and only becomes visible later.
+        if let controller = hostingController, controller.parent == nil {
+            var responder: UIResponder? = superview
+            while let current = responder {
+                if let parent = current as? UIViewController {
+                    parent.addChild(controller)
+                    controller.didMove(toParent: parent)
+                    break
+                }
+                responder = current.next
+            }
+        }
 
         // Ensure transparency is maintained after move
         self.backgroundColor = UIColor.clear

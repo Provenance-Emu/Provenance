@@ -114,6 +114,11 @@ struct ProgrammaticOverlayView: View {
             .onReceive(NotificationCenter.default.publisher(for: .overlayEditLayoutRequested)) { _ in
                 beginEditing(template: template, canvas: canvas)
             }
+            .onReceive(NotificationCenter.default.publisher(for: .deltaSkinForceRecalculate)) { _ in
+                let freshLayout = resolve(template, on: Self.canvas(for: geo), editing: editController != nil)
+                publish(freshLayout.screenFrames, force: true)
+                Self.postControlFrames(Self.controlFrames(of: freshLayout))
+            }
         }
         .onReceive(NotificationCenter.default.publisher(for: .thinLibretroCoreAVInfoDidUpdate)) { _ in
             coreAVInfoRevision &+= 1
@@ -127,11 +132,6 @@ struct ProgrammaticOverlayView: View {
         // Pause-menu and Settings choices, including ones the core could not apply.
         .onReceive(Self.variantSettingsChanged) { _ in
             refreshPadKind()
-        }
-        // The controller cleared its frame (rotation): re-send the current frames even
-        // though they did not change. (Scaling-mode changes are re-applied by the VC.)
-        .onReceive(NotificationCenter.default.publisher(for: .deltaSkinForceRecalculate)) { _ in
-            republish()
         }
         .onDisappear {
             if let editController {
@@ -231,10 +231,6 @@ struct ProgrammaticOverlayView: View {
     private func postEditing(_ editing: Bool) {
         NotificationCenter.default.post(name: .overlayEditingDidChange, object: nil,
                                         userInfo: OverlayNotificationPayload.userInfo(editing: editing))
-    }
-
-    private func republish() {
-        publish(viewport.lastFrames, force: true)
     }
 
     private func publish(_ frames: [CGRect], force: Bool = false) {
