@@ -54,37 +54,51 @@ public struct ContinuesManagementHeaderView: View {
             : Color.gray
     }
 
+    /// Side of the square game artwork.
+    static let artworkSize: CGFloat = 64
+    /// Clears the sheet's drag indicator.
+    static let topInset: CGFloat = 24
+    /// Header height: short enough that a half-height sheet still shows several saves.
+    static let height = topInset + artworkSize + RetroPauseChrome.chromeInset
+
+    private var summary: String {
+        let megabytes = String(format: "%.2f", Float(viewModel.savesTotalSize) / 1024.0 / 1024.0)
+        return viewModel.numberOfSaves == 1
+            ? String(localized: "1 Save State - \(megabytes) MB")
+            : String(localized: "\(viewModel.numberOfSaves) Save States - \(megabytes) MB")
+    }
+
     public var body: some View {
         VStack(alignment: .leading, spacing: 0) {
-            HStack(alignment: .top, spacing: 20) {
+            HStack(alignment: .center, spacing: RetroPauseChrome.chromeInset) {
                 viewModel.gameImage
                     .resizable()
                     .aspectRatio(contentMode: .fill)
-                    .frame(width: 100, height: 100)
-                    .clipShape(RoundedRectangle(cornerRadius: 9))
+                    .frame(width: Self.artworkSize, height: Self.artworkSize)
+                    .clipShape(RoundedRectangle(cornerRadius: RetroPauseChrome.menuCellCornerRadius()))
 
                 VStack(alignment: .leading, spacing: 4) {
                     Text(viewModel.gameTitle)
-                        .font(.system(.title, design: .monospaced))
+                        .font(.system(.title3, design: .monospaced))
                         .fontWeight(.bold)
                         .foregroundColor(primaryTextColor)
+                        .lineLimit(2)
+                        .minimumScaleFactor(0.8)
 
                     Text(viewModel.systemTitle)
                         .font(.subheadline)
                         .foregroundColor(primaryTextColor.opacity(0.8))
 
-                    Text("\(viewModel.numberOfSaves) Save States - \(String(format: "%.2f", Float(viewModel.savesTotalSize) / 1024.0 / 1024.0)) MB")
+                    Text(summary)
                         .font(.subheadline)
                         .foregroundColor(secondaryTextColor)
                 }
             }
-            .padding(.horizontal, 20)
-            .padding(.top, 20)
-
-//            Divider()
-//                .padding(.top, 20)
+            .padding(.horizontal, RetroPauseChrome.chromeInset)
+            .padding(.top, Self.topInset)
         }
-        .frame(height: 160) /// Fixed height for the header
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .frame(height: Self.height, alignment: .top)
     }
 }
 

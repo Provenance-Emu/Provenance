@@ -138,7 +138,7 @@ extension View {
 
 #if DEBUG
 
-@available (iOS 17.0, macOS 10.15, tvOS 17.0, watchOS 6.0, *)
+@available(iOS 17.0, macOS 10.15, tvOS 17.0, watchOS 6.0, *)
 #Preview("Save State Row") {
     @Previewable
     @State var currentUserInteractionCellID: String? = nil
@@ -178,7 +178,7 @@ extension View {
 }
 
 /// Dark mode preview
-@available (iOS 17.0, macOS 10.15, tvOS 17.0, watchOS 6.0, *)
+@available(iOS 17.0, macOS 10.15, tvOS 17.0, watchOS 6.0, *)
 #Preview("Dark Mode") {
     @Previewable
     @State var currentUserInteractionCellID: String? = nil
@@ -196,7 +196,7 @@ extension View {
 }
 
 /// Updated preview
-@available (iOS 17.0, macOS 10.15, tvOS 17.0, watchOS 6.0, *)
+@available(iOS 17.0, macOS 10.15, tvOS 17.0, watchOS 6.0, *)
 #Preview("Save State Row States") {
     @Previewable
     @State var currentUserInteractionCellID: String? = nil
@@ -269,7 +269,7 @@ extension View {
     .padding()
 }
 
-@available (iOS 17.0, macOS 10.15, tvOS 17.0, watchOS 6.0, *)
+@available(iOS 17.0, macOS 10.15, tvOS 17.0, watchOS 6.0, *)
 #Preview("Dark Mode") {
     @Previewable
     @State var currentUserInteractionCellID: String? = nil
@@ -323,30 +323,23 @@ public struct SaveStateRowView: View {
             : Color.white.opacity(0.9)
     }
 
+    private static let thumbnailSize: CGFloat = 60
+    private static let rowHeight: CGFloat = 88
+
+    private var thumbnailShape: RoundedRectangle {
+        RoundedRectangle(cornerRadius: RetroPauseChrome.menuCellCornerRadius())
+    }
+
     public var body: some View {
         ZStack {
             // Background with theme-aware styling
-            RoundedRectangle(cornerRadius: 12)
+            RoundedRectangle(cornerRadius: RetroPauseChrome.chromeCornerRadius)
                 .fill(rowBackgroundColor)
                 .overlay(
-                    RoundedRectangle(cornerRadius: 12)
-                        .strokeBorder(
-                            LinearGradient(
-                                gradient: Gradient(colors: [
-                                    viewModel.isSelected ? accentColor : accentColor.opacity(0.5),
-                                    viewModel.isFavorite ? accentColor.opacity(0.8) : accentColor.opacity(0.5),
-                                    viewModel.isPinned ? accentColor.opacity(0.8) : accentColor.opacity(0.3)
-                                ]),
-                                startPoint: .topLeading,
-                                endPoint: .bottomTrailing
-                            ),
-                            lineWidth: viewModel.isSelected || isHovered ? 1.5 : 0.8
-                        )
+                    RoundedRectangle(cornerRadius: RetroPauseChrome.chromeCornerRadius)
+                        .strokeBorder(viewModel.isSelected || isHovered ? accentColor : RetroPauseChrome.chromeBorder)
                 )
-                .shadow(color: accentColor.opacity(glowOpacity * (viewModel.isSelected ? 0.8 : 0.3)),
-                        radius: viewModel.isSelected ? 8 : 4,
-                        x: 0,
-                        y: 0)
+                .shadow(color: viewModel.isSelected ? accentColor.opacity(glowOpacity * 0.5) : .clear, radius: 4)
 
             HStack(spacing: 0) {
                 /// Selection button when in edit mode
@@ -357,35 +350,15 @@ public struct SaveStateRowView: View {
                 }
 
                 /// Main row content
-                HStack(spacing: 20) {
-                    /// Thumbnail image with theme-aware border
-                    ZStack {
-                        // Glow effect for thumbnail
-                        RoundedRectangle(cornerRadius: 9)
-                            .fill(Color.clear)
-                            .frame(width: 62, height: 62)
-                            .overlay(
-                                RoundedRectangle(cornerRadius: 9)
-                                    .strokeBorder(
-                                        LinearGradient(
-                                            gradient: Gradient(colors: [accentColor, accentColor.opacity(0.7)]),
-                                            startPoint: .topLeading,
-                                            endPoint: .bottomTrailing
-                                        ),
-                                        lineWidth: 1.5
-                                    )
-                                    .blur(radius: 1.5)
-                                    .opacity(glowOpacity)
-                            )
-
-                        // Actual thumbnail
-                        viewModel.thumbnailImage
-                            .resizable()
-                            .aspectRatio(contentMode: .fill)
-                            .frame(width: 60, height: 60)
-                            .clipShape(RoundedRectangle(cornerRadius: 9))
-                    }
-                    .padding(.leading, 9)
+                HStack(spacing: RetroPauseChrome.chromeInset) {
+                    /// Thumbnail image with the shared hairline
+                    viewModel.thumbnailImage
+                        .resizable()
+                        .aspectRatio(contentMode: .fill)
+                        .frame(width: Self.thumbnailSize, height: Self.thumbnailSize)
+                        .clipShape(thumbnailShape)
+                        .overlay { thumbnailShape.strokeBorder(RetroPauseChrome.chromeBorder) }
+                        .padding(.leading, RetroPauseChrome.chromeInset)
                     .onTapGesture {
                         showingLoadAlert = true
                     }
@@ -470,9 +443,9 @@ public struct SaveStateRowView: View {
                 }
             }
         }
-        .padding(.horizontal, 8)
+        .padding(.horizontal, RetroPauseChrome.chromeInset)
         .padding(.vertical, 4)
-        .frame(height: 100)
+        .frame(height: Self.rowHeight)
 #if !os(tvOS)
         .onHover { hovering in
             withAnimation(.easeInOut(duration: 0.2)) {

@@ -6,8 +6,6 @@ struct ContinuesSearchBar: View {
     @ObservedObject private var themeManager = ThemeManager.shared
     @FocusState private var isFocused: Bool
 
-    // Animation states for theme-aware effects
-    @State private var glowOpacity: Double = 0.7
     @State private var isHovered: Bool = false
 
     private var currentPalette: any UXThemePalette { themeManager.currentPalette }
@@ -36,9 +34,8 @@ struct ContinuesSearchBar: View {
                     .foregroundColor(isFocused ? accentColor : Color.gray.opacity(0.7))
                     .font(.system(size: 16))
                     .animation(.easeInOut(duration: 0.2), value: isFocused)
-                    .shadow(color: isFocused ? accentColor.opacity(glowOpacity) : .clear, radius: 2, x: 0, y: 0)
 
-                TextField("SEARCH SAVES", text: $text)
+                TextField("Search saves", text: $text)
                     .textFieldStyle(PlainTextFieldStyle())
                     .focused($isFocused)
                     .foregroundColor(primaryTextColor)
@@ -51,29 +48,18 @@ struct ContinuesSearchBar: View {
                         Image(systemName: "xmark.circle.fill")
                             .foregroundColor(accentColor)
                             .font(.system(size: 16))
-                            .shadow(color: accentColor.opacity(glowOpacity), radius: 2, x: 0, y: 0)
                     }
                 }
             }
-            .padding(10)
+            .padding(.horizontal, 10)
+            .frame(minHeight: RetroPauseChrome.controlHeight)
             .background(
                 RoundedRectangle(cornerRadius: RetroPauseChrome.searchFieldCornerRadius())
                     .fill(searchBackgroundColor)
                     .overlay(
                         RoundedRectangle(cornerRadius: RetroPauseChrome.searchFieldCornerRadius())
-                            .strokeBorder(
-                                LinearGradient(
-                                    gradient: Gradient(colors: [accentColor, accentColor.opacity(0.7)]),
-                                    startPoint: .topLeading,
-                                    endPoint: .bottomTrailing
-                                ),
-                                lineWidth: isFocused || isHovered ? 2.0 : 1.5
-                            )
+                            .strokeBorder(isFocused || isHovered ? accentColor : RetroPauseChrome.chromeBorder)
                     )
-                    .shadow(color: isFocused ? accentColor.opacity(glowOpacity) : accentColor.opacity(glowOpacity * 0.5),
-                            radius: isFocused || isHovered ? 5 : 3,
-                            x: 0,
-                            y: 0)
             )
         }
         #if !os(tvOS)
@@ -83,12 +69,6 @@ struct ContinuesSearchBar: View {
             }
         }
         #endif
-        .onAppear {
-            // Start animations
-            withAnimation(Animation.easeInOut(duration: 1.5).repeatForever(autoreverses: true)) {
-                glowOpacity = 1.0
-            }
-        }
     }
 }
 

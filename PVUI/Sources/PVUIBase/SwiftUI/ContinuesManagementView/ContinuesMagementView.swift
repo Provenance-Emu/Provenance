@@ -476,7 +476,7 @@ public struct ContinuesManagementView: View {
                     // Background gradient with theme-aware colors
                     LinearGradient(
                         gradient: Gradient(colors: [
-                            accentColor.opacity(themeManager.currentPalette.dark ? 0.8 : 0.3),
+                            accentColor.opacity(themeManager.currentPalette.dark ? 0.35 : 0.2),
                             headerBackgroundColor
                         ]),
                         startPoint: .top,
@@ -497,19 +497,14 @@ public struct ContinuesManagementView: View {
                                     startPoint: .leading,
                                     endPoint: .trailing
                                 ))
-                                .frame(height: 2)
-                                .blur(radius: 2)
-                                .padding(.bottom, 1)
+                                .frame(height: 1)
                         }
                     )
 
                     // Header content
                     ContinuesManagementHeaderView(viewModel: viewModel.headerViewModel)
                 }
-                .frame(height: 180)
-                .clipShape(RoundedCorners(radius: RetroPauseChrome.panelCornerRadius, corners: [.bottomLeft, .bottomRight]))
-                .shadow(color: accentColor.opacity(0.5), radius: 10, x: 0, y: 5)
-                .padding(.bottom, 10)
+                .frame(height: ContinuesManagementHeaderView.height)
 
                 /// List view
                 ZStack {
@@ -524,26 +519,6 @@ public struct ContinuesManagementView: View {
                             )
                         )
 
-                    // Top edge accent line
-                    VStack {
-                        Rectangle()
-                            .fill(LinearGradient(
-                                gradient: Gradient(colors: [
-                                    accentColor.opacity(0.0),
-                                    accentColor,
-                                    accentColor.opacity(0.7),
-                                    accentColor.opacity(0.0)
-                                ]),
-                                startPoint: .leading,
-                                endPoint: .trailing
-                            ))
-                            .frame(height: 2)
-                            .blur(radius: 2)
-                            .padding(.top, 1)
-
-                        Spacer()
-                    }
-
                     // Content
                     if viewModel.saveStates.isEmpty {
                         EmptyStateView()
@@ -551,15 +526,7 @@ public struct ContinuesManagementView: View {
                         ContinuesManagementContentView(viewModel: viewModel)
                     }
                 }
-                .clipShape(RoundedCorners(radius: RetroPauseChrome.panelCornerRadius, corners: [.topLeft, .topRight]))
-                .shadow(color: accentColor.opacity(0.5), radius: 10, x: 0, y: -5)
             }
-            .clipShape(RoundedCorners(radius: RetroPauseChrome.panelCornerRadius, corners: [.allCorners]))
-            .overlay(
-                RoundedRectangle(cornerRadius: RetroPauseChrome.panelCornerRadius)
-                    .strokeBorder(RetroPauseChrome.panelBorderGradient, lineWidth: RetroPauseChrome.panelStrokeLineWidth)
-            )
-            //        .background(viewModel.currentPalette.settingsCellBackground!.swiftUIColor)
             .onAppear {
                 viewModel.subscribeToDriverPublisher()
             }
@@ -581,21 +548,6 @@ public struct ContinuesManagementView: View {
                 }
             }
         }
-    }
-}
-
-/// Custom shape for top-only rounded corners
-struct RoundedCorners: Shape {
-    var radius: CGFloat
-    var corners: UIRectCorner
-
-    func path(in rect: CGRect) -> Path {
-        let path = UIBezierPath(
-            roundedRect: rect,
-            byRoundingCorners: corners,
-            cornerRadii: CGSize(width: radius, height: radius)
-        )
-        return Path(path.cgPath)
     }
 }
 

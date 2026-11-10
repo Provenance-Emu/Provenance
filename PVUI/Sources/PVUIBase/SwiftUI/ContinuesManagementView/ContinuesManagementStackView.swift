@@ -63,7 +63,7 @@ public struct ContinuesManagementStackView: View {
             ScrollView {
                 VStack(spacing: 0) {
                     ContinuesSearchBar(text: $viewModel.searchText)
-                        .padding(.horizontal)
+                        .padding(.horizontal, RetroPauseChrome.chromeInset)
                         .padding(.vertical, 8)
                         .background(.clear)
                         .opacity(searchBarVisible && !viewModel.controlsViewModel.isEditing ? 1 : 0)
