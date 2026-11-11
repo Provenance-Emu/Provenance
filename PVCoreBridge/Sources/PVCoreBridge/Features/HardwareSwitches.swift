@@ -57,7 +57,7 @@ public struct HardwareSwitchDescriptor: Identifiable, Sendable {
         return (current + 1) % positionList.count
     }
 
-    /// True when both positions forward the same button id, so the core can only
+    /// True when all positions forward the same button id, so the core can only
     /// see "the switch was pressed" and not which position was chosen. Such a
     /// switch is a press-to-toggle (e.g. the 7800 difficulty switches, which
     /// ProSystem flips on every push); the UI must send that single id once per

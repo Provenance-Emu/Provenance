@@ -194,7 +194,8 @@ struct ProgrammaticOverlayView: View {
         // A portrait phone usually has vertical room for controls below the game.
         // Tablets, landscape phones and tall games use the full canvas under the overlay.
         let idiom = UIDevice.current.userInterfaceIdiom
-        let reserveSpace = idiom == .phone && canvas.orientation == .portrait && aspect >= 1
+        let dualScreen = template.screenPolicy == .dualStacked || template.screenPolicy == .dualStacked3DS
+        let reserveSpace = idiom == .phone && canvas.orientation == .portrait && (aspect >= 1 || dualScreen)
         let switchLabels = (systemId.hardwareSwitches ?? []).reduce(into: [String: String]()) { labels, descriptor in
             let index = switchPositionIndexes[descriptor.id] ?? descriptor.initialPositionIndex
             if descriptor.positionList.indices.contains(index) {
