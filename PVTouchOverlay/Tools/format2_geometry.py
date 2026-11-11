@@ -2,6 +2,7 @@
 
 touch_tokens = dict(dsScreen="touchScreen", wiiPointer="pointer")
 
+
 def box(frame, unit):
     return [v / unit for pair in frame for v in pair]
 
@@ -46,4 +47,3 @@ def make_nodes(layout, unit):
                     extend=dict.fromkeys(("top", "left", "bottom", "right"), 20)
                 )
             yield node
-
