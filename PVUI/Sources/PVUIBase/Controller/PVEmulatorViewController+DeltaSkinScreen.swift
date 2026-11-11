@@ -623,78 +623,12 @@ extension PVEmulatorViewController: PVViewportLayoutDelegate {
 
         guard !effectiveRect.isEmpty else { return container }
 
-        let safeWidth = max(effectiveRect.width, 1)
-        let safeHeight = max(effectiveRect.height, 1)
-        var ratio = safeWidth / safeHeight
-
-        // Prefer the core-reported display aspect when available
-        let aspectSize = core.aspectSize
-        if aspectSize.width > 0 && aspectSize.height > 0 {
-            var aspectRatio = aspectSize.width / max(0.01, aspectSize.height)
-            if aspectRatio < 0.5 || aspectRatio > 3.0 {
-                let inverted = aspectSize.height / max(0.01, aspectSize.width)
-                if inverted >= 0.5 && inverted <= 3.0 {
-                    aspectRatio = inverted
-                }
-            }
-            if aspectRatio >= 0.5 && aspectRatio <= 3.0 {
-                ratio = aspectRatio
-            }
-        }
-
-        let containerW = container.width
-        let containerH = container.height
-        var width: CGFloat = 0
-        var height: CGFloat = 0
-
-        switch scalingMode {
-        case .stretch, .nonLinearStretch:
-            // Already handled above, but keep for completeness
-            return container
-
-        case .aspectFit:
-            // Largest game-aspect rect inscribed in container (centered)
-            if containerW / containerH > ratio {
-                height = containerH
-                width = height * ratio
-            } else {
-                width = containerW
-                height = width / ratio
-            }
-
-        case .aspectFill:
-            // Smallest game-aspect rect covering container (centered, will be clipped)
-            if containerW / containerH > ratio {
-                width = containerW
-                height = width / ratio
-            } else {
-                height = containerH
-                width = height * ratio
-            }
-
-        case .integerScale:
-            // `effectiveRect` (safeWidth/safeHeight) is the core framebuffer in
-            // PIXELS; `container` is in view POINTS. Compare in the same space via
-            // the screen scale, then express the result back in points. Without the
-            // conversion, floor(180pt / 256px) = 0 → clamped to 1 → a 256pt frame
-            // that overflows the skin cutout ("integer scale blows up too large").
-            let screenScale = gpuViewController.view.window?.screen.scale ?? UIScreen.main.scale
-            let intScale = max(1, floor(min(containerW * screenScale / safeWidth,
-                                            containerH * screenScale / safeHeight)))
-            width = safeWidth * intScale / screenScale
-            height = safeHeight * intScale / screenScale
-
-        case .nativeResolution:
-            // 1:1 pixel mapping: the core's native PIXEL dims expressed in POINTS.
-            let screenScale = gpuViewController.view.window?.screen.scale ?? UIScreen.main.scale
-            width = safeWidth / screenScale
-            height = safeHeight / screenScale
-        }
-
-        // Center within container
-        let x = container.origin.x + (containerW - width) / 2
-        let y = container.origin.y + (containerH - height) / 2
-        return CGRect(x: x, y: y, width: width, height: height)
+        guard let aspect = ScalingModeLayout.displayAspect(reported: core.aspectSize,
+                                                           fallback: effectiveRect.size) else { return container }
+        let screenScale = gpuViewController.view.window?.screen.scale ?? UIScreen.main.scale
+        return ScalingModeLayout.frame(for: scalingMode, container: container.size, contentAspect: aspect,
+                                       nativePixelHeight: effectiveRect.height, screenScale: screenScale)
+            .offsetBy(dx: container.minX, dy: container.minY)
     }
 
     /// Called when the user changes the scaling mode while a DeltaSkin is active.
