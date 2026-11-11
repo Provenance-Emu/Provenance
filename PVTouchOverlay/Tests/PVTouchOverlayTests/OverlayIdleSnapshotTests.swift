@@ -13,34 +13,39 @@ final class OverlayIdleSnapshotTests: XCTestCase {
     func testIdleArt() throws {
         let output = URL(fileURLWithPath: snapshotOutput, isDirectory: true)
         let style = try XCTUnwrap(OverlayStyle(rawValue: snapshotStyle))
+        #if !OVERLAY_RUNTIME_ART
         let theme = style == .flat ? nil : style.rawValue
+        #endif
         let baselineOnly = snapshotCandidates.isEmpty
         let candidates = URL(fileURLWithPath: snapshotCandidates, isDirectory: true)
         var rows = ["system,subtype,profile,status,pixels,legacyInk,candidateInk,changed,changedAbove8,inkUnion,meanMaxDelta,maxDelta"]
         for system in SystemOverlayBindings.boundSystems.sorted(by: { $0.rawValue < $1.rawValue }) {
             let binding = try XCTUnwrap(SystemOverlayBindings.binding(for: system))
+            #if !OVERLAY_RUNTIME_ART
             let candidateDir = candidates.appendingPathComponent(system.rawValue)
+            #endif
             for subtype in binding.families.keys.sorted() {
+                let pad = OverlayPadKind(system: system, subtype: subtype)
                 let directory = output.appendingPathComponent(system.rawValue).appendingPathComponent(subtype)
                 try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
                 var candidate: Skin2Document?
                 var status = baselineOnly ? "baseline" : "missing"
                 if !baselineOnly {
                     do {
+                        #if OVERLAY_RUNTIME_ART
+                        candidate = try XCTUnwrap(OverlayFormat2Sources.document(in: candidates, pad: pad, binding: binding, style: style),
+                                                  "Missing or invalid bundled art for \(system.rawValue)/\(subtype)")
+                        #else
                         let source = candidateDir.appendingPathComponent("skin.json")
-                        if FileManager.default.fileExists(atPath: source.path) {
-                            candidate = try Skin2Document.load(data: Data(contentsOf: source), theme: theme,
-                                                               variant: subtype == binding.defaultSubtype ? nil : subtype)
-                            status = "compared"
-                        } else {
-                            XCTFail("Missing candidate \(source.path)")
-                        }
+                        candidate = try Skin2Document.load(data: Data(contentsOf: source), theme: theme,
+                                                           variant: subtype == binding.defaultSubtype ? nil : subtype)
+                        #endif
+                        status = "compared"
                     } catch {
                         status = "invalid"
                         XCTFail("\(system.rawValue)/\(subtype): \(error)")
                     }
                 }
-                let pad = OverlayPadKind(system: system, subtype: subtype)
                 for profile in Skin2TraitSet.all {
                     try autoreleasepool {
                         let size = CGSize(width: profile.size.width, height: profile.size.height)
@@ -71,11 +76,18 @@ final class OverlayIdleSnapshotTests: XCTestCase {
                         let legacyInk = baseline.indices.strideByFour.count { baseline[$0 + 3] != 0 }
                         _ = try XCTUnwrap(legacyInk > 0 ? true : nil, "Blank legacy capture for \(prefix)")
                         if let candidate {
+                            #if OVERLAY_RUNTIME_ART
+                            let artwork = OverlayFormat2Artwork(document: candidate, layout: layout, environment: profile.environment)
+                            try assertArtworkCoverage(artwork, layout: layout, description: prefix)
+                            let image = try snapshot(RuntimeOverlayArt(layout: layout, palette: binding.palette,
+                                                                       style: style, artwork: artwork), size: size)
+                            #else
                             let resolution = Skin2Resolver.resolve(candidate, in: profile.environment)
                             let options = Skin2RenderOptions(asset: { path in
                                 try? Data(contentsOf: candidateDir.appendingPathComponent("assets").appendingPathComponent(path))
                             })
                             let image = try XCTUnwrap(Skin2Renderer.image(resolution, scale: 2, options: options), prefix)
+                            #endif
                             try write(image, to: base.appendingPathExtension("candidate.png"))
                             let comparison = try compare(baseline, image: image)
                             XCTAssertGreaterThan(comparison.candidateInk, 0, "Blank candidate for \(prefix)")
@@ -90,6 +102,21 @@ final class OverlayIdleSnapshotTests: XCTestCase {
         try (style.rawValue + "\n").write(to: output.appendingPathComponent("style.txt"), atomically: true, encoding: .utf8)
         try (rows.joined(separator: "\n") + "\n").write(to: output.appendingPathComponent("pixels.csv"), atomically: true, encoding: .utf8)
     }
+
+    #if OVERLAY_RUNTIME_ART
+    private func assertArtworkCoverage(_ artwork: OverlayFormat2Artwork, layout: OverlayLayout, description: String) throws {
+        for group in layout.groups {
+            for control in group.controls where !control.frame.isEmpty {
+                if case .touchSurface = control.control.kind { continue }
+                let node = try XCTUnwrap(artwork.control(control.id, in: group.id)?.root, "\(description)/\(group.id).\(control.id)")
+                XCTAssertEqual(node.exactFrame.x, control.frame.minX, accuracy: 0.001, description)
+                XCTAssertEqual(node.exactFrame.y, control.frame.minY, accuracy: 0.001, description)
+                XCTAssertEqual(node.exactFrame.width, control.frame.width, accuracy: 0.001, description)
+                XCTAssertEqual(node.exactFrame.height, control.frame.height, accuracy: 0.001, description)
+            }
+        }
+    }
+    #endif
 
     @MainActor
     private func snapshot(_ view: some View, size: CGSize) throws -> CGImage {
@@ -201,4 +228,32 @@ private struct IdleOverlayArt: View {
         }
     }
 }
+#if OVERLAY_RUNTIME_ART
+private struct RuntimeOverlayArt: View {
+    let layout: OverlayLayout
+    let palette: OverlayPalette
+    let style: OverlayStyle
+    let artwork: OverlayFormat2Artwork
+
+    var body: some View {
+        ZStack(alignment: .topLeading) {
+            ForEach(layout.groups) { group in
+                if !group.controls.contains(where: isTouchSurface) {
+                    OverlayGroupArtwork(group: group, palette: palette, style: style, artwork: artwork,
+                                        pressedState: OverlayPressedState(), knob: OverlayKnobState())
+                        .opacity(group.opacity)
+                        .offset(x: group.frame.minX, y: group.frame.minY)
+                }
+            }
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+        .ignoresSafeArea()
+    }
+
+    private func isTouchSurface(_ control: ResolvedControl) -> Bool {
+        if case .touchSurface = control.control.kind { return true }
+        return false
+    }
+}
+#endif
 #endif

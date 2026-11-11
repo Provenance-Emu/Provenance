@@ -5,6 +5,7 @@ if [[ $# -lt 3 || $# -gt 4 ]]; then
     echo "Set PV97_STYLE=flat|glossy|outline to select the legacy style and candidate theme." >&2
     echo "Set PV97_BASELINE_DIR to reuse the 2× legacy PNGs from a previous run." >&2
     echo "Set PV97_EDITS_TEST_SOURCE to run an additional XCTest source against the working-tree edit projector." >&2
+    echo "Set PV97_RUNTIME_ART=1 to exercise the app artwork layer against the bundled source directory." >&2
     echo "Set PV97_ONLY_TESTING to restrict XCTest (target[/class[/method]])." >&2
     echo "Usage: $0 SIMULATOR_UDID SKINKIT_CHECKOUT OUTPUT_DIRECTORY [CANDIDATE_DIRECTORY]" >&2
     exit 2
@@ -17,6 +18,7 @@ skinkit="$(cd "$2" && pwd)"
 mkdir -p "$3"
 output="$(cd "$3" && pwd)"
 style="${PV97_STYLE:-flat}"
+runtime_art="${PV97_RUNTIME_ART:-0}"
 case "$style" in
     flat|glossy|outline) ;;
     *) echo "Invalid PV97_STYLE: $style (expected flat, glossy, or outline)" >&2; exit 2 ;;
@@ -53,7 +55,18 @@ done
 for source in OverlayTouchTracker TouchInputRole; do
     sed -i '' 's/^import SkinKitUI$/import SnapshotTouchSelection/' "$scratch/Legacy/Touch/$source.swift"
 done
-rm "$scratch/Legacy/Render/OverlayEditorView.swift" "$scratch/Legacy/Render/OverlayEditController.swift"
+if [[ "$runtime_art" == 1 ]]; then
+    cp "$overlay/Sources/PVTouchOverlay/Render/"{OverlayFormat2Artwork,OverlayHostView,OverlayGroupView,OverlayEditorView,OverlayEditController}.swift "$scratch/Legacy/Render/"
+    cp -R "$overlay/Sources/PVTouchOverlay/Store" "$scratch/Legacy/"
+    sed -i '' '/^import PVLogging$/d' "$scratch/Legacy/Store/OverlayLayoutStore.swift"
+    cat > "$scratch/Legacy/Store/SnapshotLogging.swift" <<'SWIFT'
+func WLOG(_ message: String) { print(message) }
+func ELOG(_ message: String) { print(message) }
+SWIFT
+    cp "$overlay/Tests/PVTouchOverlayTests/"{OverlayFormat2RuntimeTests,OverlayLayoutEngineTests,OverlayTouchTrackerTests,OverlayMultiButtonTouchTests}.swift "$scratch/Tests/"
+else
+    rm "$scratch/Legacy/Render/OverlayEditorView.swift" "$scratch/Legacy/Render/OverlayEditController.swift"
+fi
 mv "$scratch/$style_path" "$scratch/Settings/"
 cp "$overlay/Tests/PVTouchOverlayTests/OverlayIdleSnapshotTests.swift" "$scratch/Tests/"
 if [[ -n "${PV97_EDITS_TEST_SOURCE:-}" ]]; then
@@ -70,12 +83,13 @@ extension Defaults.Keys {
 }
 SWIFT
 
-python3 - "$scratch" "$skinkit" "$output" "$candidates" "$baseline" "$style" <<'PYTHON'
+python3 - "$scratch" "$skinkit" "$output" "$candidates" "$baseline" "$style" "$runtime_art" <<'PYTHON'
 import json
 import pathlib
 import sys
 
-scratch, skinkit, output, candidates, baseline, style = sys.argv[1:]
+scratch, skinkit, output, candidates, baseline, style, runtime_art = sys.argv[1:]
+runtime_flag = '.define("OVERLAY_RUNTIME_ART"), ' if runtime_art == "1" else ""
 quote = lambda value: json.dumps(value, ensure_ascii=False)
 root = pathlib.Path(scratch)
 (root / "Tests" / "SnapshotPaths.swift").write_text(
@@ -98,13 +112,14 @@ let package = Package(
         .target(name: "PVSettings", dependencies: ["Defaults"], path: "Settings"),
         .target(name: "PVTouchOverlay", dependencies: [
             "PVSettings", .product(name: "PVSystems", package: "PVSystems"),
-            "SnapshotTouchSelection"
+            "SnapshotTouchSelection", .product(name: "SkinKit2Core", package: "SkinKit"),
+            .product(name: "SkinKit2Render", package: "SkinKit")
         ], path: "Legacy"),
         .testTarget(name: "OverlaySnapshots", dependencies: [
             "PVTouchOverlay", "PVSettings", .product(name: "PVSystems", package: "PVSystems"),
             .product(name: "SkinKit2Core", package: "SkinKit"),
             .product(name: "SkinKit2Render", package: "SkinKit")
-        ], path: "Tests", swiftSettings: [.define("OVERLAY_SNAPSHOT_HARNESS"), .unsafeFlags(["-O"])])
+        ], path: "Tests", swiftSettings: [.define("OVERLAY_SNAPSHOT_HARNESS"), {runtime_flag}.unsafeFlags(["-O"])])
     ],
     swiftLanguageModes: [.v5]
 )

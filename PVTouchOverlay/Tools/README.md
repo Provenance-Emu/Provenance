@@ -55,3 +55,26 @@ control views and with SkinKit on an iOS simulator at 2×. Select a style with
 and fails the comparison if a pair exceeds 0.25% at threshold 0.1 with
 antialiasing excluded. Use `PV97_BASELINE_DIR` to reuse captures from the
 same style.
+
+## Bundled overlay artwork
+
+Refresh the app resources from a successful bake.
+
+```sh
+resources=PVUI/Sources/PVUIBase/Resources/DefaultSkins/Programmatic
+mkdir -p "$resources"
+for source in /tmp/default-pad-candidates/*/skin.json; do
+  system="$(basename "$(dirname "$source")")"
+  cp "$source" "$resources/$system.json"
+done
+```
+
+The app ships one source per system, with each selectable pad and style inside
+that source. The bake produces the classic archives for distribution and
+verification. The in-game host uses the live control frames from the saved
+layout store, keeps UIKit touch routing, and uses the existing renderer as a
+fallback if a source or control artwork is unavailable.
+
+Set `PV97_RUNTIME_ART=1` and use the bundled `Programmatic` directory as the
+last snapshot-runner argument to exercise the same artwork view as the app.
+This also runs the saved-layout and touch routing tests in the isolated package.

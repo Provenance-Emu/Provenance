@@ -62,6 +62,7 @@ struct OverlayGroupView: View {
     let sink: any OverlayInputSink
     let hapticIntensity: Double
     let editing: Bool
+    var artwork: OverlayFormat2Artwork?
     /// Multi-button ("fat finger") touch for this group's gameplay buttons.
     var multiButton = false
     @State private var pressedState = OverlayPressedState()
@@ -70,12 +71,8 @@ struct OverlayGroupView: View {
 
     var body: some View {
         ZStack(alignment: .topLeading) {
-            ForEach(group.controls) { control in
-                controlArt(control)
-                    .frame(width: control.frame.width, height: control.frame.height)
-                    .offset(x: control.frame.minX - group.frame.minX, y: control.frame.minY - group.frame.minY)
-                    .allowsHitTesting(false)
-            }
+            OverlayGroupArtwork(group: group, palette: palette, style: style, artwork: artwork, pressedState: pressedState, knob: knob)
+                .allowsHitTesting(false)
             touchLayer
         }
         .frame(width: group.frame.width, height: group.frame.height, alignment: .topLeading)
@@ -87,17 +84,6 @@ struct OverlayGroupView: View {
             for control in stickControls {
                 if case .stick(let side, _) = control.control.kind { sink.overlayStick(side, x: 0, y: 0) }
             }
-        }
-    }
-
-    @ViewBuilder private func controlArt(_ control: ResolvedControl) -> some View {
-        let spec = OverlayArtSpec(shape: control.control.shape, color: palette.color(for: control.control.paletteSlot),
-                                  labelColor: palette.label, style: style,
-                                  pressed: pressedState.pressed.contains(control.id), label: control.control.label)
-        if case .stick = control.control.kind {
-            OverlayStickArt(spec: spec, knob: knob, axis: control.control.axis).equatable()
-        } else {
-            OverlayControlArt(spec: spec).equatable()
         }
     }
 
@@ -200,6 +186,44 @@ struct OverlayGroupView: View {
             knob.offset = CGSize(width: CGFloat(stickX) * travel, height: -CGFloat(stickY) * travel)
         }
         sink.overlayStick(side, x: stickX, y: stickY)
+    }
+}
+
+/// The visual layer, shared by the in-game host and the simulator snapshots.
+struct OverlayGroupArtwork: View {
+    let group: ResolvedGroup
+    let palette: OverlayPalette
+    let style: OverlayStyle
+    let artwork: OverlayFormat2Artwork?
+    let pressedState: OverlayPressedState
+    let knob: OverlayKnobState
+
+    var body: some View {
+        ZStack(alignment: .topLeading) {
+            ForEach(group.controls) { control in
+                controlArt(control)
+                    .frame(width: control.frame.width, height: control.frame.height)
+                    .offset(x: control.frame.minX - group.frame.minX, y: control.frame.minY - group.frame.minY)
+            }
+        }
+        .frame(width: group.frame.width, height: group.frame.height, alignment: .topLeading)
+    }
+
+    @ViewBuilder private func controlArt(_ control: ResolvedControl) -> some View {
+        let spec = OverlayArtSpec(shape: control.control.shape, color: palette.color(for: control.control.paletteSlot),
+                                  labelColor: palette.label, style: style,
+                                  pressed: pressedState.pressed.contains(control.id), label: control.control.label)
+        if let art = artwork?.control(control.id, in: group.id) {
+            if case .stick = control.control.kind {
+                OverlayFormat2ControlView(art: art, frame: control.frame, pressed: spec.pressed, knob: knob)
+            } else {
+                OverlayFormat2ControlView(art: art, frame: control.frame, pressed: spec.pressed, knob: nil)
+            }
+        } else if case .stick = control.control.kind {
+            OverlayStickArt(spec: spec, knob: knob, axis: control.control.axis).equatable()
+        } else {
+            OverlayControlArt(spec: spec).equatable()
+        }
     }
 }
 
