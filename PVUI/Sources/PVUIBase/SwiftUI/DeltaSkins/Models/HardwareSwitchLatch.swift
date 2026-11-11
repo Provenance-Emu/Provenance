@@ -79,7 +79,8 @@ public struct HardwareSwitchLatch {
 
         if isPressed {
             for descriptor in descriptors {
-                guard let index = descriptor.positionList.firstIndex(where: { $0.buttonId.lowercased() == key }) else { continue }
+                let positionToken = descriptor.id == "color_bw" ? HardwareSwitchTokens.canonicalTVType(key) ?? key : key
+                guard let index = descriptor.positionList.firstIndex(where: { $0.buttonId.lowercased() == positionToken }) else { continue }
                 if descriptor.isPressToToggle {
                     _ = advance(descriptor)
                 } else {
