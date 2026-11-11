@@ -39,9 +39,25 @@ struct OverlayTemplateExport {
                 return SystemTemplates(system: system.rawValue, defaultSubtype: binding.defaultSubtype,
                                        palette: binding.palette, layouts: layouts)
             }
+        let args = Array(CommandLine.arguments.dropFirst())
+        if args.isEmpty {
+            try write(systems)
+        } else {
+            let options = try GeometryOptions(args)
+            try write(systems.flatMap { system in
+                system.layouts.flatMap { layout in
+                    GeometryProfile.all.filter { $0.orientation == layout.orientation }.map {
+                        GeometryReference(template: layout.template, profile: $0, options: options)
+                    }
+                }
+            })
+        }
+    }
+
+    private static func write(_ value: some Encodable) throws {
         let encoder = JSONEncoder()
         encoder.outputFormatting = [.prettyPrinted, .sortedKeys, .withoutEscapingSlashes]
-        FileHandle.standardOutput.write(try encoder.encode(systems))
+        FileHandle.standardOutput.write(try encoder.encode(value))
         FileHandle.standardOutput.write(Data([0x0A]))
     }
 
