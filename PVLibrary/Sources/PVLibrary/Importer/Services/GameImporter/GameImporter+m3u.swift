@@ -20,8 +20,9 @@ extension GameImporter {
         while i >= 0 {
             let currentItem = importQueue[i]
 
-            // Skip non-M3U files
-            guard currentItem.url.pathExtension.lowercased() == Extensions.m3u.rawValue else {
+            // Verified external sets already carry their resolved members.
+            guard currentItem.verifiedGameSetMembers == nil,
+                  currentItem.url.pathExtension.lowercased() == Extensions.m3u.rawValue else {
                 i -= 1
                 continue
             }

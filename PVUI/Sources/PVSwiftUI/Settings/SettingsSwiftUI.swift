@@ -2508,6 +2508,15 @@ private struct LibrarySection2: View {
             SettingsSubheading(title: "Library Tools")
 
             #if os(iOS) || os(tvOS)
+            NavigationLink(destination: RomMLibraryView().settingsSubpageTracking()) {
+                SettingsRow(title: "RomM",
+                            subtitle: "Browse and download games from your RomM server.",
+                            icon: .sfSymbol("server.rack"))
+            }
+            #if os(tvOS)
+            .retroFocusButtonStyle(showBorder: false)
+            #endif
+
             if featureFlags.nearbyLibraries {
                 NavigationLink(destination: NearbyLibrariesView()) {
                     SettingsRow(title: "Nearby Libraries",

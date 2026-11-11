@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import PVArchiving
 import PVFileSystem
 import PVSupport
 import RealmSwift
@@ -282,6 +283,10 @@ class GameImporterFileService : GameImporterFileServicing {
         }
 
         let destinationFolder = targetSystem.romsDirectory
+        if let members = queueItem.verifiedGameSetMembers {
+            try await placeVerifiedGameSet(queueItem, members: members, in: destinationFolder)
+            return
+        }
 
         // Check if the file is already in the correct system directory
         let currentDirectory = queueItem.url.deletingLastPathComponent()
@@ -477,6 +482,56 @@ class GameImporterFileService : GameImporterFileServicing {
         queueItem.resolvedAssociatedFileURLs = placement.members + missing + queueItem.resolvedAssociatedFileURLs
         try await moveChildImports(forQueueItem: queueItem, to: placement.folder)
         removeEmptyImportSubfolder(indexURL.deletingLastPathComponent())
+    }
+
+    /// Installs a complete, private staging tree without flattening nested disc paths.
+    private func placeVerifiedGameSet(_ item: ImportQueueItem, members: [URL], in systemFolder: URL) async throws {
+        let manager = FileManager.default
+        let primary = item.url
+        let directory = primary.deletingLastPathComponent()
+        let prefix = directory.resolvingSymlinksInPath().path + "/"
+        let relatives = try members.map { member -> String in
+            let path = member.resolvingSymlinksInPath().path
+            let values = try member.resourceValues(forKeys: [.isRegularFileKey, .isSymbolicLinkKey])
+            guard path.hasPrefix(prefix), values.isRegularFile == true, values.isSymbolicLink != true else {
+                throw GameImporterError.unsupportedFile
+            }
+            return String(path.dropFirst(prefix.count))
+        }
+        guard !relatives.isEmpty else { throw GameImporterError.unsupportedFile }
+        try manager.createDirectory(at: systemFolder, withIntermediateDirectories: true)
+
+        if ArchiveCompanionLayout.isHost(primary.lastPathComponent) {
+            guard !(try ArchiveManager.shared.listEntries(at: primary, format: .zip)).isEmpty else {
+                throw GameImporterError.unsupportedFile
+            }
+            let source = ArchiveCompanionLayout.companionDirectory(forArchiveAt: primary)
+            let stem = source.lastPathComponent
+            guard relatives.allSatisfy({ $0.hasPrefix(stem + "/") && ($0 as NSString).pathExtension.lowercased() == "chd" }) else {
+                throw GameImporterError.unsupportedFile
+            }
+            let archive = systemFolder.appendingPathComponent(primary.lastPathComponent)
+            let companion = ArchiveCompanionLayout.companionDirectory(forArchiveAt: archive)
+            // Install the CHDs first so a library scan sees the archive only once its companions are present.
+            try manager.moveItem(at: source, to: companion)
+            do {
+                try manager.moveItem(at: primary, to: archive)
+            } catch {
+                try manager.moveItem(at: companion, to: source)
+                throw error
+            }
+            item.destinationUrl = archive
+            item.resolvedAssociatedFileURLs = relatives.map { systemFolder.appendingPathComponent($0) }
+        } else {
+            guard MultiFileSetFolder.isIndexFile(primary.lastPathComponent) else { throw GameImporterError.unsupportedFile }
+            let taken = Set(try manager.contentsOfDirectory(atPath: systemFolder.path))
+            let identity = await identityMD5ForFolderName(of: item)
+            let folderName = MultiFileSetFolder.folderName(forIndexFile: primary.lastPathComponent, taken: taken, identityMD5: identity)
+            let folder = systemFolder.appendingPathComponent(folderName, isDirectory: true)
+            try manager.moveItem(at: directory, to: folder)
+            item.destinationUrl = folder.appendingPathComponent(primary.lastPathComponent)
+            item.resolvedAssociatedFileURLs = relatives.map { folder.appendingPathComponent($0) }
+        }
     }
 
     /// The game's identity, which names the set's folder (`MultiFileSetFolder.folderName`) the same

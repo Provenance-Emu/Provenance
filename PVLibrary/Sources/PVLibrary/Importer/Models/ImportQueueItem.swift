@@ -179,6 +179,9 @@ public class ImportQueueItem: Identifiable, ObservableObject, Sendable {
     /// cannot reject a distinct image before the collision-safe file mover runs.
     public var requiresContentBasedDuplicateCheck = false
 
+    /// A complete disc or arcade set verified by the caller before queueing the primary file.
+    public var verifiedGameSetMembers: [URL]?
+
     //this is used when a single import has child items - e.g., m3u, cue, directory
     public var childQueueItems: [ImportQueueItem]
 

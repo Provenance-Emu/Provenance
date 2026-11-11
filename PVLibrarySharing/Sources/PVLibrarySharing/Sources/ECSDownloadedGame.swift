@@ -3,8 +3,12 @@ import Foundation
 /// Checks descriptor references before handing untrusted server files to the importer.
 public enum ECSDownloadedGame {
     public static func validate(_ game: PulledGame) throws {
-        let files = Set(game.gameFiles.map { $0.standardizedFileURL.path })
-        for file in game.gameFiles {
+        try validate(files: game.gameFiles)
+    }
+
+    public static func validate(files gameFiles: [URL]) throws {
+        let files = Set(gameFiles.map { $0.standardizedFileURL.path })
+        for file in gameFiles {
             let ext = file.pathExtension.lowercased()
             guard ["m3u", "cue", "gdi", "toc"].contains(ext) else { continue }
             let size = try file.resourceValues(forKeys: [.fileSizeKey]).fileSize ?? 0

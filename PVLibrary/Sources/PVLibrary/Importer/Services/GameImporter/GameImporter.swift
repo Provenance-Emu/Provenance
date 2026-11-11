@@ -2028,7 +2028,7 @@ public final class GameImporter: GameImporting, ObservableObject {
             let currentItem = importQueue[i]
 
             // Only CUE sheets and GDI track tables carry tracks
-            guard cdRomFileHandler.isTrackIndex(currentItem.url) else {
+            guard currentItem.verifiedGameSetMembers == nil, cdRomFileHandler.isTrackIndex(currentItem.url) else {
                 i -= 1
                 continue
             }
@@ -3314,6 +3314,8 @@ public final class GameImporter: GameImporting, ObservableObject {
                 item.systems = [matchingSystem]
                 // Continue with normal import flow
             } else {
+                // An arcade archive with verified CHD companions must be imported intact.
+                guard item.verifiedGameSetMembers == nil else { throw GameImporterError.unsupportedFile }
                 // Archive doesn't match - extract and import contents
                 ILOG("Archive \(fileName) doesn't match in database - extracting and importing contents")
 

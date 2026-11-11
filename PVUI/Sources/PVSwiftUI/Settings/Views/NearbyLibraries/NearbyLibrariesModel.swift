@@ -48,7 +48,9 @@ final class NearbyLibrariesModel {
     @ObservationIgnored private let browser = PeerBrowser()
     /// Copies land here before the importer moves them into the library.
     /// App Caches, not `Imports/`: that folder is watched (see `LibraryStaging`).
-    @ObservationIgnored let staging = LibraryStaging(
+    @ObservationIgnored let staging = NearbyLibrariesModel.incomingStaging
+
+    static let incomingStaging = LibraryStaging(
         root: FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask)[0]
             .appendingPathComponent("LibrarySharing/Incoming", isDirectory: true)
     )

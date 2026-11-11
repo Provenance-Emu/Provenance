@@ -393,12 +393,16 @@ import Security
 public struct KeychainECSTokenStore: ECSTokenStore {
     public static let service = "org.provenance-emu.content-server"
 
-    public init() {}
+    private let credentialService: String
+
+    public init(service: String = KeychainECSTokenStore.service) {
+        credentialService = service
+    }
 
     private func query(_ server: URL) -> [String: Any] {
         [
             kSecClass as String: kSecClassGenericPassword,
-            kSecAttrService as String: Self.service,
+            kSecAttrService as String: credentialService,
             kSecAttrAccount as String: server.absoluteString
         ]
     }
