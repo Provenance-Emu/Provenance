@@ -230,6 +230,8 @@ For sideloading (AltStore / SideStore) or building from source, see the [Install
 
 **2. Add your games**
 
+Development builds are adding support for two self-hosted libraries. Find [Emulation Server (ECS)](https://github.com/Provenance-Emu/emulator-content-server) in Nearby Libraries, or open [RomM](https://romm.app/) in Settings. Browse the catalog and download supported games to your local library. See the [server import preview](https://wiki.provenance-emu.com/using-provenance/importing-roms#import-from-a-self-hosted-library-development-preview) for setup.
+
 See [Importing ROMs](https://wiki.provenance-emu.com/installation-and-usage/roms/importing-roms) — WebDAV, AirDrop, Files, or browser downloads all work.
 
 **3. (Optional) Add BIOS files**
