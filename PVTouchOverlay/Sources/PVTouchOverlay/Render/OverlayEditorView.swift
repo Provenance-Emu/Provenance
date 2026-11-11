@@ -11,6 +11,7 @@ public struct OverlayEditorView: View {
     public let layout: OverlayLayout
     public let binding: SystemOverlayBinding
     public let style: OverlayStyle
+    private let format2Sources: URL?
     /// The player's controller opacity, so the pad is previewed as it will look in play.
     public let globalOpacity: Double
     /// Display name of the system, for the "All <system> games" save choice.
@@ -26,13 +27,14 @@ public struct OverlayEditorView: View {
     @State private var lastHandleWidth: CGFloat = 0
 
     public init(controller: OverlayEditController, layout: OverlayLayout, binding: SystemOverlayBinding,
-                style: OverlayStyle, globalOpacity: Double, systemName: String,
+                style: OverlayStyle, globalOpacity: Double, systemName: String, format2Sources: URL? = nil,
                 askSaveScope: (@MainActor (_ thisGame: @escaping () -> Void, _ allGames: @escaping () -> Void) -> Void)? = nil,
                 onFinish: @escaping (_ saved: Bool) -> Void) {
         self.controller = controller
         self.layout = layout
         self.binding = binding
         self.style = style
+        self.format2Sources = format2Sources
         self.globalOpacity = globalOpacity
         self.systemName = systemName
         self.askSaveScope = askSaveScope
@@ -44,7 +46,8 @@ public struct OverlayEditorView: View {
         let _ = controller.revision // read so edits re-render this view
         ZStack(alignment: .topLeading) {
             OverlayHostView(layout: layout, binding: binding, style: style, globalOpacity: globalOpacity,
-                            hapticIntensity: 0, sink: OverlayNullSink.shared, editing: true)
+                            hapticIntensity: 0, sink: OverlayNullSink.shared, editing: true,
+                            canvas: controller.canvas, format2Sources: format2Sources)
             ForEach(layout.groups) { group in groupChrome(group) }
             VStack {
                 toolbar
