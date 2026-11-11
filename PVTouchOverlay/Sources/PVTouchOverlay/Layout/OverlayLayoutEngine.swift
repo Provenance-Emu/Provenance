@@ -17,10 +17,14 @@ public enum OverlayLayoutEngine {
                                canvas: OverlayCanvas,
                                overrides: OverlayLayoutOverrides,
                                gameAspect: CGFloat,
-                               shownToggles: Set<OverlayAction> = []) -> OverlayLayout {
+                               shownToggles: Set<OverlayAction> = [],
+                               reservesControlSpace: Bool = true,
+                               arrangesConsoleRow: Bool = false,
+                               switchPositionLabels: [String: String] = [:]) -> OverlayLayout {
         let unit = referenceScale(for: canvas)
         // A toggled group that is off takes no part in the layout, so the screen planner never reserves room for it.
         let present = template.groups.filter { $0.toggledBy.map(shownToggles.contains) ?? true }
+        let consoleRow = arrangesConsoleRow ? consolePlacements(groups: present, overrides: overrides, canvas: canvas, unit: unit) : [:]
         let resolved = present.map { group -> ResolvedGroup in
             let override = overrides.groups[group.id] ?? .empty
             let scale = clampedScale(override.scale ?? CGSize(width: group.scale, height: group.scale))
@@ -28,7 +32,7 @@ public enum OverlayLayoutEngine {
             let size = CGSize(width: natural.width * unit * scale.width, height: natural.height * unit * scale.height)
 
             var center = override.center?.resolve(in: canvas)
-                ?? placementCenter(group.placement, size: size, canvas: canvas, unit: unit)
+                ?? placementCenter(consoleRow[group.id] ?? group.placement, size: size, canvas: canvas, unit: unit)
             center = clampCenter(center, size: size, within: canvas.safeRect)
             let origin = CGPoint(x: center.x - size.width / 2, y: center.y - size.height / 2)
 
@@ -39,17 +43,49 @@ public enum OverlayLayoutEngine {
                 let midX = origin.x + (control.frame.midX * unit * scale.width) + ctl.offset.x
                 let midY = origin.y + (control.frame.midY * unit * scale.height) + ctl.offset.y
                 let frame = CGRect(x: midX - width / 2, y: midY - height / 2, width: width, height: height)
-                return ResolvedControl(control: control, frame: frame,
+                var displayed = control
+                if group.id == "switches", let label = control.label,
+                   let position = switchPositionLabels[String(control.id.dropFirst("switch-".count))] {
+                    displayed.label = "\(label): \(position)"
+                }
+                return ResolvedControl(control: displayed, frame: frame,
                                        hitFrame: frame.insetBy(dx: -extendedEdges * unit, dy: -extendedEdges * unit))
             }
             return ResolvedGroup(group: group, frame: CGRect(origin: origin, size: size), controls: controls,
                                  scale: scale, opacity: group.opacity * clampedOpacity(override.opacity ?? 1))
         }
         let screens = OverlayScreenPlanner.screenFrames(policy: template.screenPolicy, canvas: canvas,
-                                                        groups: resolved, gameAspect: gameAspect)
+                                                        groups: resolved, gameAspect: gameAspect,
+                                                        reservesControlSpace: reservesControlSpace)
         let groups = resolved.map { snapSurface($0, to: screens) }
         return OverlayLayout(padKind: template.padKind, orientation: template.orientation,
                              groups: groups, screenFrames: screens)
+    }
+
+    /// Fit both console rows side by side when their default centres are still in use.
+    /// Keep the group IDs and local frames so existing layout edits still apply.
+    private static func consolePlacements(groups: [OverlayGroup], overrides: OverlayLayoutOverrides,
+                                          canvas: OverlayCanvas, unit: CGFloat) -> [String: OverlayPlacement] {
+        guard canvas.orientation == .landscape,
+              let switches = groups.first(where: { $0.id == "switches" }),
+              let buttons = groups.first(where: { $0.id == "system" }),
+              overrides.groups[switches.id]?.center == nil, overrides.groups[buttons.id]?.center == nil else { return [:] }
+        func width(_ group: OverlayGroup) -> CGFloat {
+            let scale = overrides.groups[group.id]?.scale?.width ?? group.scale
+            return group.naturalSize.width * min(max(scale, scaleRange.lowerBound), scaleRange.upperBound)
+        }
+        let switchWidth = width(switches)
+        let buttonWidth = width(buttons)
+        let gap = 2 * extendedEdges
+        let rowWidth = switchWidth + gap + buttonWidth
+        let safeWidth = canvas.safeRect.width / unit
+        guard rowWidth <= safeWidth else { return [:] }
+        let left = (safeWidth - rowWidth) / 2
+        let bottom = buttons.placement.inset.y
+        return [
+            switches.id: OverlayPlacement(anchor: .bottomLeading, inset: CGPoint(x: left, y: bottom)),
+            buttons.id: OverlayPlacement(anchor: .bottomLeading, inset: CGPoint(x: left + switchWidth + gap, y: bottom)),
+        ]
     }
 
     /// A group holding a single touch surface fills the screen it drives: the bottom screen for the DS

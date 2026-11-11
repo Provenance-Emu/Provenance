@@ -26,6 +26,21 @@ struct OverlayLayoutEngineTests {
         return OverlayTemplate(padKind: .standard(.SNES), orientation: .portrait, groups: [grp], screenPolicy: .topBand)
     }
 
+    @Test("Atari console switches and system controls fit a single tablet row with position labels")
+    func tabletConsoleRow() throws {
+        let binding = try #require(SystemOverlayBindings.binding(for: .Atari2600))
+        let template = binding.template(padKind: .standard(.Atari2600), orientation: .landscape)
+        let layout = OverlayLayoutEngine.resolve(template: template, canvas: Self.padLandscape, overrides: .empty,
+                                                gameAspect: 4.0 / 3.0, reservesControlSpace: false, arrangesConsoleRow: true,
+                                                switchPositionLabels: ["left_diff": "B", "color_bw": "CLR"])
+        let switches = try #require(layout.groups.first { $0.id == "switches" })
+        let buttons = try #require(layout.groups.first { $0.id == "system" })
+        #expect(switches.frame.maxY == buttons.frame.maxY)
+        #expect(switches.frame.maxX < buttons.frame.minX)
+        #expect(switches.controls.first(where: { $0.id == "switch-left_diff" })?.control.label == "L DIFF: B")
+        #expect(switches.controls.first(where: { $0.id == "switch-color_bw" })?.control.label == "TV: CLR")
+    }
+
     @Test("Reference scale is 1 on a 390pt phone and clamps at 1.35")
     func referenceScale() {
         #expect(OverlayLayoutEngine.referenceScale(for: Self.phonePortrait) == 1)

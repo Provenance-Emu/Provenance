@@ -43,11 +43,10 @@ struct ProgrammaticOverlayView: View {
     @State private var editController: OverlayEditController?
     /// Whether the keypad group is shown. The editor always shows it so it can be moved.
     @State private var keypadShown = false
+    @State private var switchPositionIndexes: [String: Int] = [:]
     /// Bumped when the core reports its real geometry, so `body` re-reads the game aspect.
     @State private var coreAVInfoRevision = 0
 
-    /// Accepted game aspect ratios; anything else is a not-yet-booted core's fallback.
-    private static let plausibleAspect: ClosedRange<CGFloat> = 0.5...2.5
     private static let fallbackAspect: CGFloat = 4.0 / 3.0
     private static let format2Sources = Bundle.module.url(forResource: "Programmatic", withExtension: nil, subdirectory: "DefaultSkins")
     /// Per-game or per-system controller variant choices changed.
@@ -141,6 +140,9 @@ struct ProgrammaticOverlayView: View {
             guard notification.object as? PVEmulatorCore === coreInstance else { return }
             refreshPadKind()
         }
+        .onReceive(inputHandler.$hardwareSwitchPositionIndexes) { positions in
+            switchPositionIndexes = positions
+        }
         // Pause-menu and Settings choices, including ones the core could not apply.
         .onReceive(Self.variantSettingsChanged) { _ in
             refreshPadKind()
@@ -188,17 +190,28 @@ struct ProgrammaticOverlayView: View {
         _ = store.revision // re-resolve when the stored layout changes
         _ = coreAVInfoRevision
         let key = padKind.storageKey(for: template.orientation)
+        let aspect = gameAspect()
+        // A portrait phone usually has vertical room for controls below the game.
+        // Tablets, landscape phones and tall games use the full canvas under the overlay.
+        let idiom = UIDevice.current.userInterfaceIdiom
+        let reserveSpace = idiom == .phone && canvas.orientation == .portrait && aspect >= 1
+        let switchLabels = (systemId.hardwareSwitches ?? []).reduce(into: [String: String]()) { labels, descriptor in
+            let index = switchPositionIndexes[descriptor.id] ?? descriptor.initialPositionIndex
+            if descriptor.positionList.indices.contains(index) {
+                labels[descriptor.id] = descriptor.positionList[index].label
+            }
+        }
         return OverlayLayoutEngine.resolve(template: template, canvas: canvas,
                                            overrides: store.overrides(for: key, gameMD5: gameMD5),
-                                           gameAspect: gameAspect(),
-                                           shownToggles: editing || keypadShown ? [.keypad] : [])
+                                           gameAspect: aspect,
+                                           shownToggles: editing || keypadShown ? [.keypad] : [],
+                                           reservesControlSpace: reserveSpace, arrangesConsoleRow: idiom == .pad,
+                                           switchPositionLabels: switchLabels)
     }
 
     private func gameAspect() -> CGFloat {
-        let size = coreInstance.aspectSize
-        guard size.width > 0, size.height > 0 else { return Self.fallbackAspect }
-        let ratio = size.width / size.height
-        return Self.plausibleAspect.contains(ratio) ? ratio : Self.fallbackAspect
+        ScalingModeLayout.displayAspect(reported: coreInstance.aspectSize,
+                                        fallback: coreInstance.screenRect.size) ?? Self.fallbackAspect
     }
 
     /// Not while the editor is open: it keeps the storage key of the layout it is editing.

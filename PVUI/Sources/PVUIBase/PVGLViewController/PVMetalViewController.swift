@@ -1008,117 +1008,12 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
              Using effective rect: \(effectiveRect)
             """)
 
-        if !effectiveRect.isEmpty {
-            // Use the effective dimensions for aspect ratio calculation
-            let effectiveSize = CGSize(width: effectiveRect.width, height: effectiveRect.height)
-            let safeWidth = max(effectiveSize.width, 1)
-            let safeHeight = max(effectiveSize.height, 1)
-            /// Prefer the core-reported display aspect (`aspectSize`) when available, while keeping `effectiveRect` for texture dimensions.
-            var ratio = safeWidth / safeHeight
-            let aspectSize = emulatorCore.aspectSize
-            if aspectSize.width > 0 && aspectSize.height > 0 {
-                var aspectRatio = aspectSize.width / max(0.01, aspectSize.height)
-                if aspectRatio < 0.5 || aspectRatio > 3.0 {
-                    let inverted = aspectSize.height / max(0.01, aspectSize.width)
-                    if inverted >= 0.5 && inverted <= 3.0 {
-                        aspectRatio = inverted
-                    }
-                }
-                if aspectRatio >= 0.5 && aspectRatio <= 3.0 {
-                    ratio = aspectRatio
-                }
-            }
-
-            /// Get parent size in points (not scaled)
-            var parentSize = parent?.view.bounds.size ?? CGSize.zero
-            if let window = view.window {
-                parentSize = window.bounds.size
-            }
-
-#if DEBUG
-            ILOG("Parent size for calculations: \(parentSize)")
-#endif
-
-            var height: CGFloat = 0
-            var width: CGFloat = 0
-
+        if let aspect = ScalingModeLayout.displayAspect(reported: emulatorCore.aspectSize, fallback: effectiveRect.size) {
+            let parentSize = view.window?.bounds.size ?? parent?.view.bounds.size ?? .zero
+            let screenScale = view.window?.screen.scale ?? UIScreen.main.scale
             let scalingMode = renderSettings.scalingMode
-
-            /// Calculate dimensions in points first
-            switch scalingMode {
-                case .stretch, .nonLinearStretch:
-                    // Fill the entire parent view (non-linear reshapes it in the renderer)
-                    width = parentSize.width
-                    height = parentSize.height
-
-                case .aspectFill:
-                    // Scale to fill, preserving aspect ratio (may overflow; clipping applied by view hierarchy)
-                    if parentSize.width > parentSize.height {
-                        height = parentSize.height
-                        width = height * ratio
-                        if width < parentSize.width {
-                            width = parentSize.width
-                            height = width / ratio
-                        }
-                    } else {
-                        width = parentSize.width
-                        height = width / ratio
-                        if height < parentSize.height {
-                            height = parentSize.height
-                            width = height * ratio
-                        }
-                    }
-
-                case .nativeResolution:
-                    // 1:1 pixel mapping — use the core's effective output dimensions directly
-                    width = effectiveSize.width
-                    height = effectiveSize.height
-
-                case .integerScale:
-                    // Snap to the largest integer multiple that fits
-                    if parentSize.width > parentSize.height {
-                        height = floor(parentSize.height / effectiveSize.height) * effectiveSize.height
-                        width = height * ratio
-                        if width > parentSize.width {
-                            width = parentSize.width
-                            height = width / ratio
-                        }
-                    } else {
-                        width = floor(parentSize.width / effectiveSize.width) * effectiveSize.width
-                        height = width / ratio
-                        if height > parentSize.height {
-                            height = parentSize.height
-                            width = height * ratio
-                        }
-                    }
-
-                case .aspectFit:
-                    // Default: aspect-correct fit (letterbox / pillarbox)
-                    if parentSize.width > parentSize.height {
-                        height = parentSize.height
-                        width = height * ratio
-                        if width > parentSize.width {
-                            width = parentSize.width
-                            height = width / ratio
-                        }
-                    } else {
-                        width = parentSize.width
-                        height = width / ratio
-                        if height > parentSize.height {
-                            height = parentSize.height
-                            width = height * ratio
-                        }
-                    }
-            }
-
-            DLOG("Calculated dimensions: \(width)x\(height) with ratio: \(ratio) mode: \(scalingMode)")
-
-            /// Calculate center position
-            let x = (parentSize.width - width) / 2
-            let y = (parentSize.height - height) / 2
-
-            /// Create frame with calculated position and size
-            let frame = CGRect(x: x, y: y, width: width, height: height)
+            let frame = ScalingModeLayout.frame(for: scalingMode, container: parentSize, contentAspect: aspect,
+                                                nativePixelHeight: effectiveRect.height, screenScale: screenScale)
 
 #if DEBUG
             ILOG("Calculated frame: \(frame)")
@@ -1132,13 +1027,13 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
 
             if viewFrameChanged {
                 if scalingMode.requiresNativeScaleFactor {
-                    let scale = UIScreen.main.scale
+                    let scale = screenScale
 
                     /// Apply frame to main view without triggering additional layout
                     UIView.performWithoutAnimation {
                         view.frame = frame
                         /// Position MTKView using frame directly
-                        mtlView.frame = CGRect(x: x, y: y, width: width, height: height)
+                        mtlView.frame = frame
                     }
                     if abs(mtlView.contentScaleFactor - scale) > 0.01 {
                         mtlView.contentScaleFactor = scale
@@ -1600,9 +1495,11 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
         default:
             break
         }
-        let aspectSize = emulatorCore.aspectSize
-        let aspect = aspectSize.width > 0 && aspectSize.height > 0 ? aspectSize : emulatorCore.screenRect.size
-        return RenderGeometry.contentRect(aspect: aspect, viewSize: mtlView.bounds.size, drawableSize: drawableSize)
+        let screenRect = emulatorCore.screenRect
+        let fallback = screenRect.width > 10 && screenRect.height > 10 ? screenRect.size : emulatorCore.bufferSize
+        guard let aspect = ScalingModeLayout.displayAspect(reported: emulatorCore.aspectSize, fallback: fallback) else { return full }
+        return RenderGeometry.contentRect(aspect: CGSize(width: aspect, height: 1),
+                                          viewSize: mtlView.bounds.size, drawableSize: drawableSize)
     }
 
     /// The filter to draw for this game: the pause-menu preview if one is showing,

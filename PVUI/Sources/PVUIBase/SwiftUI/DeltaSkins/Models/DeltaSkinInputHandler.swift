@@ -135,6 +135,7 @@ open class DeltaSkinInputHandler: ObservableObject {
 
     /// Per-session position memory for the current system's console switches.
     private var hardwareSwitchLatch: (system: SystemIdentifier, latch: HardwareSwitchLatch)?
+    @Published public private(set) var hardwareSwitchPositionIndexes: [String: Int] = [:]
 
     /// Dreamcast skin tokens already logged as reaching the responder this session (one line each).
     private var loggedDreamcastTokens: Set<String> = []
@@ -156,6 +157,9 @@ open class DeltaSkinInputHandler: ObservableObject {
         }
         let resolved = latch.resolve(id, isPressed: isPressed)
         hardwareSwitchLatch = (systemId, latch)
+        if hardwareSwitchPositionIndexes != latch.positionIndexes {
+            hardwareSwitchPositionIndexes = latch.positionIndexes
+        }
         return resolved
     }
 
@@ -1490,6 +1494,8 @@ open class DeltaSkinInputHandler: ObservableObject {
         }
         if !trySystemResponderCall(buttonId, isPressed: isPressed, core: core, normalizesToken: false) {
             WLOG("No system responder for hardware switch \(buttonId)")
+        } else if isPressed {
+            _ = resolveHardwareSwitch(buttonId, isPressed: true)
         }
     }
 
