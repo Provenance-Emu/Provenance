@@ -96,14 +96,7 @@ struct SystemSettingsView: View {
                                 .fill(Color.black.opacity(0.6))
                                 .overlay(
                                     RoundedRectangle(cornerRadius: 8)
-                                        .strokeBorder(
-                                            LinearGradient(
-                                                gradient: Gradient(colors: [.retroPink, .retroBlue]),
-                                                startPoint: .leading,
-                                                endPoint: .trailing
-                                            ),
-                                            lineWidth: 1.5
-                                        )
+                                        .strokeBorder(RetroPauseChrome.chromeBorder, lineWidth: RetroPauseChrome.panelStrokeLineWidth)
                                 )
                         )
                 }
@@ -174,14 +167,7 @@ struct SystemSettingsView: View {
                             .fill(Color.black.opacity(0.6))
                             .overlay(
                                 RoundedRectangle(cornerRadius: 12)
-                                    .strokeBorder(
-                                        LinearGradient(
-                                            gradient: Gradient(colors: [.retroPink, .retroBlue]),
-                                            startPoint: .leading,
-                                            endPoint: .trailing
-                                        ),
-                                        lineWidth: 1.5
-                                    )
+                                    .strokeBorder(RetroPauseChrome.chromeBorder, lineWidth: RetroPauseChrome.panelStrokeLineWidth)
                             )
                     )
                     .padding(.horizontal)
@@ -256,14 +242,7 @@ struct SystemSection: View {
                     .frame(width: 48, height: 48)
                     .overlay(
                         Circle()
-                            .strokeBorder(
-                                LinearGradient(
-                                    gradient: Gradient(colors: [.retroPink, .retroBlue]),
-                                    startPoint: .topLeading,
-                                    endPoint: .bottomTrailing
-                                ),
-                                lineWidth: 1.5
-                            )
+                            .strokeBorder(RetroPauseChrome.chromeBorder, lineWidth: RetroPauseChrome.panelStrokeLineWidth)
                     )
                     .shadow(color: .retroPink.opacity(0.3), radius: 5)
 

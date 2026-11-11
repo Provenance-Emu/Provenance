@@ -45,14 +45,7 @@ public struct PremiumThemedPicker<T: CaseIterable & Identifiable & CustomStringC
                 }
                 .overlay(
                     RoundedRectangle(cornerRadius: 8)
-                        .strokeBorder(
-                            LinearGradient(
-                                gradient: Gradient(colors: [.retroPink, .retroBlue]),
-                                startPoint: .leading,
-                                endPoint: .trailing
-                            ),
-                            lineWidth: 1.5
-                        )
+                        .strokeBorder(RetroPauseChrome.chromeBorder, lineWidth: RetroPauseChrome.panelStrokeLineWidth)
                 )
                 .background(Color.retroBlack.opacity(0.5))
                 .cornerRadius(8)

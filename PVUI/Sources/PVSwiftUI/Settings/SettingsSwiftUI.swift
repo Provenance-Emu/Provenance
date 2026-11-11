@@ -986,14 +986,7 @@ struct SettingsRow: View {
                         #endif
                         .overlay(
                             Circle()
-                                .strokeBorder(
-                                    LinearGradient(
-                                        gradient: Gradient(colors: [.retroPink, .retroBlue]),
-                                        startPoint: .topLeading,
-                                        endPoint: .bottomTrailing
-                                    ),
-                                    lineWidth: iconBorderWidth
-                                )
+                                .strokeBorder(RetroPauseChrome.chromeBorder, lineWidth: iconBorderWidth)
                         )
 
                     icon.image
@@ -2902,14 +2895,7 @@ private struct DeltaStylesLinkView: View {
                         .fill(Color(themeManager.currentPalette.settingsCellBackground ?? themeManager.currentPalette.gameLibraryBackground).opacity(0.6))
                         .overlay(
                             RoundedRectangle(cornerRadius: 8)
-                                .strokeBorder(
-                                    LinearGradient(
-                                        gradient: Gradient(colors: [.retroPink, .retroBlue]),
-                                        startPoint: .leading,
-                                        endPoint: .trailing
-                                    ),
-                                    lineWidth: 1
-                                )
+                                .strokeBorder(RetroPauseChrome.chromeBorder, lineWidth: RetroPauseChrome.panelStrokeLineWidth)
                         )
                 )
             }
@@ -2956,14 +2942,7 @@ private struct DeltaStylesLinkView: View {
                         .fill(Color(themeManager.currentPalette.settingsCellBackground ?? themeManager.currentPalette.gameLibraryBackground).opacity(0.6))
                         .overlay(
                             RoundedRectangle(cornerRadius: 8)
-                                .strokeBorder(
-                                    LinearGradient(
-                                        gradient: Gradient(colors: [.retroPink, .retroBlue]),
-                                        startPoint: .leading,
-                                        endPoint: .trailing
-                                    ),
-                                    lineWidth: 1
-                                )
+                                .strokeBorder(RetroPauseChrome.chromeBorder, lineWidth: RetroPauseChrome.panelStrokeLineWidth)
                         )
                 )
             }

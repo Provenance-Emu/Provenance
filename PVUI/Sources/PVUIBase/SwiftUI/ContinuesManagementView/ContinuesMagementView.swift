@@ -554,8 +554,6 @@ public struct ContinuesManagementView: View {
 
 internal struct EmptyStateView: View {
     @ObservedObject private var themeManager = ThemeManager.shared
-    @State private var glowOpacity: Double = 0.6
-    @State private var pulseScale: CGFloat = 1.0
 
     private var primaryTextColor: Color {
         themeManager.currentPalette.gameLibraryText.swiftUIColor
@@ -574,8 +572,7 @@ internal struct EmptyStateView: View {
                     .fill(accentColor)
                     .frame(width: 80, height: 80)
                     .blur(radius: 20)
-                    .opacity(glowOpacity)
-                    .scaleEffect(pulseScale)
+                    .opacity(0.6)
 
                 // Icon
                 Image(systemName: "tray.fill")
@@ -614,13 +611,6 @@ internal struct EmptyStateView: View {
         }
         .padding()
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .onAppear {
-            // Start animations
-            withAnimation(Animation.easeInOut(duration: 2).repeatForever(autoreverses: true)) {
-                glowOpacity = 1.0
-                pulseScale = 1.2
-            }
-        }
     }
 }
 

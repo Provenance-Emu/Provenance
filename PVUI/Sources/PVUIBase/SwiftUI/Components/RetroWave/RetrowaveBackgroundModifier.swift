@@ -13,7 +13,6 @@ import PVThemes
 /// A view modifier that applies a retro-style background with grid lines and scanline effects
 public struct RetrowaveBackgroundModifier: ViewModifier {
     @State private var scanlineOffset: CGFloat = 0
-    @State private var glowOpacity: Double = 0.7
     @ObservedObject private var themeManager = ThemeManager.shared
 
     let lineSpacing: CGFloat
@@ -87,11 +86,6 @@ public struct RetrowaveBackgroundModifier: ViewModifier {
             // Scanline animation
             withAnimation(.linear(duration: 10).repeatForever(autoreverses: false)) {
                 scanlineOffset = 4
-            }
-
-            // Pulsing glow effect
-            withAnimation(.easeInOut(duration: 2).repeatForever(autoreverses: true)) {
-                glowOpacity = 1.0
             }
         }
     }

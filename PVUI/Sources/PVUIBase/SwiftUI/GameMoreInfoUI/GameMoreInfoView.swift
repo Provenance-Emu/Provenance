@@ -423,7 +423,6 @@ struct GameMoreInfoView: View {
     }
 
     // Animation states for retrowave effects
-    @State private var glowOpacity: Double = 0.7
     @State private var scanlineOffset: CGFloat = 0
 
     /// Theme-aware color helpers
@@ -578,9 +577,6 @@ struct GameMoreInfoView: View {
                 scanlineOffset = 1000
             }
 
-            withAnimation(Animation.easeInOut(duration: 2).repeatForever(autoreverses: true)) {
-                glowOpacity = 1.0
-            }
 #if os(tvOS)
             // Set initial focus to the first editable field
             focusedField = .name
@@ -703,14 +699,12 @@ struct GameMoreInfoView: View {
                 .foregroundColor(accentColor)
                 .frame(maxWidth: .infinity, alignment: .center)
                 .padding(.bottom, 12)
-                .shadow(color: accentColor.opacity(glowOpacity), radius: 3, x: 0, y: 0)
             #else
             Text("TAP ANY FIELD WITH A PENCIL ICON TO EDIT")
                 .font(.system(size: 12, weight: .bold))
                 .foregroundColor(accentColor)
                 .frame(maxWidth: .infinity, alignment: .center)
                 .padding(.bottom, 8)
-                .shadow(color: accentColor.opacity(glowOpacity), radius: 3, x: 0, y: 0)
             #endif
 
             // Game info rows
@@ -864,7 +858,6 @@ struct GameMoreInfoView: View {
             Text("CORE OPTIONS")
                 .font(.system(size: 14, weight: .bold))
                 .foregroundColor(isEnabled ? accentColor : accentColor.opacity(0.4))
-                .shadow(color: accentColor.opacity(isEnabled ? glowOpacity : 0.2), radius: 3, x: 0, y: 0)
 
             Button(action: {
                 showCoreOptionsSheet = true
@@ -988,7 +981,6 @@ struct GameMoreInfoView: View {
             Text("RATING")
                 .font(.system(size: 14, weight: .bold))
                 .foregroundColor(accentColor)
-                .shadow(color: accentColor.opacity(glowOpacity), radius: 3, x: 0, y: 0)
 
             HStack {
                 StarRatingView(
@@ -1072,7 +1064,6 @@ struct GameMoreInfoView: View {
                     RoundedRectangle(cornerRadius: 8)
                         .stroke(accentGradient(), lineWidth: 1.5)
                 )
-                .shadow(color: accentColor.opacity(glowOpacity), radius: 5, x: 0, y: 0)
         }
         #if os(tvOS)
         .buttonStyle(.plain)
@@ -1097,7 +1088,6 @@ struct GameMoreInfoView: View {
             Text("DESCRIPTION")
                 .font(.system(size: 16, weight: .bold))
                 .foregroundColor(accentColor)
-                .shadow(color: accentColor.opacity(glowOpacity), radius: 3, x: 0, y: 0)
 
             ScrollView {
                 Text(description)
@@ -1141,7 +1131,6 @@ struct GameMoreInfoView: View {
                     Text("DEBUG INFORMATION")
                         .font(.system(size: 16, weight: .bold))
                         .foregroundColor(accentColor)
-                        .shadow(color: accentColor.opacity(glowOpacity), radius: 3, x: 0, y: 0)
                 }
             )
             .padding()

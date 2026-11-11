@@ -57,9 +57,6 @@ public struct BatchArtworkMatchingView: View {
     @State private var selectedArtworks: Set<String> = []
     @State private var failedGames: [PVGame] = []
 
-    // Animation states for retrowave effects
-    @State private var glowOpacity: Double = 0.7
-
     // MARK: - Body
 
     public var body: some View {
@@ -80,7 +77,6 @@ public struct BatchArtworkMatchingView: View {
                     .foregroundColor(.retroPink)
                     .padding(.top, 20)
                     .padding(.bottom, 10)
-                    .shadow(color: .retroPink.opacity(glowOpacity), radius: 5, x: 0, y: 0)
 
                 // Filter controls
                 filterControls
@@ -120,11 +116,6 @@ public struct BatchArtworkMatchingView: View {
         .navigationBarTitleDisplayMode(.inline)
 #endif
         .task {
-            // Start animation for glow effect
-            withAnimation(Animation.easeInOut(duration: 1.5).repeatForever(autoreverses: true)) {
-                glowOpacity = 0.9
-            }
-
             // Load games on first appearance
             await loadGamesNeedingArtwork()
         }
@@ -161,7 +152,6 @@ public struct BatchArtworkMatchingView: View {
             Text("FILTER OPTIONS")
                 .font(.system(size: 20, weight: .bold))
                 .foregroundColor(.retroPurple)
-                .shadow(color: .retroPink.opacity(glowOpacity), radius: 3, x: 0, y: 0)
                 .padding(.bottom, 4)
 
             // Include games with original artwork toggle
@@ -212,21 +202,7 @@ public struct BatchArtworkMatchingView: View {
             .padding(.top, 4)
         }
         .padding()
-        .background(
-            RoundedRectangle(cornerRadius: 12)
-                .fill(Color.black.opacity(0.6))
-                .overlay(
-                    RoundedRectangle(cornerRadius: 12)
-                        .stroke(
-                            LinearGradient(
-                                gradient: Gradient(colors: [.retroPink, .retroPurple, .retroBlue]),
-                                startPoint: .leading,
-                                endPoint: .trailing
-                            ),
-                            lineWidth: 1.5
-                        )
-                )
-        )
+        .retroChromeSurface()
     }
 
     /// Action buttons for the view

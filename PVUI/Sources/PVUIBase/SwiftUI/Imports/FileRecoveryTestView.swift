@@ -17,7 +17,6 @@ public struct FileRecoveryTestView: View {
     @ObservedObject private var themeManager = ThemeManager.shared
     @ObservedObject private var messageManager = StatusMessageManager.shared
     
-    @State private var glowOpacity: Double = 0.7
     @State private var selectedTab: TestCategory = .fileSystem
     
     public init() {}
@@ -52,12 +51,6 @@ public struct FileRecoveryTestView: View {
                     .opacity(0.3)
             }
         )
-        .onAppear {
-            // Start retrowave animations
-            withAnimation(Animation.easeInOut(duration: 2).repeatForever(autoreverses: true)) {
-                glowOpacity = 1.0
-            }
-        }
     }
     
     // Title view
@@ -67,7 +60,6 @@ public struct FileRecoveryTestView: View {
             .foregroundColor(RetroTheme.retroPink)
             .padding(.top, 20)
             .padding(.bottom, 10)
-            .shadow(color: RetroTheme.retroPink.opacity(glowOpacity), radius: 5, x: 0, y: 0)
     }
             
     // Category tabs view
@@ -154,17 +146,9 @@ public struct FileRecoveryTestView: View {
                     .fill(Color.black.opacity(0.7))
                     .overlay(
                         RoundedRectangle(cornerRadius: 8)
-                            .strokeBorder(
-                                LinearGradient(
-                                    gradient: Gradient(colors: [RetroTheme.retroPink, RetroTheme.retroPurple]),
-                                    startPoint: .topLeading,
-                                    endPoint: .bottomTrailing
-                                ),
-                                lineWidth: 2
-                            )
+                            .strokeBorder(RetroPauseChrome.chromeBorder, lineWidth: RetroPauseChrome.panelStrokeLineWidth)
                     )
             )
-            .shadow(color: RetroTheme.retroPink.opacity(glowOpacity), radius: 5, x: 0, y: 0)
         }
         .buttonStyle(PlainButtonStyle())
     }
@@ -430,7 +414,6 @@ public struct FileRecoveryTestView: View {
                             endPoint: .trailing
                         ), lineWidth: 1.5)
                 )
-                .shadow(color: color.opacity(glowOpacity * 0.5), radius: 3, x: 0, y: 0)
         }
     }
     

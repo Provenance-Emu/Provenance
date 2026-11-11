@@ -23,7 +23,6 @@ public struct FreeROMsView: View {
         .Vectrex
     ]
 
-    @State private var glowOpacity: Double = 0.7
     @State private var scanlineOffset: CGFloat = 0
     @State private var selectedSystemId: String? = nil
 
@@ -147,9 +146,6 @@ public struct FreeROMsView: View {
                 if systems.isEmpty && loadingError == nil {
                     loadROMs()
                 }
-                withAnimation(Animation.easeInOut(duration: 2).repeatForever(autoreverses: true)) {
-                    glowOpacity = 1.0
-                }
             }
             .onDisappear {
                 onDismiss?()
@@ -191,7 +187,6 @@ public struct FreeROMsView: View {
                 .font(.system(size: 18, weight: .bold))
                 .foregroundColor(RetroTheme.retroPink)
                 .padding(.top, 16)
-                .shadow(color: RetroTheme.retroPink.opacity(glowOpacity), radius: 3, x: 0, y: 0)
         }
     }
 
@@ -243,7 +238,6 @@ public struct FreeROMsView: View {
             Text("FREE ROMS")
                 .font(.system(size: 38, weight: .black))
                 .foregroundColor(RetroTheme.retroBlue)
-                .shadow(color: RetroTheme.retroBlue.opacity(glowOpacity), radius: 6)
 
             Spacer()
 
@@ -290,7 +284,6 @@ public struct FreeROMsView: View {
                             )
                     )
             )
-            .shadow(color: accentColor.opacity(glowOpacity * 0.5), radius: 3)
         }
         .buttonStyle(TVMediaCardButtonStyle())
         .tvOSDisableFocusEffect()
@@ -302,7 +295,6 @@ public struct FreeROMsView: View {
             Image(systemName: "magnifyingglass")
                 .font(.system(size: 28, weight: .semibold))
                 .foregroundColor(isSearchFieldFocused ? RetroTheme.retroBlue : RetroTheme.retroPurple)
-                .shadow(color: (isSearchFieldFocused ? RetroTheme.retroBlue : RetroTheme.retroPurple).opacity(glowOpacity), radius: 4)
 
             TextField("SEARCH ROMS", text: $searchText)
                 .font(.system(size: 28, weight: .medium))
@@ -337,8 +329,6 @@ public struct FreeROMsView: View {
                             ),
                             lineWidth: isSearchFieldFocused ? 2.5 : 1.0
                         )
-                        .shadow(color: RetroTheme.retroBlue.opacity(isSearchFieldFocused ? glowOpacity : 0.3),
-                                radius: isSearchFieldFocused ? 8 : 2)
                 )
         )
         .scaleEffect(isSearchFieldFocused ? 1.02 : 1.0)
@@ -360,7 +350,7 @@ public struct FreeROMsView: View {
                         ),
                         lineWidth: isFocused ? 3.0 : (selectedSystemId == systemId ? 2.0 : 1.0)
                     )
-                    .shadow(color: RetroTheme.retroBlue.opacity(glowOpacity),
+                    .shadow(color: RetroTheme.retroBlue.opacity(0.7),
                             radius: isFocused ? 8 : (selectedSystemId == systemId ? 5 : 2),
                             x: 0, y: 0)
             )
@@ -396,12 +386,10 @@ public struct FreeROMsView: View {
                         Text(system.name)
                             .font(.system(size: systemNameFontSize, weight: .bold))
                             .foregroundColor(.white)
-                            .shadow(color: RetroTheme.retroBlue.opacity(glowOpacity), radius: 2)
 
                         Text("\(system.roms.count) ROMs")
                             .font(.system(size: systemRomCountFontSize))
                             .foregroundColor(RetroTheme.retroPurple)
-                            .shadow(color: RetroTheme.retroPurple.opacity(glowOpacity * 0.6), radius: 1)
                     }
 
                     Spacer()
@@ -409,7 +397,6 @@ public struct FreeROMsView: View {
                     Image(systemName: expandedSystems.contains(system.id) ? "chevron.up" : "chevron.down")
                         .foregroundColor(RetroTheme.retroBlue)
                         .font(.system(size: chevronIconSize, weight: .bold))
-                        .shadow(color: RetroTheme.retroBlue.opacity(glowOpacity), radius: 2)
                 }
                 .padding(.vertical, headerVerticalPadding)
                 .padding(.horizontal, headerHorizontalPadding)
@@ -427,7 +414,6 @@ public struct FreeROMsView: View {
                 Image(systemName: "arrow.down.circle.fill")
                     .foregroundColor(RetroTheme.retroPink)
                     .font(.system(size: downloadAllIconSize))
-                    .shadow(color: RetroTheme.retroPink.opacity(glowOpacity), radius: 2)
                     .padding(.vertical, headerVerticalPadding)
                     .padding(.horizontal, 20)
                     .background(
@@ -436,7 +422,6 @@ public struct FreeROMsView: View {
                             .overlay(
                                 RoundedRectangle(cornerRadius: 10)
                                     .strokeBorder(RetroTheme.retroPink.opacity(0.6), lineWidth: focusedHeaderAction == "dl-\(system.id)" ? 2.5 : 1.0)
-                                    .shadow(color: RetroTheme.retroPink.opacity(focusedHeaderAction == "dl-\(system.id)" ? glowOpacity : 0.2), radius: focusedHeaderAction == "dl-\(system.id)" ? 6 : 1)
                             )
                     )
             }
@@ -469,12 +454,10 @@ public struct FreeROMsView: View {
                     Text(system.name)
                         .font(.system(size: systemNameFontSize, weight: .bold))
                         .foregroundColor(.white)
-                        .shadow(color: RetroTheme.retroBlue.opacity(glowOpacity), radius: 2, x: 0, y: 0)
 
                     Text("\(system.roms.count) ROMs")
                         .font(.system(size: systemRomCountFontSize))
                         .foregroundColor(RetroTheme.retroPurple)
-                        .shadow(color: RetroTheme.retroPurple.opacity(glowOpacity * 0.6), radius: 1, x: 0, y: 0)
                 }
 
                 Spacer()
@@ -486,13 +469,11 @@ public struct FreeROMsView: View {
                         Image(systemName: "arrow.down.circle.fill")
                             .foregroundColor(RetroTheme.retroPink)
                             .font(.system(size: downloadAllIconSize))
-                            .shadow(color: RetroTheme.retroPink.opacity(glowOpacity), radius: 2, x: 0, y: 0)
                     }
 
                     Image(systemName: expandedSystems.contains(system.id) ? "chevron.up" : "chevron.down")
                         .foregroundColor(RetroTheme.retroBlue)
                         .font(.system(size: chevronIconSize, weight: .bold))
-                        .shadow(color: RetroTheme.retroBlue.opacity(glowOpacity), radius: 2, x: 0, y: 0)
                 }
             }
             .padding(.vertical, headerVerticalPadding)
@@ -507,12 +488,10 @@ public struct FreeROMsView: View {
             Image(systemName: "gamecontroller.fill")
                 .font(.system(size: 50))
                 .foregroundColor(RetroTheme.retroPink)
-                .shadow(color: RetroTheme.retroPink.opacity(glowOpacity), radius: 5, x: 0, y: 0)
 
             Text("NO ROMS FOUND")
                 .font(.system(size: 22, weight: .bold))
                 .foregroundColor(RetroTheme.retroBlue)
-                .shadow(color: RetroTheme.retroBlue.opacity(glowOpacity), radius: 3, x: 0, y: 0)
 
             Text("Try checking your internet connection and retry.")
                 .font(.system(size: 16))
@@ -536,7 +515,6 @@ public struct FreeROMsView: View {
                                 endPoint: .trailing
                             ), lineWidth: 1.5)
                     )
-                    .shadow(color: RetroTheme.retroPurple.opacity(glowOpacity), radius: 3, x: 0, y: 0)
             }
         }
     }
@@ -569,7 +547,6 @@ public struct FreeROMsView: View {
                         endPoint: .trailing
                     ), lineWidth: 1.5)
             )
-            .shadow(color: RetroTheme.retroBlue.opacity(glowOpacity), radius: 2, x: 0, y: 0)
         }
     }
 
@@ -649,7 +626,6 @@ struct ROMRowView: View {
     @ObservedObject var downloadManager: ROMDownloadManager
     let onDownloaded: (ROM, URL) -> Void
 
-    @State private var glowOpacity: Double = 0.7
     @State private var isHovered: Bool = false
     @State private var selectedArtwork: URL?
 
@@ -698,15 +674,7 @@ struct ROMRowView: View {
                 .fill(Color.black.opacity(0.7))
                 .overlay(
                     RoundedRectangle(cornerRadius: 10)
-                        .strokeBorder(
-                            LinearGradient(
-                                gradient: Gradient(colors: [RetroTheme.retroPink, RetroTheme.retroPurple]),
-                                startPoint: .topLeading,
-                                endPoint: .bottomTrailing
-                            ),
-                            lineWidth: isHighlighted ? 2.5 : 1.5
-                        )
-                        .shadow(color: RetroTheme.retroPink.opacity(glowOpacity), radius: isHighlighted ? 6 : 3, x: 0, y: 0)
+                        .strokeBorder(RetroPauseChrome.chromeBorder, lineWidth: isHighlighted ? 2 : RetroPauseChrome.panelStrokeLineWidth)
                 )
 
             HStack(spacing: 12) {
@@ -714,13 +682,11 @@ struct ROMRowView: View {
                     Text(rom.file)
                         .font(.system(size: nameFontSize, weight: .bold))
                         .foregroundColor(.white)
-                        .shadow(color: RetroTheme.retroBlue.opacity(glowOpacity * 0.8), radius: 2, x: 0, y: 0)
                         .lineLimit(1)
 
                     Text(ByteCountFormatter.string(fromByteCount: Int64(rom.size), countStyle: .file))
                         .font(.system(size: sizeFontSize))
                         .foregroundColor(RetroTheme.retroPurple)
-                        .shadow(color: RetroTheme.retroPurple.opacity(glowOpacity * 0.6), radius: 1, x: 0, y: 0)
                 }
                 .padding(.leading, 4)
 
@@ -757,7 +723,6 @@ struct ROMRowView: View {
                 .overlay(
                     RoundedRectangle(cornerRadius: 4)
                         .stroke(RetroTheme.retroBlue, lineWidth: 1)
-                        .shadow(color: RetroTheme.retroBlue.opacity(glowOpacity), radius: 2, x: 0, y: 0)
                 )
             }
 
@@ -773,7 +738,6 @@ struct ROMRowView: View {
                 .overlay(
                     RoundedRectangle(cornerRadius: 4)
                         .stroke(RetroTheme.retroBlue, lineWidth: 1)
-                        .shadow(color: RetroTheme.retroBlue.opacity(glowOpacity), radius: 2, x: 0, y: 0)
                 )
             }
         }
@@ -793,11 +757,6 @@ struct ROMRowView: View {
         .animation(.spring(response: 0.2, dampingFraction: 0.8), value: isFocused)
         .padding(.vertical, 4)
         .padding(.horizontal, 4)
-        .onAppear {
-            withAnimation(Animation.easeInOut(duration: 1.5).repeatForever(autoreverses: true)) {
-                glowOpacity = 1.0
-            }
-        }
         .fullScreenCover(item: $selectedArtwork) { url in
             ArtworkFullscreenView(imageURL: url)
         }
@@ -808,11 +767,6 @@ struct ROMRowView: View {
         .onHover { hovering in
             withAnimation(.easeInOut(duration: 0.2)) {
                 isHovered = hovering
-            }
-        }
-        .onAppear {
-            withAnimation(Animation.easeInOut(duration: 1.5).repeatForever(autoreverses: true)) {
-                glowOpacity = 1.0
             }
         }
         .fullScreenCover(item: $selectedArtwork) { url in
@@ -843,7 +797,6 @@ struct DownloadButton: View {
     @ObservedObject var downloadManager: ROMDownloadManager
     let onDownloaded: (ROM, URL) -> Void
 
-    @State private var glowOpacity: Double = 0.7
 
     private var iconSize: CGFloat {
         #if os(tvOS)
@@ -861,7 +814,6 @@ struct DownloadButton: View {
                     Image(systemName: "clock.fill")
                         .foregroundColor(RetroTheme.retroPurple)
                         .font(.system(size: iconSize, weight: .bold))
-                        .shadow(color: RetroTheme.retroPurple.opacity(glowOpacity), radius: 3, x: 0, y: 0)
                 case .downloading(let progress):
                     VStack(spacing: 2) {
                         ProgressView()
@@ -878,18 +830,15 @@ struct DownloadButton: View {
                                         lineWidth: 2
                                     )
                                     .frame(width: 24, height: 24)
-                                    .shadow(color: RetroTheme.retroPink.opacity(glowOpacity), radius: 3, x: 0, y: 0)
                             }
                         Text("\(Int(progress * 100))%")
                             .font(.system(size: 12, weight: .bold))
                             .foregroundColor(RetroTheme.retroPink)
-                            .shadow(color: RetroTheme.retroPink.opacity(glowOpacity * 0.6), radius: 1, x: 0, y: 0)
                     }
                 case .completed(let localURL):
                     Image(systemName: "checkmark.circle.fill")
                         .foregroundColor(RetroTheme.retroBlue)
                         .font(.system(size: iconSize, weight: .bold))
-                        .shadow(color: RetroTheme.retroBlue.opacity(glowOpacity), radius: 3, x: 0, y: 0)
                         .onAppear {
                             onDownloaded(rom, localURL)
                         }
@@ -906,13 +855,11 @@ struct DownloadButton: View {
                 Image(systemName: "arrow.down.circle.fill")
                     .foregroundColor(RetroTheme.retroPink)
                     .font(.system(size: iconSize, weight: .bold))
-                    .shadow(color: RetroTheme.retroPink.opacity(glowOpacity), radius: 3, x: 0, y: 0)
                 #else
                 Button(action: startDownload) {
                     Image(systemName: "arrow.down.circle.fill")
                         .foregroundColor(RetroTheme.retroPink)
                         .font(.system(size: iconSize, weight: .bold))
-                        .shadow(color: RetroTheme.retroPink.opacity(glowOpacity), radius: 3, x: 0, y: 0)
                 }
                 #endif
             }
@@ -932,11 +879,6 @@ struct DownloadButton: View {
 
     private var animationEffect: some View {
         Color.clear
-            .onAppear {
-                withAnimation(Animation.easeInOut(duration: 1.5).repeatForever(autoreverses: true)) {
-                    glowOpacity = 1.0
-                }
-            }
     }
 }
 

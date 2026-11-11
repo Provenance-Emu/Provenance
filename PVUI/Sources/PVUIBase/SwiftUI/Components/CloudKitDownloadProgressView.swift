@@ -24,7 +24,6 @@ public struct CloudKitDownloadProgressView: View {
     @State private var hasError: Bool = false
     @State private var errorMessage: String = ""
     @State private var cancellables = Set<AnyCancellable>()
-    @State private var glowPulse: Bool = false
 
     public init(
         gameMD5: String,
@@ -58,13 +57,8 @@ public struct CloudKitDownloadProgressView: View {
         }
         .padding(22)
         .background(panelBackground)
-        .shadow(color: .retroPink.opacity(glowPulse ? 0.6 : 0.3),
-                radius: glowPulse ? 16 : 8)
         .onAppear {
             monitorDownloadProgress()
-            withAnimation(.easeInOut(duration: 1.8).repeatForever(autoreverses: true)) {
-                glowPulse = true
-            }
         }
     }
 
@@ -254,29 +248,22 @@ public struct CloudKitDownloadProgressView: View {
 
     private var panelBackground: some View {
         ZStack {
-            RoundedRectangle(cornerRadius: 16, style: .continuous)
+            RoundedRectangle(cornerRadius: RetroPauseChrome.chromeCornerRadius, style: .continuous)
                 .fill(Color.retroBlack.opacity(0.92))
 
             // subtle grid for retrowave feel
             RetroTheme.RetroGridView()
                 .opacity(0.10)
-                .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+                .clipShape(RoundedRectangle(cornerRadius: RetroPauseChrome.chromeCornerRadius, style: .continuous))
 
             // scanlines
             RetroScanlineOverlay()
                 .opacity(0.05)
                 .allowsHitTesting(false)
-                .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+                .clipShape(RoundedRectangle(cornerRadius: RetroPauseChrome.chromeCornerRadius, style: .continuous))
 
-            RoundedRectangle(cornerRadius: 16, style: .continuous)
-                .strokeBorder(
-                    LinearGradient(colors: [.retroPink.opacity(0.6),
-                                            .retroPurple.opacity(0.5),
-                                            .retroBlue.opacity(0.6)],
-                                   startPoint: .topLeading,
-                                   endPoint: .bottomTrailing),
-                    lineWidth: 1.5
-                )
+            RoundedRectangle(cornerRadius: RetroPauseChrome.chromeCornerRadius, style: .continuous)
+                .strokeBorder(RetroPauseChrome.chromeBorder, lineWidth: RetroPauseChrome.panelStrokeLineWidth)
         }
     }
 

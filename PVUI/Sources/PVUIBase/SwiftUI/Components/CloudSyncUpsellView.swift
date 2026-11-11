@@ -127,21 +127,13 @@ public struct CloudSyncUpsellView: View {
         .padding(.horizontal, 14)
         .padding(.vertical, 12)
         .background(
-            RoundedRectangle(cornerRadius: 12)
+            RoundedRectangle(cornerRadius: RetroPauseChrome.chromeCornerRadius)
                 .fill(themeManager.currentPalette.gameLibraryBackground.swiftUIColor.opacity(0.55))
                 .overlay(
-                    RoundedRectangle(cornerRadius: 12)
-                        .strokeBorder(
-                            LinearGradient(
-                                gradient: Gradient(colors: [.retroPink, .retroBlue]),
-                                startPoint: .leading,
-                                endPoint: .trailing
-                            ),
-                            lineWidth: 1.5
-                        )
+                    RoundedRectangle(cornerRadius: RetroPauseChrome.chromeCornerRadius)
+                        .strokeBorder(RetroPauseChrome.chromeBorder, lineWidth: RetroPauseChrome.panelStrokeLineWidth)
                 )
         )
-        .shadow(color: .retroPink.opacity(0.35), radius: 6, x: 0, y: 0)
     }
 
     private var header: some View {

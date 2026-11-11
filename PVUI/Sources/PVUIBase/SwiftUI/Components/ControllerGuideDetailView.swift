@@ -157,23 +157,13 @@ public struct ControllerGuideDetailView: View {
             }
         }
         .background(
-            RoundedRectangle(cornerRadius: 10)
+            RoundedRectangle(cornerRadius: RetroPauseChrome.chromeCornerRadius)
                 .fill(Color.retroDarkBlue.opacity(0.45))
                 .overlay(
-                    RoundedRectangle(cornerRadius: 10)
-                        .strokeBorder(
-                            LinearGradient(
-                                gradient: Gradient(colors: isExpanded
-                                    ? [Color.retroPink, Color.retroBlue]
-                                    : [Color.retroBlue.opacity(0.5), Color.retroPurple.opacity(0.5)]),
-                                startPoint: .topLeading,
-                                endPoint: .bottomTrailing
-                            ),
-                            lineWidth: isExpanded ? 1.5 : 1
-                        )
+                    RoundedRectangle(cornerRadius: RetroPauseChrome.chromeCornerRadius)
+                        .strokeBorder(RetroPauseChrome.chromeBorder, lineWidth: RetroPauseChrome.panelStrokeLineWidth)
                 )
         )
-        .shadow(color: isExpanded ? Color.retroPink.opacity(0.25) : .clear, radius: 6)
         .animation(.spring(response: 0.3, dampingFraction: 0.7), value: isExpanded)
     }
 }

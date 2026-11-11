@@ -25,7 +25,6 @@ struct LabelRowView: View {
     var borderGradient: LinearGradient? = nil
 
     // Animation states
-    @State private var glowOpacity: Double = 0.7
     @State private var isHovered: Bool = false
     #if os(tvOS)
     @FocusState private var isFocused: Bool
@@ -70,8 +69,7 @@ struct LabelRowView: View {
             isFocused: isFocused,
             labelColor: labelColor,
             backgroundColor: backgroundColor,
-            borderGradient: borderGradient,
-            glowOpacity: glowOpacity
+            borderGradient: borderGradient
         ))
         .disabled(!isEditable)
         .focused($isFocused)
@@ -82,11 +80,6 @@ struct LabelRowView: View {
         }
         .frame(height: 60)
         .padding(.vertical, 4)
-        .onAppear {
-            withAnimation(Animation.easeInOut(duration: 1.5).repeatForever(autoreverses: true)) {
-                glowOpacity = 1.0
-            }
-        }
         #else
         ZStack {
             // Background with retrowave styling
@@ -97,10 +90,6 @@ struct LabelRowView: View {
             if let gradient = borderGradient {
                 RoundedRectangle(cornerRadius: 8)
                     .strokeBorder(gradient, lineWidth: isHovered || isEditable ? 1.5 : 1.0)
-                    .shadow(color: labelColor.opacity(glowOpacity * (isHovered ? 0.8 : 0.4)),
-                            radius: isHovered ? 5 : 3,
-                            x: 0,
-                            y: 0)
             }
 
             rowContent
@@ -110,11 +99,6 @@ struct LabelRowView: View {
         .onHover { hovering in
             withAnimation(.easeInOut(duration: 0.2)) {
                 isHovered = hovering && isEditable
-            }
-        }
-        .onAppear {
-            withAnimation(Animation.easeInOut(duration: 1.5).repeatForever(autoreverses: true)) {
-                glowOpacity = 1.0
             }
         }
         #endif
@@ -132,7 +116,6 @@ struct LabelRowView: View {
                 .frame(width: 120, alignment: .trailing)
                 #endif
                 .foregroundColor(labelColor)
-                .shadow(color: labelColor.opacity(glowOpacity * 0.5), radius: 2, x: 0, y: 0)
 
             // Value side - left aligned with placeholder for empty values
             HStack {
@@ -151,7 +134,6 @@ struct LabelRowView: View {
                         .font(.caption)
                         #endif
                         .foregroundColor(labelColor)
-                        .shadow(color: labelColor.opacity(glowOpacity), radius: 2, x: 0, y: 0)
                 }
             }
             #if !os(tvOS)
@@ -181,7 +163,6 @@ private struct TVOSLabelRowButtonStyle: ButtonStyle {
     let labelColor: Color
     let backgroundColor: Color
     let borderGradient: LinearGradient?
-    let glowOpacity: Double
 
     func makeBody(configuration: Configuration) -> some View {
         configuration.label

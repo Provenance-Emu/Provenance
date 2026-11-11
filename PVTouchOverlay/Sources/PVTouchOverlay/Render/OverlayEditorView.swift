@@ -15,6 +15,9 @@ public struct OverlayEditorView: View {
     public let globalOpacity: Double
     /// Display name of the system, for the "All <system> games" save choice.
     public let systemName: String
+    /// Asks where Done saves, given the "this game" and "all games" actions. The app passes
+    /// its own alert here; nil falls back to a system confirmation dialog.
+    public let askSaveScope: (@MainActor (_ thisGame: @escaping () -> Void, _ allGames: @escaping () -> Void) -> Void)?
     public let onFinish: (_ saved: Bool) -> Void
     @State private var choosingSaveScope = false
     @State private var dragStartCenter: CGPoint?
@@ -24,6 +27,7 @@ public struct OverlayEditorView: View {
 
     public init(controller: OverlayEditController, layout: OverlayLayout, binding: SystemOverlayBinding,
                 style: OverlayStyle, globalOpacity: Double, systemName: String,
+                askSaveScope: (@MainActor (_ thisGame: @escaping () -> Void, _ allGames: @escaping () -> Void) -> Void)? = nil,
                 onFinish: @escaping (_ saved: Bool) -> Void) {
         self.controller = controller
         self.layout = layout
@@ -31,6 +35,7 @@ public struct OverlayEditorView: View {
         self.style = style
         self.globalOpacity = globalOpacity
         self.systemName = systemName
+        self.askSaveScope = askSaveScope
         self.onFinish = onFinish
     }
 
@@ -147,7 +152,12 @@ public struct OverlayEditorView: View {
             Button("Cancel") { controller.cancel(); onFinish(false) }
             Button("Done") {
                 if controller.canSaveForAllGames {
-                    choosingSaveScope = true
+                    if let askSaveScope {
+                        askSaveScope({ controller.done(); onFinish(true) },
+                                     { controller.doneForAllGames(); onFinish(true) })
+                    } else {
+                        choosingSaveScope = true
+                    }
                 } else {
                     controller.done()
                     onFinish(true)

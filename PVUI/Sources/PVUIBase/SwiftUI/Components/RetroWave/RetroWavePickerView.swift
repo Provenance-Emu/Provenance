@@ -16,7 +16,6 @@ public struct RetroWavePickerView<T: Hashable & Identifiable>: View {
     let displayText: (T) -> String
     
     @State private var isExpanded = false
-    @State private var glowOpacity = 0.0
     
     public init(
         title: String,

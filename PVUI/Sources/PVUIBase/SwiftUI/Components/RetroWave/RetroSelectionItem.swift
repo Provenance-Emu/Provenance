@@ -35,7 +35,6 @@ public struct RetroSelectionAlertView: View {
     private let onCancel: () -> Void
 
     @Binding private var isPresented: Bool
-    @State private var glowOpacity: Double = 0.7
 
     #if os(tvOS) || os(iOS)
     @FocusState private var focusedItemId: String?
@@ -165,23 +164,12 @@ public struct RetroSelectionAlertView: View {
                         .opacity(0.05)
                 }
             )
-            .clipShape(RoundedRectangle(cornerRadius: 16))
+            .clipShape(RoundedRectangle(cornerRadius: RetroPauseChrome.chromeCornerRadius))
             .overlay(
-                RoundedRectangle(cornerRadius: 16)
-                    .strokeBorder(
-                        LinearGradient(
-                            gradient: Gradient(colors: [.retroPink, .retroBlue]),
-                            startPoint: .topLeading,
-                            endPoint: .bottomTrailing
-                        ),
-                        lineWidth: 2
-                    )
+                RoundedRectangle(cornerRadius: RetroPauseChrome.chromeCornerRadius)
+                    .strokeBorder(RetroPauseChrome.chromeBorder, lineWidth: RetroPauseChrome.panelStrokeLineWidth)
             )
-            .shadow(color: Color.retroPink.opacity(glowOpacity), radius: 20, x: 0, y: 0)
             .onAppear {
-                withAnimation(.easeInOut(duration: 1.5).repeatForever(autoreverses: true)) {
-                    glowOpacity = 0.3
-                }
                 #if os(tvOS) || os(iOS)
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.15) {
                     focusedItemId = items.first?.id

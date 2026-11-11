@@ -15,7 +15,6 @@ public struct StatusMessageView: View {
     @ObservedObject private var themeManager = ThemeManager.shared
     
     // Animation states
-    @State private var glowOpacity: Double = 0.7
     
     public init() {}
     
@@ -64,12 +63,6 @@ public struct StatusMessageView: View {
             RoundedRectangle(cornerRadius: 10)
                 .fill(Color.black.opacity(0.2))
         )
-        .onAppear {
-            // Start retrowave animations
-            withAnimation(Animation.easeInOut(duration: 2).repeatForever(autoreverses: true)) {
-                glowOpacity = 1.0
-            }
-        }
     }
     
     /// Creates a view for a status message
@@ -81,7 +74,6 @@ public struct StatusMessageView: View {
             Circle()
                 .fill(messageTypeColor(message.type))
                 .frame(width: 10, height: 10)
-                .shadow(color: messageTypeColor(message.type).opacity(glowOpacity), radius: 3, x: 0, y: 0)
             
             Text(message.displayMessage)
                 .font(.system(size: 14, weight: .medium))
@@ -139,14 +131,12 @@ public struct StatusMessageView: View {
                 Text(title)
                     .font(.system(size: 14, weight: .bold))
                     .foregroundColor(color)
-                    .shadow(color: color.opacity(glowOpacity), radius: 3, x: 0, y: 0)
                 
                 Spacer()
                 
                 Text("\(current)/\(total) (\(Int(Double(current) / Double(total) * 100))%)")
                     .font(.system(size: 14, weight: .medium))
                     .foregroundColor(RetroTheme.retroPink)
-                    .shadow(color: RetroTheme.retroPink.opacity(glowOpacity), radius: 3, x: 0, y: 0)
             }
             
             // Progress bar

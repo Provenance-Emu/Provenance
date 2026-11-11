@@ -30,9 +30,6 @@ struct FeatureFlagsDebugView: View {
     @State private var isLoading = false
     @State private var errorMessage: String?
 
-    // Animation states for retrowave effects
-    @State private var glowOpacity: Double = 0.7
-
     #if os(tvOS)
     @FocusState private var focusedButton: ButtonID?
 
@@ -74,7 +71,6 @@ struct FeatureFlagsDebugView: View {
                         .foregroundColor(RetroTheme.retroPink)
                         .padding(.top, 12)
                         .padding(.bottom, 4)
-                        .shadow(color: RetroTheme.retroPink.opacity(glowOpacity), radius: 5, x: 0, y: 0)
 
                     if isLoading {
                         LoadingSection()
@@ -117,11 +113,6 @@ struct FeatureFlagsDebugView: View {
 #endif
         .task {
             await loadInitialConfiguration()
-#if !os(tvOS)
-            withAnimation(Animation.easeInOut(duration: 1.5).repeatForever(autoreverses: true)) {
-                glowOpacity = 0.9
-            }
-#endif
         }
         .pvAlert(isPresented: isErrorAlertPresented) {
             PVAlert(
@@ -433,7 +424,6 @@ private struct DebugControlsSection: View {
     @FocusState private var focusedButton: FeatureFlagsDebugView.ButtonID?
     #endif
 
-    @State private var glowOpacity: Double = 0.7
     @State private var isReindexingSpotlight = false
     @AppStorage("showFeatureFlagsDebug") private var showFeatureFlagsDebug = false
 
@@ -447,8 +437,7 @@ private struct DebugControlsSection: View {
                 RetroDebugButton(
                     icon: "xmark.circle.fill",
                     title: "CLEAR OVERRIDES",
-                    color: RetroTheme.retroBlue,
-                    glowOpacity: glowOpacity
+                    color: RetroTheme.retroBlue
                 ) {
                     featureFlags.clearDebugOverrides()
                     flags = featureFlags.getAllFeatureFlags()
@@ -465,7 +454,6 @@ private struct DebugControlsSection: View {
                     icon: isReindexingSpotlight ? nil : "magnifyingglass",
                     title: isReindexingSpotlight ? "REINDEXING..." : "REINDEX SPOTLIGHT",
                     color: RetroTheme.retroPink,
-                    glowOpacity: glowOpacity,
                     showSpinner: isReindexingSpotlight
                 ) {
                     isReindexingSpotlight = true
@@ -485,8 +473,7 @@ private struct DebugControlsSection: View {
                 RetroDebugButton(
                     icon: "arrow.clockwise",
                     title: "REFRESH FLAGS",
-                    color: RetroTheme.retroPurple,
-                    glowOpacity: glowOpacity
+                    color: RetroTheme.retroPurple
                 ) {
                     flags = featureFlags.getAllFeatureFlags()
                 }
@@ -501,8 +488,7 @@ private struct DebugControlsSection: View {
                 RetroDebugButton(
                     icon: "testtube.2",
                     title: "LOAD TEST",
-                    color: RetroTheme.retroBlue,
-                    glowOpacity: glowOpacity
+                    color: RetroTheme.retroBlue
                 ) {
                     loadTestConfiguration()
                     flags = featureFlags.getAllFeatureFlags()
@@ -521,8 +507,7 @@ private struct DebugControlsSection: View {
             RetroDebugButton(
                 icon: "trash.fill",
                 title: "RESET TO DEFAULT",
-                color: RetroTheme.retroPink,
-                glowOpacity: glowOpacity
+                color: RetroTheme.retroPink
             ) {
                 Task {
                     do {
@@ -546,13 +531,6 @@ private struct DebugControlsSection: View {
             #endif
         }
         .padding(.vertical, 8)
-        .onAppear {
-#if !os(tvOS)
-            withAnimation(Animation.easeInOut(duration: 1.5).repeatForever(autoreverses: true)) {
-                glowOpacity = 0.9
-            }
-#endif
-        }
     }
 
     @MainActor
@@ -591,7 +569,6 @@ private struct RetroDebugButton: View {
     let icon: String?
     let title: String
     let color: Color
-    let glowOpacity: Double
     var showSpinner: Bool = false
     let action: () -> Void
 
@@ -617,7 +594,6 @@ private struct RetroDebugButton: View {
             .foregroundColor(color)
             .background(RetroTheme.retroBlack.opacity(0.6))
             .clipShape(RoundedRectangle(cornerRadius: 6))
-            .shadow(color: color.opacity(glowOpacity), radius: 3, x: 0, y: 0)
         }
     }
 }

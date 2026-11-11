@@ -26,10 +26,6 @@ public struct SpotlightDebugView: View {
     @State private var errorMessage: String?
     @State private var reindexingInProgress = false
 
-    // Animation states for retrowave effects
-    @State private var glowOpacity: Double = 0.7
-    @State private var scanlineOffset: CGFloat = 0
-
     public var body: some View {
         ZStack {
             // RetroWave background
@@ -44,7 +40,6 @@ public struct SpotlightDebugView: View {
                         .foregroundColor(.retroPink)
                         .padding(.top, 20)
                         .padding(.bottom, 10)
-                        .shadow(color: .retroPink.opacity(glowOpacity), radius: 5, x: 0, y: 0)
 
                     // Content sections
                     SpotlightControlsSection(
@@ -73,11 +68,6 @@ public struct SpotlightDebugView: View {
 #endif
         .task {
             await refreshSpotlightItems()
-
-            // Start animation for glow effect
-            withAnimation(Animation.easeInOut(duration: 1.5).repeatForever(autoreverses: true)) {
-                glowOpacity = 0.9
-            }
         }
         .pvAlert(
             isPresented: Binding(
@@ -218,15 +208,12 @@ private struct SpotlightControlsSection: View {
     let refreshItems: () async -> Void
     let forceReindex: () async -> Void
 
-    @State private var glowOpacity: Double = 0.6
-
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
             // Section header with retrowave styling
             Text("SPOTLIGHT CONTROLS")
                 .font(.system(size: 20, weight: .bold))
                 .foregroundColor(.retroPurple)
-                .shadow(color: .retroPink.opacity(glowOpacity), radius: 3, x: 0, y: 0)
                 .padding(.bottom, 4)
 
             VStack(spacing: 12) {
@@ -306,12 +293,6 @@ private struct SpotlightControlsSection: View {
                 }
             }
             .padding(.horizontal)
-            .onAppear {
-                // Start animation for glow effect
-                withAnimation(Animation.easeInOut(duration: 1.5).repeatForever(autoreverses: true)) {
-                    glowOpacity = 0.8
-                }
-            }
         }
     }
 }
@@ -446,21 +427,7 @@ private struct SpotlightItemRow: View {
             }
         }
         .padding(10)
-        .background(
-            RoundedRectangle(cornerRadius: 8)
-                .fill(Color.black.opacity(0.3))
-        )
-        .overlay(
-            RoundedRectangle(cornerRadius: 8)
-                .stroke(
-                    LinearGradient(
-                        gradient: Gradient(colors: [.retroBlue.opacity(0.6), .retroPurple.opacity(0.6)]),
-                        startPoint: .leading,
-                        endPoint: .trailing
-                    ),
-                    lineWidth: 1
-                )
-        )
+        .retroChromeSurface()
     }
 
     // Extract a title from the item ID

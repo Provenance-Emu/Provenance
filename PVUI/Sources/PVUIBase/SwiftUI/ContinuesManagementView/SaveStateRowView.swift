@@ -99,7 +99,6 @@ public class SaveStateRowViewModel: ObservableObject, Identifiable, Equatable {
 /// Custom toggle style for selection with theme-aware styling
 private struct SelectionToggleStyle: ToggleStyle {
     @ObservedObject private var themeManager = ThemeManager.shared
-    @State private var glowOpacity: Double = 0.7
 
     private var accentColor: Color {
         themeManager.currentPalette.defaultTintColor.swiftUIColor
@@ -113,16 +112,7 @@ private struct SelectionToggleStyle: ToggleStyle {
             Image(systemName: configuration.isOn ? "checkmark.circle.fill" : "circle")
                 .font(.system(size: 22))
                 .foregroundColor(configuration.isOn ? accentColor : accentColor.opacity(0.7))
-                .shadow(color: configuration.isOn ? accentColor.opacity(glowOpacity) : accentColor.opacity(0.3),
-                        radius: configuration.isOn ? 5 : 3,
-                        x: 0,
-                        y: 0)
                 .animation(.easeInOut, value: configuration.isOn)
-        }
-        .onAppear {
-            withAnimation(Animation.easeInOut(duration: 1.5).repeatForever(autoreverses: true)) {
-                glowOpacity = 1.0
-            }
         }
     }
 }
@@ -302,7 +292,6 @@ public struct SaveStateRowView: View {
         viewModel.description?.isEmpty == false ? viewModel.description! : viewModel.gameTitle
     }
 
-    @State private var glowOpacity: Double = 0.7
     @State private var isHovered: Bool = false
 
     /// Theme-aware color helpers
@@ -339,7 +328,6 @@ public struct SaveStateRowView: View {
                     RoundedRectangle(cornerRadius: RetroPauseChrome.chromeCornerRadius)
                         .strokeBorder(viewModel.isSelected || isHovered ? accentColor : RetroPauseChrome.chromeBorder)
                 )
-                .shadow(color: viewModel.isSelected ? accentColor.opacity(glowOpacity * 0.5) : .clear, radius: 4)
 
             HStack(spacing: 0) {
                 /// Selection button when in edit mode
@@ -386,7 +374,6 @@ public struct SaveStateRowView: View {
                                 Image(systemName: "clock.badge.checkmark")
                                     .font(.system(size: 12))
                                     .foregroundColor(accentColor)
-                                    .shadow(color: accentColor.opacity(glowOpacity), radius: 2, x: 0, y: 0)
                             }
                         }
                     }
@@ -406,14 +393,12 @@ public struct SaveStateRowView: View {
                                     .rotationEffect(viewModel.isPinned ? .degrees(0.0) : .degrees(45))
                                     .font(.system(size: 16))
                                     .foregroundColor(viewModel.isPinned ? accentColor : accentColor.opacity(0.7))
-                                    .shadow(color: accentColor.opacity(glowOpacity), radius: viewModel.isPinned ? 3 : 1, x: 0, y: 0)
                                     .symbolEffect(.bounce, value: viewModel.isPinned)
                             } else {
                                 Image(systemName: viewModel.isPinned ? "pin.fill" : "pin")
                                     .rotationEffect(viewModel.isPinned ? .degrees(0.0) : .degrees(45))
                                     .font(.system(size: 16))
                                     .foregroundColor(viewModel.isPinned ? accentColor : accentColor.opacity(0.7))
-                                    .shadow(color: accentColor.opacity(glowOpacity), radius: viewModel.isPinned ? 3 : 1, x: 0, y: 0)
                             }
                         }
 
@@ -428,14 +413,12 @@ public struct SaveStateRowView: View {
                                     .resizable()
                                     .frame(width: 20, height: 18)
                                     .foregroundColor(viewModel.isFavorite ? accentColor : accentColor.opacity(0.7))
-                                    .shadow(color: accentColor.opacity(glowOpacity), radius: viewModel.isFavorite ? 3 : 1, x: 0, y: 0)
                                     .symbolEffect(.bounce, value: viewModel.isFavorite)
                             } else {
                                 Image(systemName: viewModel.isFavorite ? "heart.fill" : "heart")
                                     .resizable()
                                     .frame(width: 20, height: 18)
                                     .foregroundColor(viewModel.isFavorite ? accentColor : accentColor.opacity(0.7))
-                                    .shadow(color: accentColor.opacity(glowOpacity), radius: viewModel.isFavorite ? 3 : 1, x: 0, y: 0)
                             }
                         }
                     }
@@ -453,12 +436,6 @@ public struct SaveStateRowView: View {
             }
         }
         #endif
-        .onAppear {
-            // Start animations
-            withAnimation(Animation.easeInOut(duration: 1.5).repeatForever(autoreverses: true)) {
-                glowOpacity = 1.0
-            }
-        }
 #if !os(tvOS)
         .swipeCell(
             id: viewModel.id,

@@ -100,7 +100,6 @@ public struct ImportStatusView: View {
     }
 
     // Animation states for retrowave effects
-    @State private var glowOpacity: Double = 0.7
     @State private var scanlineOffset: CGFloat = 0
 
 #if os(tvOS)
@@ -128,7 +127,6 @@ public struct ImportStatusView: View {
         .onAppear {
             // Start retrowave animations
             withAnimation(Animation.easeInOut(duration: 2).repeatForever(autoreverses: true)) {
-                glowOpacity = 1.0
                 scanlineOffset = 100
             }
 
@@ -183,10 +181,8 @@ public struct ImportStatusView: View {
                                 Text("IMPORT QUEUE")
                                     .font(.system(size: 28, weight: .bold))
                                     .foregroundColor(RetroTheme.retroPink)
-                                    .shadow(color: RetroTheme.retroPink.opacity(glowOpacity), radius: 5, x: 0, y: 0)
                                     .padding(.top, 20)
                                     .padding(.bottom, 10)
-                                    .shadow(color: RetroTheme.retroPink.opacity(glowOpacity), radius: 5, x: 0, y: 0)
 
                                 // Main content
                                 if viewModel.queueItems.isEmpty {
@@ -195,7 +191,6 @@ public struct ImportStatusView: View {
                                         Text("NO ITEMS IN QUEUE")
                                             .font(.system(size: 20, weight: .bold))
                                             .foregroundColor(RetroTheme.retroBlue)
-                                            .shadow(color: RetroTheme.retroBlue.opacity(glowOpacity), radius: 3, x: 0, y: 0)
                                             .padding()
                                         Spacer()
                                     }
@@ -235,7 +230,6 @@ public struct ImportStatusView: View {
                                                                 ),
                                                                 lineWidth: 1.5
                                                             )
-                                                            .shadow(color: RetroTheme.retroBlue.opacity(glowOpacity), radius: 3, x: 0, y: 0)
                                                     )
 
                                                 // Pass callback to ImportTaskRowView
@@ -290,7 +284,6 @@ public struct ImportStatusView: View {
                                                         endPoint: .trailing
                                                     ), lineWidth: 1.5)
                                             )
-                                            .shadow(color: RetroTheme.retroPurple.opacity(glowOpacity), radius: 3, x: 0, y: 0)
                                     }
                                 }
 #endif
@@ -315,7 +308,6 @@ public struct ImportStatusView: View {
                                                     endPoint: .trailing
                                                 ), lineWidth: 1.5)
                                         )
-                                        .shadow(color: RetroTheme.retroPink.opacity(glowOpacity), radius: 3, x: 0, y: 0)
                                 }
 #endif
 
@@ -339,7 +331,6 @@ public struct ImportStatusView: View {
                                                     endPoint: .trailing
                                                 ), lineWidth: 1.5)
                                         )
-                                        .shadow(color: RetroTheme.retroBlue.opacity(glowOpacity), radius: 3, x: 0, y: 0)
                                 }
                                 // No `.focusable(true)` here: on tvOS it wraps the Button in its own
                                 // focus target, so Select on the Siri Remote never reaches the action.
@@ -357,12 +348,6 @@ public struct ImportStatusView: View {
                     .presentationDetents([.medium, .large])
                     .presentationDragIndicator(.visible)
 #endif
-                    .onAppear {
-                        // Start retrowave animations for NavigationStack content
-                        withAnimation(Animation.easeInOut(duration: 2).repeatForever(autoreverses: true)) {
-                            glowOpacity = 1.0
-                        }
-                    }
     }
 
     /// Refresh the queue items from the game importer

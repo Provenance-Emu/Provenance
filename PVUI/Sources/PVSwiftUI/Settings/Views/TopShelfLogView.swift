@@ -10,6 +10,7 @@ import PVLibrary
 import PVSupport
 import Combine
 import PVThemes
+import PVUIBase
 
 /// A view that displays the TopShelf extension log file
 struct TopShelfLogView: View {
@@ -119,14 +120,7 @@ struct TopShelfLogView: View {
                                         .fill(Color.retroBlack.opacity(0.7))
                                         .overlay(
                                             RoundedRectangle(cornerRadius: 8)
-                                                .strokeBorder(
-                                                    LinearGradient(
-                                                        gradient: Gradient(colors: [.retroPink, .retroBlue]),
-                                                        startPoint: .leading,
-                                                        endPoint: .trailing
-                                                    ),
-                                                    lineWidth: 1.5
-                                                )
+                                                .strokeBorder(RetroPauseChrome.chromeBorder, lineWidth: RetroPauseChrome.panelStrokeLineWidth)
                                         )
                                 )
                         }

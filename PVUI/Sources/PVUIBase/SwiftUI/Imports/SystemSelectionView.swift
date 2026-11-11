@@ -17,7 +17,6 @@ public struct SystemSelectionView: View {
     @Environment(\.dismiss) private var dismiss
     @Default(.unsupportedCores) private var unsupportedCores
 
-    @State private var glowOpacity: Double = 0.7
     @State private var selectedSystem: SystemIdentifier? = nil
     @FocusState private var focusedSystem: SystemIdentifier?
 
@@ -92,11 +91,6 @@ public struct SystemSelectionView: View {
         .navigationTitle("")
         .navigationBarTitleDisplayMode(.inline)
 #endif
-        .onAppear {
-            withAnimation(Animation.easeInOut(duration: 2).repeatForever(autoreverses: true)) {
-                glowOpacity = 1.0
-            }
-        }
     }
 
     @ViewBuilder

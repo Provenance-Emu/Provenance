@@ -1569,7 +1569,6 @@ struct TVMediaEmptyStateView: View {
 
     @Environment(\.tvMediaFocusCoordinator) private var focusCoordinator
     @FocusState private var isFocused: Bool
-    @State private var pulseOpacity: Double = 0.3
 
     private var focusID: String { "emptyState.\(title)" }
 
@@ -1580,7 +1579,7 @@ struct TVMediaEmptyStateView: View {
                 Circle()
                     .fill(
                         RadialGradient(
-                            colors: [Color.retroPink.opacity(pulseOpacity), .clear],
+                            colors: [Color.retroPink.opacity(0.2), .clear],
                             center: .center,
                             startRadius: 0,
                             endRadius: 60
@@ -1639,9 +1638,6 @@ struct TVMediaEmptyStateView: View {
             isFocused = true
             focusCoordinator.registerLeftEdgeItem(focusID)
             focusCoordinator.contentItemFocused(id: focusID, isAtLeftEdge: true)
-            withAnimation(.easeInOut(duration: 2.0).repeatForever(autoreverses: true)) {
-                pulseOpacity = 0.15
-            }
         }
         .onChange(of: isFocused) { focused in
             if focused {
@@ -5858,18 +5854,7 @@ struct TVMediaImportStatusToaster: View {
             .fill(Color.retroBlack.opacity(0.92))
             .overlay(
                 RoundedRectangle(cornerRadius: 14, style: .continuous)
-                    .strokeBorder(
-                        LinearGradient(
-                            colors: [
-                                Color.retroPink.opacity(0.4),
-                                Color.retroBlue.opacity(0.3),
-                                Color.retroPink.opacity(0.2)
-                            ],
-                            startPoint: .topLeading,
-                            endPoint: .bottomTrailing
-                        ),
-                        lineWidth: 1.5
-                    )
+                    .strokeBorder(RetroPauseChrome.chromeBorder, lineWidth: RetroPauseChrome.panelStrokeLineWidth)
             )
             .shadow(color: Color.retroPink.opacity(0.2), radius: 12, x: 0, y: 4)
     }

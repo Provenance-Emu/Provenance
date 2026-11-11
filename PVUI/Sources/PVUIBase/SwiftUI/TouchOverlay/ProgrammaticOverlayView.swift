@@ -82,7 +82,18 @@ struct ProgrammaticOverlayView: View {
                 if let editController {
                     OverlayEditorView(controller: editController, layout: layout, binding: binding,
                                       style: style, globalOpacity: globalOpacity,
-                                      systemName: systemId.systemName) { _ in
+                                      systemName: systemId.systemName,
+                                      askSaveScope: { thisGame, allGames in
+                                          PVAlertCenter.shared.present(PVAlert(
+                                              title: "Save layout for:",
+                                              style: .actionSheet,
+                                              actions: [
+                                                  PVAlertAction("This game", handler: thisGame),
+                                                  PVAlertAction("All \(systemId.systemName) games", handler: allGames),
+                                                  .cancel()
+                                              ]
+                                          ))
+                                      }) { _ in
                         self.editController = nil
                     }
                 }

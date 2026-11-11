@@ -1621,21 +1621,13 @@ extension RetroGameLibraryView {
         }
         .padding(12)
         .background(
-            RoundedRectangle(cornerRadius: 10)
+            RoundedRectangle(cornerRadius: RetroPauseChrome.chromeCornerRadius)
                 .fill(RetroTheme.retroBlack.opacity(0.6))
                 .overlay(
-                    RoundedRectangle(cornerRadius: 10)
-                        .strokeBorder(
-                            LinearGradient(
-                                gradient: Gradient(colors: [RetroTheme.retroPink, RetroTheme.retroBlue]),
-                                startPoint: .leading,
-                                endPoint: .trailing
-                            ),
-                            lineWidth: 1.5
-                        )
+                    RoundedRectangle(cornerRadius: RetroPauseChrome.chromeCornerRadius)
+                        .strokeBorder(RetroPauseChrome.chromeBorder, lineWidth: RetroPauseChrome.panelStrokeLineWidth)
                 )
         )
-        .shadow(color: RetroTheme.retroBlue.opacity(0.5), radius: 5, x: 0, y: 0)
     }
 }
 

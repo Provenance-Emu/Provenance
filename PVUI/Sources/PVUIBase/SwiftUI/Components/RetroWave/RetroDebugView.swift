@@ -73,7 +73,6 @@ public struct RetroDebugView: View {
 
     // Animation states
     @State private var scanlineOffset: CGFloat = 0
-    @State private var glowOpacity: Double = 0.7
 
     /// Theme-aware color helpers
     private var primaryTextColor: Color {
@@ -492,14 +491,7 @@ public struct RetroDebugView: View {
                             }
                             .overlay(
                                 RoundedRectangle(cornerRadius: 8)
-                                    .strokeBorder(
-                                        LinearGradient(
-                                            gradient: Gradient(colors: [.retroPink, .retroBlue]),
-                                            startPoint: .leading,
-                                            endPoint: .trailing
-                                        ),
-                                        lineWidth: 1.5
-                                    )
+                                    .strokeBorder(RetroPauseChrome.chromeBorder, lineWidth: RetroPauseChrome.panelStrokeLineWidth)
                             )
                             .background(Color.retroBlack.opacity(0.5))
                             .cornerRadius(8)
@@ -591,7 +583,6 @@ struct DatabaseStatsView: View {
 
     // Animation states
     @State private var scanlineOffset: CGFloat = 0
-    @State private var glowOpacity: Double = 0.7
     @State private var isLoading = true
     @State private var pulseOpacity = 0.0
 
@@ -668,7 +659,6 @@ struct DatabaseStatsView: View {
                                         lineWidth: 2
                                     )
                                     .background(sectionBackgroundColor)
-                                    .shadow(color: accentColor.opacity(glowOpacity), radius: 8, x: 0, y: 0)
                             )
                         }
                     } else {
@@ -711,7 +701,6 @@ struct DatabaseStatsView: View {
                                             endPoint: .trailing
                                         )
                                     )
-                                    .shadow(color: accentColor.opacity(glowOpacity), radius: 8, x: 0, y: 0)
                             )
                     }
                 }
@@ -778,9 +767,6 @@ struct DatabaseStatsView: View {
                 scanlineOffset = 1000
             }
 
-            withAnimation(Animation.easeInOut(duration: 2).repeatForever(autoreverses: true)) {
-                glowOpacity = 1.0
-            }
 
             // Load stats with a slight delay to show loading animation
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
@@ -813,7 +799,6 @@ struct RetroStatCard: View {
     let color: Color
 
     @ObservedObject private var themeManager = ThemeManager.shared
-    @State private var glowOpacity = 0.7
 
     private var primaryTextColor: Color {
         themeManager.currentPalette.gameLibraryText.swiftUIColor
@@ -843,7 +828,6 @@ struct RetroStatCard: View {
             Text(value)
                 .font(.system(size: 32, weight: .bold))
                 .foregroundColor(color)
-                .shadow(color: color.opacity(glowOpacity), radius: 8, x: 0, y: 0)
         }
         .frame(maxWidth: .infinity)
         .padding()
@@ -858,11 +842,6 @@ struct RetroStatCard: View {
                         )
                 )
         )
-        .onAppear {
-            withAnimation(Animation.easeInOut(duration: 1.5).repeatForever(autoreverses: true)) {
-                glowOpacity = 1.0
-            }
-        }
     }
 }
 
@@ -979,7 +958,6 @@ struct DatabaseBrowserView: View {
     @State private var showGameDetails = false
     @State private var searchText = ""
     @State private var isSearching = false
-    @State private var glowOpacity = 0.7
     @State private var scanlineOffset: CGFloat = 0
 
     private var primaryTextColor: Color {
@@ -1101,9 +1079,6 @@ struct DatabaseBrowserView: View {
                 scanlineOffset = 1000
             }
 
-            withAnimation(Animation.easeInOut(duration: 2).repeatForever(autoreverses: true)) {
-                glowOpacity = 1.0
-            }
         }
     }
 }
@@ -1113,7 +1088,6 @@ struct RetroGameCard: View {
     let isSelected: Bool
 
     @ObservedObject private var themeManager = ThemeManager.shared
-    @State private var glowOpacity = 0.7
 
     private var primaryTextColor: Color {
         themeManager.currentPalette.gameLibraryText.swiftUIColor
@@ -1228,7 +1202,6 @@ struct RetroGameCard: View {
                             .background(
                                 RoundedRectangle(cornerRadius: 4)
                                     .fill(accentColor)
-                                    .shadow(color: accentColor.opacity(glowOpacity), radius: 4, x: 0, y: 0)
                             )
                         }
                     }
@@ -1255,18 +1228,7 @@ struct RetroGameCard: View {
                             lineWidth: isSelected ? 2 : 1
                         )
                 )
-                .shadow(
-                    color: accentColor.opacity(glowOpacity * (isSelected ? 1.0 : 0.5)),
-                    radius: isSelected ? 8 : 4,
-                    x: 0,
-                    y: 0
-                )
         )
-        .onAppear {
-            withAnimation(Animation.easeInOut(duration: 1.5).repeatForever(autoreverses: true)) {
-                glowOpacity = 1.0
-            }
-        }
     }
 
     private func formattedDate(_ date: Date) -> String {
@@ -1346,7 +1308,6 @@ struct RetroSectionView<Content: View>: View {
     let title: String
     let content: Content
     @ObservedObject private var themeManager = ThemeManager.shared
-    @State private var glowOpacity: Double = 0.7
 
     private var accentColor: Color {
         themeManager.currentPalette.defaultTintColor.swiftUIColor
@@ -1408,12 +1369,6 @@ struct RetroSectionView<Content: View>: View {
                     lineWidth: 2
                 )
         )
-        .shadow(color: accentColor.opacity(glowOpacity * 0.3), radius: 10, x: 0, y: 0)
-        .onAppear {
-            withAnimation(.easeInOut(duration: 2).repeatForever(autoreverses: true)) {
-                glowOpacity = 1.0
-            }
-        }
         .frame(maxWidth: .infinity)
     }
 }

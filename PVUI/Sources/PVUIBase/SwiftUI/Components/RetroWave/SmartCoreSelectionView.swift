@@ -80,7 +80,6 @@ public struct SmartCoreSelectionView: View {
     private let onSetDefault: ((String) -> Void)?
 
     @Binding private var isPresented: Bool
-    @State private var glowOpacity: Double = 0.7
 
     #if os(tvOS) || os(iOS)
     @FocusState private var focusedItemId: String?
@@ -159,23 +158,12 @@ public struct SmartCoreSelectionView: View {
                 RoundedRectangle(cornerRadius: 20)
                     .fill(Color.black.opacity(0.95))
                     .overlay(
-                        RoundedRectangle(cornerRadius: 20)
-                            .stroke(
-                                LinearGradient(
-                                    colors: [Color.retroBlue, Color.retroPink],
-                                    startPoint: .topLeading,
-                                    endPoint: .bottomTrailing
-                                ),
-                                lineWidth: 1.5
-                            )
+                        RoundedRectangle(cornerRadius: RetroPauseChrome.chromeCornerRadius)
+                            .strokeBorder(RetroPauseChrome.chromeBorder, lineWidth: RetroPauseChrome.panelStrokeLineWidth)
                     )
-                    .shadow(color: Color.retroBlue.opacity(0.3 * glowOpacity), radius: 20, x: 0, y: 0)
             )
             .padding(.horizontal, 20)
             .onAppear {
-                withAnimation(.easeInOut(duration: 1.5).repeatForever(autoreverses: true)) {
-                    glowOpacity = 1.0
-                }
                 #if os(tvOS) || os(iOS)
                 focusedItemId = items.first?.id
                 #endif

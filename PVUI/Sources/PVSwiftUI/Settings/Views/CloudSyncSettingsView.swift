@@ -1671,45 +1671,19 @@ extension View {
         #endif
     }
 
-    /// Card modifier: translucent panel with gradient border
+    /// Card modifier: shared translucent chrome surface with hairline border
     func cloudSyncCard() -> some View {
         self
             .padding(14)
-            .background(
-                RoundedRectangle(cornerRadius: 12, style: .continuous)
-                    .fill(Color.black.opacity(0.7))
-            )
-            .overlay(
-                RoundedRectangle(cornerRadius: 12, style: .continuous)
-                    .strokeBorder(
-                        LinearGradient(
-                            colors: [Color.retroPurple.opacity(0.4), Color.retroPink.opacity(0.3)],
-                            startPoint: .topLeading,
-                            endPoint: .bottomTrailing
-                        ),
-                        lineWidth: 1
-                    )
-            )
+            .retroChromeSurface()
+            .environment(\.colorScheme, .dark)
     }
 
     /// Small stat tile (a count or a label over a value): the card look at tile size, no padding of its own.
     func cloudSyncTile() -> some View {
         self
-            .background(
-                RoundedRectangle(cornerRadius: 10, style: .continuous)
-                    .fill(Color.black.opacity(0.7))
-            )
-            .overlay(
-                RoundedRectangle(cornerRadius: 10, style: .continuous)
-                    .strokeBorder(
-                        LinearGradient(
-                            colors: [Color.retroBlue.opacity(0.4), Color.retroPurple.opacity(0.3)],
-                            startPoint: .topLeading,
-                            endPoint: .bottomTrailing
-                        ),
-                        lineWidth: 1
-                    )
-            )
+            .retroChromeSurface()
+            .environment(\.colorScheme, .dark)
     }
 
     /// Stepper button styling for +/- controls on tvOS

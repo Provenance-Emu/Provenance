@@ -42,9 +42,6 @@ public struct GameSyncStatusView: View {
     @FocusState private var cancelButtonFocused: Bool
     #endif
 
-    /// Animation state for glow effect
-    @State private var glowOpacity: Double = 0.7
-
     /// Animation state for spinner rotation
     @State private var spinnerRotation: Double = 0
 
@@ -143,26 +140,13 @@ public struct GameSyncStatusView: View {
                         .opacity(0.03)
                 }
             )
-            .clipShape(RoundedRectangle(cornerRadius: 20))
+            .clipShape(RoundedRectangle(cornerRadius: RetroPauseChrome.chromeCornerRadius))
             .overlay(
-                RoundedRectangle(cornerRadius: 20)
-                    .strokeBorder(
-                        LinearGradient(
-                            gradient: Gradient(colors: borderColors),
-                            startPoint: .topLeading,
-                            endPoint: .bottomTrailing
-                        ),
-                        lineWidth: 2
-                    )
+                RoundedRectangle(cornerRadius: RetroPauseChrome.chromeCornerRadius)
+                    .strokeBorder(borderColor, lineWidth: RetroPauseChrome.panelStrokeLineWidth)
             )
-            .shadow(color: glowColor.opacity(glowOpacity), radius: 25, x: 0, y: 0)
             .padding(40)
             .onAppear {
-                // Animate glow
-                withAnimation(.easeInOut(duration: 1.5).repeatForever(autoreverses: true)) {
-                    glowOpacity = 0.3
-                }
-
                 // Animate spinner
                 if !isComplete && !hasError {
                     withAnimation(.linear(duration: 1.0).repeatForever(autoreverses: false)) {
@@ -288,23 +272,14 @@ public struct GameSyncStatusView: View {
 
     // MARK: - Computed Properties
 
-    private var borderColors: [Color] {
+    /// Standard progress uses the shared chrome hairline; error and completion keep their status colours.
+    private var borderColor: Color {
         if hasError {
-            return [.red, .retroPink]
+            return .red.opacity(0.7)
         } else if isComplete {
-            return [.green, .retroBlue]
+            return .green.opacity(0.7)
         } else {
-            return [.retroPink, .retroBlue]
-        }
-    }
-
-    private var glowColor: Color {
-        if hasError {
-            return .red
-        } else if isComplete {
-            return .green
-        } else {
-            return .retroPink
+            return RetroPauseChrome.chromeBorder
         }
     }
 }

@@ -16,7 +16,6 @@ public struct FileCopyProgressView: View {
     @ObservedObject private var themeManager = ThemeManager.shared
     
     // Animation states for retrowave effects
-    @State private var glowOpacity: Double = 0.7
     
     var currentPalette: any UXThemePalette { themeManager.currentPalette }
     
@@ -30,7 +29,6 @@ public struct FileCopyProgressView: View {
                     Text("FILE TRANSFERS")
                         .font(.system(size: 16, weight: .bold))
                         .foregroundColor(RetroTheme.retroPink)
-                        .shadow(color: RetroTheme.retroPink.opacity(glowOpacity), radius: 2, x: 0, y: 0)
                     
                     Spacer()
                     
@@ -74,23 +72,10 @@ public struct FileCopyProgressView: View {
                         )
                     )
                     .overlay(
-                        RoundedRectangle(cornerRadius: 12)
-                            .stroke(
-                                LinearGradient(
-                                    gradient: Gradient(colors: [RetroTheme.retroPink, RetroTheme.retroBlue]),
-                                    startPoint: .leading,
-                                    endPoint: .trailing
-                                ), lineWidth: 1.5
-                            )
-                            .shadow(color: RetroTheme.retroPink.opacity(glowOpacity), radius: 3, x: 0, y: 0)
+                        RoundedRectangle(cornerRadius: RetroPauseChrome.chromeCornerRadius)
+                            .strokeBorder(RetroPauseChrome.chromeBorder, lineWidth: RetroPauseChrome.panelStrokeLineWidth)
                     )
             )
-            .onAppear {
-                // Start retrowave animations
-                withAnimation(Animation.easeInOut(duration: 2).repeatForever(autoreverses: true)) {
-                    glowOpacity = 1.0
-                }
-            }
         }
     }
 }

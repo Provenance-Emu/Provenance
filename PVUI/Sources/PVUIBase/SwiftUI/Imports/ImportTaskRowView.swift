@@ -57,7 +57,6 @@ struct ImportTaskRowView: View {
     }
 
     // Animation states for retrowave effects
-    @State private var glowOpacity: Double = 0.7
     @State private var isHovered: Bool = false
 #if os(tvOS)
     @FocusState private var isFocusedTV: Bool
@@ -123,12 +122,6 @@ struct ImportTaskRowView: View {
                 ),
                 lineWidth: lineWidth
             )
-            .shadow(
-                color: primaryColor.opacity(glowOpacity),
-                radius: shadowRadius,
-                x: 0,
-                y: 0
-            )
     }
 
     var content: some View {
@@ -137,21 +130,18 @@ struct ImportTaskRowView: View {
                 Text(item.url.lastPathComponent)
                     .font(.system(size: 16, weight: .bold))
                     .foregroundColor(.white)
-                    .shadow(color: primaryColor.opacity(glowOpacity * 0.8), radius: 2, x: 0, y: 0)
                     .lineLimit(1)
 
                 if item.fileType == .bios {
                     Text("BIOS")
                         .font(.system(size: 14, weight: .semibold))
                         .foregroundColor(RetroTheme.retroPink)
-                        .shadow(color: RetroTheme.retroPink.opacity(glowOpacity * 0.6), radius: 1, x: 0, y: 0)
                 } else if let chosenSystem = item.userChosenSystem {
                     // Show the selected system when one is chosen
                     HStack(spacing: 6) {
                         Text("\(chosenSystem.fullName)")
                             .font(.system(size: 14))
                             .foregroundColor(RetroTheme.retroBlue)
-                            .shadow(color: RetroTheme.retroBlue.opacity(glowOpacity * 0.6), radius: 1, x: 0, y: 0)
                         if let level = resolvedSupportLevel {
                             SystemSupportLevelRow(level: level)
                         }
@@ -161,7 +151,6 @@ struct ImportTaskRowView: View {
                         Text("\(resolvedSystem.fullName)")
                             .font(.system(size: 14))
                             .foregroundColor(RetroTheme.retroBlue)
-                            .shadow(color: RetroTheme.retroBlue.opacity(glowOpacity * 0.6), radius: 1, x: 0, y: 0)
                         if let level = resolvedSupportLevel {
                             SystemSupportLevelRow(level: level)
                         }
@@ -172,7 +161,6 @@ struct ImportTaskRowView: View {
                             Text("\(item.systems.first!.fullName) matched")
                                 .font(.system(size: 14))
                                 .foregroundColor(RetroTheme.retroBlue)
-                                .shadow(color: RetroTheme.retroBlue.opacity(glowOpacity * 0.6), radius: 1, x: 0, y: 0)
                             if let level = resolvedSupportLevel {
                                 SystemSupportLevelRow(level: level)
                             }
@@ -181,7 +169,6 @@ struct ImportTaskRowView: View {
                         Text("\(item.systems.count) systems")
                             .font(.system(size: 14))
                             .foregroundColor(RetroTheme.retroPurple)
-                            .shadow(color: RetroTheme.retroPurple.opacity(glowOpacity * 0.6), radius: 1, x: 0, y: 0)
                     }
                 }
 
@@ -189,7 +176,6 @@ struct ImportTaskRowView: View {
                     Text("Error: \(errorText)")
                         .font(.system(size: 12))
                         .foregroundColor(Color.red)
-                        .shadow(color: Color.red.opacity(glowOpacity * 0.6), radius: 1, x: 0, y: 0)
                         .lineLimit(2)
                 }
             }
@@ -209,20 +195,17 @@ struct ImportTaskRowView: View {
                     Image(systemName: iconNameForStatus(item.status))
                         .font(.system(size: 24))
                         .foregroundColor(primaryColor)
-                        .shadow(color: primaryColor.opacity(glowOpacity), radius: 3, x: 0, y: 0)
                 }
 
                 if (item.childQueueItems.count > 0) {
                     Text("+\(item.childQueueItems.count) files")
                         .font(.system(size: 12, weight: .medium))
                         .foregroundColor(RetroTheme.retroPink)
-                        .shadow(color: RetroTheme.retroPink.opacity(glowOpacity * 0.6), radius: 1, x: 0, y: 0)
                         .padding(.vertical, 2)
                         .padding(.horizontal, 6)
                         .background(
                             Capsule()
                                 .stroke(RetroTheme.retroPink, lineWidth: 1)
-                                .shadow(color: RetroTheme.retroPink.opacity(glowOpacity * 0.6), radius: 1, x: 0, y: 0)
                         )
                 }
             }
@@ -278,12 +261,6 @@ struct ImportTaskRowView: View {
             }
         }
 #endif
-        .onAppear {
-            // Start animations
-            withAnimation(Animation.easeInOut(duration: 1.5).repeatForever(autoreverses: true)) {
-                glowOpacity = 1.0
-            }
-        }
 
 #if os(tvOS)
         return tvOSMainRow(base: base)
@@ -347,7 +324,6 @@ struct ImportTaskRowView: View {
                     Image(systemName: "trash")
                         .font(.system(size: 22, weight: .bold))
                         .foregroundColor(RetroTheme.retroPink)
-                        .shadow(color: RetroTheme.retroPink.opacity(glowOpacity), radius: 3, x: 0, y: 0)
                         .frame(width: 56, height: 90)
                         .background(
                             RoundedRectangle(cornerRadius: 12)
@@ -363,7 +339,7 @@ struct ImportTaskRowView: View {
                                     ),
                                     lineWidth: isFocusedRemove ? 3.0 : 1.5
                                 )
-                                .shadow(color: RetroTheme.retroPink.opacity(glowOpacity), radius: isFocusedRemove ? 8 : 4, x: 0, y: 0)
+                                .shadow(color: RetroTheme.retroPink.opacity(isFocusedRemove ? 0.8 : 0.4), radius: isFocusedRemove ? 8 : 4, x: 0, y: 0)
                         )
                 }
                 .buttonStyle(.borderless)

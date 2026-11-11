@@ -14,7 +14,6 @@ public struct RetroWaveToggle: View {
     let label: String
     
     @State private var isDragging = false
-    @State private var glowOpacity = 0.0
     
 #if os(tvOS)
     @FocusState private var isFocused: Bool
@@ -55,9 +54,6 @@ public struct RetroWaveToggle: View {
         }
         .focusable(true)
         .focused($isFocused)
-        .onAppear {
-            setupInitialGlow()
-        }
 #else
         // iOS/macOS: Use tap gesture
         HStack {
@@ -72,9 +68,6 @@ public struct RetroWaveToggle: View {
                 .onTapGesture {
                     toggleAction()
                 }
-        }
-        .onAppear {
-            setupInitialGlow()
         }
 #endif
     }
@@ -97,7 +90,7 @@ public struct RetroWaveToggle: View {
             Circle()
                 .fill(isOn ? RetroTheme.retroPink : RetroTheme.retroBlue)
                 .frame(width: 26, height: 26)
-                .shadow(color: isOn ? RetroTheme.retroPink.opacity(glowOpacity) : Color.clear, radius: 6)
+                .shadow(color: isOn ? RetroTheme.retroPink.opacity(0.5) : Color.clear, radius: 6)
                 .offset(x: isOn ? 13 : -13)
                 .animation(.spring(response: 0.2, dampingFraction: 0.7), value: isOn)
         }
@@ -105,24 +98,6 @@ public struct RetroWaveToggle: View {
     
     private func toggleAction() {
         isOn.toggle()
-        
-        // Animate glow when turned on
-        if isOn {
-            withAnimation(.easeInOut(duration: 0.5).repeatForever(autoreverses: true)) {
-                glowOpacity = 0.8
-            }
-        } else {
-            glowOpacity = 0.0
-        }
-    }
-    
-    private func setupInitialGlow() {
-        // Set initial glow state
-        if isOn {
-            withAnimation(.easeInOut(duration: 0.5).repeatForever(autoreverses: true)) {
-                glowOpacity = 0.8
-            }
-        }
     }
 }
 

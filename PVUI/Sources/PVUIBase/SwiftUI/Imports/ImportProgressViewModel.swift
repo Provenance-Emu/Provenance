@@ -80,7 +80,6 @@ public class ImportProgressViewModel: ObservableObject {
     @Published public var shouldShow: Bool = false
 
     /// Animation properties from old UI
-    @Published public var glowOpacity: Double = 0.7
     @Published public var animatedProgressOffset: CGFloat = 0 // For progress bar animation if needed
 
     @Published public var showOldProgressSystem: Bool = false // If true, shows the older import progress style elements
@@ -227,16 +226,6 @@ public class ImportProgressViewModel: ObservableObject {
 
     /// Start animations for retrowave effects (from old UI)
     public func startAnimations() {
-        // Glow effect
-        Timer.publish(every: 1.0, on: .main, in: .common).autoconnect()
-            .sink { [weak self] _ in
-                guard let self = self else { return }
-                withAnimation(.easeInOut(duration: 1.0)) {
-                    self.glowOpacity = self.glowOpacity == 0.7 ? 1.0 : 0.7
-                }
-            }
-            .store(in: &cancellables)
-
         // Animated progress offset (if used by a progress bar style)
          Timer.publish(every: 0.05, on: .main, in: .common).autoconnect()
              .sink { [weak self] _ in

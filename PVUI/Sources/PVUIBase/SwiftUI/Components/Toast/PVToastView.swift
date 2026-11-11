@@ -72,15 +72,13 @@ struct PVToastItemView: View {
     let toast: PVToast
     let onDismiss: () -> Void
 
-    @State private var glowOpacity: Double = 0.6
-
     var body: some View {
         VStack(spacing: 6) {
             HStack(spacing: 10) {
                 Image(systemName: toast.icon)
                     .foregroundColor(toast.type.color)
                     .font(.system(size: 16, weight: .semibold))
-                    .shadow(color: toast.type.color.opacity(glowOpacity), radius: 4)
+                    .shadow(color: toast.type.color.opacity(0.8), radius: 4)
                     .accessibilityHidden(true)
 
                 Text(toast.displayMessage)
@@ -153,11 +151,6 @@ struct PVToastItemView: View {
                 )
         )
         .shadow(color: toast.type.color.opacity(0.4), radius: 6, x: 0, y: 2)
-        .onAppear {
-            withAnimation(.easeInOut(duration: 1.8).repeatForever(autoreverses: true)) {
-                glowOpacity = 1.0
-            }
-        }
     }
 }
 

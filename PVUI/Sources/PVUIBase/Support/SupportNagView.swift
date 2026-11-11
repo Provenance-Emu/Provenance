@@ -93,12 +93,7 @@ public struct SupportNagView: View {
                         )
                         .frame(width: 100, height: 100)
                         .blur(radius: 20)
-                        .opacity(glowOpacity)
-                        .animation(
-                            Animation.easeInOut(duration: 2.0)
-                                .repeatForever(autoreverses: true),
-                            value: glowOpacity
-                        )
+                        .opacity(0.7)
 
                     // Icon circle
                     Circle()
@@ -179,26 +174,7 @@ public struct SupportNagView: View {
                         subtitle: "Power user settings & configurations"
                     )
                 }
-                .background(
-                    RoundedRectangle(cornerRadius: 16)
-                        .fill(Color.black.opacity(0.6))
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 16)
-                                .strokeBorder(
-                                    LinearGradient(
-                                        gradient: Gradient(colors: [
-                                            Color.retroPink.opacity(0.5),
-                                            Color.retroPurple.opacity(0.5),
-                                            Color.retroBlue.opacity(0.5)
-                                        ]),
-                                        startPoint: .leading,
-                                        endPoint: .trailing
-                                    ),
-                                    lineWidth: 2
-                                )
-                        )
-                )
-                .clipShape(RoundedRectangle(cornerRadius: 16))
+                .retroChromeSurface()
                 .padding(.horizontal, 24)
 
                 // Buttons
@@ -246,10 +222,6 @@ public struct SupportNagView: View {
             }
             .padding(.vertical, 40)
         }
-        .onAppear {
-            glowOpacity = 1.0
-
-        }
     }
 
     private var supportButton: some View {
@@ -279,8 +251,6 @@ public struct SupportNagView: View {
         }
         .buttonStyle(PlainButtonStyle())
     }
-
-    @State private var glowOpacity: Double = 0.5
 }
 
 #if DEBUG

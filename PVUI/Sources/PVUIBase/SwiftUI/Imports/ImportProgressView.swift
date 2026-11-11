@@ -154,14 +154,7 @@ public struct ImportProgressView: View {
                 .fill(Color.retroBlack.opacity(0.7))
                 .overlay(
                     RoundedRectangle(cornerRadius: 6)
-                        .strokeBorder(
-                            LinearGradient(
-                                gradient: Gradient(colors: [.retroPink, .retroBlue]),
-                                startPoint: .leading,
-                                endPoint: .trailing
-                            ),
-                            lineWidth: 1.5
-                        )
+                        .strokeBorder(RetroPauseChrome.chromeBorder, lineWidth: RetroPauseChrome.panelStrokeLineWidth)
                 )
                 .frame(height: 12)
 
@@ -219,18 +212,11 @@ public struct ImportProgressView: View {
     }
     
     private var backgroundView: some View {
-        RoundedRectangle(cornerRadius: 12)
+        RoundedRectangle(cornerRadius: RetroPauseChrome.chromeCornerRadius)
             .fill(Color.retroBlack.opacity(0.7))
             .overlay(
-                RoundedRectangle(cornerRadius: 12)
-                    .strokeBorder(
-                        LinearGradient(
-                            gradient: Gradient(colors: [.retroPink, .retroBlue]),
-                            startPoint: .leading,
-                            endPoint: .trailing
-                        ),
-                        lineWidth: 1.5
-                    )
+                RoundedRectangle(cornerRadius: RetroPauseChrome.chromeCornerRadius)
+                    .strokeBorder(RetroPauseChrome.chromeBorder, lineWidth: RetroPauseChrome.panelStrokeLineWidth)
             )
     }
 
@@ -278,22 +264,13 @@ public struct ImportProgressView: View {
         }
         .padding(12)
         .background(
-            RoundedRectangle(cornerRadius: 12)
+            RoundedRectangle(cornerRadius: RetroPauseChrome.chromeCornerRadius)
                 .fill(RetroTheme.retroBlackClear)
                 .overlay(
-                    RoundedRectangle(cornerRadius: 12)
-                        .strokeBorder(
-                            LinearGradient(
-                                gradient: Gradient(colors: [.retroPink, .retroBlue]),
-                                startPoint: .topLeading,
-                                endPoint: .bottomTrailing
-                            ),
-                            lineWidth: 2
-                        )
+                    RoundedRectangle(cornerRadius: RetroPauseChrome.chromeCornerRadius)
+                        .strokeBorder(RetroPauseChrome.chromeBorder, lineWidth: RetroPauseChrome.panelStrokeLineWidth)
                 )
         )
-        .compositingGroup() // Ensures proper rendering of the transparency and overlay
-        .shadow(color: .retroPink.opacity(0.5), radius: 5, x: 0, y: 3)
     }
     
     // Helper function to determine message color based on type

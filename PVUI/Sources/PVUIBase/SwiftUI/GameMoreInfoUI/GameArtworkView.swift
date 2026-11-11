@@ -77,20 +77,18 @@ struct GameArtworkView: View {
     }
 
     // Animation states for retrowave effects
-    @State private var glowOpacity: Double = 0.7
-    @State private var pulseScale: CGFloat = 1.0
     @State private var scanlineOffset: CGFloat = 0
 
     var body: some View {
         ZStack {
             // RetroWave background for the artwork container
-            RoundedRectangle(cornerRadius: 12)
+            RoundedRectangle(cornerRadius: RetroPauseChrome.chromeCornerRadius)
                 .fill(Color.black.opacity(0.8))
 
             // Grid overlay for retrowave effect
             RetroGrid()
                 .opacity(0.15)
-                .clipShape(RoundedRectangle(cornerRadius: 12))
+                .clipShape(RoundedRectangle(cornerRadius: RetroPauseChrome.chromeCornerRadius))
 
             // Artwork content
             Group {
@@ -113,23 +111,14 @@ struct GameArtworkView: View {
             // Scanlines effect (subtle)
             ScanlineEffect(offset: 12)
                 .opacity(0.1)
-                .clipShape(RoundedRectangle(cornerRadius: 12))
+                .clipShape(RoundedRectangle(cornerRadius: RetroPauseChrome.chromeCornerRadius))
                 .offset(y: scanlineOffset)
 
-            // Neon border with glow effect
-            RoundedRectangle(cornerRadius: 12)
-                .strokeBorder(
-                    LinearGradient(
-                        gradient: Gradient(colors: [RetroTheme.retroPink, RetroTheme.retroPurple, RetroTheme.retroBlue]),
-                        startPoint: .topLeading,
-                        endPoint: .bottomTrailing
-                    ),
-                    lineWidth: 2
-                )
-                .scaleEffect(pulseScale)
-                .shadow(color: RetroTheme.retroPink.opacity(glowOpacity), radius: 8, x: 0, y: 0)
+            // Shared chrome hairline
+            RoundedRectangle(cornerRadius: RetroPauseChrome.chromeCornerRadius)
+                .strokeBorder(RetroPauseChrome.chromeBorder, lineWidth: RetroPauseChrome.panelStrokeLineWidth)
         }
-        .cornerRadius(12)
+        .cornerRadius(RetroPauseChrome.chromeCornerRadius)
         #if os(tvOS)
         // Constrain artwork size on tvOS to prevent it from being too large
         .frame(maxWidth: 400, maxHeight: 500)
@@ -144,10 +133,6 @@ struct GameArtworkView: View {
                 scanlineOffset = 500
             }
 
-            withAnimation(Animation.easeInOut(duration: 2).repeatForever(autoreverses: true)) {
-                glowOpacity = 1.0
-                pulseScale = 1.02
-            }
         }
         .animation(.easeInOut(duration: isAnimating ? 0.4 : 0), value: showingFrontArt)
         // Only enable double tap gesture when artwork is available
