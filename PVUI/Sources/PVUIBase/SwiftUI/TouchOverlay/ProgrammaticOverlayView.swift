@@ -48,6 +48,7 @@ struct ProgrammaticOverlayView: View {
     @State private var coreAVInfoRevision = 0
 
     private static let fallbackAspect: CGFloat = 4.0 / 3.0
+    private static let format2Sources = Bundle.module.url(forResource: "Programmatic", withExtension: nil, subdirectory: "DefaultSkins")
     /// Per-game or per-system controller variant choices changed.
     private static let variantSettingsChanged = Defaults
         .publisher(keys: .controllerLayoutVariantsByGame, .controllerLayoutVariantsBySystem, options: [])
@@ -76,12 +77,12 @@ struct ProgrammaticOverlayView: View {
                 if let sink {
                     OverlayHostView(layout: layout, binding: binding, style: style, globalOpacity: globalOpacity,
                                     hapticIntensity: hapticsOn ? hapticIntensity : 0, sink: sink,
-                                    editing: editController != nil)
+                                    editing: editController != nil, canvas: canvas, format2Sources: Self.format2Sources)
                 }
                 if let editController {
                     OverlayEditorView(controller: editController, layout: layout, binding: binding,
                                       style: style, globalOpacity: globalOpacity,
-                                      systemName: systemId.systemName,
+                                      systemName: systemId.systemName, format2Sources: Self.format2Sources,
                                       askSaveScope: { thisGame, allGames in
                                           PVAlertCenter.shared.present(PVAlert(
                                               title: "Save layout for:",

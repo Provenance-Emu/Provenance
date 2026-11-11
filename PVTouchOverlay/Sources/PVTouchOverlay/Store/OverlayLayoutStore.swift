@@ -2,17 +2,10 @@ import Foundation
 import Combine
 import PVLogging
 
-public struct OverlayLayoutFile: Codable, Equatable, Sendable {
-    public var version: Int
-    public var layouts: [String: [String: GroupOverride]]
-    public var games: [String: [String: [String: GroupOverride]]]
-    public static let empty = OverlayLayoutFile(version: OverlayLayoutStore.currentVersion, layouts: [:], games: [:])
-}
-
 /// Persists user layout overrides: one layer per pad kind/orientation key, plus a per-game layer on top.
 @MainActor
 public final class OverlayLayoutStore: ObservableObject {
-    nonisolated public static let currentVersion = 1
+    nonisolated public static let currentVersion = OverlayLayoutFile.currentVersion
     public static let fileName = "touch_overlay_layout_v1.json"
     public static let shared: OverlayLayoutStore = {
         let dir = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask)[0]
@@ -36,9 +29,7 @@ public final class OverlayLayoutStore: ObservableObject {
     }
 
     public func overrides(for key: String, gameMD5: String?) -> OverlayLayoutOverrides {
-        if let md5 = gameMD5, let groups = file.games[md5]?[key] { return OverlayLayoutOverrides(groups: groups) }
-        if let groups = file.layouts[key] { return OverlayLayoutOverrides(groups: groups) }
-        return .empty
+        file.overrides(for: key, gameMD5: gameMD5)
     }
 
     /// `persist: false` still bumps `revision` but defers the disk write to `flush()`.
