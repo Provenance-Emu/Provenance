@@ -144,13 +144,8 @@ public struct ImportStatusView: View {
                 updatesController.handlePickedDocuments(urls)
             }
         }
-        .alert("Unable to Import Files", isPresented: Binding(
-            get: { documentSelection.errorMessage != nil },
-            set: { if !$0 { documentSelection.errorMessage = nil } }
-        )) {
-            Button("OK", role: .cancel) { documentSelection.errorMessage = nil }
-        } message: {
-            Text(documentSelection.errorMessage ?? "")
+        .pvAlert(item: $documentSelection.errorMessage) { message in
+            PVAlert(title: "Unable to Import Files", message: message, type: .error)
         }
         // Observe file recovery progress
         .onReceive(NotificationCenter.default.publisher(for: iCloudDriveSync.iCloudFileRecoveryProgress)) { _ in

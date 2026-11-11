@@ -128,14 +128,8 @@ public struct NetplayWaitingRoomView: View {
             .onAppear {
                 localIP = Self.localIPAddress()
             }
-            .alert(
-                "Couldn't Start",
-                isPresented: Binding(get: { startError != nil }, set: { if !$0 { startError = nil } }),
-                presenting: startError
-            ) { _ in
-                Button("OK", role: .cancel) {}
-            } message: { message in
-                Text(message)
+            .pvAlert(item: $startError) { message in
+                PVAlert(title: "Couldn't Start", message: message, type: .error)
             }
             .onChange(of: netplay.state) { _, newState in
                 switch newState {

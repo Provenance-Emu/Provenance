@@ -172,10 +172,8 @@ public struct NetplayCreateRoomView: View {
                     Button("Cancel") { dismiss() }
                 }
             }
-            .alert("Error", isPresented: $showError, presenting: errorMessage) { _ in
-                Button("OK", role: .cancel) {}
-            } message: { msg in
-                Text(msg)
+            .pvAlert(isPresented: $showError) {
+                PVAlert(title: "Error", message: errorMessage, type: .error)
             }
             // After hosting starts successfully, navigate to the waiting room.
             // When the waiting room is dismissed, also dismiss this sheet so the user

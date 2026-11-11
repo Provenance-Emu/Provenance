@@ -1614,12 +1614,9 @@ private struct ExtraInfoSection: View {
                             icon: .sfSymbol("doc.text"))
             }
             .retroFocusButtonStyle(showBorder: false)
-            .alert(isPresented: $showLicensesAlert) {
-                Alert(
-                    title: Text("settings.legal.view_licenses_title", bundle: .module),
-                    message: Text("settings.legal.view_licenses_message", bundle: .module),
-                    dismissButton: .default(Text("OK", bundle: .module))
-                )
+            .pvAlert(isPresented: $showLicensesAlert) {
+                PVAlert(title: String(localized: "settings.legal.view_licenses_title", bundle: .module),
+                        message: String(localized: "settings.legal.view_licenses_message", bundle: .module))
             }
 
             /// Privacy Policy - Show URL on tvOS
@@ -1629,12 +1626,9 @@ private struct ExtraInfoSection: View {
                             icon: .sfSymbol("hand.raised"))
             }
             .retroFocusButtonStyle(showBorder: false)
-            .alert(isPresented: $showPrivacyAlert) {
-                Alert(
-                    title: Text("settings.legal.privacy_policy_title", bundle: .module),
-                    message: Text("settings.legal.privacy_policy_message", bundle: .module),
-                    dismissButton: .default(Text("OK", bundle: .module))
-                )
+            .pvAlert(isPresented: $showPrivacyAlert) {
+                PVAlert(title: String(localized: "settings.legal.privacy_policy_title", bundle: .module),
+                        message: String(localized: "settings.legal.privacy_policy_message", bundle: .module))
             }
 
             /// End User License Agreement - Show URL on tvOS
@@ -1644,12 +1638,9 @@ private struct ExtraInfoSection: View {
                             icon: .sfSymbol("signature"))
             }
             .retroFocusButtonStyle(showBorder: false)
-            .alert(isPresented: $showEULAAlert) {
-                Alert(
-                    title: Text("settings.legal.eula_title", bundle: .module),
-                    message: Text("settings.legal.eula_message", bundle: .module),
-                    dismissButton: .default(Text("OK", bundle: .module))
-                )
+            .pvAlert(isPresented: $showEULAAlert) {
+                PVAlert(title: String(localized: "settings.legal.eula_title", bundle: .module),
+                        message: String(localized: "settings.legal.eula_message", bundle: .module))
             }
             #else
             /// Open source licenses
@@ -2630,14 +2621,17 @@ private struct LibrarySection2: View {
             .retroFocusButtonStyle(showBorder: false)
             #endif
         }
-        .alert(item: $viewModel.pendingLibraryAction) { action in
-            Alert(
-                title: Text(action.title),
-                message: Text(action.message),
-                primaryButton: action.isDestructive
-                    ? .destructive(Text(action.confirmButtonTitle)) { viewModel.confirmLibraryAction() }
-                    : .default(Text(action.confirmButtonTitle)) { viewModel.confirmLibraryAction() },
-                secondaryButton: .cancel()
+        .pvAlert(item: $viewModel.pendingLibraryAction) { action in
+            PVAlert(
+                title: action.title,
+                message: action.message,
+                type: action.isDestructive ? .warning : .standard,
+                actions: [
+                    PVAlertAction(action.confirmButtonTitle, role: action.isDestructive ? .destructive : .default) {
+                        viewModel.confirmLibraryAction(action)
+                    },
+                    .cancel()
+                ]
             )
         }
     }

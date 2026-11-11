@@ -110,19 +110,22 @@ public struct PVLogSessionBrowserView: View {
         .sheet(item: $selectedEntry) { entry in
             LogFileViewerSheet(entry: entry)
         }
-        .alert("Delete All Logs?", isPresented: $showingDeleteAllConfirm) {
-            Button("Delete All", role: .destructive) { viewModel.deleteAllFiles() }
-            Button("Cancel", role: .cancel) {}
-        } message: {
-            Text("This permanently deletes all \(viewModel.logFiles.count) session log files.")
+        .pvAlert(isPresented: $showingDeleteAllConfirm) {
+            PVAlert(
+                title: "Delete All Logs?",
+                message: "This permanently deletes all \(viewModel.logFiles.count) session log files.",
+                type: .warning,
+                actions: [
+                    PVAlertAction("Delete All", role: .destructive) { viewModel.deleteAllFiles() },
+                    .cancel()
+                ]
+            )
         }
-        .alert("Error", isPresented: Binding(
+        .pvAlert(isPresented: Binding(
             get: { viewModel.errorMessage != nil },
             set: { if !$0 { viewModel.errorMessage = nil } }
         )) {
-            Button("OK") { viewModel.errorMessage = nil }
-        } message: {
-            Text(viewModel.errorMessage ?? "")
+            PVAlert(title: "Error", message: viewModel.errorMessage, type: .error)
         }
     }
 

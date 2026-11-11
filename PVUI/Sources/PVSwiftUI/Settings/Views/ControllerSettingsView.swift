@@ -477,50 +477,45 @@ struct ControllerSettingsView: View {
         .onExitCommand { dismiss() }
         #endif
         .settingsSubpageTracking()
-        .confirmationDialog(
-            "Select a controller for Player \(selectedPlayer ?? 0)",
-            isPresented: $showingActionSheet,
-            titleVisibility: .visible
-        ) {
-            // Show available controllers
-            ForEach(controllerManager.controllers, id: \.self) { controller in
-                Button(controllerDisplayName(for: controller)) {
-                    if let player = selectedPlayer {
-                        withAnimation {
-                            controllerManager.setController(controller, toPlayer: player)
-                        }
-                    }
-                }
-            }
-
-            // Not Playing option
-            Button("Not Playing", role: .destructive) {
-                if let player = selectedPlayer {
+        .pvAlert(isPresented: $showingActionSheet) {
+            let player = selectedPlayer
+            let controllerActions = controllerManager.controllers.map { controller in
+                PVAlertAction(controllerDisplayName(for: controller)) {
+                    guard let player else { return }
                     withAnimation {
-                        controllerManager.setController(nil, toPlayer: player)
+                        controllerManager.setController(controller, toPlayer: player)
                     }
                 }
             }
-
-            Button("Cancel", role: .cancel) {
-                selectedPlayer = nil
-            }
-        } message: {
-            Text("or press a button on your iCade controller")
+            return PVAlert(
+                title: "Select a controller for Player \(player ?? 0)",
+                message: "or press a button on your iCade controller",
+                style: .actionSheet,
+                actions: controllerActions + [
+                    PVAlertAction("Not Playing", role: .destructive) {
+                        guard let player else { return }
+                        withAnimation {
+                            controllerManager.setController(nil, toPlayer: player)
+                        }
+                    },
+                    .cancel { selectedPlayer = nil }
+                ]
+            )
         }
-        .confirmationDialog(
-            "Reset All Slot Preferences?",
-            isPresented: $showingResetConfirmation,
-            titleVisibility: .visible
-        ) {
-            Button("Reset All", role: .destructive) {
-                withAnimation {
-                    controllerManager.resetAllSlotPreferences()
-                }
-            }
-            Button("Cancel", role: .cancel) {}
-        } message: {
-            Text("This will clear all saved controller-to-player assignments and revert to automatic assignment.")
+        .pvAlert(isPresented: $showingResetConfirmation) {
+            PVAlert(
+                title: "Reset All Slot Preferences?",
+                message: "This will clear all saved controller-to-player assignments and revert to automatic assignment.",
+                type: .warning,
+                actions: [
+                    PVAlertAction("Reset All", role: .destructive) {
+                        withAnimation {
+                            controllerManager.resetAllSlotPreferences()
+                        }
+                    },
+                    .cancel()
+                ]
+            )
         }
         .onAppear {
             #if canImport(UIKit)
@@ -860,7 +855,6 @@ struct ButtonRemappingView: View {
     // Profile management
     @State private var activeProfileName: String?
     @State private var showSaveProfileAlert = false
-    @State private var newProfileName = ""
     @State private var showSaveProfileError = false
     @State private var saveProfileErrorMessage = ""
 
@@ -1072,27 +1066,28 @@ struct ButtonRemappingView: View {
             loadCurrentMappings()
             loadActiveProfileName()
         }
-        .alert("Save Profile", isPresented: $showSaveProfileAlert) {
-            TextField("Profile name", text: $newProfileName)
-            Button("Save") {
-                let name = newProfileName.trimmingCharacters(in: .whitespacesAndNewlines)
-                newProfileName = ""
-                guard !name.isEmpty else { return }
-                if remappableController.saveCurrentMappingsAsProfile(name: name, makeActive: true) != nil {
-                    loadActiveProfileName()
-                } else {
-                    saveProfileErrorMessage = "No button mappings are configured. Remap at least one button before saving a profile."
-                    showSaveProfileError = true
-                }
-            }
-            Button("Cancel", role: .cancel) { newProfileName = "" }
-        } message: {
-            Text("Save your current button mappings as a named profile.")
+        .pvAlert(isPresented: $showSaveProfileAlert) {
+            PVAlert(
+                title: "Save Profile",
+                message: "Save your current button mappings as a named profile.",
+                actions: [
+                    PVAlertAction("Save", responseHandler: { response in
+                        let name = response.text.trimmingCharacters(in: .whitespacesAndNewlines)
+                        guard !name.isEmpty else { return }
+                        if remappableController.saveCurrentMappingsAsProfile(name: name, makeActive: true) != nil {
+                            loadActiveProfileName()
+                        } else {
+                            saveProfileErrorMessage = "No button mappings are configured. Remap at least one button before saving a profile."
+                            showSaveProfileError = true
+                        }
+                    }),
+                    .cancel()
+                ],
+                textFields: [PVAlertTextField(placeholder: "Profile name")]
+            )
         }
-        .alert("Save Failed", isPresented: $showSaveProfileError) {
-            Button("OK", role: .cancel) {}
-        } message: {
-            Text(saveProfileErrorMessage)
+        .pvAlert(isPresented: $showSaveProfileError) {
+            PVAlert(title: "Save Failed", message: saveProfileErrorMessage, type: .error)
         }
         .sheet(isPresented: $showingTapToRemap) {
             Group {
@@ -1113,26 +1108,25 @@ struct ButtonRemappingView: View {
             .settingsSheetDetachedFromSubpageDepth()
             #endif
         }
-        .confirmationDialog(
-            "Map \(selectedButton.map { buttonDisplayName($0) } ?? "button") to:",
-            isPresented: $showingDestinationPicker,
-            titleVisibility: .visible
-        ) {
-            ForEach(standardButtons, id: \.self) { destination in
-                Button(buttonDisplayName(destination)) {
-                    if let source = selectedButton {
-                        remapButton(source, to: destination)
-                    }
+        .pvAlert(isPresented: $showingDestinationPicker) {
+            let source = selectedButton
+            let destinationActions = standardButtons.map { destination in
+                PVAlertAction(buttonDisplayName(destination)) {
+                    guard let source else { return }
+                    remapButton(source, to: destination)
                 }
             }
-            Button("Remove Mapping", role: .destructive) {
-                if let source = selectedButton {
-                    clearMapping(for: source)
-                }
-            }
-            Button("Cancel", role: .cancel) {
-                selectedButton = nil
-            }
+            return PVAlert(
+                title: "Map \(source.map { buttonDisplayName($0) } ?? "button") to:",
+                style: .actionSheet,
+                actions: destinationActions + [
+                    PVAlertAction("Remove Mapping", role: .destructive) {
+                        guard let source else { return }
+                        clearMapping(for: source)
+                    },
+                    .cancel { selectedButton = nil }
+                ]
+            )
         }
     }
 

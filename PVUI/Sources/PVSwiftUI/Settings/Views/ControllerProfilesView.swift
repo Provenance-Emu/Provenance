@@ -72,24 +72,36 @@ struct ControllerProfilesView: View {
             }
             #endif
             .onAppear(perform: reloadProfiles)
-            .alert("New Profile", isPresented: $showNewProfileAlert) {
-                TextField("Profile name", text: $newProfileName)
-                Button("Save", action: saveNewProfile)
-                Button("Cancel", role: .cancel) { newProfileName = "" }
-            } message: {
-                Text("Enter a name for this button mapping profile.")
+            .pvAlert(isPresented: $showNewProfileAlert) {
+                PVAlert(
+                    title: "New Profile",
+                    message: "Enter a name for this button mapping profile.",
+                    actions: [
+                        PVAlertAction("Save", responseHandler: { response in
+                            newProfileName = response.text
+                            saveNewProfile()
+                        }),
+                        .cancel { newProfileName = "" }
+                    ],
+                    textFields: [PVAlertTextField(placeholder: "Profile name", text: newProfileName)]
+                )
             }
-            .alert("Rename Profile", isPresented: $showRenameAlert) {
-                TextField("Profile name", text: $renameText)
-                Button("Rename", action: commitRename)
-                Button("Cancel", role: .cancel) { profileToRename = nil }
-            } message: {
-                Text("Enter a new name.")
+            .pvAlert(isPresented: $showRenameAlert) {
+                PVAlert(
+                    title: "Rename Profile",
+                    message: "Enter a new name.",
+                    actions: [
+                        PVAlertAction("Rename", responseHandler: { response in
+                            renameText = response.text
+                            commitRename()
+                        }),
+                        .cancel { profileToRename = nil }
+                    ],
+                    textFields: [PVAlertTextField(placeholder: "Profile name", text: renameText)]
+                )
             }
-            .alert("Error", isPresented: $showError) {
-                Button("OK", role: .cancel) {}
-            } message: {
-                Text(errorMessage ?? "An unknown error occurred.")
+            .pvAlert(isPresented: $showError) {
+                PVAlert(title: "Error", message: errorMessage ?? "An unknown error occurred.", type: .error)
             }
             .settingsSubpageTracking()
     }

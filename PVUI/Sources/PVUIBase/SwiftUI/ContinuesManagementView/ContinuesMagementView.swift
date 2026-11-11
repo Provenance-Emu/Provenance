@@ -532,20 +532,21 @@ public struct ContinuesManagementView: View {
             }
             .presentationDetents([.medium, .large])
             .presentationDragIndicator(.visible)
-            .alert("Edit Description", isPresented: Binding(
+            .pvAlert(isPresented: Binding(
                 get: { editingField == .description },
                 set: { if !$0 { editingField = nil } }
             )) {
-                TextField("Description", text: $editText)
-                Button(NSLocalizedString("Cancel", comment: "Cancel")) {
-                    editingField = nil
-                }
-                Button("Save") {
-                    if let saveState = editingSaveState {
-                        saveState.description = editText
-                    }
-                    editingField = nil
-                }
+                let saveState = editingSaveState
+                return PVAlert(
+                    title: "Edit Description",
+                    actions: [
+                        PVAlertAction("Save", responseHandler: { response in
+                            saveState?.description = response.text
+                        }),
+                        .cancel()
+                    ],
+                    textFields: [PVAlertTextField(placeholder: "Description", text: editText)]
+                )
             }
         }
     }

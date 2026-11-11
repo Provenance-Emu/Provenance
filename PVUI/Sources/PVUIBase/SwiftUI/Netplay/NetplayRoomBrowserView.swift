@@ -96,10 +96,8 @@ public struct NetplayRoomBrowserView: View {
             .netplayPresentation(isPresented: $showInviteSheet) {
                 NetplayInviteView(gameName: gameName)
             }
-            .alert("Connection Error", isPresented: $showError, presenting: errorMessage) { _ in
-                Button("OK", role: .cancel) {}
-            } message: { msg in
-                Text(msg)
+            .pvAlert(isPresented: $showError) {
+                PVAlert(title: "Connection Error", message: errorMessage, type: .error)
             }
             .onAppear {
                 netplay.startDiscovery()

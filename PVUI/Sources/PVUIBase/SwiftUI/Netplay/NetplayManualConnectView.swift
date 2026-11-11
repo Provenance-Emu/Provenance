@@ -102,10 +102,8 @@ public struct NetplayManualConnectView: View {
                     Button("Cancel") { dismiss() }
                 }
             }
-            .alert("Connection Error", isPresented: $showError, presenting: errorMessage) { _ in
-                Button("OK", role: .cancel) {}
-            } message: { msg in
-                Text(msg)
+            .pvAlert(isPresented: $showError) {
+                PVAlert(title: "Connection Error", message: errorMessage, type: .error)
             }
         }
     }

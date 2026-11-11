@@ -586,21 +586,19 @@ struct GameMoreInfoView: View {
             focusedField = .name
 #endif
         }
-        .alert(editingField?.title ?? "", isPresented: .init(
-            get: { editingField != nil },
-            set: { if !$0 { editingField = nil } }
-        )) {
-            TextField("Value", text: $editingValue)
-            Button(NSLocalizedString("Cancel", comment: "Cancel"), role: .cancel) {
-                editingField = nil
-            }
-            Button("Save") {
-                if let field = editingField {
-                    saveEdit(field)
-                }
-            }
-        } message: {
-            Text("Enter a new value")
+        .pvAlert(item: $editingField) { field in
+            PVAlert(
+                title: field.title,
+                message: "Enter a new value",
+                actions: [
+                    PVAlertAction("Save", responseHandler: { response in
+                        editingValue = response.text
+                        saveEdit(field)
+                    }),
+                    .cancel()
+                ],
+                textFields: [PVAlertTextField(placeholder: "Value", text: editingValue)]
+            )
         }
         .sheet(isPresented: $showCoreOptionsSheet) {
             if let info = coreOptionsInfo,
@@ -1080,13 +1078,16 @@ struct GameMoreInfoView: View {
         .buttonStyle(.plain)
         #endif
         .padding(.top)
-        .alert("Reset Statistics", isPresented: $showingResetStatsConfirmation) {
-            Button("Cancel", role: .cancel) { }
-            Button("Reset", role: .destructive) {
-                viewModel.resetStats()
-            }
-        } message: {
-            Text("Are you sure you want to reset play count and time spent for this game? This action cannot be undone.")
+        .pvAlert(isPresented: $showingResetStatsConfirmation) {
+            PVAlert(
+                title: "Reset Statistics",
+                message: "Are you sure you want to reset play count and time spent for this game? This action cannot be undone.",
+                type: .warning,
+                actions: [
+                    PVAlertAction("Reset", role: .destructive) { viewModel.resetStats() },
+                    .cancel()
+                ]
+            )
         }
     }
 

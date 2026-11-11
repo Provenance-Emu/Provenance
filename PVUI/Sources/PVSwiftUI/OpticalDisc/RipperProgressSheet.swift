@@ -9,6 +9,7 @@
 
 import SwiftUI
 import PVOpticalDiscReader
+import PVUIBase
 
 // MARK: - Sheet
 
@@ -37,19 +38,18 @@ public struct RipperProgressSheet: View {
             #endif
             .interactiveDismissDisabled(true)
         }
-        .confirmationDialog(
-            String(localized: "ripper_sheet.cancel_confirm.title"),
-            isPresented: $viewModel.showCancelRipConfirmation,
-            titleVisibility: .visible
-        ) {
-            Button(String(localized: "ripper_sheet.cancel_confirm.stop"), role: .destructive) {
-                viewModel.cancelRip()
-            }
-            Button(String(localized: "ripper_sheet.cancel_confirm.continue"), role: .cancel) {
-                viewModel.showCancelRipConfirmation = false
-            }
-        } message: {
-            Text("ripper_sheet.cancel_confirm.message")
+        .pvAlert(isPresented: $viewModel.showCancelRipConfirmation) {
+            PVAlert(
+                title: String(localized: "ripper_sheet.cancel_confirm.title"),
+                message: String(localized: "ripper_sheet.cancel_confirm.message"),
+                type: .warning,
+                actions: [
+                    PVAlertAction(String(localized: "ripper_sheet.cancel_confirm.stop"), role: .destructive) {
+                        viewModel.cancelRip()
+                    },
+                    .cancel(String(localized: "ripper_sheet.cancel_confirm.continue"))
+                ]
+            )
         }
     }
 

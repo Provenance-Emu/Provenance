@@ -99,10 +99,8 @@ public struct SaveStateBrowserView: View {
         .saveBundleDropTarget { result in
             handleDropImportResult(result)
         }
-        .alert(dropImportAlertTitle, isPresented: $showDropImportAlert) {
-            Button("OK", role: .cancel) { }
-        } message: {
-            Text(dropImportAlertMessage)
+        .pvAlert(isPresented: $showDropImportAlert) {
+            PVAlert(title: dropImportAlertTitle, message: dropImportAlertMessage)
         }
         #endif
         .task {

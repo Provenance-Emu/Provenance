@@ -703,14 +703,12 @@ final class CloudKitOnDemandViewModel: ObservableObject {
             .task(id: viewModel.selectedScope) { // Re-run task when scope changes
                 await viewModel.refreshMetadata()
             }
-            .alert("Error", isPresented: Binding(
+            .pvAlert(isPresented: Binding(
                 get: { viewModel.error != nil },
                 set: { if !$0 { viewModel.error = nil } }
-            ), actions: {
-                Button("OK") { viewModel.error = nil }
-            }, message: {
-                Text(viewModel.error ?? "An unknown error occurred.")
-            })
+            )) {
+                PVAlert(title: "Error", message: viewModel.error ?? "An unknown error occurred.", type: .error)
+            }
         }
 
         // Helper for swipe-to-delete on iOS/tvOS List

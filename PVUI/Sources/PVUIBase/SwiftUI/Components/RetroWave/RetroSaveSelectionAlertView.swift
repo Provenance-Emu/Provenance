@@ -369,7 +369,7 @@ public struct RetroSaveSelectionAlertView: View {
         .retroChromeSurface()
         // This modal keeps white text and neon accents over the dimmed game in every theme.
         .environment(\.colorScheme, .dark)
-        .padding(.horizontal, RetroPauseChrome.chromeInset)
+        .padding(.horizontal, RetroPauseChrome.dialogScreenMargin)
         .onAppear {
             #if os(tvOS) || os(iOS)
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.15) {

@@ -66,33 +66,39 @@ struct CloudKitRecordsManagementView: View {
             HapticFeedbackService.shared.playSelection(style: .light)
 #endif
         }
-        .alert("Delete All Records", isPresented: $showingDeleteAllConfirmation) {
-            Button("Cancel", role: .cancel) { }
-            Button("Delete All", role: .destructive) {
-                if let recordType = recordTypeToDelete {
-                    Task {
-                        _ = await viewModel.deleteAllRecords(ofType: recordType)
-                    }
-                }
-            }
-        } message: {
-            if let recordType = recordTypeToDelete {
-                Text("Are you sure you want to delete ALL \(recordType) records from CloudKit? This action cannot be undone.")
-            }
+        .pvAlert(isPresented: $showingDeleteAllConfirmation) {
+            let recordType = recordTypeToDelete
+            return PVAlert(
+                title: "Delete All Records",
+                message: recordType.map { "Are you sure you want to delete ALL \($0) records from CloudKit? This action cannot be undone." },
+                type: .warning,
+                actions: [
+                    PVAlertAction("Delete All", role: .destructive) {
+                        guard let recordType else { return }
+                        Task {
+                            _ = await viewModel.deleteAllRecords(ofType: recordType)
+                        }
+                    },
+                    .cancel()
+                ]
+            )
         }
-        .alert("Delete Record", isPresented: $showingDeleteSingleConfirmation) {
-            Button("Cancel", role: .cancel) { }
-            Button("Delete", role: .destructive) {
-                if let record = recordToDelete {
-                    Task {
-                        _ = await viewModel.deleteRecord(record)
-                    }
-                }
-            }
-        } message: {
-            if let record = recordToDelete {
-                Text("Are you sure you want to delete \"\(record.displayName)\"? This action cannot be undone.")
-            }
+        .pvAlert(isPresented: $showingDeleteSingleConfirmation) {
+            let record = recordToDelete
+            return PVAlert(
+                title: "Delete Record",
+                message: record.map { "Are you sure you want to delete \"\($0.displayName)\"? This action cannot be undone." },
+                type: .warning,
+                actions: [
+                    PVAlertAction("Delete", role: .destructive) {
+                        guard let record else { return }
+                        Task {
+                            _ = await viewModel.deleteRecord(record)
+                        }
+                    },
+                    .cancel()
+                ]
+            )
         }
         .sheet(item: $showingRecordDetail) { record in
             recordDetailSheet(record: record)

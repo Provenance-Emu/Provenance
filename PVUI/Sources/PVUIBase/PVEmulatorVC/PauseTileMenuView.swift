@@ -1844,50 +1844,39 @@ struct PauseTileMenuView: View {
         }
         #endif
         // Core action option picker — shown when a CoreAction exposes multiple options.
-        .confirmationDialog(
-            pendingCoreAction?.title ?? "",
-            isPresented: Binding(
-                get: { pendingCoreAction != nil },
-                set: { if !$0 { pendingCoreAction = nil } }
-            ),
-            titleVisibility: .visible
-        ) {
-            if let action = pendingCoreAction,
-               let options = action.options {
-                ForEach(options, id: \.title) { opt in
-                    Button(opt.title) {
-                        pendingCoreAction = nil
-                        let selectedAction = CoreAction(
-                            title: action.title,
-                            requiresReset: action.requiresReset,
-                            options: options.map { CoreActionOption(title: $0.title, selected: $0 == opt) },
-                            style: action.style
-                        )
-                        let emulatorVC = self.emulatorVC
-                        emulatorVC.dismissNav(resumeEmulation: true) {
-                            emulatorVC.handleCoreAction(selectedAction)
-                        }
+        .pvAlert(item: $pendingCoreAction) { action in
+            let options = action.options ?? []
+            let emulatorVC = self.emulatorVC
+            let optionActions = options.map { opt in
+                PVAlertAction(opt.title) {
+                    let selectedAction = CoreAction(
+                        title: action.title,
+                        requiresReset: action.requiresReset,
+                        options: options.map { CoreActionOption(title: $0.title, selected: $0 == opt) },
+                        style: action.style
+                    )
+                    emulatorVC.dismissNav(resumeEmulation: true) {
+                        emulatorVC.handleCoreAction(selectedAction)
                     }
                 }
-                Button(String(localized: "Cancel"), role: .cancel) {
-                    pendingCoreAction = nil
-                }
             }
+            return PVAlert(title: action.title, style: .actionSheet, actions: optionActions + [.cancel()])
         }
-        .confirmationDialog(
-            String(localized: "Restart Required"),
-            isPresented: $showingDeferredRestartPrompt,
-            titleVisibility: .visible
-        ) {
-            Button(String(localized: "Save State and Restart")) {
-                performDeferredCoreRestart(createSaveState: true)
-            }
-            Button(String(localized: "Restart Without Saving"), role: .destructive) {
-                performDeferredCoreRestart(createSaveState: false)
-            }
-            Button(String(localized: "Not Now"), role: .cancel) { }
-        } message: {
-            Text(String(localized: "Some core settings require a restart. Apply them now?"))
+        .pvAlert(isPresented: $showingDeferredRestartPrompt) {
+            PVAlert(
+                title: String(localized: "Restart Required"),
+                message: String(localized: "Some core settings require a restart. Apply them now?"),
+                type: .warning,
+                actions: [
+                    PVAlertAction(String(localized: "Save State and Restart")) {
+                        performDeferredCoreRestart(createSaveState: true)
+                    },
+                    PVAlertAction(String(localized: "Restart Without Saving"), role: .destructive) {
+                        performDeferredCoreRestart(createSaveState: false)
+                    },
+                    .cancel(String(localized: "Not Now"))
+                ]
+            )
         }
         // AirPlay trigger — invisible bridge that fires the system route-picker sheet.
         #if os(iOS) || targetEnvironment(macCatalyst)

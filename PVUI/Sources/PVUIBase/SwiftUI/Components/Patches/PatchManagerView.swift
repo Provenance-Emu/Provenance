@@ -67,21 +67,17 @@ public struct PatchManagerView: View {
             }
         }
         .navigationTitle("Patches")
-        .confirmationDialog(
-            "Delete this patch?",
-            isPresented: Binding(
-                get: { patchPendingDeletion != nil },
-                set: { if !$0 { patchPendingDeletion = nil } }
-            ),
-            titleVisibility: .visible
-        ) {
-            Button("Delete Patch", role: .destructive) {
-                if let patch = patchPendingDeletion { delete(patch) }
-                patchPendingDeletion = nil
-            }
-            Button("Cancel", role: .cancel) { patchPendingDeletion = nil }
-        } message: {
-            Text("The patch file and any save states for its patched copy are removed. The original ROM is not touched.")
+        .pvAlert(item: $patchPendingDeletion) { patch in
+            PVAlert(
+                title: "Delete this patch?",
+                message: "The patch file and any save states for its patched copy are removed. The original ROM is not touched.",
+                type: .warning,
+                style: .actionSheet,
+                actions: [
+                    PVAlertAction("Delete Patch", role: .destructive) { delete(patch) },
+                    .cancel()
+                ]
+            )
         }
 #if !os(tvOS)
         .navigationBarTitleDisplayMode(.inline)

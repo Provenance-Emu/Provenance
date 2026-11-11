@@ -36,7 +36,6 @@ struct RumbleProfilesView: View {
 
     @State private var customPresets: [RumblePreset] = []
     @State private var showNewPresetAlert = false
-    @State private var newPresetName = ""
     @State private var showImportPicker = false
     @State private var showExportSheet = false
     @State private var presetToExport: RumblePreset?
@@ -92,36 +91,39 @@ struct RumbleProfilesView: View {
         .navigationBarTitleDisplayMode(.inline)
         #endif
         .onAppear { loadCustomPresets() }
-        .alert("New Custom Preset", isPresented: $showNewPresetAlert) {
-            TextField("Preset name", text: $newPresetName)
-            Button("Create") {
-                let name = newPresetName.trimmingCharacters(in: .whitespacesAndNewlines)
-                newPresetName = ""
-                guard !name.isEmpty else { return }
-                let preset = RumblePreset(name: name)
-                customPresets.append(preset)
-                saveCustomPresets()
-            }
-            Button("Cancel", role: .cancel) { newPresetName = "" }
-        } message: {
-            Text("Enter a name for the new custom rumble preset.")
+        .pvAlert(isPresented: $showNewPresetAlert) {
+            PVAlert(
+                title: "New Custom Preset",
+                message: "Enter a name for the new custom rumble preset.",
+                actions: [
+                    PVAlertAction("Create", responseHandler: { response in
+                        let name = response.text.trimmingCharacters(in: .whitespacesAndNewlines)
+                        guard !name.isEmpty else { return }
+                        let preset = RumblePreset(name: name)
+                        customPresets.append(preset)
+                        saveCustomPresets()
+                    }),
+                    .cancel()
+                ],
+                textFields: [PVAlertTextField(placeholder: "Preset name")]
+            )
         }
-        .alert("Import Error", isPresented: $showImportError) {
-            Button("OK", role: .cancel) {}
-        } message: {
-            Text(importError ?? "Unknown error")
+        .pvAlert(isPresented: $showImportError) {
+            PVAlert(title: "Import Error", message: importError ?? "Unknown error", type: .error)
         }
-        .confirmationDialog(
-            "Delete preset \"\(presetToDelete?.name ?? "")\"?",
-            isPresented: $showDeleteConfirm,
-            titleVisibility: .visible
-        ) {
-            Button("Delete", role: .destructive) {
-                if let preset = presetToDelete {
-                    deletePreset(preset)
-                }
-            }
-            Button("Cancel", role: .cancel) {}
+        .pvAlert(isPresented: $showDeleteConfirm) {
+            let preset = presetToDelete
+            return PVAlert(
+                title: "Delete preset \"\(preset?.name ?? "")\"?",
+                type: .warning,
+                actions: [
+                    PVAlertAction("Delete", role: .destructive) {
+                        guard let preset else { return }
+                        deletePreset(preset)
+                    },
+                    .cancel()
+                ]
+            )
         }
         #if canImport(UIKit) && !os(tvOS)
         .sheet(isPresented: $showImportPicker) {

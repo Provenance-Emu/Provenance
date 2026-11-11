@@ -176,16 +176,8 @@ public struct RetroLogView: View {
             }
         }
         .task(id: initialImportURL) { await importInitialLog() }
-        .alert(
-            "Import Failed",
-            isPresented: Binding(
-                get: { importErrorMessage != nil },
-                set: { if !$0 { importErrorMessage = nil } }
-            )
-        ) {
-            Button("OK", role: .cancel) { importErrorMessage = nil }
-        } message: {
-            Text(importErrorMessage ?? "")
+        .pvAlert(item: $importErrorMessage) { message in
+            PVAlert(title: "Import Failed", message: message, type: .error)
         }
         #endif
     }

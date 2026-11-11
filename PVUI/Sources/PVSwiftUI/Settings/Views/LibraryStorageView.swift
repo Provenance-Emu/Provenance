@@ -44,17 +44,17 @@ struct LibraryStorageView: View {
             LibraryMoveConfirmationSheet(model: model)
         }
         .overlay { stepOverlay }
-        .alert("Library moved", isPresented: Binding(get: { model.step == .relaunchRequired },
-                                                      set: { if !$0 { model.acknowledge() } })) {
-            Button("OK", role: .cancel) {}
-        } message: {
-            Text("Quit and reopen Provenance to finish. The old files are removed on the next launch.")
+        .pvAlert(isPresented: Binding(get: { model.step == .relaunchRequired },
+                                      set: { if !$0 { model.acknowledge() } })) {
+            PVAlert(title: "Library moved",
+                    message: "Quit and reopen Provenance to finish. The old files are removed on the next launch.",
+                    type: .success)
         }
-        .alert("Couldn't move the library", isPresented: Binding(get: { if case .failed = model.step { return true }; return false },
-                                                                 set: { if !$0 { model.acknowledge() } })) {
-            Button("OK", role: .cancel) {}
-        } message: {
-            if case .failed(let message) = model.step { Text(message) }
+        .pvAlert(isPresented: Binding(get: { if case .failed = model.step { return true }; return false },
+                                      set: { if !$0 { model.acknowledge() } })) {
+            var message: String?
+            if case .failed(let reason) = model.step { message = reason }
+            return PVAlert(title: "Couldn't move the library", message: message, type: .error)
         }
     }
 
@@ -302,23 +302,28 @@ struct LibraryFolderUnavailableAlert: ViewModifier {
 
     func body(content: Content) -> some View {
         content
-            .alert("Library folder unavailable", isPresented: $isPresented) {
-                Button("Choose Folder…") { showsPicker = true }
-                // A model per action: this modifier lives on the root view, so it holds none for the whole session.
-                Button("Use App Storage") { showsRelaunch = LibraryStorageViewModel().abandon() == .relaunchRequired }
-                Button("Later", role: .cancel) {}
-            } message: {
-                if case .unavailable(let reason) = LibraryLocation.pickedFolderAtLaunch { Text(reason) }
+            .pvAlert(isPresented: $isPresented) {
+                var message: String?
+                if case .unavailable(let reason) = LibraryLocation.pickedFolderAtLaunch { message = reason }
+                return PVAlert(
+                    title: "Library folder unavailable",
+                    message: message,
+                    type: .warning,
+                    actions: [
+                        PVAlertAction("Choose Folder…") { showsPicker = true },
+                        // A model per action: this modifier lives on the root view, so it holds none for the whole session.
+                        PVAlertAction("Use App Storage") { showsRelaunch = LibraryStorageViewModel().abandon() == .relaunchRequired },
+                        .cancel("Later")
+                    ]
+                )
             }
             .sheet(isPresented: $showsPicker) {
                 LibraryFolderPicker { url in
                     Task { @MainActor in showsRelaunch = await LibraryStorageViewModel().rebind(to: url) == .relaunchRequired }
                 }
             }
-            .alert("Relaunch required", isPresented: $showsRelaunch) {
-                Button("OK", role: .cancel) {}
-            } message: {
-                Text("Quit and reopen Provenance to use the new location.")
+            .pvAlert(isPresented: $showsRelaunch) {
+                PVAlert(title: "Relaunch required", message: "Quit and reopen Provenance to use the new location.")
             }
     }
 }

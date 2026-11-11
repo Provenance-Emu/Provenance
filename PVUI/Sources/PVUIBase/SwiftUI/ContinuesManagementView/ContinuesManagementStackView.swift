@@ -103,12 +103,8 @@ public struct ContinuesManagementStackView: View {
                 }
             }
         }
-        .alert("Edit Description", isPresented: Binding(
-            get: {
-                // Access the field property on the main actor
-                let field = bindableEditState.field
-                return field == .description
-            },
+        .pvAlert(isPresented: Binding(
+            get: { bindableEditState.field == .description },
             set: { isPresented in
                 if !isPresented {
                     Task { @MainActor in
@@ -117,34 +113,27 @@ public struct ContinuesManagementStackView: View {
                 }
             }
         )) {
-            // Use a local state variable for the text field to avoid actor isolation issues
-            let textBinding = Binding(
-                get: { bindableEditState.text },
-                set: { newValue in
-                    Task { @MainActor in
-                        bindableEditState.text = newValue
+            let saveState = bindableEditState.saveState
+            return PVAlert(
+                title: "Edit Description",
+                actions: [
+                    PVAlertAction("Save", responseHandler: { response in
+                        Task { @MainActor in
+                            if let saveState {
+                                saveState.description = response.text
+                                viewModel.updateSaveState(saveState)
+                            }
+                            bindableEditState.reset()
+                        }
+                    }),
+                    .cancel {
+                        Task { @MainActor in
+                            bindableEditState.reset()
+                        }
                     }
-                }
+                ],
+                textFields: [PVAlertTextField(placeholder: "Description", text: bindableEditState.text)]
             )
-
-            TextField("Description", text: textBinding)
-                #if !os(tvOS)
-                .textInputAutocapitalization(.words)
-                #endif
-            Button(NSLocalizedString("Cancel", comment: "Cancel"), role: .cancel) {
-                Task { @MainActor in
-                    bindableEditState.reset()
-                }
-            }
-            Button("Save") {
-                Task { @MainActor in
-                    if let saveState = bindableEditState.saveState {
-                        saveState.description = bindableEditState.text
-                        viewModel.updateSaveState(saveState)
-                    }
-                    bindableEditState.reset()
-                }
-            }
         }
     }
 }

@@ -138,18 +138,18 @@ class PVSettingsViewModel: ObservableObject {
 
     // MARK: - Library Management Actions
 
-    /// Confirmation state published to the View layer for SwiftUI `.alert()` presentation.
+    /// Confirmation state published to the View layer for `.pvAlert(item:)` presentation.
     @Published var pendingLibraryAction: LibraryAction?
 
-    /// Set pending action — the View presents a confirmation alert via `.alert()`.
+    /// Set pending action — the View presents a confirmation alert via `.pvAlert(item:)`.
     func reimportROMs() { pendingLibraryAction = .scanROMs }
     func resetData() { pendingLibraryAction = .resetLibrary }
     func refreshGameLibrary() { pendingLibraryAction = .updateMetadata }
     func emptyImageCache() { pendingLibraryAction = .clearArtworkCache }
 
-    /// Execute the confirmed action and clear pending state.
-    func confirmLibraryAction() {
-        guard let action = pendingLibraryAction else { return }
+    /// Runs `action` and clears pending state. The alert passes the action it showed:
+    /// it clears `pendingLibraryAction` before its buttons run.
+    func confirmLibraryAction(_ action: LibraryAction) {
         pendingLibraryAction = nil
         switch action {
         case .scanROMs:

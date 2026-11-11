@@ -156,6 +156,7 @@ public struct RetroAlertView<Content: View>: View {
                 RoundedRectangle(cornerRadius: RetroPauseChrome.chromeCornerRadius)
                     .strokeBorder(alertBorderGradient, lineWidth: RetroPauseChrome.panelStrokeLineWidth)
             )
+            .padding(.horizontal, RetroPauseChrome.dialogScreenMargin)
             .onAppear {
                 // Animate spinner for loading type
                 if alertType == .loading {

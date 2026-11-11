@@ -61,36 +61,28 @@ public struct LogFilesSheet: View {
         .onAppear { refresh() }
         #if os(tvOS)
         .onExitCommand { dismiss() }
-        .confirmationDialog(
-            actionTarget?.name ?? "",
-            isPresented: Binding(get: { actionTarget != nil }, set: { if !$0 { actionTarget = nil } }),
-            titleVisibility: .visible,
-            presenting: actionTarget
-        ) { file in
-            Button("View") { view(file) }
+        .pvAlert(item: $actionTarget) { file in
+            var actions = [PVAlertAction("View") { view(file) }]
             if !viewModel.isActiveSessionFile(file.url) {
-                Button("Delete", role: .destructive) { pendingDelete = file }
+                actions.append(PVAlertAction("Delete", role: .destructive) { pendingDelete = file })
             }
-            Button("Cancel", role: .cancel) {}
+            actions.append(.cancel())
+            return PVAlert(title: file.name, style: .actionSheet, actions: actions)
         }
         #endif
-        .alert(
-            "Delete Log File?",
-            isPresented: Binding(get: { pendingDelete != nil }, set: { if !$0 { pendingDelete = nil } }),
-            presenting: pendingDelete
-        ) { file in
-            Button("Delete", role: .destructive) { delete(file) }
-            Button("Cancel", role: .cancel) {}
-        } message: { file in
-            Text("\(file.name) will be permanently deleted.")
+        .pvAlert(item: $pendingDelete) { file in
+            PVAlert(
+                title: "Delete Log File?",
+                message: "\(file.name) will be permanently deleted.",
+                type: .warning,
+                actions: [
+                    PVAlertAction("Delete", role: .destructive) { delete(file) },
+                    .cancel()
+                ]
+            )
         }
-        .alert(
-            "Error",
-            isPresented: Binding(get: { errorMessage != nil }, set: { if !$0 { errorMessage = nil } })
-        ) {
-            Button("OK", role: .cancel) { errorMessage = nil }
-        } message: {
-            Text(errorMessage ?? "")
+        .pvAlert(item: $errorMessage) { message in
+            PVAlert(title: "Error", message: message, type: .error)
         }
     }
 

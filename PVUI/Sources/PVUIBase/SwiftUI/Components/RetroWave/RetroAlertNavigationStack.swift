@@ -116,8 +116,6 @@ public class RetroAlertNavigationStack: ObservableObject {
 public struct RetroAlertNavigationStackView: View {
     @ObservedObject var stack: RetroAlertNavigationStack
 
-    @State private var glowOpacity: Double = 0.7
-
     public init(stack: RetroAlertNavigationStack) {
         self.stack = stack
     }
@@ -203,8 +201,6 @@ public struct RetroAlertContainer<Content: View>: View {
     private let onBack: (() -> Void)?
     private let onCancel: (() -> Void)?
 
-    @State private var glowOpacity: Double = 0.7
-
     #if os(tvOS)
     @FocusState private var isCancelFocused: Bool
     #endif
@@ -246,51 +242,14 @@ public struct RetroAlertContainer<Content: View>: View {
                 .padding(.bottom, 20)
             }
         }
-        .frame(minWidth: 300, maxWidth: 500)
-        .background(alertBackground)
-        .clipShape(RoundedRectangle(cornerRadius: 16))
-        .overlay(alertBorder)
-        .shadow(color: Color.retroPink.opacity(glowOpacity), radius: 20, x: 0, y: 0)
-        .onAppear {
-            withAnimation(.easeInOut(duration: 1.5).repeatForever(autoreverses: true)) {
-                glowOpacity = 0.3
-            }
-        }
-    }
-
-    private var alertBackground: some View {
-        ZStack {
-            LinearGradient(
-                gradient: Gradient(colors: [
-                    Color.retroBlack,
-                    Color.retroBlack.opacity(0.95)
-                ]),
-                startPoint: .top,
-                endPoint: .bottom
-            )
-            RetroAlertGridPattern()
-                .opacity(0.2)
-            RetroScanlineOverlay()
-                .opacity(0.05)
-        }
-    }
-
-    private var alertBorder: some View {
-        RoundedRectangle(cornerRadius: 16)
-            .strokeBorder(
-                LinearGradient(
-                    gradient: Gradient(colors: [.retroPink, .retroBlue]),
-                    startPoint: .topLeading,
-                    endPoint: .bottomTrailing
-                ),
-                lineWidth: 2
-            )
+        .frame(maxWidth: 500)
+        .retroChromeSurface()
+        // Same look as `RetroSaveSelectionAlertView`, the next step in this stack.
+        .environment(\.colorScheme, .dark)
+        .padding(.horizontal, RetroPauseChrome.dialogScreenMargin)
     }
 }
 
-// MARK: - UIKit Hosting View
-
-/// A SwiftUI view for hosting the navigation stack from UIKit
 public struct RetroAlertNavigationStackHostingView: View {
     @ObservedObject var stack: RetroAlertNavigationStack
 

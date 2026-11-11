@@ -125,14 +125,15 @@ public struct RetroDebugView: View {
         .navigationBarTitleDisplayMode(.large)
 #endif
         .toolbarColorScheme(.dark, for: .navigationBar)
-        .alert(isPresented: $showConfirmResetAlert) {
-            Alert(
-                title: Text("Reset Database"),
-                message: Text("This will delete all games and save states. This action cannot be undone."),
-                primaryButton: .destructive(Text("Reset")) {
-                    resetDatabase()
-                },
-                secondaryButton: .cancel()
+        .pvAlert(isPresented: $showConfirmResetAlert) {
+            PVAlert(
+                title: "Reset Database",
+                message: "This will delete all games and save states. This action cannot be undone.",
+                type: .warning,
+                actions: [
+                    PVAlertAction("Reset", role: .destructive) { resetDatabase() },
+                    .cancel()
+                ]
             )
         }
         .sheet(isPresented: $showDatabaseStats) {

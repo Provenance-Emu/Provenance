@@ -50,28 +50,26 @@ public struct NetplayDeepLinkHandlerModifier: ViewModifier {
                 pendingRequest = request
                 showConfirmAlert = true
             }
-            .alert(
-                "Netplay Invite",
-                isPresented: $showConfirmAlert,
-                presenting: pendingRequest
-            ) { request in
-                Button("Join") {
-                    Task { await handleJoin(request) }
+            .pvAlert(isPresented: $showConfirmAlert) {
+                let request = pendingRequest
+                let message = request.map { request in
+                    request.gameName.map { "Join \"\($0)\" hosted at \(request.host)?" }
+                        ?? "Join the netplay session at \(request.host)?"
                 }
-                Button("Decline", role: .cancel) {
-                    pendingRequest = nil
-                }
-            } message: { request in
-                if let game = request.gameName {
-                    Text("Join \"\(game)\" hosted at \(request.host)?")
-                } else {
-                    Text("Join the netplay session at \(request.host)?")
-                }
+                return PVAlert(
+                    title: "Netplay Invite",
+                    message: message,
+                    actions: [
+                        PVAlertAction("Join") {
+                            guard let request else { return }
+                            Task { await handleJoin(request) }
+                        },
+                        .cancel("Decline") { pendingRequest = nil }
+                    ]
+                )
             }
-            .alert("Join Failed", isPresented: $showError, presenting: joinError) { _ in
-                Button("OK", role: .cancel) {}
-            } message: { msg in
-                Text(msg)
+            .pvAlert(isPresented: $showError) {
+                PVAlert(title: "Join Failed", message: joinError, type: .error)
             }
     }
 

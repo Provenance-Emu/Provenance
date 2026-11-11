@@ -102,6 +102,8 @@ public enum RetroPauseChrome {
     public static let chromeCornerRadius: CGFloat = 13
     /// Inset between chrome and the screen edge, and between a panel and its content.
     public static let chromeInset: CGFloat = 12
+    /// Smallest gap between a centered dialog (alerts, the launch save picker) and the screen's side edges.
+    public static let dialogScreenMargin: CGFloat = 20
     /// Minimum height of a tappable chrome control.
     public static let controlHeight: CGFloat = 44
     /// Height of the fade that shows a chrome scroll view continues past its edge.

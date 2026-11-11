@@ -509,29 +509,44 @@ struct ConsoleGamesView: SwiftUI.View {
                     )
                 }
                 // Batch delete confirmation
-                .alert("Delete Selected Games?", isPresented: $gamesViewModel.showBatchDeleteConfirmation) {
-                    Button("Delete", role: .destructive) { performBatchDelete() }
-                    Button("Cancel", role: .cancel) { }
-                } message: {
-                    Text("This will delete \(gamesViewModel.selectedGameMD5s.count) game\(gamesViewModel.selectedGameMD5s.count == 1 ? "" : "s") and their ROM files. Save states will be kept.")
+                .pvAlert(isPresented: $gamesViewModel.showBatchDeleteConfirmation) {
+                    let count = gamesViewModel.selectedGameMD5s.count
+                    return PVAlert(
+                        title: "Delete Selected Games?",
+                        message: "This will delete \(count) game\(count == 1 ? "" : "s") and their ROM files. Save states will be kept.",
+                        type: .warning,
+                        actions: [
+                            PVAlertAction("Delete", role: .destructive) { performBatchDelete() },
+                            .cancel()
+                        ]
+                    )
                 }
                 // Batch move to system
                 .sheet(isPresented: $gamesViewModel.showBatchMoveToSystem) {
                     batchMoveToSystemSheet
                 }
                 // Batch offload confirmation
-                .alert("Offload Selected Games?", isPresented: $gamesViewModel.showBatchOffloadConfirmation) {
-                    Button("Offload", role: .destructive) { performBatchOffload() }
-                    Button("Cancel", role: .cancel) { }
-                } message: {
-                    Text("This will remove the ROM files from this device. You can re-download them from Cloud later.")
+                .pvAlert(isPresented: $gamesViewModel.showBatchOffloadConfirmation) {
+                    PVAlert(
+                        title: "Offload Selected Games?",
+                        message: "This will remove the ROM files from this device. You can re-download them from Cloud later.",
+                        type: .warning,
+                        actions: [
+                            PVAlertAction("Offload", role: .destructive) { performBatchOffload() },
+                            .cancel()
+                        ]
+                    )
                 }
                 // Batch download confirmation
-                .alert("Download Selected Games?", isPresented: $gamesViewModel.showBatchDownloadConfirmation) {
-                    Button("Download") { performBatchDownload() }
-                    Button("Cancel", role: .cancel) { }
-                } message: {
-                    Text("This will queue the selected games for download from Cloud.")
+                .pvAlert(isPresented: $gamesViewModel.showBatchDownloadConfirmation) {
+                    PVAlert(
+                        title: "Download Selected Games?",
+                        message: "This will queue the selected games for download from Cloud.",
+                        actions: [
+                            PVAlertAction("Download") { performBatchDownload() },
+                            .cancel()
+                        ]
+                    )
                 }
                 // Import Status View
                 .fullScreenCover(isPresented: Binding<Bool>(

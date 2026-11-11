@@ -200,13 +200,18 @@ public struct PatchApplierView: View {
             }
         }
         .navigationTitle("Patch Applier")
-        .alert("Replace the original?", isPresented: $confirmingReplace) {
-            Button("Replace", role: .destructive) {
-                Task { await apply() }
-            }
-            Button("Cancel", role: .cancel) {}
-        } message: {
-            Text(Self.replaceWarning(for: replaceRisk))
+        .pvAlert(isPresented: $confirmingReplace) {
+            PVAlert(
+                title: "Replace the original?",
+                message: Self.replaceWarning(for: replaceRisk),
+                type: .warning,
+                actions: [
+                    PVAlertAction("Replace", role: .destructive) {
+                        Task { await apply() }
+                    },
+                    .cancel()
+                ]
+            )
         }
 #if !os(tvOS)
         .navigationBarTitleDisplayMode(.inline)

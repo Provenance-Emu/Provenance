@@ -49,12 +49,14 @@ public struct CloudKitDiagnosticView: View {
                 await viewModel.refreshAllRecords()
             }
         }
-        .actionSheet(isPresented: $showingActionSheet) {
-            ActionSheet(
-                title: Text("Delete CloudKit Records"),
-                message: Text("This will permanently delete ALL records from your CloudKit database. This action cannot be undone."),
-                buttons: [
-                    .destructive(Text("Delete All Records")) {
+        .pvAlert(isPresented: $showingActionSheet) {
+            PVAlert(
+                title: "Delete CloudKit Records",
+                message: "This will permanently delete ALL records from your CloudKit database. This action cannot be undone.",
+                type: .warning,
+                style: .actionSheet,
+                actions: [
+                    PVAlertAction("Delete All Records", role: .destructive) {
                         Task {
                             await viewModel.deleteAllRecords()
                         }

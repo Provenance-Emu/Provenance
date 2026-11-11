@@ -104,9 +104,9 @@ public struct NetplayLibraryLobbyView: View {
         .onChange(of: showUnverified) { _, enabled in if !enabled && list == .unverified { list = .suggested } }
         .onChange(of: list) { _, _ in pageLimit = 40 }
         .onChange(of: query) { _, _ in pageLimit = 40 }
-        .alert("Network Play", isPresented: Binding(get: { errorMessage != nil }, set: { if !$0 { errorMessage = nil } })) {
-            Button("OK") { errorMessage = nil }
-        } message: { Text(errorMessage ?? "") }
+        .pvAlert(item: $errorMessage) { message in
+            PVAlert(title: "Network Play", message: message, type: .error)
+        }
     }
 
     private var horizontalInset: CGFloat {

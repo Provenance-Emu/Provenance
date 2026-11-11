@@ -359,17 +359,8 @@ public struct NetplayGameCenterView: View {
                     gkManager.authenticate()
                 }
             }
-            .alert(
-                "Connection Error",
-                isPresented: Binding(
-                    get: { coordinator.connectionError != nil },
-                    set: { if !$0 { coordinator.connectionError = nil } }
-                ),
-                presenting: coordinator.connectionError
-            ) { _ in
-                Button("OK", role: .cancel) {}
-            } message: { msg in
-                Text(msg)
+            .pvAlert(item: $coordinator.connectionError) { message in
+                PVAlert(title: "Connection Error", message: message, type: .error)
             }
         }
 #if !os(tvOS)

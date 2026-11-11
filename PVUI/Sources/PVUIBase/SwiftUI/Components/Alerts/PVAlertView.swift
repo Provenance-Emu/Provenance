@@ -93,14 +93,7 @@ public struct PVAlertView: View {
                     .fill(Color.retroBlack.opacity(0.7))
                     .overlay(
                         RoundedRectangle(cornerRadius: 8)
-                            .strokeBorder(
-                                LinearGradient(
-                                    colors: [.retroPink, .retroBlue],
-                                    startPoint: .leading,
-                                    endPoint: .trailing
-                                ),
-                                lineWidth: 1
-                            )
+                            .strokeBorder(RetroPauseChrome.chromeBorder, lineWidth: RetroPauseChrome.panelStrokeLineWidth)
                     )
             )
             .padding(.horizontal, 20)

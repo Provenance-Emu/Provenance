@@ -16,6 +16,7 @@
 
 import SwiftUI
 import PVOpticalDiscReader
+import PVUIBase
 
 // MARK: - Main View
 
@@ -45,20 +46,13 @@ public struct DiscRipperView: View {
         .sheet(isPresented: $viewModel.showRipperSheet) {
             RipperProgressSheet(viewModel: viewModel)
         }
-        .alert(
-            String(localized: "disc_ripper.rip_error.title"),
-            isPresented: Binding(
-                get: { viewModel.ripError != nil },
-                set: { if !$0 { viewModel.ripError = nil } }
+        .pvAlert(item: $viewModel.ripError) { error in
+            PVAlert(
+                title: String(localized: "disc_ripper.rip_error.title"),
+                message: error,
+                type: .error,
+                actions: [PVAlertAction(String(localized: "disc_ripper.rip_error.dismiss"))]
             )
-        ) {
-            Button(String(localized: "disc_ripper.rip_error.dismiss")) {
-                viewModel.ripError = nil
-            }
-        } message: {
-            if let error = viewModel.ripError {
-                Text(verbatim: error)
-            }
         }
         .task { await viewModel.connect() }
     }

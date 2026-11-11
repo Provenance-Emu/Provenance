@@ -96,10 +96,8 @@ struct InSessionProfilePickerView: View {
         // so pressing Menu exits cleanly instead of potentially doing nothing.
         .onExitCommand { onDismiss() }
         #endif
-        .alert("Error", isPresented: $showError) {
-            Button("OK", role: .cancel) {}
-        } message: {
-            Text(errorMessage ?? "An error occurred.")
+        .pvAlert(isPresented: $showError) {
+            PVAlert(title: "Error", message: errorMessage ?? "An error occurred.", type: .error)
         }
     }
 

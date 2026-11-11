@@ -211,15 +211,20 @@ public struct TVOSCheatsView: View {
         .sheet(item: $cheatToEdit, onDismiss: { delayedReload() }) { ctx in
             TVOSEditCheatView(cheat: ctx.cheat, cheatTypes: cheatTypes)
         }
-        .alert("Delete Cheat Code?", isPresented: $showingDeleteAlert) {
-            Button("Delete", role: .destructive) {
-                if let cheat = cheatToDelete {
-                    deleteCheat(cheat)
-                }
-            }
-            Button("Cancel", role: .cancel) {}
-        } message: {
-            Text("This action cannot be undone.")
+        .pvAlert(isPresented: $showingDeleteAlert) {
+            let cheat = cheatToDelete
+            return PVAlert(
+                title: "Delete Cheat Code?",
+                message: "This action cannot be undone.",
+                type: .warning,
+                actions: [
+                    PVAlertAction("Delete", role: .destructive) {
+                        guard let cheat else { return }
+                        deleteCheat(cheat)
+                    },
+                    .cancel()
+                ]
+            )
         }
     }
 
@@ -1234,13 +1239,8 @@ struct TVOSCheatSearchView: View {
             }
         }
         .task { await loadCheats() }
-        .alert(
-            "Online Search Failed",
-            isPresented: Binding(get: { onlineErrorMessage != nil }, set: { if !$0 { onlineErrorMessage = nil } })
-        ) {
-            Button("OK", role: .cancel) { onlineErrorMessage = nil }
-        } message: {
-            Text(onlineErrorMessage ?? "")
+        .pvAlert(item: $onlineErrorMessage) { message in
+            PVAlert(title: "Online Search Failed", message: message, type: .error)
         }
     }
 

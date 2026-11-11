@@ -147,17 +147,20 @@ extension CloudSyncSettingsView {
                     HapticFeedbackService.shared.playWarning()
                     #endif
                 }
-                .alert(isPresented: $showingResetConfirmation) {
-                    Alert(
-                        title: Text("Reset Cloud Sync"),
-                        message: Text("Are you sure you want to reset cloud sync? This will clear all sync metadata and may cause files to be re-uploaded."),
-                        primaryButton: .destructive(Text("Reset")) {
-                            viewModel.resetCloudSync()
-                            #if !os(tvOS)
-                            HapticFeedbackService.shared.playError()
-                            #endif
-                        },
-                        secondaryButton: .cancel()
+                .pvAlert(isPresented: $showingResetConfirmation) {
+                    PVAlert(
+                        title: "Reset Cloud Sync",
+                        message: "Are you sure you want to reset cloud sync? This will clear all sync metadata and may cause files to be re-uploaded.",
+                        type: .warning,
+                        actions: [
+                            PVAlertAction("Reset", role: .destructive) {
+                                viewModel.resetCloudSync()
+                                #if !os(tvOS)
+                                HapticFeedbackService.shared.playError()
+                                #endif
+                            },
+                            .cancel()
+                        ]
                     )
                 }
             }

@@ -744,10 +744,10 @@ private struct LibraryLocationRow: View {
             RoundedRectangle(cornerRadius: 6)
                 .fill(RetroTheme.retroBlack.opacity(0.3))
         )
-        .alert("Library moved", isPresented: $showsRelaunchAlert) {
-            Button("OK", role: .cancel) {}
-        } message: {
-            Text("Quit and reopen Provenance to finish. The old files are removed on the next launch.")
+        .pvAlert(isPresented: $showsRelaunchAlert) {
+            PVAlert(title: "Library moved",
+                    message: "Quit and reopen Provenance to finish. The old files are removed on the next launch.",
+                    type: .success)
         }
     }
 

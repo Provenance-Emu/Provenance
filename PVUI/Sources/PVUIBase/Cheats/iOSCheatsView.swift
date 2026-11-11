@@ -493,26 +493,23 @@ struct iOSCheatSearchView: View {
                 }
             }
         }
-        .alert(
-            "Import Cheat?",
-            isPresented: $showingConfirm,
-            presenting: pendingEntry
-        ) { entry in
-            Button("Import") {
-                onImport(entry.cheatCode, entry.cheatName, entry.deviceName, cheatIndex, true)
-                dismiss()
-            }
-            Button("Cancel", role: .cancel) {}
-        } message: { entry in
-            Text("\"\(entry.cheatName)\"\n\(entry.cheatCode)")
+        .pvAlert(isPresented: $showingConfirm) {
+            let entry = pendingEntry
+            return PVAlert(
+                title: "Import Cheat?",
+                message: entry.map { "\"\($0.cheatName)\"\n\($0.cheatCode)" },
+                actions: [
+                    PVAlertAction("Import") {
+                        guard let entry else { return }
+                        onImport(entry.cheatCode, entry.cheatName, entry.deviceName, cheatIndex, true)
+                        dismiss()
+                    },
+                    .cancel()
+                ]
+            )
         }
-        .alert(
-            "Online Search Failed",
-            isPresented: Binding(get: { onlineErrorMessage != nil }, set: { if !$0 { onlineErrorMessage = nil } })
-        ) {
-            Button("OK", role: .cancel) { onlineErrorMessage = nil }
-        } message: {
-            Text(onlineErrorMessage ?? "")
+        .pvAlert(item: $onlineErrorMessage) { message in
+            PVAlert(title: "Online Search Failed", message: message, type: .error)
         }
         .task { await loadCheats() }
     }

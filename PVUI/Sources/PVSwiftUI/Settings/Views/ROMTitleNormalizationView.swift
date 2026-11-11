@@ -81,11 +81,11 @@ public struct ROMTitleNormalizationView: View {
         .toolbar { toolbarItems }
         #endif
         .task { await load() }
-        .alert(resultIsError ? "Error" : "Done", isPresented: $showResult, actions: {
-            Button("OK") {}
-        }, message: {
-            Text(resultMessage ?? "")
-        })
+        .pvAlert(isPresented: $showResult) {
+            PVAlert(title: resultIsError ? "Error" : "Done",
+                    message: resultMessage,
+                    type: resultIsError ? .error : .success)
+        }
     }
 
     // MARK: Subviews

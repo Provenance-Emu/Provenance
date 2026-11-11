@@ -1012,14 +1012,17 @@ public struct CloudSyncSettingsView: View {
                 .buttonStyle(PlainButtonStyle())
                 #endif
                 .disabled(!viewModel.iCloudAvailable || viewModel.isSyncing)
-                .alert(isPresented: $showingResetConfirmation) {
-                    Alert(
-                        title: Text("cloud_sync.reset.alert_title", bundle: .module),
-                        message: Text("cloud_sync.reset.alert_message", bundle: .module),
-                        primaryButton: .destructive(Text("cloud_sync.reset.confirm", bundle: .module)) {
-                            viewModel.resetCloudSync()
-                        },
-                        secondaryButton: .cancel()
+                .pvAlert(isPresented: $showingResetConfirmation) {
+                    PVAlert(
+                        title: String(localized: "cloud_sync.reset.alert_title", bundle: .module),
+                        message: String(localized: "cloud_sync.reset.alert_message", bundle: .module),
+                        type: .warning,
+                        actions: [
+                            PVAlertAction(String(localized: "cloud_sync.reset.confirm", bundle: .module), role: .destructive) {
+                                viewModel.resetCloudSync()
+                            },
+                            .cancel()
+                        ]
                     )
                 }
 #endif

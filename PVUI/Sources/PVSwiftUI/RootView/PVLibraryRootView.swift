@@ -72,17 +72,8 @@ public struct PVLibraryRootView: View {
                 presentedSheet(sheet)
             }
             #endif
-            .confirmationDialog("Select Import Source", isPresented: $navigation.showsImportSources, titleVisibility: .visible) {
-                #if !os(tvOS)
-                Button("Cloud & Local Files") { navigation.showsFileImporter = true }
-                #endif
-                #if canImport(PVWebServerHost)
-                Button(isWebServerRunning ? "Web Server — Running" : "Web Server") { startWebServer() }
-                #endif
-                if PVFeatureFlagsManager.shared.featureStates[.inAppFreeROMs] == true {
-                    Button("Free ROMs") { navigation.sheet = .freeROMs }
-                }
-                Button("Import Queue") { navigation.didTapImports() }
+            .pvAlert(isPresented: $navigation.showsImportSources) {
+                PVAlert(title: "Select Import Source", style: .actionSheet, actions: importSourceActions)
             }
             #if !os(tvOS)
             .fileImporter(isPresented: $navigation.showsFileImporter, allowedContentTypes: [.data, .item], allowsMultipleSelection: true) { result in
@@ -95,11 +86,16 @@ public struct PVLibraryRootView: View {
                 }
             }
             #endif
-            .confirmationDialog("Delete Game?", isPresented: Binding(
-                get: { navigation.gameForDeletion != nil },
-                set: { if !$0 { navigation.gameForDeletion = nil } }
-            ), titleVisibility: .visible, presenting: navigation.gameForDeletion) { game in
-                Button("Delete Game", role: .destructive) { navigation.confirmDeletion(game) }
+            .pvAlert(item: $navigation.gameForDeletion) { game in
+                PVAlert(
+                    title: "Delete Game?",
+                    type: .warning,
+                    style: .actionSheet,
+                    actions: [
+                        PVAlertAction("Delete Game", role: .destructive) { navigation.confirmDeletion(game) },
+                        .cancel()
+                    ]
+                )
             }
             .onReceive(navigation.tabs.$selectedTab) { identifier in
                 navigation.viewModel.selectedConsole = navigation.gameLibrary.system(identifier: identifier)?.freeze()
@@ -277,6 +273,23 @@ public struct PVLibraryRootView: View {
                 }
             } catch { /* Releasing the shoulder button ends repeating navigation. */ }
         }
+    }
+
+    /// Choices in the "Select Import Source" sheet.
+    private var importSourceActions: [PVAlertAction] {
+        var actions: [PVAlertAction] = []
+        #if !os(tvOS)
+        actions.append(PVAlertAction("Cloud & Local Files") { navigation.showsFileImporter = true })
+        #endif
+        #if canImport(PVWebServerHost)
+        actions.append(PVAlertAction(isWebServerRunning ? "Web Server — Running" : "Web Server") { startWebServer() })
+        #endif
+        if PVFeatureFlagsManager.shared.featureStates[.inAppFreeROMs] == true {
+            actions.append(PVAlertAction("Free ROMs") { navigation.sheet = .freeROMs })
+        }
+        actions.append(PVAlertAction("Import Queue") { navigation.didTapImports() })
+        actions.append(.cancel())
+        return actions
     }
 
     #if canImport(PVWebServerHost)
