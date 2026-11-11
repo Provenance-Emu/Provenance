@@ -29,8 +29,10 @@ PVTouchOverlay/Tools/export-skins.sh > overlay-templates.json
 PVTouchOverlay/Tools/export-skins.sh --geometry --keypad > overlay-geometry-keypad.json
 python3 PVTouchOverlay/Tools/generate-format2-skins.py \
   overlay-templates.json overlay-geometry-keypad.json /path/to/skinkit-bake /tmp/default-pad-candidates
-PVTouchOverlay/Tools/run-overlay-snapshots.sh SIMULATOR_UDID /path/to/SkinKit \
-  /tmp/default-pad-snapshots /tmp/default-pad-candidates
+for style in flat glossy outline; do
+  PV97_STYLE="$style" PVTouchOverlay/Tools/run-overlay-snapshots.sh SIMULATOR_UDID /path/to/SkinKit \
+    "/tmp/default-pad-snapshots-$style" /tmp/default-pad-candidates || exit
+done
 ```
 
 The output includes one source per system, the classic archive for its default

@@ -131,16 +131,30 @@ def add_profile_art(node, control, palette, condition, frame, unit):
     label = control.get("label")
     if not label or control["shape"] in ("ring", "surface", "cross"):
         return
-    height = frame[3] * unit
-    node["children"].append({
+    width, height = (length * unit for length in frame[2:])
+    label_size = min(height * 0.4, 18)
+    text = {
         "type": "text",
         "text": label,
         "color": rgba(palette["label"]),
-        "font": {"size": min(height * 0.4, 18) / unit, "weight": "semibold"},
+        "font": {"size": label_size / unit, "weight": "semibold"},
         "fit": True,
         "visible": condition,
         "layout": {"inset": dict.fromkeys(("top", "left", "bottom", "right"), 4 / unit)},
-    })
+    }
+    # SwiftUI wraps this Wolfenstein face label at the narrow iPhone size.
+    # Format 2 text is single-line, so emit the same two leading-aligned lines.
+    if control["shape"] == "circle" and label == "OPEN" and width - 8 < label_size * 2.8:
+        line_height = label_size * 1.2
+        line_width = label_size * 1.9
+        for index, line in enumerate(("OPE", "N")):
+            x = (width - line_width) / 2
+            y = height / 2 + (index - 1) * line_height
+            node["children"].append(dict(text, text=line, align="leading", layout={
+                "frame": [length / unit for length in (x, y, line_width, line_height)],
+            }))
+    else:
+        node["children"].append(text)
 
 
 def children_for(rows, templates, palette):
