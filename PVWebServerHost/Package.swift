@@ -31,7 +31,7 @@ let package = Package(
 
     dependencies: [
         .package(name: "PVLogging", path: "../PVLogging/"),
-        .package(url: "https://github.com/Provenance-Emu/PVWebServer.git", from: "1.2.0")
+        .package(url: "https://github.com/Provenance-Emu/PVWebServer.git", from: "1.3.1")
     ],
 
     // MARK: - Targets
