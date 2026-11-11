@@ -69,7 +69,7 @@ final class PauseTileMenuViewModel: ObservableObject {
         featureFlags: PVFeatureFlagsManager,
         indicatorRegistry: PVIndicatorRegistry,
         hasControllerProfiles: Bool,
-        hardwareSwitchStates: [String: Bool],
+        hardwareSwitchStates: [String: Int],
         coreOptionsMD5: String?,
         route: PauseTileMenuRoute
     ) {
@@ -646,15 +646,16 @@ final class PauseTileMenuViewModel: ObservableObject {
             let hardwareMomentaryButtons = activeSystem.hardwareMomentaryButtons ?? []
 
             for descriptor in hardwareSwitches {
-                let isOn = hardwareSwitchStates[descriptor.id] ?? descriptor.defaultState
-                let activePosition = isOn ? descriptor.positions.on : descriptor.positions.off
+                let saved = hardwareSwitchStates[descriptor.id] ?? descriptor.initialPositionIndex
+                let current = descriptor.positionList.indices.contains(saved) ? saved : descriptor.initialPositionIndex
+                let activePosition = descriptor.positionList[current]
                 coreTiles.append(PauseMenuTile(
                     id: "\(Self.hardwareSwitchTilePrefix)\(descriptor.id)",
                     icon: "switch.2",
                     label: descriptor.title,
                     badge: activePosition.label,
                     description: String(localized: "Toggle this physical hardware switch."),
-                    colorKey: isOn ? .green : .gray,
+                    colorKey: current == 0 ? .gray : .green,
                     dismissOnTap: false
                 ))
             }

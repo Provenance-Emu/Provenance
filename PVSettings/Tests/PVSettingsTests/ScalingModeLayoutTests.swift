@@ -30,6 +30,19 @@ struct ScalingModeLayoutTests {
         #expect(frame(.stretch, container: container, aspect: sixteenByNine) == CGRect(origin: .zero, size: container))
     }
 
+    @Test("A tall core-reported picture keeps its orientation and reaches a container edge")
+    func tallDisplayAspect() throws {
+        let aspect = try #require(ScalingModeLayout.displayAspect(reported: CGSize(width: 160, height: 400),
+                                                                 fallback: CGSize(width: 320, height: 240)))
+        #expect(aspect == 0.4)
+        let container = CGSize(width: 844, height: 390)
+        let fit = frame(.aspectFit, container: container, aspect: aspect)
+        #expect(fit.height == container.height)
+        #expect(fit.width == 156)
+        #expect(ScalingModeLayout.displayAspect(reported: CGSize(width: CGFloat.infinity, height: 1),
+                                               fallback: CGSize(width: 320, height: 240)) == fourByThree)
+    }
+
     @Test("aspectFit letterboxes a 16:9 picture in a 4:3 container")
     func fitLetterbox() {
         let rect = frame(.aspectFit, container: CGSize(width: 800, height: 600), aspect: sixteenByNine)

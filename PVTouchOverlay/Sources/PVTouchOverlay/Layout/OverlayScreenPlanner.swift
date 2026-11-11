@@ -11,25 +11,27 @@ public enum OverlayScreenPlanner {
     public static let n3dsBottomAspect: CGFloat = 320.0 / 240.0
 
     public static func screenFrames(policy: OverlayScreenPolicy, canvas: OverlayCanvas,
-                                    groups: [ResolvedGroup], gameAspect: CGFloat) -> [CGRect] {
+                                    groups: [ResolvedGroup], gameAspect: CGFloat,
+                                    reservesControlSpace: Bool = true) -> [CGRect] {
         let safe = canvas.safeRect
-        let aspect = gameAspect > 0 ? gameAspect : 4.0 / 3.0
+        let aspect = gameAspect.isFinite && gameAspect > 0 ? gameAspect : 4.0 / 3.0
+        let area = reservesControlSpace ? safe : canvas.bounds
         switch policy {
         case .fill:
-            return [safe]
+            return [area]
         case .topBand:
-            let band = topBand(safe: safe, groups: groups)
+            let band = reservesControlSpace ? topBand(safe: safe, groups: groups) : area
             return [aspectFit(aspect, in: band)]
         case .centeredTopBand:
-            let band = topBand(safe: safe, groups: groups)
+            let band = reservesControlSpace ? topBand(safe: safe, groups: groups) : area
             var frame = aspectFit(aspect, in: band)
-            frame.origin.y = min(safe.midY - frame.height / 2, band.maxY - frame.height)
+            frame.origin.y = min(area.midY - frame.height / 2, band.maxY - frame.height)
             return [frame]
         case .centerColumn:
-            let column = centerColumn(safe: safe, groups: groups)
+            let column = reservesControlSpace ? centerColumn(safe: safe, groups: groups) : area
             return [aspectFit(aspect, in: column)]
         case .dualStacked:
-            let band = topBand(safe: safe, groups: groups)
+            let band = reservesControlSpace ? topBand(safe: safe, groups: groups) : area
             let half = CGRect(x: band.minX, y: band.minY, width: band.width, height: max(0, (band.height - gap) / 2))
             let size = aspectFit(dsAspect, in: half).size
             // Centre the pair in the band so the slack above equals the slack below.
@@ -40,7 +42,7 @@ public enum OverlayScreenPlanner {
         case .dualStacked3DS:
             // Both screens share the band's width budget; the 5:3 top screen is the wider one, so it
             // sets the width and the 4:3 bottom screen is centred under it at the same height.
-            let band = topBand(safe: safe, groups: groups)
+            let band = reservesControlSpace ? topBand(safe: safe, groups: groups) : area
             let half = CGRect(x: band.minX, y: band.minY, width: band.width, height: max(0, (band.height - gap) / 2))
             let topSize = aspectFit(n3dsTopAspect, in: half).size
             let bottomWidth = topSize.height * n3dsBottomAspect

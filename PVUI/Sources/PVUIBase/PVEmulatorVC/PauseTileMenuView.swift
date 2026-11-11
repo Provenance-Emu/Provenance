@@ -164,8 +164,6 @@ struct PauseTileMenuView: View {
     @State private var pendingCoreAction: CoreAction?
     /// Cached result of the Realm query — refreshed on appear, not on every render.
     @State private var hasControllerProfiles = false
-    /// In-memory on/off states for hardware switch tiles (e.g. Atari difficulty / TV type).
-    @State private var hardwareSwitchStates: [String: Bool] = [:]
     /// Query string for global tile search.
     @State private var searchText: String = ""
     @State private var showsSearch = false
@@ -266,7 +264,7 @@ struct PauseTileMenuView: View {
             featureFlags: featureFlags,
             indicatorRegistry: indicatorRegistry,
             hasControllerProfiles: hasControllerProfiles,
-            hardwareSwitchStates: hardwareSwitchStates,
+            hardwareSwitchStates: emulatorVC.coreInputHandler.hardwareSwitchPositionIndexes,
             coreOptionsMD5: currentCoreOptionsMD5Scope,
             route: currentRoute
         )
@@ -880,11 +878,9 @@ struct PauseTileMenuView: View {
             dismissForSubSheetThen { self.emulatorVC.showCoreOptions() }
         case let id where id.hasPrefix(PauseTileMenuViewModel.hardwareSwitchTilePrefix):
             guard let descriptor = hardwareSwitchDescriptor(forTileID: id) else { return }
-            let current = hardwareSwitchStates[descriptor.id] ?? descriptor.defaultState
-            let next = !current
-            hardwareSwitchStates[descriptor.id] = next
-            let selectedButtonId = next ? descriptor.positions.on.buttonId : descriptor.positions.off.buttonId
-            dispatchHardwareSwitchButton(selectedButtonId)
+            let current = emulatorVC.coreInputHandler.hardwareSwitchPositionIndexes[descriptor.id] ?? descriptor.initialPositionIndex
+            let next = descriptor.nextPosition(after: current)
+            dispatchHardwareSwitchButton(descriptor.positionList[next].buttonId)
             rebuildSections()
         case let id where id.hasPrefix(PauseTileMenuViewModel.hardwareMomentaryTilePrefix):
             guard let descriptor = hardwareMomentaryDescriptor(forTileID: id) else { return }
@@ -1895,7 +1891,6 @@ struct PauseTileMenuView: View {
         .onAppear {
             routeStack = initialRoute == .root ? [.root] : [.root, initialRoute]
             refreshControllerProfileState()
-            initializeHardwareSwitchStatesIfNeeded()
             rebuildSections()
             if focusedTileID == nil, let first = firstEnabledTileID() {
                 focusedTileID = first
@@ -1940,7 +1935,6 @@ struct PauseTileMenuView: View {
             appearedUptime = ProcessInfo.processInfo.systemUptime
             routeStack = initialRoute == .root ? [.root] : [.root, initialRoute]
             refreshControllerProfileState()
-            initializeHardwareSwitchStatesIfNeeded()
             rebuildSections()
             reattachTVOSFocusIfNeeded()
             openNetworkPlayIfRequested()
@@ -1967,15 +1961,6 @@ struct PauseTileMenuView: View {
         hasControllerProfiles = controllers.contains { c in
             guard let name = c.vendorName else { return false }
             return !db.controllerProfiles(forVendor: name).isEmpty
-        }
-    }
-
-    /// Seeds local switch states from system defaults once per menu presentation.
-    private func initializeHardwareSwitchStatesIfNeeded() {
-        guard hardwareSwitchStates.isEmpty else { return }
-        let switches = activeSystemIdentifier.hardwareSwitches ?? []
-        hardwareSwitchStates = switches.reduce(into: [:]) { partialResult, descriptor in
-            partialResult[descriptor.id] = descriptor.defaultState
         }
     }
 
