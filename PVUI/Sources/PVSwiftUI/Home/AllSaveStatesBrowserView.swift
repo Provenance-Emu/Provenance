@@ -39,6 +39,7 @@ private enum SaveStatesBrowserSort: String, CaseIterable, Identifiable {
 /// manage, and delete actions.
 @available(iOS 15, tvOS 15, *)
 public struct AllSaveStatesBrowserView: View {
+    @Environment(\.dismiss) private var dismiss
     @ObservedObject private var store: RetroSaveStatesStore = .shared
     @ObservedObject private var themeManager = ThemeManager.shared
 
@@ -405,6 +406,11 @@ public struct AllSaveStatesBrowserView: View {
 
     @ToolbarContentBuilder
     private var toolbarItems: some ToolbarContent {
+        ToolbarItem(placement: .cancellationAction) {
+            Button("Done") {
+                dismiss()
+            }
+        }
         ToolbarItemGroup(placement: .navigationBarTrailing) {
             // Favourites filter toggle
             Button {
