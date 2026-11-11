@@ -92,12 +92,14 @@ struct GeometryReference: Encodable {
     let pad: OverlayPadKind
     let profile: String
     let layoutKey: String
+    let unit: CGFloat
     let groups: [Group]
     let screens: [CGRect]
 
     init(template: OverlayTemplate, profile: GeometryProfile, options: GeometryOptions) {
         pad = template.padKind
         self.profile = profile.name
+        unit = OverlayLayoutEngine.referenceScale(for: profile.canvas)
         layoutKey = pad.storageKey(for: template.orientation)
         let overrides = options.layout.overrides(for: layoutKey, gameMD5: options.gameMD5)
         let result = OverlayLayoutEngine.resolve(template: template, canvas: profile.canvas, overrides: overrides,
