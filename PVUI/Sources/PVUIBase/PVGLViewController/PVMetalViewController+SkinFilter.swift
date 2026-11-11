@@ -62,6 +62,8 @@ extension DeltaSkinScreenFilter {
     /// filter lets go of its input afterwards so it does not keep the frame alive.
     static func run(_ filters: [DeltaSkinScreenFilter], on image: CIImage) -> CIImage {
         filters.reduce(image) { current, screenFilter in
+            // A skin can name a generator (no input image); setting the key on one raises.
+            guard screenFilter.filter.inputKeys.contains(kCIInputImageKey) else { return current }
             defer { screenFilter.filter.setValue(nil, forKey: kCIInputImageKey) }
             return screenFilter.apply(to: current, in: current.extent) ?? current
         }
