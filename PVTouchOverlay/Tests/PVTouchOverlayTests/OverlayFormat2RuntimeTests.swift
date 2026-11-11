@@ -97,5 +97,25 @@ final class OverlayFormat2RuntimeTests: XCTestCase {
         XCTAssertEqual(after.frame.y, before.frame.y + offset.height)
         XCTAssertEqual(moved.root.frame, stick.root.frame)
     }
+
+    @MainActor
+    func testAtariFormat2ArtworkShowsTheCurrentSwitchPosition() throws {
+        let binding = try XCTUnwrap(SystemOverlayBindings.binding(for: .Atari2600))
+        let pad = OverlayPadKind(system: .Atari2600, subtype: binding.defaultSubtype)
+        let profile = try XCTUnwrap(Skin2TraitSet.all.first { $0.name == "ipad-standard-landscape" })
+        let canvas = OverlayCanvas(size: CGSize(width: profile.size.width, height: profile.size.height),
+                                   safeArea: .init(top: 24, left: 0, bottom: 20, right: 0))
+        let template = binding.template(padKind: pad, orientation: canvas.orientation)
+        let directory = URL(fileURLWithPath: snapshotCandidates, isDirectory: true)
+        let document = try XCTUnwrap(OverlayFormat2Sources.document(in: directory, pad: pad, binding: binding, style: .flat))
+        for position in ["B", "A"] {
+            let layout = OverlayLayoutEngine.resolve(template: template, canvas: canvas, overrides: .empty, gameAspect: 4.0 / 3.0,
+                                                    reservesControlSpace: false, arrangesConsoleRow: true,
+                                                    switchPositionLabels: ["left_diff": position])
+            let artwork = OverlayFormat2Artwork(document: document, layout: layout, environment: profile.environment)
+            let control = try XCTUnwrap(artwork.control("switch-left_diff", in: "switches"))
+            XCTAssertEqual(control.root.children.compactMap { $0.node.text }, ["L DIFF: \(position)"])
+        }
+    }
 }
 #endif
