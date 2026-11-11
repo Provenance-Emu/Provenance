@@ -392,10 +392,54 @@ public extension RealmConfiguration {
     ///         may materialize the App Group *container directory* itself. It never
     ///         touches `default.realm`.
     public static var realmFileURL: URL {
+        #if os(tvOS)
+        return privateRealmFileURL
+        #else
+        return realmFileURLInSharedContainer
+        #endif
+    }
+
+    /// The database's place in the App Group container, or the legacy location without one.
+    internal static var realmFileURLInSharedContainer: URL {
         if RealmConfiguration.supportsAppGroups, let appGroupPath = RealmConfiguration.appGroupPath {
             return appGroupPath.appendingPathComponent(realmFilename, isDirectory: false)
         }
         return legacyRealmFileURL
+    }
+
+    /// Folder for the database inside the app's own Caches, beside the tvOS library.
+    internal static let privateDatabaseFolderName = "Database"
+
+    /// The database's place in the app's own container, used on tvOS.
+    ///
+    /// realm-core holds a real `flock` on its `.lock` file for as long as a Realm is open on tvOS
+    /// (`REALM_FILELOCK_EMULATION` excludes tvOS). iOS kills a process that is suspended holding a
+    /// lock on a file in a shared container (0xDEAD10CC), so every time the app left the screen
+    /// it was terminated. No tvOS extension reads the database, so it does not need to be shared.
+    internal static var privateRealmFileURL: URL {
+        FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask)[0]
+            .appendingPathComponent(privateDatabaseFolderName, isDirectory: true)
+            .appendingPathComponent(realmFilename, isDirectory: false)
+    }
+
+    /// Moves the first database found in `sources` to `destination` when none is there yet.
+    ///
+    /// Realm's own side files (`.lock`, `.management`, `.note`) stay behind: they are rebuilt on
+    /// open, and a moved lock file would carry the old path's state.
+    /// - Returns: The source that was moved, or `nil` when nothing moved.
+    @discardableResult
+    internal static func moveDatabase(from sources: [URL], to destination: URL, fileManager: FileManager = .default) -> URL? {
+        guard !fileManager.fileExists(atPath: destination.path),
+              let source = sources.first(where: { fileManager.fileExists(atPath: $0.path) }) else { return nil }
+        do {
+            try fileManager.createDirectory(at: destination.deletingLastPathComponent(), withIntermediateDirectories: true)
+            try fileManager.moveItem(at: source, to: destination)
+            ILOG("Moved the database from \(source.path) to \(destination.path)")
+            return source
+        } catch {
+            ELOG("Failed to move the database from \(source.path) to \(destination.path): \(error.localizedDescription)")
+            return nil
+        }
     }
 
     /// `true` when the shared database file exists on disk.
@@ -489,6 +533,17 @@ public extension RealmConfiguration {
     /// the app's read/write path. Because `realmConfig` is a lazily-initialized
     /// `static var`, this still runs at most once per process, exactly as before.
     internal static func relocateLegacyDatabaseIfNeeded() {
+        #if os(tvOS)
+        // Out of the App Group (see `privateRealmFileURL`); an older build's copy comes along.
+        moveDatabase(from: [realmFileURLInSharedContainer, legacyRealmFileURL], to: privateRealmFileURL)
+        // Realm creates the file but not its folder; a fresh install has neither.
+        try? FileManager.default.createDirectory(at: privateRealmFileURL.deletingLastPathComponent(), withIntermediateDirectories: true)
+        #else
+        relocateLegacyDatabaseIntoSharedContainer()
+        #endif
+    }
+
+    private static func relocateLegacyDatabaseIntoSharedContainer() {
         let nonGroupPath = legacyRealmFileURL
 
         guard RealmConfiguration.supportsAppGroups, let appGroupPath = RealmConfiguration.appGroupPath else {

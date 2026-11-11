@@ -1374,6 +1374,19 @@ static NSString *s_controllerVariantID = nil;
     return content;
 }
 // Required ini file for the Button Manager GC is at 0-3 port
+/// Sets the SI device for a GameCube port, once Dolphin's config exists.
+///
+/// The host applies the controller layout from the main thread as soon as the overlay lays out,
+/// which can be before `UICommon::Init()` or between a session's Shutdown and Init. There is no
+/// Base layer then, `Config::GetLayer` returns null and `Config::SetBase` dereferences it. The
+/// ini file still carries the choice, and the boot path applies it after Init.
+static void PVSetGCSIDeviceIfConfigReady(int port) {
+    if (!Config::GetLayer(Config::LayerType::Base)) {
+        return;
+    }
+    Config::SetBase(Config::GetInfoForSIDevice(port), s_gcSIDevice);
+}
+
 -(void) writeGCIniFile {
 	NSString *fileName = [NSString stringWithFormat:@"%@/../DolphinData/Config/GCPadNew.ini",
 						  self.batterySavesPath];
@@ -1393,12 +1406,12 @@ static NSString *s_controllerVariantID = nil;
             }
             content = [content stringByAppendingString:[self getGCTouchConfig:port gcPort:(port - 1) source:1]];
             // SI device honors the controller layout variant (standard pad / Bongos / keyboard).
-            Config::SetBase(Config::GetInfoForSIDevice(port - 1), s_gcSIDevice);
+            PVSetGCSIDeviceIfConfigReady(port - 1);
             port += 1;
         }
     } else {
         content = [self getGCTouchConfig:1 gcPort:0 source:1];
-        Config::SetBase(Config::GetInfoForSIDevice(0), s_gcSIDevice);
+        PVSetGCSIDeviceIfConfigReady(0);
     }
     ILOG(@"Config File: %s\n%s\n", fileName.UTF8String, content.UTF8String);
     ILOG(@"🎮 Writing GC config with iOS device source");

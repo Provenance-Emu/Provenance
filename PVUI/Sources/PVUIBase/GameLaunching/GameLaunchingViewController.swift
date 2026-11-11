@@ -210,6 +210,8 @@ public extension GameLaunchingViewController {
         // Try to match MD5s for files that don't match by name, and rename them to what's expected if found
         // Warn on files that have filename match but MD5 doesn't match expected
         var canLoad = true
+        // Read from the Realm object here: the hashing tasks below run on other threads.
+        let biosDirectory = system.biosDirectory
         await entries.asyncForEach { currentEntry in
             let expectedFilename = self.getExpectedFilename(currentEntry)
             // Check for a direct filename match and that it isn't an optional BIOS if we don't find it
@@ -225,7 +227,7 @@ public extension GameLaunchingViewController {
 
                         for filename in biosPathContents {
                             group.addTask {
-                                let fullBIOSFileURL = system.biosDirectory.appendingPathComponent(filename, isDirectory: false)
+                                let fullBIOSFileURL = biosDirectory.appendingPathComponent(filename, isDirectory: false)
 
                                 // Download file if needed (async)
                                 do {
