@@ -40,6 +40,8 @@ struct SettingsWrapperView: View {
     @Binding var canPop: Bool
     #endif
     #if !os(tvOS)
+    /// False where the host has its own way to Help (the tvOS-style layout's side menu).
+    private let showsHelp: Bool
     @State private var showingDocumentPicker = false
     #endif
     @State private var importMessage: String? = nil
@@ -61,7 +63,9 @@ struct SettingsWrapperView: View {
         _canPop = canPop
     }
     #else
-    init() {}
+    init(showsHelp: Bool = true) {
+        self.showsHelp = showsHelp
+    }
     #endif
 
     var body: some View {
@@ -106,7 +110,8 @@ struct SettingsWrapperView: View {
         PVSettingsView(
             conflictsController: conflictsController,
             menuDelegate: menuDelegate,
-            showsDoneButton: false
+            showsDoneButton: false,
+            showsHelpButton: showsHelp
         ) {
             showingSettings = false
         }

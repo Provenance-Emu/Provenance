@@ -571,7 +571,11 @@ public struct PVSettingsView: View {
 
     @ObservedObject var conflictsController: PVGameLibraryUpdatesController
 
-    @State public var showsDoneButton: Bool = true
+    /// False where the settings sit inside another screen's chrome (the tvOS-style layout,
+    /// the single-page UI): the header with Done, the title and Help is then left out.
+    public let showsDoneButton: Bool
+    /// False where Help is reachable elsewhere (the tvOS-style layout has it in its side menu).
+    public let showsHelpButton: Bool
     #if !os(tvOS)
     @State private var selectedPane: SettingsPane = .general
     @State private var searchQuery = ""
@@ -601,13 +605,22 @@ public struct PVSettingsView: View {
         self.onSubpagePushChanged = onSubpagePushChanged
         _viewModel = StateObject(wrappedValue: PVSettingsViewModel(menuDelegate: menuDelegate, conflictsController: conflictsController))
         self.showsDoneButton = showsDoneButton
+        self.showsHelpButton = showsDoneButton
     }
     #else
-    public init(conflictsController: PVGameLibraryUpdatesController, menuDelegate: PVMenuDelegate, showsDoneButton: Bool = true, dismissAction: @escaping () -> Void) {
+    /// `showsHelpButton` follows `showsDoneButton` unless given.
+    public init(
+        conflictsController: PVGameLibraryUpdatesController,
+        menuDelegate: PVMenuDelegate,
+        showsDoneButton: Bool = true,
+        showsHelpButton: Bool? = nil,
+        dismissAction: @escaping () -> Void
+    ) {
         self.conflictsController = conflictsController
         self.dismissAction = dismissAction
         _viewModel = StateObject(wrappedValue: PVSettingsViewModel(menuDelegate: menuDelegate, conflictsController: conflictsController))
         self.showsDoneButton = showsDoneButton
+        self.showsHelpButton = showsHelpButton ?? showsDoneButton
     }
     #endif
 
@@ -634,7 +647,7 @@ public struct PVSettingsView: View {
                     searchFocused: $searchFocused,
                     pendingScrollSection: $pendingScrollSection,
                     onDone: showsDoneButton ? { dismissAction() } : nil,
-                    onHelp: showsDoneButton ? { showWiki = true } : nil,
+                    onHelp: showsHelpButton ? { showWiki = true } : nil,
                     onSelectSearchResult: selectSearchResult,
                     paneContent: paneContent
                 )
