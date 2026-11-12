@@ -227,6 +227,14 @@ final class NearbyLibrariesModel {
         return model
     }
 
+    /// The browse model behind a pushed `.peer` screen. Cached models win, so an open
+    /// screen survives its peer dropping out of the browse for a moment.
+    func peerModel(forPeerID id: String) -> NearbyPeerLibraryModel? {
+        if let existing = peerModels[id] { return existing }
+        let listed = visiblePeers + contentServers.map(contentServerPeer)
+        return listed.first { $0.id == id }.map(peerModel(for:))
+    }
+
     func didLoad(_ catalogue: RemoteCatalogue, for peer: DiscoveredPeer) {
         let systems = catalogue.systems.filter(playableSystems.contains).count
         let games = catalogue.filtered(to: playableSystems).items.count

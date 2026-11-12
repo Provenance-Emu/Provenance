@@ -5,111 +5,99 @@
 //  Settings › Library › Nearby Libraries: iFly and iCube libraries on the
 //  local network, a browser for each, and copying a game into the library.
 //
+//  Rows are buttons and value-based navigation links (see NearbyNavigation.swift),
+//  so touch, the tvOS remote and an iOS controller all drive the same controls.
+//
 
 #if os(iOS) || os(tvOS)
 import PVFeatureFlags
 import PVLibrarySharing
 import PVSystems
+import PVThemes
 import SwiftUI
 
 struct NearbyLibrariesView: View {
     @State private var model = NearbyLibrariesModel()
     @State private var showingAddServer = false
+    @State private var cursorID: String?
     @ObservedObject private var featureFlags = PVFeatureFlagsManager.shared
+    @Environment(NearbyNavigator.self) private var navigator: NearbyNavigator?
     #if os(tvOS)
     @Environment(\.dismiss) private var dismiss
     #endif
 
+    private static let footer = "Turn on Library Sharing in iFly, iCube or Provenance on another device "
+        + "on the same Wi-Fi. Copied games are imported into your library; "
+        + "BIOS files and saves stay on the other device."
+
+    private var showsOpenSettings: Bool {
+        #if os(iOS)
+        return model.snapshot.localNetworkDenied
+        #else
+        return false
+        #endif
+    }
+
+    private var cursorLayout: TVMediaCursorLayout {
+        NearbyCursor.home(
+            peerIDs: model.visiblePeers.map(\.id),
+            serverPeerIDs: model.contentServers.map { model.contentServerPeer($0).id },
+            showsContentServers: featureFlags.contentServerLibraries,
+            showsOpenSettings: showsOpenSettings
+        )
+    }
+
     var body: some View {
-        List {
-            SwiftUI.Section {
-                NavigationLink {
-                    LibrarySharingSettingsView()
-                } label: {
-                    Label("Share This Library", systemImage: "square.and.arrow.up.on.square")
-                }
-                NavigationLink {
-                    AutomaticLibraryCopySettingsView()
-                } label: {
-                    Label("Automatic Game Copies", systemImage: "arrow.down.circle")
-                }
+        NearbyScreen(title: "Nearby Libraries", cursorID: cursorID) {
+            NearbySection {
+                NearbyLinkRow(
+                    route: .librarySharing, cursorID: NearbyCursor.librarySharing,
+                    title: "Share This Library", systemImage: "square.and.arrow.up.on.square"
+                )
+                NearbyLinkRow(
+                    route: .automaticCopies, cursorID: NearbyCursor.automaticCopies,
+                    title: "Automatic Game Copies", systemImage: "arrow.down.circle"
+                )
             }
 
-            SwiftUI.Section {
+            NearbySection(header: "On This Network", footer: Self.footer) {
                 if model.visiblePeers.isEmpty {
-                    HStack(spacing: 12) {
-                        ProgressView()
-                        Text("Looking for libraries on this network…")
-                            .foregroundStyle(.secondary)
-                    }
-                } else {
-                    ForEach(model.visiblePeers) { peer in
-                        NavigationLink {
-                            NearbyPeerLibraryView(model: model.peerModel(for: peer))
-                        } label: {
-                            NearbyPeerRow(peer: peer, summary: model.loadedSummaries[peer.id])
-                        }
-                    }
+                    NearbyNote(text: "Looking for libraries on this network…", showsProgress: true)
                 }
-            } footer: {
-                Text("Turn on Library Sharing in iFly, iCube or Provenance on another device on the same Wi-Fi. "
-                     + "Copied games are imported into your library; BIOS files and saves stay on the other device.")
+                ForEach(model.visiblePeers) { peer in
+                    peerRow(peer, summary: model.loadedSummaries[peer.id])
+                }
             }
 
             if featureFlags.contentServerLibraries {
-                SwiftUI.Section {
-                    ForEach(model.contentServers) { server in
-                        let peer = model.contentServerPeer(server)
-                        NavigationLink {
-                            NearbyPeerLibraryView(model: model.peerModel(for: peer))
-                        } label: {
-                            NearbyPeerRow(peer: peer, summary: model.loadedSummaries[peer.id] ?? server.username)
-                        }
-                    }
-                    .onDelete { model.removeContentServers(at: $0) }
-                    Button("Add Content Server…") { showingAddServer = true }
-                } header: {
-                    Text("Content Servers")
-                } footer: {
-                    Text("An emulator-content-server on your network or at home. Provenance keeps a sign-in token in the Keychain, never your password.")
-                }
+                contentServers
             }
 
             if model.snapshot.localNetworkDenied {
-                SwiftUI.Section {
-                    Label("Provenance can't see the local network.", systemImage: "wifi.exclamationmark")
-                    #if os(iOS)
-                    Button("Open Settings") {
-                        if let url = URL(string: UIApplication.openSettingsURLString) {
-                            UIApplication.shared.open(url)
-                        }
-                    }
-                    #endif
-                } footer: {
-                    Text("Allow Local Network access for Provenance in Settings › Privacy & Security › Local Network.")
-                }
+                localNetworkDenied
             }
 
             ForEach(model.browseProblems) { problem in
-                SwiftUI.Section {
-                    Label(problem.message, systemImage: "exclamationmark.triangle")
-                        .foregroundStyle(.orange)
-                }
+                NearbyNote(text: problem.message, systemImage: "exclamationmark.triangle", tint: .orange)
             }
         }
-        .navigationTitle("Nearby Libraries")
-        // Keep the presenter outside List's transient section hosts as discovery updates the rows.
+        .navigationDestination(for: NearbyRoute.self) { route in
+            destination(route)
+        }
+        // Keep the presenter outside the scroll content, which discovery rebuilds as peers come and go.
         .sheet(isPresented: $showingAddServer) {
             AddContentServerView { url, username, password, token in
                 model.addContentServer(url: url, username: username, password: password, accessToken: token)
             }
+            .environment(navigator)
+        }
+        .onChange(of: showingAddServer) { _, isShowing in
+            navigator?.isSubsheetPresented = isShowing
         }
         .onChange(of: featureFlags.contentServerLibraries) { _, enabled in
             if !enabled { showingAddServer = false }
         }
-        #if os(iOS)
-        .navigationBarTitleDisplayMode(.inline)
-        #endif
+        .nearbyControllerCursor(cursorLayout, cursor: $cursorID, scope: .screen(nil), onActivate: activate)
         .onAppear { model.start() }
         .onDisappear { model.stop() }
         #if os(tvOS)
@@ -117,18 +105,118 @@ struct NearbyLibrariesView: View {
         #endif
         .settingsSubpageTracking()
     }
+
+    private func peerRow(_ peer: DiscoveredPeer, summary: String?) -> some View {
+        NearbyLinkRow(
+            route: .peer(id: peer.id),
+            cursorID: NearbyCursor.peer(peer.id),
+            title: peer.serviceName,
+            subtitle: summary ?? "\(peer.appDisplayName) · Open to browse",
+            systemImage: NearbyPeerSymbol.symbol(for: peer.app),
+            badge: peer.appDisplayName
+        )
+    }
+
+    private var contentServers: some View {
+        NearbySection(
+            header: "Content Servers",
+            footer: "An emulator-content-server on your network or at home. "
+                + "Provenance keeps a sign-in token in the Keychain, never your password."
+        ) {
+            ForEach(Array(model.contentServers.enumerated()), id: \.element.id) { index, server in
+                let peer = model.contentServerPeer(server)
+                HStack(spacing: NearbyMetrics.rowSpacing) {
+                    peerRow(peer, summary: model.loadedSummaries[peer.id] ?? server.username)
+                    Button(role: .destructive) {
+                        model.removeContentServers(at: IndexSet(integer: index))
+                    } label: {
+                        Label("Remove", systemImage: "trash")
+                    }
+                    .buttonStyle(NearbyChipButtonStyle(cursorID: NearbyCursor.removeServer(peer.id)))
+                }
+            }
+            Button {
+                showingAddServer = true
+            } label: {
+                NearbyRowLabel(title: "Add Content Server…", systemImage: "plus.circle")
+            }
+            .buttonStyle(NearbyRowButtonStyle(cursorID: NearbyCursor.addServer))
+        }
+    }
+
+    private var localNetworkDenied: some View {
+        NearbySection(
+            footer: "Allow Local Network access for Provenance in Settings › Privacy & Security › Local Network."
+        ) {
+            NearbyNote(
+                text: "Provenance can't see the local network.", systemImage: "wifi.exclamationmark", tint: .orange
+            )
+            #if os(iOS)
+            Button(action: openSystemSettings) {
+                NearbyRowLabel(title: "Open Settings", systemImage: "gear")
+            }
+            .buttonStyle(NearbyRowButtonStyle(cursorID: NearbyCursor.openSettings))
+            #endif
+        }
+    }
+
+    @ViewBuilder
+    private func destination(_ route: NearbyRoute) -> some View {
+        switch route {
+        case .librarySharing:
+            LibrarySharingSettingsView()
+        case .automaticCopies:
+            AutomaticLibraryCopySettingsView()
+        case .peer(let id):
+            if let peerModel = model.peerModel(forPeerID: id) {
+                NearbyPeerLibraryView(model: peerModel)
+            } else {
+                ContentUnavailableView("This library is no longer on the network", systemImage: "wifi.slash")
+                    .nearbyControllerCursor(.empty, cursor: .constant(nil), scope: .screen(route)) { _ in }
+            }
+        }
+    }
+
+    private func activate(_ item: String) {
+        switch item {
+        case NearbyCursor.librarySharing:
+            navigator?.push(.librarySharing)
+        case NearbyCursor.automaticCopies:
+            navigator?.push(.automaticCopies)
+        case NearbyCursor.addServer:
+            showingAddServer = true
+        case NearbyCursor.openSettings:
+            openSystemSettings()
+        default:
+            let peers = model.visiblePeers + model.contentServers.map(model.contentServerPeer)
+            if let peer = peers.first(where: { NearbyCursor.peer($0.id) == item }) {
+                navigator?.push(.peer(id: peer.id))
+            } else if let index = model.contentServers.firstIndex(where: {
+                NearbyCursor.removeServer(model.contentServerPeer($0).id) == item
+            }) {
+                model.removeContentServers(at: IndexSet(integer: index))
+            }
+        }
+    }
+
+    private func openSystemSettings() {
+        #if os(iOS)
+        if let url = URL(string: UIApplication.openSettingsURLString) {
+            UIApplication.shared.open(url)
+        }
+        #endif
+    }
 }
 
 /// Nearby Libraries presented from the library itself (side menu on iOS, the
-/// TV sidebar rail), not pushed from Settings: it brings its own navigation
-/// stack, which the peer and Share This Library screens push onto.
+/// TV sidebar rail), not pushed from Settings: it owns its navigation path, so
+/// a controller can push and pop its screens.
 struct NearbyLibrariesSheet: View {
-    #if os(iOS)
     @Environment(\.dismiss) private var dismiss
-    #endif
+    @State private var navigator = NearbyNavigator()
 
     var body: some View {
-        NavigationStack {
+        NavigationStack(path: $navigator.path) {
             NearbyLibrariesView()
                 #if os(iOS)
                 .toolbar {
@@ -137,6 +225,21 @@ struct NearbyLibrariesSheet: View {
                     }
                 }
                 #endif
+        }
+        .environment(navigator)
+        .onAppear {
+            navigator.onClose = { dismiss() }
+        }
+    }
+}
+
+enum NearbyPeerSymbol {
+    static func symbol(for app: PeerApp) -> String {
+        switch app {
+        case .iFly: return "opticaldisc"
+        case .iCube: return "cube"
+        case .pvLibrary: return "books.vertical"
+        case .contentServer: return "server.rack"
         }
     }
 }
@@ -151,317 +254,88 @@ private struct AddContentServerView: View {
     @State private var password = ""
     @State private var accessToken = ""
     @State private var useToken = true
+    @State private var cursorID: String?
+    @FocusState private var editingField: String?
 
     private var url: URL? { try? ECSConnection.origin(for: address) }
 
+    private var canAdd: Bool {
+        url != nil && (useToken ? !accessToken.isEmpty : !(username.isEmpty || password.isEmpty))
+    }
+
     var body: some View {
         NavigationStack {
-            Form {
-                TextField("Address (192.168.1.10:8473)", text: $address)
+            NearbyScreen(title: "Add Content Server", cursorID: cursorID) {
+                NearbySection {
+                    NearbyTextFieldRow(
+                        placeholder: "Address (192.168.1.10:8473)", text: $address,
+                        cursorID: NearbyCursor.address, editing: $editingField
+                    )
                     #if os(iOS)
                     .keyboardType(.URL)
                     .textInputAutocapitalization(.never)
                     #endif
-                    .autocorrectionDisabled()
-                Toggle("Use access token", isOn: $useToken)
-                if useToken {
-                    SecureField("Read access token", text: $accessToken)
-                        .autocorrectionDisabled()
-                } else {
-                    TextField("Username", text: $username)
+                    NearbySwitchRow(title: "Use access token", cursorID: NearbyCursor.useToken, isOn: $useToken)
+                    if useToken {
+                        NearbyTextFieldRow(
+                            placeholder: "Read access token", text: $accessToken,
+                            cursorID: NearbyCursor.token, isSecure: true, editing: $editingField
+                        )
+                    } else {
+                        NearbyTextFieldRow(
+                            placeholder: "Username", text: $username,
+                            cursorID: NearbyCursor.username, editing: $editingField
+                        )
                         #if os(iOS)
                         .textInputAutocapitalization(.never)
                         #endif
-                        .autocorrectionDisabled()
-                    SecureField("Password", text: $password)
-                }
-            }
-            .navigationTitle("Add Content Server")
-            .toolbar {
-                ToolbarItem(placement: .cancellationAction) {
-                    Button("Cancel") { dismiss() }
-                }
-                ToolbarItem(placement: .confirmationAction) {
-                    Button("Add") {
-                        if let url { onAdd(url, useToken ? "" : username, useToken ? "" : password, useToken ? accessToken : nil) }
-                        dismiss()
+                        NearbyTextFieldRow(
+                            placeholder: "Password", text: $password,
+                            cursorID: NearbyCursor.password, isSecure: true, editing: $editingField
+                        )
                     }
-                    .disabled(url == nil || (useToken ? accessToken.isEmpty : (username.isEmpty || password.isEmpty)))
+                }
+                HStack(spacing: NearbyMetrics.rowSpacing) {
+                    Spacer()
+                    Button("Cancel", role: .cancel) { dismiss() }
+                        .buttonStyle(NearbyChipButtonStyle(cursorID: NearbyCursor.cancel))
+                    Button("Add", action: add)
+                        .buttonStyle(NearbyChipButtonStyle(cursorID: NearbyCursor.add, isSelected: true))
+                        .disabled(!canAdd)
                 }
             }
         }
-    }
-}
-
-private struct NearbyPeerRow: View {
-    let peer: DiscoveredPeer
-    let summary: String?
-
-    static func symbol(for app: PeerApp) -> String {
-        switch app {
-        case .iFly: return "opticaldisc"
-        case .iCube: return "cube"
-        case .pvLibrary: return "books.vertical"
-        case .contentServer: return "server.rack"
-        }
+        .nearbyControllerCursor(
+            NearbyCursor.addServer(usesToken: useToken),
+            cursor: $cursorID,
+            scope: .subsheet,
+            isEditingText: editingField != nil,
+            onBack: back,
+            onActivate: activate
+        )
     }
 
-    var body: some View {
-        HStack(spacing: 12) {
-            Image(systemName: Self.symbol(for: peer.app))
-                .font(.title2)
-                .frame(width: 32)
-            VStack(alignment: .leading, spacing: 2) {
-                Text(peer.serviceName)
-                    .font(.body)
-                Text(summary ?? "\(peer.appDisplayName) · Tap to browse")
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
-            }
-            Spacer()
-            Text(peer.appDisplayName)
-                .font(.caption.bold())
-                .padding(.horizontal, 8)
-                .padding(.vertical, 3)
-                .background(Capsule().fill(Color.accentColor.opacity(0.2)))
-        }
-        .padding(.vertical, 4)
+    private func add() {
+        guard let url else { return }
+        onAdd(url, useToken ? "" : username, useToken ? "" : password, useToken ? accessToken : nil)
+        dismiss()
     }
-}
 
-struct NearbyPeerLibraryView: View {
-    let model: NearbyPeerLibraryModel
-    @State private var code = ""
-    @ObservedObject private var featureFlags = PVFeatureFlagsManager.shared
-
-    var body: some View {
-        if model.peer.app == .contentServer && !featureFlags.contentServerLibraries {
-            ContentUnavailableView("Content Servers Disabled", systemImage: "server.rack")
+    /// B: leave the field being typed in first, then close.
+    private func back() {
+        if editingField != nil {
+            editingField = nil
         } else {
-            library
+            dismiss()
         }
     }
 
-    private var library: some View {
-        List {
-            switch model.phase {
-            case .idle, .loading:
-                SwiftUI.Section {
-                    HStack(spacing: 12) {
-                        ProgressView()
-                        Text(progressText)
-                            .foregroundStyle(.secondary)
-                    }
-                }
-            case .needsPairing:
-                pairingPrompt
-            case .enteringCode(let handle):
-                codeEntry(handle)
-            case .confirmingCode:
-                SwiftUI.Section {
-                    HStack(spacing: 12) {
-                        ProgressView()
-                        Text("Approve the pairing on \(model.title)…")
-                            .foregroundStyle(.secondary)
-                    }
-                }
-            case .failed(let message):
-                SwiftUI.Section {
-                    Label(message, systemImage: "exclamationmark.triangle")
-                    Button("Try Again") { model.load() }
-                }
-            case .loaded:
-                catalogueSections
-            }
-        }
-        .searchable(text: Binding(get: { model.searchText }, set: { model.searchText = $0 }), prompt: "Search games")
-        .navigationTitle(model.title)
-        #if os(iOS)
-        .navigationBarTitleDisplayMode(.inline)
-        #endif
-        .onAppear { model.appear() }
-        .onDisappear { model.cancel() }
-        .settingsSubpageTracking()
-    }
-
-    private var progressText: String {
-        switch model.phase {
-        case .loading(.waitingForApproval):
-            return "Waiting for approval on \(model.title)…"
-        case .loading(.loadingCatalogue):
-            return "Loading the library…"
-        default:
-            return "Connecting to \(model.title)…"
-        }
-    }
-
-    @ViewBuilder
-    private var catalogueSections: some View {
-        if !model.serverLibraries.isEmpty {
-            SwiftUI.Section {
-                Picker("Library", selection: Binding(get: { model.selectedLibraryID }, set: { model.selectedLibraryID = $0; model.load() })) {
-                    Text("All libraries").tag("")
-                    ForEach(model.serverLibraries) { library in Text(library.name).tag(library.id) }
-                }
-            }
-        }
-        if model.sections.isEmpty {
-            SwiftUI.Section {
-                Text(model.searchText.isEmpty ? "\(model.title) isn't sharing any games Provenance can play." : "No games match your search.")
-                    .foregroundStyle(.secondary)
-            }
-        }
-        ForEach(model.sections) { section in
-            SwiftUI.Section(section.system.fullName) {
-                ForEach(section.items) { item in
-                    NearbyItemRow(
-                        item: item,
-                        image: model.artwork[item.id],
-                        inLibrary: model.isInLibrary(item),
-                        copyState: model.copies[item.id],
-                        peerName: model.title,
-                        canPlay: model.peer.app == .contentServer && model.canPlay(item),
-                        isContentServer: model.peer.app == .contentServer,
-                        onPlay: { model.play(item) },
-                        onCopy: { model.copy(item, playAfterImport: model.peer.app == .contentServer) },
-                        onCancel: { model.cancelCopy(item) }
-                    )
-                    .task(id: item.id) { await model.loadArtwork(for: item) }
-                }
-            }
-        }
-        if model.unsupportedCount > 0 {
-            SwiftUI.Section {
-                Text("\(model.unsupportedCount) more game\(model.unsupportedCount == 1 ? " isn't" : "s aren't") supported by Provenance.")
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
-            }
-        }
-    }
-
-    private var pairingPrompt: some View {
-        SwiftUI.Section {
-            Button("Pair with \(model.title)") { model.beginPairing() }
-        } footer: {
-            Text("iCube shares its library only with paired devices. A 6-digit code will appear on \(model.title).")
-        }
-    }
-
-    private func codeEntry(_ handle: ICubePairingHandle) -> some View {
-        SwiftUI.Section {
-            TextField("6-digit code", text: $code)
-                #if os(iOS)
-                .keyboardType(.numberPad)
-                .textContentType(.oneTimeCode)
-                #endif
-            Button("Pair") {
-                model.submitCode(code.trimmingCharacters(in: .whitespaces), for: handle)
-                code = ""
-            }
-            .disabled(code.trimmingCharacters(in: .whitespaces).count != 6)
-        } header: {
-            Text("Enter the code shown on \(handle.serverName)")
-        } footer: {
-            if let error = model.codeError {
-                Text(error).foregroundStyle(.red)
-            } else {
-                Text("Then approve the request on \(handle.serverName).")
-            }
-        }
-    }
-}
-
-private struct NearbyItemRow: View {
-    let item: RemoteLibraryItem
-    let image: UIImage?
-    let inLibrary: Bool
-    let copyState: NearbyCopyState?
-    let peerName: String
-    let canPlay: Bool
-    let isContentServer: Bool
-    let onPlay: () -> Void
-    let onCopy: () -> Void
-    let onCancel: () -> Void
-
-    var body: some View {
-        HStack(spacing: 12) {
-            Group {
-                if let image {
-                    Image(uiImage: image)
-                        .resizable()
-                        .scaledToFit()
-                } else {
-                    Image(systemName: "photo")
-                        .foregroundStyle(.secondary)
-                }
-            }
-            .frame(width: 44, height: 44)
-            .clipShape(RoundedRectangle(cornerRadius: 6))
-
-            VStack(alignment: .leading, spacing: 2) {
-                Text(item.title)
-                    .lineLimit(2)
-                Text(detail)
-                    .font(.caption)
-                    .foregroundStyle(isFailure ? Color.red : Color.secondary)
-                    .lineLimit(3)
-                if case .downloading(let fraction) = copyState {
-                    ProgressView(value: fraction)
-                }
-            }
-            Spacer()
-            trailing
-                #if os(iOS)
-                .buttonStyle(.borderless)
-                #endif
-        }
-    }
-
-    private var isFailure: Bool {
-        if case .failed = copyState { return true }
-        return false
-    }
-
-    private var detail: String {
-        let size = ByteCountFormatter.string(fromByteCount: item.sizeBytes, countStyle: .file)
-        switch copyState {
-        case .preparing(.waitingForApproval):
-            return "Waiting for approval on \(peerName)…"
-        case .preparing(.loadingCatalogue):
-            return "Preparing game files…"
-        case .preparing:
-            return "Connecting…"
-        case .downloading(let fraction):
-            return "Copying… \(Int(fraction * 100))%"
-        case .verifying:
-            return "Checking the copy…"
-        case .completed:
-            return "Imported into your library."
-        case .importing:
-            return "Copied. Importing into your library…"
-        case .failed(let message):
-            return message
-        case nil:
-            return size
-        }
-    }
-
-    @ViewBuilder
-    private var trailing: some View {
-        if copyState?.isActive == true {
-            Button("Stop", role: .cancel, action: onCancel)
-        } else if copyState == .importing {
-            Image(systemName: "tray.and.arrow.down.fill")
-                .foregroundStyle(.secondary)
-        } else if canPlay && isContentServer {
-            Button("Play", action: onPlay)
-        } else if inLibrary || copyState == .completed {
-            Label("In your library", systemImage: "checkmark.circle.fill")
-                .labelStyle(.titleAndIcon)
-                .font(.caption)
-                .foregroundStyle(.green)
-        } else {
-            Button(isFailure ? "Retry" : (isContentServer ? "Download & Play" : "Copy"), action: onCopy)
+    private func activate(_ item: String) {
+        switch item {
+        case NearbyCursor.useToken: useToken.toggle()
+        case NearbyCursor.cancel: dismiss()
+        case NearbyCursor.add: if canAdd { add() }
+        default: editingField = item
         }
     }
 }

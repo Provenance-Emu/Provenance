@@ -203,7 +203,7 @@ enum TVMediaOverlayProbe {
     }
 
     /// The same test `MainView` uses to hide the library behind a running game.
-    private static var isGameOnScreen: Bool {
+    static var isGameOnScreen: Bool {
         let scenes = SceneCoordinator.shared
         return scenes.currentScene == .emulator
             && scenes.showEmulator
