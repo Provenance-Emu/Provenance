@@ -227,11 +227,20 @@ public struct PVLibraryRootView: View {
                 ContinuesManagementView(viewModel: viewModel)
             }
         case .corePicker:
-            List(navigation.availableCores, id: \.identifier) { core in
-                Menu(core.displayName) {
-                    Button("This Time") { navigation.chooseCore(core, preference: .once) }
-                    Button("Always for This Game") { navigation.chooseCore(core, preference: .game) }
-                    Button("Always for This System") { navigation.chooseCore(core, preference: .system) }
+            List(navigation.corePickerItems) { item in
+                VStack(alignment: .leading, spacing: 4) {
+                    Menu {
+                        Button("This Time") { navigation.chooseCore(item.id, preference: .once) }
+                        Button("Always for This Game") { navigation.chooseCore(item.id, preference: .game) }
+                        Button("Always for This System") { navigation.chooseCore(item.id, preference: .system) }
+                    } label: {
+                        CorePickerMenuLabel(item: item)
+                    }
+                    if let reason = item.summary {
+                        Text(reason)
+                            .font(.footnote)
+                            .foregroundStyle(.secondary)
+                    }
                 }
             }
             .navigationTitle("Choose Core")

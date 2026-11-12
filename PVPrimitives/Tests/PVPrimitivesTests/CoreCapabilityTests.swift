@@ -138,6 +138,7 @@ final class CoreCapabilityTests: XCTestCase {
         """
         let data = json.data(using: .utf8)!
         let manifest = try JSONDecoder().decode(CoreCapabilitiesManifest.self, from: data)
+        XCTAssertTrue(manifest.pickerDefaults.isEmpty)
 
         let core = manifest.metadata(for: "some.libretro.framework")
         XCTAssertNotNil(core)
@@ -146,5 +147,33 @@ final class CoreCapabilityTests: XCTestCase {
 
         let req = manifest.gameRequirements.first
         XCTAssertTrue(req?.preferredCapabilities.contains(.retroAchievements) == true)
+    }
+
+    func testPickerDefaultsUseFirstAvailableCoreForTheSystem() throws {
+        let data = Data("""
+        {
+            "version": 3,
+            "cores": [],
+            "gameRequirements": [],
+            "pickerDefaults": {
+                "test.system": [
+                    { "coreIdentifier": "preferred", "reason": "Preferred reason." },
+                    { "coreIdentifier": "alternative", "reason": "Alternative reason." }
+                ]
+            }
+        }
+        """.utf8)
+        let manifest = try JSONDecoder().decode(CoreCapabilitiesManifest.self, from: data)
+
+        XCTAssertEqual(
+            manifest.pickerDefault(for: "test.system", availableCoreIdentifiers: ["alternative", "preferred"])?.coreIdentifier,
+            "preferred"
+        )
+        XCTAssertEqual(
+            manifest.pickerDefault(for: "test.system", availableCoreIdentifiers: ["alternative", "other"]),
+            CorePickerDefault(coreIdentifier: "alternative", reason: "Alternative reason.")
+        )
+        XCTAssertNil(manifest.pickerDefault(for: "test.system", availableCoreIdentifiers: ["other"]))
+        XCTAssertNil(manifest.pickerDefault(for: "other.system", availableCoreIdentifiers: ["preferred"]))
     }
 }

@@ -123,6 +123,27 @@ final class TestCoreRecommendationEngine: XCTestCase {
         XCTAssertTrue(meta?.capabilities.contains(.highAccuracy) == true)
     }
 
+    func testBundledPickerDefaultsRespectCoreAvailability() {
+        let mgba = "com.provenance.core.mGBA"
+        let libretroMGBA = "mgba.libretro.framework"
+        let azahar = "com.provenance.core.azahar"
+        let emuThree = "com.provenance.core.emuThree"
+
+        XCTAssertEqual(
+            CoreRecommendationEngine.pickerDefault(for: "com.provenance.gba", availableCoreIdentifiers: [mgba, libretroMGBA])?.coreIdentifier,
+            mgba
+        )
+        XCTAssertEqual(
+            CoreRecommendationEngine.pickerDefault(for: "com.provenance.gba", availableCoreIdentifiers: [libretroMGBA])?.coreIdentifier,
+            libretroMGBA
+        )
+        XCTAssertEqual(
+            CoreRecommendationEngine.pickerDefault(for: "com.provenance.3ds", availableCoreIdentifiers: [emuThree, azahar])?.coreIdentifier,
+            azahar
+        )
+        XCTAssertNil(CoreRecommendationEngine.pickerDefault(for: "com.provenance.3ds", availableCoreIdentifiers: [emuThree]))
+    }
+
     // MARK: - Multi-source manifest building
 
     /// Verifies that a manifest built from an explicit CoreCapabilitiesManifest (no CoreLoader)

@@ -617,12 +617,8 @@ public extension GameLaunchingViewController {
             // Both paths converge on `presentEMU(withCore: snes9x, ...)` with the same Realm-
             // resolved PVCore. SNES9x has no first-launch warmup, no thin-wrapper swap, no
             // dynamic framework load — the bridge init is plain.
-            // Remaining (unverified) suspects:
-            //   - some early lifecycle assertion in PVSNES9xEmulatorCore that the ad-hoc
-            //     path's ~250 ms dismiss animation happens to mask
-            //   - some side effect of `CoreRecommendationEngine.recommendations(...)`
-            //     (loads core capability manifest off the main actor) that the default path
-            //     skips
+            // One remaining suspect is an early lifecycle assertion in PVSNES9xEmulatorCore
+            // that the ad-hoc path's ~250 ms dismiss animation happens to mask.
             // Cannot fix without a real crash log: reproduce on Apple TV with Snes9x set as
             // default, capture the .ips from Settings → Privacy → Analytics, and re-open.
             selectedCore = preferredCore
@@ -732,33 +728,6 @@ public extension GameLaunchingViewController {
                         stack.push(saveView, id: "save-selection-\(selectedCore.identifier)")
                     }
                 } else {
-                    // Show core selection first — smart (with capability chips) or plain
-                    let saveCounts: [String: Int] = Dictionary(uniqueKeysWithValues: cores.map { core in
-                        let count = game.saveStates.filter("core.identifier == %@", core.identifier).count
-                        DLOG("[LaunchFlow] Core selection: \(core.projectName) has \(count) saves")
-                        return (core.identifier, count)
-                    })
-
-                    // Extract value types from Realm objects before going off the main actor.
-                    let gameTitle = game.title
-                    let systemIdentifier = game.system?.identifier
-                    let md5 = game.md5Hash.isEmpty ? nil : game.md5Hash
-                    let serial = game.romSerial
-                    let coreIdentifiers = cores.map(\.identifier)
-
-                    // Compute recommendations off the main actor to avoid blocking UI during
-                    // first-launch manifest loading (Core.plist scanning + JSON decode).
-                    let recommendations = await Task.detached(priority: .userInitiated) {
-                        CoreRecommendationEngine.shared.recommendations(
-                            gameTitle: gameTitle,
-                            systemIdentifier: systemIdentifier,
-                            md5: md5,
-                            serial: serial,
-                            availableCoreIdentifiers: coreIdentifiers,
-                            saveCounts: saveCounts
-                        )
-                    }.value
-
                     let handleCoreSelect: (String) -> Void = { selectedId in
                         Task { @MainActor in
                             if let core = cores.first(where: { $0.identifier == selectedId }) {
@@ -770,28 +739,13 @@ public extension GameLaunchingViewController {
                         }
                     }
 
-                    // Smart tile-based picker stays — but recommendation metadata
-                    // (rank badges, capability chips, tips, summaries) is suppressed
-                    // unconditionally. The 2026-05-22 audit found the underlying
-                    // CoreCapabilities.json incomplete (~30 of 50+ cores documented,
-                    // quality ranks hand-tuned not empirical), so badging cores as
-                    // "Recommended" actively misled users. The engine still runs to
-                    // produce save-count sorting; only the metadata is dropped.
-                    // Re-enable per-recommendation once the manifest is audited end
-                    // to end and we have a data-driven quality-rank source.
-                    let smartItems = recommendations.compactMap { rec -> SmartCoreSelectionItem? in
-                        guard let core = cores.first(where: { $0.identifier == rec.coreIdentifier }) else { return nil }
-                        return SmartCoreSelectionItem(
-                            id: rec.coreIdentifier,
-                            coreName: core.projectName,
-                            saveCount: rec.saveCount
-                        )
-                    }
+                    // The May 2026 audit found the capability scores incomplete. The picker
+                    // uses curated defaults while the broader capability data is verified.
                     let system = game.system
                     let coreSelectionView = SmartCoreSelectionHostingView(
                         title: "Select Core",
                         message: "Choose a core to run \(game.title)",
-                        items: smartItems,
+                        items: SmartCoreSelectionItem.items(for: game, cores: cores),
                         showSetDefault: system != nil,
                         onSelect: handleCoreSelect,
                         onSetDefault: system.map { sys in

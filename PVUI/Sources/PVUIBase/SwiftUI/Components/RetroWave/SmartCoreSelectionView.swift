@@ -10,6 +10,10 @@
 import SwiftUI
 import PVPrimitives
 import PVCoreLoader
+import PVRealm
+import RealmSwift
+import Defaults
+import PVSettings
 
 // MARK: - View Model
 
@@ -20,6 +24,7 @@ public struct SmartCoreSelectionItem: Identifiable, Sendable {
     public let id: String            // core identifier
     public let coreName: String
     public let saveCount: Int
+    public let isLibretroCore: Bool
     public let rank: CoreRecommendation.Rank
     public let summary: String?
     public let highlightedCapabilities: [CoreCapability]
@@ -34,11 +39,13 @@ public struct SmartCoreSelectionItem: Identifiable, Sendable {
         summary: String? = nil,
         highlightedCapabilities: [CoreCapability] = [],
         recommendationTip: String? = nil,
-        qualityRank: Int = 0
+        qualityRank: Int = 0,
+        isLibretroCore: Bool = false
     ) {
         self.id = id
         self.coreName = coreName
         self.saveCount = saveCount
+        self.isLibretroCore = isLibretroCore
         self.rank = rank
         self.summary = summary
         self.highlightedCapabilities = highlightedCapabilities
@@ -48,15 +55,92 @@ public struct SmartCoreSelectionItem: Identifiable, Sendable {
 
     /// Creates a ``SmartCoreSelectionItem`` from a ``CoreRecommendation``,
     /// using the given project name for display.
-    public init(recommendation: CoreRecommendation, coreName: String) {
-        self.id = recommendation.coreIdentifier
-        self.coreName = coreName
-        self.saveCount = recommendation.saveCount
-        self.rank = recommendation.rank
-        self.summary = recommendation.metadata?.summary
-        self.highlightedCapabilities = recommendation.highlightedCapabilities
-        self.recommendationTip = recommendation.recommendationTip
-        self.qualityRank = recommendation.metadata?.qualityRank ?? 0
+    public init(recommendation: CoreRecommendation, coreName: String, isLibretroCore: Bool = false) {
+        self.init(
+            id: recommendation.coreIdentifier,
+            coreName: coreName,
+            saveCount: recommendation.saveCount,
+            rank: recommendation.rank,
+            summary: recommendation.metadata?.summary,
+            highlightedCapabilities: recommendation.highlightedCapabilities,
+            recommendationTip: recommendation.recommendationTip,
+            qualityRank: recommendation.metadata?.qualityRank ?? 0,
+            isLibretroCore: isLibretroCore
+        )
+    }
+
+    /// Builds picker rows from the cores available to this launch, with existing saves first.
+    @MainActor
+    public static func items(for game: PVGame, cores: [PVCore]) -> [Self] {
+        let recommendation = cores.count > 1 ? CoreRecommendationEngine.pickerDefault(
+            for: game.systemIdentifier,
+            availableCoreIdentifiers: Set(cores.lazy.filter { !$0.isDeprecated && !$0.disabled }.map(\.identifier))
+        ) : nil
+        return cores.map { core in
+            let isRecommended = core.identifier == recommendation?.coreIdentifier
+            return (
+                item: Self(
+                    id: core.identifier,
+                    coreName: core.displayName,
+                    saveCount: game.saveStates.filter("core.identifier == %@", core.identifier).count,
+                    rank: isRecommended ? .recommended : .standard,
+                    summary: isRecommended ? recommendation?.reason : nil,
+                    isLibretroCore: core.isLibretroCore
+                ),
+                isDeprecated: core.isDeprecated
+            )
+        }.sorted { lhs, rhs in
+            if lhs.item.saveCount != rhs.item.saveCount { return lhs.item.saveCount > rhs.item.saveCount }
+            if lhs.item.rank != rhs.item.rank { return lhs.item.rank == .recommended }
+            if lhs.isDeprecated != rhs.isDeprecated { return !lhs.isDeprecated }
+            if lhs.item.isLibretroCore != rhs.item.isLibretroCore { return !lhs.item.isLibretroCore }
+            return lhs.item.coreName.localizedStandardCompare(rhs.item.coreName) == .orderedAscending
+        }.map(\.item)
+    }
+
+    /// Resolves launch candidates using the same availability rules as the launcher.
+    @MainActor
+    public static func availableCores(for game: PVGame) -> [PVCore] {
+        let unsupportedCores = Defaults[.unsupportedCores]
+        let isAppStore = AppState.shared.isAppStore
+        return game.system?.cores.filter {
+            (!$0.disabled || unsupportedCores) && $0.hasCoreClass && !(isAppStore && $0.appStoreDisabled)
+        } ?? []
+    }
+
+    public var saveCountDescription: String {
+        switch saveCount {
+        case 0: return String(localized: "No saves")
+        case 1: return String(localized: "1 save")
+        default: return String(localized: "\(saveCount) saves")
+        }
+    }
+}
+
+/// Compact label for core pickers presented as menus.
+public struct CorePickerMenuLabel: View {
+    let item: SmartCoreSelectionItem
+
+    public init(item: SmartCoreSelectionItem) {
+        self.item = item
+    }
+
+    public var body: some View {
+        Label {
+            Text(title)
+        } icon: {
+            if item.isLibretroCore {
+                Image(LibretroCoreBadge.assetName, bundle: BundleLoader.myBundle)
+                    .accessibilityLabel("libretro core")
+            } else {
+                Image(systemName: "gamecontroller")
+            }
+        }
+    }
+
+    private var title: String {
+        let name = item.rank == .recommended ? String(localized: "\(item.coreName) · Recommended") : item.coreName
+        return item.saveCount > 0 ? String(localized: "\(name) · \(item.saveCountDescription)") : name
     }
 }
 
@@ -65,8 +149,6 @@ public struct SmartCoreSelectionItem: Identifiable, Sendable {
 /// A RetroWave-styled core selection sheet with capability chips,
 /// recommendation badges and save state counts.
 ///
-/// Replace the plain `RetroSelectionAlertView` with this view when the
-/// ``CoreRecommendationEngine`` has metadata for at least one available core.
 public struct SmartCoreSelectionView: View {
 
     // MARK: - Properties
@@ -186,7 +268,9 @@ public struct SmartCoreSelectionView: View {
             .tvOSDisableFocusEffect()
         }
         .tvOSDisableFocusEffect()
-        #if os(iOS)
+        #if os(tvOS)
+        .onExitCommand(perform: dismiss)
+        #elseif os(iOS)
         .onReceive(gamepadManager.eventPublisher) { event in
             guard isPresented, gamepadManager.isNavigationInputAvailable else { return }
             switch event {
@@ -396,6 +480,12 @@ private struct CoreSelectionCard: View {
             }
             Spacer()
             rankBadge
+            if item.isLibretroCore {
+                LibretroCoreBadge(size: 18)
+                    .foregroundStyle(.white)
+                    .padding(4)
+                    .background(Color.white.opacity(0.12), in: RoundedRectangle(cornerRadius: 6))
+            }
         }
     }
 
@@ -403,13 +493,13 @@ private struct CoreSelectionCard: View {
         Group {
             if item.saveCount > 0 {
                 Label(
-                    item.saveCount == 1 ? "1 save" : "\(item.saveCount) saves",
+                    item.saveCountDescription,
                     systemImage: "square.and.arrow.down"
                 )
                 .font(.system(size: 12))
                 .foregroundColor(Color.retroGreen.opacity(0.9))
             } else {
-                Text("No saves")
+                Text(item.saveCountDescription)
                     .font(.system(size: 12))
                     .foregroundColor(.white.opacity(0.4))
             }
