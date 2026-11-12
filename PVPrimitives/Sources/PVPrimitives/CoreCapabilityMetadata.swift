@@ -128,6 +128,17 @@ public struct GameFeatureRequirement: Codable, Sendable {
     }
 }
 
+/// A curated core recommendation and its explanation in the launch picker.
+public struct CorePickerDefault: Codable, Sendable, Equatable {
+    public let coreIdentifier: String
+    public let reason: String
+
+    public init(coreIdentifier: String, reason: String) {
+        self.coreIdentifier = coreIdentifier
+        self.reason = reason
+    }
+}
+
 // MARK: - CoreCapabilitiesManifest
 
 /// Top-level container decoded from `CoreCapabilities.json`.
@@ -142,11 +153,14 @@ public struct CoreCapabilitiesManifest: Codable, Sendable {
     /// Per-game (or per-system) feature requirements used for smart recommendations.
     public let gameRequirements: [GameFeatureRequirement]
 
+    /// Recommended cores by system identifier, in preference order.
+    public let pickerDefaults: [String: [CorePickerDefault]]
+
     /// O(1) lookup dictionary built from `cores` on init.
     private let coresByIdentifier: [String: CoreCapabilityMetadata]
 
     private enum CodingKeys: String, CodingKey {
-        case version, cores, gameRequirements
+        case version, cores, gameRequirements, pickerDefaults
     }
 
     public init(from decoder: Decoder) throws {
@@ -154,18 +168,30 @@ public struct CoreCapabilitiesManifest: Codable, Sendable {
         version = try container.decode(Int.self, forKey: .version)
         cores = try container.decode([CoreCapabilityMetadata].self, forKey: .cores)
         gameRequirements = try container.decode([GameFeatureRequirement].self, forKey: .gameRequirements)
+        pickerDefaults = try container.decodeIfPresent([String: [CorePickerDefault]].self, forKey: .pickerDefaults) ?? [:]
         coresByIdentifier = Dictionary(cores.map { ($0.coreIdentifier, $0) }, uniquingKeysWith: { first, _ in first })
     }
 
-    public init(version: Int, cores: [CoreCapabilityMetadata], gameRequirements: [GameFeatureRequirement]) {
+    public init(
+        version: Int,
+        cores: [CoreCapabilityMetadata],
+        gameRequirements: [GameFeatureRequirement],
+        pickerDefaults: [String: [CorePickerDefault]] = [:]
+    ) {
         self.version = version
         self.cores = cores
         self.gameRequirements = gameRequirements
+        self.pickerDefaults = pickerDefaults
         self.coresByIdentifier = Dictionary(cores.map { ($0.coreIdentifier, $0) }, uniquingKeysWith: { first, _ in first })
     }
 
     /// Looks up the capability metadata for the given core identifier in O(1).
     public func metadata(for coreIdentifier: String) -> CoreCapabilityMetadata? {
         coresByIdentifier[coreIdentifier]
+    }
+
+    /// Returns a recommendation only when a curated core is available.
+    public func pickerDefault(for systemIdentifier: String, availableCoreIdentifiers: Set<String>) -> CorePickerDefault? {
+        return pickerDefaults[systemIdentifier]?.first { availableCoreIdentifiers.contains($0.coreIdentifier) }
     }
 }

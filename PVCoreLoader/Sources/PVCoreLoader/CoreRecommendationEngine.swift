@@ -70,6 +70,13 @@ public final class CoreRecommendationEngine: Sendable {
 
     public static let shared = CoreRecommendationEngine()
 
+    private static let enrichmentManifest = loadEnrichmentManifest()
+
+    /// Looks up the first curated default present in the caller's available core list.
+    public static func pickerDefault(for systemIdentifier: String, availableCoreIdentifiers: Set<String>) -> CorePickerDefault? {
+        enrichmentManifest?.pickerDefault(for: systemIdentifier, availableCoreIdentifiers: availableCoreIdentifiers)
+    }
+
     // MARK: Private state
 
     private let manifest: CoreCapabilitiesManifest?
@@ -339,7 +346,7 @@ public final class CoreRecommendationEngine: Sendable {
         }
 
         // --- Layer 2: enrichment from CoreCapabilities.json ---
-        let enrichmentManifest = loadEnrichmentManifest()
+        let enrichmentManifest = Self.enrichmentManifest
 
         // Merge: plist-derived as base, JSON as enrichment
         var mergedCores: [CoreCapabilityMetadata]
@@ -382,7 +389,12 @@ public final class CoreRecommendationEngine: Sendable {
 
         let gameRequirements = enrichmentManifest?.gameRequirements ?? []
         let manifestVersion = enrichmentManifest?.version ?? 2
-        return CoreCapabilitiesManifest(version: manifestVersion, cores: mergedCores, gameRequirements: gameRequirements)
+        return CoreCapabilitiesManifest(
+            version: manifestVersion,
+            cores: mergedCores,
+            gameRequirements: gameRequirements,
+            pickerDefaults: enrichmentManifest?.pickerDefaults ?? [:]
+        )
     }
 
     /// Loads `CoreCapabilities.json` as the enrichment/editorial data layer.

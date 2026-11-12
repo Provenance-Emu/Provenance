@@ -1,6 +1,29 @@
 {
   "_comment": "ENRICHMENT LAYER — This file is NOT the primary source of core capabilities. It enriches runtime data derived from each core's Core.plist (PVCapabilities). Fields in this file are merged on top of auto-derived capabilities. Add or update entries here only to supply: summary, qualityRank, notes, gameRequirements, and capability flags for cores that do not yet declare them in Core.plist. Capability flags (including highAccuracy, mouseSupport, lightgunSupport, etc.) should preferably be declared in Core.plist via the PVCapabilities key; values present there take effect automatically and do not need to be repeated here.",
-  "version": 2,
+  "version": 3,
+  "pickerDefaults": {
+    "com.provenance.gb": [
+      { "coreIdentifier": "gambatte.libretro.framework", "reason": "An accuracy-focused core for original Game Boy games." }
+    ],
+    "com.provenance.gbc": [
+      { "coreIdentifier": "gambatte.libretro.framework", "reason": "An accuracy-focused core for Game Boy Color games." }
+    ],
+    "com.provenance.gba": [
+      { "coreIdentifier": "com.provenance.core.mGBA", "reason": "A good starting point for Game Boy Advance games, with link cable support." },
+      { "coreIdentifier": "mgba.libretro.framework", "reason": "A good starting point for Game Boy Advance games." }
+    ],
+    "com.provenance.snes": [
+      { "coreIdentifier": "snes9x.libretro.framework", "reason": "A general-purpose SNES core with broad game compatibility." },
+      { "coreIdentifier": "com.provenance.core.snes9x", "reason": "A general-purpose SNES core with broad game compatibility." }
+    ],
+    "com.provenance.ds": [
+      { "coreIdentifier": "melondsds.libretro.framework", "reason": "A general-purpose Nintendo DS core that also supports DSi games." },
+      { "coreIdentifier": "melonds.libretro.framework", "reason": "A general-purpose core for Nintendo DS games." }
+    ],
+    "com.provenance.3ds": [
+      { "coreIdentifier": "com.provenance.core.azahar", "reason": "Use Azahar for new 3DS games. Existing emuThreeDS save states still need emuThreeDS." }
+    ]
+  },
   "cores": [
     {
       "coreIdentifier": "com.provenance.core.mGBA",

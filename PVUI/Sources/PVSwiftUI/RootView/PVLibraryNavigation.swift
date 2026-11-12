@@ -204,8 +204,9 @@ final class PVLibraryNavigation: ObservableObject, PVMenuDelegate, PVRootDelegat
         case once, game, system
     }
 
-    func chooseCore(_ core: PVCore, preference: CorePreference) {
-        guard let frozenGame = gameForCoreSelection, let game = frozenGame.thaw() else { return }
+    func chooseCore(_ identifier: String, preference: CorePreference) {
+        guard let game = gameForCoreSelection?.thaw(),
+              let core = SmartCoreSelectionItem.availableCores(for: game).first(where: { $0.identifier == identifier }) else { return }
         do {
             try RomDatabase.sharedInstance.writeTransaction {
                 switch preference {
@@ -220,11 +221,9 @@ final class PVLibraryNavigation: ObservableObject, PVMenuDelegate, PVRootDelegat
         }
     }
 
-    var availableCores: [PVCore] {
+    var corePickerItems: [SmartCoreSelectionItem] {
         guard let game = gameForCoreSelection else { return [] }
-        return game.system?.cores.filter {
-            (!$0.disabled || Defaults[.unsupportedCores]) && $0.hasCoreClass && !(AppState.shared.isAppStore && $0.appStoreDisabled)
-        }.sorted { $0.projectName.localizedStandardCompare($1.projectName) == .orderedAscending } ?? []
+        return SmartCoreSelectionItem.items(for: game, cores: SmartCoreSelectionItem.availableCores(for: game))
     }
 
     func attemptToDelete(game: PVGame, deleteSaves: Bool) {

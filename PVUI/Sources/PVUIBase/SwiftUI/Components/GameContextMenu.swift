@@ -230,24 +230,20 @@ private struct GameContextMenuItems: View {
                     }
                 }
 
-                if availableCores.count > 1 {
+                let pickerCores = SmartCoreSelectionItem.availableCores(for: game)
+                if pickerCores.count > 1 {
                     // Use inline Menu to show cores with save state counts
                     // directly in the context menu — no separate alert needed.
                     Menu {
-                        ForEach(availableCores, id: \.identifier) { core in
+                        ForEach(SmartCoreSelectionItem.items(for: game, cores: pickerCores)) { item in
                             Button {
                                 Task { @MainActor in
-                                    if let thawedGame = game.thaw() {
-                                        await rootDelegate?.root_load(thawedGame, sender: menu, core: core, saveState: nil)
-                                    }
+                                    guard let thawedGame = game.thaw(),
+                                          let core = pickerCores.first(where: { $0.identifier == item.id }) else { return }
+                                    await rootDelegate?.root_load(thawedGame, sender: menu, core: core, saveState: nil)
                                 }
                             } label: {
-                                let saveCount = game.saveStates.filter("core.identifier == %@", core.identifier).count
-                                if saveCount > 0 {
-                                    Label("\(core.projectName) (\(saveCount) save\(saveCount == 1 ? "" : "s"))", systemImage: "gamecontroller")
-                                } else {
-                                    Label(core.projectName, systemImage: "gamecontroller")
-                                }
+                                CorePickerMenuLabel(item: item)
                             }
                         }
                     } label: {

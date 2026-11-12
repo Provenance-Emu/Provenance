@@ -142,7 +142,7 @@ struct EmulatorContainerView: UIViewControllerRepresentable {
         }
 
         // Get available cores for the system
-        let availableCores = system.cores
+        let availableCores = SmartCoreSelectionItem.availableCores(for: game)
         ILOG("EmulatorContainerView: System \(system.name) has \(availableCores.count) available cores")
 
         // If a core was explicitly set (e.g., from SceneCoordinator), use it
@@ -260,7 +260,7 @@ struct EmulatorContainerView: UIViewControllerRepresentable {
             return
         }
 
-        let availableCores = Array(system.cores)
+        let availableCores = SmartCoreSelectionItem.availableCores(for: game)
 
         if availableCores.isEmpty {
             ELOG("EmulatorContainerView: No cores available for system \(system.name)")
@@ -272,20 +272,13 @@ struct EmulatorContainerView: UIViewControllerRepresentable {
             return
         }
 
-        let items = availableCores.map { core in
-            let saveCount = game.saveStates.filter("core.identifier == %@", core.identifier).count
-            let subtitle = formatSaveCountSubtitle(saveCount)
-            return RetroSelectionItem(id: core.identifier, title: core.displayName, subtitle: subtitle,
-                                      isLibretroCore: core.isLibretroCore)
-        }
-
         // Capture hostingVC in a variable so onSelect/onCancel can dismiss it
         var hostingVC: UIHostingController<CoreSelectionAlertHostingView>?
 
         let selectionView = CoreSelectionAlertHostingView(
             title: "Select Core",
             message: "Choose a core to run \(game.title)",
-            items: items,
+            items: SmartCoreSelectionItem.items(for: game, cores: availableCores),
             cores: availableCores,
             onSelect: { selectedCore in
                 // Dismiss the core selection alert FIRST, then load
@@ -320,14 +313,6 @@ struct EmulatorContainerView: UIViewControllerRepresentable {
         }
         if let vc = hostingVC {
             topVC.present(vc, animated: true)
-        }
-    }
-
-    private func formatSaveCountSubtitle(_ count: Int) -> String {
-        switch count {
-        case 0: return "No saves"
-        case 1: return "1 save"
-        default: return "\(count) saves"
         }
     }
 
@@ -405,27 +390,15 @@ class EmulatorContainerViewController: UIViewController, GameLaunchingViewContro
     func presentCoreSelection(forGame game: PVGame, saveState: PVSaveState? = nil, sender: Any?) {
         let saveStateToUse = saveState ?? AppState.shared.emulationUIState.currentSaveState
 
-        guard let system = game.system else {
+        guard game.system != nil else {
             ELOG("EmulatorContainerViewController: Game has no system")
             return
         }
 
-        let cores = Array(system.cores)
+        let cores = SmartCoreSelectionItem.availableCores(for: game)
         guard !cores.isEmpty else {
             ELOG("EmulatorContainerViewController: No cores available")
             return
-        }
-
-        let items = cores.map { core in
-            let saveCount = game.saveStates.filter("core.identifier == %@", core.identifier).count
-            let subtitle: String
-            switch saveCount {
-            case 0: subtitle = "No saves"
-            case 1: subtitle = "1 save"
-            default: subtitle = "\(saveCount) saves"
-            }
-            return RetroSelectionItem(id: core.identifier, title: core.displayName, subtitle: subtitle,
-                                      isLibretroCore: core.isLibretroCore)
         }
 
         // Capture hostingVC so onSelect/onCancel can dismiss it
@@ -434,7 +407,7 @@ class EmulatorContainerViewController: UIViewController, GameLaunchingViewContro
         let selectionView = CoreSelectionAlertHostingView(
             title: "Select Core",
             message: "Choose a core to run \(game.title)",
-            items: items,
+            items: SmartCoreSelectionItem.items(for: game, cores: cores),
             cores: cores,
             onSelect: { [weak self] selectedCore in
                 // Dismiss the core selection alert FIRST, then load
@@ -655,38 +628,28 @@ class EmulatorContainerViewController: UIViewController, GameLaunchingViewContro
 
 // MARK: - Core Selection Hosting View
 
-/// A SwiftUI view that wraps RetroSelectionAlertView for core selection
+/// Presents the shared core picker in the emulator scene.
 /// Note: The caller is responsible for dismissing the hosting controller
 struct CoreSelectionAlertHostingView: View {
     let title: String
     let message: String
-    let items: [RetroSelectionItem]
+    let items: [SmartCoreSelectionItem]
     let cores: [PVCore]
     let onSelect: (PVCore) -> Void
     let onCancel: () -> Void
 
-    @State private var isPresented = true
-
     var body: some View {
-        ZStack {
-            if isPresented {
-                RetroSelectionAlertView(
-                    title: title,
-                    message: message,
-                    items: items,
-                    isPresented: $isPresented,
-                    onSelect: { selectedId in
-                        if let selectedCore = cores.first(where: { $0.identifier == selectedId }) {
-                            isPresented = false
-                            onSelect(selectedCore)
-                        }
-                    },
-                    onCancel: {
-                        isPresented = false
-                        onCancel()
-                    }
-                )
-            }
-        }
+        SmartCoreSelectionHostingView(
+            title: title,
+            message: message,
+            items: items,
+            showSetDefault: false,
+            onSelect: { selectedId in
+                if let selectedCore = cores.first(where: { $0.identifier == selectedId }) {
+                    onSelect(selectedCore)
+                }
+            },
+            onCancel: onCancel
+        )
     }
 }
