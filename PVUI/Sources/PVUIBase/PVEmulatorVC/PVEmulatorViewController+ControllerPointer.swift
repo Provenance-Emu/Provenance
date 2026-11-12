@@ -2,7 +2,8 @@
 //  PVEmulatorViewController+ControllerPointer.swift
 //  PVUI
 //
-//  The running game's controller pointer (touchpad as mouse, pause from the touchpad click).
+//  The running game's controller pointer (touchpad as mouse or Wii pointer, pause from the
+//  touchpad click) and pad shake.
 //
 
 #if canImport(UIKit)
@@ -14,6 +15,7 @@ import UIKit
 
 private enum ControllerPointerKeys {
     static var routerKey: UInt8 = 0
+    static var motionRouterKey: UInt8 = 0
     #if os(tvOS)
     static var overlayKey: UInt8 = 0
     #endif
@@ -33,16 +35,30 @@ extension PVEmulatorViewController {
         pointerRouter?.role ?? .none
     }
 
+    /// Turns the players' pad shakes into the game's shake input. Lives as long as `pointerRouter`.
+    var motionRouter: ControllerMotionRouter? {
+        get { objc_getAssociatedObject(self, &ControllerPointerKeys.motionRouterKey) as? ControllerMotionRouter }
+        set {
+            objc_setAssociatedObject(self, &ControllerPointerKeys.motionRouterKey, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+        }
+    }
+
     func startControllerPointer() {
         guard pointerRouter == nil else { return }
         let router = ControllerPointerRouter(host: self)
         router.start()
         pointerRouter = router
+
+        let motion = ControllerMotionRouter(host: self)
+        motion.start()
+        motionRouter = motion
     }
 
     func stopControllerPointer() {
         pointerRouter?.stop()
         pointerRouter = nil
+        motionRouter?.stop()
+        motionRouter = nil
     }
 
     /// Whether `controller`'s touchpad click may open the pause menu right now.

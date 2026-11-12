@@ -130,7 +130,9 @@ imports in the logic itself, unit tested):
 - `PointerClickBindings`: zone to action, per role. Defaults:
   - mouse: one-finger click = left button, two-finger click = right button;
   - light gun: left half = trigger, right half = reload, two-finger click = pause menu;
-  - Wii pointer: click = Wiimote A.
+  - Wii pointer: left half = Wiimote A, right half = Wiimote B, two-finger click = pause menu (changed
+    2026-11-12 while building: with the touchpad taken, a PlayStation pad has no other single pause button
+    in Wii games, and pointer shooters need B).
 
   Actions a zone can be bound to: left button, right button, trigger, reload, aux A, aux B, gun Start,
   Wiimote A, Wiimote B, pause menu, nothing.
@@ -224,7 +226,7 @@ each pad answers the hardware unknowns listed at the end. It stays in the app.
 - Role `wiiPointer` whenever the system is Wii and the pad has a touchpad. The sink is `PointerResponder`.
 - Relative by default (drag moves the pointer; the game draws it). "Pad is the screen" (absolute) is an
   option, because some players will prefer it for menus.
-- Click is Wiimote A by default. The pause menu on Wii is already on Create (Wii has no Select).
+- Left click is Wiimote A, right click Wiimote B, two-finger click the pause menu (see the defaults above).
 - The stick-to-IR path and its option are untouched.
 - Reaches: Dolphin only.
 

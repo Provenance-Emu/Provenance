@@ -28,11 +28,13 @@ import UIKit
 final class ControllerPointerRouter {
     /// Roles that have somewhere to deliver to. A game whose role is not in this set leaves
     /// the touchpad free, so its click still opens the pause menu.
-    static let deliverableRoles: Set<ControllerPointerRole> = [.mouse]
+    static let deliverableRoles: Set<ControllerPointerRole> = [.mouse, .wiiPointer]
     /// How long the "Pointer speed" readout stays up after a two-finger slide.
     private static let speedReadoutDuration: TimeInterval = 1.5
     /// One readout at a time: each step replaces the last.
     private static let speedReadoutKey = "controllerPointerSpeed"
+    /// The touchpad pointer always belongs to player 1 (0-based for the core).
+    private static let pointerPlayer = 0
 
     private weak var host: PVEmulatorViewController?
     private var observers: [NSObjectProtocol] = []
@@ -114,6 +116,7 @@ final class ControllerPointerRouter {
             system: Self.system(of: host),
             gameSupportsMouse: (core as? MouseResponder)?.gameSupportsMouse ?? false,
             gameSupportsLightGun: (core as? LightGunResponder)?.gameSupportsLightGun ?? false,
+            coreSupportsPointer: (core as? PointerResponder)?.gameSupportsPointer ?? false,
             padHasPointerInput: pointerPad() != nil)
         let decided = ControllerPointerPolicy.role(for: context, mode: settings.mode)
         setRole(Self.deliverableRoles.contains(decided) ? decided : .none)
@@ -125,7 +128,12 @@ final class ControllerPointerRouter {
         /// Buttons held under the old role are released through the old role's sink.
         releaseHeldInput()
         session = nil
+        let pointer = host?.core as? PointerResponder
+        if role == .wiiPointer { pointer?.pointerEnded?(forPlayer: Self.pointerPlayer) }
         role = newRole
+        if newRole == .wiiPointer {
+            pointer?.pointerMoved(toNormalized: PointerCursor.centre, forPlayer: Self.pointerPlayer)
+        }
         #if os(tvOS)
         if newRole == .mouse {
             host?.installPointerOverlayIfNeeded()
@@ -216,14 +224,22 @@ final class ControllerPointerRouter {
         guard !outputs.isEmpty, let core = host?.core else { return }
         for output in outputs {
             if ignoringActions, case .action(_, isDown: true) = output { continue }
-            if case let .speedChanged(speed) = output {
+            switch output {
+            case let .speedChanged(speed):
                 saveSpeed(speed)
                 continue
+            case .action(.pauseMenu, isDown: true):
+                PauseMenuTrigger.touchpadButton.postPauseRequest()
+                continue
+            default:
+                break
             }
             switch role {
             case .mouse:
                 if let mouse = core as? MouseResponder { deliver(output, toMouse: mouse) }
-            case .none, .wiiPointer, .lightGun:
+            case .wiiPointer:
+                if let pointer = core as? PointerResponder { deliver(output, toWii: pointer) }
+            case .none, .lightGun:
                 break
             }
         }
@@ -256,13 +272,33 @@ final class ControllerPointerRouter {
             if isDown { mouse.leftMouseDown(atPoint: position) } else { mouse.leftMouseUp() }
         case .rightButton:
             if isDown { mouse.rightMouseDown(atPoint: position) } else { mouse.rightMouseUp() }
-        case .pauseMenu:
-            PauseMenuTrigger.touchpadButton.postPauseRequest()
-        case .trigger, .reload, .auxA, .auxB, .gunStart, .wiiA, .wiiB, .none:
+        case .trigger, .reload, .auxA, .auxB, .gunStart, .wiiA, .wiiB, .pauseMenu, .none:
             return
         }
-        if isDown, action != .pauseMenu {
+        if isDown {
             NotificationCenter.default.post(name: .PVMouseButtonDidPress, object: self)
+        }
+    }
+
+    private func deliver(_ output: PointerOutput, toWii pointer: PointerResponder) {
+        switch output {
+        case let .moved(_, position), let .recentered(position):
+            pointer.pointerMoved(toNormalized: position, forPlayer: Self.pointerPlayer)
+        case let .action(action, isDown):
+            let button: PVWiiMoteButton
+            switch action {
+            case .wiiA: button = .wiiA
+            case .wiiB: button = .wiiB
+            default: return
+            }
+            guard let wii = pointer as? PVWiiSystemResponderClient else { return }
+            if isDown {
+                wii.didPush(button, forPlayer: Self.pointerPlayer)
+            } else {
+                wii.didRelease(button, forPlayer: Self.pointerPlayer)
+            }
+        case .touching, .speedChanged:
+            break
         }
     }
 

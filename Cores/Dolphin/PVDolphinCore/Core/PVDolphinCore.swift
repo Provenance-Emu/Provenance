@@ -24,6 +24,9 @@ open class PVDolphinCore: PVEmulatorCore, @unchecked Sendable {
 
     let _bridge: PVDolphinCoreBridge = .init()
 
+    /// Players shaking each Wii Remote port; several share port 4 when multiplayer is off.
+    fileprivate var shakingPorts = SharedShakeState()
+
     /// GameCube / Wii DeltaSkins position Dolphin's render view through the bridge's
     /// `EmulatorCoreViewportPositioning` conformance. Skins are a touch-screen feature, so
     /// tvOS keeps reporting no skin support, exactly as before.
@@ -74,6 +77,30 @@ extension PVDolphinCore: PVWiiSystemResponderClient {
     }
     public func didRelease(_ button: PVCoreBridge.PVWiiMoteButton, forPlayer player: Int) {
         (_bridge as! PVWiiSystemResponderClient).didRelease(button, forPlayer: player)
+    }
+}
+
+/// A controller's touchpad aims the Wii Remote (`ControllerPointerRouter`).
+extension PVDolphinCore: PointerResponder {
+    public var gameSupportsPointer: Bool { _bridge.isWii }
+
+    public func pointerMoved(toNormalized position: CGPoint, forPlayer player: Int) {
+        _bridge.setIRPointerNormalizedX(position.x * 2 - 1, y: position.y * 2 - 1, forPlayer: player)
+    }
+
+    public func pointerEnded(forPlayer player: Int) {
+        _bridge.endIRPointer(forPlayer: player)
+    }
+}
+
+/// Shaking a pad shakes the Wii Remote (`ControllerMotionRouter`).
+extension PVDolphinCore: MotionResponder {
+    public var gameSupportsShake: Bool { _bridge.isWii }
+
+    public func setShaking(_ shaking: Bool, forPlayer player: Int) {
+        let port = Int(_bridge.wiimotePort(forPlayer: player))
+        guard let held = shakingPorts.set(shaking, player: player, port: port) else { return }
+        _bridge.setWiimoteShakeHeld(held, onPort: Int32(port))
     }
 }
 

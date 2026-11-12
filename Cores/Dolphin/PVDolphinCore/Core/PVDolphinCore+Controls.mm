@@ -256,6 +256,8 @@ typedef unsigned short u16;
 typedef unsigned int   u32;
 static bool rotateControls = false;
 static bool rotateIr = false;
+/// Wii Remote ports (4-7, indexed 0-3) whose pointer a controller's touchpad is driving.
+static bool s_padPointsIR[4] = {false, false, false, false};
 CGFloat adj=10;
 CGFloat adj2=5;
 constexpr auto INPUT_DETECT_INITIAL_TIME = std::chrono::seconds(3);
@@ -699,7 +701,7 @@ s8 joyx[4], joyy[4];
         switch (button) {
             case(PVWiiMoteButtonLeftAnalog):
                 // Optional: IR cursor control from left joystick (can be disabled)
-                if (!self.disableJoystickIRCursor) {
+                if (!self.disableJoystickIRCursor && !s_padPointsIR[port - 4]) {
                     // Using IR axis numbers from WiimoteNew.ini: 112-117
                     [self gamepadMoveEventOnPad:port axis:116 value:xValue]; // IR Forward
                     [self gamepadMoveEventOnPad:port axis:117 value:xValue]; // IR Backward
@@ -1543,29 +1545,49 @@ static void PVSetGCSIDeviceIfConfigReady(int port) {
     float normalizedX = ((location.x - picture.origin.x) / picture.size.width) * 2.0f - 1.0f;
     float normalizedY = ((location.y - picture.origin.y) / picture.size.height) * 2.0f - 1.0f;
 
-    // Clamp to valid range
+    [self writeIRNormalizedX:normalizedX y:normalizedY onPort:[self wiimotePortForPlayer:player]];
+}
+
+-(int)wiimotePortForPlayer:(NSInteger)player {
+    // Pads 4-7 are the Wii Remotes.
+    return 4 + (self.multiPlayer ? (int)MAX(0, MIN(player, 3)) : 0);
+}
+
+/// Sets the IR axes from x, y in -1...1, (0, 0) the centre, +y down. Applies the IR rotation.
+-(void)writeIRNormalizedX:(float)normalizedX y:(float)normalizedY onPort:(int)port {
     normalizedX = fmaxf(-1.0f, fminf(1.0f, normalizedX));
     normalizedY = fmaxf(-1.0f, fminf(1.0f, normalizedY));
 
-    // Apply rotation if enabled
     if (rotateIr) {
         float temp = normalizedX;
         normalizedX = normalizedY;
         normalizedY = -temp;
     }
 
-    // Map to Dolphin IR axes (pad 4 is Wiimote controller)
-    int port = 4 + (self.multiPlayer ? player : 0);
-
-    // Set IR cursor position - positive values for right/down, negative for left/up
     // Using axis numbers from WiimoteNew.ini: IR/Left=114, IR/Right=115, IR/Up=112, IR/Down=113
     [self gamepadMoveEventOnPad:port axis:114 value:normalizedX < 0 ? -normalizedX : 0]; // IR Left
     [self gamepadMoveEventOnPad:port axis:115 value:normalizedX > 0 ? normalizedX : 0]; // IR Right
     [self gamepadMoveEventOnPad:port axis:112 value:normalizedY < 0 ? -normalizedY : 0]; // IR Up
     [self gamepadMoveEventOnPad:port axis:113 value:normalizedY > 0 ? normalizedY : 0]; // IR Down
+}
 
-    NSLog(@"🎯 Touch IR: x=%.2f, y=%.2f -> normalizedX=%.2f, normalizedY=%.2f",
-          location.x, location.y, normalizedX, normalizedY);
+-(void)setIRPointerNormalizedX:(CGFloat)x y:(CGFloat)y forPlayer:(NSInteger)player {
+    if (!self.isWii || !_isInitialized) return;
+    const int port = [self wiimotePortForPlayer:player];
+    s_padPointsIR[port - 4] = true;
+    [self writeIRNormalizedX:(float)x y:(float)y onPort:port];
+}
+
+-(void)endIRPointerForPlayer:(NSInteger)player {
+    s_padPointsIR[[self wiimotePortForPlayer:player] - 4] = false;
+}
+
+-(void)setWiimoteShakeHeld:(BOOL)held onPort:(int)port {
+    if (!self.isWii || !_isInitialized || port < 4 || port > 7) return;
+    const int action = held ? 1 : 0;
+    [self gamepadEventOnPad:port button:WIIMOTE_SHAKE_X action:action];
+    [self gamepadEventOnPad:port button:WIIMOTE_SHAKE_Y action:action];
+    [self gamepadEventOnPad:port button:WIIMOTE_SHAKE_Z action:action];
 }
 
 -(void)resetIRCursorForPlayer:(NSInteger)player {

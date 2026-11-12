@@ -195,6 +195,17 @@
 -(void)updateIRCursorWithLocation:(CGPoint)location inView:(UIView*)view forPlayer:(NSInteger)player;
 -(void)resetIRCursorForPlayer:(NSInteger)player;
 
+// A controller's touchpad as the Wii Remote pointer (ControllerPointerRouter).
+/// The Wii Remote port `player` (0-based) plays on.
+-(int)wiimotePortForPlayer:(NSInteger)player;
+/// Points `player`'s Wii Remote at x, y in -1...1 of the picture, (0, 0) the centre. While a pad
+/// points, the on-screen stick stops driving the pointer.
+-(void)setIRPointerNormalizedX:(CGFloat)x y:(CGFloat)y forPlayer:(NSInteger)player;
+/// The pad stopped pointing; the on-screen stick drives the pointer again.
+-(void)endIRPointerForPlayer:(NSInteger)player;
+/// Holds or lets go of Shake on a Wii Remote port (buttons 132-134).
+-(void)setWiimoteShakeHeld:(BOOL)held onPort:(int)port;
+
 // Haptic feedback setup
 -(void)setupHapticFeedback;
 
