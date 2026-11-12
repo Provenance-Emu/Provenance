@@ -445,6 +445,13 @@ struct ControllerSettingsView: View {
                 #if os(tvOS)
                 .retroFocusButtonStyle(focusScale: 1.04, focusBorderWidth: 2.5, cornerRadius: 12)
                 #endif
+                NavigationLink(destination: ControllerInputTestView()) {
+                    Label("Controller Input Test", systemImage: "waveform.path.ecg")
+                        .tvOSRowInset()
+                }
+                #if os(tvOS)
+                .retroFocusButtonStyle(focusScale: 1.04, focusBorderWidth: 2.5, cornerRadius: 12)
+                #endif
                 NavigationLink(destination: WikiPageView(path: "info/controllers-and-controls/README.md", title: "Controllers & Controls").settingsSubpageTracking()) {
                     Label("Full Controller Wiki", systemImage: "books.vertical.fill")
                         .tvOSRowInset()
