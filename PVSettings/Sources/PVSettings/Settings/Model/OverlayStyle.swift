@@ -17,3 +17,11 @@ public enum OverlayStyle: String, Codable, Sendable, CaseIterable, Identifiable,
         }
     }
 }
+
+/// Arrangement of the built-in overlay's console switches and momentary controls.
+public enum OverlayConsoleLayout: String, Codable, Sendable, CaseIterable, Identifiable, Defaults.Serializable {
+    case automatic, horizontal, vertical
+
+    public var id: String { rawValue }
+    public var displayName: String { rawValue.capitalized }
+}

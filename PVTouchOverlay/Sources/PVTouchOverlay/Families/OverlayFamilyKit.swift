@@ -108,6 +108,33 @@ public enum OverlayFamilyKit {
                             placement: OverlayPlacement(anchor: .bottomCenter, inset: CGPoint(x: 0, y: bottom)))
     }
 
+    /// Apply the active console's descriptor list while keeping the existing edit group and control IDs.
+    public static func presentingConsoleControls(_ labels: [(id: String, label: String)], in template: OverlayTemplate,
+                                                 vertically: Bool) -> OverlayTemplate {
+        var groups = template.groups
+        let index = groups.firstIndex { $0.id == "switches" }
+        if labels.isEmpty {
+            if let index { groups.remove(at: index) }
+        } else {
+            let controls = labels.enumerated().map { offset, descriptor in
+                let x = vertically ? 0 : CGFloat(offset) * (pillSize.width + edge)
+                let y = vertically ? CGFloat(offset) * (pillSize.height + edge) : 0
+                return OverlayControl(id: "switch-\(descriptor.id)", kind: .hardwareSwitch(descriptorID: descriptor.id),
+                                      frame: CGRect(origin: CGPoint(x: x, y: y), size: pillSize),
+                                      label: descriptor.label, shape: .pill, paletteSlot: .utility)
+            }
+            if let index {
+                groups[index].controls = controls
+            } else {
+                let bottom = template.orientation == .landscape ? 12 + pillSize.height + 8 : portraitBottom + dpadSize + 24
+                groups.append(OverlayGroup(id: "switches", controls: controls,
+                                           placement: OverlayPlacement(anchor: .bottomCenter, inset: CGPoint(x: 0, y: bottom))))
+            }
+        }
+        return OverlayTemplate(padKind: template.padKind, orientation: template.orientation,
+                               groups: groups, screenPolicy: template.screenPolicy)
+    }
+
     // Standard group set shared by the pad families. `face` is supplied by the family.
     // swiftlint:disable:next function_parameter_count
     public static func padTemplate(face: [OverlayControl], shoulders: [OverlayFamilySlot],

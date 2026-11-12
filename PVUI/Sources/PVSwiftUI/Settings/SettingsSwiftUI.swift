@@ -2719,6 +2719,8 @@ private struct DeltaSkinsSection: View {
     @Default(.skinMode) var skinMode
     #if os(iOS)
     @Default(.overlayStyle) var overlayStyle
+    @Default(.overlayConsoleLayout) var overlayConsoleLayout
+    @Default(.overlayConsoleSwitchNames) var overlayConsoleSwitchNames
     @Default(.skinMultiButtonTouch) var skinMultiButtonTouch
     @Default(.arcadeMultiButtonTouch) var arcadeMultiButtonTouch
     #endif
@@ -2741,6 +2743,20 @@ private struct DeltaSkinsSection: View {
                                   choices: OverlayStyle.allCases,
                                   selection: $overlayStyle,
                                   label: \.displayName)
+
+            SettingsMenuPickerRow(title: "Console Switch Layout",
+                                  subtitle: "Arrange the built-in console controls in a row or a column.",
+                                  symbol: "switch.2",
+                                  choices: OverlayConsoleLayout.allCases,
+                                  selection: $overlayConsoleLayout,
+                                  label: \.displayName)
+
+            ThemedToggle(isOn: $overlayConsoleSwitchNames) {
+                SettingsRow(title: "Show Console Switch Names",
+                            subtitle: "Show each switch’s name alongside its current position.",
+                            icon: .sfSymbol("textformat"),
+                            showChevron: false)
+            }
 
             ThemedToggle(isOn: $skinMultiButtonTouch) {
                 SettingsRow(title: "Skin Multi-Button Touch",

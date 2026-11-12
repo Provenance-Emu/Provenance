@@ -90,7 +90,7 @@ struct OverlayGroupView: View {
     private var clusterControls: [ResolvedControl] {
         group.controls.filter { control in
             switch control.control.kind {
-            case .stick, .touchSurface, .hardwareSwitch: return false
+            case .stick, .touchSurface: return false
             default: return true
             }
         }

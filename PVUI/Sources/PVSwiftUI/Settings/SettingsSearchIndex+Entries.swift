@@ -210,6 +210,10 @@ extension SettingsSearchIndex {
 
         entry("skins.overlaystyle", "Overlay Style", "Look of the built-in on-screen controller.",
               .controller, SettingsSectionTitle.deltaSkins, keywords: ["overlay", "touch", "controls", "gamepad", "layout", "style"], tvOS: false),
+        entry("skins.consoleswitchlayout", "Console Switch Layout", "Arrange built-in console controls in a row or a column.",
+              .controller, SettingsSectionTitle.deltaSkins, keywords: ["switch", "overlay", "horizontal", "vertical"], tvOS: false),
+        entry("skins.consoleswitchnames", "Show Console Switch Names", "Show switch names alongside their positions.",
+              .controller, SettingsSectionTitle.deltaSkins, keywords: ["switch", "overlay", "label"], tvOS: false),
         entry("skins.mode", "Skin Mode", nil,
               .controller, SettingsSectionTitle.deltaSkins, keywords: ["delta skin", "theme", "overlay", "controller skin"], tvOS: false),
         entry("skins.select", "Select Controller Skins", "Choose controller skins for each system and orientation.",

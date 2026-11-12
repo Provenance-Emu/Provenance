@@ -34,6 +34,9 @@ struct ProgrammaticOverlayView: View {
 
     @ObservedObject private var store = OverlayLayoutStore.shared
     @Default(.overlayStyle) private var style
+    @Default(.overlayConsoleLayout) private var consoleLayout
+    @Default(.overlayConsoleSwitchNames) private var consoleSwitchNames
+    @Default(.overlayConsoleVisibility) private var consoleVisibility
     @Default(.controllerOpacity) private var globalOpacity
     @Default(.overlayHapticIntensity) private var hapticIntensity
     @Default(.buttonVibration) private var hapticsOn
@@ -69,7 +72,11 @@ struct ProgrammaticOverlayView: View {
     var body: some View {
         GeometryReader { geo in
             let canvas = Self.canvas(for: geo)
-            let template = binding.template(padKind: padKind, orientation: canvas.orientation)
+            let baseTemplate = binding.template(padKind: padKind, orientation: canvas.orientation)
+            let console = consoleControls(in: baseTemplate)
+            let expanded = consoleVisibility[systemId.rawValue] ?? baseTemplate.groups.contains { $0.id == "switches" }
+            let template = OverlayFamilyKit.presentingConsoleControls(expanded || editController != nil ? console : [],
+                                                                     in: baseTemplate, vertically: consoleLayout == .vertical)
             let layout = resolve(template, on: canvas, editing: editController != nil)
             // The editor opens only on request (pause menu "Edit Layout" or the view
             // controller's three-finger hold), never from a press on the controls' area.
@@ -99,6 +106,13 @@ struct ProgrammaticOverlayView: View {
                 }
             }
             .frame(width: canvas.size.width, height: canvas.size.height, alignment: .topLeading)
+            .overlay(alignment: .bottomTrailing) {
+                if !console.isEmpty, editController == nil {
+                    consoleVisibilityButton(expanded: expanded)
+                        .padding(.trailing, canvas.safeArea.right + 8)
+                        .padding(.bottom, canvas.safeArea.bottom + 8)
+                }
+            }
             .onAppear {
                 if sink == nil {
                     let adapter = OverlayInputSinkAdapter(handler: inputHandler)
@@ -196,18 +210,48 @@ struct ProgrammaticOverlayView: View {
         let idiom = UIDevice.current.userInterfaceIdiom
         let dualScreen = template.screenPolicy == .dualStacked || template.screenPolicy == .dualStacked3DS
         let reserveSpace = idiom == .phone && canvas.orientation == .portrait && (aspect >= 1 || dualScreen)
-        let switchLabels = (systemId.hardwareSwitches ?? []).reduce(into: [String: String]()) { labels, descriptor in
-            let index = switchPositionIndexes[descriptor.id] ?? descriptor.initialPositionIndex
-            if descriptor.positionList.indices.contains(index) {
-                labels[descriptor.id] = descriptor.positionList[index].label
-            }
-        }
+        let arrangeRow = consoleLayout == .horizontal || (consoleLayout == .automatic && idiom == .pad)
         return OverlayLayoutEngine.resolve(template: template, canvas: canvas,
                                            overrides: store.overrides(for: key, gameMD5: gameMD5),
                                            gameAspect: aspect,
                                            shownToggles: editing || keypadShown ? [.keypad] : [],
-                                           reservesControlSpace: reserveSpace, arrangesConsoleRow: idiom == .pad,
-                                           switchPositionLabels: switchLabels)
+                                           reservesControlSpace: reserveSpace, arrangesConsoleRow: arrangeRow)
+    }
+
+    private func consoleControls(in template: OverlayTemplate) -> [(id: String, label: String)] {
+        let switches = (systemId.hardwareSwitches ?? []).map { descriptor in
+            let index = switchPositionIndexes[descriptor.id] ?? descriptor.initialPositionIndex
+            let position = descriptor.positionList.indices.contains(index) ? index : descriptor.initialPositionIndex
+            let value = descriptor.positionList[position].label
+            let name = OverlayHardwareSwitch.named(descriptor.id)?.label ?? descriptor.title
+            return (id: descriptor.id, label: consoleSwitchNames ? "\(name): \(value)" : value)
+        }
+        let existing = template.groups.flatMap(\.controls)
+        let momentary = (systemId.hardwareMomentaryButtons ?? []).filter { button in
+            !existing.contains { control in
+                if case .button(let input) = control.kind { return input.token == button.buttonId }
+                if case .action(.service) = control.kind { return button.buttonId == "service" }
+                return false
+            }
+        }.map { (id: $0.id, label: $0.title) }
+        return switches + momentary
+    }
+
+    private func consoleVisibilityButton(expanded: Bool) -> some View {
+        Button {
+            consoleVisibility[systemId.rawValue] = !expanded
+        } label: {
+            OverlayControlArt(spec: OverlayArtSpec(shape: .pill, color: binding.palette.color(for: .utility),
+                                                   labelColor: binding.palette.label, style: style,
+                                                   pressed: false, label: "Console"))
+                .frame(width: 68, height: 28)
+                .frame(minHeight: 44)
+                .contentShape(Rectangle())
+        }
+        .buttonStyle(.plain)
+        .opacity(max(globalOpacity, 0.05))
+        .accessibilityLabel("Console Controls")
+        .accessibilityValue(expanded ? "Expanded" : "Collapsed")
     }
 
     private func gameAspect() -> CGFloat {

@@ -15,6 +15,8 @@ import PVTouchOverlay
 @MainActor
 public final class OverlayInputSinkAdapter: @preconcurrency OverlayInputSink {
     private let handler: DeltaSkinInputHandler
+    private var heldConsoleControls: [String: (buttonID: String, started: TimeInterval)] = [:]
+    private var pendingConsoleReleases: [String: Task<Void, Never>] = [:]
 
     /// Runs when the player taps the keypad pill. The keypad is a group of the overlay itself, so the
     /// toggle never reaches the core.
@@ -76,8 +78,34 @@ public final class OverlayInputSinkAdapter: @preconcurrency OverlayInputSink {
         }
     }
 
-    public func overlayHardwareSwitch(descriptorID: String, isOn: Bool) {
-        // Phase 2: no Phase 1 binding has console switches.
+    public func overlayConsoleControl(_ descriptorID: String, isPressed: Bool) {
+        let now = ProcessInfo.processInfo.systemUptime
+        if isPressed {
+            guard heldConsoleControls[descriptorID] == nil, let buttonID = handler.nextConsoleButtonID(for: descriptorID) else { return }
+            if let pending = pendingConsoleReleases.removeValue(forKey: buttonID) {
+                pending.cancel()
+                handler.sendHardwareSwitch(buttonID, isPressed: false)
+            }
+            heldConsoleControls[descriptorID] = (buttonID, now)
+            handler.sendHardwareSwitch(buttonID, isPressed: true)
+            return
+        }
+        guard let held = heldConsoleControls.removeValue(forKey: descriptorID) else { return }
+        let delay = HardwareSwitchTiming.pressDuration - (now - held.started)
+        if delay <= 0 {
+            handler.sendHardwareSwitch(held.buttonID, isPressed: false)
+        } else {
+            pendingConsoleReleases[held.buttonID] = Task { [weak self, handler] in
+                do {
+                    try await Task.sleep(for: .seconds(delay))
+                } catch {
+                    return
+                }
+                guard !Task.isCancelled else { return }
+                handler.sendHardwareSwitch(held.buttonID, isPressed: false)
+                self?.pendingConsoleReleases[held.buttonID] = nil
+            }
+        }
     }
 
     /// Function tokens `DeltaSkinInputHandler.buttonPressed(_:)` recognises. The handler has

@@ -12,7 +12,7 @@ public protocol OverlayInputSink: AnyObject {
     func overlayAnalogTrigger(_ id: OverlayInputID, value: Float)
     func overlaySurface(_ role: OverlaySurfaceRole, normalized: CGPoint, phase: OverlaySurfacePhase)
     func overlayAction(_ action: OverlayAction)
-    func overlayHardwareSwitch(descriptorID: String, isOn: Bool)
+    func overlayConsoleControl(_ descriptorID: String, isPressed: Bool)
 }
 
 /// Turns hit-set deltas into sink calls. Each touch surface reports its own partial hit set under a
@@ -106,7 +106,9 @@ public final class OverlayHitDispatcher {
                 emitToken(token, isDown: isDown, analog: true, to: sink)
             case .action(let action):
                 if isDown { sink.overlayAction(action) }
-            case .stick, .touchSurface, .hardwareSwitch, .dpad:
+            case .hardwareSwitch(let descriptorID):
+                sink.overlayConsoleControl(descriptorID, isPressed: isDown)
+            case .stick, .touchSurface, .dpad:
                 break // handled by their own surfaces/views
             }
         }

@@ -232,6 +232,6 @@ public final class OverlayNullSink: OverlayInputSink, Sendable {
     public func overlayAnalogTrigger(_ id: OverlayInputID, value: Float) {}
     public func overlaySurface(_ role: OverlaySurfaceRole, normalized: CGPoint, phase: OverlaySurfacePhase) {}
     public func overlayAction(_ action: OverlayAction) {}
-    public func overlayHardwareSwitch(descriptorID: String, isOn: Bool) {}
+    public func overlayConsoleControl(_ descriptorID: String, isPressed: Bool) {}
 }
 #endif

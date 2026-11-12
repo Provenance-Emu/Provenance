@@ -13,7 +13,7 @@ final class RecordingSink: OverlayInputSink {
         log.append("surface \(role.rawValue) \(phase)")
     }
     func overlayAction(_ action: OverlayAction) { log.append("action \(action.rawValue)") }
-    func overlayHardwareSwitch(descriptorID: String, isOn: Bool) { log.append("switch \(descriptorID) \(isOn)") }
+    func overlayConsoleControl(_ descriptorID: String, isPressed: Bool) { log.append("switch \(descriptorID) \(isPressed)") }
 }
 
 @Suite("OverlayHitDispatcher")
@@ -114,5 +114,17 @@ struct OverlayHostDispatchTests {
         #expect(sink.log == ["press a", "press b", "release a"])
         dispatcher.apply([], from: "g")
         #expect(sink.log.last == "release b")
+    }
+
+    @Test("Collapsing console controls releases a held hardware input once")
+    func collapseReleasesHardwareInput() {
+        let sink = RecordingSink()
+        let hardware = OverlayControl(id: "switch-speed", kind: .hardwareSwitch(descriptorID: "speed"),
+                                      frame: .zero, shape: .pill, paletteSlot: .utility)
+        let dispatcher = OverlayHitDispatcher(controls: [hardware], sink: sink)
+        dispatcher.apply([.control(id: hardware.id)], from: "switches")
+        dispatcher.update(controls: [])
+        dispatcher.apply([], from: "switches")
+        #expect(sink.log == ["switch speed true", "switch speed false"])
     }
 }

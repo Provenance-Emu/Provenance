@@ -256,7 +256,7 @@ struct PauseTileMenuView: View {
     // MARK: - Rebuild cached sections via view model
 
     /// Triggers a full section rebuild. Call on appear and after any option mutation.
-    private func rebuildSections() {
+    private func rebuildSections(hardwareSwitchPositions: [String: Int]? = nil) {
         viewModel.rebuild(
             emulatorVC: emulatorVC,
             showFPSCount: showFPSCount,
@@ -264,7 +264,7 @@ struct PauseTileMenuView: View {
             featureFlags: featureFlags,
             indicatorRegistry: indicatorRegistry,
             hasControllerProfiles: hasControllerProfiles,
-            hardwareSwitchStates: emulatorVC.coreInputHandler.hardwareSwitchPositionIndexes,
+            hardwareSwitchStates: hardwareSwitchPositions ?? emulatorVC.coreInputHandler.hardwareSwitchPositionIndexes,
             coreOptionsMD5: currentCoreOptionsMD5Scope,
             route: currentRoute
         )
@@ -877,11 +877,9 @@ struct PauseTileMenuView: View {
         case CoreOptionTileProvider.coreSettingsTileID:
             dismissForSubSheetThen { self.emulatorVC.showCoreOptions() }
         case let id where id.hasPrefix(PauseTileMenuViewModel.hardwareSwitchTilePrefix):
-            guard let descriptor = hardwareSwitchDescriptor(forTileID: id) else { return }
-            let current = emulatorVC.coreInputHandler.hardwareSwitchPositionIndexes[descriptor.id] ?? descriptor.initialPositionIndex
-            let next = descriptor.nextPosition(after: current)
-            dispatchHardwareSwitchButton(descriptor.positionList[next].buttonId)
-            rebuildSections()
+            guard let descriptor = hardwareSwitchDescriptor(forTileID: id),
+                  let input = emulatorVC.coreInputHandler.nextConsoleButtonID(for: descriptor.id) else { return }
+            dispatchHardwareSwitchButton(input)
         case let id where id.hasPrefix(PauseTileMenuViewModel.hardwareMomentaryTilePrefix):
             guard let descriptor = hardwareMomentaryDescriptor(forTileID: id) else { return }
             dispatchHardwareSwitchButton(descriptor.buttonId)
@@ -1636,6 +1634,10 @@ struct PauseTileMenuView: View {
                 #endif
             }
         }
+        .onReceive(emulatorVC.coreInputHandler.$hardwareSwitchPositionIndexes.removeDuplicates()) { positions in
+            // @Published sends before assignment. Rebuild with the new positions.
+            rebuildSections(hardwareSwitchPositions: positions)
+        }
         .sheet(isPresented: $showingSaveStateBrowser) {
             PauseMenuSaveStateBrowserView(emulatorVC: emulatorVC) { stateToLoad in
                 showingSaveStateBrowser = false
@@ -1810,17 +1812,17 @@ struct PauseTileMenuView: View {
         }
         #endif
         #if os(tvOS)
-        .fullScreenCover(isPresented: $showingShaderBrowser, onDismiss: rebuildSections) {
+        .fullScreenCover(isPresented: $showingShaderBrowser, onDismiss: { rebuildSections() }) {
             ShaderPauseSheet(emulatorVC: emulatorVC)
         }
-        .fullScreenCover(isPresented: $showingShaderSettings, onDismiss: rebuildSections) {
+        .fullScreenCover(isPresented: $showingShaderSettings, onDismiss: { rebuildSections() }) {
             ShaderPauseSheet(emulatorVC: emulatorVC, startInEditor: true)
         }
         #else
-        .sheet(isPresented: $showingShaderBrowser, onDismiss: rebuildSections) {
+        .sheet(isPresented: $showingShaderBrowser, onDismiss: { rebuildSections() }) {
             ShaderPauseSheet(emulatorVC: emulatorVC)
         }
-        .sheet(isPresented: $showingShaderSettings, onDismiss: rebuildSections) {
+        .sheet(isPresented: $showingShaderSettings, onDismiss: { rebuildSections() }) {
             ShaderPauseSheet(emulatorVC: emulatorVC, startInEditor: true)
         }
         #endif
