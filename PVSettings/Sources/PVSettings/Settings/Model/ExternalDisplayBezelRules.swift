@@ -21,30 +21,52 @@ public enum ExternalDisplayBezelRules {
         public let id: String
         /// System identifiers this TV is the natural screen for.
         public let preferredSystems: Set<String>
+        /// The player added this one (imported or saved). Their TVs come before the built-in
+        /// ones when several list a system.
+        public let isUserAdded: Bool
 
-        public init(id: String, preferredSystems: Set<String> = []) {
+        public init(id: String, preferredSystems: Set<String> = [], isUserAdded: Bool = false) {
             self.id = id
             self.preferredSystems = preferredSystems
+            self.isUserAdded = isUserAdded
         }
     }
 
-    /// The TV to show for a game, or `nil` for the picture alone.
+    /// The TV to show for a game, or `nil` for the picture alone. The first that applies:
     ///
-    /// A TV has to be chosen for any TV to show: the system's own screen replaces the chosen
-    /// one, it does not switch the feature on.
+    /// 1. the TV pinned to the game, which may be none;
+    /// 2. artwork made for the game;
+    /// 3. with a TV chosen and `matchesSystem`, a TV that lists the game's system;
+    /// 4. the chosen TV.
     ///
     /// - Parameters:
     ///   - chosen: the stored choice (`noBezelID` for none).
     ///   - matchesSystem: prefer the TV that lists the game's system, when one does.
-    ///   - candidates: the catalogue, in its own order. The first TV listing a system wins.
+    ///   - candidates: every TV on the device, in catalogue order. Among TVs listing a system
+    ///     the player's own win, then the first.
+    ///   - pinned: the TV pinned to this game: `nil` for automatic, `noBezelID` for none. A pin
+    ///     whose TV is gone counts as no pin.
+    ///   - gameArt: artwork for this game that is on the device, when the player wants game
+    ///     artwork shown. It shows with no TV chosen too.
     public static func bezelID(chosen: String,
                                matchesSystem: Bool,
                                systemID: String?,
-                               candidates: [Candidate]) -> String? {
-        guard chosen != noBezelID, candidates.contains(where: { $0.id == chosen }) else { return nil }
-        if matchesSystem, let systemID,
-           let preferred = candidates.first(where: { $0.preferredSystems.contains(systemID) }) {
-            return preferred.id
+                               candidates: [Candidate],
+                               pinned: String? = nil,
+                               gameArt: String? = nil) -> String? {
+        let known = { (id: String) in candidates.contains { $0.id == id } }
+        if let pinned {
+            if pinned == noBezelID { return nil }
+            if known(pinned) { return pinned }
+        }
+        if let gameArt, known(gameArt) { return gameArt }
+        // The system's own screen replaces the chosen TV; it does not switch TVs on.
+        guard chosen != noBezelID, known(chosen) else { return nil }
+        if matchesSystem, let systemID {
+            let listing = candidates.filter { $0.preferredSystems.contains(systemID) }
+            if let preferred = listing.first(where: \.isUserAdded) ?? listing.first {
+                return preferred.id
+            }
         }
         return chosen
     }

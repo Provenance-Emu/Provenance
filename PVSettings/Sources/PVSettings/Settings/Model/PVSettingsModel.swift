@@ -79,6 +79,16 @@ extension Defaults.Keys {
     /// The picture lights the room around the TV. Off keeps the reflections and costs less GPU time.
     static let externalDisplayBezelLightsRoom = Key<Bool>("externalDisplayBezelLightsRoom", default: true)
 
+    /// Show artwork made for the running game around the picture on an external display,
+    /// downloaded from The Bezel Project the first time the game is played.
+    static let externalDisplayGameBezels = Key<Bool>("externalDisplayGameBezels", default: false)
+
+    /// Which of The Bezel Project's two families of artwork is browsed and downloaded.
+    static let externalDisplayBezelProjectStyle = Key<BezelProjectStyle>("externalDisplayBezelProjectStyle", default: .gameArt)
+
+    /// TVs pinned to single games: game MD5 to `TVBezel` id (`ExternalDisplayBezelRules.noBezelID` for none).
+    static let externalDisplayBezelByGame = Key<[String: String]>("externalDisplayBezelByGame", default: [:])
+
     static let showRecentSaveStates = Key<Bool>("showRecentSaveStates", default: true)
 
     /// When false (default), the Recent Saves carousel collapses timed autosaves: only the

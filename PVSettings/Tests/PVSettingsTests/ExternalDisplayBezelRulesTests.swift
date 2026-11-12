@@ -74,4 +74,56 @@ struct ExternalDisplayBezelRulesTests {
         #expect(Rules.tubeFilter(hasUserSelection: true, userSelectionIsOff: true, userSelectionIsBezel: false) == .off)
         #expect(Rules.tubeFilter(hasUserSelection: true, userSelectionIsOff: false, userSelectionIsBezel: true) == .off)
     }
+
+    // MARK: - Pins, game artwork and the player's own TVs
+
+    private let library: [Rules.Candidate] = [
+        .init(id: "studio"),
+        .init(id: "computer", preferredSystems: ["com.provenance.c64"]),
+        .init(id: "my-c64", preferredSystems: ["com.provenance.c64"], isUserAdded: true),
+        .init(id: "my-snes", preferredSystems: ["com.provenance.snes"], isUserAdded: true),
+        .init(id: "art-actraiser", isUserAdded: true)
+    ]
+
+    private func resolve(chosen: String = "studio", matches: Bool = true, system: String? = "com.provenance.nes",
+                         pinned: String? = nil, gameArt: String? = nil) -> String? {
+        Rules.bezelID(chosen: chosen, matchesSystem: matches, systemID: system, candidates: library,
+                      pinned: pinned, gameArt: gameArt)
+    }
+
+    @Test("A pinned TV beats everything, and a pinned None shows the picture alone")
+    func pinned() {
+        #expect(resolve(system: "com.provenance.c64", pinned: "studio", gameArt: "art-actraiser") == "studio")
+        #expect(resolve(pinned: Rules.noBezelID, gameArt: "art-actraiser") == nil)
+        #expect(resolve(chosen: Rules.noBezelID, pinned: "computer") == "computer")
+    }
+
+    @Test("A pin whose TV is gone counts as no pin")
+    func stalePin() {
+        #expect(resolve(pinned: "deleted") == "studio")
+        #expect(resolve(pinned: "deleted", gameArt: "art-actraiser") == "art-actraiser")
+        #expect(resolve(chosen: Rules.noBezelID, pinned: "deleted") == nil)
+    }
+
+    @Test("Game artwork beats the system's screen and the chosen TV, and shows with no TV chosen")
+    func gameArtwork() {
+        #expect(resolve(system: "com.provenance.c64", gameArt: "art-actraiser") == "art-actraiser")
+        #expect(resolve(chosen: Rules.noBezelID, gameArt: "art-actraiser") == "art-actraiser")
+        #expect(resolve(chosen: Rules.noBezelID, matches: false, system: nil, gameArt: "art-actraiser") == "art-actraiser")
+    }
+
+    @Test("Artwork that is not on the device is ignored")
+    func missingArtwork() {
+        #expect(resolve(gameArt: "not-downloaded") == "studio")
+        #expect(resolve(chosen: Rules.noBezelID, gameArt: "not-downloaded") == nil)
+    }
+
+    @Test("Among TVs for a system the player's own comes first")
+    func ownTVFirst() {
+        #expect(resolve(system: "com.provenance.c64") == "my-c64")
+        #expect(resolve(system: "com.provenance.snes") == "my-snes")
+        #expect(resolve(matches: false, system: "com.provenance.c64") == "studio")
+        // A TV for a system still needs a TV to be chosen.
+        #expect(resolve(chosen: Rules.noBezelID, system: "com.provenance.snes") == nil)
+    }
 }
