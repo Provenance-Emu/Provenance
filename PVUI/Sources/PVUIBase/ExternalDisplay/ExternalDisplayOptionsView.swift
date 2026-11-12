@@ -17,6 +17,7 @@ import PVShaders
 public struct ExternalDisplayOptionsView: View {
     @Default(.externalDisplayMode) private var mode
     @Default(.externalDisplayDevicePicture) private var devicePicture
+    @Default(.hideOnScreenControlsWithController) private var hideControlsWithController
     private let store = ShaderLibraryStore.shared
 
     public init() {}
@@ -49,6 +50,14 @@ public struct ExternalDisplayOptionsView: View {
                     Text("Game Picture on This Device")
                 } footer: {
                     Text("Auto keeps the picture here when you play with a controller or a skin with its own artwork, and hides it when this device only shows touch controls.")
+                }
+
+                Section {
+                    Toggle(String(localized: "Hide Touch Controls with a Controller"), isOn: $hideControlsWithController)
+                } header: {
+                    Text("Controls on This Device")
+                } footer: {
+                    Text("Turn off to keep the touch controls on this device while a hardware controller is connected.")
                 }
 
                 Section {

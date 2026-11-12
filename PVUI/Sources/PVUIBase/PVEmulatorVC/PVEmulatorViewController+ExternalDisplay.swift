@@ -42,8 +42,12 @@ extension PVEmulatorViewController {
         NotificationCenter.default.addObserver(self, selector: #selector(externalDisplayFilterDidChange),
                                                name: ShaderLibraryStore.didChangeNotification, object: nil)
         externalDisplaySettingsObservation = Task { @MainActor [weak self] in
-            for await _ in Defaults.updates([.externalDisplayMode, .externalDisplayDevicePicture, .imageSmoothingMode],
+            for await _ in Defaults.updates([.externalDisplayMode, .externalDisplayDevicePicture, .imageSmoothingMode,
+                                             .hideOnScreenControlsWithController],
                                             initial: false) {
+                // The controls switch sits with the display options, and is otherwise read only
+                // when a controller connects.
+                self?.updateOnScreenControlsVisibility()
                 self?.updateExternalDisplay()
             }
         }
