@@ -10,6 +10,7 @@ import UIKit
 import Metal
 import QuartzCore
 import PVLogging
+import PVSettings
 import PVShaders
 import SkinKitCore
 import SkinKitUI
@@ -39,6 +40,13 @@ final class GameExternalOutputView: UIView {
     /// The picture as the tube shows it, between the two draw stages.
     private var tubeTexture: MTLTexture?
 
+    /// A bezel that is one image, above the picture: it leaves its screen clear.
+    private let bezelImageView = UIImageView()
+    /// The image bezel shown, for its size and where its screen is.
+    private var imageBezel: TVBezel.ImageArtwork?
+    /// The image bezel's screen in this view's coordinates, while one is shown.
+    private var bezelScreenFrame: CGRect?
+
     /// The skin's artwork, above the picture: a skin leaves its screen area clear.
     private let skinImageView = UIImageView()
     private var skinLayout: ExternalDisplaySkinLayout?
@@ -55,6 +63,7 @@ final class GameExternalOutputView: UIView {
         backgroundColor = .black
         isUserInteractionEnabled = false
         addSubview(skinImageView)
+        addSubview(bezelImageView)
         guard let metalLayer else { return }
         metalLayer.device = device
         // Matches the presenter's pipeline, which is built for the device view's format.
@@ -86,6 +95,21 @@ final class GameExternalOutputView: UIView {
         let frames = skinLayout?.frames(in: bounds.size)
         skinImageView.frame = frames?.image ?? .zero
         skinScreenFrame = frames?.screen
+        layoutImageBezel()
+    }
+
+    /// Fits the image bezel whole into the view and works out where its screen lands.
+    private func layoutImageBezel() {
+        guard let art = imageBezel, art.size.width > 0, bounds.width > 0, bounds.height > 0 else {
+            bezelImageView.frame = .zero
+            bezelScreenFrame = nil
+            return
+        }
+        let frame = RenderGeometry.aspectFit(aspect: art.size, in: bounds)
+        let scale = frame.width / art.size.width
+        bezelImageView.frame = frame
+        bezelScreenFrame = CGRect(x: frame.minX + art.screen.minX * scale, y: frame.minY + art.screen.minY * scale,
+                                  width: art.screen.width * scale, height: art.screen.height * scale)
     }
 
     /// Draws `skin` around the picture using `layout`, or with `nil` shows the picture alone.
@@ -137,14 +161,17 @@ final class GameExternalOutputView: UIView {
             guard bezelKey != nil else { return }
             bezelLoad?.cancel()
             bezelKey = nil
-            bezelScene = nil
-            tubeTexture = nil
-            bezelProcessor.update(nil, smoothing: true)
+            clearShaderBezel()
+            clearImageBezel()
             didChange()
             return
         }
         bezelRequest = (bezel, lightsRoom, flatGlass, didChange)
         let drawableSize = metalLayer?.drawableSize ?? .zero
+        if let art = bezel.image {
+            showImageBezel(bezel, art: art, drawableSize: drawableSize, didChange: didChange)
+            return
+        }
         let sceneRect = RenderGeometry.sceneRect(aspect: TVBezelShader.sceneAspect, drawableSize: drawableSize)
         // No size yet: `layoutSubviews` asks again once the drawable has one.
         guard sceneRect.width > 0, sceneRect.height > 0 else { return }
@@ -159,6 +186,7 @@ final class GameExternalOutputView: UIView {
                                   scenePixelWidth: sceneRect.width, key: key)
             }.value
             guard let self, self.bezelKey == key else { return }
+            self.clearImageBezel()
             self.bezelScene = scene
             self.tubeTexture = nil
             self.bezelProcessor.update(scene?.shader, smoothing: true, textures: scene?.textures)
@@ -169,6 +197,48 @@ final class GameExternalOutputView: UIView {
             }
             didChange()
         }
+    }
+
+    /// Lays an image bezel over the picture. The image is decoded off the main thread, no
+    /// larger than the display needs; until it is ready what was showing stays.
+    private func showImageBezel(_ bezel: TVBezel, art: TVBezel.ImageArtwork, drawableSize: CGSize, didChange: @escaping () -> Void) {
+        let maxPixel = max(drawableSize.width, drawableSize.height)
+        // No size yet: `layoutSubviews` asks again once the drawable has one.
+        guard maxPixel > 0 else { return }
+        let key = "\(bezel.id)|image|\(Int(maxPixel))|\(art.screen)"
+        guard key != bezelKey else { return }
+        bezelKey = key
+        bezelLoad?.cancel()
+        bezelLoad = Task { @MainActor [weak self] in
+            let image = await Task.detached(priority: .userInitiated) {
+                TVBezelImage.displayImage(art.fileURL, maxPixel: maxPixel).map { UIImage(cgImage: $0) }
+            }.value
+            guard let self, self.bezelKey == key else { return }
+            self.clearShaderBezel()
+            self.imageBezel = image == nil ? nil : art
+            self.bezelImageView.image = image
+            self.setNeedsLayout()
+            self.layoutIfNeeded()
+            if image == nil {
+                WLOG("External display: bezel '\(bezel.name)' could not be read; showing the picture alone")
+            } else {
+                ILOG("External display: bezel '\(bezel.name)', screen \(art.screen) of \(art.size)")
+            }
+            didChange()
+        }
+    }
+
+    private func clearShaderBezel() {
+        bezelScene = nil
+        tubeTexture = nil
+        bezelProcessor.update(nil, smoothing: true)
+    }
+
+    private func clearImageBezel() {
+        guard imageBezel != nil || bezelImageView.image != nil else { return }
+        imageBezel = nil
+        bezelImageView.image = nil
+        layoutImageBezel()
     }
 
     /// The texture stage one draws the tube's picture into, for a scene `sceneSize` pixels
@@ -194,9 +264,16 @@ final class GameExternalOutputView: UIView {
         layoutIfNeeded()
     }
 
-    /// The picture's rect in drawable pixels: inside the skin's screen while a skin is shown,
-    /// else aspect-fit in the whole view.
+    /// The picture's rect in drawable pixels: inside an image bezel's or a skin's screen while
+    /// one is shown, else aspect-fit in the whole view.
     func pictureRect(aspect: CGSize, drawableSize: CGSize) -> CGRect {
+        if let screen = bezelScreenFrame, bounds.width > 0, bounds.height > 0 {
+            let fit = BezelPictureFit.rect(aspect: aspect, in: screen)
+            let scaleX = drawableSize.width / bounds.width
+            let scaleY = drawableSize.height / bounds.height
+            return CGRect(x: fit.minX * scaleX, y: fit.minY * scaleY,
+                          width: fit.width * scaleX, height: fit.height * scaleY).integral
+        }
         guard let screen = skinScreenFrame, bounds.width > 0, bounds.height > 0 else {
             return RenderGeometry.contentRect(aspect: aspect, viewSize: bounds.size, drawableSize: drawableSize)
         }

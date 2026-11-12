@@ -2068,7 +2068,7 @@ struct PauseTileMenuView: View {
         #endif
         #if os(iOS)
         .sheet(isPresented: $showingExternalDisplay, onDismiss: rebuildSections) {
-            ExternalDisplayPauseSheet()
+            ExternalDisplayPauseSheet(emulatorVC: emulatorVC)
         }
         #endif
         .sheet(isPresented: $showingPortDevices) {

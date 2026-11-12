@@ -43,7 +43,37 @@ extension PVEmulatorViewController {
         guard filtersApplyToCurrentLayout else { return nil }
         return TVBezelCatalog.bezel(chosen: Defaults[.externalDisplayBezel],
                                     matchesSystem: Defaults[.externalDisplayBezelMatchesSystem],
-                                    systemID: shaderSystemID)
+                                    systemID: shaderSystemID,
+                                    pinned: shaderGameMD5.flatMap { Defaults[.externalDisplayBezelByGame][$0] },
+                                    gameArt: Defaults[.externalDisplayGameBezels]
+                                        ? ExternalDisplayGameArtwork.shared.bezelID(forGame: shaderGameMD5) : nil)
+    }
+
+    /// The running game as the bezel options and The Bezel Project's lists know it.
+    var externalDisplayGameContext: ExternalDisplayGameContext? {
+        guard let game, !game.isInvalidated, let systemID = shaderSystemID else { return nil }
+        let romName = ((game.romPath as NSString).lastPathComponent as NSString).deletingPathExtension
+        return ExternalDisplayGameContext(md5: game.md5Hash, systemID: systemID, romName: romName, title: game.title)
+    }
+
+    /// Looks for artwork made for this game once per session and style, downloading it the
+    /// first time. Nothing is said when it fails: the chosen TV keeps showing.
+    private func findExternalDisplayGameArt() {
+        guard Defaults[.externalDisplayGameBezels], filtersApplyToCurrentLayout,
+              let context = externalDisplayGameContext else { return }
+        let style = Defaults[.externalDisplayBezelProjectStyle]
+        let found = ExternalDisplayGameArtwork.shared
+        guard found.begin(game: context.md5, style: style) else { return }
+        Task { @MainActor [weak self] in
+            let bezel = await BezelProjectService.shared.artwork(for: context, style: style)
+            guard let bezel, found.finish(game: context.md5, style: style, bezelID: bezel.id) else { return }
+            self?.updateExternalDisplay()
+        }
+    }
+
+    @objc private func bezelLibraryDidChange() {
+        // A pinned or chosen bezel may have arrived or gone.
+        updateExternalDisplay()
     }
 
     /// What supplies the controls on the device: the generated touch controls, a skin that
@@ -61,10 +91,14 @@ extension PVEmulatorViewController {
                                                name: ExternalDisplayCoordinator.didChangeNotification, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(externalDisplayFilterDidChange),
                                                name: ShaderLibraryStore.didChangeNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(bezelLibraryDidChange),
+                                               name: TVBezelLibrary.didChangeNotification, object: nil)
+        TVBezelLibrary.shared.refreshIfNeeded()
         externalDisplaySettingsObservation = Task { @MainActor [weak self] in
             for await _ in Defaults.updates([.externalDisplayMode, .externalDisplayDevicePicture, .externalDisplaySkin,
                                              .externalDisplayBezel, .externalDisplayBezelMatchesSystem,
-                                             .externalDisplayBezelLightsRoom,
+                                             .externalDisplayBezelLightsRoom, .externalDisplayGameBezels,
+                                             .externalDisplayBezelProjectStyle, .externalDisplayBezelByGame,
                                              .imageSmoothingMode, .hideOnScreenControlsWithController],
                                             initial: false) {
                 // The controls switch sits with the display options, and is otherwise read only
@@ -86,6 +120,7 @@ extension PVEmulatorViewController {
     /// Brings both screens in line with `externalDisplayPlan`. Cheap and safe to call whenever
     /// one of its inputs may have changed.
     func updateExternalDisplay() {
+        if ExternalDisplayCoordinator.shared.isConnected { findExternalDisplayGameArt() }
         let plan = externalDisplayPlan
         let metalVC = gpuViewController as? PVMetalViewController
         if plan.gameOnExternalDisplay,
@@ -128,7 +163,11 @@ extension PVEmulatorViewController {
         var resolved = store.resolvedShader(on: .external, gameMD5: shaderGameMD5, systemID: shaderSystemID,
                                             screenType: core.screenType)
         let bezel = externalDisplayPlan.bezelOnExternalDisplay ? externalDisplayBezel : nil
-        if let bezel {
+        if let bezel, bezel.image != nil {
+            // An image bezel has no look or glass of its own: the filter runs as it does with
+            // no TV, except one that brings a frame, which cannot go inside another.
+            if let picked = resolved, TVBezelShader.isBezelFilter(picked.entry) { resolved = nil }
+        } else if let bezel {
             switch ExternalDisplayBezelRules.tubeFilter(
                 hasUserSelection: store.selection(for: .screen(.external)) != nil,
                 userSelectionIsOff: resolved == nil,

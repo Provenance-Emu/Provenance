@@ -5,17 +5,37 @@
 //  The TVs that can surround the game picture on an external display.
 //
 
+import CoreGraphics
 import Foundation
 import PVLogging
 import PVSettings
 import PVShaders
 
 /// One TV: a cabinet and room drawn from a format 2 skin document, the look of its frame and
-/// glass, and the tube look it suggests.
+/// glass, and the tube look it suggests. Or a picture with a hole in it: a bezel the player
+/// imported or downloaded, laid plainly over the game.
 ///
 /// A TV is data. The bundled ones live in `Resources/TVBezels`: `catalog.json` lists them and
-/// each names a skin document beside it.
+/// each names a skin document beside it. The player's own live in `TVBezelLibrary`.
 public struct TVBezel: Decodable, Identifiable, Equatable, Sendable {
+
+    /// A bezel that is one image with a see-through screen.
+    public struct ImageArtwork: Equatable, Sendable {
+        public let fileURL: URL
+        /// The image's size in pixels.
+        public let size: CGSize
+        /// The see-through screen in the image's pixels, origin at the top left.
+        public let screen: CGRect
+    }
+
+    /// Where a TV came from.
+    public enum Source: String, Codable, Sendable {
+        case builtIn
+        /// A file the player brought in.
+        case imported
+        /// Downloaded from The Bezel Project.
+        case bezelProject
+    }
 
     /// A filter and the values it runs with: the tube look a TV suggests.
     public struct Look: Decodable, Equatable, Sendable {
@@ -47,8 +67,15 @@ public struct TVBezel: Decodable, Identifiable, Equatable, Sendable {
     /// The picture may light this TV's room (`TVBezelShader.ambientID`). Off for a TV that
     /// looks wrong or runs too slowly with it.
     public let lightsRoom: Bool
-    /// File name of the format 2 skin document that draws the cabinet and the room.
+    /// File name of the format 2 skin document that draws the cabinet and the room. Empty for
+    /// an image bezel.
     public let artwork: String
+    /// The image of a bezel the player imported or downloaded; `nil` for a built-in TV.
+    public let image: ImageArtwork?
+    public let source: Source
+    /// Shown in the picker. Artwork fetched for a single game is on the device without
+    /// being listed.
+    public let isListed: Bool
 
     private enum CodingKeys: String, CodingKey { case id, name, preferredSystems, frame, look, lightsRoom, artwork }
 
@@ -61,6 +88,23 @@ public struct TVBezel: Decodable, Identifiable, Equatable, Sendable {
         look = try container.decodeIfPresent(Look.self, forKey: .look)
         lightsRoom = try container.decodeIfPresent(Bool.self, forKey: .lightsRoom) ?? true
         artwork = try container.decode(String.self, forKey: .artwork)
+        image = nil
+        source = .builtIn
+        isListed = true
+    }
+
+    /// An image bezel.
+    init(id: String, name: String, preferredSystems: [String], image: ImageArtwork, source: Source, isListed: Bool) {
+        self.id = id
+        self.name = name
+        self.preferredSystems = preferredSystems
+        frame = [:]
+        look = nil
+        lightsRoom = false
+        artwork = ""
+        self.image = image
+        self.source = source
+        self.isListed = isListed
     }
 }
 
@@ -99,18 +143,29 @@ public enum TVBezelCatalog {
         }
     }()
 
+    /// Every TV on the device: the bundled ones, then the player's own, listed or not.
+    public static var all: [TVBezel] { bundled + TVBezelLibrary.shared.bezels }
+
     public static func bezel(id: String) -> TVBezel? {
-        bundled.first { $0.id == id }
+        bundled.first { $0.id == id } ?? TVBezelLibrary.shared.bezel(id: id)
     }
 
-    /// The catalogue as the selection rules see it.
+    /// The catalogue as the selection rules see it. Only a TV shown in the picker can stand
+    /// for a system.
     public static var candidates: [ExternalDisplayBezelRules.Candidate] {
-        bundled.map { .init(id: $0.id, preferredSystems: Set($0.preferredSystems)) }
+        all.map {
+            .init(id: $0.id, preferredSystems: $0.isListed ? Set($0.preferredSystems) : [], isUserAdded: $0.source != .builtIn)
+        }
     }
 
     /// The TV to show for a game from the current settings, or `nil` for the picture alone.
-    public static func bezel(chosen: String, matchesSystem: Bool, systemID: String?) -> TVBezel? {
-        ExternalDisplayBezelRules.bezelID(chosen: chosen, matchesSystem: matchesSystem,
-                                          systemID: systemID, candidates: candidates).flatMap(bezel(id:))
+    ///
+    /// - Parameters:
+    ///   - pinned: the TV pinned to the game (`ExternalDisplayBezelRules.bezelID`).
+    ///   - gameArt: artwork for the game that is on the device, when game artwork is wanted.
+    public static func bezel(chosen: String, matchesSystem: Bool, systemID: String?,
+                             pinned: String? = nil, gameArt: String? = nil) -> TVBezel? {
+        ExternalDisplayBezelRules.bezelID(chosen: chosen, matchesSystem: matchesSystem, systemID: systemID,
+                                          candidates: candidates, pinned: pinned, gameArt: gameArt).flatMap(bezel(id:))
     }
 }
