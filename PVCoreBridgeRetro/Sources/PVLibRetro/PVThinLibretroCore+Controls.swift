@@ -371,61 +371,6 @@ extension PVThinLibretroCore {
             }
             _bridge.setAnalogIndex(kAnalogRightStick, axis: kAnalogAxisX, value: Int16(rx * Float(kAnalogMax)), forPlayer: player)
             _bridge.setAnalogIndex(kAnalogRightStick, axis: kAnalogAxisY, value: Int16(ry * Float(kAnalogMax)), forPlayer: player)
-
-            // DualSense / DualShock touchpad → mouse input (player 0 only, when mouse is active).
-            // The touchpad reports absolute position in the [-1, 1] range per axis.
-            // We compute frame-to-frame deltas and scale them to libretro mouse_rel units.
-            // DS is excluded: it uses RETRO_DEVICE_POINTER (absolute coordinates via setPointerX),
-            // not RETRO_DEVICE_MOUSE (relative deltas via setMouseDeltaX), so forwarding touchpad
-            // swipes as mouse deltas would conflict with the pointer path.
-            if playerIndex == 0, gameSupportsMouse, systemIdentifier != SystemIdentifier.DS.rawValue {
-#if canImport(GameController)
-                if #available(iOS 14.5, tvOS 14.5, *) {
-                    var touchpadX: Float = 0
-                    var touchpadY: Float = 0
-                    var hasTouchpad = false
-
-                    // GCDualSenseGamepad and GCDualShockGamepad both subclass GCExtendedGamepad,
-                    // so we can cast the already-captured `pad` directly.
-                    if let dualSense = pad as? GCDualSenseGamepad {
-                        touchpadX = dualSense.touchpadPrimary.xAxis.value
-                        touchpadY = dualSense.touchpadPrimary.yAxis.value
-                        hasTouchpad = true
-                    } else if let dualShock = pad as? GCDualShockGamepad {
-                        touchpadX = dualShock.touchpadPrimary.xAxis.value
-                        touchpadY = dualShock.touchpadPrimary.yAxis.value
-                        hasTouchpad = true
-                    }
-
-                    if hasTouchpad {
-                        // Use a deadzone to filter noise rather than the click button
-                        // (touchpadButton.isPressed represents a physical click, not a
-                        // finger-on-pad touch, so swipes without clicking would be missed).
-                        let deadzone: Float = 0.01
-                        let scale: Float = 300.0
-
-                        if _padTouchPrevValid {
-                            let dx = touchpadX - _padTouchPrevX
-                            let dy = touchpadY - _padTouchPrevY
-                            if abs(dx) > deadzone || abs(dy) > deadzone {
-                                // Scale: touchpad full range (-1..1) maps to ~600 rel units;
-                                // a gentle swipe produces comfortable cursor speed.
-                                _bridge.setMouseDeltaX(
-                                    Int16(clamping: Int(dx * scale)),
-                                    deltaY: Int16(clamping: Int(dy * scale))
-                                )
-                            }
-                        }
-                        // Always refresh the previous sample while a touchpad is present so
-                        // sub-deadzone per-frame movements don't accumulate into a large jump
-                        // the next time the finger moves beyond the deadzone.
-                        _padTouchPrevX = touchpadX
-                        _padTouchPrevY = touchpadY
-                        _padTouchPrevValid = true
-                    }
-                }
-#endif
-            }
         }
     }
 }
@@ -1678,6 +1623,19 @@ extension PVThinLibretroCore: MouseResponder {
         _mousePrevNorm = CGPoint(x: px, y: py)
         _mousePrevValid = true
 #endif
+    }
+
+    /// Moves the mouse by a fraction of the emulated screen, the same on iOS and tvOS.
+    ///
+    /// A controller's touchpad or gyro arrives here (`ControllerPointerRouter` in PVUI).
+    /// DS takes absolute pointer positions, not mouse movement, so it ignores this.
+    public func mouseMoved(byNormalizedDelta delta: CGPoint) {
+        guard SystemIdentifier(rawValue: systemIdentifier ?? "") != .DS else { return }
+        let scale = relativeMouseScale()
+        let units = _mouseScaler.units(dx: Double(delta.x), dy: Double(delta.y), scaleX: scale.x, scaleY: scale.y)
+        if units.x != 0 || units.y != 0 {
+            _bridge.setMouseDeltaX(units.x, deltaY: units.y)
+        }
     }
 
     public func leftMouseDown(atPoint point: CGPoint) {

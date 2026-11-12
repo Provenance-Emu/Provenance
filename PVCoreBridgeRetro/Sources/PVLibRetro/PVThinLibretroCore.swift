@@ -154,10 +154,6 @@ class PVThinLibretroCore: PVEmulatorCore, @unchecked Sendable {
     /// Whether the DS touchscreen pointer is currently pressed (finger down).
     /// Used by `mouseMoved(atPoint:)` to maintain pressed state during drag.
     var _dsPointerPressed: Bool = false
-    /// Previous touchpad position for DualSense touchpad → mouse delta computation.
-    var _padTouchPrevX: Float = 0
-    var _padTouchPrevY: Float = 0
-    var _padTouchPrevValid: Bool = false
 
     // MARK: - Core option state
     /// `buildOptions()` result and the frontend state it was built from.

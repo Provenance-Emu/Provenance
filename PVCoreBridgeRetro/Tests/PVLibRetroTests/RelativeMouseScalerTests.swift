@@ -19,6 +19,16 @@ struct RelativeMouseScalerTests {
         #expect(units.y == -50)
     }
 
+    /// What `mouseMoved(byNormalizedDelta:)` does with a controller touchpad's movement:
+    /// half a screen at DOS's 640 x 400 sweep is 320 and 200 mouse units.
+    @Test func normalizedDeltaScalesBySweep() {
+        var scaler = RelativeMouseScaler()
+        let dos = PVThinLibretroCore.relativeMouseScale(system: .DOS, coreIdentifier: nil, frameWidth: 320, frameHeight: 200)
+        let units = scaler.units(dx: 0.5, dy: 0.5, scaleX: dos.x, scaleY: dos.y)
+        #expect(units.x == 320)
+        #expect(units.y == 200)
+    }
+
     @Test func subUnitStepsAccumulate() {
         var scaler = RelativeMouseScaler()
         var totalX = 0

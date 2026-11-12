@@ -92,6 +92,16 @@ extension PVSNES9xEmulatorCore: MouseResponder {
 #endif
     }
 
+    /// The SNES picture in pixels: a movement of one full screen is this many mouse counts.
+    private static let mouseCountsPerScreen = CGSize(width: 256, height: 224)
+
+    /// Moves the SNES Mouse by a fraction of the screen, the same on iOS and tvOS.
+    /// A controller's touchpad or gyro arrives here (`ControllerPointerRouter` in PVUI).
+    public func mouseMoved(byNormalizedDelta delta: CGPoint) {
+        let counts = CGPoint(x: delta.x * Self.mouseCountsPerScreen.width, y: delta.y * Self.mouseCountsPerScreen.height)
+        (bridge as! PVSNESEmulatorCoreBridge).snesMouseMoved(byDelta: counts)
+    }
+
     public func leftMouseDown(atPoint point: CGPoint) {
         (bridge as! PVSNESEmulatorCoreBridge).snesLeftMouseDown()
     }
