@@ -163,10 +163,11 @@ struct NetplayChoiceRow<Value: Hashable>: View {
                 Text(title).font(.subheadline).foregroundStyle(.secondary)
             }
             // Too many choices for the width (a phone): scroll them sideways rather than truncate.
+            // Chips keep their full width in both, or the first always "fits" by truncating.
             ViewThatFits(in: .horizontal) {
-                chips(fitted: false)
+                chips
                 ScrollView(.horizontal, showsIndicators: false) {
-                    chips(fitted: true)
+                    chips
                         .padding(.vertical, NetplayCursorMetrics.highlightOutset)
                         .padding(.horizontal, NetplayCursorMetrics.highlightOutset)
                 }
@@ -174,14 +175,14 @@ struct NetplayChoiceRow<Value: Hashable>: View {
         }
     }
 
-    private func chips(fitted: Bool) -> some View {
+    private var chips: some View {
         HStack(spacing: 10) {
             ForEach(Array(choices.enumerated()), id: \.offset) { index, choice in
                 let id = Self.cursorID(cursorPrefix, index)
                 NetplayChoiceChip(title: choice.title, selected: choice.value == selection, isCursor: cursor == id) {
                     selection = choice.value
                 }
-                .fixedSize(horizontal: fitted, vertical: false)
+                .fixedSize(horizontal: true, vertical: false)
                 .netplayCursorItem(id, cursor: cursor, cornerRadius: 16)
             }
         }
