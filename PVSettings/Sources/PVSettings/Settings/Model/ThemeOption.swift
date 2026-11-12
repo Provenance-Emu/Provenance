@@ -91,8 +91,6 @@ public enum ThemeOptionsCGA: String, ThemeOptions {
     case red
     case yellow
     case purple
-    case rainbow
-    case random
     
     public var description: String {
         rawValue.capitalized

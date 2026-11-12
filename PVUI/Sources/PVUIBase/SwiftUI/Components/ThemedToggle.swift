@@ -39,10 +39,14 @@ private struct ToggleStyleModifier: ViewModifier {
         #if os(tvOS)
             content.toggleStyle(RetroTheme.RetroToggleStyle())
         #else
-        if useRetroStyle {
+        let palette = themeManager.currentPalette
+        if useRetroStyle && palette is RetroWaveThemePalette {
             content.toggleStyle(RetroTheme.RetroToggleStyle())
+        } else if useRetroStyle {
+            content.toggleStyle(.switch)
+                .tint(Color(palette.switchON ?? palette.defaultTintColor))
         } else {
-            content.toggleStyle(SwitchThemedToggleStyle(tint: themeManager.currentPalette.switchON?.swiftUIColor ?? .white))
+            content.toggleStyle(SwitchThemedToggleStyle(tint: palette.switchON?.swiftUIColor ?? .white))
         }
         #endif
     }

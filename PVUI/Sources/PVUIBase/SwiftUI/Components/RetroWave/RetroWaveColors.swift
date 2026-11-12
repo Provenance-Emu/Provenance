@@ -35,15 +35,19 @@ public enum RetroThemeColors {
             if palette is RetroWaveThemePalette { return UIColor(red: 0.40, green: 0.80, blue: 0.90, alpha: 1) }
             return tint
         case .secondary, .tertiary:
-            let shift: CGFloat = role == .secondary ? 0.16 : 0.29
             if palette is RetroWaveThemePalette {
                 return role == .secondary
                     ? UIColor(red: 0.69, green: 0.55, blue: 0.91, alpha: 1)
                     : palette.defaultTintColor
             }
-            return UIColor(hue: (hue + shift).truncatingRemainder(dividingBy: 1),
-                           saturation: min(saturation, palette.dark ? 0.52 : 0.75),
-                           brightness: palette.dark ? 0.95 : 0.66, alpha: 1)
+            // Keep gradients and highlights in the theme's accent family.
+            let secondary = role == .secondary
+            return UIColor(hue: hue,
+                           saturation: saturation * (palette.dark ? (secondary ? 0.72 : 0.86) : 1),
+                           brightness: palette.dark
+                               ? brightness + (1 - brightness) * (secondary ? 0.35 : 0.65)
+                               : brightness * (secondary ? 0.88 : 0.76),
+                           alpha: 1)
         case .background, .surface:
             let base = (role == .background ? palette.gameLibraryBackground
                         : palette.gameLibraryCellBackground ?? palette.gameLibraryHeaderBackground).resolvedColor(with: traits)

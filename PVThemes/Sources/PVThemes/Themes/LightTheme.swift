@@ -19,10 +19,11 @@ struct LightThemePalette: UXThemePalette {
     public var dark: Bool { false }
 
     enum Colors {
+        static let accent = UIColor(red: 0, green: 0.36, blue: 0.70, alpha: 1)
         static let white9alpha6 = UIColor(white: 0.9, alpha: 0.6)
     }
 
-    public var defaultTintColor: UIColor { .Provenance.blue } // iOS Blue
+    public var defaultTintColor: UIColor { Colors.accent }
 
     public var gameLibraryBackground: UIColor { .white }
     public var gameLibraryCellBackground: UIColor? { .white }
@@ -39,13 +40,13 @@ struct LightThemePalette: UXThemePalette {
 
     public var settingsCellBackground: UIColor? { .white }
     public var settingsCellText: UIColor? { .black }
-    public var settingsCellTextDetail: UIColor? { .gray }
+    public var settingsCellTextDetail: UIColor? { .darkGray }
     
-    public var barButtonItemTint: UIColor? { .Provenance.blue }
+    public var barButtonItemTint: UIColor? { defaultTintColor }
     
     // Switch
-    public var switchON: UIColor { .Provenance.blue }
-    public var switchThumb: UIColor { .Provenance.blue.brightness(0.95) }
+    public var switchON: UIColor { defaultTintColor }
+    public var switchThumb: UIColor { .white }
     
     /// Side Menu
     ///     Background
@@ -60,10 +61,10 @@ struct LightThemePalette: UXThemePalette {
     ///         Background
     public var menuHeaderBackground: UIColor { .white }
     ///         Icon Tint
-    public var menuHeaderIconTint: UIColor { .Provenance.blue }
+    public var menuHeaderIconTint: UIColor { defaultTintColor }
     ///     Section Header
     ///         Background
     public var menuSectionHeaderBackground: UIColor { .lightGray }
     ///         Tint
-    public var menuSectionHeaderIconTint: UIColor { .Provenance.blue }
+    public var menuSectionHeaderIconTint: UIColor { defaultTintColor }
 }

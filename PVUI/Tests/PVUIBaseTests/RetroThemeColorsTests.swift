@@ -17,6 +17,17 @@ struct RetroThemeColorsTests {
         #expect(secondary != tertiary)
     }
 
+    @Test("CGA highlights keep the primary accent hue", arguments: CGAThemes.allCases)
+    func cgaAccentHue(theme: CGAThemes) {
+        let palette = theme.palette
+        let traits = UITraitCollection(userInterfaceStyle: palette.dark ? .dark : .light)
+        let primary = RetroThemeColors.resolvedColor(.primary, palette: palette, traits: traits)
+        for role in [RetroThemeColors.Role.secondary, .tertiary] {
+            let accent = RetroThemeColors.resolvedColor(role, palette: palette, traits: traits)
+            #expect(abs(hue(accent) - hue(primary)) < 0.001)
+        }
+    }
+
     @Test("The light canvas remains light and the dark canvas remains dark")
     func canvasContrast() {
         let traits = UITraitCollection(userInterfaceStyle: .light)
@@ -34,6 +45,12 @@ struct RetroThemeColorsTests {
         #expect(palette.statusBarColor != UIColor.white)
     }
     #endif
+
+    private func hue(_ color: UIColor) -> CGFloat {
+        var value: CGFloat = 0
+        color.getHue(&value, saturation: nil, brightness: nil, alpha: nil)
+        return value
+    }
 
     private func brightness(_ color: UIColor) -> CGFloat {
         var red: CGFloat = 0

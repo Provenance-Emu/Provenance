@@ -7,6 +7,7 @@ private let restingTabBorderIntensity: CGFloat = 0.5
 
 /// A custom tab view with retrowave styling
 public struct RetroTabView<Content: View>: View {
+    @ObservedObject private var themeManager = ThemeManager.shared
     @Binding private var selection: Int
     private let content: Content
     private let tabItems: [RetroTabItem]
@@ -64,6 +65,10 @@ public struct RetroTabView<Content: View>: View {
 
     @State private var borderGlowIntensity: CGFloat = restingTabBorderIntensity
 
+    private var palette: any UXThemePalette { themeManager.currentPalette }
+    private var inactiveTabColor: Color { palette.dark ? .white.opacity(0.6) : Color(palette.gameLibraryText).opacity(0.8) }
+    private var tabGlow: Color { palette is RetroWaveThemePalette ? RetroTheme.retroPink.opacity(0.7) : .clear }
+
     private func retroTabBar(bottomSafeAreaInset: CGFloat) -> some View {
         ZStack(alignment: .bottom) {
             // Tab bar background with retrowave styling
@@ -71,8 +76,8 @@ public struct RetroTabView<Content: View>: View {
                 .fill(
                     LinearGradient(
                         gradient: Gradient(colors: [
-                            Color.black.opacity(0.8),
-                            RetroTheme.retroDarkBlue.opacity(0.7)
+                            palette.dark ? Color.black.opacity(0.8) : Color(palette.gameLibraryBackground),
+                            RetroTheme.retroDarkBlue.opacity(palette.dark ? 0.7 : 1)
                         ]),
                         startPoint: .bottom,
                         endPoint: .top
@@ -163,11 +168,11 @@ public struct RetroTabView<Content: View>: View {
                             Image(systemName: systemName)
                                 .font(.system(size: 22))
                                 .foregroundStyle(RetroTheme.retroHorizontalGradient)
-                                .shadow(color: RetroTheme.retroPink.opacity(0.7), radius: 3)
+                                .shadow(color: tabGlow, radius: 3)
                         } else {
                             Image(systemName: systemName)
                                 .font(.system(size: 22))
-                                .foregroundColor(Color.white.opacity(0.6))
+                                .foregroundStyle(inactiveTabColor)
                                 .shadow(color: .clear, radius: 0)
                         }
                     }
@@ -182,7 +187,7 @@ public struct RetroTabView<Content: View>: View {
                     } else {
                         Text(item.title)
                             .font(.system(size: 12, weight: .regular))
-                            .foregroundColor(Color.white.opacity(0.6))
+                            .foregroundStyle(inactiveTabColor)
                     }
                 }
             }
@@ -210,7 +215,7 @@ public struct RetroTabView<Content: View>: View {
         RoundedRectangle(cornerRadius: 2)
             .fill(RetroTheme.retroHorizontalGradient)
             .frame(height: 3)
-            .shadow(color: RetroTheme.retroPink.opacity(0.7), radius: 3)
+            .shadow(color: tabGlow, radius: 3)
             .overlay(
                 RoundedRectangle(cornerRadius: 2)
                     .fill(Color.white.opacity(0.3))

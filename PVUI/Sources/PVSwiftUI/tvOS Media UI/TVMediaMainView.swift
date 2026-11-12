@@ -573,7 +573,7 @@ struct TVMediaMainView: View {
 
         private var layoutWithAppearance: some View {
             layoutWithPatchApplier
-                .preferredColorScheme(.dark)
+                .preferredColorScheme(themeManager.currentPalette.dark ? .dark : .light)
                 .ignoresSafeArea(.all)
                 .hideHomeIndicator()
         }

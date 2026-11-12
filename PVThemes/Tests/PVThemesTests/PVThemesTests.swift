@@ -29,7 +29,7 @@ class PVThemesTests: XCTestCase {
     }
 
     func testPaletteRolesSurviveProtocolDispatch() {
-        for theme in CGAThemes.allCases.filter({ $0 != .random }) {
+        for theme in CGAThemes.allCases {
             let palette = theme.palette
             XCTAssertNotNil(palette.gameLibraryCellBackground, palette.name)
             XCTAssertNotNil(palette.settingsCellTextDetail, palette.name)

@@ -193,7 +193,7 @@ public struct RetroMainView: View {
             // Clean up timer when view disappears
             effectTimer?.cancel()
         }
-        .preferredColorScheme(.dark) // Retrowave theme works best with dark mode
+        .preferredColorScheme(themeManager.currentPalette.dark ? .dark : .light)
         .ignoresSafeArea(.all) // Ensure the view extends edge-to-edge
 #if os(iOS)
         .romDropTarget() // ROM drag & drop import (#2136)

@@ -29,7 +29,6 @@ enum ThemeName: String, CaseIterable {
     case cgaRed = "CGA Red"
     case cgaYellow = "CGA Yellow"
     case cgaPurple = "CGA Purple"
-    case cgaRainbow = "CGA Rainbow"
 }
 
 public struct RetroDebugView: View {
@@ -295,8 +294,6 @@ public struct RetroDebugView: View {
             ThemeManager.shared.setCurrentPalette(CGAThemes.yellow.palette)
         case .cgaPurple:
             ThemeManager.shared.setCurrentPalette(CGAThemes.purple.palette)
-        case .cgaRainbow:
-            ThemeManager.shared.setCurrentPalette(CGAThemes.rainbow.palette)
         }
     }
 

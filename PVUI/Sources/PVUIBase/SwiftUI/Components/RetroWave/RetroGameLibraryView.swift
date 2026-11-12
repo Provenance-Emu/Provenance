@@ -149,7 +149,11 @@ public struct RetroGameLibraryView: View {
 #if !os(tvOS)
             .navigationBarTitleDisplayMode(.inline) // Changed to inline to avoid overlap
 #endif
-            .toolbarColorScheme(.dark, for: .navigationBar)
+            .toolbarColorScheme(themeManager.currentPalette.dark ? .dark : .light, for: .navigationBar)
+            #if os(iOS)
+            .toolbarBackground(Color(themeManager.currentPalette.navigationBarBackgroundColor ?? themeManager.currentPalette.gameLibraryBackground),
+                               for: .navigationBar)
+            #endif
             .safeAreaInset(edge: .top) {
                 // Add a spacer with height that matches status bar
                 Color.clear.frame(height: 0)
@@ -723,7 +727,7 @@ public struct RetroGameLibraryView: View {
                 // Subtitle with scanline effect
                 Text("INSERT GAMES TO CONTINUE")
                     .font(.system(size: 18, weight: .bold, design: .monospaced))
-                    .foregroundColor(.white)
+                    .foregroundStyle(Color(themeManager.currentPalette.gameLibraryText))
                     .padding(.vertical, 10)
                     .frame(maxWidth: .infinity)
                     .background(Color.retroBlack.opacity(0.5))

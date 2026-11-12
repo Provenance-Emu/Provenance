@@ -809,6 +809,11 @@ struct ThemeOptionTests {
         }
     }
 
+    @Test("Retired CGA themes fall back to CGA Blue", arguments: ["rainbow", "random"])
+    func retiredCGATheme(rawValue: String) {
+        #expect(ThemeOptionBridge().deserialize(["type": "cga", "value": rawValue]) == .cga(.blue))
+    }
+
     @Test("ThemeOptionBridge deserialize with nil returns nil")
     func bridgeDeserializeNil() {
         let bridge = ThemeOptionBridge()
