@@ -10,6 +10,7 @@ import UniformTypeIdentifiers
 struct CustomThemeEditor: View {
     @Environment(\.dismiss) private var dismiss
     @State private var draft: CustomTheme
+    @State private var preview: Preview = .library
     @State private var image: PhotosPickerItem?
     @State private var suggestions: [ThemeColor] = []
     @State private var isImporting = false
@@ -26,18 +27,30 @@ struct CustomThemeEditor: View {
     var body: some View {
         Form {
             Section("Live Preview") {
-                themePreview
-                if hasLowContrast {
-                    Label("Text or accents may be hard to read on this palette.", systemImage: "exclamationmark.circle")
-                        .font(.footnote)
+                Picker("Preview", selection: $preview) {
+                    Text("Library").tag(Preview.library)
+                    Text("Settings").tag(Preview.settings)
                 }
+                .pickerStyle(.segmented)
+                themePreview
             }
 
             Section("Palette") {
                 TextField("Theme Name", text: $draft.name)
                 Toggle("Dark Appearance", isOn: $draft.dark)
                 ForEach(ColorRole.allCases) { role in
-                    ColorPicker(role.title, selection: colorBinding(role), supportsOpacity: false)
+                    VStack(alignment: .leading, spacing: 4) {
+                        ColorPicker(role.title, selection: colorBinding(role), supportsOpacity: false)
+                        if let contrast = minimumContrast(for: role), contrast < 4.5 {
+                            Label {
+                                Text("Contrast \(contrast.formatted(.number.precision(.fractionLength(1)))):1. Aim for 4.5:1.")
+                            } icon: {
+                                Image(systemName: "exclamationmark.circle")
+                            }
+                            .font(.footnote)
+                            .foregroundStyle(.secondary)
+                        }
+                    }
                 }
             }
 
@@ -54,11 +67,16 @@ struct CustomThemeEditor: View {
                                         Button(role.title) { draft[keyPath: role.field] = swatch }
                                     }
                                 } label: {
-                                    Circle()
-                                        .fill(Color(swatch.platformColor))
-                                        .frame(width: 30, height: 30)
-                                        .overlay { Circle().strokeBorder(.primary.opacity(0.2)) }
-                                        .frame(width: 44, height: 44)
+                                    VStack(spacing: 4) {
+                                        RoundedRectangle(cornerRadius: 6)
+                                            .fill(Color(swatch.platformColor))
+                                            .frame(height: 30)
+                                            .overlay { RoundedRectangle(cornerRadius: 6).strokeBorder(.primary.opacity(0.2)) }
+                                        Text(swatch.hex)
+                                            .font(.caption2.monospaced())
+                                            .foregroundStyle(.primary)
+                                    }
+                                    .frame(minWidth: 64, minHeight: 44)
                                 }
                                 .accessibilityLabel("Assign \(swatch.hex)")
                             }
@@ -97,10 +115,14 @@ struct CustomThemeEditor: View {
         }
     }
 
-    private var hasLowContrast: Bool {
-        [draft.background, draft.surface].contains { background in
-            draft.text.contrastRatio(with: background) < 4.5 || draft.accent.contrastRatio(with: background) < 4.5
-        }
+    private enum Preview: Hashable {
+        case library, settings
+    }
+
+    private func minimumContrast(for role: ColorRole) -> Double? {
+        guard role == .text || role == .accent else { return nil }
+        let foreground = draft[keyPath: role.field]
+        return min(foreground.contrastRatio(with: draft.background), foreground.contrastRatio(with: draft.surface))
     }
 
     private var themePreview: some View {
@@ -109,22 +131,29 @@ struct CustomThemeEditor: View {
         let accent = Color(palette.defaultTintColor)
         let surface = Color(palette.gameLibraryHeaderBackground)
         return VStack(alignment: .leading, spacing: 12) {
-            Text("Library")
-                .font(.headline)
-                .foregroundStyle(text)
-            Label("Recently Played", systemImage: "gamecontroller")
-                .foregroundStyle(accent)
-            Divider()
-            Text("Settings")
-                .font(.headline)
-                .foregroundStyle(accent)
-            Toggle("Show Artwork", isOn: .constant(true))
-                .foregroundStyle(text)
-                .tint(accent)
-                .padding(10)
-                .background(surface, in: RoundedRectangle(cornerRadius: 8))
-                .allowsHitTesting(false)
+            switch preview {
+            case .library:
+                Text("Recently Played")
+                    .font(.headline)
+                    .foregroundStyle(accent)
+                Label("Game Library", systemImage: "gamecontroller")
+                    .foregroundStyle(text)
+                    .padding(10)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .background(surface, in: RoundedRectangle(cornerRadius: 8))
+            case .settings:
+                Text("Appearance")
+                    .font(.headline)
+                    .foregroundStyle(accent)
+                Toggle("Show Artwork", isOn: .constant(true))
+                    .foregroundStyle(text)
+                    .tint(accent)
+                    .padding(10)
+                    .background(surface, in: RoundedRectangle(cornerRadius: 8))
+                    .allowsHitTesting(false)
+            }
         }
+        .frame(maxWidth: .infinity, alignment: .leading)
         .padding()
         .background(Color(palette.gameLibraryBackground), in: RoundedRectangle(cornerRadius: 12))
         .environment(\.colorScheme, draft.dark ? .dark : .light)

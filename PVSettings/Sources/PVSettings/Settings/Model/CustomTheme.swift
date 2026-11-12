@@ -75,15 +75,15 @@ public enum ConsoleThemePreset: String, CaseIterable, Identifiable, Sendable {
     public var theme: CustomTheme {
         switch self {
         case .sega:
-            CustomTheme(name: "Sega", dark: true, background: 0x111820, surface: 0x202D3C, text: 0xF0F6FF, accent: 0x79BEFF)
+            CustomTheme(name: "Arcade Blue", dark: true, background: 0x111820, surface: 0x202D3C, text: 0xF0F6FF, accent: 0x79BEFF)
         case .nes:
-            CustomTheme(name: "Classic NES", dark: false, background: 0xEEEAE6, surface: 0xFBF8F5, text: 0x272324, accent: 0xA22839)
+            CustomTheme(name: "8-Bit Gray", dark: false, background: 0xEEEAE6, surface: 0xFBF8F5, text: 0x272324, accent: 0xA22839)
         case .famicom:
-            CustomTheme(name: "Famicom", dark: false, background: 0xF5E9D4, surface: 0xFFF8EA, text: 0x352423, accent: 0x941C33)
+            CustomTheme(name: "Crimson Cartridge", dark: false, background: 0xF5E9D4, surface: 0xFFF8EA, text: 0x352423, accent: 0x941C33)
         case .pikachu:
-            CustomTheme(name: "Pikachu Yellow", dark: false, background: 0xFFE475, surface: 0xFFF1AD, text: 0x392A16, accent: 0x8C2333)
+            CustomTheme(name: "Electric Yellow", dark: false, background: 0xFFE475, surface: 0xFFF1AD, text: 0x392A16, accent: 0x8C2333)
         case .ps2:
-            CustomTheme(name: "PS2 Razor Blue", dark: true, background: 0x0B0E1D, surface: 0x181E39, text: 0xEAF0FF, accent: 0x9DAFFF)
+            CustomTheme(name: "Midnight Vector", dark: true, background: 0x0B0E1D, surface: 0x181E39, text: 0xEAF0FF, accent: 0x9DAFFF)
         }
     }
 }
