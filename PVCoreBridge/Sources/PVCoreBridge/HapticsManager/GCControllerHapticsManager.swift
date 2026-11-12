@@ -18,6 +18,7 @@
 import Foundation
 import PVPrimitives
 #if canImport(GameController) && canImport(CoreHaptics)
+import PVSystems
 import GameController
 import CoreHaptics
 import PVLogging
@@ -287,20 +288,14 @@ public final class GCControllerHapticsManager {
         }
     }
 
-    /// Map a Provenance system identifier to the best DualSense adaptive trigger profile.
-    ///
-    /// PlayStation systems with analog L2/R2 triggers get a `.soft` feedback profile
-    /// so the physical resistance complements the original controller experience.
-    /// All other systems default to `.off` (standard spring feel).
+    /// Selects the trigger feel for the active emulated system.
     @available(iOS 14.5, tvOS 14.5, *)
     private func adaptiveTriggerProfile(forSystemIdentifier sysId: String) -> AdaptiveTriggerProfile {
-        let id = sysId.lowercased()
-        // PlayStation systems have analog L2/R2; soft resistance enhances immersion.
-        if id.contains("psx") || id.contains("ps1") || id.contains("ps2")
-            || id.contains("ps3") || id.contains("playstation") {
-            return .soft
+        switch SystemIdentifier(rawValue: sysId) {
+        case .GameCube: return .gameCubeClick
+        case .PSX, .PS2, .PS3: return .soft
+        default: return .off
         }
-        return .off
     }
 
     private var notificationObservers: [NSObjectProtocol] = []
@@ -652,6 +647,11 @@ public final class GCControllerHapticsManager {
                 dualSense.rightTrigger.setModeFeedbackWithStartPosition(0.0, resistiveStrength: 0.6)
             }
 
+        case .gameCubeClick:
+            // Resistance just before Dolphin's digital click at 90% travel.
+            dualSense.leftTrigger.setModeWeaponWithStartPosition(0.8, endPosition: 0.9, resistiveStrength: 0.7)
+            dualSense.rightTrigger.setModeWeaponWithStartPosition(0.8, endPosition: 0.9, resistiveStrength: 0.7)
+
         case .soft:
             // Light uniform feedback across the full travel.
             dualSense.leftTrigger.setModeFeedbackWithStartPosition(0.0, resistiveStrength: 0.3)
@@ -924,6 +924,8 @@ public enum AdaptiveTriggerProfile {
     case racing
     /// Light uniform resistance — general soft feedback.
     case soft
+    /// Resistance near the end of travel for GameCube’s digital L/R click.
+    case gameCubeClick
 }
 
 

@@ -254,6 +254,18 @@ typedef unsigned char  u8;
 typedef signed char    s8;
 typedef unsigned short u16;
 typedef unsigned int   u32;
+// Dolphin's MixedTriggers uses the same axis for analog travel and the digital click.
+static constexpr int gameCubeClickPercent = 90;
+static constexpr float gameCubeClick = gameCubeClickPercent / 100.0f;
+
+static constexpr bool GameCubeZChord(float left, float right) {
+    return left >= gameCubeClick && right >= gameCubeClick;
+}
+
+static_assert(!GameCubeZChord(0.5f, 1.0f));
+static_assert(!GameCubeZChord(1.0f, 0.5f));
+static_assert(GameCubeZChord(0.9f, 0.9f));
+
 static bool rotateControls = false;
 static bool rotateIr = false;
 /// Wii Remote ports (4-7, indexed 0-3) whose pointer a controller's touchpad is driving.
@@ -350,6 +362,28 @@ s8 joyx[4], joyy[4];
 		}
 		if (controller.extendedGamepad != nil)
 		{
+            __weak GCExtendedGamepad *weakPad = controller.extendedGamepad;
+            void (^updateGameCubeTriggers)(void) = ^{
+                GCExtendedGamepad *pad = weakPad;
+                if (!pad || self.isWii) return;
+
+                const float left = pad.leftTrigger.value;
+                const float right = pad.rightTrigger.value;
+                const bool chord = GameCubeZChord(left, right);
+                const float leftAxis = pad.leftShoulder.isPressed ? 1.0f : (chord ? 0.0f : left);
+                const float rightAxis = pad.rightShoulder.isPressed ? 1.0f : (chord ? 0.0f : right);
+                [self gamepadMoveEventOnPad:gcPort axis:TRIGGER_L value:leftAxis];
+                [self gamepadMoveEventOnPad:gcPort axis:TRIGGER_R value:rightAxis];
+                [self gamepadEventOnPad:gcPort button:BUTTON_Z action:(chord || pad.rightThumbstickButton.isPressed)];
+            };
+            if (!self.isWii) {
+                controller.extendedGamepad.leftTrigger.valueChangedHandler = ^(GCControllerButtonInput *, float, BOOL) {
+                    updateGameCubeTriggers();
+                };
+                controller.extendedGamepad.rightTrigger.valueChangedHandler = ^(GCControllerButtonInput *, float, BOOL) {
+                    updateGameCubeTriggers();
+                };
+            }
             controller.extendedGamepad.buttonB.pressedChangedHandler = ^(GCControllerButtonInput* button, float value, bool pressed) {
                     [self gamepadEventOnPad:port button:WIIMOTE_BUTTON_A
                      action:(pressed?1:0)];
@@ -397,7 +431,11 @@ s8 joyx[4], joyy[4];
                     [self gamepadEventOnPad:port
 				 button:CLASSIC_BUTTON_ZL
 				 action:(pressed?1:0)];
-				[self gamepadMoveEventOnPad:gcPort axis:TRIGGER_L value:(pressed?1.0:0.0)];
+                if (self.isWii) {
+                    [self gamepadMoveEventOnPad:gcPort axis:TRIGGER_L value:(pressed?1.0:0.0)];
+                } else {
+                    updateGameCubeTriggers();
+                }
 			};
 						controller.extendedGamepad.rightShoulder.pressedChangedHandler = ^(GCControllerButtonInput* button, float value, bool pressed) {
                     [self gamepadMoveEventOnPad:port axis:WIIMOTE_SHAKE_X value:value];
@@ -406,26 +444,18 @@ s8 joyx[4], joyy[4];
                     [self gamepadEventOnPad:port
 				 button:ciface::iOS::ButtonType::CLASSIC_BUTTON_ZR
 				 action:(pressed?1:0)];
-				[self gamepadMoveEventOnPad:gcPort axis:ciface::iOS::ButtonType::TRIGGER_R value:(pressed?1.0:0.0)];
+                if (self.isWii) {
+                    [self gamepadMoveEventOnPad:gcPort axis:ciface::iOS::ButtonType::TRIGGER_R value:(pressed?1.0:0.0)];
+                } else {
+                    updateGameCubeTriggers();
+                }
 			};
 						controller.extendedGamepad.leftTrigger.pressedChangedHandler = ^(GCControllerButtonInput* button, float value, bool pressed) {
                     [self gamepadEventOnPad:port button:ciface::iOS::ButtonType::NUNCHUK_BUTTON_C action:(pressed?1:0)];
                     [self gamepadEventOnPad:port
 				 button:ciface::iOS::ButtonType::CLASSIC_TRIGGER_L
 				 action:(pressed?1:0)];
-                    // GC mode: when both triggers held simultaneously, fire BUTTON_Z.
-                    // Both trigger axes are suppressed during the combo and restored correctly
-                    // regardless of which trigger was pressed first.
-                    // Z is only released if neither the combo nor R3 is holding it.
-                    if (!self.isWii) {
-                        bool rightTriggerHeld = controller.extendedGamepad.rightTrigger.isPressed;
-                        bool zCombo = pressed && rightTriggerHeld;
-                        bool r3HeldZ = controller.extendedGamepad.rightThumbstickButton.isPressed;
-                        bool zActive = zCombo || r3HeldZ;
-                        [self gamepadEventOnPad:gcPort button:ciface::iOS::ButtonType::BUTTON_Z action:(zActive?1:0)];
-                        [self gamepadMoveEventOnPad:gcPort axis:ciface::iOS::ButtonType::TRIGGER_L value:(zCombo?0.0:(pressed?1.0:0.0))];
-                        [self gamepadMoveEventOnPad:gcPort axis:ciface::iOS::ButtonType::TRIGGER_R value:(zCombo?0.0:(rightTriggerHeld?1.0:0.0))];
-                    } else {
+                    if (self.isWii) {
                         [self gamepadMoveEventOnPad:gcPort axis:ciface::iOS::ButtonType::TRIGGER_L value:(pressed?1.0:0.0)];
                     }
 			};
@@ -436,19 +466,7 @@ s8 joyx[4], joyy[4];
                     [self gamepadEventOnPad:port
 				 button:ciface::iOS::ButtonType::CLASSIC_TRIGGER_R
 				 action:(pressed?1:0)];
-                    // GC mode: when both triggers held simultaneously, fire BUTTON_Z.
-                    // Both trigger axes are suppressed during the combo and restored correctly
-                    // regardless of which trigger was pressed first.
-                    // Z is only released if neither the combo nor R3 is holding it.
-                    if (!self.isWii) {
-                        bool leftTriggerHeld = controller.extendedGamepad.leftTrigger.isPressed;
-                        bool zCombo = pressed && leftTriggerHeld;
-                        bool r3HeldZ = controller.extendedGamepad.rightThumbstickButton.isPressed;
-                        bool zActive = zCombo || r3HeldZ;
-                        [self gamepadEventOnPad:gcPort button:ciface::iOS::ButtonType::BUTTON_Z action:(zActive?1:0)];
-                        [self gamepadMoveEventOnPad:gcPort axis:ciface::iOS::ButtonType::TRIGGER_R value:(zCombo?0.0:(pressed?1.0:0.0))];
-                        [self gamepadMoveEventOnPad:gcPort axis:ciface::iOS::ButtonType::TRIGGER_L value:(zCombo?0.0:(leftTriggerHeld?1.0:0.0))];
-                    } else {
+                    if (self.isWii) {
                         [self gamepadMoveEventOnPad:gcPort axis:ciface::iOS::ButtonType::TRIGGER_R value:(pressed?1.0:0.0)];
                     }
 			};
@@ -546,14 +564,7 @@ s8 joyx[4], joyy[4];
                     action:(pressed?1:0)];
 //                [self gamepadEventOnPad:port button:ciface::iOS::ButtonType::WIIMOTE_IR_RECENTER action:(pressed?1:0)];
                 if (!self.isWii) {
-                    // GameCube mode: R3 (right thumbstick press) → Z button.
-                    // Also account for the L2+R2 trigger combo: don't release Z if the combo
-                    // is still active when R3 is released.
-                    const float triggerThreshold = 0.5f;
-                    BOOL zFromCombo = (controller.extendedGamepad.leftTrigger.value >= triggerThreshold &&
-                                       controller.extendedGamepad.rightTrigger.value >= triggerThreshold);
-                    const int zAction = (pressed || zFromCombo) ? 1 : 0;
-                    [self gamepadEventOnPad:gcPort button:ciface::iOS::ButtonType::BUTTON_Z action:zAction];
+                    updateGameCubeTriggers();
                 } else {
                     // Wii mode: R3 → Start
                     [self gamepadEventOnPad:gcPort button:ciface::iOS::ButtonType::BUTTON_START
@@ -1447,13 +1458,15 @@ static void PVSetGCSIDeviceIfConfigReady(int port) {
     @"C-Stick/Right = `Axis 19`\n"
     @"Triggers/L = `Axis 20`\n"
     @"Triggers/R = `Axis 21`\n"
+    @"Triggers/Threshold = %d\n"
+    @"Triggers/Dead Zone = 0\n"
     @"Triggers/L-Analog = `Axis 20`\n"
     @"Triggers/R-Analog = `Axis 21`\n"
     @"Rumble/Motor = `Rumble 700`\n"
     @"Main Stick/Calibration = 100.00 141.42 100.00 141.42 100.00 141.42 100.00 141.42\n"
     @"C-Stick/Calibration = 100.00 141.42 100.00 141.42 100.00 141.42 100.00 141.42\n"
     @"Source = %d\n",
-    port, gcPort, source];
+    port, gcPort, gameCubeClickPercent, source];
     return content;
 }
 
