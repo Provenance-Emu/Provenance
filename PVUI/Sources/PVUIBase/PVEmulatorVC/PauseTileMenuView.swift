@@ -149,6 +149,9 @@ struct PauseTileMenuView: View {
     @State private var showingShaderSettings = false
     @State private var showingShaderBrowser = false
     @State private var showingPortDevices = false
+    #if os(iOS)
+    @State private var showingExternalDisplay = false
+    #endif
     #if !os(tvOS)
     @State private var controllerLayoutContext: ControllerLayoutSheetContext?
     #endif
@@ -718,6 +721,11 @@ struct PauseTileMenuView: View {
         // MARK: Port device type picker
         case "portDevices":
             showingPortDevices = true
+
+        #if os(iOS)
+        case PauseTileMenuViewModel.externalDisplayTileID:
+            showingExternalDisplay = true
+        #endif
 
         // MARK: Programmatic touch overlay
         #if !os(tvOS)
@@ -1826,6 +1834,11 @@ struct PauseTileMenuView: View {
         }
         .sheet(isPresented: $showingShaderSettings, onDismiss: rebuildSections) {
             ShaderPauseSheet(emulatorVC: emulatorVC, startInEditor: true)
+        }
+        #endif
+        #if os(iOS)
+        .sheet(isPresented: $showingExternalDisplay, onDismiss: rebuildSections) {
+            ExternalDisplayPauseSheet()
         }
         #endif
         .sheet(isPresented: $showingPortDevices) {

@@ -107,6 +107,22 @@ struct ShaderLibraryStoreTests {
         #expect(store.effectiveScope(gameMD5: "abc", systemID: "com.provenance.gba") == .system("com.provenance.gba"))
     }
 
+    @Test("an external screen follows the game until it has a selection of its own")
+    func screenSelection() {
+        let (store, _) = makeStore()
+        store.setSelection(.always(.native(.lcd)), for: .game("abc"))
+        #expect(store.effectiveSelection(on: .external, gameMD5: "abc", systemID: nil) == .always(.native(.lcd)))
+        store.setSelection(.always(.native(.vhs)), for: .screen(.external))
+        #expect(store.effectiveSelection(on: .external, gameMD5: "abc", systemID: nil) == .always(.native(.vhs)))
+        // The device keeps the game's own selection.
+        #expect(store.effectiveSelection(gameMD5: "abc", systemID: nil) == .always(.native(.lcd)))
+        #expect(store.effectiveScope(gameMD5: "abc", systemID: nil) == .game("abc"))
+        store.setSelection(.off, for: .screen(.external))
+        #expect(store.effectiveSelection(on: .external, gameMD5: "abc", systemID: nil) == .off)
+        store.setSelection(nil, for: .screen(.external))
+        #expect(store.effectiveSelection(on: .external, gameMD5: "abc", systemID: nil) == .always(.native(.lcd)))
+    }
+
     @Test("the legacy filter mode becomes the global selection")
     func migratesLegacy() {
         let (store, _) = makeStore(legacy: "Auto(simpleCRT, lcd)")

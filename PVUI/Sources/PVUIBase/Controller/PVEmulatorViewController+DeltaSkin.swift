@@ -402,6 +402,10 @@ extension PVEmulatorViewController {
         overlayScreenFrames = frames
         if mounting { applyResolvedControllerVariantIfNeeded() }
         hideOrShowMenuButton()
+        #if os(iOS)
+        // Generated controls and a skin with its own art differ in what the device shows.
+        if mounting || unmounting { updateExternalDisplay() }
+        #endif
         guard core.supportsDualScreens else {
             // A returning packaged skin's frame can be stored (`validateAndStoreFrame`) and then
             // covered by a late overlay frame; its re-broadcast is then dropped as unchanged. Force
@@ -524,6 +528,9 @@ extension PVEmulatorViewController {
                 guard let self else { return }
                 self.skinDidReportLoaded = true
                 self.hideOrShowMenuButton()
+                #if os(iOS)
+                self.updateExternalDisplay()
+                #endif
                 // Skin loaded → short delay for frame notification → finalize → pause pipeline
                 Just(())
                     .delay(for: .milliseconds(300), scheduler: DispatchQueue.main)

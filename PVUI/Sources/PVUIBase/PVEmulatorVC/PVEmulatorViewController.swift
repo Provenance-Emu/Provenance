@@ -282,8 +282,12 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, Emulato
         features.feature(type)
     }
 
-    var secondaryScreen: UIScreen?
-    var secondaryWindow: UIWindow?
+    #if os(iOS)
+    /// The window showing the game picture on an external display, while one does
+    /// (see PVEmulatorViewController+ExternalDisplay.swift).
+    var externalDisplayWindow: UIWindow?
+    var externalDisplaySettingsObservation: Task<Void, Never>?
+    #endif
     var menuGestureRecognizer: UITapGestureRecognizer?
 
     /// Drops the duplicate `PauseGame` signals one button press can produce.
@@ -461,6 +465,10 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, Emulato
         staticSelf = nil
         MainActor.assumeIsolated {
             gpuViewController.dismiss(animated: false)
+            #if os(iOS)
+            externalDisplaySettingsObservation?.cancel()
+            removeExternalDisplayWindow()
+            #endif
         }
         core.touchViewController = nil
         #if os(iOS) && !targetEnvironment(macCatalyst) && !os(macOS)
@@ -527,8 +535,9 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, Emulato
         NotificationCenter.default.addObserver(self, selector: #selector(PVEmulatorViewController.appWillTerminate(_:)), name: UIApplication.willTerminateNotification, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(PVEmulatorViewController.controllerDidConnect(_:)), name: .GCControllerDidConnect, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(PVEmulatorViewController.controllerDidDisconnect(_:)), name: .GCControllerDidDisconnect, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(PVEmulatorViewController.screenDidConnect(_:)), name: UIScreen.didConnectNotification, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(PVEmulatorViewController.screenDidDisconnect(_:)), name: UIScreen.didDisconnectNotification, object: nil)
+        #if os(iOS)
+        observeExternalDisplay()
+        #endif
         NotificationCenter.default.addObserver(self, selector: #selector(PVEmulatorViewController.handleControllerManagerControllerReassigned(_:)), name: .PVControllerManagerControllerReassigned, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(PVEmulatorViewController.handleControllerMappingsChanged(_:)), name: ControllerMappingStore.didChangeNotification, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(PVEmulatorViewController.handlePause(_:)), name: Notification.Name("PauseGame"), object: nil)
@@ -996,33 +1005,33 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, Emulato
             try core.loadFile(atPath: romURL.path)
         }
 
-        // Route game view to an external display when one is already connected at launch,
-        // the user has chosen dedicated mode, and the core reports supportsExternalDisplay == true.
-        // In all other cases fall through to the normal primary-screen path below.
-        let externalMode = Defaults[.externalDisplayMode]
-        let externalScreens = UIScreen.screens.dropFirst()
-        if let externalScreen = externalScreens.first, core.supportsExternalDisplay && externalMode == .dedicated {
-            // attachGPUView performs UIKit view/window mutations — must run on the main actor.
-            await MainActor.run {
-                attachGPUView(to: externalScreen)
-            }
-        } else {
-            // For RetroArch cores with skipLayout and no skins, GPU view controller is not attached
-            // RetroArch manages its own view hierarchy (CocoaView + Metal/GL surfaces)
-            let isRetroArchSkipLayout = core.coreIdentifier?.contains("libretro") == true && core.skipLayout
+        // For RetroArch cores with skipLayout and no skins, GPU view controller is not attached
+        // RetroArch manages its own view hierarchy (CocoaView + Metal/GL surfaces)
+        let isRetroArchSkipLayout = core.coreIdentifier?.contains("libretro") == true && core.skipLayout
 
-            #if os(tvOS)
-            if core.skipLayout && !(isRetroArchSkipLayout && currentSkin == nil) {
-                // Special handling for RetroArch cores on tvOS (only if using skins)
-                addChild(gpuViewController)
-                if let gpuView = gpuViewController.view {
-                    gpuView.frame = view.bounds
-                    gpuView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
-                    view.addSubview(gpuView)
-                }
-                gpuViewController.didMove(toParent: self)
-            } else if !core.skipLayout {
-                // Keep existing behavior for non-skipLayout cores
+        #if os(tvOS)
+        if core.skipLayout && !(isRetroArchSkipLayout && currentSkin == nil) {
+            // Special handling for RetroArch cores on tvOS (only if using skins)
+            addChild(gpuViewController)
+            if let gpuView = gpuViewController.view {
+                gpuView.frame = view.bounds
+                gpuView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+                view.addSubview(gpuView)
+            }
+            gpuViewController.didMove(toParent: self)
+        } else if !core.skipLayout {
+            // Keep existing behavior for non-skipLayout cores
+            gpuViewController.willMove(toParent: self)
+            addChild(gpuViewController)
+            if let aView = gpuViewController.view {
+                aView.frame = view.bounds
+                view.addSubview(aView)
+            }
+            gpuViewController.didMove(toParent: self)
+        }
+        #else
+        if !core.skipLayout {
+            if gpuViewController.parent !== self {
                 gpuViewController.willMove(toParent: self)
                 addChild(gpuViewController)
                 if let aView = gpuViewController.view {
@@ -1030,25 +1039,13 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, Emulato
                     view.addSubview(aView)
                 }
                 gpuViewController.didMove(toParent: self)
+            } else {
+                gpuViewController.view.frame = view.bounds
             }
-            #else
-            if !core.skipLayout {
-                if gpuViewController.parent !== self {
-                    gpuViewController.willMove(toParent: self)
-                    addChild(gpuViewController)
-                    if let aView = gpuViewController.view {
-                        aView.frame = view.bounds
-                        view.addSubview(aView)
-                    }
-                    gpuViewController.didMove(toParent: self)
-                } else {
-                    gpuViewController.view.frame = view.bounds
-                }
-            }
-            // For RetroArch skipLayout without skins, GPU view controller is not attached
-            // (handled in setupGPUView which is called from viewDidLoad)
-            #endif
         }
+        // For RetroArch skipLayout without skins, GPU view controller is not attached
+        // (handled in setupGPUView which is called from viewDidLoad)
+        #endif
         #if os(iOS) && !targetEnvironment(macCatalyst) && !os(macOS)
         // No skin layer (desktop input mode): libretro and PPSSPP still want this VC as their
         // stable host, which the fallback below deliberately leaves to this path.
@@ -1155,6 +1152,10 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, Emulato
                                      preStartAspectSize: preStartAspectSize)
         }
         core.startEmulation()
+        #if os(iOS)
+        // An external display may already be connected.
+        updateExternalDisplay()
+        #endif
     }
 
     /// Re-lay-out the GPU view when the core's display aspect only became known
@@ -1997,6 +1998,8 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, Emulato
         gpuViewController.dismiss(animated: false)
         core.touchViewController = nil
         #if os(iOS)
+        externalDisplaySettingsObservation?.cancel()
+        removeExternalDisplayWindow()
         for controller in PVControllerManager.shared.controllers {
             controller.clearPauseHandler()
         }

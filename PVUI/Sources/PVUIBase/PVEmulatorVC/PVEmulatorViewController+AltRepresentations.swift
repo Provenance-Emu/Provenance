@@ -58,26 +58,18 @@ extension PVEmulatorViewController {
     }
 
     /// Re-runs the game viewport for the active layout set: the DS/3DS dual-screen split (Metal or core-side),
-    /// the single-screen viewport otherwise, and the GPU view on a dedicated external display.
+    /// or the single-screen viewport otherwise.
     @MainActor
     func relayoutForAltRepresentations() {
         // Frames reported by the skin view belong to the old set; the reloaded view reports new ones.
         clearReceivedScreenFrames()
         lastAppliedViewportFrame = nil
 
-        // Dedicated external display: the GPU view is that window's root view and keeps filling it. The
-        // device-sized skin geometry below does not apply to it and would pull the view back under the skin.
-        if let externalView = secondaryWindow?.rootViewController?.view {
-            externalView.setNeedsLayout()
-            externalView.layoutIfNeeded()
-            return
-        }
-
         applyDualScreenViewport()   // falls back to applyViewportFromCurrentSkin() for single-screen cores
 
         // The SwiftUI skin re-renders asynchronously; run the layout again once its new screens have settled.
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.15) { [weak self] in
-            guard let self, self.secondaryWindow == nil else { return }
+            guard let self else { return }
             self.lastAppliedViewportFrame = nil
             self.applyDualScreenViewport()
             NotificationCenter.default.post(name: .deltaSkinForceRecalculate, object: nil)

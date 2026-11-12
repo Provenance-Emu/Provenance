@@ -73,6 +73,9 @@ extension PVEmulatorViewController {
     @objc func controllerDidConnect(_ note: Notification?) {
         hideOrShowMenuButton()
         updateOnScreenControlsVisibility()
+        #if os(iOS)
+        updateExternalDisplay()
+        #endif
         /// Rebind pause handlers for the freshly connected controller. Deferred by
         /// one runloop tick so the core's own `controllerDidConnect` observer runs
         /// first (cores typically install their own `pressedChangedHandler` on the
@@ -90,6 +93,9 @@ extension PVEmulatorViewController {
     @objc func controllerDidDisconnect(_ note: Notification?) {
         hideOrShowMenuButton()
         updateOnScreenControlsVisibility()
+        #if os(iOS)
+        updateExternalDisplay()
+        #endif
         pauseIfLastGamepadDisconnected(note?.object as? GCController)
     }
 
@@ -180,115 +186,6 @@ extension PVEmulatorViewController {
         setupSiriRemoteForKeyboardCore()
         setupSiriRemoteForLightGunCore()
         #endif
-    }
-
-    // MARK: - UIScreenNotifications
-
-    @objc func screenDidConnect(_ note: Notification?) {
-        ILOG("Screen did connect: \(note?.object ?? "")")
-        guard secondaryScreen == nil else { return }
-
-        guard let screen = note?.object as? UIScreen else {
-            ELOG("screenDidConnect: notification did not carry a UIScreen – ignoring")
-            Task { @MainActor in self.hideOrShowMenuButton() }
-            return
-        }
-
-        let mode = Defaults[.externalDisplayMode]
-        let canUseDedicated = core.supportsExternalDisplay
-
-        guard mode == .dedicated && canUseDedicated else {
-            ILOG("External display connected – using system mirror mode (mode=\(mode.rawValue), canUseDedicated=\(canUseDedicated))")
-            Task { @MainActor in self.hideOrShowMenuButton() }
-            return
-        }
-
-        ILOG("External display connected – activating dedicated game view")
-        Task { @MainActor in
-            self.attachGPUView(to: screen)
-            self.hideOrShowMenuButton()
-        }
-    }
-
-    @objc func screenDidDisconnect(_ note: Notification?) {
-        ILOG("Screen did disconnect: \(note?.object ?? "")")
-        let screen = note?.object as? UIScreen
-        guard secondaryScreen == screen else { return }
-        Task { @MainActor in
-            self.restoreGPUViewToDevice()
-            self.hideOrShowMenuButton()
-        }
-    }
-
-    // MARK: - External Display Helpers
-
-    /// Moves the GPU view controller to the specified external screen's window.
-    func attachGPUView(to screen: UIScreen) {
-        secondaryScreen = screen
-        // Only run the containment removal sequence when the VC is currently parented
-        // (e.g., the launch-time path calls this before the first addChild, so there is
-        // nothing to remove and calling willMove/removeFromParent would be a no-op).
-        if gpuViewController.parent != nil {
-            gpuViewController.willMove(toParent: nil)
-            gpuViewController.view?.removeFromSuperview()
-            gpuViewController.removeFromParent()
-            // Note: removeFromParent() automatically calls didMove(toParent: nil)
-        }
-
-        let window = UIWindow(frame: screen.bounds)
-        // `UIWindow.screen` is deprecated in iOS 13 but remains the only reliable
-        // way to target a specific `UIScreen` without a full `UIWindowScene`
-        // integration.  The scene-based path (iOS 16+) would require adopting
-        // `UIWindowSceneGeometryPreferencesExternal`, which is a multi-step refactor
-        // tracked in the issue body.  For now we keep the legacy assignment so the
-        // feature works on iOS 15 and up.
-        window.screen = screen
-        // Setting rootViewController lets UIWindow own and manage the view lifecycle.
-        // Do NOT also call window.addSubview(gpuViewController.view) — that would
-        // create a redundant subview relationship and cause layout/lifecycle issues.
-        window.rootViewController = gpuViewController
-        window.isHidden = false
-        gpuViewController.view?.setNeedsLayout()
-        secondaryWindow = window
-    }
-
-    /// Restores the GPU view controller back to the primary device screen after
-    /// an external display disconnects.
-    func restoreGPUViewToDevice() {
-        // Detach from the external window FIRST, before re-parenting, so that
-        // gpuViewController is never simultaneously owned by two windows/hierarchies.
-        secondaryWindow?.rootViewController = nil
-        secondaryWindow?.isHidden = true
-        secondaryWindow = nil
-        secondaryScreen = nil
-
-        // Only run the containment removal sequence when the VC has a parent.
-        // When it is a window rootViewController (the dedicated-display path),
-        // UIKit manages its lifecycle via `secondaryWindow?.rootViewController = nil`
-        // above, so manually calling willMove/removeFromParent/didMove on a
-        // parentless VC would be incorrect.
-        if gpuViewController.parent != nil {
-            gpuViewController.willMove(toParent: nil)
-            gpuViewController.view?.removeFromSuperview()
-            gpuViewController.removeFromParent()
-            // Note: removeFromParent() automatically calls didMove(toParent: nil)
-        }
-
-        // addChild automatically calls willMove(toParent: self) on the child.
-        addChild(gpuViewController)
-
-        if let gpuView = gpuViewController.view {
-            // Reset to device bounds so the view isn't left with an external-display
-            // sized frame after disconnect.
-            gpuView.frame = view.bounds
-            gpuView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
-
-            view.addSubview(gpuView)
-        }
-
-        // Complete the containment cycle; this triggers viewDidMove and appearance callbacks.
-        gpuViewController.didMove(toParent: self)
-        gpuViewController.view?.setNeedsLayout()
     }
 }
 

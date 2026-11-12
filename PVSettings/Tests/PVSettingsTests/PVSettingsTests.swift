@@ -1428,10 +1428,10 @@ struct GyroMouseDefaultsTests {
 @Suite("External Display Mode Defaults", .serialized)
 struct ExternalDisplayModeTests {
 
-    @Test("externalDisplayMode default is systemMirror")
+    @Test("externalDisplayMode default is the game picture alone")
     func externalDisplayModeDefault() {
         Defaults.reset(.externalDisplayMode)
-        #expect(Defaults[.externalDisplayMode] == .systemMirror)
+        #expect(Defaults[.externalDisplayMode] == .dedicated)
     }
 
     @Test("externalDisplayMode key name is correct")
@@ -1439,14 +1439,14 @@ struct ExternalDisplayModeTests {
         #expect(Defaults.Keys.externalDisplayMode.name == "externalDisplayMode")
     }
 
-    @Test("externalDisplayMode can be set to dedicated and reset")
+    @Test("externalDisplayMode can be set to mirror and reset")
     func externalDisplayModeMutable() {
         Defaults.reset(.externalDisplayMode)
         defer { Defaults.reset(.externalDisplayMode) }
-        Defaults[.externalDisplayMode] = .dedicated
-        #expect(Defaults[.externalDisplayMode] == .dedicated)
-        Defaults.reset(.externalDisplayMode)
+        Defaults[.externalDisplayMode] = .systemMirror
         #expect(Defaults[.externalDisplayMode] == .systemMirror)
+        Defaults.reset(.externalDisplayMode)
+        #expect(Defaults[.externalDisplayMode] == .dedicated)
     }
 
     @Test("ExternalDisplayMode rawValues are stable")

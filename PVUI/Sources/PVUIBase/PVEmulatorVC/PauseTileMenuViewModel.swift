@@ -426,6 +426,16 @@ final class PauseTileMenuViewModel: ObservableObject {
         if emulatorVC.core.supportsAudioVisualizer {
             screenDisplayTiles.append(Self.audioVisualizerTile(currentMode: emulatorVC.visualizerMode))
         }
+        if ExternalDisplayCoordinator.shared.isConnected {
+            screenDisplayTiles.append(PauseMenuTile(
+                id: Self.externalDisplayTileID,
+                icon: "tv",
+                label: String(localized: "External Display"),
+                description: String(localized: "What the connected display and this device show"),
+                colorKey: .cyan,
+                dismissOnTap: false
+            ))
+        }
         #endif
         #if canImport(UIKit) && !os(tvOS)
         if let keyboardTile = Self.keyboardToggleTile(emulatorVC: emulatorVC) {
@@ -737,7 +747,7 @@ final class PauseTileMenuViewModel: ObservableObject {
             let optionIDs: Set<String> = [
                 "fastForwardToggle", "gameSpeedCycle", "fpsCounterToggle", "rewindToggle",
                 "filterCycle", "shaderSettings", "airPlay",
-                "audioVisualizer"
+                "audioVisualizer", Self.externalDisplayTileID
             ]
             let tiles = tiles(matching: optionIDs, from: rootSections)
             return [PauseMenuTileSection(id: "options_route", title: String(localized: "OPTIONS"), tiles: tiles)]
@@ -927,6 +937,9 @@ final class PauseTileMenuViewModel: ObservableObject {
     static let filterOptionPrefix = "shader_"
 
     /// Opens the filter browser; long-press offers Off plus favorites and recents.
+    /// Shown while an external display is connected; opens `ExternalDisplayPauseSheet`.
+    static let externalDisplayTileID = "externalDisplay"
+
     private static func filterTile(active: ShaderCatalogEntry?) -> PauseMenuTile {
         let store = ShaderLibraryStore.shared
         var quickIDs: [ShaderID] = []

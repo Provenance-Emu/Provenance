@@ -222,6 +222,20 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
     }
 
     var  inputTexture: MTLTexture?
+
+    #if os(iOS)
+    /// The game picture on an external display, drawn alongside the device's own (see `presentOnExternalOutput`).
+    weak var externalOutput: GameExternalOutputView?
+    #endif
+
+    /// Draws black on the device instead of the game picture, while an external display shows
+    /// it. The view keeps its place and keeps presenting, so skins and layout are untouched.
+    var blanksPicture = false {
+        didSet {
+            guard blanksPicture != oldValue else { return }
+            redrawPausedFrame()
+        }
+    }
     var  previousCommandBuffer: MTLCommandBuffer? // used for scheduling with OpenGL context
 
     /// Count of consecutive frames where `currentDrawable` returned nil. Used to
@@ -1802,20 +1816,7 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
             return
         }
 
-        // The native PPSSPP core presents on its own
-        // surface, so skip our texture update/draw path for them. The thin libretro
-        // PPSSPP ("ppsspp.libretro.framework") is different: it renders via Vulkan and
-        // hands every frame to this presenter (didRenderVulkanFrameWithMTLTexture), so
-        // skipping it here leaves the screen black while audio plays. Only those
-        // frontend-presented cores report rendersToVulkan.
-        if let coreId = emulatorCore.coreIdentifier?.lowercased(), coreId.contains("ppsspp"),
-           !emulatorCore.rendersToVulkan {
-            return
-        }
-        // Cores that present into their own layer (skipLayout, GL/Vulkan surface of their own, no
-        // frontend presentation: Dolphin, Azahar) never hand us a frame. Drawing here would only
-        // paint a blank texture over their view.
-        if emulatorCore.skipLayout && emulatorCore.rendersToOpenGL && !emulatorCore.rendersToVulkan {
+        guard presentsCoreFrames else {
             return
         }
 
@@ -2415,6 +2416,11 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
             recoverFromGPUError()
             return
         }
+        #if os(iOS)
+        // Before the device's drawable: a missing one below must not stall the external display.
+        presentOnExternalOutput(inputTexture, emulatorCore: emulatorCore, commandQueue: commandQueue)
+        #endif
+
         // Freeze fix: guarantee nextDrawable can NEVER block the main thread
         // indefinitely. The background/resume freeze was main wedged in
         // `currentDrawable → nextDrawable` with the timeout not live on the layer.
@@ -2507,6 +2513,11 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
         guard let commandBuffer = commandQueue.makeCommandBuffer() else {
             ELOG("Failed to create command buffer")
             recoverFromGPUError()
+            return
+        }
+
+        if blanksPicture {
+            presentBlankFrame(to: drawable, commandBuffer: commandBuffer)
             return
         }
 
@@ -2727,6 +2738,89 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
         // Track presentation + fire first-frame notification once
         markFramePresented()
     }
+
+    /// Whether the core hands its frames to this presenter. `false` for cores that present on a
+    /// surface of their own: nothing here can draw them, on the device or on a second screen.
+    var presentsCoreFrames: Bool {
+        guard let emulatorCore else { return false }
+        // The native PPSSPP core presents on its own surface. The thin libretro PPSSPP
+        // ("ppsspp.libretro.framework") is different: it renders via Vulkan and hands every
+        // frame to this presenter (didRenderVulkanFrameWithMTLTexture), so skipping it leaves
+        // the screen black while audio plays. Only those frontend-presented cores report
+        // rendersToVulkan.
+        if let coreId = emulatorCore.coreIdentifier?.lowercased(), coreId.contains("ppsspp"),
+           !emulatorCore.rendersToVulkan {
+            return false
+        }
+        // Cores that present into their own layer (skipLayout, GL/Vulkan surface of their own, no
+        // frontend presentation: Dolphin, Azahar) never hand us a frame. Drawing here would only
+        // paint a blank texture over their view.
+        if emulatorCore.skipLayout && emulatorCore.rendersToOpenGL && !emulatorCore.rendersToVulkan {
+            return false
+        }
+        return true
+    }
+
+    /// Presents a black frame on the device. Still counts as a presented frame: the game is
+    /// running and visible, on the external display.
+    private func presentBlankFrame(to drawable: CAMetalDrawable, commandBuffer: MTLCommandBuffer) {
+        commandBuffer.makeRenderCommandEncoder(descriptor: Self.clearPass(target: drawable.texture))?.endEncoding()
+        commandBuffer.present(drawable)
+        commandBuffer.commit()
+        previousCommandBuffer = commandBuffer
+        frameCount += 1
+        markFramePresented()
+    }
+
+    private static func clearPass(target: MTLTexture) -> MTLRenderPassDescriptor {
+        let pass = MTLRenderPassDescriptor()
+        pass.colorAttachments[0].texture = target
+        pass.colorAttachments[0].loadAction = .clear
+        pass.colorAttachments[0].storeAction = .store
+        pass.colorAttachments[0].clearColor = MTLClearColor(red: 0, green: 0, blue: 0, alpha: 1)
+        return pass
+    }
+
+    #if os(iOS)
+    /// Draws `source` on the external display, aspect-fit: with that screen's own filter when
+    /// one is set and ready, else as the plain picture with the device's smoothing.
+    ///
+    /// Called from `directRender` with the same frame snapshot the device draws, so it shares
+    /// that path's guarantees about when the texture is safe to sample.
+    private func presentOnExternalOutput(_ source: MTLTexture, emulatorCore: PVEmulatorCore, commandQueue: MTLCommandQueue) {
+        guard let output = externalOutput, output.window != nil,
+              let pipeline = customPipeline,
+              let sampler = pictureSampler(for: renderSettings.smoothingMode),
+              let drawable = output.metalLayer?.nextDrawable(),
+              let commandBuffer = commandQueue.makeCommandBuffer() else { return }
+        let target = drawable.texture
+        let aspectSize = emulatorCore.aspectSize
+        let aspect = aspectSize.width > 0 && aspectSize.height > 0 ? aspectSize : emulatorCore.screenRect.size
+        let contentRect = RenderGeometry.contentRect(aspect: aspect, viewSize: output.bounds.size,
+                                                     drawableSize: CGSize(width: target.width, height: target.height))
+        // OpenGL frames store the picture's bottom row first; software and Vulkan frames its top row.
+        let sourceIsBottomUp = emulatorCore.rendersToOpenGL && !emulatorCore.rendersToVulkan
+
+        let filtered = output.filter.render(source: source, target: target, commandBuffer: commandBuffer,
+                                            contentRect: contentRect, screenType: emulatorCore.screenType,
+                                            sourceIsBottomUp: sourceIsBottomUp)
+        if !filtered {
+            guard let encoder = commandBuffer.makeRenderCommandEncoder(descriptor: Self.clearPass(target: target)) else { return }
+            encoder.setViewport(MTLViewport(originX: Double(contentRect.minX), originY: Double(contentRect.minY),
+                                            width: Double(contentRect.width), height: Double(contentRect.height),
+                                            znear: 0, zfar: 1))
+            encoder.setRenderPipelineState(pipeline)
+            var flipY = !sourceIsBottomUp
+            encoder.setVertexBytes(&flipY, length: MemoryLayout<Bool>.size, index: 1)
+            encodePictureSampling(renderSettings.smoothingMode, sampler: sampler, encoder: encoder)
+            encoder.setFragmentTexture(source, index: 0)
+            encoder.drawPrimitives(type: .triangleStrip, vertexStart: 0, vertexCount: 4)
+            encoder.endEncoding()
+        }
+        commandBuffer.present(drawable)
+        commandBuffer.commit()
+    }
+    #endif
 
     // Helper method to update texture from core's buffer
     /// Updates the texture from the emulator core's video buffer
