@@ -35,6 +35,10 @@ public extension ThemeManager {
             }
         case .retrowave:
             paletteToApply = ProvenanceThemes.retrowave.palette
+        case .console(let preset):
+            paletteToApply = EditableThemePalette(theme: preset.theme)
+        case .custom:
+            paletteToApply = EditableThemePalette(theme: Defaults[.customTheme])
         case .cga(let option):
             let isDarkMode = UITraitCollection.current.userInterfaceStyle == .dark
             let autoPalette = isDarkMode ? ProvenanceThemes.dark.palette : ProvenanceThemes.light.palette

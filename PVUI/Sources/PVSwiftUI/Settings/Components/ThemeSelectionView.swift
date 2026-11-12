@@ -7,6 +7,8 @@
 
 import SwiftUI
 import PVThemes
+import PVSettings
+import Defaults
 import PVUIBase
 #if canImport(FreemiumKit)
 import FreemiumKit
@@ -340,6 +342,7 @@ struct ThemeSelectionView: View {
     @ObservedObject private var themeManager = ThemeManager.shared
     /// Currently selected theme stored in user defaults
     @Default(.theme) private var currentTheme
+    @Default(.customTheme) private var customTheme
     /// Environment variable for dismissing the view
     @Environment(\.dismiss) private var dismiss
     /// Current system color scheme (light/dark)
@@ -416,7 +419,7 @@ struct ThemeSelectionView: View {
                             .font(.system(size: 12, weight: .semibold))
                         Text("PLUS")
                             .font(.system(size: 11, weight: .heavy))
-                        Text("— 9 CGA color themes")
+                        Text("— \(CGAThemes.allCases.count) CGA color themes")
                             .font(.system(size: 11))
                     }
                     .foregroundStyle(
@@ -519,6 +522,81 @@ struct ThemeSelectionView: View {
         #endif
     }
 
+    private var consolePresetsSection: some View {
+        ThemeSection(title: "Console Presets", titleColor: RetroTheme.retroBlue) {
+            ForEach(ConsoleThemePreset.allCases) { preset in
+                Button {
+                    apply(.console(preset))
+                } label: {
+                    editableThemeLabel(preset.theme, selected: currentTheme == .console(preset))
+                }
+            }
+        }
+    }
+
+    private var customThemeSection: some View {
+        ThemeSection(title: "Custom Theme", titleColor: RetroTheme.retroBlue) {
+            Button {
+                apply(.custom)
+            } label: {
+                editableThemeLabel(customTheme, selected: currentTheme == .custom)
+            }
+            #if os(iOS)
+            NavigationLink {
+                CustomThemeEditor(theme: customTheme, onSave: saveCustomTheme)
+            } label: {
+                Label("Edit Custom Theme", systemImage: "paintpalette")
+                    .foregroundStyle(RetroTheme.retroBlue)
+            }
+            Menu("Customize a Console Preset", systemImage: "slider.horizontal.3") {
+                ForEach(ConsoleThemePreset.allCases) { preset in
+                    Button(preset.theme.name) { presetToEdit = preset }
+                }
+            }
+            .foregroundStyle(RetroTheme.retroBlue)
+            #endif
+        }
+    }
+
+    private func editableThemeLabel(_ theme: CustomTheme, selected: Bool) -> some View {
+        HStack(spacing: 12) {
+            ForEach([theme.background, theme.surface, theme.accent].indices, id: \.self) { index in
+                let color = [theme.background, theme.surface, theme.accent][index]
+                Circle()
+                    .fill(Color(color.platformColor))
+                    .frame(width: 16, height: 16)
+                    .overlay { Circle().strokeBorder(.primary.opacity(0.2)) }
+            }
+            .accessibilityHidden(true)
+            Text(theme.name)
+                .foregroundStyle(Color(themeManager.currentPalette.gameLibraryText))
+            Spacer()
+            if selected {
+                Image(systemName: "checkmark")
+                    .foregroundStyle(RetroTheme.retroBlue)
+                    .accessibilityLabel("Selected")
+            }
+        }
+        .padding(.vertical, 8)
+        .contentShape(Rectangle())
+    }
+
+    #if os(iOS)
+    @State private var presetToEdit: ConsoleThemePreset?
+
+    private func saveCustomTheme(_ theme: CustomTheme) {
+        customTheme = theme
+        currentTheme = .custom
+        ThemeManager.applySavedTheme()
+    }
+    #endif
+
+    private func apply(_ option: ThemeOption) {
+        currentTheme = option
+        ThemeManager.applySavedTheme()
+        dismiss()
+    }
+
     // MARK: - Main Content
 
     /// Main content container
@@ -528,6 +606,8 @@ struct ThemeSelectionView: View {
             standardThemesSection
             cgaThemesSection
             retroWaveThemeSection
+            consolePresetsSection
+            customThemeSection
 
             RetroPalettePreview(palette: themeManager.currentPalette)
                 .frame(maxWidth: .infinity)
@@ -558,6 +638,9 @@ struct ThemeSelectionView: View {
         .toolbarColorScheme(themeManager.currentPalette.dark ? .dark : .light, for: .navigationBar)
         #if os(iOS)
         .navigationBarTitleDisplayMode(.inline)
+        .navigationDestination(item: $presetToEdit) { preset in
+            CustomThemeEditor(theme: preset.theme, onSave: saveCustomTheme)
+        }
         #endif
         #if os(tvOS)
         .focusSection()

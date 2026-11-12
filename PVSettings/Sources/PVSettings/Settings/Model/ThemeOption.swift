@@ -25,6 +25,10 @@ public struct ThemeOptionBridge: Defaults.Bridge, Sendable {
             return ["type": "retrowave", "value": "retrowave"]
         case .cga(let option):
             return ["type": "cga", "value": option.rawValue]
+        case .console(let preset):
+            return ["type": "console", "value": preset.rawValue]
+        case .custom:
+            return ["type": "custom", "value": "custom"]
         }
     }
     
@@ -37,6 +41,10 @@ public struct ThemeOptionBridge: Defaults.Bridge, Sendable {
             return .retrowave
         case "cga":
             return .cga(ThemeOptionsCGA(rawValue: value) ?? .blue)
+        case "console":
+            return ConsoleThemePreset(rawValue: value).map(ThemeOption.console)
+        case "custom":
+            return .custom
         default:
             return nil
         }
@@ -47,6 +55,8 @@ public enum ThemeOption: Defaults.Serializable, Equatable, CustomStringConvertib
     case standard(ThemeOptionsStandard)
     case cga(ThemeOptionsCGA)
     case retrowave
+    case console(ConsoleThemePreset)
+    case custom
     
     public static let bridge = ThemeOptionBridge()
     
@@ -54,20 +64,24 @@ public enum ThemeOption: Defaults.Serializable, Equatable, CustomStringConvertib
         switch self {
         case .standard(let option): return "Standard " + option.description
         case .retrowave: return "RetroWave"
+        case .console(let preset): return preset.theme.name
+        case .custom: return "Custom Theme"
         case .cga(let option): return "CGA " + option.description
         }
     }
     
     public static var allCases: [ThemeOption] {
         return ThemeOptionsStandard.allCases.map { ThemeOption.standard($0) } +
-               ThemeOptionsCGA.allCases.map { ThemeOption.cga($0) } + [.retrowave]
+               ThemeOptionsCGA.allCases.map { ThemeOption.cga($0) } +
+               ConsoleThemePreset.allCases.map { ThemeOption.console($0) } + [.retrowave, .custom]
     }
     
     public static func == (lhs: ThemeOption, rhs: ThemeOption) -> Bool {
         switch (lhs, rhs) {
         case (.standard(let l), .standard(let r)): return l == r
         case (.cga(let l), .cga(let r)): return l == r
-        case (.retrowave, .retrowave): return true
+        case (.retrowave, .retrowave), (.custom, .custom): return true
+        case (.console(let l), .console(let r)): return l == r
         default: return false
         }
     }

@@ -716,7 +716,7 @@ struct ThemeOptionTests {
         let cases = ThemeOption.allCases
         let standardCount = ThemeOptionsStandard.allCases.count
         let cgaCount = ThemeOptionsCGA.allCases.count
-        #expect(cases.count == standardCount + cgaCount + 1)
+        #expect(cases.count == standardCount + cgaCount + ConsoleThemePreset.allCases.count + 2)
         #expect(cases.contains(.retrowave))
     }
 
