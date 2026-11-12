@@ -194,8 +194,9 @@ frame, the reflections and the light on the room over and around it, every frame
 - The screen filter is the existing `ShaderScope.screen(.external)` selection. Unset now means
   *The TV's Own* while a TV is chosen, and "same as the device" when the TV is *None*, as today.
 
-Resolution for a game: if matching is on and a TV lists the game's system as preferred, that TV;
-otherwise the chosen TV; otherwise none. A stored id that no longer exists resolves to none.
+Resolution for a game: with no TV chosen, none (matching replaces the chosen TV, it does not
+switch TVs on). Otherwise, if matching is on and a TV lists the game's system as preferred, that
+TV; otherwise the chosen TV. A stored id that no longer exists resolves to none.
 
 ### Tests
 

@@ -18,14 +18,38 @@ struct ExternalDisplayPlanTests {
                       controller: Bool = false,
                       deviceSkin: ExternalDisplayPlan.DeviceSkin = .generatedControls,
                       devicePicture: ExternalDisplayDevicePicture = .auto,
-                      externalSkin: ExternalDisplaySkin = .realSkinsOnly) -> ExternalDisplayPlan {
+                      externalSkin: ExternalDisplaySkin = .realSkinsOnly,
+                      bezelChosen: Bool = false) -> ExternalDisplayPlan {
         ExternalDisplayPlan(.init(mode: mode,
                                   externalDisplayConnected: connected,
                                   coreCanPresentExternally: coreCanPresent,
                                   hardwareControllerConnected: controller,
                                   deviceSkin: deviceSkin,
                                   devicePicture: devicePicture,
-                                  externalSkin: externalSkin))
+                                  externalSkin: externalSkin,
+                                  bezelChosen: bezelChosen))
+    }
+
+    @Test("A TV takes the place of the skin around the picture")
+    func bezelReplacesSkin() {
+        let plan = plan(deviceSkin: .real, externalSkin: .always, bezelChosen: true)
+        #expect(plan.bezelOnExternalDisplay)
+        #expect(!plan.skinOnExternalDisplay)
+    }
+
+    @Test("No TV leaves the skin setting in charge")
+    func noBezelKeepsSkin() {
+        let plan = plan(deviceSkin: .real, externalSkin: .always)
+        #expect(!plan.bezelOnExternalDisplay)
+        #expect(plan.skinOnExternalDisplay)
+    }
+
+    @Test("A TV needs the game on the external display",
+          arguments: [(ExternalDisplayMode.dedicated, false, true), (.dedicated, true, false)])
+    func bezelNeedsDedicatedPicture(mode: ExternalDisplayMode, connected: Bool, coreCanPresent: Bool) {
+        let plan = plan(mode: mode, connected: connected, coreCanPresent: coreCanPresent, bezelChosen: true)
+        #expect(!plan.gameOnExternalDisplay)
+        #expect(!plan.bezelOnExternalDisplay)
     }
 
     @Test("Touch play on generated controls turns the device into a controller")

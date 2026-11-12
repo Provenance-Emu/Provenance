@@ -32,6 +32,9 @@ public struct ExternalDisplayPlan: Equatable, Sendable {
         public var deviceSkin: DeviceSkin
         public var devicePicture: ExternalDisplayDevicePicture
         public var externalSkin: ExternalDisplaySkin
+        /// A TV is set to surround the picture on the external display
+        /// (`ExternalDisplayBezelRules.bezelID` is not `nil`).
+        public var bezelChosen: Bool
 
         public init(mode: ExternalDisplayMode,
                     externalDisplayConnected: Bool,
@@ -39,7 +42,8 @@ public struct ExternalDisplayPlan: Equatable, Sendable {
                     hardwareControllerConnected: Bool,
                     deviceSkin: DeviceSkin,
                     devicePicture: ExternalDisplayDevicePicture,
-                    externalSkin: ExternalDisplaySkin) {
+                    externalSkin: ExternalDisplaySkin,
+                    bezelChosen: Bool = false) {
             self.mode = mode
             self.externalDisplayConnected = externalDisplayConnected
             self.coreCanPresentExternally = coreCanPresentExternally
@@ -47,6 +51,7 @@ public struct ExternalDisplayPlan: Equatable, Sendable {
             self.deviceSkin = deviceSkin
             self.devicePicture = devicePicture
             self.externalSkin = externalSkin
+            self.bezelChosen = bezelChosen
         }
     }
 
@@ -57,6 +62,8 @@ public struct ExternalDisplayPlan: Equatable, Sendable {
     /// The external display draws the device's skin around the picture, when the skin has a
     /// layout that suits it (the caller checks that).
     public let skinOnExternalDisplay: Bool
+    /// The external display draws a TV around the picture. It takes the place of the skin.
+    public let bezelOnExternalDisplay: Bool
 
     public init(_ inputs: Inputs) {
         gameOnExternalDisplay = inputs.mode == .dedicated
@@ -66,9 +73,13 @@ public struct ExternalDisplayPlan: Equatable, Sendable {
             // Mirrored (or no display): the device is the only place the picture is drawn.
             pictureOnDevice = true
             skinOnExternalDisplay = false
+            bezelOnExternalDisplay = false
             return
         }
+        bezelOnExternalDisplay = inputs.bezelChosen
         switch inputs.externalSkin {
+        case _ where inputs.bezelChosen:
+            skinOnExternalDisplay = false
         case .always:
             // Generated controls have no artwork to show.
             skinOnExternalDisplay = inputs.deviceSkin != .generatedControls
