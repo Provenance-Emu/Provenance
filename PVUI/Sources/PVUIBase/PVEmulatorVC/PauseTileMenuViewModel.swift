@@ -45,6 +45,10 @@ final class PauseTileMenuViewModel: ObservableObject {
     /// menu offers Save & Quit beside Quit.
     @Published private(set) var offersSaveAndQuit = false
 
+    /// When the newest save state was made, and how many there are, for the save row.
+    @Published private(set) var latestSaveDate: Date?
+    @Published private(set) var saveStateCount = 0
+
     /// Flat lookup table: tile ID -> description text.
     /// Built alongside `sections` so the info shelf can resolve descriptions in O(1).
     private(set) var descriptionsByTileID: [String: String] = [:]
@@ -85,6 +89,13 @@ final class PauseTileMenuViewModel: ObservableObject {
             guard let game = emulatorVC.game, !game.isInvalidated else { return false }
             return !game.saveStates.isEmpty
         }()
+        if let game = emulatorVC.game, !game.isInvalidated {
+            saveStateCount = game.saveStates.count
+            latestSaveDate = game.saveStates.sorted(byKeyPath: "date", ascending: false).first?.date
+        } else {
+            saveStateCount = 0
+            latestSaveDate = nil
+        }
         let n64ID = SystemIdentifier.N64.rawValue
         let gameSystemID = emulatorVC.game?.systemIdentifier ?? emulatorVC.core.systemIdentifier
         let supportsCheatCodes = (emulatorVC.core as? GameWithCheat)?.supportsCheatCode == true
@@ -879,6 +890,22 @@ final class PauseTileMenuViewModel: ObservableObject {
             }
         }
         return matches
+    }
+
+    /// The first level's sections, whichever page or submenu is showing.
+    private var rootSections: [PauseMenuTileSection] { sectionsByRoute[.root] ?? [] }
+
+    /// A control of the first level by its identifier, for the panel's chrome (save row, exit buttons).
+    func rootTile(withID id: String) -> PauseMenuTile? {
+        rootSections.lazy.flatMap(\.tiles).first { $0.id == id }
+    }
+
+    /// One page of the first level as a single grid, in the page's fixed order.
+    func section(for tab: PauseMenuTab) -> PauseMenuTileSection {
+        let root = rootSections
+        let ids = tab.tileIDs(inRootSections: root.map { (id: $0.id, tileIDs: $0.tiles.map(\.id)) })
+        let byID = Dictionary(root.flatMap(\.tiles).map { ($0.id, $0) }, uniquingKeysWith: { first, _ in first })
+        return PauseMenuTileSection(id: "page_\(tab.rawValue)", tiles: ids.compactMap { byID[$0] })
     }
 
     /// Looks up the description for a tile by ID, returning nil when none exists.

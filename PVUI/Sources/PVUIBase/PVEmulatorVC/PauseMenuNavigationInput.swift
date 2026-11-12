@@ -16,8 +16,15 @@ enum PauseMenuNavigationCommand: Equatable, Sendable {
     case activate
     /// The pad's B / Circle button.
     case back
+    /// L1 and R1: the page before and after.
+    case previousTab, nextTab
+    /// The pad's X / Square and Y / Triangle buttons.
+    case quickSave, quickLoad
 
+    /// Held directions repeat.
     static let directions: [PauseMenuNavigationCommand] = [.up, .down, .left, .right]
+    /// Buttons fire once per press.
+    static let buttons: [PauseMenuNavigationCommand] = [.activate, .back, .previousTab, .nextTab, .quickSave, .quickLoad]
 }
 
 /// What the pads are holding, merged across every connected controller.
@@ -43,7 +50,7 @@ struct PauseMenuNavigationRepeater: Sendable {
         defer { held = sample.held }
         guard let held else { return [] }
         var fired: [PauseMenuNavigationCommand] = []
-        for command in PauseMenuNavigationCommand.directions + [.activate, .back] {
+        for command in PauseMenuNavigationCommand.directions + PauseMenuNavigationCommand.buttons {
             guard sample.held.contains(command) else {
                 nextRepeat[command] = nil
                 continue
@@ -61,13 +68,14 @@ struct PauseMenuNavigationRepeater: Sendable {
     }
 }
 
-#if os(iOS)
+#if canImport(UIKit)
 /// Reads the connected pads while the pause menu is on screen and publishes navigation commands.
 ///
-/// tvOS drives the menu with the focus engine. iOS has none for buttons without a hardware
-/// keyboard, and the shared `GamepadManager` handlers follow one controller's d-pad and
-/// are lost when a core installs its own handlers on the same elements. Sampling every pad
-/// covers the left stick and any connected controller, and depends on no handler.
+/// iOS has no focus engine for buttons without a hardware keyboard, and the shared
+/// `GamepadManager` handlers follow one controller's d-pad and are lost when a core installs
+/// its own handlers on the same elements. Sampling every pad covers the left stick and any
+/// connected controller, and depends on no handler. tvOS moves the cursor with its focus
+/// engine and takes only the shoulder buttons from here.
 @MainActor
 final class PauseMenuControllerInput {
     /// How far a stick must be pushed to count as a direction.
@@ -105,6 +113,10 @@ final class PauseMenuControllerInput {
             if gamepad.dpad.right.isPressed || stick.xAxis.value > Self.stickThreshold { held.insert(.right) }
             if gamepad.buttonA.isPressed { held.insert(.activate) }
             if gamepad.buttonB.isPressed { held.insert(.back) }
+            if gamepad.leftShoulder.isPressed { held.insert(.previousTab) }
+            if gamepad.rightShoulder.isPressed { held.insert(.nextTab) }
+            if gamepad.buttonX.isPressed { held.insert(.quickSave) }
+            if gamepad.buttonY.isPressed { held.insert(.quickLoad) }
         }
         let uptime = ProcessInfo.processInfo.systemUptime
         for command in repeater.update(with: PauseMenuNavigationSample(held: held), at: uptime) {

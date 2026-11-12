@@ -45,18 +45,20 @@ enum PauseTilePanelMetrics {
     /// Total vertical breathing room kept between the panel and the safe area.
     static let verticalInset: CGFloat = 24
 
-    /// Layouts at least this wide (iPad, Mac, tvOS) cap the panel at `regularMaxHeight`.
-    static let regularLayoutWidth: CGFloat = 600
-
+    /// The tallest a centred panel gets, so the game stays visible around it.
     static let regularMaxHeight: CGFloat = 680
 
     /// Height of the pinned title row on iOS.
     static let headerHeight: CGFloat = 34
     static let tvHeaderHeight: CGFloat = 56
-    /// How much shorter than the row the header capsules are drawn.
-    static let headerButtonInset: CGFloat = 6
     /// Below this panel width Quit and Save & Quit show their glyphs alone.
     static let compactHeaderWidth: CGFloat = 430
+    /// How much of the screen's height the phone sheet may take; the game shows above it.
+    static let sheetHeightFraction: CGFloat = 0.74
+    /// Gap kept around the panel on a phone held sideways.
+    static let railInset: CGFloat = 8
+    /// Gap between the panel and the description that floats beside it.
+    static let infoPillGap: CGFloat = 8
     /// The narrowest the panel gets when its sections need few columns: room for the
     /// title, search and the three header capsules.
     static let minimumWidth: CGFloat = 380
@@ -96,7 +98,6 @@ enum PauseTileMetrics {
     static let labelSize: CGFloat = 16
     static let badgeSize: CGFloat = 13
     static let sectionTitleSize: CGFloat = 16
-    static let infoTextSize: CGFloat = 18
     #else
     static let iconSize: CGFloat = 22
     /// Glyph size where the horizontal size class is regular (iPad, Mac).
@@ -108,7 +109,6 @@ enum PauseTileMetrics {
     static let labelSize: CGFloat = 11.5
     static let badgeSize: CGFloat = 9.5
     static let sectionTitleSize: CGFloat = 11
-    static let infoTextSize: CGFloat = 12
     #endif
     static let iconLabelGap: CGFloat = 2
     /// Vertical room around the glyph, so symbols of different heights share a baseline.
@@ -178,8 +178,8 @@ struct PauseTileMenuView: View {
     @State private var showsSearch = false
     /// Whether rows remain below the scroll viewport.
     @State private var hasMoreBelow = false
-    @ScaledMetric(relativeTo: .caption) private var tooltipHeight: CGFloat = 56
-    @ScaledMetric(relativeTo: .caption) private var tooltipFontSize = PauseTileMetrics.infoTextSize
+    /// The page of the first level on show. L1 and R1, or a tap on the page bar, change it.
+    @State private var rootTab: PauseMenuTab = .game
     /// Ranked search results across the full pause-menu tree.
     @State private var searchResults: [PauseMenuSearchResult] = []
     /// Description text shown in the bottom info shelf when a tile is focused/long-pressed.
@@ -230,17 +230,22 @@ struct PauseTileMenuView: View {
     @Default(.recordingCameraPosition) private var recordingCameraPosition
     #endif
 
-    #if os(iOS)
-    @ObservedObject private var gamepadManager = GamepadManager.shared
     /// Samples the connected pads while the menu is up; see `handleControllerCommand`.
     @State private var controllerInput = PauseMenuControllerInput()
+    #if os(iOS)
+    @ObservedObject private var gamepadManager = GamepadManager.shared
+    /// The panel's shape as last laid out, so the cursor walks the controls in drawn order.
+    @State private var currentMode: PauseMenuLayoutMode = .panel
     /// Columns the grid is drawn with (set from the layout in `body`), so controller
     /// navigation walks the same rows the panel shows.
     @State private var currentColumns = 0
     #endif
 
-    /// Black laid over the panel's material: enough for white labels over a bright game.
-    private static let panelTintOpacity: Double = 0.55
+    #if os(tvOS)
+    private static let isTV = true
+    #else
+    private static let isTV = false
+    #endif
 
     /// Slack before the grid counts as scrolled to its end.
     private static let scrollEndTolerance: CGFloat = 4
@@ -292,9 +297,16 @@ struct PauseTileMenuView: View {
         refreshSearchResults()
     }
 
+    /// What the grid shows: one page of the first level, or a submenu's sections.
+    private var visibleSections: [PauseMenuTileSection] {
+        guard currentRoute == .root else { return viewModel.sections }
+        let page = viewModel.section(for: rootTab)
+        return page.tiles.isEmpty ? [] : [page]
+    }
+
     /// Returns the first focusable tile identifier in display order.
     private func firstEnabledTileID() -> String? {
-        for section in viewModel.sections {
+        for section in visibleSections {
             if let tile = section.tiles.first(where: { $0.isEnabled }) {
                 return tile.id
             }
@@ -304,66 +316,12 @@ struct PauseTileMenuView: View {
 
     /// Returns the enabled tile object for an ID, if any.
     private func tile(forID id: String) -> PauseMenuTile? {
-        for section in viewModel.sections {
+        for section in visibleSections {
             if let tile = section.tiles.first(where: { $0.id == id && $0.isEnabled }) {
                 return tile
             }
         }
         return nil
-    }
-
-    /// Grid coordinate for a tile within its section: (sectionIndex, row, col).
-    /// `row` and `col` are computed against `cols` (the live column count); rows
-    /// are full-width except the last, which may be partial.
-    private struct TileGridCoord: Equatable {
-        let sectionIndex: Int
-        let row: Int
-        let col: Int
-    }
-
-    /// Locates the grid coordinate for a tile ID, using `cols` as the row width.
-    /// Returns nil when the tile isn't part of the currently rendered grid.
-    private func gridCoord(forTileID id: String, cols: Int) -> TileGridCoord? {
-        guard cols > 0 else { return nil }
-        for (sectionIndex, section) in viewModel.sections.enumerated() {
-            if let idx = section.tiles.firstIndex(where: { $0.id == id }) {
-                return TileGridCoord(sectionIndex: sectionIndex, row: idx / cols, col: idx % cols)
-            }
-        }
-        return nil
-    }
-
-    /// Returns the tile ID at the given grid coordinate, walking past disabled
-    /// tiles to the nearest enabled tile in the same row/section.
-    /// Search order: requested col → leftward in row → rightward in row.
-    private func tileID(at coord: TileGridCoord, cols: Int) -> String? {
-        guard cols > 0,
-              coord.sectionIndex >= 0,
-              coord.sectionIndex < viewModel.sections.count else { return nil }
-        let tiles = viewModel.sections[coord.sectionIndex].tiles
-        let rowStart = coord.row * cols
-        guard rowStart < tiles.count else { return nil }
-        let rowEnd = min(rowStart + cols, tiles.count)
-        let rowTiles = Array(tiles[rowStart..<rowEnd])
-        let clampedCol = max(0, min(rowTiles.count - 1, coord.col))
-        // Try requested column first, then expand outward.
-        if rowTiles[clampedCol].isEnabled { return rowTiles[clampedCol].id }
-        for offset in 1..<rowTiles.count {
-            let left = clampedCol - offset
-            if left >= 0, rowTiles[left].isEnabled { return rowTiles[left].id }
-            let right = clampedCol + offset
-            if right < rowTiles.count, rowTiles[right].isEnabled { return rowTiles[right].id }
-        }
-        return nil
-    }
-
-    /// Row count for a section given the current column count.
-    private func rowCount(forSectionIndex sectionIndex: Int, cols: Int) -> Int {
-        guard cols > 0,
-              sectionIndex >= 0,
-              sectionIndex < viewModel.sections.count else { return 0 }
-        let n = viewModel.sections[sectionIndex].tiles.count
-        return (n + cols - 1) / cols
     }
 
     #if os(iOS)
@@ -374,81 +332,92 @@ struct PauseTileMenuView: View {
         let width = ProcessInfo.processInfo.isiOSAppOnMac ? PauseTilePanelMetrics.desktopMinWidth : panelMaxWidth
         return columnCount(for: width)
     }
+
+    /// Everything the controller cursor can reach, top to bottom as drawn: the exit
+    /// buttons and the save row around the grid. Disabled controls are left out.
+    private var cursorGrid: PauseMenuCursorGrid {
+        let columns = currentColumnCount()
+        let cells = visibleSections.flatMap { section in
+            PauseMenuCursorGrid.chunk(section.tiles.map(\.id), columns: columns).map { row in
+                row.filter { id in section.tiles.first { $0.id == id }?.isEnabled == true }
+            }
+        }
+        let saves = saveControls.filter(\.isEnabled).map(\.id)
+        /// The sheet has its exit buttons under the grid; the other shapes have them in the title row.
+        return currentMode == .sheet
+            ? PauseMenuCursorGrid(above: [saves], cells: cells, below: [exitControlIDs], columns: columns)
+            : PauseMenuCursorGrid(above: [exitControlIDs, saves], cells: cells, columns: columns)
+    }
     #endif
 
-    /// Moves focus horizontally within the current row. Clamps at row edges
-    /// (no wraparound to adjacent rows), matching platform convention.
-    private func moveFocus(deltaCol: Int, cols: Int) {
-        guard deltaCol != 0, cols > 0 else { return }
-        guard let id = focusedTileID else {
-            focusedTileID = firstEnabledTileID()
-            return
-        }
-        guard let coord = gridCoord(forTileID: id, cols: cols) else {
-            focusedTileID = firstEnabledTileID()
-            return
-        }
-        let tiles = viewModel.sections[coord.sectionIndex].tiles
-        let rowStart = coord.row * cols
-        let rowEnd = min(rowStart + cols, tiles.count)
-        let rowWidth = rowEnd - rowStart
-        let step = deltaCol > 0 ? 1 : -1
-        var col = coord.col + step
-        while col >= 0, col < rowWidth {
-            if tiles[rowStart + col].isEnabled {
-                focusedTileID = tiles[rowStart + col].id
-                return
-            }
-            col += step
-        }
-        // No enabled tile found in this row in that direction — stay put.
+    /// The exit buttons, in their fixed order.
+    private var exitControlIDs: [String] {
+        [PauseMenuChromeID.quit]
+            + (viewModel.offersSaveAndQuit ? [PauseMenuChromeID.saveQuit] : [])
+            + [PauseMenuChromeID.resume]
     }
 
-    /// Moves focus vertically, first walking rows within the current section
-    /// then crossing into the adjacent section's nearest row while preserving
-    /// the column (snapped to the last column when the new row is shorter).
-    private func moveFocus(deltaRow: Int, cols: Int) {
-        guard deltaRow != 0, cols > 0 else { return }
-        guard let id = focusedTileID else {
-            focusedTileID = firstEnabledTileID()
-            return
-        }
-        guard let coord = gridCoord(forTileID: id, cols: cols) else {
-            focusedTileID = firstEnabledTileID()
-            return
-        }
-        let step = deltaRow > 0 ? 1 : -1
-        var sectionIndex = coord.sectionIndex
-        var row = coord.row + step
-        // Walk row-by-row (and section-by-section at boundaries) until an
-        // enabled tile is found or we run off the ends.
-        while sectionIndex >= 0, sectionIndex < viewModel.sections.count {
-            let rows = rowCount(forSectionIndex: sectionIndex, cols: cols)
-            if row < 0 {
-                // Step into previous section's last row.
-                sectionIndex -= 1
-                if sectionIndex < 0 { return }
-                row = max(0, rowCount(forSectionIndex: sectionIndex, cols: cols) - 1)
-                continue
+    /// One control of the save row: its chrome identifier and the root control it stands for.
+    private struct SaveControl {
+        let id: String
+        let tileID: String
+        let isEnabled: Bool
+    }
+
+    /// The save row, shown on the first level only.
+    private var saveControls: [SaveControl] {
+        guard currentRoute == .root else { return [] }
+        return Self.chromeTileIDs.filter { Self.saveChromeIDs.contains($0.chrome) }
+            .map { SaveControl(id: $0.chrome, tileID: $0.tile, isEnabled: viewModel.rootTile(withID: $0.tile)?.isEnabled == true) }
+    }
+
+    private static let saveChromeIDs = [PauseMenuChromeID.save, PauseMenuChromeID.load, PauseMenuChromeID.allSaves]
+
+    /// Each chrome control and the root control whose action and description it shares.
+    private static let chromeTileIDs: [(chrome: String, tile: String)] = [
+        (PauseMenuChromeID.save, "saveState"), (PauseMenuChromeID.load, "loadState"),
+        (PauseMenuChromeID.allSaves, "browseSaves"), (PauseMenuChromeID.quit, "quit"),
+        (PauseMenuChromeID.saveQuit, "saveQuit"), (PauseMenuChromeID.resume, "resume")
+    ]
+
+    /// Runs a chrome control. Returns false when `id` is not one.
+    @discardableResult
+    private func performChrome(_ id: String) -> Bool {
+        switch id {
+        case PauseMenuChromeID.quit: quitWithoutSaving()
+        case PauseMenuChromeID.saveQuit: saveAndQuit()
+        case PauseMenuChromeID.resume: requestPauseMenuClose()
+        case PauseMenuChromeID.save, PauseMenuChromeID.load, PauseMenuChromeID.allSaves:
+            let tileID = Self.chromeTileIDs.first { $0.chrome == id }?.tile
+            if let tile = tileID.flatMap({ viewModel.rootTile(withID: $0) }), tile.isEnabled {
+                handle(tile)
             }
-            if row >= rows {
-                // Step into next section's first row.
-                sectionIndex += 1
-                row = 0
-                continue
-            }
-            let candidate = TileGridCoord(sectionIndex: sectionIndex, row: row, col: coord.col)
-            if let nextID = tileID(at: candidate, cols: cols) {
-                focusedTileID = nextID
-                return
-            }
-            row += step
+        default: return false
         }
+        return true
+    }
+
+    /// The description for whatever the cursor is on, a chrome control included.
+    private func description(forCursor id: String?) -> String? {
+        let tileID = Self.chromeTileIDs.first { $0.chrome == id }?.tile ?? id
+        return viewModel.description(forTileID: tileID)
+    }
+
+    /// Shows the page `offset` steps away and puts the cursor on its first control.
+    private func switchTab(by offset: Int) {
+        guard currentRoute == .root else { return }
+        selectTab(rootTab.next(by: offset))
+    }
+
+    private func selectTab(_ tab: PauseMenuTab) {
+        guard tab != rootTab else { return }
+        rootTab = tab
+        reattachTVOSFocusIfNeeded()
     }
 
     /// Activates the currently focused tile via the standard tile handler.
     private func activateFocusedTile() {
-        guard let id = focusedTileID, let tile = tile(forID: id) else { return }
+        guard let id = focusedTileID, !performChrome(id), let tile = tile(forID: id) else { return }
         handle(tile)
     }
 
@@ -460,9 +429,9 @@ struct PauseTileMenuView: View {
         /// No cursor means touch is driving the menu; leave it without one.
         guard focusedID != nil else { return }
         #endif
-        let hasValidFocus = viewModel.sections.contains { section in
+        let hasValidFocus = visibleSections.contains { section in
             section.tiles.contains(where: { $0.id == focusedID && $0.isEnabled })
-        }
+        } || exitControlIDs.contains(focusedID ?? "") || saveControls.contains { $0.id == focusedID && $0.isEnabled }
         guard !hasValidFocus else { return }
         guard let fallbackID = firstEnabledTileID() else { return }
         DispatchQueue.main.async {
@@ -508,17 +477,22 @@ struct PauseTileMenuView: View {
     }
 
     /// One step from the controller: the d-pad or left stick moves the cursor, A opens
-    /// the tile under it and B goes back a level, then closes the menu.
+    /// what is under it, B goes back a level then closes the menu, L1 and R1 change
+    /// page, X and Y save and load.
     private func handleControllerCommand(_ command: PauseMenuNavigationCommand) {
         guard !isCoveredByPresentation else { return }
-        let cols = currentColumnCount()
+        let grid = cursorGrid
         switch command {
-        case .left: moveFocus(deltaCol: -1, cols: cols)
-        case .right: moveFocus(deltaCol: 1, cols: cols)
-        case .up: moveFocus(deltaRow: -1, cols: cols)
-        case .down: moveFocus(deltaRow: 1, cols: cols)
+        case .left: focusedTileID = grid.move(from: focusedTileID, .left)
+        case .right: focusedTileID = grid.move(from: focusedTileID, .right)
+        case .up: focusedTileID = grid.move(from: focusedTileID, .up)
+        case .down: focusedTileID = grid.move(from: focusedTileID, .down)
         case .activate: activateFocusedTile()
         case .back: handleBackCommand()
+        case .previousTab: switchTab(by: -1)
+        case .nextTab: switchTab(by: 1)
+        case .quickSave: performChrome(PauseMenuChromeID.save)
+        case .quickLoad: performChrome(PauseMenuChromeID.load)
         }
     }
     #endif
@@ -1208,12 +1182,26 @@ struct PauseTileMenuView: View {
         return min(insetWidth, panelMaxWidth)
     }
 
-    /// A phone gives the panel all the height it has, so as few rows as possible sit
-    /// below the fold; wider layouts cap it and keep the game visible around it.
-    private func panelMaxHeight(in size: CGSize) -> CGFloat {
-        let available = max(0, size.height - PauseTilePanelMetrics.verticalInset)
-        guard size.width >= PauseTilePanelMetrics.regularLayoutWidth else { return available }
-        return min(PauseTilePanelMetrics.regularMaxHeight, available)
+    /// The panel's width before it is fitted to its columns: the whole screen for the
+    /// phone sheet, nearly all of it for a phone on its side, the floating width otherwise.
+    private func fullPanelWidth(in size: CGSize, mode: PauseMenuLayoutMode) -> CGFloat {
+        switch mode {
+        case .sheet: return size.width
+        case .rail: return max(0, size.width - PauseTilePanelMetrics.railInset * 2)
+        case .panel: return panelWidth(forAvailableWidth: size.width)
+        }
+    }
+
+    /// The sheet leaves the game showing above it, a phone on its side gives the panel
+    /// all the height it has, and wider layouts cap it and keep the game visible around it.
+    private func panelMaxHeight(in size: CGSize, mode: PauseMenuLayoutMode) -> CGFloat {
+        switch mode {
+        case .sheet: return size.height * PauseTilePanelMetrics.sheetHeightFraction
+        case .rail: return max(0, size.height - PauseTilePanelMetrics.railInset * 2)
+        case .panel:
+            let available = max(0, size.height - PauseTilePanelMetrics.verticalInset)
+            return min(PauseTilePanelMetrics.regularMaxHeight, available)
+        }
     }
 
     // MARK: - Tile view
@@ -1261,31 +1249,41 @@ struct PauseTileMenuView: View {
     }
 
     /// Translucent like the library dock: the paused game stays visible through the panel.
-    private var panelBackground: some View {
-        let shape = RoundedRectangle(cornerRadius: RetroPauseChrome.chromeCornerRadius)
+    /// The theme's menu colour tints the material; the sheet is square where it meets the screen edge.
+    private func panelBackground(theme: PauseMenuTheme, mode: PauseMenuLayoutMode) -> some View {
+        let radius = RetroPauseChrome.chromeCornerRadius
+        let foot = mode == .sheet ? 0 : radius
+        let shape = UnevenRoundedRectangle(topLeadingRadius: radius, bottomLeadingRadius: foot,
+                                           bottomTrailingRadius: foot, topTrailingRadius: radius)
         return shape.fill(.ultraThinMaterial)
-            .overlay { shape.fill(Color.black.opacity(Self.panelTintOpacity)) }
-            .overlay { shape.strokeBorder(RetroPauseChrome.chromeBorder) }
-            .environment(\.colorScheme, .dark)
+            .overlay { shape.fill(theme.panelTint.opacity(PauseMenuTheme.panelTintOpacity)) }
+            .overlay { shape.strokeBorder(theme.border) }
+            .ignoresSafeArea(edges: mode == .sheet ? .bottom : [])
     }
 
-    /// One slim pinned row: it stays put while the grid scrolls, so it is kept short.
-    /// Buttons keep a 44 pt wide target; the row's height is the compromise.
-    /// Leaving the game sits beside going back to it: Quit, Save & Quit, Resume.
-    private func panelHeader(compact: Bool) -> some View {
+    /// The game's name on the first level, the submenu's name below it.
+    private var panelTitle: String {
+        guard currentRoute == .root, let game = emulatorVC.game, !game.isInvalidated, !game.title.isEmpty else {
+            return routeTitle
+        }
+        return game.title
+    }
+
+    /// The pinned title row: back, the title, search, and the exit buttons where the shape puts them here.
+    private func titleRow(theme: PauseMenuTheme, showsExits: Bool, compactExits: Bool) -> some View {
         let rowHeight = tvOSAdjusted(PauseTilePanelMetrics.headerHeight, tvOS: PauseTilePanelMetrics.tvHeaderHeight)
-        return HStack(spacing: 4) {
+        return HStack(spacing: 6) {
             if routeStack.count > 1 {
                 Button { _ = popRoute() } label: {
                     Image(systemName: "chevron.left")
                         .frame(width: RetroPauseChrome.controlHeight, height: rowHeight)
                         .contentShape(Rectangle())
                 }
+                .buttonStyle(.plain)
                 .accessibilityLabel("Back")
             }
-            Text(routeTitle)
+            Text(panelTitle)
                 .font(.system(size: tvOSAdjusted(15, tvOS: 22), weight: .semibold, design: .rounded))
-                .foregroundStyle(Color.retroBlue)
                 .lineLimit(1)
                 .minimumScaleFactor(PauseTileMetrics.labelMinimumScale)
             Spacer(minLength: 0)
@@ -1294,43 +1292,193 @@ struct PauseTileMenuView: View {
                     .frame(width: RetroPauseChrome.controlHeight, height: rowHeight)
                     .contentShape(Rectangle())
             }
+            .buttonStyle(.plain)
             .accessibilityLabel("Search settings")
-            headerCapsule(String(localized: "Quit"), symbol: compact ? "xmark.circle" : nil,
-                          tint: .retroPink, rowHeight: rowHeight, action: quitWithoutSaving)
-            if viewModel.offersSaveAndQuit {
-                headerCapsule(String(localized: "Save & Quit"), symbol: compact ? "square.and.arrow.down.on.square" : nil,
-                              tint: .retroCyan, rowHeight: rowHeight, action: saveAndQuit)
+            if showsExits {
+                exitButtons(theme: theme, compact: compactExits, expands: false,
+                            height: PauseMenuChromeMetrics.controlHeight)
             }
-            headerCapsule(String(localized: "Resume"), symbol: nil,
-                          tint: .retroGreen, rowHeight: rowHeight, action: requestPauseMenuClose)
         }
-        .buttonStyle(.plain)
-        .foregroundStyle(Color.retroBlue)
+        .foregroundStyle(theme.accent)
         .padding(.horizontal, tvOSAdjusted(RetroPauseChrome.chromeInset, tvOS: 20))
-        .padding(.top, 4)
+        .padding(.top, 6)
+        .padding(.bottom, 4)
+        #if os(tvOS)
+        .focusSection()
+        #endif
     }
 
-    /// A tinted capsule in the header row. With a `symbol` it shows the glyph alone and
-    /// keeps `title` for VoiceOver.
-    private func headerCapsule(_ title: String, symbol: String?, tint: Color, rowHeight: CGFloat,
-                               action: @escaping () -> Void) -> some View {
-        Button(action: action) {
-            Group {
-                if let symbol {
-                    Image(systemName: symbol)
-                } else {
-                    Text(title).lineLimit(1)
+    /// Quit, Save & Quit, Resume: always in that order, Resume the primary one.
+    @ViewBuilder
+    private func exitButtons(theme: PauseMenuTheme, compact: Bool, expands: Bool, height: CGFloat) -> some View {
+        PauseChromeButton(title: String(localized: "Quit"), symbol: compact ? "xmark.circle" : nil,
+                          tint: theme.destructive, iconOnly: compact, expands: expands, height: height,
+                          isCursor: focusedTileID == PauseMenuChromeID.quit, action: quitWithoutSaving)
+        if viewModel.offersSaveAndQuit {
+            PauseChromeButton(title: String(localized: "Save & Quit"),
+                              symbol: compact ? "square.and.arrow.down.on.square" : nil,
+                              tint: theme.accent, iconOnly: compact, expands: expands, height: height,
+                              isCursor: focusedTileID == PauseMenuChromeID.saveQuit, action: saveAndQuit)
+        }
+        PauseChromeButton(title: String(localized: "Resume"), tint: theme.accent, prominent: true,
+                          expands: expands, height: height,
+                          isCursor: focusedTileID == PauseMenuChromeID.resume, action: requestPauseMenuClose)
+    }
+
+    /// The exit buttons as a full-width bar under the phone sheet, at the thumb.
+    private func exitBar(theme: PauseMenuTheme) -> some View {
+        HStack(spacing: 6) {
+            exitButtons(theme: theme, compact: false, expands: true, height: PauseMenuChromeMetrics.sheetActionHeight)
+        }
+        .padding(.horizontal, RetroPauseChrome.chromeInset)
+        .padding(.vertical, 8)
+        .overlay(alignment: .top) { theme.divider.frame(height: 1) }
+    }
+
+    /// Save, Load and All saves in one slim row, so the grid keeps the room.
+    private func saveRow(theme: PauseMenuTheme) -> some View {
+        HStack(spacing: 6) {
+            ForEach(saveControls, id: \.id) { control in
+                PauseChromeButton(title: Self.saveTitle(for: control.id), symbol: Self.saveSymbol(for: control.id),
+                                  detail: saveDetail(for: control.id), tint: Self.saveTint(for: control.id),
+                                  expands: true, isEnabled: control.isEnabled,
+                                  isCursor: focusedTileID == control.id) { performChrome(control.id) }
+            }
+        }
+        .padding(.horizontal, tvOSAdjusted(RetroPauseChrome.chromeInset, tvOS: 20))
+        .padding(.bottom, 6)
+        #if os(tvOS)
+        .focusSection()
+        #endif
+    }
+
+    private static func saveTitle(for id: String) -> String {
+        switch id {
+        case PauseMenuChromeID.save: return String(localized: "Save")
+        case PauseMenuChromeID.load: return String(localized: "Load")
+        default: return String(localized: "All Saves")
+        }
+    }
+
+    private static func saveSymbol(for id: String) -> String {
+        switch id {
+        case PauseMenuChromeID.save: return "square.and.arrow.down"
+        case PauseMenuChromeID.load: return "arrowshape.turn.up.left"
+        default: return "square.grid.2x2"
+        }
+    }
+
+    private static func saveTint(for id: String) -> Color {
+        switch id {
+        case PauseMenuChromeID.save: return .retroCyan
+        case PauseMenuChromeID.load: return .retroBlue
+        default: return .retroPurple
+        }
+    }
+
+    /// The age of the newest save beside Load, and the number of saves beside All Saves.
+    private func saveDetail(for id: String) -> String? {
+        switch id {
+        case PauseMenuChromeID.load:
+            return viewModel.latestSaveDate.map { Self.saveAgeFormatter.localizedString(for: $0, relativeTo: Date()) }
+        case PauseMenuChromeID.allSaves:
+            return viewModel.saveStateCount > 0 ? String(viewModel.saveStateCount) : nil
+        default:
+            return nil
+        }
+    }
+
+    private static let saveAgeFormatter: RelativeDateTimeFormatter = {
+        let formatter = RelativeDateTimeFormatter()
+        formatter.unitsStyle = .abbreviated
+        return formatter
+    }()
+
+    /// Whether a controller can switch pages, so the page bar shows L1 and R1.
+    private var showsShoulderKeys: Bool {
+        #if os(tvOS)
+        return true
+        #else
+        return gamepadManager.isControllerConnected
+        #endif
+    }
+
+    private func tabBar(_ style: PauseMenuTabBar.Style, theme: PauseMenuTheme) -> some View {
+        PauseMenuTabBar(selection: rootTab, style: style, theme: theme,
+                        showsShoulderKeys: style == .labels && showsShoulderKeys, select: selectTab)
+            .padding(.horizontal, style == .rail ? 0 : tvOSAdjusted(RetroPauseChrome.chromeInset, tvOS: 20))
+            .padding(.vertical, 4)
+    }
+
+    #if os(iOS)
+    /// What each button does, shown under a panel while a controller is connected.
+    private static let legendEntries: [PauseMenuLegend.Entry] = [
+        .init(keys: ["A"], action: String(localized: "Open")),
+        .init(keys: ["B"], action: String(localized: "Back")),
+        .init(keys: ["X"], action: String(localized: "Save")),
+        .init(keys: ["Y"], action: String(localized: "Load")),
+        .init(keys: ["L1", "R1"], action: String(localized: "Page"))
+    ]
+    #endif
+
+    /// The panel's content for its shape. See `PauseMenuLayoutMode`.
+    @ViewBuilder
+    private func panelContent(mode: PauseMenuLayoutMode, theme: PauseMenuTheme, sections: [PauseMenuTileSection],
+                              cols: Int, spacing: CGFloat, showsGrid: Bool, compactExits: Bool) -> some View {
+        let isRoot = currentRoute == .root
+        switch mode {
+        case .panel:
+            VStack(spacing: 0) {
+                titleRow(theme: theme, showsExits: true, compactExits: compactExits)
+                if isRoot {
+                    saveRow(theme: theme)
+                    tabBar(.labels, theme: theme)
+                }
+                gridScroll(sections: sections, cols: cols, spacing: spacing, showsGrid: showsGrid)
+                #if os(iOS)
+                if gamepadManager.isControllerConnected {
+                    PauseMenuLegend(entries: Self.legendEntries, theme: theme)
+                }
+                #endif
+            }
+        case .sheet:
+            VStack(spacing: 0) {
+                titleRow(theme: theme, showsExits: false, compactExits: false)
+                if isRoot { saveRow(theme: theme) }
+                gridScroll(sections: sections, cols: cols, spacing: spacing, showsGrid: showsGrid)
+                if isRoot {
+                    tabBar(.stacked, theme: theme)
+                        .overlay(alignment: .top) { theme.divider.frame(height: 1) }
+                }
+                exitBar(theme: theme)
+            }
+        case .rail:
+            HStack(spacing: 0) {
+                if isRoot {
+                    tabBar(.rail, theme: theme)
+                        .overlay(alignment: .trailing) { theme.divider.frame(width: 1) }
+                }
+                VStack(spacing: 0) {
+                    titleRow(theme: theme, showsExits: true, compactExits: compactExits)
+                    if isRoot { saveRow(theme: theme) }
+                    gridScroll(sections: sections, cols: cols, spacing: spacing, showsGrid: showsGrid)
                 }
             }
-            .font(.system(size: tvOSAdjusted(12, tvOS: 18), weight: .medium))
-            .padding(.horizontal, RetroPauseChrome.chromeInset)
-            .frame(height: rowHeight - PauseTilePanelMetrics.headerButtonInset)
-            .foregroundStyle(tint)
-            .background(tint.opacity(RetroPauseChrome.menuCellFillOpacityUnfocused), in: Capsule())
-            .frame(height: rowHeight)
-            .contentShape(Rectangle())
         }
-        .accessibilityLabel(title)
+    }
+
+    /// The description of the control under the cursor, floating beside the panel: above
+    /// the phone sheet, below a centred panel, and over the foot of a panel that fills the screen.
+    @ViewBuilder
+    private func infoPill(mode: PauseMenuLayoutMode, theme: PauseMenuTheme) -> some View {
+        if let infoText {
+            let gap = PauseTilePanelMetrics.infoPillGap
+            PauseMenuInfoPill(text: infoText, theme: theme)
+                .padding(.horizontal, RetroPauseChrome.chromeInset)
+                .alignmentGuide(mode == .sheet ? .top : .bottom) { dimensions in
+                    mode == .panel ? dimensions[.top] - gap : dimensions[.bottom] + gap
+                }
+        }
     }
 
     // MARK: - Section view
@@ -1340,7 +1488,7 @@ struct PauseTileMenuView: View {
             if let title = section.title {
                 Text(title)
                     .font(.system(size: PauseTileMetrics.sectionTitleSize, weight: .heavy))
-                    .foregroundColor(.white.opacity(0.6))
+                    .foregroundColor(Color.primary.opacity(0.6))
                     .tracking(tvOSAdjusted(1.5, tvOS: 2.5))
                     .lineLimit(1)
                     .padding(.horizontal, 2)
@@ -1395,12 +1543,12 @@ struct PauseTileMenuView: View {
         HStack(spacing: 6) {
             Image(systemName: "magnifyingglass")
                 .font(.system(size: tvOSAdjusted(11, tvOS: 15), weight: .semibold))
-                .foregroundColor(.white.opacity(0.7))
+                .foregroundColor(Color.primary.opacity(0.7))
             TextField(String(localized: "Search settings"), text: $searchText)
                 .textInputAutocapitalization(.never)
                 .disableAutocorrection(true)
                 .font(.system(size: tvOSAdjusted(11, tvOS: 15), weight: .medium, design: .rounded))
-                .foregroundColor(.white)
+                .foregroundColor(.primary)
                 // Exclude the search field from controller / focus-engine
                 // navigation. Without this, tvOS focus engine and iOS
                 // keyboard-driven focus latch onto the TextField on first
@@ -1468,13 +1616,13 @@ struct PauseTileMenuView: View {
                     .lineLimit(1)
                     .minimumScaleFactor(0.8)
             }
-            .foregroundColor(.white.opacity(0.92))
+            .foregroundColor(Color.primary.opacity(0.92))
             .padding(.horizontal, tvOSAdjusted(10, tvOS: 14))
             .padding(.vertical, tvOSAdjusted(6, tvOS: 10))
             .frame(maxWidth: .infinity)
             .background(
                 RoundedRectangle(cornerRadius: tvOSAdjusted(8, tvOS: 12))
-                    .fill(Color.white.opacity(0.08))
+                    .fill(Color.primary.opacity(0.08))
                     .overlay(
                         RoundedRectangle(cornerRadius: tvOSAdjusted(8, tvOS: 12))
                             .strokeBorder(accent.opacity(RetroPauseChrome.menuCellStrokeOpacityUnfocused))
@@ -1496,32 +1644,32 @@ struct PauseTileMenuView: View {
                 VStack(alignment: .leading, spacing: 2) {
                     Text(title)
                         .font(.system(size: tvOSAdjusted(10, tvOS: 14), weight: .semibold))
-                        .foregroundColor(.white)
+                        .foregroundColor(.primary)
                     Text(subtitle)
                         .font(.system(size: tvOSAdjusted(9, tvOS: 12), weight: .medium))
-                        .foregroundColor(.white.opacity(0.6))
+                        .foregroundColor(Color.primary.opacity(0.6))
                 }
                 Spacer(minLength: 6)
                 ZStack(alignment: isOn.wrappedValue ? .trailing : .leading) {
                     Capsule()
-                        .fill((isOn.wrappedValue ? Color.retroCyan : Color.white.opacity(0.20)).opacity(0.22))
+                        .fill((isOn.wrappedValue ? Color.retroCyan : Color.primary.opacity(0.20)).opacity(0.22))
                         .overlay(
                             Capsule()
-                                .strokeBorder(isOn.wrappedValue ? Color.retroCyan.opacity(0.95) : Color.white.opacity(0.45))
+                                .strokeBorder(isOn.wrappedValue ? Color.retroCyan.opacity(0.95) : Color.primary.opacity(0.45))
                         )
                         .frame(width: tvOSAdjusted(50, tvOS: 70), height: tvOSAdjusted(24, tvOS: 30))
                     Circle()
-                        .fill(isOn.wrappedValue ? Color.retroCyan : Color.white.opacity(0.85))
+                        .fill(isOn.wrappedValue ? Color.retroCyan : Color.primary.opacity(0.85))
                         .frame(width: tvOSAdjusted(18, tvOS: 24), height: tvOSAdjusted(18, tvOS: 24))
                         .padding(.horizontal, tvOSAdjusted(3, tvOS: 4))
-                        .shadow(color: (isOn.wrappedValue ? Color.retroCyan : Color.white).opacity(0.75), radius: 6, x: 0, y: 0)
+                        .shadow(color: (isOn.wrappedValue ? Color.retroCyan : Color.primary).opacity(0.75), radius: 6, x: 0, y: 0)
                 }
             }
             .padding(.horizontal, tvOSAdjusted(10, tvOS: 14))
             .padding(.vertical, tvOSAdjusted(8, tvOS: 11))
             .background(
                 RoundedRectangle(cornerRadius: tvOSAdjusted(8, tvOS: 12))
-                    .fill(Color.white.opacity(0.06))
+                    .fill(Color.primary.opacity(0.06))
                     .overlay(
                         RoundedRectangle(cornerRadius: tvOSAdjusted(8, tvOS: 12))
                             .strokeBorder(RetroPauseChrome.chromeBorder)
@@ -1537,14 +1685,14 @@ struct PauseTileMenuView: View {
         VStack(alignment: .leading, spacing: 8) {
             Text(String(localized: "SEARCH RESULTS"))
                 .font(.system(size: tvOSAdjusted(9, tvOS: 13), weight: .heavy))
-                .foregroundColor(.white.opacity(0.45))
+                .foregroundColor(Color.primary.opacity(0.45))
                 .tracking(tvOSAdjusted(1.5, tvOS: 2.5))
                 .padding(.horizontal, 2)
 
             if searchResults.isEmpty {
                 Text(String(localized: "No matching settings found."))
                     .font(.system(size: tvOSAdjusted(10, tvOS: 14), weight: .medium, design: .rounded))
-                    .foregroundColor(.white.opacity(0.65))
+                    .foregroundColor(Color.primary.opacity(0.65))
                     .padding(.top, 4)
             } else {
                 ForEach(searchResults) { result in
@@ -1557,10 +1705,10 @@ struct PauseTileMenuView: View {
                             VStack(alignment: .leading, spacing: 2) {
                                 Text(result.tile.label)
                                     .font(.system(size: tvOSAdjusted(11, tvOS: 16), weight: .semibold))
-                                    .foregroundColor(.white)
+                                    .foregroundColor(.primary)
                                 Text(result.route.rawValue.uppercased())
                                     .font(.system(size: tvOSAdjusted(8, tvOS: 11), weight: .bold))
-                                    .foregroundColor(.white.opacity(0.55))
+                                    .foregroundColor(Color.primary.opacity(0.55))
                             }
                             Spacer()
                             if let badge = result.tile.badge {
@@ -1577,7 +1725,7 @@ struct PauseTileMenuView: View {
                         .padding(.vertical, tvOSAdjusted(7, tvOS: 10))
                         .background(
                             RoundedRectangle(cornerRadius: tvOSAdjusted(8, tvOS: 12))
-                                .fill(Color.white.opacity(0.05))
+                                .fill(Color.primary.opacity(0.05))
                         )
                     }
                     .buttonStyle(.plain)
@@ -1585,6 +1733,86 @@ struct PauseTileMenuView: View {
                 }
             }
         }
+    }
+
+    /// The scrolling part of the panel: search, the grid or the search results, and a submenu's own rows.
+    private func gridScroll(sections: [PauseMenuTileSection], cols: Int, spacing: CGFloat, showsGrid: Bool) -> some View {
+        ScrollViewReader { scrollProxy in
+        ScrollView(.vertical, showsIndicators: true) {
+            VStack(alignment: .leading, spacing: tvOSAdjusted(12, tvOS: 20)) {
+                Color.clear.frame(height: 0).id(Self.panelTopID)
+                if showsSearch || !searchText.isEmpty {
+                    searchBarView
+                }
+                if currentRoute == .core {
+                    coreScopeControlsView
+                }
+
+                if showsGrid {
+                    // Grouped sections — one outer focus section for the whole
+                    // tile grid so tvOS treats it as a single focus region.
+                    // Per-section focusSections caused focus to snap to the top
+                    // when navigating between sections with off-screen tiles
+                    // (LazyVGrid defers rendering of rows below the fold).
+                    VStack(alignment: .leading, spacing: tvOSAdjusted(12, tvOS: 20)) {
+                        ForEach(sections) { section in
+                            sectionView(section: section, cols: cols, spacing: spacing)
+                            if section.id != sections.last?.id {
+                                Color.primary.opacity(PauseMenuTheme.dividerOpacity).frame(height: 1)
+                            }
+                        }
+                    }
+                    #if os(tvOS)
+                    .focusSection()
+                    #endif
+                } else {
+                    searchResultsView
+                }
+
+                if currentRoute == .core {
+                    coreRouteFooterActionsView
+                }
+            }
+            .padding([.horizontal, .top], tvOSAdjusted(RetroPauseChrome.chromeInset, tvOS: 20))
+            // Lets the last row scroll clear of the bottom fade.
+            .padding(.bottom, RetroPauseChrome.scrollEdgeFade)
+            .background {
+                GeometryReader { content in
+                    // A Bool, so the preference changes when the end is reached, not on every scrolled frame.
+                    let visibleBottom = content.bounds(of: .scrollView)?.maxY ?? content.size.height
+                    Color.clear.preference(key: PauseScrollHasMoreBelowKey.self,
+                                           value: content.size.height - visibleBottom > Self.scrollEndTolerance)
+                }
+            }
+        }
+        .onPreferenceChange(PauseScrollHasMoreBelowKey.self) { hasMoreBelow = $0 }
+        // Rows fade out at the edges, the indicator flashes once and a chevron
+        // marks rows below the fold, so it is clear the grid scrolls.
+        .retroScrollEdgeFade()
+        .scrollIndicatorsFlash(onAppear: true)
+        .overlay(alignment: .bottom) {
+            if hasMoreBelow {
+                Image(systemName: "chevron.compact.down")
+                    .font(.system(size: tvOSAdjusted(20, tvOS: 28), weight: .medium))
+                    .foregroundStyle(Color.primary.opacity(0.75))
+                    .allowsHitTesting(false)
+                    .accessibilityHidden(true)
+                    .transition(.opacity)
+            }
+        }
+        .animation(.easeInOut(duration: 0.2), value: hasMoreBelow)
+        /// A submenu is a new page: start it at its top rather than
+        /// wherever the previous one happened to be scrolled.
+        .onChange(of: routeStack) { _ in
+            scrollProxy.scrollTo(Self.panelTopID, anchor: .top)
+        }
+        .onChange(of: focusedTileID) { newID in
+            guard let newID else { return }
+            withAnimation(.easeInOut(duration: 0.2)) {
+                scrollProxy.scrollTo(newID, anchor: .center)
+            }
+        }
+        } // ScrollViewReader
     }
 
     // MARK: - Body
@@ -1607,118 +1835,43 @@ struct PauseTileMenuView: View {
                     .ignoresSafeArea()
                     .onTapGesture { requestPauseMenuClose() }
 
-                // Floating grid panel. Derived from the live GeometryReader width on
-                // every layout pass so macOS window resizes re-flow the panel and its
-                // column count instead of keeping a width cached at first layout.
-                let fullWidth = self.panelWidth(forAvailableWidth: geo.size.width)
+                // The panel takes one of three shapes for the space it has, and on a
+                // centred panel is only as wide as its page needs. Everything is derived
+                // from the live size, so a window resize or a rotation re-flows it.
+                let mode = PauseMenuLayoutMode.resolve(size: geo.size, isTV: Self.isTV)
+                let theme = PauseMenuTheme(palette: palette)
                 let spacing: CGFloat = tvOSAdjusted(6, tvOS: 12)
-                let sections = viewModel.sections
-                /// Only as wide as the sections need: four cells in a row do not get an
-                /// eight-column panel. Search results are a list and keep the full width.
+                let sections = visibleSections
                 let showsGrid = searchText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
-                let fit = PauseTileLayout.fit(
-                    fullWidth: fullWidth,
-                    maxColumns: columnCount(for: fullWidth),
-                    tileCounts: showsGrid ? sections.map(\.tiles.count) : [],
-                    inset: tvOSAdjusted(RetroPauseChrome.chromeInset, tvOS: 20),
-                    spacing: spacing,
-                    minimumWidth: tvOSAdjusted(PauseTilePanelMetrics.minimumWidth, tvOS: PauseTilePanelMetrics.tvMinimumWidth))
-                let panelWidth = fit.width
+                let fullWidth = fullPanelWidth(in: geo.size, mode: mode)
+                let gridWidth = mode == .rail && currentRoute == .root ? fullWidth - PauseMenuChromeMetrics.railWidth : fullWidth
+                let fit = mode == .panel
+                    ? PauseTileLayout.fit(
+                        fullWidth: fullWidth,
+                        maxColumns: columnCount(for: fullWidth),
+                        tileCounts: showsGrid ? sections.map(\.tiles.count) : [],
+                        inset: tvOSAdjusted(RetroPauseChrome.chromeInset, tvOS: 20),
+                        spacing: spacing,
+                        minimumWidth: tvOSAdjusted(PauseTilePanelMetrics.minimumWidth, tvOS: PauseTilePanelMetrics.tvMinimumWidth))
+                    : PauseTileLayout.Fit(columns: columnCount(for: gridWidth), width: fullWidth)
                 let cols = fit.columns
 
-                VStack(spacing: 0) {
-                    panelHeader(compact: panelWidth < PauseTilePanelMetrics.compactHeaderWidth)
-                    ScrollViewReader { scrollProxy in
-                    ScrollView(.vertical, showsIndicators: true) {
-                        VStack(alignment: .leading, spacing: tvOSAdjusted(12, tvOS: 20)) {
-                            Color.clear.frame(height: 0).id(Self.panelTopID)
-                            if showsSearch || !searchText.isEmpty {
-                                searchBarView
-                            }
-                            if currentRoute == .core {
-                                coreScopeControlsView
-                            }
-
-                            if showsGrid {
-                                // Grouped sections — one outer focus section for the whole
-                                // tile grid so tvOS treats it as a single focus region.
-                                // Per-section focusSections caused focus to snap to the top
-                                // when navigating between sections with off-screen tiles
-                                // (LazyVGrid defers rendering of rows below the fold).
-                                VStack(alignment: .leading, spacing: tvOSAdjusted(12, tvOS: 20)) {
-                                    ForEach(sections) { section in
-                                        sectionView(section: section, cols: cols, spacing: spacing)
-                                        if section.id != sections.last?.id {
-                                            RetroPauseChrome.chromeDivider.frame(height: 1)
-                                        }
-                                    }
-                                }
-                                #if os(tvOS)
-                                .focusSection()
-                                #endif
-                            } else {
-                                searchResultsView
-                            }
-
-                            if currentRoute == .core {
-                                coreRouteFooterActionsView
-                            }
-                        }
-                        .padding([.horizontal, .top], tvOSAdjusted(RetroPauseChrome.chromeInset, tvOS: 20))
-                        // Lets the last row scroll clear of the bottom fade.
-                        .padding(.bottom, RetroPauseChrome.scrollEdgeFade)
-                        .background {
-                            GeometryReader { content in
-                                // A Bool, so the preference changes when the end is reached, not on every scrolled frame.
-                                let visibleBottom = content.bounds(of: .scrollView)?.maxY ?? content.size.height
-                                Color.clear.preference(key: PauseScrollHasMoreBelowKey.self,
-                                                       value: content.size.height - visibleBottom > Self.scrollEndTolerance)
-                            }
-                        }
-                    }
-                    .onPreferenceChange(PauseScrollHasMoreBelowKey.self) { hasMoreBelow = $0 }
-                    // Rows fade out at the edges, the indicator flashes once and a chevron
-                    // marks rows below the fold, so it is clear the grid scrolls.
-                    .retroScrollEdgeFade()
-                    .scrollIndicatorsFlash(onAppear: true)
-                    .overlay(alignment: .bottom) {
-                        if hasMoreBelow {
-                            Image(systemName: "chevron.compact.down")
-                                .font(.system(size: tvOSAdjusted(20, tvOS: 28), weight: .medium))
-                                .foregroundStyle(.white.opacity(0.75))
-                                .allowsHitTesting(false)
-                                .accessibilityHidden(true)
-                                .transition(.opacity)
-                        }
-                    }
-                    .animation(.easeInOut(duration: 0.2), value: hasMoreBelow)
-                    /// A submenu is a new page: start it at its top rather than
-                    /// wherever the previous one happened to be scrolled.
-                    .onChange(of: routeStack) { _ in
-                        scrollProxy.scrollTo(Self.panelTopID, anchor: .top)
-                    }
-                    .onChange(of: focusedTileID) { newID in
-                        guard let newID else { return }
-                        withAnimation(.easeInOut(duration: 0.2)) {
-                            scrollProxy.scrollTo(newID, anchor: .center)
-                        }
-                    }
-                    } // ScrollViewReader
-
-                    if showsInfoShelf {
-                        infoShelfView
-                    }
-                }
-                .background(panelBackground)
-                .frame(width: panelWidth)
-                .frame(maxHeight: panelMaxHeight(in: geo.size))
-                .fixedSize(horizontal: false, vertical: true)
-                .position(x: geo.size.width / 2, y: geo.size.height / 2)
-                #if os(iOS)
-                // Mirror the drawn column count into @State so controller navigation
-                // walks the same grid the panel shows.
-                .task(id: cols) { currentColumns = cols }
-                #endif
+                panelContent(mode: mode, theme: theme, sections: sections, cols: cols, spacing: spacing,
+                             showsGrid: showsGrid, compactExits: fit.width < PauseTilePanelMetrics.compactHeaderWidth)
+                    .background(panelBackground(theme: theme, mode: mode))
+                    .frame(width: fit.width)
+                    .frame(maxHeight: panelMaxHeight(in: geo.size, mode: mode))
+                    .fixedSize(horizontal: false, vertical: true)
+                    .overlay(alignment: mode == .sheet ? .top : .bottom) { infoPill(mode: mode, theme: theme) }
+                    .animation(.easeInOut(duration: 0.2), value: infoText)
+                    .environment(\.colorScheme, theme.colorScheme)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: mode == .sheet ? .bottom : .center)
+                    #if os(iOS)
+                    // Mirror the drawn columns and shape into @State so controller
+                    // navigation walks the controls the panel shows.
+                    .task(id: cols) { currentColumns = cols }
+                    .task(id: mode) { currentMode = mode }
+                    #endif
             }
         }
         .onReceive(emulatorVC.coreInputHandler.$hardwareSwitchPositionIndexes.removeDuplicates()) { positions in
@@ -1996,7 +2149,7 @@ struct PauseTileMenuView: View {
         .onDisappear { controllerInput.stop() }
         .onChange(of: focusedTileID) { newID in
             withAnimation(.easeInOut(duration: 0.2)) {
-                infoText = viewModel.description(forTileID: newID)
+                infoText = description(forCursor: newID)
             }
         }
         .onReceive(controllerInput.commands) { handleControllerCommand($0) }
@@ -2007,11 +2160,18 @@ struct PauseTileMenuView: View {
             refreshControllerProfileState()
             rebuildSections()
             reattachTVOSFocusIfNeeded()
+            controllerInput.start()
             openNetworkPlayIfRequested()
+        }
+        .onDisappear { controllerInput.stop() }
+        /// The focus engine moves the cursor here; the shoulder buttons change page.
+        .onReceive(controllerInput.commands) { command in
+            if command == .previousTab { switchTab(by: -1) }
+            if command == .nextTab { switchTab(by: 1) }
         }
         .onChange(of: focusedTileID) { newID in
             withAnimation(.easeInOut(duration: 0.2)) {
-                infoText = viewModel.description(forTileID: newID)
+                infoText = description(forCursor: newID)
             }
         }
         .onChange(of: scenePhase) { newPhase in
@@ -2476,40 +2636,6 @@ struct PauseTileMenuView: View {
         let next = presets[(nearestIndex + 1) % presets.count]
         mouseSensitivity = next
         rebuildSections()
-    }
-
-    // MARK: - Info shelf
-
-    /// Descriptions follow focus. tvOS always has a focused tile, so the shelf keeps its
-    /// room there; on iOS it takes room only while there is a description to show,
-    /// instead of leaving a blank band under the grid.
-    private var showsInfoShelf: Bool {
-        #if os(tvOS)
-        true
-        #else
-        infoText != nil
-        #endif
-    }
-
-    /// Description of the focused tile, under a rule at the foot of the panel.
-    private var infoShelfView: some View {
-        HStack(spacing: 8) {
-            if let text = infoText {
-                Image(systemName: "info.circle")
-                    .foregroundStyle(Color.retroBlue)
-                Text(text)
-                    .foregroundStyle(.white.opacity(0.85))
-                    .lineLimit(3)
-                    .minimumScaleFactor(PauseTileMetrics.labelMinimumScale)
-            }
-        }
-        .font(.system(size: tooltipFontSize))
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .frame(height: tvOSAdjusted(tooltipHeight, tvOS: 84))
-        .padding(.horizontal, tvOSAdjusted(RetroPauseChrome.chromeInset, tvOS: 20))
-        .overlay(alignment: .top) {
-            RetroPauseChrome.chromeDivider.frame(height: 1)
-        }
     }
 
 }

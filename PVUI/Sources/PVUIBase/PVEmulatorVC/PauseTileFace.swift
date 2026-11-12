@@ -90,7 +90,7 @@ struct PauseTileFace: View {
                 .accessibilityHidden(true)
             Text(label)
                 .font(.system(size: labelSize, weight: .medium))
-                .foregroundStyle(.white)
+                .foregroundStyle(.primary)
                 .multilineTextAlignment(.center)
                 .lineLimit(dynamicTypeSize.isAccessibilitySize ? 3 : 2)
                 .minimumScaleFactor(PauseTileMetrics.labelMinimumScale)
