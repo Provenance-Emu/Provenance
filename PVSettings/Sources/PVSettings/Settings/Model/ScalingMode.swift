@@ -153,6 +153,17 @@ public enum ScalingMode: String, Codable, Equatable, Hashable,
 /// device PIXELS and the resulting frame is in view POINTS (pixels / `screenScale`).
 public enum ScalingModeLayout {
 
+    /// The aspect reported by the core, or the framebuffer aspect while its display geometry is unavailable.
+    /// Keep the reported axes, including tall arcade games.
+    public static func displayAspect(reported: CGSize, fallback: CGSize) -> CGFloat? {
+        func ratio(_ size: CGSize) -> CGFloat? {
+            guard size.width.isFinite, size.height.isFinite, size.width > 0, size.height > 0 else { return nil }
+            let aspect = size.width / size.height
+            return aspect.isFinite && aspect > 0 ? aspect : nil
+        }
+        return ratio(reported) ?? ratio(fallback)
+    }
+
     /// The rect, in the container's coordinate space, that the content occupies.
     ///
     /// - Parameters:

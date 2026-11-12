@@ -112,6 +112,23 @@ struct HardwareSwitchLatchTests {
         #expect(latch.resolve("leftdiff", isPressed: false) == "leftdiff")
     }
 
+    @Test("A three-position switch advances in order and remembers explicit positions")
+    func threePositionSwitch() throws {
+        let descriptor = try #require(HardwareSwitchDescriptor(id: "speed", title: "Speed", positions: [
+            .init(label: "Slow", buttonId: "slow"),
+            .init(label: "Normal", buttonId: "normal"),
+            .init(label: "Fast", buttonId: "fast")
+        ], initialPositionIndex: 1, advanceButtonId: "speed"))
+        var latch = HardwareSwitchLatch(descriptors: [descriptor])
+        #expect(latch.positionIndexes["speed"] == 1)
+        #expect(latch.resolve("speed", isPressed: true) == "fast")
+        #expect(latch.resolve("speed", isPressed: false) == "fast")
+        #expect(latch.positionIndexes["speed"] == 2)
+        #expect(latch.resolve("speed", isPressed: true) == "slow")
+        #expect(latch.resolve("normal", isPressed: true) == "normal")
+        #expect(latch.positionIndexes["speed"] == 1)
+    }
+
     @Test("A system with no switches passes everything through")
     func noSwitches() {
         var latch = HardwareSwitchLatch(descriptors: [])

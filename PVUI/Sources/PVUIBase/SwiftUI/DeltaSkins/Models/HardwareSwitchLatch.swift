@@ -43,61 +43,58 @@ public enum HardwareSwitchTokens {
     ]
 }
 
-/// Remembers the position of each two-position console switch so a skin that
+/// Remembers the position of each console switch so a skin that
 /// has only one input id per switch (Manic `tvType`, `leftDifficulty`...) can
 /// still tell the core which position was chosen.
 ///
-/// - A press of a position-less token flips the latched state and emits the id
+/// - A press of a position-less token advances the latched state and emits the id
 ///   of the new position; the matching release repeats that id.
 /// - A press of an explicit position id (`leftdiffa`, `color`...) passes through
 ///   unchanged and records that position, so mixed skins stay in step.
-/// - Press-to-toggle switches (both positions share one id) and every other
-///   button pass through untouched.
+/// - A press-to-toggle switch advances its display state and forwards its shared id.
 public struct HardwareSwitchLatch {
-    private struct Entry {
-        let descriptor: HardwareSwitchDescriptor
-        var isOn: Bool
-    }
-
-    private var entries: [Entry]
+    private let descriptors: [HardwareSwitchDescriptor]
+    public private(set) var positionIndexes: [String: Int]
     /// Id emitted by the in-flight press of each position-less token.
     private var pending: [String: String] = [:]
 
     public init(descriptors: [HardwareSwitchDescriptor]) {
-        entries = descriptors.filter { !$0.isPressToToggle }
-            .map { Entry(descriptor: $0, isOn: $0.defaultState) }
+        self.descriptors = descriptors
+        positionIndexes = Dictionary(descriptors.map { ($0.id, $0.initialPositionIndex) }, uniquingKeysWith: { first, _ in first })
     }
 
-    /// Returns the button id to forward, or `nil` when the event must be dropped.
+    /// Returns the button id to forward, or nil for a release whose press was never seen.
     public mutating func resolve(_ token: String, isPressed: Bool) -> String? {
         let key = token.lowercased()
 
-        if let index = entries.firstIndex(where: { Self.isSingleToken(key, for: $0.descriptor) }) {
-            if isPressed {
-                entries[index].isOn.toggle()
-                let descriptor = entries[index].descriptor
-                let emitted = entries[index].isOn ? descriptor.positions.on.buttonId : descriptor.positions.off.buttonId
-                pending[key] = emitted
-                return emitted
-            }
-            return pending.removeValue(forKey: key)
+        if let descriptor = descriptors.first(where: {
+            !$0.isPressToToggle && ($0.advanceButtonId?.lowercased() == key ||
+                                    HardwareSwitchTokens.singleTokenAliases[$0.id]?.contains(key) == true)
+        }) {
+            guard isPressed else { return pending.removeValue(forKey: key) }
+            let emitted = descriptor.positionList[advance(descriptor)].buttonId
+            pending[key] = emitted
+            return emitted
         }
 
-        if isPressed, let index = entries.firstIndex(where: { Self.position(of: key, in: $0.descriptor) != nil }),
-           let isOn = Self.position(of: key, in: entries[index].descriptor) {
-            entries[index].isOn = isOn
+        if isPressed {
+            for descriptor in descriptors {
+                let positionToken = descriptor.id == "color_bw" ? HardwareSwitchTokens.canonicalTVType(key) ?? key : key
+                guard let index = descriptor.positionList.firstIndex(where: { $0.buttonId.lowercased() == positionToken }) else { continue }
+                if descriptor.isPressToToggle {
+                    _ = advance(descriptor)
+                } else {
+                    positionIndexes[descriptor.id] = index
+                }
+                break
+            }
         }
         return key
     }
 
-    private static func isSingleToken(_ key: String, for descriptor: HardwareSwitchDescriptor) -> Bool {
-        HardwareSwitchTokens.singleTokenAliases[descriptor.id]?.contains(key) ?? false
-    }
-
-    /// `true`/`false` when `key` is the on/off position id of `descriptor`.
-    private static func position(of key: String, in descriptor: HardwareSwitchDescriptor) -> Bool? {
-        if key == descriptor.positions.on.buttonId { return true }
-        if key == descriptor.positions.off.buttonId { return false }
-        return nil
+    private mutating func advance(_ descriptor: HardwareSwitchDescriptor) -> Int {
+        let index = descriptor.nextPosition(after: positionIndexes[descriptor.id] ?? descriptor.initialPositionIndex)
+        positionIndexes[descriptor.id] = index
+        return index
     }
 }

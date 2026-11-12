@@ -38,6 +38,32 @@ struct OverlayScreenPlannerTests {
         #expect(frame.maxY <= 390 - 21)
     }
 
+    @Test("Floating controls do not reduce the picture in either orientation")
+    func floatingControlsUseFullCanvas() {
+        let groups = [group("dpad", CGRect(x: 59, y: 100, width: 160, height: 160))]
+        let landscapeFrames = OverlayScreenPlanner.screenFrames(policy: .centerColumn, canvas: landscape,
+                                                                 groups: groups, gameAspect: 4.0 / 3.0, reservesControlSpace: false)
+        #expect(landscapeFrames == [CGRect(x: 162, y: 0, width: 520, height: 390)])
+        let tablet = OverlayCanvas(size: CGSize(width: 834, height: 1194), safeArea: .init(top: 24, left: 0, bottom: 20, right: 0))
+        let tabletFrames = OverlayScreenPlanner.screenFrames(policy: .topBand, canvas: tablet,
+                                                              groups: groups, gameAspect: 4.0 / 3.0, reservesControlSpace: false)
+        #expect(tabletFrames.first?.width == tablet.size.width)
+        #expect(tabletFrames.first?.midY == tablet.bounds.midY)
+    }
+
+    @Test("Floating controls give a stacked pair the full canvas without changing screen order")
+    func floatingControlsPreserveDualScreens() throws {
+        let groups = [group("dpad", CGRect(x: 0, y: 500, width: 150, height: 150))]
+        let frames = OverlayScreenPlanner.screenFrames(policy: .dualStacked3DS, canvas: portrait,
+                                                       groups: groups, gameAspect: 1, reservesControlSpace: false)
+        let top = try #require(frames.first)
+        let bottom = try #require(frames.last)
+        #expect(frames.count == 2)
+        #expect(top.maxY < bottom.minY)
+        #expect(top.height == bottom.height)
+        #expect(bottom.maxY > 500)
+    }
+
     @Test("dualStacked yields two 4:3 screens, top first, inside the top band")
     func dualStacked() {
         let groups = [group("face", CGRect(x: 0, y: 650, width: 150, height: 150))]
