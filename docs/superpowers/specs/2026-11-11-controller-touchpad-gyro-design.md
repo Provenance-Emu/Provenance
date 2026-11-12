@@ -37,6 +37,10 @@ In the owner's words, confirmed in conversation on 2026-11-11:
 - Pause: "pause is a nightmare, just make it work well." The pause decisions below are therefore the
   builder's call, not the owner's.
 - Build order, approved: pause, mouse, Wii pointer, light gun, gyro and profiles.
+- Added after approval, same day: "Wii shake/tilt would be really nice. Shake is probably most important
+  because Mario Wii uses that mechanic a ton." And: are the trigger feedback APIs used, "like virtual click
+  for GameCube, R or Z, that has a double trigger action"? Both are now in scope (steps 4 and 7). The
+  builder placed shake and tilt straight after the Wii pointer.
 
 ## Goals
 
@@ -47,13 +51,16 @@ In the owner's words, confirmed in conversation on 2026-11-11:
 3. The touchpad drives the Wii pointer in Dolphin.
 4. The touchpad aims a light gun on every light-gun core, with a crosshair and a fire/reload split by where
    the pad is pressed.
-5. Gyro can drive the same pointer in all three roles. The existing gyro and mouse settings do what they say.
+5. Gyro can drive the same pointer in all three roles (step 6). The existing gyro and mouse settings do what they say.
 6. Pointer settings resolve per game, then per system, then globally.
+7. Shaking or tilting a pad that has motion sensors shakes or tilts the Wii Remote in Dolphin.
+8. GameCube L and R are analog from the pad's triggers with the digital click at the end of travel, and a
+   DualSense makes that click point felt.
 
 ## Non-goals (this pass)
 
 - Two-finger gestures outside pointer games (fast-forward, rewind).
-- Wii shake/tilt and 3DS motion from a pad's sensors. Dolphin's dead device-motion code stays as it is.
+- 3DS motion from a pad's sensors, and Wii MotionPlus (raw gyro) data. The motion protocol leaves room.
 - The touchpad as a DS or 3DS stylus. The pointer protocol below leaves room for it.
 - Aiming from an analog stick (Xbox pads have neither touchpad nor gyro). The source enum leaves room.
 - A second player's pointer. Player 1's pad only.
@@ -146,7 +153,7 @@ imports in the logic itself, unit tested):
 and stopped beside `startPauseTriggers()` / `stopPauseTriggers()`, ticking on an `OwnedDisplayLink`):
 
 1. Picks the pointer pad: player 1's controller if it has a touchpad (`GCDualSenseGamepad`,
-   `GCDualShockGamepad`) or, from step 5, motion; otherwise the first connected pad that has. Wrappers
+   `GCDualShockGamepad`) or, from step 4, motion; otherwise the first connected pad that has. Wrappers
    (`PVRemappedController`, `PVPhysicalProfileController`) are unwrapped to the hardware pad. Whichever pad
    it is, the pointer belongs to player 1's port.
 2. Reads `touchpadPrimary`, `touchpadSecondary` and `touchpadButton.isPressed` into a `TouchpadSample`.
@@ -221,7 +228,31 @@ each pad answers the hardware unknowns listed at the end. It stays in the app.
 - The stick-to-IR path and its option are untouched.
 - Reaches: Dolphin only.
 
-### Step 4: light gun
+### Step 4: Wii shake and tilt
+
+Today Dolphin's bridge shakes the Wii Remote from buttons: R2 sends Shake Y, and the A, X and other face
+handlers send Shake axes along with their button (`PVDolphinCore+Controls.mm:366-432`). Its device-motion
+code, including a shake detector, never runs because motion is never started (`:1693`).
+
+- `ControllerMotionSource` (PVUIBase) arrives here rather than in the gyro step: it sets
+  `motion.sensorsActive = true` on pads where `sensorsRequireManualActivation` is true while a game uses
+  motion, samples acceleration and rotation rate on the router's tick, and switches the sensors off when the
+  game pauses or ends.
+- Pure logic in PVCoreBridge: `ShakeDetector` (acceleration samples in, "shaking" out, held for a short
+  minimum so one flick registers as one shake) and `TiltEstimator` (low-passed gravity to pitch and roll).
+  Pads report total acceleration, so both work from that and do not need a gravity/user split.
+- New `@objc protocol MotionResponder` in PVCoreBridge: `gameSupportsMotion`,
+  `motionShakeChanged(_ shaking: Bool, forPlayer:)`, `motionTiltChanged(pitch:roll:forPlayer:)`. Dolphin's
+  bridge conforms: shake drives the Wii Remote's Shake X/Y/Z inputs (132-134), tilt drives its Tilt axes.
+- The button-driven shakes stay as they are (a pad without sensors still needs them). Whether the face
+  buttons should keep sending shake once real shake works is a question for the hardware run, not decided here.
+- Dolphin's existing options "Enable Gyro Motion Controls" and "Enable Gyro IR Cursor" gate this and step 6's
+  gyro pointer for Wii. An iPhone or iPad with no motion-capable pad feeds the same two detectors from its
+  own sensors, replacing the dead CoreMotion code.
+- Reaches: Dolphin (Wii) only. Pads: DualSense, DualShock 4, and Switch Pro / Joy-Con if they report
+  motion; Xbox pads have no sensors and keep shake on R2.
+
+### Step 5: light gun
 
 - Role `lightGun` when `gameSupportsLightGun`. The sink calls `lightGunMovedToPoint(_:isOffscreen:)`,
   trigger, reload (which the cores already treat as an off-screen shot), aux A.
@@ -235,12 +266,10 @@ each pad answers the hardware unknowns listed at the end. It stays in the app.
 - Reaches: FCEU, snes9x (Super Scope, Justifier), Genesis Plus GX, Mednafen (Saturn, PSX GunCon, NES,
   legacy SNES), Stella, ProSystem, and thin-wrapper light-gun games per `LightGunGameRegistry`.
 
-### Step 5: gyro, then profiles
+### Step 6: gyro aiming, then profiles
 
-- `ControllerMotionSource` (PVUIBase): while a role uses gyro it sets `motion.sensorsActive = true` on pads
-  where `sensorsRequireManualActivation` is true, samples `rotationRate` on the same tick, and switches the
-  sensors off when the game pauses or ends. On an iPhone or iPad with no motion-capable pad it can use the
-  device's own sensors (CoreMotion), as `GyroMouseAdapter` intended.
+- Uses step 4's `ControllerMotionSource`, which now also runs while a pointer role uses gyro. On an iPhone
+  or iPad with no motion-capable pad it can use the device's own sensors, as `GyroMouseAdapter` intended.
 - Gyro feeds the same `PointerCursor` through `GyroPointerFilter`, so it works in all three roles. With
   touchpad and gyro both on, movements add.
 - `gyroMouseEnabled`, `gyroMouseSensitivity` and `gyroMouseDeadZone` become live, and the "stored but not yet
@@ -248,6 +277,21 @@ each pad answers the hardware unknowns listed at the end. It stays in the app.
 - Recenter for gyro: two-finger tap on PS pads. A pad with no touchpad recenters from the pause-menu tile
   only: cores read its buttons directly, so no button can be taken from the game for this. Pushing the
   cursor against a screen edge also re-aligns it, as the cursor is clamped.
+
+### Step 7: GameCube triggers
+
+Today Dolphin's bridge reads L2/R2 as pressed or not and sends the GameCube trigger axis as 0 or 1
+(`PVDolphinCore+Controls.mm:409-450`), so a half pull (Super Mario Sunshine's spray, Luigi's Mansion) cannot
+be done. DualSense adaptive triggers are already driven by `GCControllerHapticsManager`, but only a soft
+resistance for PlayStation systems.
+
+- The GameCube trigger axes follow the pad's analog trigger value. The digital L/R click is sent when the
+  value passes a threshold near the end of travel (0.9 to start; tuned on hardware). The existing
+  both-triggers-for-Z rule keeps working from the same values.
+- `GCControllerHapticsManager` gains a `.gameCubeClick` profile used for GameCube: resistance that gives way
+  at the click point, so the analog range and the click feel like two stages. Its system matching moves to
+  `SystemIdentifier` while it is being touched. The existing "DualSense adaptive triggers" setting gates it.
+- Reaches: Dolphin (GameCube) only. Every pad gets analog triggers; only a DualSense gets the felt click.
 
 ### Settings and profiles
 
@@ -276,6 +320,8 @@ game whose MD5 changes loses its per-game values, as per-game light-gun settings
 10. A "Controller Input Test" screen is built first and stays in the app.
 11. Pointer settings are per game, per system and global, stored on the device, not in the Realm controller
     profiles and not synced.
+12. Wii shake and tilt come straight after the Wii pointer; the buttons that shake today keep doing so.
+13. GameCube L/R click at 90% of trigger travel until a hardware run says otherwise.
 
 ## Which cores each step reaches
 
@@ -284,13 +330,15 @@ game whose MD5 changes loses its per-game values, as per-game light-gun settings
 | 1 pause, Select | all | all; Select change in FCEU, Gambatte, TGBDual, Mednafen |
 | 2 mouse | all mouse games except DS | snes9x; Atari800, ep128 by fallback (iOS) |
 | 3 Wii pointer | none | Dolphin |
-| 4 light gun | libretro light-gun games | FCEU, snes9x, Genesis Plus GX, Mednafen, Stella, ProSystem |
-| 5 gyro | as steps 2 and 4 | as steps 2-4 |
+| 4 Wii shake, tilt | none | Dolphin |
+| 5 light gun | libretro light-gun games | FCEU, snes9x, Genesis Plus GX, Mednafen, Stella, ProSystem |
+| 6 gyro aiming | as steps 2 and 5 | as steps 2, 3 and 5 |
+| 7 GameCube triggers | none | Dolphin |
 
 ## Tests
 
 - PVCoreBridge: recognizer (finger down/up produce no delta, zones, two-finger tap and slide, a two-finger
-  click that moves, click with no finger), speed curve, cursor clamping and recenter, role policy for each system kind and mode, click
+  click that moves, click with no finger), speed curve, shake detector, tilt estimator, cursor clamping and recenter, role policy for each system kind and mode, click
   bindings, settings resolution across scopes, gyro filter (moved from the adapter's tests).
 - PVUI: pause policy with the touchpad trigger (free, pointer in use, remapped), detector edge on the click.
 - Thin wrapper (PVLibRetroTests): `mouseMoved(byNormalizedDelta:)` scaling per system.
@@ -304,6 +352,8 @@ game whose MD5 changes loses its per-game values, as per-game light-gun settings
 - That DualSense, DualShock 4 and Switch Pro report motion once sensors are on, and at what rate.
 - The pause triggers from `1890a49971`, and the name of the Switch Pro Capture button.
 - That the system does not also act on the touchpad click or Create (screenshot, clip) once the app reads them.
+- Shake and tilt thresholds, and whether face buttons should stop sending shake once real shake works.
+- Where the GameCube click should sit and how the DualSense trigger resistance feels there.
 
 ## Left to the builder
 
