@@ -2782,8 +2782,9 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
     }
 
     #if os(iOS)
-    /// Draws `source` on the external display, aspect-fit: with that screen's own filter when
-    /// one is set and ready, else as the plain picture with the device's smoothing.
+    /// Draws `source` on the external display, aspect-fit in the view or in the skin's screen
+    /// when a skin is shown there: with that display's own filter when one is set and ready,
+    /// else as the plain picture with the device's smoothing.
     ///
     /// Called from `directRender` with the same frame snapshot the device draws, so it shares
     /// that path's guarantees about when the texture is safe to sample.
@@ -2796,8 +2797,8 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
         let target = drawable.texture
         let aspectSize = emulatorCore.aspectSize
         let aspect = aspectSize.width > 0 && aspectSize.height > 0 ? aspectSize : emulatorCore.screenRect.size
-        let contentRect = RenderGeometry.contentRect(aspect: aspect, viewSize: output.bounds.size,
-                                                     drawableSize: CGSize(width: target.width, height: target.height))
+        let contentRect = output.pictureRect(aspect: aspect,
+                                             drawableSize: CGSize(width: target.width, height: target.height))
         // OpenGL frames store the picture's bottom row first; software and Vulkan frames its top row.
         let sourceIsBottomUp = emulatorCore.rendersToOpenGL && !emulatorCore.rendersToVulkan
 

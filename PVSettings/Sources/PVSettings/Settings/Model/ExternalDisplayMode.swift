@@ -69,3 +69,24 @@ public enum ExternalDisplayDevicePicture: String, Codable, Equatable, Hashable,
         }
     }
 }
+
+/// Whether the skin on the device is also drawn around the picture on an external display.
+/// Nobody can press its buttons there: it is shown for its artwork.
+public enum ExternalDisplaySkin: String, Codable, Equatable, Hashable,
+    UserDefaultsRepresentable, Defaults.Serializable, CaseIterable, Sendable {
+
+    /// Any skin, built-in ones included.
+    case always
+    /// Only skins the user installed, which usually frame the picture with artwork.
+    case realSkinsOnly
+    /// The game picture alone.
+    case never
+
+    public var displayName: String {
+        switch self {
+        case .always:        return "Always"
+        case .realSkinsOnly: return "Real Skins Only"
+        case .never:         return "Never"
+        }
+    }
+}

@@ -66,6 +66,9 @@ extension Defaults.Keys {
     /// Whether the device keeps drawing the game picture while an external display shows it.
     static let externalDisplayDevicePicture = Key<ExternalDisplayDevicePicture>("externalDisplayDevicePicture", default: .auto)
 
+    /// Whether the device's skin is drawn around the picture on an external display.
+    static let externalDisplaySkin = Key<ExternalDisplaySkin>("externalDisplaySkin", default: .realSkinsOnly)
+
     static let showRecentSaveStates = Key<Bool>("showRecentSaveStates", default: true)
 
     /// When false (default), the Recent Saves carousel collapses timed autosaves: only the

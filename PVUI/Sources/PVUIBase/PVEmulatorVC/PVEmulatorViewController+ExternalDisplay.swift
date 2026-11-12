@@ -11,6 +11,8 @@ import Defaults
 import PVLogging
 import PVSettings
 import PVShaders
+import SkinKitCore
+import SkinKitUI
 
 extension PVEmulatorViewController {
 
@@ -29,8 +31,16 @@ extension PVEmulatorViewController {
             externalDisplayConnected: ExternalDisplayCoordinator.shared.isConnected,
             coreCanPresentExternally: coreCanPresentExternally,
             hardwareControllerConnected: PVControllerManager.shared.hasControllers,
-            skinHasOwnArt: isDeltaSkinEnabled && currentSkin != nil && !isProgrammaticOverlayActive,
-            devicePicture: Defaults[.externalDisplayDevicePicture]))
+            deviceSkin: externalDisplayDeviceSkin,
+            devicePicture: Defaults[.externalDisplayDevicePicture],
+            externalSkin: Defaults[.externalDisplaySkin]))
+    }
+
+    /// What supplies the controls on the device: the generated touch controls, a skin that
+    /// ships with the app, or one the user installed.
+    private var externalDisplayDeviceSkin: ExternalDisplayPlan.DeviceSkin {
+        guard isDeltaSkinEnabled, let skin = currentSkin, !isProgrammaticOverlayActive else { return .generatedControls }
+        return skin.isCaseControllerSkin ? .builtIn : .real
     }
 
     /// Whether the external display is showing the game picture on its own right now.
@@ -42,8 +52,8 @@ extension PVEmulatorViewController {
         NotificationCenter.default.addObserver(self, selector: #selector(externalDisplayFilterDidChange),
                                                name: ShaderLibraryStore.didChangeNotification, object: nil)
         externalDisplaySettingsObservation = Task { @MainActor [weak self] in
-            for await _ in Defaults.updates([.externalDisplayMode, .externalDisplayDevicePicture, .imageSmoothingMode,
-                                             .hideOnScreenControlsWithController],
+            for await _ in Defaults.updates([.externalDisplayMode, .externalDisplayDevicePicture, .externalDisplaySkin,
+                                             .imageSmoothingMode, .hideOnScreenControlsWithController],
                                             initial: false) {
                 // The controls switch sits with the display options, and is otherwise read only
                 // when a controller connects.
@@ -85,6 +95,7 @@ extension PVEmulatorViewController {
                 ILOG("External display: showing the game picture (\(scene.screen.bounds.size))")
             }
             updateExternalDisplayFilter()
+            updateExternalDisplaySkin()
         } else {
             removeExternalDisplayWindow()
         }
@@ -102,6 +113,32 @@ extension PVEmulatorViewController {
                                                                  screenType: core.screenType)
         output.filter.update(resolved, smoothing: Defaults[.imageSmoothingMode].usesLinearFiltering)
         (gpuViewController as? PVMetalViewController)?.redrawPausedFrame()
+    }
+
+    /// Draws the device's skin around the picture on the external display when the settings ask
+    /// for it and the skin has a layout that frames one game screen; else the picture alone.
+    func updateExternalDisplaySkin() {
+        guard let metalVC = gpuViewController as? PVMetalViewController,
+              let output = metalVC.externalOutput else { return }
+        var skin: (any DeltaSkinRenderable)?
+        var layout: ExternalDisplaySkinLayout?
+        if externalDisplayPlan.skinOnExternalDisplay, let renderable = currentSkin as? any DeltaSkinRenderable {
+            let deviceTraits = skinRenderTraits()
+            layout = ExternalDisplaySkinLayout.resolve(gameIdentifiers: deviceTraits.gameIdentifiers,
+                                                       usesAltRepresentations: deviceTraits.usesAltRepresentations,
+                                                       containerSize: output.bounds.size,
+                                                       screens: { renderable.screens(for: $0) },
+                                                       mappingSize: { renderable.mappingSize(for: $0) })
+            skin = layout == nil ? nil : renderable
+            if let layout {
+                ILOG("External display: skin '\(renderable.name)' with its \(layout.traits.description) layout")
+            } else {
+                ILOG("External display: skin '\(renderable.name)' has no landscape layout that frames one screen; showing the picture alone")
+            }
+        }
+        output.showSkin(skin, layout: layout) { [weak metalVC] in
+            metalVC?.redrawPausedFrame()
+        }
     }
 
     /// Takes the game picture off the external display; the system goes back to mirroring.

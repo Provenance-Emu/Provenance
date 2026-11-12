@@ -6,6 +6,7 @@
 //
 
 import Testing
+import Defaults
 @testable import PVSettings
 
 @Suite("ExternalDisplayPlan")
@@ -15,14 +16,16 @@ struct ExternalDisplayPlanTests {
                       connected: Bool = true,
                       coreCanPresent: Bool = true,
                       controller: Bool = false,
-                      skinHasOwnArt: Bool = false,
-                      devicePicture: ExternalDisplayDevicePicture = .auto) -> ExternalDisplayPlan {
+                      deviceSkin: ExternalDisplayPlan.DeviceSkin = .generatedControls,
+                      devicePicture: ExternalDisplayDevicePicture = .auto,
+                      externalSkin: ExternalDisplaySkin = .realSkinsOnly) -> ExternalDisplayPlan {
         ExternalDisplayPlan(.init(mode: mode,
                                   externalDisplayConnected: connected,
                                   coreCanPresentExternally: coreCanPresent,
                                   hardwareControllerConnected: controller,
-                                  skinHasOwnArt: skinHasOwnArt,
-                                  devicePicture: devicePicture))
+                                  deviceSkin: deviceSkin,
+                                  devicePicture: devicePicture,
+                                  externalSkin: externalSkin))
     }
 
     @Test("Touch play on generated controls turns the device into a controller")
@@ -32,9 +35,9 @@ struct ExternalDisplayPlanTests {
         #expect(!plan.pictureOnDevice)
     }
 
-    @Test("A skin with its own art keeps the picture on the device")
-    func touchPlayRealSkin() {
-        let plan = plan(skinHasOwnArt: true)
+    @Test("A skin keeps the picture on the device", arguments: [ExternalDisplayPlan.DeviceSkin.builtIn, .real])
+    func touchPlaySkin(deviceSkin: ExternalDisplayPlan.DeviceSkin) {
+        let plan = plan(deviceSkin: deviceSkin)
         #expect(plan.gameOnExternalDisplay)
         #expect(plan.pictureOnDevice)
     }
@@ -46,10 +49,45 @@ struct ExternalDisplayPlanTests {
         #expect(plan.pictureOnDevice)
     }
 
-    @Test("On and Off override the automatic choice", arguments: [true, false], [true, false])
-    func explicitChoiceWins(controller: Bool, skinHasOwnArt: Bool) {
-        #expect(plan(controller: controller, skinHasOwnArt: skinHasOwnArt, devicePicture: .on).pictureOnDevice)
-        #expect(!plan(controller: controller, skinHasOwnArt: skinHasOwnArt, devicePicture: .off).pictureOnDevice)
+    @Test("On and Off override the automatic choice", arguments: [true, false],
+          [ExternalDisplayPlan.DeviceSkin.generatedControls, .real])
+    func explicitChoiceWins(controller: Bool, deviceSkin: ExternalDisplayPlan.DeviceSkin) {
+        #expect(plan(controller: controller, deviceSkin: deviceSkin, devicePicture: .on).pictureOnDevice)
+        #expect(!plan(controller: controller, deviceSkin: deviceSkin, devicePicture: .off).pictureOnDevice)
+    }
+
+    @Test("Real Skins Only draws only an installed skin on the display")
+    func realSkinsOnly() {
+        #expect(plan(deviceSkin: .real).skinOnExternalDisplay)
+        #expect(!plan(deviceSkin: .builtIn).skinOnExternalDisplay)
+        #expect(!plan(deviceSkin: .generatedControls).skinOnExternalDisplay)
+    }
+
+    @Test("Always adds built-in skins, but generated controls have nothing to draw")
+    func alwaysSkin() {
+        #expect(plan(deviceSkin: .real, externalSkin: .always).skinOnExternalDisplay)
+        #expect(plan(deviceSkin: .builtIn, externalSkin: .always).skinOnExternalDisplay)
+        #expect(!plan(deviceSkin: .generatedControls, externalSkin: .always).skinOnExternalDisplay)
+    }
+
+    @Test("Never keeps the picture alone on the display")
+    func neverSkin() {
+        #expect(!plan(deviceSkin: .real, externalSkin: .never).skinOnExternalDisplay)
+    }
+
+    @Test("A mirrored display draws no skin of its own")
+    func mirroredHasNoSkin() {
+        #expect(!plan(mode: .systemMirror, deviceSkin: .real, externalSkin: .always).skinOnExternalDisplay)
+        #expect(!plan(coreCanPresent: false, deviceSkin: .real, externalSkin: .always).skinOnExternalDisplay)
+    }
+
+    @Test("ExternalDisplaySkin defaults to real skins and keeps its raw values")
+    func externalSkinSetting() {
+        Defaults.reset(.externalDisplaySkin)
+        #expect(Defaults[.externalDisplaySkin] == .realSkinsOnly)
+        #expect(ExternalDisplaySkin.always.rawValue == "always")
+        #expect(ExternalDisplaySkin.realSkinsOnly.rawValue == "realSkinsOnly")
+        #expect(ExternalDisplaySkin.never.rawValue == "never")
     }
 
     @Test("Mirror mode leaves everything on the device")

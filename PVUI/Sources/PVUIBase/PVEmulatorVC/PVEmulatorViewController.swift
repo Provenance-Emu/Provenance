@@ -114,7 +114,14 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, Emulato
     var scalingModeCancellable: AnyCancellable?
 
     // Store the current skin for rotation handling
-    var currentSkin: DeltaSkinProtocol?
+    var currentSkin: DeltaSkinProtocol? {
+        didSet {
+            #if os(iOS)
+            // A skin picked mid-game also changes what frames the picture on an external display.
+            if externalDisplayWindow != nil { updateExternalDisplay() }
+            #endif
+        }
+    }
 
     // Track current orientation
     #if !os(tvOS)
