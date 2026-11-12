@@ -1588,7 +1588,16 @@ final class PVMetalViewController: PVGPUViewController, PVRenderDelegate, MTKVie
     /// Redraws the last frame while emulation is paused, so filter previews and
     /// parameter edits show up without unpausing.
     public func redrawPausedFrame() {
-        guard isPaused, let mtlView, inputTexture != nil else { return }
+        #if os(iOS)
+        // Prompts such as the gameplay-clips opt-in pause the core directly.
+        // The display link skips those frames even when the renderer is unpaused.
+        let needsExternalFrame = externalOutput != nil
+            && emulatorCore?.skipEmulationLoop == true
+            && UIApplication.shared.applicationState == .active
+        #else
+        let needsExternalFrame = false
+        #endif
+        guard isPaused || needsExternalFrame, let mtlView, inputTexture != nil else { return }
         directRender(in: mtlView)
     }
 
