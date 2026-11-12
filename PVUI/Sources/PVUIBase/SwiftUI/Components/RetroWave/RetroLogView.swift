@@ -41,6 +41,13 @@ public struct RetroLogView: View {
 
     /// A log file handed to the app from outside (Files, Mail, AirDrop), imported on appear
     private var initialImportURL: URL? = nil
+
+    /// Says whether this view may act on a hardware controller's event. Nil (the default)
+    /// leaves the controller alone. See `controllerNavigation(when:)`.
+    private var controllerInputGate: (() -> Bool)?
+
+    /// What the controller cursor is on.
+    @State private var controllerCursor: RetroLogControllerCursor?
     #endif
 
     #if os(tvOS)
@@ -116,6 +123,11 @@ public struct RetroLogView: View {
                 .onChange(of: viewModel.displayedLogs.count) { _, _ in handleAutoScroll(scrollView: scrollView) }
                 .onChange(of: viewModel.autoScroll) { _, _ in handleAutoScroll(scrollView: scrollView) }
                 .onChange(of: viewModel.sortOrder) { _, _ in handleAutoScroll(scrollView: scrollView) }
+                #if !os(tvOS)
+                .onReceive(GamepadManager.shared.eventPublisher) { event in
+                    handleController(event, scrollView: scrollView)
+                }
+                #endif
             }
         }
         .background(
@@ -311,6 +323,7 @@ public struct RetroLogView: View {
                                 .strokeBorder(viewModel.autoScroll ? RetroTheme.retroBlue : RetroTheme.retroPink.opacity(0.7), lineWidth: 1)
                         )
                 }
+                .overlay(controllerRing(.autoScroll))
 
                 // Sort order toggle button
                 Button(action: {
@@ -325,6 +338,7 @@ public struct RetroLogView: View {
                                 .strokeBorder(RetroTheme.retroBlue, lineWidth: 1)
                         )
                 }
+                .overlay(controllerRing(.sortOrder))
 
                 // Detail toggle
                 Button(action: {
@@ -339,6 +353,7 @@ public struct RetroLogView: View {
                                 .strokeBorder(viewModel.showFullDetails ? RetroTheme.retroBlue : RetroTheme.retroPink.opacity(0.7), lineWidth: 1)
                         )
                 }
+                .overlay(controllerRing(.details))
 
                 // Copy Filtered logs button
                 Button(action: {
@@ -418,6 +433,7 @@ public struct RetroLogView: View {
                         )
                 }
                 .disabled(viewModel.importedSession != nil)
+                .overlay(controllerRing(.clear))
 
                 Spacer()
 
@@ -436,6 +452,7 @@ public struct RetroLogView: View {
                                     .strokeBorder(RetroTheme.retroPink, lineWidth: 1)
                             )
                     }
+                    .overlay(controllerRing(.fullscreen))
                 } else {
                     // Expand to fullscreen button
                     Button {
@@ -450,6 +467,7 @@ public struct RetroLogView: View {
                                     .strokeBorder(RetroTheme.retroBlue, lineWidth: 1)
                             )
                     }
+                    .overlay(controllerRing(.fullscreen))
                 }
                 #endif
             }
@@ -561,7 +579,7 @@ public struct RetroLogView: View {
         LogEntryRowContent(log: log, viewModel: viewModel)
             .buttonStyle(.plain)
         #else
-        LogEntryRowContent(log: log, viewModel: viewModel)
+        LogEntryRowContent(log: log, viewModel: viewModel, isControllerCursor: controllerCursor == .row(log.id))
         #endif
     }
 
@@ -595,6 +613,11 @@ private struct LogEntryRowContent: View {
     let log: LogEntry
     let viewModel: RetroLogViewModel
 
+    #if !os(tvOS)
+    /// True while a hardware controller's cursor is on this row.
+    var isControllerCursor = false
+    #endif
+
     @State private var isCopying = false
     #if os(tvOS)
     @FocusState private var isFocused: Bool
@@ -603,6 +626,30 @@ private struct LogEntryRowContent: View {
 
     // Split out of `body` so the row type-checks in reasonable time.
     private var levelColor: Color { viewModel.logLevelColor(log.level) }
+
+    /// Outlined: just copied, or under the controller cursor.
+    private var isOutlined: Bool {
+        #if os(tvOS)
+        return isCopying
+        #else
+        return isCopying || isControllerCursor
+        #endif
+    }
+
+    #if !os(tvOS)
+    /// The line as it is copied: timestamp, level, category, optionally file and line, message.
+    static func pasteboardText(for log: LogEntry, showFullDetails: Bool) -> String {
+        var logText = "[\(log.formattedTimestamp)] [\(log.level.name.uppercased())] "
+        if !log.category.isEmpty {
+            logText += "(\(log.category)) "
+        }
+        if showFullDetails {
+            let fileName = (log.file as NSString).lastPathComponent
+            logText += "[\(fileName):\(log.line)] "
+        }
+        return logText + log.message
+    }
+    #endif
 
     private var headerRow: some View {
         HStack {
@@ -627,7 +674,7 @@ private struct LogEntryRowContent: View {
     }
 
     private var cardBorderGradient: LinearGradient {
-        let colors: [Color] = isCopying
+        let colors: [Color] = isOutlined
             ? [RetroTheme.retroPink, RetroTheme.retroBlue]
             : [levelColor.opacity(0.3), RetroTheme.retroDarkBlue.opacity(0.1)]
         return LinearGradient(gradient: Gradient(colors: colors), startPoint: .topLeading, endPoint: .bottomTrailing)
@@ -638,7 +685,7 @@ private struct LogEntryRowContent: View {
             .fill(Color.black.opacity(0.4))
             .overlay(
                 RoundedRectangle(cornerRadius: 6)
-                    .strokeBorder(cardBorderGradient, lineWidth: isCopying ? 2 : 1)
+                    .strokeBorder(cardBorderGradient, lineWidth: isOutlined ? 2 : 1)
             )
     }
 
@@ -733,27 +780,7 @@ private struct LogEntryRowContent: View {
         }
         #else
         .onLongPressGesture(minimumDuration: 0.5) {
-            // Create a full log string with all details
-            var logText = ""
-
-            // Include timestamp and level
-            logText += "[\(log.formattedTimestamp)] [\(log.level.name.uppercased())] "
-
-            // Include category if available
-            if !log.category.isEmpty {
-                logText += "(\(log.category)) "
-            }
-
-            // Include file and line if full details are shown
-            if viewModel.showFullDetails {
-                let fileName = (log.file as NSString).lastPathComponent
-                logText += "[\(fileName):\(log.line)] "
-            }
-
-            // Add the main message
-            logText += log.message
-
-            UIPasteboard.general.string = logText
+            UIPasteboard.general.string = Self.pasteboardText(for: log, showFullDetails: viewModel.showFullDetails)
 
             // Visual feedback
             isCopying = true
@@ -764,6 +791,92 @@ private struct LogEntryRowContent: View {
         #endif // !os(tvOS)
     }
 }
+
+// MARK: - Hardware Controller (iOS)
+
+#if !os(tvOS)
+extension RetroLogView {
+    /// Lets a hardware controller drive this view while `gate` returns true: up and down
+    /// move through the lines (L1 and R1 a page at a time), up from the first line reaches
+    /// the toolbar, left and right move along it, and A presses the highlighted button or
+    /// copies the highlighted line. tvOS has the focus engine and does not need this.
+    public func controllerNavigation(when gate: @escaping () -> Bool) -> RetroLogView {
+        var copy = self
+        copy.controllerInputGate = gate
+        return copy
+    }
+
+    /// Outline drawn on a toolbar button while the controller cursor is on it.
+    @ViewBuilder
+    fileprivate func controllerRing(_ action: RetroLogToolbarAction) -> some View {
+        if controllerCursor == .toolbar(action) {
+            RoundedRectangle(cornerRadius: 6)
+                .strokeBorder(Color.white, lineWidth: 2)
+                .padding(-3)
+                .allowsHitTesting(false)
+        }
+    }
+
+    fileprivate func handleController(_ event: GamepadEvent, scrollView: ScrollViewProxy) {
+        guard let controllerInputGate,
+              GamepadManager.shared.isNavigationInputAvailable,
+              controllerInputGate() else { return }
+        switch event {
+        case .verticalNavigation(let value, true):
+            moveControllerCursor(rows: value < 0 ? 1 : -1, scrollView: scrollView)
+        case .shoulderRight(true):
+            moveControllerCursor(rows: RetroLogControllerNavigation.pageSize, scrollView: scrollView)
+        case .shoulderLeft(true):
+            moveControllerCursor(rows: -RetroLogControllerNavigation.pageSize, scrollView: scrollView)
+        case .horizontalNavigation(let value, true):
+            controllerCursor = RetroLogControllerNavigation.moveHorizontal(from: controllerCursor, by: value > 0 ? 1 : -1)
+        case .buttonPress(true):
+            activateControllerCursor()
+        default:
+            break
+        }
+    }
+
+    private func moveControllerCursor(rows delta: Int, scrollView: ScrollViewProxy) {
+        // An imported file's lines are not live entries; the cursor stays on the toolbar there.
+        let rowIDs = viewModel.importedSession == nil ? viewModel.displayedLogs.map(\.id) : []
+        let cursor = RetroLogControllerNavigation.moveVertical(from: controllerCursor, by: delta, rowIDs: rowIDs)
+        controllerCursor = cursor
+        guard case .row(let id) = cursor else { return }
+        // Following the newest line would pull the list away from the cursor.
+        viewModel.autoScroll = false
+        withAnimation(.easeOut(duration: 0.15)) {
+            scrollView.scrollTo(id, anchor: .center)
+        }
+    }
+
+    private func activateControllerCursor() {
+        switch controllerCursor {
+        case .toolbar(.autoScroll):
+            viewModel.autoScroll.toggle()
+        case .toolbar(.sortOrder):
+            viewModel.toggleSortOrder()
+        case .toolbar(.details):
+            viewModel.showFullDetails.toggle()
+        case .toolbar(.clear):
+            if viewModel.importedSession == nil {
+                viewModel.clearLogs()
+            }
+        case .toolbar(.fullscreen):
+            isFullscreen.toggle()
+        case .row(let id):
+            guard let log = viewModel.displayedLogs.first(where: { $0.id == id }) else { return }
+            UIPasteboard.general.string = LogEntryRowContent.pasteboardText(
+                for: log,
+                showFullDetails: viewModel.showFullDetails
+            )
+            PVToastManager.post("Log line copied", icon: "doc.on.doc")
+        case nil:
+            break
+        }
+    }
+}
+#endif
 
 // MARK: - Imported Session UI
 

@@ -38,6 +38,11 @@ struct TVMediaImportStatusSheet: View {
     /// Drives `navigationDestination` for system selection rows.
     @State private var systemSelectionItemID: UUID?
 
+    /// The control the controller cursor is on (iOS): `closeCursorID` or one of a row's focus IDs.
+    @State private var cursorID: String?
+
+    private static let closeCursorID = "importQueue|close"
+
     init(gameImporter: any GameImporting, updatesController: PVGameLibraryUpdatesController, onDismiss: @escaping () -> Void) {
         self.gameImporter = gameImporter
         self.updatesController = updatesController
@@ -75,6 +80,7 @@ struct TVMediaImportStatusSheet: View {
                                     TVMediaImportQueueRow(
                                         item: item,
                                         focusedItemID: $focusedItemID,
+                                        cursorID: cursorID,
                                         onChooseSystem: { systemSelectionItemID = item.id },
                                         onRemove: { remove(item) }
                                     )
@@ -91,6 +97,16 @@ struct TVMediaImportStatusSheet: View {
             .tvMediaOnExitCommand {
                 onDismiss()
             }
+            #if os(iOS)
+            .onAppear {
+                if cursorID == nil {
+                    cursorID = cursorLayout.firstItem
+                }
+            }
+            .tvMediaOverlayControllerInput { event in
+                handleController(event)
+            }
+            #endif
             .navigationDestination(item: $systemSelectionItemID) { id in
                 if let item = viewModel.importQueueItems.first(where: { $0.id == id }) {
                     SystemSelectionView(item: item, onSystemSelected: { _, queueItem in
@@ -103,6 +119,63 @@ struct TVMediaImportStatusSheet: View {
             }
         }
     }
+
+    #if os(iOS)
+    /// One row per queued file (its system button when it has one, then its delete button),
+    /// with Close as the row above them.
+    private var cursorLayout: TVMediaCursorLayout {
+        let closeRow = TVMediaCursorLayout.Row(id: "importQueue|closeRow", items: [Self.closeCursorID])
+        let itemRows = viewModel.importQueueItems.map { item in
+            TVMediaCursorLayout.Row(
+                id: "importQueue|row|\(item.id.uuidString)",
+                items: TVMediaImportQueueRow.cursorIDs(for: item)
+            )
+        }
+        return TVMediaCursorLayout(rows: [closeRow] + itemRows)
+    }
+
+    /// This sheet owns the controller while it is up: d-pad moves, A acts, B backs out.
+    private func handleController(_ event: GamepadEvent) {
+        // The system picker pushed over the queue is not cursor-driven; B still leaves it.
+        if systemSelectionItemID != nil {
+            if case .buttonB(true) = event { systemSelectionItemID = nil }
+            return
+        }
+        switch event {
+        case .verticalNavigation(let value, true):
+            moveCursor(TVMediaCursorDirection(verticalValue: value))
+        case .horizontalNavigation(let value, true):
+            moveCursor(TVMediaCursorDirection(horizontalValue: value))
+        case .buttonPress(true):
+            activateCursor()
+        case .buttonB(true):
+            onDismiss()
+        default:
+            break
+        }
+    }
+
+    private func moveCursor(_ direction: TVMediaCursorDirection?) {
+        guard let direction, case .moved(let item, _) = cursorLayout.move(from: cursorID, direction) else { return }
+        cursorID = item
+    }
+
+    private func activateCursor() {
+        guard let cursorID = cursorLayout.validCursor(cursorID) else { return }
+        if cursorID == Self.closeCursorID {
+            onDismiss()
+            return
+        }
+        guard let item = viewModel.importQueueItems.first(where: { TVMediaImportQueueRow.cursorIDs(for: $0).contains(cursorID) }) else { return }
+        if cursorID == TVMediaImportQueueRow.removeCursorID(for: item) {
+            remove(item)
+            // The row is going away: keep the cursor on something that stays.
+            self.cursorID = Self.closeCursorID
+        } else {
+            systemSelectionItemID = item.id
+        }
+    }
+    #endif
 
     /// Deletes by id against the importer's own queue; the sheet's list is only a snapshot of it.
     private func remove(_ item: ImportQueueItem) {
@@ -146,9 +219,13 @@ struct TVMediaImportStatusSheet: View {
                         .font(.system(size: 14, weight: .bold))
                         .tracking(1)
                 }
-                .foregroundStyle(Color.retroPink)
+                .foregroundStyle(cursorID == Self.closeCursorID ? Color.white : Color.retroPink)
                 .padding(.horizontal, 24)
                 .padding(.vertical, 12)
+                .background(
+                    RoundedRectangle(cornerRadius: 10, style: .continuous)
+                        .fill(Color.retroPink.opacity(cursorID == Self.closeCursorID ? 0.35 : 0))
+                )
                 .background(
                     RoundedRectangle(cornerRadius: 10, style: .continuous)
                         .strokeBorder(
@@ -270,12 +347,26 @@ private struct TVMediaImportQueueRow: View {
     /// Observed so the row follows the item's status as it is re-queued, processed or fails.
     @ObservedObject var item: ImportQueueItem
     var focusedItemID: FocusState<String?>.Binding
+    /// The control the controller cursor is on (iOS); matched against this row's focus IDs.
+    var cursorID: String?
     let onChooseSystem: () -> Void
     let onRemove: () -> Void
 
-    private var rowFocusID: String { item.id.uuidString }
-    private var removeFocusID: String { "remove-\(item.id.uuidString)" }
+    private var rowFocusID: String { Self.rowCursorID(for: item) }
+    private var removeFocusID: String { Self.removeCursorID(for: item) }
     private var canChooseSystem: Bool { ImportQueueResolver.canChooseSystem(for: item) }
+
+    static func rowCursorID(for item: ImportQueueItem) -> String { item.id.uuidString }
+    static func removeCursorID(for item: ImportQueueItem) -> String { "remove-\(item.id.uuidString)" }
+
+    /// The controls this row shows, left to right.
+    static func cursorIDs(for item: ImportQueueItem) -> [String] {
+        (ImportQueueResolver.canChooseSystem(for: item) ? [rowCursorID(for: item)] : []) + [removeCursorID(for: item)]
+    }
+
+    private func isHighlighted(_ id: String) -> Bool {
+        focusedItemID.wrappedValue == id || cursorID == id
+    }
 
     var body: some View {
         HStack(spacing: 12) {
@@ -285,7 +376,7 @@ private struct TVMediaImportQueueRow: View {
                 }
                 .buttonStyle(TVMediaCardButtonStyle())
                 .tvOSDisableFocusEffect()
-                .modifier(TVMediaImportRowChrome(isFocused: focusedItemID.wrappedValue == rowFocusID))
+                .modifier(TVMediaImportRowChrome(isFocused: isHighlighted(rowFocusID)))
                 .focused(focusedItemID, equals: rowFocusID)
             } else {
                 rowContent
@@ -297,7 +388,7 @@ private struct TVMediaImportQueueRow: View {
     }
 
     private var removeButton: some View {
-        let isFocused = focusedItemID.wrappedValue == removeFocusID
+        let isFocused = isHighlighted(removeFocusID)
         return Button(action: onRemove) {
             Image(systemName: "trash")
                 .font(.system(size: 22, weight: .semibold))

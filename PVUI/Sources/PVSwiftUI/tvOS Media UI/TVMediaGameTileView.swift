@@ -19,6 +19,9 @@ struct TVMediaGameTileView<MenuContent: View>: View {
     let isAtLeftEdge: Bool
     var focusCoordinator: TVMediaFocusCoordinator?
     let focusedGameID: FocusState<String?>.Binding?
+    /// This tile's controller cursor ID (iOS). Defaults to the game's ID; a screen that
+    /// shows a game on more than one shelf passes one that is unique on that screen.
+    let cursorID: String
 
     @FocusState private var isFocusedInternal: Bool
     @State private var artwork: UIImage?
@@ -28,7 +31,8 @@ struct TVMediaGameTileView<MenuContent: View>: View {
     /// Blur artwork when obfuscation is enabled.
     @Default(.obfuscateArtwork) private var obfuscateArtwork
     #if os(iOS)
-    @StateObject private var gamepadManager = GamepadManager.shared
+    /// True while the controller cursor is on this tile.
+    @State private var isCursor = false
     /// iOS-only: tracks hold-A duration on a focused tile so a long press
     /// surfaces the context menu (matching tvOS focus-engine long-press
     /// behaviour). A short tap on A still launches the game.
@@ -72,7 +76,8 @@ struct TVMediaGameTileView<MenuContent: View>: View {
         @ViewBuilder contextMenu: @escaping () -> MenuContent,
         isAtLeftEdge: Bool = false,
         focusCoordinator: TVMediaFocusCoordinator? = nil,
-        focusedGameID: FocusState<String?>.Binding? = nil
+        focusedGameID: FocusState<String?>.Binding? = nil,
+        cursorID: String? = nil
     ) {
         self.game = game
         self.titleFont = titleFont
@@ -81,13 +86,19 @@ struct TVMediaGameTileView<MenuContent: View>: View {
         self.isAtLeftEdge = isAtLeftEdge
         self.focusCoordinator = focusCoordinator
         self.focusedGameID = focusedGameID
+        self.cursorID = cursorID ?? game.id
     }
 
+    /// Highlighted: the focus engine's choice on tvOS, the controller cursor on iOS.
     private var isFocused: Bool {
+        #if os(iOS)
+        return isCursor
+        #else
         if let focusedGameID {
             return focusedGameID.wrappedValue == game.id
         }
         return isFocusedInternal
+        #endif
     }
 
     private var tileWidth: CGFloat {
@@ -205,12 +216,10 @@ struct TVMediaGameTileView<MenuContent: View>: View {
             focusCoordinator?.unregisterLeftEdgeItem(game.id)
         }
         #if os(iOS)
-        .onReceive(gamepadManager.eventPublisher) { event in
-            guard gamepadManager.isNavigationInputAvailable else { return }
-            guard isFocused else { return }
-            if case .buttonPress(let isPressed) = event {
-                handleControllerButtonPress(isPressed: isPressed)
-            }
+        .tvMediaCursorItem(cursorID, coordinator: focusCoordinator, isCursor: $isCursor)
+        .tvMediaControllerInput([.content], coordinator: focusCoordinator) { event in
+            guard isCursor, case .buttonPress(let isPressed) = event else { return }
+            handleControllerButtonPress(isPressed: isPressed)
         }
         .onChange(of: isFocused) { focused in
             if !focused {

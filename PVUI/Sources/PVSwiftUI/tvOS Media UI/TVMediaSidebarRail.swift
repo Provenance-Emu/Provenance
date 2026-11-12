@@ -23,6 +23,7 @@ struct TVMediaSidebarRail: View {
     var onSelectNearby: (() -> Void)?
 
     let onSelectNetplay: () -> Void
+    let onSelectHelp: () -> Void
 
     @Default(.netplayEnabled) private var netplayEnabled
 
@@ -31,8 +32,19 @@ struct TVMediaSidebarRail: View {
     @Namespace private var sidebarAnimation
     @State private var appIcon: UIImage?
     #if os(iOS)
-    @StateObject private var gamepadManager = GamepadManager.shared
+    /// The item the controller cursor is on. Plain state: SwiftUI focus does not hold a
+    /// value on iOS unless a focusable view is bound to it.
+    @State private var cursorItem: SidebarItem?
     #endif
+
+    /// The highlighted item: the focus engine's on tvOS, the controller cursor's on iOS.
+    private var activeItem: SidebarItem? {
+        #if os(iOS)
+        return focusCoordinator.isSidebarExpanded ? cursorItem : nil
+        #else
+        return focusedItem
+        #endif
+    }
 
     private let collapsedWidth: CGFloat = {
         #if os(iOS)
@@ -68,6 +80,7 @@ struct TVMediaSidebarRail: View {
             .background(sidebarBackground)
             .tvMediaFocusSection()
             .animation(.spring(response: 0.32, dampingFraction: 0.82), value: focusCoordinator.isSidebarExpanded)
+            #if os(tvOS)
             .onChange(of: focusedItem) { newItem in
                 if newItem != nil {
                     focusCoordinator.sidebarGainedFocus()
@@ -84,10 +97,14 @@ struct TVMediaSidebarRail: View {
                     focusedItem = nil
                 }
             }
+            #endif
             .onChange(of: focusCoordinator.isSidebarExpanded) { expanded in
-                if expanded {
-                    focusedItem = itemForDestination(destination)
-                }
+                guard expanded else { return }
+                #if os(iOS)
+                cursorItem = itemForDestination(destination)
+                #else
+                focusedItem = itemForDestination(destination)
+                #endif
             }
             .tvMediaOnMoveCommand { direction in
                 if direction == .right && focusCoordinator.isSidebarExpanded {
@@ -99,32 +116,16 @@ struct TVMediaSidebarRail: View {
                 loadAppIcon()
             }
             #if os(iOS)
-            .onReceive(gamepadManager.eventPublisher) { event in
-                guard gamepadManager.isNavigationInputAvailable else { return }
-                // Don't compete with retrowave alerts/popovers for controller
-                // input — when one is up it owns navigation. The previous code
-                // let A press while a popover was visible navigate the underlying
-                // (hidden) sidebar item AND select the popover row at the same time.
-                if focusCoordinator.isAlertPresented { return }
-                // Only handle navigation/activation when the sidebar is the
-                // active focus zone; otherwise destination handlers own input.
-                let sidebarHasFocus = focusCoordinator.isSidebarExpanded || focusedItem != nil
+            // B, Start and Options belong to the shell (`TVMediaMainRootView`), which
+            // closes the sidebar. Handling them here too undid its work in the same press.
+            .tvMediaControllerInput([.sidebar], coordinator: focusCoordinator) { event in
                 switch event {
-                case .menuToggle(let isPressed):
-                    if isPressed {
-                        focusCoordinator.toggleSidebar()
-                    }
-                case .verticalNavigation(let value, let isPressed):
-                    guard isPressed, sidebarHasFocus else { return }
-                    moveSidebarFocus(isNext: value < 0)
-                case .buttonPress(let isPressed):
-                    guard isPressed, sidebarHasFocus else { return }
-                    activateFocusedSidebar()
-                case .buttonB(let isPressed):
-                    guard isPressed else { return }
-                    if focusCoordinator.isSidebarExpanded {
-                        focusCoordinator.closeSidebar()
-                    }
+                case .verticalNavigation(let value, true):
+                    moveSidebarCursor(isNext: value < 0)
+                case .horizontalNavigation(let value, true) where value > 0:
+                    focusCoordinator.closeSidebar()
+                case .buttonPress(true):
+                    activateSidebarCursor()
                 default:
                     break
                 }
@@ -136,6 +137,8 @@ struct TVMediaSidebarRail: View {
         switch dest {
         case .settings: return .settings
         case .status: return .status
+        // A system's games are shown under the Systems item; there is no item of their own.
+        case .systemGames: return .destination(.system)
         default: return .destination(dest)
         }
     }
@@ -185,6 +188,8 @@ struct TVMediaSidebarRail: View {
                 }
                 sidebarButton(for: .settings)
                     .id(SidebarItem.settings)
+                sidebarButton(for: .help)
+                    .id(SidebarItem.help)
                 sidebarButton(for: .destination(.logs))
                     .id(SidebarItem.destination(.logs))
                 sidebarButton(for: .status)
@@ -200,7 +205,7 @@ struct TVMediaSidebarRail: View {
                     proxy.scrollTo(target, anchor: .center)
                 }
             }
-            .onChange(of: focusedItem) { newValue in
+            .onChange(of: activeItem) { newValue in
                 guard let newValue else { return }
                 withAnimation(.easeOut(duration: 0.15)) {
                     proxy.scrollTo(newValue, anchor: .center)
@@ -323,7 +328,7 @@ struct TVMediaSidebarRail: View {
     @ViewBuilder
     private func sidebarButton(for item: SidebarItem) -> some View {
         let isSelected = item.matchesDestination(destination)
-        let isFocused = focusedItem == item
+        let isFocused = activeItem == item
 
         Button {
             handleSelection(item)
@@ -458,6 +463,8 @@ struct TVMediaSidebarRail: View {
             onSelectNearby?()
         case .netplay:
             onSelectNetplay()
+        case .help:
+            onSelectHelp()
         }
 
         focusedItem = nil
@@ -530,26 +537,27 @@ struct TVMediaSidebarRail: View {
         if netplayEnabled {
             items.append(.netplay)
         }
-        items += [.settings, .destination(.logs), .status]
+        items += [.settings, .help, .destination(.logs), .status]
         return items
     }
 
-    private func moveSidebarFocus(isNext: Bool) {
+    #if os(iOS)
+    private func moveSidebarCursor(isNext: Bool) {
         let items = sidebarItems
         guard !items.isEmpty else { return }
-        let current = focusedItem ?? itemForDestination(destination)
+        let current = cursorItem ?? itemForDestination(destination)
         guard let index = items.firstIndex(of: current) else {
-            focusedItem = items.first
+            cursorItem = items.first
             return
         }
         let nextIndex = isNext ? min(index + 1, items.count - 1) : max(index - 1, 0)
-        focusedItem = items[nextIndex]
+        cursorItem = items[nextIndex]
     }
 
-    private func activateFocusedSidebar() {
-        guard let focusedItem else { return }
-        handleSelection(focusedItem)
+    private func activateSidebarCursor() {
+        handleSelection(cursorItem ?? itemForDestination(destination))
     }
+    #endif
 }
 
 // MARK: - Sidebar Item Enum
@@ -562,6 +570,7 @@ private enum SidebarItem: Hashable {
     case imports
     case nearby
     case netplay
+    case help
 
     static let mainNavItems: [SidebarItem] = [
         .destination(.home),
@@ -580,6 +589,7 @@ private enum SidebarItem: Hashable {
         case .imports: return "Imports"
         case .nearby: return "Nearby"
         case .netplay: return "Network Play"
+        case .help: return "Help"
         }
     }
 
@@ -601,6 +611,7 @@ private enum SidebarItem: Hashable {
         case .imports: return "tray.and.arrow.down"
         case .nearby: return "antenna.radiowaves.left.and.right"
         case .netplay: return "network"
+        case .help: return "questionmark.circle"
         }
     }
 
@@ -611,7 +622,7 @@ private enum SidebarItem: Hashable {
             return d == dest
         case .settings: return dest == .settings
         case .status: return dest == .status
-        case .imports, .nearby, .netplay: return false
+        case .imports, .nearby, .netplay, .help: return false
         }
     }
 }

@@ -237,10 +237,6 @@ struct TVMediaMainView: View {
         @ObservedObject var libraryModel: TVMediaLibraryModel
         @ObservedObject var gameActions: TVMediaGameActions
 
-        #if os(iOS)
-        @StateObject private var gamepadManager = GamepadManager.shared
-        #endif
-
         @State private var showingImportsAlert = false
         @StateObject private var featureFlagsManager = PVFeatureFlagsManager.shared
 
@@ -287,6 +283,11 @@ struct TVMediaMainView: View {
                         libraryModel.selectSystem(identifier: lastSystemIdentifier)
                     }
                     refreshInitialLibraryFocus()
+                    #if os(iOS)
+                    focusCoordinator.isExternalOverlayPresented = {
+                        TVMediaOverlayProbe.isOverlayPresented
+                    }
+                    #endif
                 }
                 .onChange(of: libraryModel.gamesBySystemIdentifier.values.contains { !$0.isEmpty }) { hasGames in
                     if hasGames { refreshInitialLibraryFocus() }
@@ -338,42 +339,38 @@ struct TVMediaMainView: View {
                     focusCoordinator.isAlertPresented = presented
                 }
                 #if os(iOS)
-                .onReceive(gamepadManager.eventPublisher) { event in
-                    guard gamepadManager.isNavigationInputAvailable else { return }
-                    // When any retrowave alert/popover is showing, defer to its own
-                    // gamepad handler — we don't want the root to toggle the sidebar
-                    // or hijack inputs that belong to the modal.
-                    if focusCoordinator.isAlertPresented { return }
+                // The shell alone handles B, Start and Options. Alerts, sheets and the
+                // running game own input while they are up (`.overlay`), so this never
+                // runs behind them.
+                .tvMediaControllerInput([.sidebar, .content], coordinator: focusCoordinator) { event in
                     switch event {
-                    case .menuToggle(let isPressed):
-                        if isPressed { focusCoordinator.toggleSidebar() }
-                    case .start(let isPressed):
-                        if isPressed { focusCoordinator.toggleSidebar() }
-                    case .buttonB(let isPressed):
-                        guard isPressed else { break }
-                        if isRenamePresented {
-                            gameActions.clearRename()
-                            return
-                        }
-                        if focusCoordinator.isAlertPresented || focusCoordinator.isModalPresented {
-                            return
-                        }
-                        if focusCoordinator.isSidebarExpanded {
-                            focusCoordinator.closeSidebar()
-                            return
-                        }
-                        if router.handleBack() { return }
-                        if router.destination == .settings, settingsCanPop {
-                            NotificationCenter.default.post(name: .tvOSSettingsRequestPop, object: nil)
-                            return
-                        }
-                        focusCoordinator.openSidebar()
+                    case .menuToggle(true), .start(true):
+                        focusCoordinator.toggleSidebar()
+                    case .buttonB(true):
+                        handleControllerBack()
                     default:
                         break
                     }
                 }
                 #endif
         }
+
+        #if os(iOS)
+        /// B: close the sidebar, else let the screen use it, else go back, else open the sidebar.
+        private func handleControllerBack() {
+            if focusCoordinator.isSidebarExpanded {
+                focusCoordinator.closeSidebar()
+                return
+            }
+            if focusCoordinator.interceptBack() { return }
+            if router.handleBack() { return }
+            if router.destination == .settings, settingsCanPop {
+                NotificationCenter.default.post(name: .tvOSSettingsRequestPop, object: nil)
+                return
+            }
+            focusCoordinator.openSidebar()
+        }
+        #endif
 
         private var layoutWithExitCommand: some View {
             layoutWithLifecycle
@@ -427,6 +424,12 @@ struct TVMediaMainView: View {
                 #else
                 .sheet(item: $router.activeModal) { modal in
                     modalContent(modal)
+                        // These sheets are built from standard controls, which a controller
+                        // cannot move through on iOS. B at least goes back or closes them.
+                        .tvMediaOverlayControllerInput { event in
+                            guard modal.usesShellBackButton, case .buttonB(true) = event else { return }
+                            TVMediaOverlayProbe.popOrDismissSheet { router.dismissModal() }
+                        }
                 }
                 #endif
         }
@@ -627,6 +630,9 @@ struct TVMediaMainView: View {
                 } : nil,
                 onSelectNetplay: {
                     router.activeModal = .netplayLobby
+                },
+                onSelectHelp: {
+                    router.activeModal = .help
                 }
             )
             .tvMediaFocusScope(sidebarNamespace)
@@ -708,7 +714,8 @@ struct TVMediaMainView: View {
                         focusCoordinator.closeSidebar()
                     }
                 #else
-                SettingsWrapperView()
+                // Help is in the side menu here, so the settings header is left out entirely.
+                SettingsWrapperView(showsHelp: false)
                     .onAppear {
                         focusCoordinator.closeSidebar()
                     }
@@ -832,6 +839,17 @@ struct TVMediaMainView: View {
                     router.dismissModal()
                 }
                 #endif
+        case .help:
+            NavigationStack {
+                WikiHelpView()
+                    #if !os(tvOS)
+                    .toolbar {
+                        ToolbarItem(placement: .cancellationAction) {
+                            Button("Done") { router.dismissModal() }
+                        }
+                    }
+                    #endif
+            }
         case .artworkSearch(let game):
             let actions = gameActions
             NavigationStack {
@@ -1477,42 +1495,22 @@ private struct TVMediaTrackWidthModifier: ViewModifier {
     }
 }
 
-private func tvMediaAdaptiveColumnsPerRow(
-    availableWidth: CGFloat,
-    minItemWidth: CGFloat,
-    maxItemWidth: CGFloat,
-    spacing: CGFloat
-) -> Int {
-    guard availableWidth > 0, minItemWidth > 0 else { return 1 }
-
-    var columns = max(1, Int((availableWidth + spacing) / (minItemWidth + spacing)))
-    while columns > 1 {
-        let itemWidth = (availableWidth - (CGFloat(columns - 1) * spacing)) / CGFloat(columns)
-        if itemWidth <= maxItemWidth { break }
-        columns -= 1
-    }
-    return max(columns, 1)
-}
-
 // MARK: - Logs View
 
 @available(tvOS 16.0, iOS 16.0, *)
 struct TVMediaLogsView: View {
     @State private var isFullscreen = false
     @Environment(\.tvMediaFocusCoordinator) private var focusCoordinator
-    #if os(iOS)
-    @StateObject private var gamepadManager = GamepadManager.shared
-    #endif
 
     var body: some View {
         Group {
             if isFullscreen {
-                RetroLogView(isFullscreen: $isFullscreen)
+                logView
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
                     .padding(.horizontal, 40)
                     .padding(.vertical, 40)
             } else {
-                RetroLogView(isFullscreen: $isFullscreen)
+                logView
                     .padding(.horizontal, 8)
                     .padding(.vertical, 6)
                     .tvMediaFocusSection()
@@ -1525,35 +1523,32 @@ struct TVMediaLogsView: View {
         }
         .onAppear {
             focusCoordinator.closeSidebar()
+            #if os(iOS)
+            // B leaves full screen before it belongs to the shell.
+            focusCoordinator.setBackInterceptor(owner: Self.backInterceptorOwner) {
+                guard isFullscreen else { return false }
+                isFullscreen = false
+                return true
+            }
+            #endif
         }
         #if os(iOS)
-        .onReceive(gamepadManager.eventPublisher) { event in
-            guard gamepadManager.isNavigationInputAvailable else { return }
-            if focusCoordinator.isAlertPresented || focusCoordinator.isSidebarExpanded { return }
-            switch event {
-            case .menuToggle(let isPressed), .start(let isPressed):
-                if isPressed {
-                    focusCoordinator.toggleSidebar()
-                }
-            case .buttonB(let isPressed):
-                if isPressed {
-                    if isFullscreen {
-                        isFullscreen = false
-                    } else {
-                        focusCoordinator.openSidebar()
-                    }
-                }
-            case .buttonPress(let isPressed):
-                // A toggles fullscreen log view.
-                if isPressed {
-                    withAnimation(.easeInOut(duration: 0.2)) {
-                        isFullscreen.toggle()
-                    }
-                }
-            default:
-                break
-            }
+        .onDisappear {
+            focusCoordinator.clearBackInterceptor(owner: Self.backInterceptorOwner)
         }
+        #endif
+    }
+
+    private static let backInterceptorOwner = "logs"
+
+    /// The log view; on iOS a controller drives it while the content owns input.
+    private var logView: RetroLogView {
+        let view = RetroLogView(isFullscreen: $isFullscreen)
+        #if os(iOS)
+        let coordinator = focusCoordinator
+        return view.controllerNavigation { coordinator.inputOwnerForCurrentEvent() == .content }
+        #else
+        return view
         #endif
     }
 }
@@ -1657,20 +1652,24 @@ struct TVMediaEmptyStateView: View {
 struct TVMediaEmptyLibraryActionButtons: View {
     let onSettings: () -> Void
     let onImportStatus: () -> Void
+    let onHelp: () -> Void
 
     @Environment(\.tvMediaFocusCoordinator) private var focusCoordinator
 
-    private enum ButtonID: Hashable {
+    private enum ButtonID: String, Hashable, CaseIterable {
         case settings
         case importStatus
         case helpWiki
+
+        /// Controller cursor ID (iOS).
+        var cursorID: String { "emptyLibrary|\(rawValue)" }
     }
+
+    private static let cursorRowID = "emptyLibrary"
 
     @FocusState private var focusedButton: ButtonID?
-
-    private var isAnyButtonFocused: Bool {
-        focusedButton != nil
-    }
+    /// The button the controller cursor is on (iOS).
+    @State private var cursorButton: ButtonID?
 
     var body: some View {
         HStack(spacing: 24) {
@@ -1690,36 +1689,18 @@ struct TVMediaEmptyLibraryActionButtons: View {
                 action: onImportStatus
             )
 
-            NavigationLink(destination: WikiHelpView()) {
-                HStack(spacing: 10) {
-                    Image(systemName: "books.vertical.fill")
-                        .font(.system(size: 18, weight: focusedButton == .helpWiki ? .semibold : .regular))
-                    Text("tv_media.help_wiki", bundle: .module)
-                        .font(.system(size: 14, weight: .semibold))
-                        .tracking(1)
-                }
-                .foregroundStyle(focusedButton == .helpWiki ? .white : .white.opacity(0.8))
-                .padding(.horizontal, 28)
-                .padding(.vertical, 14)
-                .background(
-                    RoundedRectangle(cornerRadius: 12, style: .continuous)
-                        .fill(Color.retroPurple.opacity(focusedButton == .helpWiki ? 0.35 : 0.2))
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 12, style: .continuous)
-                                .strokeBorder(
-                                    Color.retroPurple.opacity(focusedButton == .helpWiki ? 0.8 : 0.4),
-                                    lineWidth: focusedButton == .helpWiki ? 2 : 1
-                                )
-                        )
-                )
-                .shadow(color: focusedButton == .helpWiki ? Color.retroPurple.opacity(0.5) : .clear, radius: 12, x: 0, y: 4)
-                .scaleEffect(focusedButton == .helpWiki ? 1.05 : 1.0)
-                .animation(Animation.spring(response: 0.25, dampingFraction: 0.8), value: focusedButton == .helpWiki)
-            }
-            .buttonStyle(TVMediaCardButtonStyle())
-            .tvOSDisableFocusEffect()
-            .focused($focusedButton, equals: .helpWiki)
+            // A button, not a NavigationLink: these screens have no navigation stack.
+            actionButton(
+                id: .helpWiki,
+                icon: "books.vertical.fill",
+                title: String(localized: "tv_media.help_wiki", bundle: .module),
+                accentColor: Color.retroPurple,
+                action: onHelp
+            )
         }
+        .tvMediaCursorRows([
+            TVMediaCursorLayout.Row(id: Self.cursorRowID, items: ButtonID.allCases.map(\.cursorID))
+        ])
         .tvMediaOnMoveCommand { direction in
             if direction == .left, focusedButton == .settings {
                 focusCoordinator.openSidebar()
@@ -1749,7 +1730,7 @@ struct TVMediaEmptyLibraryActionButtons: View {
         accentColor: Color,
         action: @escaping () -> Void
     ) -> some View {
-        let isFocused = focusedButton == id
+        let isFocused = focusedButton == id || cursorButton == id
 
         Button(action: action) {
             HStack(spacing: 10) {
@@ -1780,6 +1761,12 @@ struct TVMediaEmptyLibraryActionButtons: View {
         .buttonStyle(TVMediaCardButtonStyle())
         .tvOSDisableFocusEffect()
         .focused($focusedButton, equals: id)
+        .tvMediaCursorItem(
+            id.cursorID,
+            coordinator: focusCoordinator,
+            isCursor: tvMediaCursorBinding($cursorButton, is: id),
+            onActivate: action
+        )
     }
 }
 
@@ -2056,10 +2043,6 @@ struct TVMediaSavesView: View {
 
     @Environment(\.tvMediaFocusCoordinator) private var focusCoordinator
     @FocusState private var isEmptyStateFocused: Bool
-    @FocusState private var focusedSaveID: String?
-    #if os(iOS)
-    @StateObject private var gamepadManager = GamepadManager.shared
-    #endif
     @State private var gridWidth: CGFloat = 0
     @State private var allSaves: [RetroSaveStateItem] = []
     @State private var filteredSaves: [RetroSaveStateItem] = []
@@ -2068,7 +2051,20 @@ struct TVMediaSavesView: View {
     @State private var selectedSystems: Set<String> = []
     @State private var isAutoFiltered = false
     @State private var isFilterPickerPresented = false
-    @FocusState private var isFilterButtonFocused: Bool
+    @FocusState private var isFilterButtonFocusedInternal: Bool
+    /// True while the controller cursor is on the filter button or the "clear filter" button (iOS).
+    @State private var isFilterCursor = false
+    @State private var isClearFilterCursor = false
+
+    private var isFilterButtonFocused: Bool { isFilterButtonFocusedInternal || isFilterCursor }
+
+    /// Controller cursor IDs for the two buttons outside the grid (iOS).
+    private enum CursorID {
+        static let headerRow = "savesHeader"
+        static let filter = "saves|filter"
+        static let emptyRow = "savesEmpty"
+        static let clearFilter = "saves|clearFilter"
+    }
 
     private var displayTitle: String {
         if isAutoFiltered, let systemID = selectedSystems.first {
@@ -2077,12 +2073,6 @@ struct TVMediaSavesView: View {
         }
         return "Save States"
     }
-
-    #if os(iOS)
-    private var tvMediaSavesFocusedSaveBinding: FocusState<String?>.Binding? { $focusedSaveID }
-    #else
-    private var tvMediaSavesFocusedSaveBinding: FocusState<String?>.Binding? { nil }
-    #endif
 
     var body: some View {
         ScrollView {
@@ -2103,6 +2093,8 @@ struct TVMediaSavesView: View {
             .padding(.horizontal, 60)
             .padding(.vertical, 40)
         }
+        // iOS: the filter button is the row above the grid, so the d-pad reaches it.
+        .tvMediaCursorScreen(coordinator: focusCoordinator)
         .task {
             await initializeFilters()
             await loadAllSaves()
@@ -2181,7 +2173,11 @@ struct TVMediaSavesView: View {
         }
         .buttonStyle(TVMediaCardButtonStyle())
         .tvOSDisableFocusEffect()
-        .focused($isFilterButtonFocused)
+        .focused($isFilterButtonFocusedInternal)
+        .tvMediaCursorItem(CursorID.filter, coordinator: focusCoordinator, isCursor: $isFilterCursor) {
+            isFilterPickerPresented = true
+        }
+        .tvMediaCursorRows([TVMediaCursorLayout.Row(id: CursorID.headerRow, items: [CursorID.filter], isHeader: true)])
     }
 
     private var filterButtonLabel: String {
@@ -2224,11 +2220,19 @@ struct TVMediaSavesView: View {
                         .padding(.vertical, 10)
                         .background(
                             RoundedRectangle(cornerRadius: 8)
-                                .strokeBorder(Color.retroBlue.opacity(0.6), lineWidth: 1.5)
+                                .fill(Color.retroBlue.opacity(isClearFilterCursor ? 0.25 : 0))
+                        )
+                        .background(
+                            RoundedRectangle(cornerRadius: 8)
+                                .strokeBorder(Color.retroBlue.opacity(isClearFilterCursor ? 1 : 0.6), lineWidth: isClearFilterCursor ? 2 : 1.5)
                         )
                 }
                 .buttonStyle(TVMediaCardButtonStyle())
                 .tvOSDisableFocusEffect()
+                .tvMediaCursorItem(CursorID.clearFilter, coordinator: focusCoordinator, isCursor: $isClearFilterCursor) {
+                    selectedSystems = []
+                }
+                .tvMediaCursorRows([TVMediaCursorLayout.Row(id: CursorID.emptyRow, items: [CursorID.clearFilter])])
                 .padding(.top, 8)
             }
 
@@ -2255,15 +2259,15 @@ struct TVMediaSavesView: View {
             columns: [GridItem(.adaptive(minimum: tileWidth, maximum: tileWidth), spacing: spacing)],
             spacing: spacing
         ) {
-            ForEach(filteredSaves.indices, id: \.self) { index in
-                let item = filteredSaves[index]
+            // Identified by save ID, which is the cursor ID too: the screen can then scroll
+            // to a tile that is not built yet.
+            ForEach(Array(filteredSaves.enumerated()), id: \.element.id) { index, item in
                 let isAtLeftEdge = (index % columnsPerRow) == 0
                 TVMediaSaveStateTileButton(
                     item: item,
                     store: saveStatesStore,
                     isAtLeftEdge: isAtLeftEdge,
                     focusCoordinator: focusCoordinator,
-                    focusedSaveID: tvMediaSavesFocusedSaveBinding,
                     onDeleteCompleted: { deletedID in
                         allSaves.removeAll { $0.id == deletedID }
                         filteredSaves.removeAll { $0.id == deletedID }
@@ -2278,44 +2282,9 @@ struct TVMediaSavesView: View {
         .frame(maxWidth: .infinity, alignment: .leading)
         .tvMediaFocusSection()
         .tvMediaTrackWidth { gridWidth = $0 }
-        .onAppear {
-            if focusedSaveID == nil, let first = filteredSaves.first {
-                focusedSaveID = first.id
-            }
-        }
-        .onChange(of: filteredSaves) { _ in
-            if focusedSaveID == nil, let first = filteredSaves.first {
-                focusedSaveID = first.id
-            }
-        }
-        #if os(iOS)
-        .onReceive(gamepadManager.eventPublisher) { event in
-            guard gamepadManager.isNavigationInputAvailable, !filteredSaves.isEmpty else { return }
-            switch event {
-            case .horizontalNavigation(let value, let isPressed):
-                guard isPressed else { return }
-                moveSaveFocus(horizontal: value > 0 ? 1 : -1, vertical: 0, columnsPerRow: columnsPerRow)
-            case .verticalNavigation(let value, let isPressed):
-                guard isPressed else { return }
-                moveSaveFocus(horizontal: 0, vertical: value < 0 ? 1 : -1, columnsPerRow: columnsPerRow)
-            case .buttonPress(let isPressed):
-                guard isPressed else { return }
-                if let id = focusedSaveID,
-                   let item = filteredSaves.first(where: { $0.id == id }) {
-                    Task { await saveStatesStore.openSaveState(id: item.id) }
-                }
-            case .buttonB(let isPressed):
-                guard isPressed else { return }
-                focusCoordinator.openSidebar()
-            case .menuToggle(let isPressed):
-                if isPressed {
-                    focusCoordinator.toggleSidebar()
-                }
-            default:
-                break
-            }
-        }
-        #endif
+        .tvMediaCursorRows(
+            TVMediaCursorLayout(gridItems: filteredSaves.map(\.id), columns: columnsPerRow, rowPrefix: "saves").rows
+        )
         .onChange(of: gridWidth) { _ in
             syncFocusedEdgeState(columnsPerRow: columnsPerRow)
         }
@@ -2330,32 +2299,6 @@ struct TVMediaSavesView: View {
         let isAtLeftEdge = (index % max(columnsPerRow, 1)) == 0
         focusCoordinator.contentItemFocused(id: focusedID, isAtLeftEdge: isAtLeftEdge)
     }
-
-    #if os(iOS)
-    private func moveSaveFocus(horizontal: Int, vertical: Int, columnsPerRow: Int) {
-        guard !filteredSaves.isEmpty else { return }
-        let ids = filteredSaves.map(\.id)
-        let currentID = focusedSaveID ?? ids[0]
-        guard let currentIndex = ids.firstIndex(of: currentID) else { return }
-        let currentCol = currentIndex % columnsPerRow
-        let currentRow = currentIndex / columnsPerRow
-        var newRow = currentRow + vertical
-        var newCol = currentCol + horizontal
-        if horizontal < 0, currentCol == 0 {
-            if currentRow == 0 {
-                focusCoordinator.openSidebar()
-                return
-            }
-            newRow = currentRow - 1
-            newCol = columnsPerRow - 1
-        }
-        let newIndex = (newRow * columnsPerRow) + newCol
-        guard newIndex >= 0, newIndex < ids.count else { return }
-        focusedSaveID = ids[newIndex]
-        let isAtLeftEdge = (newIndex % columnsPerRow) == 0
-        focusCoordinator.contentItemFocused(id: ids[newIndex], isAtLeftEdge: isAtLeftEdge)
-    }
-    #endif
 
     private func initializeFilters() async {
         availableSystemIDs = await saveStatesStore.systemIDsWithSaves()
@@ -2395,6 +2338,16 @@ struct TVMediaSystemFilterPicker: View {
 
     @FocusState private var focusedSystemID: String?
     @Namespace private var pickerNamespace
+    /// The control the controller cursor is on (iOS): a header action's ID or a system ID.
+    @State private var cursorID: String?
+
+    private enum HeaderAction: String, CaseIterable {
+        case selectAll
+        case clear
+        case done
+
+        var cursorID: String { "filterHeader|\(rawValue)" }
+    }
 
     var body: some View {
         ZStack {
@@ -2407,23 +2360,92 @@ struct TVMediaSystemFilterPicker: View {
                     .padding(.top, 50)
                     .padding(.bottom, 24)
 
-                ScrollView {
-                    LazyVStack(spacing: 12) {
-                        ForEach(availableSystemIDs, id: \.self) { systemID in
-                            systemRow(for: systemID)
+                ScrollViewReader { proxy in
+                    ScrollView {
+                        LazyVStack(spacing: 12) {
+                            ForEach(availableSystemIDs, id: \.self) { systemID in
+                                systemRow(for: systemID)
+                            }
+                        }
+                        .padding(.horizontal, 60)
+                        .padding(.bottom, 60)
+                    }
+                    .tvMediaFocusSection()
+                    .onChange(of: cursorID) { _, newValue in
+                        guard let newValue else { return }
+                        withAnimation(.easeOut(duration: TVMediaCursorMetrics.scrollDuration)) {
+                            proxy.scrollTo(newValue)
                         }
                     }
-                    .padding(.horizontal, 60)
-                    .padding(.bottom, 60)
                 }
-                .tvMediaFocusSection()
             }
         }
         .tvMediaFocusScope(pickerNamespace)
         .tvMediaOnExitCommand {
             onDismiss()
         }
+        #if os(iOS)
+        .onAppear {
+            if cursorID == nil {
+                cursorID = availableSystemIDs.first ?? HeaderAction.done.cursorID
+            }
+        }
+        .tvMediaOverlayControllerInput { event in
+            handleController(event)
+        }
+        #endif
     }
+
+    private func perform(_ action: HeaderAction) {
+        switch action {
+        case .selectAll: selectedSystems = Set(availableSystemIDs)
+        case .clear: selectedSystems = []
+        case .done: onDismiss()
+        }
+    }
+
+    private func toggle(_ systemID: String) {
+        if selectedSystems.contains(systemID) {
+            selectedSystems.remove(systemID)
+        } else {
+            selectedSystems.insert(systemID)
+        }
+    }
+
+    #if os(iOS)
+    /// The header actions' row, then the systems, one to a row.
+    private var cursorLayout: TVMediaCursorLayout {
+        let headerRow = TVMediaCursorLayout.Row(id: "filterHeader", items: HeaderAction.allCases.map(\.cursorID))
+        let systemRows = availableSystemIDs.map { TVMediaCursorLayout.Row(id: "filterSystem|\($0)", items: [$0]) }
+        return TVMediaCursorLayout(rows: [headerRow] + systemRows)
+    }
+
+    /// This sheet owns the controller while it is up: d-pad moves, A acts, B closes.
+    private func handleController(_ event: GamepadEvent) {
+        switch event {
+        case .verticalNavigation(let value, true):
+            moveCursor(TVMediaCursorDirection(verticalValue: value))
+        case .horizontalNavigation(let value, true):
+            moveCursor(TVMediaCursorDirection(horizontalValue: value))
+        case .buttonPress(true):
+            guard let cursorID else { return }
+            if let action = HeaderAction.allCases.first(where: { $0.cursorID == cursorID }) {
+                perform(action)
+            } else {
+                toggle(cursorID)
+            }
+        case .buttonB(true):
+            onDismiss()
+        default:
+            break
+        }
+    }
+
+    private func moveCursor(_ direction: TVMediaCursorDirection?) {
+        guard let direction, case .moved(let item, _) = cursorLayout.move(from: cursorID, direction) else { return }
+        cursorID = item
+    }
+    #endif
 
     private var header: some View {
         HStack {
@@ -2445,13 +2467,15 @@ struct TVMediaSystemFilterPicker: View {
                 TVMediaFilterHeaderButton(
                     title: "SELECT ALL",
                     accentColor: Color.retroBlue,
-                    action: { selectedSystems = Set(availableSystemIDs) }
+                    isCursor: cursorID == HeaderAction.selectAll.cursorID,
+                    action: { perform(.selectAll) }
                 )
 
                 TVMediaFilterHeaderButton(
                     title: "CLEAR",
                     accentColor: .white.opacity(0.5),
-                    action: { selectedSystems = [] }
+                    isCursor: cursorID == HeaderAction.clear.cursorID,
+                    action: { perform(.clear) }
                 )
 
                 TVMediaFilterHeaderButton(
@@ -2459,7 +2483,8 @@ struct TVMediaSystemFilterPicker: View {
                     icon: "checkmark",
                     accentColor: Color.retroPink,
                     isPrimary: true,
-                    action: onDismiss
+                    isCursor: cursorID == HeaderAction.done.cursorID,
+                    action: { perform(.done) }
                 )
             }
         }
@@ -2468,17 +2493,13 @@ struct TVMediaSystemFilterPicker: View {
     @ViewBuilder
     private func systemRow(for systemID: String) -> some View {
         let isSelected = selectedSystems.contains(systemID)
-        let isFocused = focusedSystemID == systemID
+        let isFocused = focusedSystemID == systemID || cursorID == systemID
         let system = model.systems.first(where: { $0.identifier == systemID })
         let systemName = system?.name ?? systemID
         let shortName = system?.shortName ?? ""
 
         Button {
-            if isSelected {
-                selectedSystems.remove(systemID)
-            } else {
-                selectedSystems.insert(systemID)
-            }
+            toggle(systemID)
         } label: {
             HStack(spacing: 18) {
                 ZStack {
@@ -2561,9 +2582,13 @@ private struct TVMediaFilterHeaderButton: View {
     var icon: String? = nil
     var accentColor: Color = .white
     var isPrimary: Bool = false
+    /// True while the controller cursor is on this button (iOS).
+    var isCursor: Bool = false
     let action: () -> Void
 
-    @FocusState private var isFocused: Bool
+    @FocusState private var isFocusedInternal: Bool
+
+    private var isFocused: Bool { isFocusedInternal || isCursor }
 
     private let buttonWidth: CGFloat = 140
 
@@ -2597,7 +2622,7 @@ private struct TVMediaFilterHeaderButton: View {
         .buttonStyle(TVMediaCardButtonStyle())
         .tvMediaFocusable()
         .tvOSDisableFocusEffect()
-        .focused($isFocused)
+        .focused($isFocusedInternal)
     }
 }
 
@@ -2607,32 +2632,26 @@ private struct TVMediaSaveStateTileButton: View {
     @ObservedObject var store: RetroSaveStatesStore
     let isAtLeftEdge: Bool
     var focusCoordinator: TVMediaFocusCoordinator?
-    var focusedSaveID: FocusState<String?>.Binding?
     let onDeleteCompleted: (String) -> Void
 
     @FocusState private var isFocusedInternal: Bool
+    /// True while the controller cursor is on this tile (iOS). Its cursor ID is the save's ID.
+    @State private var isCursor = false
     @State private var thumbnail: UIImage?
 
-    private var isFocused: Bool {
-        if let focusedSaveID {
-            return focusedSaveID.wrappedValue == item.id
-        }
-        return isFocusedInternal
-    }
+    private var isFocused: Bool { isFocusedInternal || isCursor }
 
     init(
         item: RetroSaveStateItem,
         store: RetroSaveStatesStore,
         isAtLeftEdge: Bool = false,
         focusCoordinator: TVMediaFocusCoordinator? = nil,
-        focusedSaveID: FocusState<String?>.Binding? = nil,
         onDeleteCompleted: @escaping (String) -> Void = { _ in }
     ) {
         self.item = item
         self.store = store
         self.isAtLeftEdge = isAtLeftEdge
         self.focusCoordinator = focusCoordinator
-        self.focusedSaveID = focusedSaveID
         self.onDeleteCompleted = onDeleteCompleted
     }
 
@@ -2653,6 +2672,9 @@ private struct TVMediaSaveStateTileButton: View {
         .tvMediaFocusable()
         .tvOSDisableFocusEffect()
         .focused($isFocusedInternal)
+        .tvMediaCursorItem(item.id, coordinator: focusCoordinator, isCursor: $isCursor) {
+            Task { await store.openSaveState(id: item.id) }
+        }
         .tvMediaOnMoveCommand { direction in
             if direction == .left, isFocused, isAtLeftEdge {
                 focusCoordinator?.openSidebar()
@@ -2723,10 +2745,6 @@ struct TVMediaHomeView: View {
     @State private var webServerURL: String?
 #endif
 
-#if os(iOS)
-    @StateObject private var gamepadManager = GamepadManager.shared
-#endif
-
     /// Check if we have any games at all
     private var hasAnyGames: Bool {
         if LaunchArgument.forceEmptyLibrary.isEnabled { return false }
@@ -2764,7 +2782,7 @@ struct TVMediaHomeView: View {
                         } else {
                             // Favorites section
                             if hasFavorites {
-                                TVMediaShelf(title: "Favorites", items: favorites, gameActions: gameActions)
+                                TVMediaShelf(title: "Favorites", items: favorites, gameActions: gameActions, cursorRowID: "favorites")
                                     .id("favorites")
                                     .background(
                                         GeometryReader { geo in
@@ -2812,6 +2830,7 @@ struct TVMediaHomeView: View {
                                             title: "\(system.shortName) · SAVES",
                                             items: recent,
                                             store: saveStatesStore,
+                                            cursorRowID: "saves_\(system.identifier)",
                                             onViewAll: {
                                                 router.navigateToSaves(filterBySystem: system.identifier)
                                             }
@@ -2873,15 +2892,9 @@ struct TVMediaHomeView: View {
                     .padding(.trailing, 20)
                 }
             }
-            #if os(iOS)
-            .onReceive(NotificationCenter.default.publisher(for: TVMediaHomeView.scrollToSectionNotification)) { note in
-                guard let id = note.userInfo?["sectionID"] as? String else { return }
-                withAnimation(.easeOut(duration: 0.3)) {
-                    proxy.scrollTo(id, anchor: .top)
-                }
-            }
-            #endif
         }
+        // iOS: the d-pad walks the shelves below; each shelf declares its own row.
+        .tvMediaCursorScreen(coordinator: focusCoordinator)
         .task {
             await loadAllGames()
         }
@@ -2893,64 +2906,7 @@ struct TVMediaHomeView: View {
             refreshWebServerURL()
         }
 #endif
-#if os(iOS)
-        .onReceive(gamepadManager.eventPublisher) { event in
-            guard gamepadManager.isNavigationInputAvailable else { return }
-            // Don't compete with the sidebar / alerts when they own input.
-            if focusCoordinator.isAlertPresented || focusCoordinator.isSidebarExpanded { return }
-            switch event {
-            case .verticalNavigation(let value, let isPressed):
-                guard isPressed else { return }
-                advanceHomeSection(forward: value < 0)
-            case .buttonB(let isPressed):
-                guard isPressed else { return }
-                focusCoordinator.openSidebar()
-            default:
-                // Horizontal nav + A are handled by each focused section's own
-                // subscriber (HomeContinueSection, future TVMediaShelf nav).
-                break
-            }
-        }
-#endif
     }
-
-#if os(iOS)
-    /// Ordered list of section anchor IDs in Home (top → favorites → system shelves).
-    private func homeSectionIDs() -> [String] {
-        var ids: [String] = ["home_top"]
-        if !model.favoriteGames(limit: 1).isEmpty {
-            ids.append("favorites")
-        }
-        for system in systemsWithGames {
-            ids.append("system_\(system.identifier)")
-        }
-        return ids
-    }
-
-    /// Move `currentSection` to the next/previous Home section and ask the
-    /// ScrollViewReader to scroll there. Used by the iOS controller d-pad.
-    private func advanceHomeSection(forward: Bool) {
-        let ids = homeSectionIDs()
-        guard !ids.isEmpty else { return }
-        let currentIndex = currentSection.flatMap { ids.firstIndex(of: $0) } ?? 0
-        let nextIndex = forward
-            ? min(currentIndex + 1, ids.count - 1)
-            : max(currentIndex - 1, 0)
-        guard nextIndex != currentIndex else { return }
-        let target = ids[nextIndex]
-        currentSection = target
-        NotificationCenter.default.post(
-            name: TVMediaHomeView.scrollToSectionNotification,
-            object: nil,
-            userInfo: ["sectionID": target]
-        )
-    }
-
-    /// Notification name carrying a target section ID. The ScrollViewReader
-    /// inside `body` listens for this and animates to the section so the
-    /// outer iOS gamepad handler doesn't need direct access to the proxy.
-    fileprivate static let scrollToSectionNotification = Notification.Name("TVMediaHomeView.scrollToSection")
-#endif
 
     private var loadingView: some View {
         VStack(spacing: 24) {
@@ -3021,7 +2977,8 @@ struct TVMediaHomeView: View {
             // Action buttons for first-time users
             TVMediaEmptyLibraryActionButtons(
                 onSettings: { router.navigate(to: .settings) },
-                onImportStatus: { router.activeModal = .importStatus }
+                onImportStatus: { router.activeModal = .importStatus },
+                onHelp: { router.activeModal = .help }
             )
             .padding(.top, 8)
 
@@ -3131,9 +3088,6 @@ struct TVMediaSystemsView: View {
     @ObservedObject private var iconLoader = SystemIconLoader.shared
     @Environment(\.tvMediaFocusCoordinator) private var focusCoordinator
     @FocusState private var focusedSystemID: String?
-    #if os(iOS)
-    @StateObject private var gamepadManager = GamepadManager.shared
-    #endif
 
     /// Number of columns for calculating left edge
     @State private var columnsPerRow: Int = 4
@@ -3185,8 +3139,8 @@ struct TVMediaSystemsView: View {
                         emptySystemsState
                     } else {
                         LazyVGrid(columns: columns, spacing: gridSpacing) {
-                            ForEach(systemsWithGames.indices, id: \.self) { index in
-                                let system = systemsWithGames[index]
+                            // Identified by system ID, which is the cursor ID too.
+                            ForEach(Array(systemsWithGames.enumerated()), id: \.element.identifier) { index, system in
                                 let isAtLeftEdge = index % columnsPerRow == 0
                                 TVMediaSystemCard(
                                     system: system,
@@ -3199,12 +3153,18 @@ struct TVMediaSystemsView: View {
                                     focusCoordinator.closeSidebar()
                                     router.navigateToSystem(system.identifier)
                                 }
-                                .id(system.identifier)
                                 .task {
                                     model.loadGamesIfNeeded(systemIdentifier: system.identifier)
                                 }
                             }
                         }
+                        .tvMediaCursorRows(
+                            TVMediaCursorLayout(
+                                gridItems: systemsWithGames.map(\.identifier),
+                                columns: columnsPerRow,
+                                rowPrefix: "systems"
+                            ).rows
+                        )
                     }
                 }
                 .padding(.horizontal, 60)
@@ -3212,12 +3172,11 @@ struct TVMediaSystemsView: View {
                 .tvMediaTrackWidth { width in
                     gridWidth = width
                     let availableWidth = max(width - 120, UIScreen.main.bounds.width - 120)
-                    columnsPerRow = max(1, tvMediaAdaptiveColumnsPerRow(
+                    columnsPerRow = TVMediaGridMetrics.adaptiveColumnCount(
                         availableWidth: availableWidth,
                         minItemWidth: minCardWidth,
-                        maxItemWidth: maxCardWidth,
                         spacing: gridSpacing
-                    ))
+                    )
                 }
             }
             .onChange(of: focusedSystemID) { newValue in
@@ -3227,6 +3186,7 @@ struct TVMediaSystemsView: View {
                 }
             }
         }
+        .tvMediaCursorScreen(coordinator: focusCoordinator)
         // Re-fire icon loading whenever the set of visible systems changes so
         // that icons for systems loaded after first appearance are requested.
         // Use [String] directly (not .joined()) to avoid hash collisions between
@@ -3256,35 +3216,6 @@ struct TVMediaSystemsView: View {
                 focusedSystemID = systemsWithGames.first?.identifier
             }
         }
-        #if os(iOS)
-        .onReceive(gamepadManager.eventPublisher) { event in
-            guard gamepadManager.isNavigationInputAvailable else { return }
-            switch event {
-            case .menuToggle(let isPressed):
-                if isPressed {
-                    focusCoordinator.toggleSidebar()
-                }
-            case .horizontalNavigation(let value, let isPressed):
-                guard isPressed else { return }
-                moveFocus(horizontal: value > 0 ? 1 : -1, vertical: 0)
-            case .verticalNavigation(let value, let isPressed):
-                guard isPressed else { return }
-                moveFocus(horizontal: 0, vertical: value < 0 ? 1 : -1)
-            case .buttonPress(let isPressed):
-                guard isPressed else { return }
-                if let id = focusedSystemID,
-                   let system = systemsWithGames.first(where: { $0.identifier == id }) {
-                    focusCoordinator.closeSidebar()
-                    router.navigateToSystem(system.identifier)
-                }
-            case .buttonB(let isPressed):
-                guard isPressed else { return }
-                focusCoordinator.openSidebar()
-            default:
-                break
-            }
-        }
-        #endif
     }
 
     /// Focusable actions keep the remote's Menu command inside an empty library.
@@ -3306,35 +3237,13 @@ struct TVMediaSystemsView: View {
 
             TVMediaEmptyLibraryActionButtons(
                 onSettings: { router.navigate(to: .settings) },
-                onImportStatus: { router.activeModal = .importStatus }
+                onImportStatus: { router.activeModal = .importStatus },
+                onHelp: { router.activeModal = .help }
             )
         }
         .frame(maxWidth: .infinity, minHeight: 360)
         .padding(.vertical, 40)
         .tvMediaOnExitCommand { focusCoordinator.openSidebar() }
-    }
-
-    private func moveFocus(horizontal: Int, vertical: Int) {
-        let systems = systemsWithGames
-        guard !systems.isEmpty else { return }
-        let ids = systems.map { $0.identifier }
-        let currentID = focusedSystemID ?? ids[0]
-        guard let currentIndex = ids.firstIndex(of: currentID) else { return }
-        let currentCol = currentIndex % columnsPerRow
-        let currentRow = currentIndex / columnsPerRow
-        var newRow = currentRow + vertical
-        var newCol = currentCol + horizontal
-        if horizontal < 0, currentCol == 0 {
-            if currentRow == 0 {
-                focusCoordinator.openSidebar()
-                return
-            }
-            newRow = currentRow - 1
-            newCol = columnsPerRow - 1
-        }
-        let newIndex = (newRow * columnsPerRow) + newCol
-        guard newIndex >= 0, newIndex < ids.count else { return }
-        focusedSystemID = ids[newIndex]
     }
 }
 
@@ -3349,8 +3258,11 @@ struct TVMediaSystemCard: View {
     let focusedSystemID: FocusState<String?>.Binding
     let action: () -> Void
 
+    /// True while the controller cursor is on this card (iOS). Its cursor ID is the system's ID.
+    @State private var isCursor = false
+
     private var isFocused: Bool {
-        focusedSystemID.wrappedValue == system.identifier
+        focusedSystemID.wrappedValue == system.identifier || isCursor
     }
 
     @State private var glowIntensity: Double = 0
@@ -3593,6 +3505,7 @@ struct TVMediaSystemCard: View {
         .buttonStyle(TVMediaSystemCardButtonStyle(isFocused: isFocused))
         .tvMediaFocusable()
         .focused(focusedSystemID, equals: system.identifier)
+        .tvMediaCursorItem(system.identifier, coordinator: focusCoordinator, isCursor: $isCursor, onActivate: action)
         .onChange(of: isFocused) { focused in
             withAnimation(.easeOut(duration: focused ? 0.3 : 0.15)) {
                 glowIntensity = focused ? 0.8 : 0
@@ -3693,9 +3606,15 @@ struct TVMediaViewAllCard: View {
     @ObservedObject private var themeManager = ThemeManager.shared
     let title: String
     let subtitle: String
+    /// Controller cursor ID (iOS); nil keeps the card out of cursor navigation.
+    var cursorID: String?
     let action: () -> Void
 
-    @FocusState private var isFocused: Bool
+    @Environment(\.tvMediaFocusCoordinator) private var focusCoordinator
+    @FocusState private var isFocusedInternal: Bool
+    @State private var isCursor = false
+
+    private var isFocused: Bool { isFocusedInternal || isCursor }
 
     private let cardWidth: CGFloat = 180
     private let cardHeight: CGFloat = 220
@@ -3781,7 +3700,8 @@ struct TVMediaViewAllCard: View {
         }
         .buttonStyle(TVMediaCardButtonStyle())
         .tvOSDisableFocusEffect()
-        .focused($isFocused)
+        .focused($isFocusedInternal)
+        .tvMediaCursorItem(cursorID, coordinator: focusCoordinator, isCursor: $isCursor, onActivate: action)
         .scaleEffect(isFocused ? 1.05 : 1.0)
         .animation(Animation.spring(response: 0.25, dampingFraction: 0.8), value: isFocused)
     }
@@ -3792,9 +3712,15 @@ struct TVMediaViewAllCard: View {
 struct TVMediaSaveStatesViewAllCard: View {
     @ObservedObject private var themeManager = ThemeManager.shared
     let count: Int
+    /// Controller cursor ID (iOS); nil keeps the card out of cursor navigation.
+    var cursorID: String?
     let action: () -> Void
 
-    @FocusState private var isFocused: Bool
+    @Environment(\.tvMediaFocusCoordinator) private var focusCoordinator
+    @FocusState private var isFocusedInternal: Bool
+    @State private var isCursor = false
+
+    private var isFocused: Bool { isFocusedInternal || isCursor }
 
     private let cardWidth: CGFloat = 160
     private let cardHeight: CGFloat = 190
@@ -3879,7 +3805,8 @@ struct TVMediaSaveStatesViewAllCard: View {
         }
         .buttonStyle(TVMediaCardButtonStyle())
         .tvOSDisableFocusEffect()
-        .focused($isFocused)
+        .focused($isFocusedInternal)
+        .tvMediaCursorItem(cursorID, coordinator: focusCoordinator, isCursor: $isCursor, onActivate: action)
         .scaleEffect(isFocused ? 1.05 : 1.0)
         .animation(Animation.spring(response: 0.25, dampingFraction: 0.8), value: isFocused)
     }
@@ -3990,6 +3917,7 @@ struct TVMediaSystemGamesView: View {
                 }
             }
         }
+        .tvMediaCursorScreen(coordinator: focusCoordinator)
         .task {
             isLoading = true
             defer { isLoading = false }
@@ -4071,9 +3999,6 @@ struct TVMediaAllGamesGrid: View {
     @EnvironmentObject private var sceneCoordinator: SceneCoordinator
     @Environment(\.tvMediaFocusCoordinator) private var focusCoordinator
     @FocusState private var focusedGameID: String?
-    #if os(iOS)
-    @StateObject private var gamepadManager = GamepadManager.shared
-    #endif
 
     @State private var gridWidth: CGFloat = 0
 
@@ -4084,14 +4009,8 @@ struct TVMediaAllGamesGrid: View {
     var body: some View {
         let spacing: CGFloat = 20
         let minItemWidth: CGFloat = 260
-        let maxItemWidth: CGFloat = 300
         let effectiveWidth = gridWidth > 0 ? gridWidth : max(1, UIScreen.main.bounds.width - 120)
-        let columnsPerRow = tvMediaAdaptiveColumnsPerRow(
-            availableWidth: effectiveWidth,
-            minItemWidth: minItemWidth,
-            maxItemWidth: maxItemWidth,
-            spacing: spacing
-        )
+        let columnsPerRow = TVMediaGridMetrics.adaptiveColumnCount(availableWidth: effectiveWidth, minItemWidth: minItemWidth, spacing: spacing)
 
         LazyVGrid(columns: columns, spacing: 20) {
             ForEach(Array(games.enumerated()), id: \.element.id) { index, game in
@@ -4120,31 +4039,10 @@ struct TVMediaAllGamesGrid: View {
                 focusedGameID = games.first?.id
             }
         }
-        #if os(iOS)
-        .onReceive(gamepadManager.eventPublisher) { event in
-            guard gamepadManager.isNavigationInputAvailable else { return }
-            switch event {
-            case .horizontalNavigation(let value, let isPressed):
-                guard isPressed else { return }
-                moveFocus(horizontal: value > 0 ? 1 : -1, vertical: 0, columnsPerRow: columnsPerRow)
-            case .verticalNavigation(let value, let isPressed):
-                guard isPressed else { return }
-                moveFocus(horizontal: 0, vertical: value < 0 ? 1 : -1, columnsPerRow: columnsPerRow)
-            // NOTE: `.buttonPress` (A button) is handled by the focused
-            // ``TVMediaGameTileView`` itself so that hold-A can surface the
-            // context menu while a short tap still launches the game.
-            case .buttonB(let isPressed):
-                guard isPressed else { return }
-                focusCoordinator.openSidebar()
-            case .menuToggle(let isPressed):
-                if isPressed {
-                    focusCoordinator.toggleSidebar()
-                }
-            default:
-                break
-            }
-        }
-        #endif
+        // iOS: the screen's cursor walks these rows; the tiles carry their game ID as view ID.
+        .tvMediaCursorRows(
+            TVMediaCursorLayout(gridItems: games.map(\.id), columns: columnsPerRow, rowPrefix: "allGames").rows
+        )
     }
 
     private func syncFocusedEdgeState(columnsPerRow: Int) {
@@ -4153,31 +4051,22 @@ struct TVMediaAllGamesGrid: View {
         let isAtLeftEdge = (index % max(columnsPerRow, 1)) == 0
         focusCoordinator.contentItemFocused(id: focusedID, isAtLeftEdge: isAtLeftEdge)
     }
-
-    private func moveFocus(horizontal: Int, vertical: Int, columnsPerRow: Int) {
-        guard !games.isEmpty else { return }
-        let ids = games.map { $0.id }
-        let currentID = focusedGameID ?? ids[0]
-        guard let currentIndex = ids.firstIndex(of: currentID) else { return }
-        let currentCol = currentIndex % columnsPerRow
-        let currentRow = currentIndex / columnsPerRow
-        var newRow = currentRow + vertical
-        var newCol = currentCol + horizontal
-        if horizontal < 0, currentCol == 0 {
-            if currentRow == 0 {
-                focusCoordinator.openSidebar()
-                return
-            }
-            newRow = currentRow - 1
-            newCol = columnsPerRow - 1
-        }
-        let newIndex = (newRow * columnsPerRow) + newCol
-        guard newIndex >= 0, newIndex < ids.count else { return }
-        focusedGameID = ids[newIndex]
-    }
 }
 
 // MARK: - Search View
+
+/// Controller cursor IDs for the Search screen's controls above the results (iOS).
+private enum TVMediaSearchCursorID {
+    static let headerRow = "searchHeader"
+    static let field = "search|field"
+    static let recentToggle = "search|recentToggle"
+    static let clearText = "search|clearText"
+    static let recentsHeaderRow = "searchRecentsHeader"
+    static let clearRecents = "search|clearRecents"
+    static let recentsRow = "searchRecents"
+
+    static func recent(_ index: Int) -> String { "search|recent|\(index)" }
+}
 
 @available(tvOS 16.0, iOS 17.0, *)
 struct TVMediaSearchView: View {
@@ -4197,13 +4086,35 @@ struct TVMediaSearchView: View {
     @AppStorage("TVMediaSearch.recentSearches") private var recentSearchesData: Data = Data()
 
     @Environment(\.tvMediaFocusCoordinator) private var focusCoordinator
-    @FocusState private var isSearchFieldFocused: Bool
+    /// The text field is being edited.
+    @FocusState private var isSearchFieldEditing: Bool
     @FocusState private var focusedRecentIndex: Int?
-    @FocusState private var isRecentButtonFocused: Bool
+    @FocusState private var isRecentButtonFocusedInternal: Bool
+    /// The control the controller cursor is on (iOS): one of `TVMediaSearchCursorID`.
+    @State private var searchCursorID: String?
 
-    #if os(iOS)
-    @StateObject private var gamepadManager = GamepadManager.shared
-    #endif
+    private var isSearchFieldFocused: Bool { isSearchFieldEditing || searchCursorID == TVMediaSearchCursorID.field }
+    private var isRecentButtonFocused: Bool { isRecentButtonFocusedInternal || searchCursorID == TVMediaSearchCursorID.recentToggle }
+
+    /// The search field's row: the field, then whichever of its two buttons are showing.
+    private var headerCursorRow: TVMediaCursorLayout.Row {
+        var items = [TVMediaSearchCursorID.field]
+        if !recentSearches.isEmpty { items.append(TVMediaSearchCursorID.recentToggle) }
+        if !text.isEmpty { items.append(TVMediaSearchCursorID.clearText) }
+        return TVMediaCursorLayout.Row(id: TVMediaSearchCursorID.headerRow, items: items)
+    }
+
+    private func clearSearch() {
+        text = ""
+        results = []
+        lastSearch = ""
+    }
+
+    private func runRecentSearch(_ query: String) {
+        text = query
+        lastSearch = query
+        Task { await performSearch() }
+    }
 
     private let maxRecentSearches = 8
     private let searchDebounceInterval: Duration = .milliseconds(300)
@@ -4273,61 +4184,29 @@ struct TVMediaSearchView: View {
             searchDebounceTask?.cancel()
             searchDebounceTask = nil
         }
+        .tvMediaCursorScreen(coordinator: focusCoordinator)
         #if os(iOS)
-        .onReceive(gamepadManager.eventPublisher) { event in
-            guard gamepadManager.isNavigationInputAvailable else { return }
-            // Defer to the sidebar when it owns focus, and to any retrowave alert.
-            if focusCoordinator.isAlertPresented || focusCoordinator.isSidebarExpanded {
-                return
+        .onAppear {
+            // B first stops editing, then clears the text, and only then belongs to the shell.
+            focusCoordinator.setBackInterceptor(owner: Self.backInterceptorOwner) {
+                if isSearchFieldEditing {
+                    isSearchFieldEditing = false
+                    return true
+                }
+                if !text.isEmpty {
+                    clearSearch()
+                    return true
+                }
+                return false
             }
-            switch event {
-            case .buttonPress(let isPressed):
-                guard isPressed else { return }
-                if let index = focusedRecentIndex, index < recentSearches.count {
-                    let query = recentSearches[index]
-                    text = query
-                    lastSearch = query
-                    focusedRecentIndex = nil
-                    Task { await performSearch() }
-                } else {
-                    isSearchFieldFocused = true
-                }
-            case .buttonB(let isPressed):
-                guard isPressed else { return }
-                if focusedRecentIndex != nil {
-                    focusedRecentIndex = nil
-                } else if !text.isEmpty {
-                    text = ""
-                    results = []
-                    lastSearch = ""
-                } else {
-                    focusCoordinator.openSidebar()
-                }
-            case .verticalNavigation(let value, let isPressed):
-                guard isPressed else { return }
-                if value > 0 {
-                    // Up: pop focus back to the search field.
-                    focusedRecentIndex = nil
-                    isSearchFieldFocused = true
-                } else if value < 0, !recentSearches.isEmpty {
-                    // Down: drop into recent searches.
-                    isSearchFieldFocused = false
-                    focusedRecentIndex = focusedRecentIndex.map { min($0, recentSearches.count - 1) } ?? 0
-                }
-            case .horizontalNavigation(let value, let isPressed):
-                guard isPressed, !recentSearches.isEmpty else { return }
-                let current = focusedRecentIndex ?? 0
-                let next = value > 0
-                    ? min(current + 1, recentSearches.count - 1)
-                    : max(current - 1, 0)
-                focusedRecentIndex = next
-                isSearchFieldFocused = false
-            default:
-                break
-            }
+        }
+        .onDisappear {
+            focusCoordinator.clearBackInterceptor(owner: Self.backInterceptorOwner)
         }
         #endif
     }
+
+    private static let backInterceptorOwner = "search"
 
     private var searchField: some View {
         HStack(spacing: 16) {
@@ -4367,7 +4246,13 @@ struct TVMediaSearchView: View {
                 .disableAutocorrection(true)
                 .foregroundStyle(Color(themeManager.currentPalette.gameLibraryText))
                 .font(.system(size: 24, weight: .medium))
-                .focused($isSearchFieldFocused)
+                .focused($isSearchFieldEditing)
+                .tvMediaCursorItem(
+                    TVMediaSearchCursorID.field,
+                    coordinator: focusCoordinator,
+                    isCursor: tvMediaCursorBinding($searchCursorID, is: TVMediaSearchCursorID.field),
+                    onActivate: { isSearchFieldEditing = true }
+                )
                 .onChange(of: text) { _ in
                     // Debounce: cancel any pending search and schedule a new one
                     // after a short delay so we don't query Realm on every keystroke.
@@ -4438,35 +4323,51 @@ struct TVMediaSearchView: View {
                 }
                 .buttonStyle(TVMediaCardButtonStyle())
                 .tvOSDisableFocusEffect()
-                .focused($isRecentButtonFocused)
+                .focused($isRecentButtonFocusedInternal)
+                .tvMediaCursorItem(
+                    TVMediaSearchCursorID.recentToggle,
+                    coordinator: focusCoordinator,
+                    isCursor: tvMediaCursorBinding($searchCursorID, is: TVMediaSearchCursorID.recentToggle),
+                    onActivate: {
+                        withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                            showRecentSearches.toggle()
+                        }
+                    }
+                )
                 .scaleEffect(isRecentButtonFocused ? 1.05 : 1.0)
                 .animation(Animation.spring(response: 0.25, dampingFraction: 0.8), value: isRecentButtonFocused)
             }
 
             // Clear button
             if !text.isEmpty {
+                let isClearCursor = searchCursorID == TVMediaSearchCursorID.clearText
                 Button {
-                    text = ""
-                    results = []
-                    lastSearch = ""
+                    clearSearch()
                 } label: {
                     ZStack {
                         Circle()
-                            .fill(Color.retroPink.opacity(0.15))
+                            .fill(Color.retroPink.opacity(isClearCursor ? 0.4 : 0.15))
                             .frame(width: 36, height: 36)
 
                         Image(systemName: "xmark")
                             .font(.system(size: 14, weight: .bold))
-                            .foregroundStyle(Color.retroPink)
+                            .foregroundStyle(isClearCursor ? Color.white : Color.retroPink)
                     }
                 }
                 .buttonStyle(TVMediaCardButtonStyle())
                 .tvOSDisableFocusEffect()
+                .tvMediaCursorItem(
+                    TVMediaSearchCursorID.clearText,
+                    coordinator: focusCoordinator,
+                    isCursor: tvMediaCursorBinding($searchCursorID, is: TVMediaSearchCursorID.clearText),
+                    onActivate: clearSearch
+                )
             }
         }
         .padding(.vertical, 20)
         .padding(.horizontal, 24)
         .background(searchFieldBackground)
+        .tvMediaCursorRows([headerCursorRow])
         .animation(Animation.spring(response: 0.25, dampingFraction: 0.8), value: isSearchFieldFocused)
     }
 
@@ -4543,16 +4444,29 @@ struct TVMediaSearchView: View {
                             .font(.system(size: 10, weight: .bold))
                             .tracking(0.8)
                     }
-                    .foregroundStyle(Color.retroPink.opacity(0.7))
+                    .foregroundStyle(Color.retroPink.opacity(searchCursorID == TVMediaSearchCursorID.clearRecents ? 1 : 0.7))
                     .padding(.horizontal, 10)
                     .padding(.vertical, 6)
-        .background(
+                    .background(
                         RoundedRectangle(cornerRadius: 6, style: .continuous)
-                            .strokeBorder(Color.retroPink.opacity(0.3), lineWidth: 1)
+                            .strokeBorder(
+                                Color.retroPink.opacity(searchCursorID == TVMediaSearchCursorID.clearRecents ? 1 : 0.3),
+                                lineWidth: searchCursorID == TVMediaSearchCursorID.clearRecents ? 2 : 1
+                            )
                     )
                 }
                 .buttonStyle(TVMediaCardButtonStyle())
                 .tvOSDisableFocusEffect()
+                .tvMediaCursorItem(
+                    TVMediaSearchCursorID.clearRecents,
+                    coordinator: focusCoordinator,
+                    isCursor: tvMediaCursorBinding($searchCursorID, is: TVMediaSearchCursorID.clearRecents),
+                    onActivate: {
+                        withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                            clearRecentSearches()
+                        }
+                    }
+                )
             }
 
             // Recent search chips
@@ -4560,23 +4474,26 @@ struct TVMediaSearchView: View {
                 LazyHStack(spacing: 12) {
                     ForEach(Array(recentSearches.enumerated()), id: \.element) { index, query in
                         recentSearchChip(query: query, index: index)
+                            .id(TVMediaSearchCursorID.recent(index))
                     }
                 }
                 .padding(.vertical, 8)
             }
             .tvMediaFocusSection()
         }
+        .tvMediaCursorRows([
+            TVMediaCursorLayout.Row(id: TVMediaSearchCursorID.recentsHeaderRow, items: [TVMediaSearchCursorID.clearRecents], isHeader: true),
+            TVMediaCursorLayout.Row(id: TVMediaSearchCursorID.recentsRow, items: recentSearches.indices.map(TVMediaSearchCursorID.recent))
+        ])
         .transition(.opacity.combined(with: .move(edge: Edge.top)))
     }
 
     @ViewBuilder
     private func recentSearchChip(query: String, index: Int) -> some View {
-        let isFocused = focusedRecentIndex == index
+        let isFocused = focusedRecentIndex == index || searchCursorID == TVMediaSearchCursorID.recent(index)
 
         Button {
-            text = query
-            lastSearch = query
-            Task { await performSearch() }
+            runRecentSearch(query)
         } label: {
             HStack(spacing: 10) {
                 Image(systemName: "clock")
@@ -4644,6 +4561,12 @@ struct TVMediaSearchView: View {
         .buttonStyle(TVMediaCardButtonStyle())
         .tvOSDisableFocusEffect()
         .focused($focusedRecentIndex, equals: index)
+        .tvMediaCursorItem(
+            TVMediaSearchCursorID.recent(index),
+            coordinator: focusCoordinator,
+            isCursor: tvMediaCursorBinding($searchCursorID, is: TVMediaSearchCursorID.recent(index)),
+            onActivate: { runRecentSearch(query) }
+        )
         .scaleEffect(isFocused ? 1.05 : 1.0)
         .animation(Animation.spring(response: 0.25, dampingFraction: 0.8), value: isFocused)
     }
@@ -4847,6 +4770,7 @@ struct TVMediaFavoritesView: View {
             .padding(.horizontal, 60)
             .padding(.vertical, 40)
         }
+        .tvMediaCursorScreen(coordinator: focusCoordinator)
         .onAppear {
             // Focus empty state if no favorites
             if model.favoriteGames(limit: 1).isEmpty {
@@ -4981,6 +4905,11 @@ struct TVMediaShelf: View {
     let title: String
     let items: [PVGame]
     @ObservedObject var gameActions: TVMediaGameActions
+    /// Row ID for the controller cursor (iOS). Give the shelf the same view ID to have it
+    /// centred when the cursor enters it.
+    var cursorRowID: String?
+
+    private var rowID: String { cursorRowID ?? "shelf_\(title)" }
 
     @EnvironmentObject private var sceneCoordinator: SceneCoordinator
     @Environment(\.tvMediaFocusCoordinator) private var focusCoordinator
@@ -5023,16 +4952,18 @@ struct TVMediaShelf: View {
                     .shadow(color: Color.retroPink.opacity(0.3), radius: 4)
             }
 
+            let entries = TVMediaShelfEntry.entries(for: items, rowID: rowID)
             ScrollView(.horizontal, showsIndicators: false) {
                 LazyHStack(spacing: itemSpacing) {
-                    ForEach(Array(items.enumerated()), id: \.element.id) { index, game in
+                    ForEach(entries) { entry in
                         TVMediaGameTileView(
-                            game: game,
+                            game: entry.game,
                             titleFont: .callout.weight(.semibold),
-                            onPlay: { sceneCoordinator.launchGame(game) },
-                            contextMenu: { GameContextMenu(game: game, rootDelegate: nil, contextMenuDelegate: gameActions) },
-                            isAtLeftEdge: index == 0,
-                            focusCoordinator: focusCoordinator
+                            onPlay: { sceneCoordinator.launchGame(entry.game) },
+                            contextMenu: { GameContextMenu(game: entry.game, rootDelegate: nil, contextMenuDelegate: gameActions) },
+                            isAtLeftEdge: entry.index == 0,
+                            focusCoordinator: focusCoordinator,
+                            cursorID: entry.id
                         )
                     }
                 }
@@ -5040,6 +4971,28 @@ struct TVMediaShelf: View {
             }
             // Use focusSection to ensure this shelf catches vertical focus navigation
             .tvMediaFocusSection()
+            .tvMediaCursorRows([TVMediaCursorLayout.Row(id: rowID, items: entries.map(\.id))])
+        }
+        .id(rowID)
+    }
+}
+
+/// A game on a shelf, identified by its controller cursor ID.
+///
+/// The same game can sit on two shelves of one screen, so the ID carries the shelf's row.
+/// It is the `ForEach` ID too, which lets the screen scroll to a tile that is not built yet.
+struct TVMediaShelfEntry: Identifiable {
+    let id: String
+    let index: Int
+    let game: PVGame
+
+    static func cursorID(rowID: String, itemID: String) -> String {
+        "\(rowID)|\(itemID)"
+    }
+
+    static func entries(for games: [PVGame], rowID: String) -> [TVMediaShelfEntry] {
+        games.enumerated().map { index, game in
+            TVMediaShelfEntry(id: cursorID(rowID: rowID, itemID: game.id), index: index, game: game)
         }
     }
 }
@@ -5055,6 +5008,12 @@ struct TVMediaSystemShelfRow: View {
 
     @EnvironmentObject private var sceneCoordinator: SceneCoordinator
     @Environment(\.tvMediaFocusCoordinator) private var focusCoordinator
+
+    /// How many games the shelf shows before "View All".
+    private static let shelfGameLimit = 30
+
+    /// Controller cursor row (iOS); Home gives the shelf the same view ID.
+    private var rowID: String { "system_\(system.identifier)" }
 
     var body: some View {
         VStack(alignment: .leading, spacing: 18) {
@@ -5106,17 +5065,19 @@ struct TVMediaSystemShelfRow: View {
             }
 
             // Horizontal scroll with games + View All card at the end
+            let entries = TVMediaShelfEntry.entries(for: Array(games.prefix(Self.shelfGameLimit)), rowID: rowID)
+            let viewAllCursorID = TVMediaShelfEntry.cursorID(rowID: rowID, itemID: "viewAll")
             ScrollView(.horizontal, showsIndicators: false) {
                 LazyHStack(spacing: 24) {
-                    let gamesArray = Array(games.prefix(30))
-                    ForEach(Array(gamesArray.enumerated()), id: \.element.id) { index, game in
+                    ForEach(entries) { entry in
                         TVMediaGameTileView(
-                            game: game,
+                            game: entry.game,
                             titleFont: .callout.weight(.semibold),
-                            onPlay: { sceneCoordinator.launchGame(game) },
-                            contextMenu: { GameContextMenu(game: game, rootDelegate: nil, contextMenuDelegate: gameActions) },
-                            isAtLeftEdge: index == 0,
-                            focusCoordinator: focusCoordinator
+                            onPlay: { sceneCoordinator.launchGame(entry.game) },
+                            contextMenu: { GameContextMenu(game: entry.game, rootDelegate: nil, contextMenuDelegate: gameActions) },
+                            isAtLeftEdge: entry.index == 0,
+                            focusCoordinator: focusCoordinator,
+                            cursorID: entry.id
                         )
                     }
 
@@ -5124,13 +5085,16 @@ struct TVMediaSystemShelfRow: View {
                     TVMediaViewAllCard(
                         title: "View All",
                         subtitle: "\(games.count) games",
+                        cursorID: viewAllCursorID,
                         action: onViewAll
                     )
+                    .id(viewAllCursorID)
                 }
                 .padding(.vertical, 12)
             }
             // Use focusSection to ensure this shelf catches vertical focus navigation
             .tvMediaFocusSection()
+            .tvMediaCursorRows([TVMediaCursorLayout.Row(id: rowID, items: entries.map(\.id) + [viewAllCursorID])])
         }
         .onAppear(perform: ensureLoaded)
         .task {
@@ -5146,11 +5110,32 @@ struct TVMediaSaveStatesShelfRow: View {
     let title: String
     let items: [RetroSaveStateItem]
     @ObservedObject var store: RetroSaveStatesStore
+    /// Row ID for the controller cursor (iOS); also this shelf's scroll anchor.
+    var cursorRowID: String?
     var onViewAll: (() -> Void)? = nil
 
     @FocusState private var focusedSaveID: String?
+    /// The save the controller cursor is on (iOS).
+    @State private var cursorSaveID: String?
     @State private var thumbs: [String: UIImage] = [:]
     @Environment(\.tvMediaFocusCoordinator) private var focusCoordinator
+
+    private var rowID: String { cursorRowID ?? "saves_\(title)" }
+
+    private func cursorID(for item: RetroSaveStateItem) -> String {
+        TVMediaShelfEntry.cursorID(rowID: rowID, itemID: item.id)
+    }
+
+    private var viewAllCursorID: String {
+        TVMediaShelfEntry.cursorID(rowID: rowID, itemID: "viewAll")
+    }
+
+    private var cursorRow: TVMediaCursorLayout.Row {
+        TVMediaCursorLayout.Row(
+            id: rowID,
+            items: items.map { cursorID(for: $0) } + (onViewAll == nil ? [] : [viewAllCursorID])
+        )
+    }
 
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
@@ -5178,20 +5163,25 @@ struct TVMediaSaveStatesShelfRow: View {
                 LazyHStack(spacing: 20) {
                     ForEach(items) { item in
                         saveStateTile(for: item)
+                            .id(cursorID(for: item))
                     }
 
                     if let onViewAll {
                         TVMediaSaveStatesViewAllCard(
                             count: items.count,
+                            cursorID: viewAllCursorID,
                             action: onViewAll
                         )
+                        .id(viewAllCursorID)
                     }
                 }
                 .padding(.vertical, 12)
             }
             // Use focusSection to ensure this shelf catches vertical focus navigation
             .tvMediaFocusSection()
+            .tvMediaCursorRows([cursorRow])
         }
+        .id(rowID)
         .onChange(of: focusedSaveID) { newValue in
             guard let id = newValue else { return }
             guard let index = items.firstIndex(where: { $0.id == id }) else { return }
@@ -5201,7 +5191,7 @@ struct TVMediaSaveStatesShelfRow: View {
 
     @ViewBuilder
     private func saveStateTile(for item: RetroSaveStateItem) -> some View {
-        let isFocused = focusedSaveID == item.id
+        let isFocused = focusedSaveID == item.id || cursorSaveID == item.id
 
         Button {
             Task { await store.openSaveState(id: item.id) }
@@ -5219,6 +5209,12 @@ struct TVMediaSaveStatesShelfRow: View {
         .tvMediaFocusable()
         .tvOSDisableFocusEffect()
         .focused($focusedSaveID, equals: item.id)
+        .tvMediaCursorItem(
+            cursorID(for: item),
+            coordinator: focusCoordinator,
+            isCursor: tvMediaCursorBinding($cursorSaveID, is: item.id),
+            onActivate: { Task { await store.openSaveState(id: item.id) } }
+        )
         .contextMenu {
             Button(role: .destructive) {
                 Task { await deleteSaveState(item) }
@@ -5263,9 +5259,6 @@ struct TVMediaSearchResultsGrid: View {
     @Environment(\.tvMediaFocusCoordinator) private var focusCoordinator
 
     @FocusState private var focusedGameID: String?
-    #if os(iOS)
-    @StateObject private var gamepadManager = GamepadManager.shared
-    #endif
 
     @State private var gridWidth: CGFloat = 0
 
@@ -5276,14 +5269,8 @@ struct TVMediaSearchResultsGrid: View {
     var body: some View {
         let spacing: CGFloat = 20
         let minItemWidth: CGFloat = 260
-        let maxItemWidth: CGFloat = 300
         let effectiveWidth = gridWidth > 0 ? gridWidth : max(1, UIScreen.main.bounds.width - 120)
-        let columnsPerRow = tvMediaAdaptiveColumnsPerRow(
-            availableWidth: effectiveWidth,
-            minItemWidth: minItemWidth,
-            maxItemWidth: maxItemWidth,
-            spacing: spacing
-        )
+        let columnsPerRow = TVMediaGridMetrics.adaptiveColumnCount(availableWidth: effectiveWidth, minItemWidth: minItemWidth, spacing: spacing)
 
         LazyVGrid(columns: columns, spacing: 20) {
             ForEach(Array(results.enumerated()), id: \.element.id) { index, game in
@@ -5312,31 +5299,10 @@ struct TVMediaSearchResultsGrid: View {
                 focusedGameID = first.id
             }
         }
-        #if os(iOS)
-        .onReceive(gamepadManager.eventPublisher) { event in
-            guard gamepadManager.isNavigationInputAvailable else { return }
-            switch event {
-            case .horizontalNavigation(let value, let isPressed):
-                guard isPressed else { return }
-                moveFocus(horizontal: value > 0 ? 1 : -1, vertical: 0, columnsPerRow: columnsPerRow)
-            case .verticalNavigation(let value, let isPressed):
-                guard isPressed else { return }
-                moveFocus(horizontal: 0, vertical: value < 0 ? 1 : -1, columnsPerRow: columnsPerRow)
-            // NOTE: `.buttonPress` (A button) is handled by the focused
-            // ``TVMediaGameTileView`` itself so that hold-A can surface the
-            // context menu while a short tap still launches the game.
-            case .buttonB(let isPressed):
-                guard isPressed else { return }
-                focusCoordinator.openSidebar()
-            case .menuToggle(let isPressed):
-                if isPressed {
-                    focusCoordinator.toggleSidebar()
-                }
-            default:
-                break
-            }
-        }
-        #endif
+        // iOS: the screen's cursor walks these rows; the tiles carry their game ID as view ID.
+        .tvMediaCursorRows(
+            TVMediaCursorLayout(gridItems: results.map(\.id), columns: columnsPerRow, rowPrefix: "results").rows
+        )
     }
 
     private func syncFocusedEdgeState(columnsPerRow: Int) {
@@ -5345,30 +5311,6 @@ struct TVMediaSearchResultsGrid: View {
         let isAtLeftEdge = (index % max(columnsPerRow, 1)) == 0
         focusCoordinator.contentItemFocused(id: focusedID, isAtLeftEdge: isAtLeftEdge)
     }
-
-    #if os(iOS)
-    private func moveFocus(horizontal: Int, vertical: Int, columnsPerRow: Int) {
-        guard !results.isEmpty else { return }
-        let ids = results.map(\.id)
-        let currentID = focusedGameID ?? ids[0]
-        guard let currentIndex = ids.firstIndex(of: currentID) else { return }
-        let currentCol = currentIndex % columnsPerRow
-        let currentRow = currentIndex / columnsPerRow
-        var newRow = currentRow + vertical
-        var newCol = currentCol + horizontal
-        if horizontal < 0, currentCol == 0 {
-            if currentRow == 0 {
-                focusCoordinator.openSidebar()
-                return
-            }
-            newRow = currentRow - 1
-            newCol = columnsPerRow - 1
-        }
-        let newIndex = (newRow * columnsPerRow) + newCol
-        guard newIndex >= 0, newIndex < ids.count else { return }
-        focusedGameID = ids[newIndex]
-    }
-    #endif
 }
 
 // MARK: - Background

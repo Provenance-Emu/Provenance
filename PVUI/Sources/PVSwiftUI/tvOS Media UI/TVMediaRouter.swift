@@ -169,6 +169,7 @@ enum TVMediaModal: Identifiable, Equatable {
     case imagePicker(game: PVGame)
     case nearbyLibraries
     case netplayLobby
+    case help
 
     var id: String {
         switch self {
@@ -196,11 +197,24 @@ enum TVMediaModal: Identifiable, Equatable {
             return "nearbyLibraries"
         case .netplayLobby:
             return "netplayLobby"
+        case .help:
+            return "help"
         }
     }
 
     static func == (lhs: TVMediaModal, rhs: TVMediaModal) -> Bool {
         lhs.id == rhs.id
+    }
+
+    /// True when the shell handles the controller's B press for this sheet on iOS. The
+    /// import queue has its own controller navigation, B included.
+    var usesShellBackButton: Bool {
+        switch self {
+        case .importQueue:
+            return false
+        default:
+            return true
+        }
     }
 }
 

@@ -67,18 +67,16 @@ extension View {
         #endif
     }
 
-    /// Enables focus on iOS where needed; no-op on tvOS.
-    /// On iOS we also suppress the system blue focus ring — every view that uses
-    /// this modifier already draws its own retrowave focus styling, so the system
-    /// halo just doubles up.
+    /// Marks a control the controller cursor drives on iOS.
+    ///
+    /// tvOS buttons are focusable already, so this does nothing there. On iOS it keeps
+    /// SwiftUI focus *off* the control: a controller moves the app-owned cursor
+    /// (`TVMediaContentFocus.cursorID`) instead, and a second, invisible focus on the same
+    /// buttons would answer the same presses.
     @ViewBuilder
-    func tvMediaFocusable(_ enabled: Bool = true) -> some View {
+    func tvMediaFocusable() -> some View {
         #if os(iOS)
-        if #available(iOS 17.0, *) {
-            self.focusable(enabled).focusEffectDisabled()
-        } else {
-            self
-        }
+        self.focusable(false)
         #else
         self
         #endif
@@ -107,7 +105,9 @@ final class TVMediaFocusCoordinator: ObservableObject {
     @Published private(set) var activeZone: FocusZone = .content
 
     /// Sidebar expanded state - only true when sidebar has focus
-    @Published private(set) var isSidebarExpanded: Bool = false
+    @Published private(set) var isSidebarExpanded: Bool = false {
+        didSet { contentFocus.setCursorHidden(isSidebarExpanded) }
+    }
 
     /// Whether a modal is currently presented
     @Published var isModalPresented: Bool = false
@@ -133,6 +133,59 @@ final class TVMediaFocusCoordinator: ObservableObject {
 
     /// Set of IDs that are at the left edge of their container
     private var leftEdgeItemIDs: Set<String> = []
+
+    // MARK: - Controller input ownership (iOS)
+
+    /// True while something this coordinator is not told about is in front: a sheet, a
+    /// system-presented alert, or the running game. Set by the root view on iOS.
+    var isExternalOverlayPresented: () -> Bool = { false }
+
+    private var backInterceptor: (owner: String, handler: () -> Bool)?
+
+    /// Lets the visible screen take the controller's B press before the shell does
+    /// (leave full screen, clear a search field). `handler` returns true when it used the press.
+    func setBackInterceptor(owner: String, _ handler: @escaping () -> Bool) {
+        backInterceptor = (owner, handler)
+    }
+
+    /// Removes `owner`'s interceptor. A screen that disappears after the next one appeared
+    /// must not remove that one's, hence the owner.
+    func clearBackInterceptor(owner: String) {
+        if backInterceptor?.owner == owner {
+            backInterceptor = nil
+        }
+    }
+
+    /// Offers the B press to the visible screen. True when it was used.
+    func interceptBack() -> Bool {
+        backInterceptor?.handler() ?? false
+    }
+
+    private var eventOwnerSnapshot: TVMediaInputOwner?
+
+    /// Who owns controller input right now.
+    var inputOwner: TVMediaInputOwner {
+        .resolve(
+            isOverlayPresented: isAlertPresented || isModalPresented || isExternalOverlayPresented(),
+            isSidebarExpanded: isSidebarExpanded
+        )
+    }
+
+    /// Who owned controller input when the event being delivered began.
+    ///
+    /// One press reaches every subscriber in turn. Without this, the first one to open or
+    /// close the sidebar changes the answer for the rest, and the same press is handled
+    /// twice: B opened the sidebar in the shell and closed it again in the rail. The
+    /// snapshot is dropped once the main queue has finished delivering the event.
+    func inputOwnerForCurrentEvent() -> TVMediaInputOwner {
+        if let eventOwnerSnapshot { return eventOwnerSnapshot }
+        let owner = inputOwner
+        eventOwnerSnapshot = owner
+        DispatchQueue.main.async { [weak self] in
+            self?.eventOwnerSnapshot = nil
+        }
+        return owner
+    }
 
     // MARK: - Public API
 
@@ -279,6 +332,38 @@ final class TVMediaContentFocus: ObservableObject {
         // Skip redundant writes so re-syncing the same tile doesn't invalidate observers.
         if focusedContentID != id {
             focusedContentID = id
+        }
+    }
+
+    // MARK: Controller cursor (iOS)
+
+    /// The item a controller's cursor is drawn on. Nil while the sidebar has the cursor.
+    @Published private(set) var cursorID: String?
+
+    /// The item the content cursor rests on, also while it is hidden behind the sidebar.
+    private(set) var contentCursorID: String?
+
+    private var isCursorHidden = false
+
+    /// True until the user moves the cursor: it was put on a screen's default item, and
+    /// follows that default as the screen's rows arrive (a grid that loads after its header).
+    private(set) var cursorIsDefault = true
+
+    func setCursor(_ id: String?, isDefault: Bool = false) {
+        contentCursorID = id
+        cursorIsDefault = isDefault
+        publishCursor()
+    }
+
+    func setCursorHidden(_ hidden: Bool) {
+        isCursorHidden = hidden
+        publishCursor()
+    }
+
+    private func publishCursor() {
+        let visible = isCursorHidden ? nil : contentCursorID
+        if cursorID != visible {
+            cursorID = visible
         }
     }
 }
