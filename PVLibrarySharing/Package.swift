@@ -26,7 +26,7 @@ let package = Package(
     dependencies: [
         .package(url: "https://github.com/Provenance-Emu/PVSystems.git", from: "1.0.0"),
         .package(path: "../PVLogging"),
-        .package(path: "../External/EmulatorContentClient")
+        .package(url: "https://github.com/Provenance-Emu/emulator-content-server.git", revision: "4a46d3f357ec0cb82bcf50f152ea72de6d3b9d7e")
     ],
     targets: [
         .target(
@@ -34,7 +34,7 @@ let package = Package(
             dependencies: [
                 .product(name: "PVSystems", package: "PVSystems"),
                 "PVLogging",
-                .product(name: "EmulatorContentClient", package: "EmulatorContentClient")
+                .product(name: "EmulatorContentClient", package: "emulator-content-server")
             ]
         ),
 

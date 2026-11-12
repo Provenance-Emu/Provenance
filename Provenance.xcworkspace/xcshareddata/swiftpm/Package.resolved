@@ -73,6 +73,14 @@
       }
     },
     {
+      "identity" : "emulator-content-server",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/Provenance-Emu/emulator-content-server.git",
+      "state" : {
+        "revision" : "4a46d3f357ec0cb82bcf50f152ea72de6d3b9d7e"
+      }
+    },
+    {
       "identity" : "floatingbutton",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/exyte/FloatingButton.git",

@@ -10,4 +10,4 @@ Managed items use the generated Swift client's manifest models and server SHA-25
 
 Downloads support cancellation and retries. Navigating away from a content server cancels its active transfer/import wait; an already claimed import finishes safely, and does not auto-launch after cancellation. Tokens are scoped to the server origin and requests do not follow redirects.
 
-The `External/EmulatorContentClient` package is an unmodified snapshot of the server's generated Swift package. `UPSTREAM.md` records its source revision; `Scripts/update_content_client.py` refreshes it after generation. This avoids absolute paths to a developer's server checkout and does not require Xcode project edits.
+Provenance uses the `EmulatorContentClient` and `RomMClient` products from the [Emulation Server Swift package](https://github.com/Provenance-Emu/emulator-content-server). Update the revision in both `PVLibrarySharing/Package.swift` and `PVUI/Package.swift` together, then resolve dependencies in the Xcode workspace.

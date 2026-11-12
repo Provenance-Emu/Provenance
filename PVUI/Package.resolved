@@ -1,5 +1,5 @@
 {
-  "originHash" : "e24ac7ef9b23711afaa19acdabe0d7468f04fa780948855697ba43126865766e",
+  "originHash" : "05714280e3620f98d9e04ef5e0b4169501e1dfae84821b160f6dfc486797a507",
   "pins" : [
     {
       "identity" : "activityindicatorview",
@@ -62,6 +62,14 @@
       "state" : {
         "revision" : "5bfac4928f000fabdbef7e4ed0251399bb0841c9",
         "version" : "9.0.8"
+      }
+    },
+    {
+      "identity" : "emulator-content-server",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/Provenance-Emu/emulator-content-server.git",
+      "state" : {
+        "revision" : "4a46d3f357ec0cb82bcf50f152ea72de6d3b9d7e"
       }
     },
     {
