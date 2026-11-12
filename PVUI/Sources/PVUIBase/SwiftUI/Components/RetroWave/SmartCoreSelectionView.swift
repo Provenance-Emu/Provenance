@@ -81,8 +81,12 @@ public struct SmartCoreSelectionView: View {
 
     @Binding private var isPresented: Bool
 
-    #if os(tvOS) || os(iOS)
+    #if os(tvOS)
     @FocusState private var focusedItemId: String?
+    #elseif os(iOS)
+    /// The item the controller cursor is on. Plain state, not `@FocusState`: buttons are
+    /// not focusable on iOS, so a focus value never held and nothing was highlighted.
+    @State private var focusedItemId: String?
     #endif
 
     #if os(iOS)
@@ -210,7 +214,9 @@ public struct SmartCoreSelectionView: View {
         #if os(tvOS) || os(iOS)
         let isFocused = focusedItemId == item.id
         coreSelectionCard(for: item, isItemFocused: isFocused)
+            #if os(tvOS)
             .focused($focusedItemId, equals: item.id)
+            #endif
             .tvOSDisableFocusEffect()
             #if os(iOS)
             .overlay(controllerFocusRing(visible: isFocused, cornerRadius: 12))
@@ -264,7 +270,7 @@ public struct SmartCoreSelectionView: View {
         }
         .buttonStyle(TVMediaCardButtonStyle())
         .tvOSDisableFocusEffect()
-        #if os(tvOS) || os(iOS)
+        #if os(tvOS)
         .focused($focusedItemId, equals: Self.cancelFocusID)
         #endif
         #if os(iOS)

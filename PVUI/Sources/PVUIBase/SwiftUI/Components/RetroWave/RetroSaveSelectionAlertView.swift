@@ -304,9 +304,10 @@ public struct RetroSaveSelectionAlertView: View {
     @FocusState private var focusedItemId: String?
     private let gridColumns = [GridItem(.flexible()), GridItem(.flexible()), GridItem(.flexible())]
     #elseif os(iOS)
-    /// Drives controller-nav focus on iOS. SwiftUI `@FocusState` is iOS 15+,
-    /// which is well below the iOS 17 minimum target.
-    @FocusState private var focusedItemId: String?
+    /// The item the controller cursor is on. Plain state, not `@FocusState`: buttons are
+    /// not focusable on iOS, so a focus value never held, nothing was highlighted and A
+    /// always chose Quick Continue.
+    @State private var focusedItemId: String?
     /// Gamepad input bridge for iOS controller navigation of the save picker.
     @StateObject private var gamepadManager = GamepadManager.shared
     private let gridColumns = [GridItem(.flexible()), GridItem(.flexible())]
@@ -468,7 +469,7 @@ public struct RetroSaveSelectionAlertView: View {
             ) {
                 onStartFresh()
             }
-            #if os(tvOS) || os(iOS)
+            #if os(tvOS)
             .focused($focusedItemId, equals: Self.startFreshFocusID)
             #endif
         }
@@ -554,7 +555,6 @@ public struct RetroSaveSelectionAlertView: View {
             showBorder: false
         )
 #elseif os(iOS)
-        .focused($focusedItemId, equals: save.id)
         .overlay(controllerFocusRing(visible: focusedItemId == save.id, cornerRadius: 10))
 #endif
     }
@@ -651,7 +651,6 @@ public struct RetroSaveSelectionAlertView: View {
             showBorder: false
         )
         #elseif os(iOS)
-        .focused($focusedItemId, equals: save.id)
         .overlay(controllerFocusRing(visible: focusedItemId == save.id, cornerRadius: 8))
         #endif
     }
@@ -744,7 +743,7 @@ public struct RetroSaveSelectionAlertView: View {
                 ) {
                     onBack?()
                 }
-                #if os(tvOS) || os(iOS)
+                #if os(tvOS)
                 .focused($focusedItemId, equals: Self.backFocusID)
                 #endif
             }
@@ -756,7 +755,7 @@ public struct RetroSaveSelectionAlertView: View {
             ) {
                 onCancel()
             }
-            #if os(tvOS) || os(iOS)
+            #if os(tvOS)
             .focused($focusedItemId, equals: Self.cancelFocusID)
             #endif
         }

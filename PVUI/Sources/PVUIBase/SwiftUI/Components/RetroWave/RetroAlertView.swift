@@ -810,9 +810,15 @@ public class RetroAlertState: ObservableObject {
 public struct RetroAlertStateView: View {
     @ObservedObject var alertState: RetroAlertState
 
-    #if os(tvOS) || os(iOS)
+    #if os(tvOS)
     @FocusState private var focusedButton: AlertButton?
+    #elseif os(iOS)
+    /// The button the controller cursor is on. Plain state, not `@FocusState`: buttons
+    /// are not focusable on iOS, so a focus value never held and nothing was highlighted.
+    @State private var focusedButton: AlertButton?
+    #endif
 
+    #if os(tvOS) || os(iOS)
     private enum AlertButton: Hashable {
         case primary
         case secondary
@@ -856,10 +862,8 @@ public struct RetroAlertStateView: View {
                             alertState.onPrimaryAction?()
                             alertState.hide()
                         }
-                        #if os(tvOS) || os(iOS)
-                        .focused($focusedButton, equals: .primary)
-                        #endif
                         #if os(tvOS)
+                        .focused($focusedButton, equals: .primary)
                         /// Forces tvOS's focus engine to pick this button as the default
                         /// focus target within the alert's focus scope on appear. Without
                         /// this hint, focus can remain on whatever view was focused
@@ -879,7 +883,7 @@ public struct RetroAlertStateView: View {
                                 alertState.onSecondaryAction?()
                                 alertState.hide()
                             }
-                            #if os(tvOS) || os(iOS)
+                            #if os(tvOS)
                             .focused($focusedButton, equals: .secondary)
                             #endif
                         }
@@ -894,7 +898,7 @@ public struct RetroAlertStateView: View {
                                 alertState.onDestructiveAction?()
                                 alertState.hide()
                             }
-                            #if os(tvOS) || os(iOS)
+                            #if os(tvOS)
                             .focused($focusedButton, equals: .destructive)
                             #endif
                         }

@@ -36,8 +36,12 @@ public struct RetroSelectionAlertView: View {
 
     @Binding private var isPresented: Bool
 
-    #if os(tvOS) || os(iOS)
+    #if os(tvOS)
     @FocusState private var focusedItemId: String?
+    #elseif os(iOS)
+    /// The item the controller cursor is on. Plain state, not `@FocusState`: buttons are
+    /// not focusable on iOS, so a focus value never held and no row was ever highlighted.
+    @State private var focusedItemId: String?
     #endif
 
     #if os(tvOS)
@@ -107,7 +111,7 @@ public struct RetroSelectionAlertView: View {
                                     isPresented = false
                                     onSelect(item.id)
                                 }
-                                #if os(tvOS) || os(iOS)
+                                #if os(tvOS)
                                 .focused($focusedItemId, equals: item.id)
                                 #endif
                             }
@@ -126,7 +130,7 @@ public struct RetroSelectionAlertView: View {
                                     isPresented = false
                                     onSelect(item.id)
                                 }
-                                #if os(tvOS) || os(iOS)
+                                #if os(tvOS)
                                 .focused($focusedItemId, equals: item.id)
                                 #endif
                             }

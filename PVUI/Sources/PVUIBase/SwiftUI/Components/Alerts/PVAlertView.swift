@@ -17,11 +17,13 @@ public struct PVAlertView: View {
     @State private var toggleValue: Bool
     @State private var answered = false
 
-    #if os(tvOS) || os(iOS)
-    @FocusState private var focusedAction: PVAlertAction.ID?
-    #endif
     #if os(tvOS)
+    @FocusState private var focusedAction: PVAlertAction.ID?
     @Namespace private var focusNamespace
+    #elseif os(iOS)
+    /// The action the controller cursor is on. Plain state, not `@FocusState`: buttons
+    /// are not focusable on iOS, so a focus value never held and nothing was highlighted.
+    @State private var focusedAction: PVAlertAction.ID?
     #endif
     #if os(iOS)
     @ObservedObject private var gamepadManager = GamepadManager.shared
@@ -119,10 +121,8 @@ public struct PVAlertView: View {
                     ) {
                         choose(action)
                     }
-                    #if os(tvOS) || os(iOS)
-                    .focused($focusedAction, equals: action.id)
-                    #endif
                     #if os(tvOS)
+                    .focused($focusedAction, equals: action.id)
                     .prefersDefaultFocus(action.id == alert.initialFocusID, in: focusNamespace)
                     #endif
                 }
@@ -162,7 +162,7 @@ public struct PVAlertView: View {
     }
 
     #if os(iOS)
-    /// Controllers on iOS don't drive the focus engine, so move focus by hand.
+    /// Controllers on iOS don't drive the focus engine, so the cursor is moved by hand.
     private func handleGamepad(_ event: GamepadEvent) {
         let actions = alert.orderedActions
         switch event {
