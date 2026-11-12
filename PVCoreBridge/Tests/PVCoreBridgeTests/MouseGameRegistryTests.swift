@@ -170,6 +170,26 @@ final class MouseGameRegistryTests: XCTestCase {
         XCTAssertNil(MouseGameRegistry.shared.userOverride(forMD5: "neverseenmd5"))
     }
 
+    #if canImport(ObjectiveC)
+    func testNativeCoreMouseOverrideTakesPrecedenceOverAutomaticDetection() {
+        let md5 = "abc123"
+        let registry = MouseGameRegistry.shared
+        defer { registry.setUserOverride(nil, forMD5: md5) }
+
+        XCTAssertTrue(MouseGameRegistryObjC.shouldEnableMouse(forROMMD5: nil, autoDetected: true))
+        XCTAssertFalse(MouseGameRegistryObjC.shouldEnableMouse(forROMMD5: md5, autoDetected: false))
+
+        registry.setUserOverride(true, forMD5: md5)
+        XCTAssertTrue(MouseGameRegistryObjC.shouldEnableMouse(forROMMD5: md5.uppercased(), autoDetected: false))
+
+        registry.setUserOverride(false, forMD5: md5)
+        XCTAssertFalse(MouseGameRegistryObjC.shouldEnableMouse(forROMMD5: md5, autoDetected: true))
+
+        registry.setUserOverride(nil, forMD5: md5)
+        XCTAssertTrue(MouseGameRegistryObjC.shouldEnableMouse(forROMMD5: md5, autoDetected: true))
+    }
+    #endif
+
     // MARK: - Dynamic registration
 
     func testRegisterNewMD5() {

@@ -356,3 +356,15 @@ public final class MouseGameRegistry: @unchecked Sendable {
         _titlePatterns = patterns
     }
 }
+
+#if canImport(ObjectiveC)
+/// Lets native Objective-C cores apply the per-game setting over their own automatic detection.
+@objc(PVMouseGameRegistry)
+public final class MouseGameRegistryObjC: NSObject {
+    @objc(shouldEnableMouseForROMMD5:autoDetected:)
+    public static func shouldEnableMouse(forROMMD5 md5: String?, autoDetected: Bool) -> Bool {
+        guard let md5, !md5.isEmpty else { return autoDetected }
+        return MouseGameRegistry.shared.userOverride(forMD5: md5) ?? autoDetected
+    }
+}
+#endif

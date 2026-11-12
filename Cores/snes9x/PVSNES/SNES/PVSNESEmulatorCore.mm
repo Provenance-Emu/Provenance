@@ -798,25 +798,29 @@ NSString *SNESEmulatorKeys[] = { @"Up", @"Down", @"Left", @"Right", @"A", @"B", 
         isMultitap = NO;
         _isMouseGame = NO; // Reset on every ROM load so stale state is not carried across games.
         [self resetSNESLightGunState]; // Reset light-gun session state before re-detecting.
+        const BOOL usesJustifier = [snesJustifier containsObject:cartCRC32];
+        const BOOL usesSuperScope = [superscopeGames containsObject:cartCRC32];
+        const BOOL autoDetectMouse = !usesJustifier && !usesSuperScope && [snesMouseGames containsObject:cartCRC32];
+        const BOOL enableMouse = [PVMouseGameRegistry shouldEnableMouseForROMMD5:self.romMD5 autoDetected:autoDetectMouse];
 		// Automatically enable SNES Mouse, Super Scope, Justifier and Multitap where supported
-		if([snesJustifier containsObject:cartCRC32])
-		{
-			S9xSetController(1, CTL_JUSTIFIER, 0, 0, 0, 0);
-			S9xSetController(0, CTL_JOYPAD,    0, 0, 0, 0);
-            [self setupJustifierMappings];
-		}
-		else if([superscopeGames containsObject:cartCRC32])
-		{
-			S9xSetController(1, CTL_SUPERSCOPE, 0, 0, 0, 0);
-			S9xSetController(0, CTL_JOYPAD,     0, 0, 0, 0); // Ensure port 0 is a standard joypad (not stale CTL_MOUSE, etc.)
-            [self setupSuperScopeMappings];
-		}
-		else if([snesMouseGames containsObject:cartCRC32])
+		if (enableMouse)
 		{
 			S9xSetController(0, CTL_MOUSE,  0, 0, 0, 0); // Mouse Port 1
 			S9xSetController(1, CTL_JOYPAD, 1, 0, 0, 0); // Controller Port 2
             _isMouseGame = YES;
             [self setupMouseMappings];
+		}
+		else if (usesJustifier)
+		{
+			S9xSetController(1, CTL_JUSTIFIER, 0, 0, 0, 0);
+			S9xSetController(0, CTL_JOYPAD,    0, 0, 0, 0);
+            [self setupJustifierMappings];
+		}
+		else if (usesSuperScope)
+		{
+			S9xSetController(1, CTL_SUPERSCOPE, 0, 0, 0, 0);
+			S9xSetController(0, CTL_JOYPAD,     0, 0, 0, 0); // Ensure port 0 is a standard joypad (not stale CTL_MOUSE, etc.)
+            [self setupSuperScopeMappings];
 		}
 		else if([multitapGames containsObject:cartCRC32])
 		{
