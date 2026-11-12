@@ -1,0 +1,164 @@
+//
+//  ControllerPointerSettings.swift
+//  PVCoreBridge
+//
+//  The player's pointer settings, per game, per system and for everything.
+//
+
+import Defaults
+import Foundation
+import PVSettings
+import PVSystems
+
+/// Pointer settings at one scope. A nil field is inherited from the next scope out.
+public struct ControllerPointerSettings: Codable, Equatable, Sendable {
+    public var mode: ControllerPointerMode?
+    public var speed: Double?
+    public var acceleration: Double?
+    /// Click bindings by role (`ControllerPointerRole.rawValue`).
+    public var bindings: [String: PointerClickBindings]?
+
+    public init() {}
+
+    public var isEmpty: Bool {
+        mode == nil && speed == nil && acceleration == nil && (bindings?.isEmpty ?? true)
+    }
+}
+
+/// Where a set of pointer settings applies. The same scope keys as the shader library.
+public enum ControllerPointerScope: Hashable, Sendable {
+    case global
+    case system(SystemIdentifier)
+    case game(md5: String)
+
+    public var key: String {
+        switch self {
+        case .global: return "global"
+        case .system(let system): return "system:\(system.rawValue)"
+        case .game(let md5): return "game:\(md5)"
+        }
+    }
+}
+
+/// Stores `ControllerPointerSettings` by scope and resolves them for a game.
+///
+/// The global speed is the existing "Mouse Sensitivity" setting and the global mode follows
+/// "Input Source", so those two settings and this store never disagree. Everything else is
+/// one dictionary on this device.
+public final class ControllerPointerSettingsStore: @unchecked Sendable {
+
+    public static let shared = ControllerPointerSettingsStore()
+
+    /// Posted on the main queue after any scope changes.
+    public static let didChangeNotification = Notification.Name("PVControllerPointerSettingsDidChange")
+
+    static let storageKey = "controllerPointerSettings"
+    /// The "Mouse Sensitivity" setting: the global pointer speed.
+    static let speedKey = Defaults.Keys.mouseSensitivity
+    /// The "Input Source" setting: decides the global mode.
+    static let inputSourceKey = Defaults.Keys.mouseInputSource
+
+    /// What a game plays with, after the scopes are combined.
+    public struct Resolved: Equatable, Sendable {
+        public var mode: ControllerPointerMode
+        public var curve: PointerSpeedCurve
+        var bindingOverrides: [ControllerPointerRole: PointerClickBindings]
+
+        public func bindings(for role: ControllerPointerRole) -> PointerClickBindings {
+            bindingOverrides[role] ?? .defaults(for: role)
+        }
+    }
+
+    private let defaults: UserDefaults
+    private let lock = NSLock()
+
+    public init(defaults: UserDefaults = .standard) {
+        self.defaults = defaults
+    }
+
+    // MARK: - Read
+
+    public func settings(for scope: ControllerPointerScope) -> ControllerPointerSettings {
+        var settings = lock.withLock { stored()[scope.key] } ?? ControllerPointerSettings()
+        if scope == .global {
+            settings.speed = globalSpeed
+            settings.mode = settings.mode ?? globalMode
+        }
+        return settings
+    }
+
+    /// The settings a game plays with: each field from the game if it has one, else from
+    /// its system, else the global value.
+    public func resolved(system: SystemIdentifier?, gameMD5: String?) -> Resolved {
+        var scopes: [ControllerPointerScope] = []
+        if let gameMD5, !gameMD5.isEmpty { scopes.append(.game(md5: gameMD5)) }
+        if let system { scopes.append(.system(system)) }
+        scopes.append(.global)
+        let layers = scopes.map(settings(for:))
+
+        let defaultCurve = PointerSpeedCurve()
+        let curve = PointerSpeedCurve(
+            speed: layers.lazy.compactMap(\.speed).first ?? defaultCurve.speed,
+            acceleration: layers.lazy.compactMap(\.acceleration).first ?? defaultCurve.acceleration)
+
+        var overrides: [ControllerPointerRole: PointerClickBindings] = [:]
+        for role in ControllerPointerRole.allCases {
+            overrides[role] = layers.lazy.compactMap { $0.bindings?[role.rawValue] }.first
+        }
+        return Resolved(
+            mode: layers.lazy.compactMap(\.mode).first ?? .automatic, curve: curve, bindingOverrides: overrides)
+    }
+
+    // MARK: - Write
+
+    /// Changes one scope. An entry left with nothing in it is removed.
+    public func update(_ scope: ControllerPointerScope, _ change: (inout ControllerPointerSettings) -> Void) {
+        lock.withLock {
+            var all = stored()
+            var settings = all[scope.key] ?? ControllerPointerSettings()
+            if scope == .global { settings.speed = globalSpeed }
+            change(&settings)
+            if scope == .global {
+                /// The global speed has one home: the Mouse Sensitivity setting.
+                if let speed = settings.speed { defaults.set(speed, forKey: Self.speedKey.name) }
+                settings.speed = nil
+            }
+            all[scope.key] = settings.isEmpty ? nil : settings
+            save(all)
+        }
+        DispatchQueue.main.async {
+            NotificationCenter.default.post(name: Self.didChangeNotification, object: self)
+        }
+    }
+
+    // MARK: - Storage
+
+    private var globalSpeed: Double {
+        defaults.object(forKey: Self.speedKey.name) as? Double ?? Self.speedKey.defaultValue
+    }
+
+    /// "Input Source" set to the touch screen or a hardware mouse means the pad is not the pointer.
+    private var globalMode: ControllerPointerMode {
+        let raw = defaults.string(forKey: Self.inputSourceKey.name)
+        switch raw.flatMap(MouseInputSource.init(rawValue:)) ?? Self.inputSourceKey.defaultValue {
+        case .touchscreen, .physicalMouse: return .off
+        case .auto, .controllerTouchpad, .gyro: return .automatic
+        }
+    }
+
+    private func stored() -> [String: ControllerPointerSettings] {
+        guard let data = defaults.data(forKey: Self.storageKey),
+              let decoded = try? JSONDecoder().decode([String: ControllerPointerSettings].self, from: data) else {
+            return [:]
+        }
+        return decoded
+    }
+
+    private func save(_ all: [String: ControllerPointerSettings]) {
+        if all.isEmpty {
+            defaults.removeObject(forKey: Self.storageKey)
+        } else if let data = try? JSONEncoder().encode(all) {
+            defaults.set(data, forKey: Self.storageKey)
+        }
+    }
+}

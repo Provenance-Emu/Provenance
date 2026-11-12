@@ -63,6 +63,14 @@ import UIKit
 #endif
 	func mouseMoved(atPoint point: CGPoint)
 
+	/// Moves the mouse by a fraction of the emulated screen: (1, 0) is one full screen width
+	/// to the right, (0, 1) one full height down.
+	///
+	/// `mouseMoved(atPoint:)` means an absolute 0-1 position on iOS and a delta in view points
+	/// on tvOS. This means the same thing on both, so a controller's touchpad or gyro can drive
+	/// the mouse through one path. A core that does not implement it is sent positions instead.
+	@objc optional func mouseMoved(byNormalizedDelta delta: CGPoint)
+
 	func leftMouseDown(atPoint point: CGPoint)
 	func leftMouseUp()
 
