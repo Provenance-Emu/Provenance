@@ -158,7 +158,7 @@ final class TVMediaControllerInputTests: XCTestCase {
     func testOnlyTheImportQueueHandlesItsOwnBackButton() {
         XCTAssertFalse(TVMediaModal.importQueue.usesShellBackButton)
         XCTAssertTrue(TVMediaModal.nearbyLibraries.usesShellBackButton)
-        XCTAssertTrue(TVMediaModal.netplayLobby.usesShellBackButton)
+        XCTAssertFalse(TVMediaModal.netplayLobby.usesShellBackButton)
         XCTAssertTrue(TVMediaModal.help.usesShellBackButton)
     }
 }

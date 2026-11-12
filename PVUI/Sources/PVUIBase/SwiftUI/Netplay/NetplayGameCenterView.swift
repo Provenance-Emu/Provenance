@@ -353,6 +353,8 @@ public struct NetplayGameCenterView: View {
                     Button("Done") { dismiss() }
                 }
             }
+            // Touch-only form; on iOS a controller's B closes it (the screen under it stays still).
+            .netplayControllerBack { dismiss() }
             .onAppear {
                 coordinator.onConnected = { dismiss() }
                 if !gkManager.isAuthenticated {

@@ -38,6 +38,10 @@ public struct NetplayCreateRoomView: View {
     /// Set to true by NetplayWaitingRoomView when the host taps Start Game,
     /// so onDismiss knows NOT to tear down the in-progress session.
     @State private var gameStarted = false
+    @State private var showAdvanced = false
+    /// The iOS controller cursor (plain state: iOS has no focus engine for buttons).
+    @State private var cursor: String?
+    @FocusState private var focusedField: NetplayCreateRoomCursor.Field?
 
     @Environment(\.dismiss) private var dismiss
 
@@ -78,34 +82,43 @@ public struct NetplayCreateRoomView: View {
                     if options.isEmpty {
                         Label("Multiplayer details or core support are missing.", systemImage: "questionmark.circle")
                     } else {
-                        Picker("Play style", selection: $selectedOptionID) {
-                            ForEach(options) { Text($0.mode.title).tag($0.id) }
-                        }
+                        NetplayChoiceRow(title: "Play style", choices: options.map { ($0.id, $0.mode.title) },
+                                         selection: selectedOptionBinding, cursorPrefix: NetplayCreateRoomCursor.optionPrefix, cursor: cursor)
                     }
-                    if hostedGame != nil { Button("Review Multiplayer Details") { showMetadata = true } }
+                    if hostedGame != nil {
+                        Button("Review Multiplayer Details") { showMetadata = true }
+                            .netplayCursorItem(NetplayCreateRoomCursor.metadata, cursor: cursor)
+                    }
                 }
 
                 // Room settings
                 NetplayFormSection("Room Settings") {
                     TextField("Room Name", text: $settings.roomName)
                         .autocorrectionDisabled()
+                        .focused($focusedField, equals: .roomName)
+                        .netplayCursorItem(NetplayCreateRoomCursor.roomName, cursor: cursor)
 
-                    NetplayStepperView(label: "Max Players", value: $settings.maxPlayers, in: 2...(selectedOption?.maxPlayers ?? 2))
+                    NetplayStepperView(label: "Max Players", value: $settings.maxPlayers, in: playerRange,
+                                       cursorID: NetplayCreateRoomCursor.maxPlayers, cursor: cursor)
 
                     if selectedOption?.core.supportsSpectators == true {
                         Toggle("Allow Spectators", isOn: $settings.allowSpectators)
+                            .netplayCursorItem(NetplayCreateRoomCursor.spectators, cursor: cursor)
                     }
 
-                    if settings.allowSpectators && selectedOption?.core.supportsSpectators == true {
-                        NetplayStepperView(label: "Max Spectators", value: $settings.maxSpectators, in: 0...11)
+                    if showsSpectatorLimit {
+                        NetplayStepperView(label: "Max Spectators", value: $settings.maxSpectators, in: NetplayCreateRoomCursor.spectatorRange,
+                                           cursorID: NetplayCreateRoomCursor.maxSpectators, cursor: cursor)
                     }
                 }
 
                 // Network settings
-                NetplayDisclosure("Advanced Network Settings") {
+                NetplayDisclosure("Advanced Network Settings", isExpanded: $showAdvanced,
+                                  cursorID: NetplayCreateRoomCursor.advanced, cursor: cursor) {
                   NetplayFormSection("Network") {
                     if selectedOption?.core.supportsFrameDelay == true {
-                        NetplayStepperView(label: "Frame Delay", value: $settings.frameDelay, in: 0...10)
+                        NetplayStepperView(label: "Frame Delay", value: $settings.frameDelay, in: NetplayCreateRoomCursor.frameDelayRange,
+                                           cursorID: NetplayCreateRoomCursor.frameDelay, cursor: cursor)
                     }
                     HStack {
                         Text("Port")
@@ -131,6 +144,8 @@ public struct NetplayCreateRoomView: View {
                         get: { settings.password ?? "" },
                         set: { settings.password = $0.isEmpty ? nil : $0 }
                     ))
+                    .focused($focusedField, equals: .password)
+                    .netplayCursorItem(NetplayCreateRoomCursor.password, cursor: cursor)
                 }
 
                 // Start button
@@ -149,7 +164,8 @@ public struct NetplayCreateRoomView: View {
                             Spacer()
                         }
                     }
-                    .disabled(isStarting || settings.roomName.isEmpty || selectedOption == nil)
+                    .disabled(!canStart)
+                    .netplayCursorItem(NetplayCreateRoomCursor.start, cursor: cursor)
                 } footer: {
                     if hostingRestartsGame {
                         Text("Hosting restarts the game so it can use the network. Save first.")
@@ -166,11 +182,14 @@ public struct NetplayCreateRoomView: View {
             .netplayNavigationTitle("Create Room")
             #if !os(tvOS)
             .navigationBarTitleDisplayMode(.inline)
-            #endif
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button("Cancel") { dismiss() }
                 }
+            }
+            #endif
+            .netplayControllerNavigation(cursorRows, cursor: $cursor, isCovered: showError) {
+                if focusedField != nil { focusedField = nil } else { dismiss() }
             }
             .pvAlert(isPresented: $showError) {
                 PVAlert(title: "Error", message: errorMessage, type: .error)
@@ -201,9 +220,61 @@ public struct NetplayCreateRoomView: View {
         }
     }
 
+    // MARK: - Controller
+
+    private var playerRange: ClosedRange<Int> { 2...(selectedOption?.maxPlayers ?? 2) }
+
+    private var showsSpectatorLimit: Bool {
+        settings.allowSpectators && selectedOption?.core.supportsSpectators == true
+    }
+
+    private var canStart: Bool { !isStarting && !settings.roomName.isEmpty && selectedOption != nil }
+
+    /// The chosen play style; with none chosen yet, the first one (what hosting would use).
+    private var selectedOptionBinding: Binding<String> {
+        Binding(get: { selectedOption?.id ?? "" }, set: { selectedOptionID = $0 })
+    }
+
+    /// What the iOS controller cursor can reach, in the order it is drawn. Everything above
+    /// Start Hosting is a header row, so the cursor starts on Start Hosting.
+    private var cursorRows: [NetplayCursorRow] {
+        var rows: [NetplayCursorRow] = []
+        if !options.isEmpty {
+            rows.append(NetplayChoiceRow.cursorRow(NetplayCreateRoomCursor.optionPrefix, choices: options.map(\.id),
+                                                   selection: selectedOptionBinding))
+        }
+        if hostedGame != nil {
+            rows.append(.single(NetplayCursorTarget(id: NetplayCreateRoomCursor.metadata) { showMetadata = true }, isHeader: true))
+        }
+        rows.append(.single(NetplayCursorTarget(id: NetplayCreateRoomCursor.roomName) { focusedField = .roomName }, isHeader: true))
+        var players = NetplayStepperView.cursorRow(NetplayCreateRoomCursor.maxPlayers, value: $settings.maxPlayers, in: playerRange)
+        players.isHeader = true
+        rows.append(players)
+        if selectedOption?.core.supportsSpectators == true {
+            rows.append(.single(NetplayCursorTarget(id: NetplayCreateRoomCursor.spectators) { settings.allowSpectators.toggle() }, isHeader: true))
+        }
+        if showsSpectatorLimit {
+            var spectators = NetplayStepperView.cursorRow(NetplayCreateRoomCursor.maxSpectators, value: $settings.maxSpectators,
+                                                          in: NetplayCreateRoomCursor.spectatorRange)
+            spectators.isHeader = true
+            rows.append(spectators)
+        }
+        rows.append(.single(NetplayCursorTarget(id: NetplayCreateRoomCursor.advanced) { showAdvanced.toggle() }, isHeader: true))
+        if showAdvanced && selectedOption?.core.supportsFrameDelay == true {
+            var delay = NetplayStepperView.cursorRow(NetplayCreateRoomCursor.frameDelay, value: $settings.frameDelay,
+                                                     in: NetplayCreateRoomCursor.frameDelayRange)
+            delay.isHeader = true
+            rows.append(delay)
+        }
+        rows.append(.single(NetplayCursorTarget(id: NetplayCreateRoomCursor.password) { focusedField = .password }, isHeader: true))
+        rows.append(.single(NetplayCursorTarget(id: NetplayCreateRoomCursor.start, isEnabled: canStart, action: startHosting)))
+        return rows
+    }
+
     // MARK: - Actions
 
     private func startHosting() {
+        guard canStart else { return }
         isStarting = true
         Task { @MainActor in
             do {
@@ -222,5 +293,24 @@ public struct NetplayCreateRoomView: View {
             isStarting = false
         }
     }
+}
+
+/// Cursor IDs and fixed values of the Create Room screen.
+enum NetplayCreateRoomCursor {
+    enum Field: Hashable { case roomName, password }
+
+    static let optionPrefix = "option"
+    static let metadata = "metadata"
+    static let roomName = "roomName"
+    static let maxPlayers = "maxPlayers"
+    static let spectators = "spectators"
+    static let maxSpectators = "maxSpectators"
+    static let advanced = "advanced"
+    static let frameDelay = "frameDelay"
+    static let password = "password"
+    static let start = "start"
+
+    static let spectatorRange = 0...11
+    static let frameDelayRange = 0...10
 }
 #endif

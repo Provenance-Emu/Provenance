@@ -30,6 +30,8 @@ public struct NetplayWaitingRoomView: View {
     @State private var localIP: String = ""
     @State private var isStartingGame = false
     @State private var startError: String?
+    /// The iOS controller cursor (plain state: iOS has no focus engine for buttons).
+    @State private var cursor: String?
 
     @Environment(\.dismiss) private var dismiss
 
@@ -117,7 +119,6 @@ public struct NetplayWaitingRoomView: View {
             .netplayNavigationTitle("Waiting Room")
             #if !os(tvOS)
             .navigationBarTitleDisplayMode(.inline)
-            #endif
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button("Cancel", role: .destructive) {
@@ -125,6 +126,8 @@ public struct NetplayWaitingRoomView: View {
                     }
                 }
             }
+            #endif
+            .netplayControllerNavigation(cursorRows, cursor: $cursor, isCovered: startError != nil, onBack: cancelRoom)
             .onAppear {
                 localIP = Self.localIPAddress()
             }
@@ -298,6 +301,7 @@ public struct NetplayWaitingRoomView: View {
                 }
             }
             .disabled(!canStartGame || isStartingGame)
+            .netplayCursorItem(NetplayWaitingRoomCursor.start, cursor: cursor)
 
             if !canStartGame {
                 Text("Waiting for at least one player to join before starting.")
@@ -306,8 +310,28 @@ public struct NetplayWaitingRoomView: View {
                     .multilineTextAlignment(.center)
                     .frame(maxWidth: .infinity)
             }
+
+            Button(role: .destructive, action: cancelRoom) {
+                Label("Close Room", systemImage: "xmark.circle")
+                    .frame(maxWidth: .infinity)
+            }
+            .netplayCursorItem(NetplayWaitingRoomCursor.close, cursor: cursor)
         }
     }
+
+    /// What the iOS controller cursor can reach. B closes the room too.
+    private var cursorRows: [NetplayCursorRow] {
+        [
+            .single(NetplayCursorTarget(id: NetplayWaitingRoomCursor.start, isEnabled: canStartGame && !isStartingGame, action: startGame)),
+            .single(NetplayCursorTarget(id: NetplayWaitingRoomCursor.close, action: cancelRoom))
+        ]
+    }
+}
+
+/// Cursor IDs of the waiting room.
+enum NetplayWaitingRoomCursor {
+    static let start = "start"
+    static let close = "close"
 }
 
 // MARK: - Rows and actions

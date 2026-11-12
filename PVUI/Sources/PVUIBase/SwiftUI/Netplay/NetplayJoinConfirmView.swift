@@ -33,6 +33,9 @@ public struct NetplayJoinConfirmView: View {
     let onConfirm: () -> Void
     let onCancel: () -> Void
 
+    /// The iOS controller cursor (plain state: iOS has no focus engine for buttons).
+    @State private var cursor: String?
+
     /// Three-state ROM verification result.
     private enum HashVerification {
         case match
@@ -75,6 +78,7 @@ public struct NetplayJoinConfirmView: View {
                     if !hashesMatch && !localHashUnknown && !remoteHashUnknown {
                         mismatchWarning
                     }
+                    actionButtons
                 }
                 .padding()
             }
@@ -82,7 +86,6 @@ public struct NetplayJoinConfirmView: View {
             .netplayNavigationTitle("Join Room")
             #if !os(tvOS)
             .navigationBarTitleDisplayMode(.inline)
-            #endif
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button("Cancel", role: .cancel, action: onCancel)
@@ -96,7 +99,33 @@ public struct NetplayJoinConfirmView: View {
                     .tint(hashVerification == .mismatch ? .orange : .accentColor)
                 }
             }
+            #endif
+            .netplayControllerNavigation(cursorRows, cursor: $cursor, onBack: onCancel)
         }
+    }
+
+    private var canJoin: Bool { hashesMatch && !room.isFull }
+
+    /// Join and Cancel in the content, so the focus engine and the controller reach them.
+    private var actionButtons: some View {
+        HStack(spacing: 16) {
+            Button("Cancel", role: .cancel, action: onCancel)
+                .buttonStyle(.bordered)
+                .netplayCursorItem(NetplayJoinConfirmCursor.cancel, cursor: cursor)
+            Button("Join", action: onConfirm)
+                .buttonStyle(.borderedProminent)
+                .disabled(!canJoin)
+                .netplayCursorItem(NetplayJoinConfirmCursor.join, cursor: cursor)
+        }
+        .frame(maxWidth: .infinity)
+    }
+
+    /// The cursor starts on Cancel, so a second A from the room list does not join by accident; B cancels too.
+    private var cursorRows: [NetplayCursorRow] {
+        [NetplayCursorRow(id: "row.actions", targets: [
+            NetplayCursorTarget(id: NetplayJoinConfirmCursor.cancel, action: onCancel),
+            NetplayCursorTarget(id: NetplayJoinConfirmCursor.join, isEnabled: canJoin, action: onConfirm)
+        ])]
     }
 
     // MARK: - Subviews
@@ -269,6 +298,12 @@ public struct NetplayJoinConfirmView: View {
         .padding(.horizontal)
         .padding(.vertical, 12)
     }
+}
+
+/// Cursor IDs of the join confirmation.
+enum NetplayJoinConfirmCursor {
+    static let cancel = "cancel"
+    static let join = "join"
 }
 
 // MARK: - Previews

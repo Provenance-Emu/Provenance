@@ -35,6 +35,9 @@ public struct NetplayRoomBrowserView: View {
     @State private var roomToConfirm: NetplayRoom?
     @State private var showInviteSheet = false
     @State private var password = ""
+    /// The iOS controller cursor (plain state: iOS has no focus engine for buttons).
+    @State private var cursor: String?
+    @FocusState private var passwordFocused: Bool
 
     @Environment(\.dismiss) private var dismiss
 
@@ -59,7 +62,6 @@ public struct NetplayRoomBrowserView: View {
             .netplayNavigationTitle(spectateMode ? "Find Room to Spectate" : "Browse Rooms")
             #if !os(tvOS)
             .navigationBarTitleDisplayMode(.inline)
-            #endif
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button("Cancel") { dismiss() }
@@ -78,6 +80,10 @@ public struct NetplayRoomBrowserView: View {
                         .accessibilityHint("Open manual host and port form")
                     }
                 }
+            }
+            #endif
+            .netplayControllerNavigation(cursorRows, cursor: $cursor, isCovered: showError) {
+                if passwordFocused { passwordFocused = false } else { dismiss() }
             }
             .netplayPresentation(isPresented: $showManualConnect) {
                 NetplayManualConnectView(gameName: gameName, coreIdentifier: coreIdentifier, defaultSpectate: spectateMode)
@@ -123,19 +129,37 @@ public struct NetplayRoomBrowserView: View {
                 .multilineTextAlignment(.center)
                 .padding(.horizontal)
 
-            Button {
-                netplay.stopDiscovery()
-                netplay.startDiscovery()
-            } label: {
-                Label("Refresh", systemImage: "arrow.clockwise")
-            }
-            .buttonStyle(.bordered)
+            listActions
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 
+    /// Refresh and Manual Connect, in the content so the focus engine and the controller reach them.
+    private var listActions: some View {
+        HStack(spacing: 16) {
+            Button(action: refresh) {
+                Label("Refresh", systemImage: "arrow.clockwise")
+            }
+            .buttonStyle(.bordered)
+            .netplayCursorItem(NetplayRoomBrowserCursor.refresh, cursor: cursor)
+            Button {
+                showManualConnect = true
+            } label: {
+                Label("Manual Connect", systemImage: "plus")
+            }
+            .buttonStyle(.bordered)
+            .netplayCursorItem(NetplayRoomBrowserCursor.manual, cursor: cursor)
+        }
+    }
+
+    private func refresh() {
+        netplay.stopDiscovery()
+        netplay.startDiscovery()
+    }
+
     private var lanRoomList: some View {
         NetplayForm {
+            listActions
             NetplayFormSection {
                 ForEach(netplay.discoveredRooms) { room in
                     roomRow(room)
@@ -180,7 +204,12 @@ public struct NetplayRoomBrowserView: View {
 
             Spacer()
 
-            if room.isPasswordProtected { SecureField("Room password", text: $password).frame(maxWidth: 220) }
+            if room.isPasswordProtected {
+                SecureField("Room password", text: $password)
+                    .frame(maxWidth: 220)
+                    .focused($passwordFocused)
+                    .netplayCursorItem(NetplayRoomBrowserCursor.password(room.id), cursor: cursor)
+            }
             Button {
                 join(room: room, spectate: spectateMode)
             } label: {
@@ -188,14 +217,12 @@ public struct NetplayRoomBrowserView: View {
                     .padding(12)
             }
             .retroFocusButtonStyle(focusScale: 1.025)
-            .disabled(isJoining || (!spectateMode && room.isFull) || room.coreIdentifier != coreIdentifier
-                      || room.gameHash.caseInsensitiveCompare(localGameHash) != .orderedSame
-                      || (spectateMode && !room.allowsSpectators) || (room.isPasswordProtected && password.isEmpty))
+            .disabled(!canJoin(room))
+            .netplayCursorItem(NetplayRoomBrowserCursor.join(room.id), cursor: cursor)
 
             // Show a spectate button for full rooms that allow spectators,
             // unless we're already in spectate mode (the tap itself will spectate).
-            if !spectateMode && room.isFull && room.allowsSpectators && room.coreIdentifier == coreIdentifier
-                && room.gameHash.caseInsensitiveCompare(localGameHash) == .orderedSame {
+            if offersSpectate(room) {
                 Button {
                     join(room: room, spectate: true)
                 } label: {
@@ -204,9 +231,49 @@ public struct NetplayRoomBrowserView: View {
                 }
                 .buttonStyle(.bordered)
                 .disabled(isJoining)
+                .netplayCursorItem(NetplayRoomBrowserCursor.spectate(room.id), cursor: cursor)
             }
         }
         .padding(.vertical, 12)
+    }
+
+    // MARK: - Controller
+
+    private func matchesLocalGame(_ room: NetplayRoom) -> Bool {
+        room.coreIdentifier == coreIdentifier && room.gameHash.caseInsensitiveCompare(localGameHash) == .orderedSame
+    }
+
+    private func canJoin(_ room: NetplayRoom) -> Bool {
+        !isJoining && (spectateMode || !room.isFull) && matchesLocalGame(room)
+            && (!spectateMode || room.allowsSpectators) && !(room.isPasswordProtected && password.isEmpty)
+    }
+
+    private func offersSpectate(_ room: NetplayRoom) -> Bool {
+        !spectateMode && room.isFull && room.allowsSpectators && matchesLocalGame(room)
+    }
+
+    /// What the iOS controller cursor can reach, in the order it is drawn.
+    private var cursorRows: [NetplayCursorRow] {
+        var rows = [NetplayCursorRow(id: "row.actions", isHeader: true, targets: [
+            NetplayCursorTarget(id: NetplayRoomBrowserCursor.refresh, action: refresh),
+            NetplayCursorTarget(id: NetplayRoomBrowserCursor.manual) { showManualConnect = true }
+        ])]
+        for room in netplay.discoveredRooms {
+            var targets: [NetplayCursorTarget] = []
+            if room.isPasswordProtected {
+                targets.append(NetplayCursorTarget(id: NetplayRoomBrowserCursor.password(room.id)) { passwordFocused = true })
+            }
+            targets.append(NetplayCursorTarget(id: NetplayRoomBrowserCursor.join(room.id), isEnabled: canJoin(room)) {
+                join(room: room, spectate: spectateMode)
+            })
+            if offersSpectate(room) {
+                targets.append(NetplayCursorTarget(id: NetplayRoomBrowserCursor.spectate(room.id), isEnabled: !isJoining) {
+                    join(room: room, spectate: true)
+                })
+            }
+            rows.append(NetplayCursorRow(id: "row.\(room.id)", targets: targets))
+        }
+        return rows
     }
 
     // MARK: - Actions
@@ -241,5 +308,15 @@ public struct NetplayRoomBrowserView: View {
             isJoining = false
         }
     }
+}
+
+/// Cursor IDs of the room browser.
+enum NetplayRoomBrowserCursor {
+    static let refresh = "refresh"
+    static let manual = "manual"
+
+    static func password(_ room: UUID) -> String { "password.\(room)" }
+    static func join(_ room: UUID) -> String { "join.\(room)" }
+    static func spectate(_ room: UUID) -> String { "spectate.\(room)" }
 }
 #endif

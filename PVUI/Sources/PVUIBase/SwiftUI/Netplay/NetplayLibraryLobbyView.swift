@@ -27,6 +27,10 @@ public struct NetplayLibraryLobbyView: View {
     @State private var pendingLaunch: (PVGame, NetplayGameOption, NetplayLaunchIntent.Action, String?)?
     @State private var errorMessage: String?
     @State private var didOpenInitialGame = false
+    /// The iOS controller cursor (plain state: iOS has no focus engine for buttons).
+    @State private var cursor: String?
+    @State private var gridWidth: CGFloat = 0
+    @FocusState private var searchFocused: Bool
 
     public init(initialGameMD5: String? = nil) { self.initialGameMD5 = initialGameMD5 }
 
@@ -36,14 +40,7 @@ public struct NetplayLibraryLobbyView: View {
                 Text("Pick a game. Bring your friends.").font(.title2.bold())
                     .accessibilityIdentifier("netplay.hub.heading")
                 Text("Host a multiplayer game or join a compatible room nearby.").foregroundStyle(.secondary)
-                #if os(tvOS)
-                TextField("Game or system", text: $query)
-                    .textFieldStyle(.plain)
-                    .autocorrectionDisabled()
-                    .padding(16)
-                    .background(Color.primary.opacity(0.08), in: RoundedRectangle(cornerRadius: 12))
-                    .accessibilityIdentifier("netplay.hub.search")
-                #endif
+                headerControls
                 if !Defaults[.netplayEnabled] {
                     Label("Enable Netplay in Settings > Advanced to host or join.", systemImage: "exclamationmark.triangle")
                 }
@@ -53,11 +50,6 @@ public struct NetplayLibraryLobbyView: View {
                     roomsPanel.frame(maxWidth: 520)
                 }
                 #else
-                Picker("Browse", selection: $showRooms) {
-                    Text("Your Games").tag(false)
-                    Text("Nearby Rooms").tag(true)
-                }.pickerStyle(.segmented)
-                    .accessibilityIdentifier("netplay.panes")
                 if showRooms { roomsPanel } else { gamesPanel }
                 #endif
             }
@@ -66,20 +58,15 @@ public struct NetplayLibraryLobbyView: View {
             .netplayScreen()
             .netplayNavigationTitle("Network Play")
             #if !os(tvOS)
-            .searchable(text: $query, prompt: "Game or system")
-            #endif
+            .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button("Done") { dismiss() }.accessibilityIdentifier("netplay.hub.done")
                 }
-                ToolbarItem(placement: .primaryAction) {
-                    #if os(tvOS)
-                    Button("Settings") { showSettings = true }
-                        .accessibilityIdentifier("netplay.hub.settings")
-                    #else
-                    Button("Settings", systemImage: "gearshape") { showSettings = true }.accessibilityIdentifier("netplay.hub.settings")
-                    #endif
-                }
+            }
+            #endif
+            .netplayControllerNavigation(cursorRows, cursor: $cursor, isCovered: errorMessage != nil) {
+                if searchFocused { searchFocused = false } else { dismiss() }
             }
         }
         .netplayPresentation(isPresented: $showSettings, onDismiss: refresh) { NetplaySettingsView() }
@@ -102,12 +89,14 @@ public struct NetplayLibraryLobbyView: View {
             if selected == nil && !showSettings { discovery.stopDiscovery() }
         }
         .onChange(of: showUnverified) { _, enabled in if !enabled && list == .unverified { list = .suggested } }
-        .onChange(of: list) { _, _ in pageLimit = 40 }
-        .onChange(of: query) { _, _ in pageLimit = 40 }
+        .onChange(of: list) { _, _ in pageLimit = Self.pageSize }
+        .onChange(of: query) { _, _ in pageLimit = Self.pageSize }
         .pvAlert(item: $errorMessage) { message in
             PVAlert(title: "Network Play", message: message, type: .error)
         }
     }
+
+    private static let pageSize = 40
 
     private var horizontalInset: CGFloat {
         #if os(tvOS)
@@ -125,22 +114,59 @@ public struct NetplayLibraryLobbyView: View {
         #endif
     }
 
+    /// Search, the games/rooms switch (iOS; TV shows both side by side) and Settings, in the
+    /// content rather than the toolbar, so the focus engine and the controller cursor reach them.
+    private var headerControls: some View {
+        HStack(spacing: 12) {
+            #if !os(tvOS)
+            ForEach([false, true], id: \.self) { rooms in
+                let id = NetplayHubCursor.tab(rooms: rooms)
+                NetplayChoiceChip(title: rooms ? "Nearby Rooms" : "Your Games", selected: showRooms == rooms, isCursor: cursor == id) {
+                    showRooms = rooms
+                }
+                .fixedSize()
+                .netplayCursorItem(id, cursor: cursor, cornerRadius: 16)
+            }
+            .accessibilityIdentifier("netplay.panes")
+            #endif
+            TextField("Game or system", text: $query)
+                .textFieldStyle(.plain)
+                .autocorrectionDisabled()
+                .focused($searchFocused)
+                .padding(searchPadding)
+                .background(Color.primary.opacity(0.08), in: RoundedRectangle(cornerRadius: 12))
+                .netplayCursorItem(NetplayHubCursor.search, cursor: cursor)
+                .accessibilityIdentifier("netplay.hub.search")
+            Button {
+                showSettings = true
+            } label: {
+                Label("Settings", systemImage: "gearshape")
+                    .padding(searchPadding)
+                    .contentShape(Rectangle())
+            }
+            .retroFocusButtonStyle(focusScale: 1.05)
+            .netplayCursorItem(NetplayHubCursor.settings, cursor: cursor)
+            .accessibilityIdentifier("netplay.hub.settings")
+        }
+    }
+
+    private var searchPadding: CGFloat {
+        #if os(tvOS)
+        16
+        #else
+        10
+        #endif
+    }
+
+    private var availableLists: [NetplayGameList] {
+        NetplayGameList.allCases.filter { $0 != .unverified || showUnverified }
+    }
+
     private var gamesPanel: some View {
         VStack(alignment: .leading, spacing: 20) {
-            #if os(tvOS)
-            HStack(spacing: 10) {
-                ForEach(NetplayGameList.allCases.filter { $0 != .unverified || showUnverified }, id: \.self) { item in
-                    NetplayTVListFilter(title: item.title, selected: item == list) { list = item }
-                }
-            }
-            .accessibilityIdentifier("netplay.gameList")
-            #else
-            Picker("Game list", selection: $list) {
-                ForEach(NetplayGameList.allCases.filter { $0 != .unverified || showUnverified }, id: \.self) { Text($0.title).tag($0) }
-            }
-            .accessibilityIdentifier("netplay.gameList")
-            .pickerStyle(.menu)
-            #endif
+            NetplayChoiceRow(title: "", choices: availableLists.map { ($0, $0.title) }, selection: $list,
+                             cursorPrefix: NetplayHubCursor.listPrefix, cursor: cursor)
+                .accessibilityIdentifier("netplay.gameList")
             if list == .unverified {
                 Text("Multiplayer details are missing. These games are never recommended. Select one to review its details.")
                     .font(.subheadline).foregroundStyle(.secondary)
@@ -151,7 +177,7 @@ public struct NetplayLibraryLobbyView: View {
                     ContentUnavailableView(list == .unverified ? "No Unverified Games" : "No Compatible Games", systemImage: "gamecontroller",
                                            description: Text("Games need multiplayer details and an installed core for that mode. Enable Unverified in Settings to review missing details."))
                 }
-                LazyVGrid(columns: [GridItem(.adaptive(minimum: cardWidth), spacing: 28)], spacing: 28) {
+                LazyVGrid(columns: [GridItem(.adaptive(minimum: cardWidth), spacing: Self.gridSpacing)], spacing: Self.gridSpacing) {
                     ForEach(visible.prefix(pageLimit)) { entry in
                         VStack(alignment: .leading, spacing: 8) {
                             GameItemView(game: entry.game) { selected = entry }
@@ -159,11 +185,21 @@ public struct NetplayLibraryLobbyView: View {
                             Text(entry.eligibility.options.first?.mode.title ?? "Multiplayer unverified")
                                 .font(.caption).foregroundStyle(.secondary)
                         }
+                        .netplayCursorItem(NetplayHubCursor.game(entry.id), cursor: cursor)
                     }
                 }
-                .padding(12)
+                .padding(Self.gridPadding)
+                .background {
+                    GeometryReader { proxy in
+                        Color.clear
+                            .onAppear { gridWidth = proxy.size.width }
+                            .onChange(of: proxy.size.width) { _, width in gridWidth = width }
+                    }
+                }
                 if visible.count > pageLimit {
-                    Button("Show More (\(visible.count) games)") { pageLimit += 40 }.buttonStyle(.bordered)
+                    Button("Show More (\(visible.count) games)") { pageLimit += Self.pageSize }
+                        .buttonStyle(.bordered)
+                        .netplayCursorItem(NetplayHubCursor.showMore, cursor: cursor)
                 }
             }
             #if os(tvOS)
@@ -171,6 +207,9 @@ public struct NetplayLibraryLobbyView: View {
             #endif
         }
     }
+
+    private static let gridSpacing: CGFloat = 28
+    private static let gridPadding: CGFloat = 12
 
     private var cardWidth: CGFloat {
         #if os(tvOS)
@@ -208,24 +247,77 @@ public struct NetplayLibraryLobbyView: View {
                     Label("Looking for rooms nearby", systemImage: "antenna.radiowaves.left.and.right")
                     Text("Use the same Wi-Fi or Ethernet network and allow Local Network access.").foregroundStyle(.secondary)
                 }
-                ForEach(discovery.rooms.sorted { $0.gameName.localizedStandardCompare($1.gameName) == .orderedAscending }) { room in
-                    let match = Self.match(room)
-                    let entry = match.game.flatMap { game in entries.first { $0.id == game.md5Hash } }
+                ForEach(sortedRooms) { room in
+                    let entry = entry(for: room)
                     let ready = entry.flatMap { NetplayLibraryEligibility.option(for: room, entry: $0) } != nil
                     NetplayActionCard(title: room.gameName, subtitle: "\(room.hostName) · \(room.playerCountDisplay) · \(roomState(room, entry: entry, ready: ready))",
                                       icon: room.isPasswordProtected ? "lock.fill" : "person.2.fill") {
                         selected = entry
                     }
                     .disabled(entry == nil || !Defaults[.netplayEnabled])
+                    .netplayCursorItem(NetplayHubCursor.room(room.id), cursor: cursor, cornerRadius: 18)
                 }
-                Button("Refresh Rooms", systemImage: "arrow.clockwise") {
-                    discovery.stopDiscovery()
-                    discovery.startDiscovery()
-                    refresh()
-                }.buttonStyle(.bordered)
+                Button("Refresh Rooms", systemImage: "arrow.clockwise", action: refreshRooms)
+                    .buttonStyle(.bordered)
+                    .netplayCursorItem(NetplayHubCursor.refresh, cursor: cursor)
             }
             .padding(12)
         }
+    }
+
+    private var sortedRooms: [NetplayRoom] {
+        discovery.rooms.sorted { $0.gameName.localizedStandardCompare($1.gameName) == .orderedAscending }
+    }
+
+    private func entry(for room: NetplayRoom) -> NetplayLibraryEligibility.Entry? {
+        Self.match(room).game.flatMap { game in entries.first { $0.id == game.md5Hash } }
+    }
+
+    private func refreshRooms() {
+        discovery.stopDiscovery()
+        discovery.startDiscovery()
+        refresh()
+    }
+
+    /// What the iOS controller cursor can reach, in the order it is drawn.
+    private var cursorRows: [NetplayCursorRow] {
+        var header: [NetplayCursorTarget] = []
+        #if !os(tvOS)
+        header += [false, true].map { rooms in
+            NetplayCursorTarget(id: NetplayHubCursor.tab(rooms: rooms)) { showRooms = rooms }
+        }
+        #endif
+        header += [
+            NetplayCursorTarget(id: NetplayHubCursor.search) { searchFocused = true },
+            NetplayCursorTarget(id: NetplayHubCursor.settings) { showSettings = true }
+        ]
+        var rows = [NetplayCursorRow(id: "row.header", isHeader: true, targets: header)]
+        if showRooms {
+            rows += sortedRooms.map { room in
+                let entry = entry(for: room)
+                return .single(NetplayCursorTarget(id: NetplayHubCursor.room(room.id), isEnabled: entry != nil && Defaults[.netplayEnabled]) {
+                    selected = entry
+                })
+            }
+            rows.append(.single(NetplayCursorTarget(id: NetplayHubCursor.refresh, action: refreshRooms)))
+        } else {
+            rows.append(NetplayChoiceRow.cursorRow(NetplayHubCursor.listPrefix, choices: availableLists, selection: $list))
+            let visible = visibleEntries
+            let shown = Array(visible.prefix(pageLimit))
+            let columns = ControllerGridMetrics.adaptiveColumnCount(availableWidth: gridWidth - 2 * Self.gridPadding,
+                                                                    minItemWidth: cardWidth, spacing: Self.gridSpacing)
+            rows += NetplayHubCursor.gridRows(shown.map(\.id), columns: columns).map { row in
+                NetplayCursorRow(id: row.id, targets: row.items.compactMap { item in
+                    shown.first { NetplayHubCursor.game($0.id) == item }.map { entry in
+                        NetplayCursorTarget(id: item) { selected = entry }
+                    }
+                })
+            }
+            if visible.count > pageLimit {
+                rows.append(.single(NetplayCursorTarget(id: NetplayHubCursor.showMore) { pageLimit += Self.pageSize }))
+            }
+        }
+        return rows
     }
 
     private func roomState(_ room: NetplayRoom, entry: NetplayLibraryEligibility.Entry?, ready: Bool) -> String {
@@ -278,6 +370,23 @@ public struct NetplayLibraryLobbyView: View {
         NetplayGameMatcher.match(room, gameByMD5: { realm.object(ofType: PVGame.self, forPrimaryKey: $0) }, gameBySerial: { serial, system in
             realm.objects(PVGame.self).filter("romSerial == %@ AND systemIdentifier == %@", serial, system).first
         })
+    }
+}
+/// Cursor IDs on the hub.
+enum NetplayHubCursor {
+    static let search = "search"
+    static let settings = "settings"
+    static let refresh = "refresh"
+    static let showMore = "showMore"
+    static let listPrefix = "list"
+
+    static func tab(rooms: Bool) -> String { rooms ? "tab.rooms" : "tab.games" }
+    static func game(_ md5: String) -> String { "game.\(md5)" }
+    static func room(_ id: some CustomStringConvertible) -> String { "room.\(id)" }
+
+    /// The games grid as cursor rows of `game(...)` IDs.
+    static func gridRows(_ md5s: [String], columns: Int) -> [ControllerCursorLayout.Row] {
+        ControllerCursorLayout.gridRows(md5s.map(game), columns: columns, rowPrefix: "row.games")
     }
 }
 #endif

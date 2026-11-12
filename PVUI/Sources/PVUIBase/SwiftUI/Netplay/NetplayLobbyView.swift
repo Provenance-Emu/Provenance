@@ -42,6 +42,8 @@ public struct NetplayLobbyView: View {
     @State private var showSettings = false
     @State private var showGameCenter = false
     @State private var didOpenHostSetup = false
+    /// The iOS controller cursor (plain state: iOS has no focus engine for buttons).
+    @State private var cursor: String?
 
     private var isNetplayEnabled: Bool {
         Defaults[.netplayEnabled]
@@ -108,6 +110,7 @@ public struct NetplayLobbyView: View {
                             showCreateRoom = true
                         }
                         .disabled(!isNetplayEnabled)
+                        .netplayCursorItem(NetplayLobbyCursor.host, cursor: cursor, cornerRadius: 18)
 
                         actionCard(
                             icon: "list.bullet.rectangle",
@@ -118,6 +121,7 @@ public struct NetplayLobbyView: View {
                             showRoomBrowser = true
                         }
                         .disabled(!isNetplayEnabled)
+                        .netplayCursorItem(NetplayLobbyCursor.browse, cursor: cursor, cornerRadius: 18)
 
                         if NetplayCoreCompatibility.support(coreIdentifier: coreIdentifier, systemIdentifier: systemIdentifier)?.supportsSpectators == true {
                         actionCard(
@@ -129,6 +133,7 @@ public struct NetplayLobbyView: View {
                             showSpectate = true
                         }
                         .disabled(!isNetplayEnabled)
+                        .netplayCursorItem(NetplayLobbyCursor.spectate, cursor: cursor, cornerRadius: 18)
 
                         }
 
@@ -142,7 +147,18 @@ public struct NetplayLobbyView: View {
                             showGameCenter = true
                         }
                         .disabled(!isNetplayEnabled)
+                        .netplayCursorItem(NetplayLobbyCursor.gameCenter, cursor: cursor, cornerRadius: 18)
 #endif
+
+                        actionCard(
+                            icon: "gearshape",
+                            title: "Network Play Settings",
+                            subtitle: "Nickname, room size and connection defaults",
+                            color: .gray
+                        ) {
+                            showSettings = true
+                        }
+                        .netplayCursorItem(NetplayLobbyCursor.settings, cursor: cursor, cornerRadius: 18)
                     }
                     .padding()
                 }
@@ -161,20 +177,13 @@ public struct NetplayLobbyView: View {
             .netplayNavigationTitle("Network Play")
             #if !os(tvOS)
             .navigationBarTitleDisplayMode(.inline)
-            #endif
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button("Done") { dismiss() }
                 }
-                ToolbarItem(placement: .primaryAction) {
-                    Button {
-                        showSettings = true
-                    } label: {
-                        Image(systemName: "gearshape")
-                    }
-                    .accessibilityLabel("Network Play Settings")
-                }
             }
+            #endif
+            .netplayControllerNavigation(cursorRows, cursor: $cursor, isCovered: showGameCenter) { dismiss() }
             .netplayPresentation(isPresented: $showRoomBrowser) {
                 NetplayRoomBrowserView(gameName: gameName, coreIdentifier: coreIdentifier, localGameHash: localGameHash, spectateMode: false)
             }
@@ -193,6 +202,22 @@ public struct NetplayLobbyView: View {
             }
 #endif
         }
+    }
+
+    /// What the iOS controller cursor can reach, in the order it is drawn.
+    private var cursorRows: [NetplayCursorRow] {
+        var targets = [
+            NetplayCursorTarget(id: NetplayLobbyCursor.host, isEnabled: isNetplayEnabled) { showCreateRoom = true },
+            NetplayCursorTarget(id: NetplayLobbyCursor.browse, isEnabled: isNetplayEnabled) { showRoomBrowser = true }
+        ]
+        if NetplayCoreCompatibility.support(coreIdentifier: coreIdentifier, systemIdentifier: systemIdentifier)?.supportsSpectators == true {
+            targets.append(NetplayCursorTarget(id: NetplayLobbyCursor.spectate, isEnabled: isNetplayEnabled) { showSpectate = true })
+        }
+        #if canImport(GameKit)
+        targets.append(NetplayCursorTarget(id: NetplayLobbyCursor.gameCenter, isEnabled: isNetplayEnabled) { showGameCenter = true })
+        #endif
+        targets.append(NetplayCursorTarget(id: NetplayLobbyCursor.settings) { showSettings = true })
+        return targets.map { .single($0) }
     }
 
     // MARK: - Subviews
@@ -246,6 +271,15 @@ public struct NetplayLobbyView: View {
     ) -> some View {
         NetplayActionCard(title: title, subtitle: subtitle, icon: icon, color: color, action: action)
     }
+}
+
+/// Cursor IDs of the in-game Network Play screen.
+enum NetplayLobbyCursor {
+    static let host = "host"
+    static let browse = "browse"
+    static let spectate = "spectate"
+    static let gameCenter = "gameCenter"
+    static let settings = "settings"
 }
 
 #endif

@@ -61,6 +61,10 @@ public struct NetplaySettingsView: View {
     @AppStorage(NetplayDefaultsKey.showUnverified) private var showUnverified = false
     @AppStorage(NetplayDefaultsKey.playStyle) private var playStyle = "any"
     @State private var showAdvanced = false
+    @State private var showOrdering = false
+    /// The iOS controller cursor (plain state: iOS has no focus engine for buttons).
+    @State private var cursor: String?
+    @FocusState private var focusedField: NetplaySettingsCursor.Field?
 
     private var isNetplayEnabled: Bool {
         Defaults[.netplayEnabled]
@@ -88,7 +92,8 @@ public struct NetplaySettingsView: View {
                     playerProfileSection
                     hostingDefaultsSection
                     suggestionsSection
-                    NetplayDisclosure("Advanced Connection Defaults", isExpanded: $showAdvanced) {
+                    NetplayDisclosure("Advanced Connection Defaults", isExpanded: $showAdvanced,
+                                      cursorID: NetplaySettingsCursor.advanced, cursor: cursor) {
                         connectionSection
                         performanceSection
                     }
@@ -99,13 +104,19 @@ public struct NetplaySettingsView: View {
                 .navigationBarTitleDisplayMode(.inline)
                 #endif
                 .onAppear { normalizeStoredPort() }
+                #if !os(tvOS)
                 .toolbar {
                     ToolbarItem(placement: .cancellationAction) {
                         Button("Done") { dismiss() }
                     }
                 }
+                #endif
+                .netplayControllerNavigation(cursorRows, cursor: $cursor) {
+                    if focusedField != nil { focusedField = nil } else { dismiss() }
+                }
             } else {
                 featureDisabledView
+                    .netplayControllerBack { dismiss() }
             }
         }
     }
@@ -116,6 +127,8 @@ public struct NetplaySettingsView: View {
         NetplayFormSection("Player Profile") {
             TextField("Nickname", text: $nickname)
                 .autocorrectionDisabled()
+                .focused($focusedField, equals: .nickname)
+                .netplayCursorItem(NetplaySettingsCursor.nickname, cursor: cursor)
         }
     }
 
@@ -124,6 +137,8 @@ public struct NetplaySettingsView: View {
             portRow
             TextField("Relay (optional)", text: $relayServer)
                 .autocorrectionDisabled()
+                .focused($focusedField, equals: .relay)
+                .netplayCursorItem(NetplaySettingsCursor.relay, cursor: cursor)
                 #if canImport(UIKit)
                 .keyboardType(.URL)
                 .textInputAutocapitalization(.never)
@@ -151,7 +166,8 @@ public struct NetplaySettingsView: View {
     @ViewBuilder
     private var portRow: some View {
         #if os(tvOS)
-        NetplayStepperView(label: "Default Port", value: validatedPortBinding, in: netplayPortRange)
+        NetplayStepperView(label: "Default Port", value: validatedPortBinding, in: netplayPortRange,
+                           cursorID: NetplaySettingsCursor.port, cursor: cursor)
         #else
         HStack {
             Text("Default Port")
@@ -163,13 +179,16 @@ public struct NetplaySettingsView: View {
                 #endif
                 .frame(width: 80)
                 .foregroundStyle(.secondary)
+                .focused($focusedField, equals: .port)
         }
+        .netplayCursorItem(NetplaySettingsCursor.port, cursor: cursor)
         #endif
     }
 
     private var performanceSection: some View {
         NetplayFormSection {
-            NetplayStepperView(label: "Frame Delay", value: $frameDelay, in: 0...10)
+            NetplayStepperView(label: "Frame Delay", value: $frameDelay, in: NetplaySettingsCursor.frameDelayRange,
+                               cursorID: NetplaySettingsCursor.frameDelay, cursor: cursor)
         } header: {
             Text("Performance")
         } footer: {
@@ -179,25 +198,26 @@ public struct NetplaySettingsView: View {
 
     private var hostingDefaultsSection: some View {
         NetplayFormSection("Hosting Defaults") {
-            NetplayStepperView(label: "Preferred Room Size", value: $maxPlayers, in: 2...8)
+            NetplayStepperView(label: "Preferred Room Size", value: $maxPlayers, in: NetplaySettingsCursor.roomSizeRange,
+                               cursorID: NetplaySettingsCursor.roomSize, cursor: cursor)
             Text("Limited by the selected game and core. Spectators are offered only by methods that support them.")
                 .font(.caption).foregroundStyle(.secondary)
             Toggle("Allow Spectators", isOn: $allowSpectators)
+                .netplayCursorItem(NetplaySettingsCursor.spectators, cursor: cursor)
         }
     }
 
     private var suggestionsSection: some View {
         NetplayFormSection("Game Suggestions") {
-            Picker("Play style", selection: $playStyle) {
-                Text("Any multiplayer").tag("any")
-                Text("Shared console").tag("shared")
-                Text("Linked devices").tag("linked")
-            }
+            NetplayChoiceRow(title: "Play style", choices: NetplaySettingsCursor.playStyles, selection: $playStyle,
+                             cursorPrefix: NetplaySettingsCursor.playStylePrefix, cursor: cursor)
             Toggle("Show Unverified Games", isOn: $showUnverified)
                 .accessibilityIdentifier("netplay.showUnverified")
+                .netplayCursorItem(NetplaySettingsCursor.unverified, cursor: cursor)
             Text("Unverified games have a separate list and never appear in recommendations. Confirm multiplayer details to check their available cores.")
                 .font(.caption).foregroundStyle(.secondary)
-            NetplayDisclosure("How the Lists Are Ordered") {
+            NetplayDisclosure("How the Lists Are Ordered", isExpanded: $showOrdering,
+                              cursorID: NetplaySettingsCursor.ordering, cursor: cursor) {
                 Text("Suggested: compatible open rooms, then favorites, then recently played. All supported and Favorites: A–Z. Recent: last played first. Title, system and ROM identity break ties.")
                 Text("Games need multiplayer metadata and an installed core for that mode. Single-player-only games and unsupported combinations are excluded. Unplayed eligible games are included.")
             }
@@ -223,12 +243,61 @@ public struct NetplaySettingsView: View {
         #if !os(tvOS)
         .navigationBarTitleDisplayMode(.inline)
         #endif
+        #if !os(tvOS)
         .toolbar {
             ToolbarItem(placement: .cancellationAction) {
                 Button("Done") { dismiss() }
             }
         }
+        #endif
     }
+
+    /// What the iOS controller cursor can reach, in the order it is drawn.
+    private var cursorRows: [NetplayCursorRow] {
+        var rows: [NetplayCursorRow] = [
+            .single(NetplayCursorTarget(id: NetplaySettingsCursor.nickname) { focusedField = .nickname }),
+            NetplayStepperView.cursorRow(NetplaySettingsCursor.roomSize, value: $maxPlayers, in: NetplaySettingsCursor.roomSizeRange),
+            .single(NetplayCursorTarget(id: NetplaySettingsCursor.spectators) { allowSpectators.toggle() }),
+            NetplayChoiceRow.cursorRow(NetplaySettingsCursor.playStylePrefix, choices: NetplaySettingsCursor.playStyles.map(\.value),
+                                       selection: $playStyle, isHeader: false),
+            .single(NetplayCursorTarget(id: NetplaySettingsCursor.unverified) { showUnverified.toggle() }),
+            .single(NetplayCursorTarget(id: NetplaySettingsCursor.ordering) { showOrdering.toggle() }),
+            .single(NetplayCursorTarget(id: NetplaySettingsCursor.advanced) { showAdvanced.toggle() })
+        ]
+        if showAdvanced {
+            #if os(tvOS)
+            rows.append(NetplayStepperView.cursorRow(NetplaySettingsCursor.port, value: validatedPortBinding, in: netplayPortRange))
+            #else
+            rows.append(.single(NetplayCursorTarget(id: NetplaySettingsCursor.port) { focusedField = .port }))
+            #endif
+            rows.append(.single(NetplayCursorTarget(id: NetplaySettingsCursor.relay) { focusedField = .relay }))
+            rows.append(NetplayStepperView.cursorRow(NetplaySettingsCursor.frameDelay, value: $frameDelay,
+                                                     in: NetplaySettingsCursor.frameDelayRange))
+        }
+        return rows
+    }
+}
+
+/// Cursor IDs and fixed values of the Network Play settings screen.
+enum NetplaySettingsCursor {
+    enum Field: Hashable { case nickname, port, relay }
+
+    static let nickname = "nickname"
+    static let roomSize = "roomSize"
+    static let spectators = "spectators"
+    static let playStylePrefix = "playStyle"
+    static let unverified = "unverified"
+    static let ordering = "ordering"
+    static let advanced = "advanced"
+    static let port = "port"
+    static let relay = "relay"
+    static let frameDelay = "frameDelay"
+
+    static let roomSizeRange = 2...8
+    static let frameDelayRange = 0...10
+    static let playStyles: [(value: String, title: String)] = [
+        ("any", "Any multiplayer"), ("shared", "Shared console"), ("linked", "Linked devices")
+    ]
 }
 
 // MARK: - NetplaySettings stored defaults

@@ -30,6 +30,10 @@ private struct NetplayScreenModifier: ViewModifier {
             .toolbarBackground(Color(palette.gameLibraryBackground), for: .navigationBar)
             .toolbarColorScheme(palette.dark ? .dark : .light, for: .navigationBar)
             #endif
+            #if os(tvOS)
+            // TV forms scroll under the title; an opaque bar keeps both readable.
+            .toolbarBackground(.visible, for: .navigationBar)
+            #endif
     }
 }
 
@@ -92,36 +96,106 @@ extension View {
     }
 }
 
-#if os(tvOS)
-/// Separate selection and focus colors keep library filters readable on Apple TV.
-struct NetplayTVListFilter: View {
+/// A choice among a few values (a list filter, a play style): a plain button that touch, the
+/// tvOS focus engine and the iOS controller cursor all drive. Selection and focus have
+/// separate colors so both stay readable on a TV.
+struct NetplayChoiceChip: View {
     let title: String
     let selected: Bool
+    /// The iOS controller cursor is on this chip.
+    var isCursor = false
     let action: () -> Void
     @FocusState private var focused: Bool
     @ObservedObject private var themeManager = ThemeManager.shared
 
     var body: some View {
         let accent = Color(themeManager.currentPalette.defaultTintColor)
+        let lit = focused || isCursor
         Button(action: action) {
             Text(title)
-                .font(.system(size: 25, weight: .semibold))
+                .font(chipFont)
                 .lineLimit(1)
                 .frame(maxWidth: .infinity)
                 .padding(.horizontal, 12)
-                .padding(.vertical, 18)
-                .foregroundStyle(focused ? Color.black : Color(themeManager.currentPalette.gameLibraryCellText))
-                .background(focused ? Color.white : accent.opacity(selected ? 0.3 : 0.08), in: RoundedRectangle(cornerRadius: 16))
+                .padding(.vertical, verticalPadding)
+                .foregroundStyle(lit ? Color.black : Color(themeManager.currentPalette.gameLibraryCellText))
+                .background(lit ? Color.white : accent.opacity(selected ? 0.3 : 0.08), in: RoundedRectangle(cornerRadius: 16))
                 .overlay {
                     RoundedRectangle(cornerRadius: 16).strokeBorder(selected ? accent : .clear, lineWidth: 3)
                 }
+                .contentShape(RoundedRectangle(cornerRadius: 16))
         }
         .buttonStyle(.plain)
         .focused($focused)
         .accessibilityAddTraits(selected ? .isSelected : [])
     }
+
+    private var chipFont: Font {
+        #if os(tvOS)
+        .system(size: 25, weight: .semibold)
+        #else
+        .subheadline.weight(.semibold)
+        #endif
+    }
+
+    private var verticalPadding: CGFloat {
+        #if os(tvOS)
+        18
+        #else
+        10
+        #endif
+    }
 }
-#endif
+
+/// A row of `NetplayChoiceChip`s for picking one value, in place of a `Picker` (which a
+/// controller cannot drive on iOS and which pushes a separate list on tvOS).
+struct NetplayChoiceRow<Value: Hashable>: View {
+    let title: String
+    let choices: [(value: Value, title: String)]
+    @Binding var selection: Value
+    /// The cursor ID prefix: each chip is `"<cursorPrefix>.<index>"`.
+    let cursorPrefix: String
+    let cursor: String?
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            if !title.isEmpty {
+                Text(title).font(.subheadline).foregroundStyle(.secondary)
+            }
+            // Too many choices for the width (a phone): scroll them sideways rather than truncate.
+            ViewThatFits(in: .horizontal) {
+                chips(fitted: false)
+                ScrollView(.horizontal, showsIndicators: false) {
+                    chips(fitted: true)
+                        .padding(.vertical, NetplayCursorMetrics.highlightOutset)
+                        .padding(.horizontal, NetplayCursorMetrics.highlightOutset)
+                }
+            }
+        }
+    }
+
+    private func chips(fitted: Bool) -> some View {
+        HStack(spacing: 10) {
+            ForEach(Array(choices.enumerated()), id: \.offset) { index, choice in
+                let id = Self.cursorID(cursorPrefix, index)
+                NetplayChoiceChip(title: choice.title, selected: choice.value == selection, isCursor: cursor == id) {
+                    selection = choice.value
+                }
+                .fixedSize(horizontal: fitted, vertical: false)
+                .netplayCursorItem(id, cursor: cursor, cornerRadius: 16)
+            }
+        }
+    }
+
+    static func cursorID(_ prefix: String, _ index: Int) -> String { "\(prefix).\(index)" }
+
+    /// The cursor row matching this view.
+    static func cursorRow(_ prefix: String, choices: [Value], selection: Binding<Value>, isHeader: Bool = true) -> NetplayCursorRow {
+        NetplayCursorRow(id: "row.\(prefix)", isHeader: isHeader, targets: choices.enumerated().map { index, value in
+            NetplayCursorTarget(id: cursorID(prefix, index)) { selection.wrappedValue = value }
+        })
+    }
+}
 
 /// Shared form layout with room for TV focus rings and readable sections on phones.
 struct NetplayForm<Content: View>: View {
@@ -153,23 +227,30 @@ struct NetplayForm<Content: View>: View {
     }
 }
 
-/// A focusable disclosure on TV, where SwiftUI's DisclosureGroup is unavailable.
+/// A disclosure built from a plain button, so the TV focus engine and the iOS controller
+/// cursor can open it (SwiftUI's DisclosureGroup is unavailable on TV and cannot be pressed
+/// from code on iOS). A screen that lists it as a cursor target passes `isExpanded`, `cursorID`
+/// and `cursor`.
 struct NetplayDisclosure<Content: View>: View {
     let title: LocalizedStringKey
     let externalExpansion: Binding<Bool>?
+    let cursorID: String?
+    let cursor: String?
     @ViewBuilder let content: Content
     @State private var expanded = false
 
-    init(_ title: LocalizedStringKey, isExpanded: Binding<Bool>? = nil, @ViewBuilder content: () -> Content) {
+    init(_ title: LocalizedStringKey, isExpanded: Binding<Bool>? = nil, cursorID: String? = nil, cursor: String? = nil,
+         @ViewBuilder content: () -> Content) {
         self.title = title
         externalExpansion = isExpanded
+        self.cursorID = cursorID
+        self.cursor = cursor
         self.content = content()
     }
 
     private var expansion: Binding<Bool> { externalExpansion ?? $expanded }
 
     var body: some View {
-        #if os(tvOS)
         VStack(alignment: .leading, spacing: 20) {
             Button {
                 withAnimation(.easeInOut(duration: 0.2)) { expansion.wrappedValue.toggle() }
@@ -178,15 +259,15 @@ struct NetplayDisclosure<Content: View>: View {
                     Text(title)
                     Spacer()
                     Image(systemName: expansion.wrappedValue ? "chevron.up" : "chevron.down")
-                }.padding(16)
+                }
+                .padding(16)
+                .contentShape(Rectangle())
             }
             .retroFocusButtonStyle(focusScale: 1.025)
+            .netplayCursorItem(cursorID, cursor: cursor)
             .accessibilityValue(expansion.wrappedValue ? "Expanded" : "Collapsed")
             if expansion.wrappedValue { content }
         }
-        #else
-        DisclosureGroup(title, isExpanded: expansion) { content }
-        #endif
     }
 }
 

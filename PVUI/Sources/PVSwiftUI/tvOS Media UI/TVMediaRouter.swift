@@ -183,7 +183,7 @@ enum TVMediaModal: Identifiable, Equatable {
             return "gameInfo-\(gameID)"
         case .importStatus:
             return "importStatus"
-        case .importQueue:
+        case .importQueue, .netplayLobby:
             return "importQueue"
         case .freeROMs:
             return "freeROMs"
@@ -207,10 +207,10 @@ enum TVMediaModal: Identifiable, Equatable {
     }
 
     /// True when the shell handles the controller's B press for this sheet on iOS. The
-    /// import queue has its own controller navigation, B included.
+    /// import queue and Network Play have their own controller navigation, B included.
     var usesShellBackButton: Bool {
         switch self {
-        case .importQueue:
+        case .importQueue, .netplayLobby:
             return false
         default:
             return true
