@@ -28,7 +28,7 @@ import UIKit
 final class ControllerPointerRouter {
     /// Roles that have somewhere to deliver to. A game whose role is not in this set leaves
     /// the touchpad free, so its click still opens the pause menu.
-    static let deliverableRoles: Set<ControllerPointerRole> = [.mouse, .wiiPointer]
+    static let deliverableRoles: Set<ControllerPointerRole> = [.mouse, .wiiPointer, .lightGun]
     /// How long the "Pointer speed" readout stays up after a two-finger slide.
     private static let speedReadoutDuration: TimeInterval = 1.5
     /// One readout at a time: each step replaces the last.
@@ -45,6 +45,14 @@ final class ControllerPointerRouter {
     private weak var sessionPad: GCController?
     /// The game is paused or the app is not active; nothing is delivered.
     private var isSuspended = false
+
+    /// Where a held action came from: the same action can be held by the touchpad and a trigger.
+    private enum ActionSource: Hashable, Sendable { case touchpad, triggers }
+    private var heldActions = HeldActionCombiner<ActionSource>()
+    /// Light gun: R2 fires and L2 reloads. The ones down right now.
+    private var triggersDown: Set<PointerAction> = []
+    /// Triggers still held from before a pause; they act again only once let go.
+    private var triggersAwaitingRelease: Set<PointerAction> = []
 
     private let store = ControllerPointerSettingsStore.shared
     /// The player's settings for this game: mode, speed, acceleration and click bindings.
@@ -134,11 +142,14 @@ final class ControllerPointerRouter {
         if newRole == .wiiPointer {
             pointer?.pointerMoved(toNormalized: PointerCursor.centre, forPlayer: Self.pointerPlayer)
         }
+        if newRole == .lightGun {
+            postGunCursor(PointerCursor.centre, isTouching: false)
+        }
         #if os(tvOS)
-        if newRole == .mouse {
-            host?.installPointerOverlayIfNeeded()
-        } else {
-            host?.removePointerOverlay()
+        /// tvOS has no skin to draw the arrow or the crosshair, so they are hosted here.
+        host?.removePointerOverlay()
+        if newRole == .mouse || newRole == .lightGun {
+            host?.installPointerOverlay(for: newRole)
         }
         #endif
     }
@@ -207,41 +218,76 @@ final class ControllerPointerRouter {
         let outputs = current.update(sample, at: CACurrentMediaTime())
         session = current
         deliver(outputs, ignoringActions: Self.isTouchpadClickRemapped(on: pad))
+        if role == .lightGun { sampleGunTriggers(on: pad) }
+    }
+
+    /// R2 fires and L2 reloads, so the gun works with the pad held normally.
+    private func sampleGunTriggers(on pad: GCController) {
+        guard let gamepad = pad.hardwareController.extendedGamepad else { return }
+        let pressed: [PointerAction: Bool] = [.trigger: gamepad.rightTrigger.isPressed, .reload: gamepad.leftTrigger.isPressed]
+        for (action, isPressed) in pressed {
+            if triggersAwaitingRelease.contains(action) {
+                if !isPressed { triggersAwaitingRelease.remove(action) }
+                continue
+            }
+            guard isPressed != triggersDown.contains(action) else { continue }
+            if isPressed { triggersDown.insert(action) } else { triggersDown.remove(action) }
+            deliverAction(action, isDown: isPressed, from: .triggers)
+        }
     }
 
     /// Lets go of every button the pointer is holding in the core. The session keeps its
     /// cursor, and ignores a click that is still held until the pad is released.
     private func releaseHeldInput() {
-        guard var current = session else { return }
-        let outputs = current.reset()
-        session = current
-        deliver(outputs, ignoringActions: false)
+        if var current = session {
+            let outputs = current.reset()
+            session = current
+            deliver(outputs, ignoringActions: false)
+        }
+        triggersAwaitingRelease.formUnion(triggersDown)
+        triggersDown.removeAll()
+        for action in heldActions.releaseAll(from: .triggers) {
+            deliverToRole(.action(action, isDown: false))
+        }
     }
 
     // MARK: - Delivery
 
     private func deliver(_ outputs: [PointerOutput], ignoringActions: Bool) {
-        guard !outputs.isEmpty, let core = host?.core else { return }
         for output in outputs {
-            if ignoringActions, case .action(_, isDown: true) = output { continue }
             switch output {
             case let .speedChanged(speed):
                 saveSpeed(speed)
-                continue
             case .action(.pauseMenu, isDown: true):
-                PauseMenuTrigger.touchpadButton.postPauseRequest()
-                continue
+                if !ignoringActions { PauseMenuTrigger.touchpadButton.postPauseRequest() }
+            case .action(.pauseMenu, isDown: false):
+                break
+            case let .action(action, isDown):
+                if ignoringActions, isDown { continue }
+                deliverAction(action, isDown: isDown, from: .touchpad)
             default:
-                break
+                deliverToRole(output)
             }
-            switch role {
-            case .mouse:
-                if let mouse = core as? MouseResponder { deliver(output, toMouse: mouse) }
-            case .wiiPointer:
-                if let pointer = core as? PointerResponder { deliver(output, toWii: pointer) }
-            case .none, .lightGun:
-                break
-            }
+        }
+    }
+
+    /// Presses or releases `action` for one source; the core sees it only when the combined state changes.
+    private func deliverAction(_ action: PointerAction, isDown: Bool, from source: ActionSource) {
+        guard let combined = heldActions.set(action, isDown: isDown, from: source) else { return }
+        deliverToRole(.action(action, isDown: combined))
+    }
+
+    private func deliverToRole(_ output: PointerOutput) {
+        guard let core = host?.core else { return }
+        switch role {
+        case .mouse:
+            if let mouse = core as? MouseResponder { deliver(output, toMouse: mouse) }
+        case .wiiPointer:
+            if let pointer = core as? PointerResponder { deliver(output, toWii: pointer) }
+        case .lightGun:
+            if let gun = core as? LightGunResponder { deliver(output, toGun: gun) }
+        case .none:
+            break
         }
     }
 
@@ -317,6 +363,62 @@ final class ControllerPointerRouter {
         NotificationCenter.default.post(
             name: .PVMousePositionDidChange, object: self,
             userInfo: [PVMousePositionKey: NSValue(cgPoint: position)])
+    }
+}
+
+// MARK: - Light gun
+
+private extension ControllerPointerRouter {
+    func deliver(_ output: PointerOutput, toGun gun: LightGunResponder) {
+        let position = session?.cursor.position ?? PointerCursor.centre
+        switch output {
+        case let .moved(_, newPosition), let .recentered(newPosition):
+            gun.lightGunMovedToPoint(newPosition, isOffscreen: false)
+            postGunCursor(newPosition, isTouching: nil)
+        case let .touching(isTouching):
+            postGunCursor(position, isTouching: isTouching)
+        case let .action(action, isDown):
+            fire(action, isDown: isDown, at: position, on: gun)
+        case .speedChanged:
+            break
+        }
+    }
+
+    func fire(_ action: PointerAction, isDown: Bool, at position: CGPoint, on gun: LightGunResponder) {
+        switch action {
+        case .trigger:
+            if isDown { gun.lightGunTriggerDown() } else { gun.lightGunTriggerUp() }
+        case .reload:
+            /// A core without its own reload gets an off-screen shot, which is what reloading is.
+            if isDown {
+                guard gun.lightGunReloadDown?() == nil else { return }
+                gun.lightGunMovedToPoint(position, isOffscreen: true)
+                gun.lightGunTriggerDown()
+            } else {
+                guard gun.lightGunReloadUp?() == nil else { return }
+                gun.lightGunTriggerUp()
+                gun.lightGunMovedToPoint(position, isOffscreen: false)
+            }
+        case .auxA:
+            _ = isDown ? gun.lightGunAuxADown?() : gun.lightGunAuxAUp?()
+        case .auxB:
+            _ = isDown ? gun.lightGunAuxBDown?() : gun.lightGunAuxBUp?()
+        case .gunStart:
+            _ = isDown ? gun.lightGunStartDown?() : gun.lightGunStartUp?()
+        case .leftButton, .rightButton, .wiiA, .wiiB, .pauseMenu, .none:
+            break
+        }
+    }
+
+    /// Moves the on-screen crosshair; `isTouching` nil leaves the touch ring as it is.
+    func postGunCursor(_ position: CGPoint, isTouching: Bool?) {
+        var info: [String: Any] = [
+            LightGunCursorNotification.positionXKey: NSNumber(value: Double(position.x)),
+            LightGunCursorNotification.positionYKey: NSNumber(value: Double(position.y)),
+            LightGunCursorNotification.isOffscreenKey: false
+        ]
+        if let isTouching { info[LightGunCursorNotification.isTouchingKey] = isTouching }
+        NotificationCenter.default.post(name: .lightGunCursorDidMove, object: self, userInfo: info)
     }
 }
 #endif

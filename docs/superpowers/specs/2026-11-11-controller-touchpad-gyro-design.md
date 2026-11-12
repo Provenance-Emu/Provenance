@@ -267,6 +267,11 @@ code, including a shake detector, never runs because motion is never started (`:
   the pad held normally.
 - Reaches: FCEU, snes9x (Super Scope, Justifier), Genesis Plus GX, Mednafen (Saturn, PSX GunCon, NES,
   legacy SNES), Stella, ProSystem, and thin-wrapper light-gun games per `LightGunGameRegistry`.
+- As built (2026-11-12): a touchpad click and a trigger holding the same action are combined
+  (`HeldActionCombiner`), so letting go of one never cuts off the other, and a trigger still held after a
+  pause acts again only once let go. A core without its own reload gets an off-screen shot. On iOS the
+  crosshair is the skin view's (`LightGunCrosshairView`, which now draws the touch ring); on tvOS the
+  view controller hosts it. Absolute aiming is not built (it belongs with the step 6 settings screen).
 
 ### Step 6: gyro aiming, then profiles
 

@@ -71,14 +71,14 @@ extension PVEmulatorViewController {
 // MARK: - Cursor overlay
 //
 // On iOS the virtual mouse installs the arrow cursor for every mouse game
-// (`PVEmulatorViewController+VirtualMouse.swift`). tvOS has no virtual mouse, so the
-// arrow a pad's touchpad moves is hosted here.
+// (`PVEmulatorViewController+VirtualMouse.swift`) and the skin view draws the light-gun
+// crosshair. tvOS has neither, so the arrow or crosshair a pad's touchpad moves is hosted here.
 
 @MainActor
 extension PVEmulatorViewController {
 
-    private var pointerOverlayHost: UIHostingController<MouseCursorOverlayView>? {
-        get { objc_getAssociatedObject(self, &ControllerPointerKeys.overlayKey) as? UIHostingController<MouseCursorOverlayView> }
+    private var pointerOverlayHost: UIViewController? {
+        get { objc_getAssociatedObject(self, &ControllerPointerKeys.overlayKey) as? UIViewController }
         set { objc_setAssociatedObject(self, &ControllerPointerKeys.overlayKey, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC) }
     }
 
@@ -89,12 +89,20 @@ extension PVEmulatorViewController {
         return gpuFrame.isEmpty ? view.bounds : gpuFrame
     }
 
-    func installPointerOverlayIfNeeded() {
+    /// Shows the arrow for `.mouse` or the crosshair for `.lightGun`.
+    func installPointerOverlay(for role: ControllerPointerRole) {
         guard pointerOverlayHost == nil else { return }
-        let overlay = MouseCursorOverlayView(
-            showsCursor: !MouseCursorOverlayView.systemDrawsOwnPointer(
-                core.systemIdentifier, coreIdentifier: core.coreIdentifier))
-        let host = UIHostingController(rootView: overlay)
+        let host: UIViewController
+        switch role {
+        case .mouse:
+            host = UIHostingController(rootView: MouseCursorOverlayView(
+                showsCursor: !MouseCursorOverlayView.systemDrawsOwnPointer(
+                    core.systemIdentifier, coreIdentifier: core.coreIdentifier)))
+        case .lightGun:
+            host = UIHostingController(rootView: LightGunCrosshairView())
+        case .none, .wiiPointer:
+            return
+        }
         host.view.backgroundColor = .clear
         host.view.isOpaque = false
         host.view.isUserInteractionEnabled = false

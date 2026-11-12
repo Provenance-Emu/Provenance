@@ -6,7 +6,8 @@
 //  Copyright © 2026 Provenance Emu. All rights reserved.
 //
 //  Defines the `Notification.Name` and `userInfo` key constants for the
-//  light-gun cursor-position notification posted by `GCMouseLightGunDriver`.
+//  light-gun cursor-position notification posted by `GCMouseLightGunDriver`
+//  and `ControllerPointerRouter`.
 //
 
 import Foundation
@@ -27,4 +28,7 @@ public enum LightGunCursorNotification {
     public static let positionYKey = "positionY"
     /// `Bool` — `true` when the gun is pointed off-screen (right-click / reload gesture).
     public static let isOffscreenKey = "isOffscreen"
+    /// `Bool`, optional — `true` while a finger is on the controller touchpad that aims the gun.
+    /// Absent means unchanged.
+    public static let isTouchingKey = "isTouching"
 }

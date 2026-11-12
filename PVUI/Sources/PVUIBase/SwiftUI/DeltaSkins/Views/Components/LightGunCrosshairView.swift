@@ -131,6 +131,11 @@ public struct LightGunCrosshairView: View {
     @State private var cursorPosition: CGPoint = CGPoint(x: 0.5, y: 0.5)
     /// Whether the gun is currently aimed off-screen.
     @State private var isOffscreen: Bool = false
+    /// A finger is on the controller touchpad that aims the gun: a ring shows the aim is live.
+    @State private var isTouching: Bool = false
+
+    /// Diameter of the ring drawn while a touchpad finger aims.
+    private static let touchRingDiameter: CGFloat = 44
 
     public init() {}
 
@@ -148,6 +153,13 @@ public struct LightGunCrosshairView: View {
                     if !isOffscreen {
                         crosshairView
                             .position(x: x, y: y)
+                        if isTouching {
+                            Circle()
+                                .stroke(Color.white.opacity(0.8), lineWidth: 2)
+                                .frame(width: Self.touchRingDiameter, height: Self.touchRingDiameter)
+                                .shadow(color: .black.opacity(0.6), radius: 1)
+                                .position(x: x, y: y)
+                        }
                     }
                 }
             }
@@ -159,6 +171,9 @@ public struct LightGunCrosshairView: View {
                 if let nx = info?[LightGunCursorNotification.positionXKey] as? NSNumber,
                    let ny = info?[LightGunCursorNotification.positionYKey] as? NSNumber {
                     cursorPosition = CGPoint(x: CGFloat(nx.doubleValue), y: CGFloat(ny.doubleValue))
+                }
+                if let touching = info?[LightGunCursorNotification.isTouchingKey] as? Bool {
+                    isTouching = touching
                 }
                 if let rawIsOffscreen = info?[LightGunCursorNotification.isOffscreenKey] {
                     if let boolValue = rawIsOffscreen as? Bool {
