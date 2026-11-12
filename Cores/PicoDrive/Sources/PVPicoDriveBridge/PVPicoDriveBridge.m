@@ -30,6 +30,7 @@
 
 @import PVAudio;
 @import PVCoreBridge;
+@import PVCoreObjCBridge;
 @import PVLoggingObjC;
 @import PVSupport;
 @import GameController;
@@ -840,11 +841,9 @@ static void writeSaveFile(const char* path, int type)
             case RETRO_DEVICE_ID_JOYPAD_SELECT: // Sega Mode
                 return [[gamepad leftTrigger] isPressed];
             case RETRO_DEVICE_ID_JOYPAD_START: // Sega Start
-#if TARGET_OS_TV
-                return [[gamepad buttonMenu] isPressed]?:[[gamepad rightTrigger] isPressed];
-#else
-                return [[gamepad rightTrigger] isPressed];
-#endif
+                /// The trigger, plus the pad's own Start button where reading it cannot also
+                /// open the pause menu (nil on a pad whose single Menu button is its pause button).
+                return [[gamepad rightTrigger] isPressed] || [PVStartButtonForController(controller) isPressed];
             default:
                 break;
         }}
@@ -896,12 +895,9 @@ static void writeSaveFile(const char* path, int type)
             case RETRO_DEVICE_ID_JOYPAD_R:     // Sega Z
                 return [[gamepad leftShoulder] isPressed];
             case RETRO_DEVICE_ID_JOYPAD_START: // Sega Start
-                // Do NOT fall back to buttonMenu on tvOS — buttonMenu is reserved
-                // for the pause-menu pipeline (controllerPausedHandler / GCEventViewController),
-                // and polling it from the bridge suppresses pause on Siri Remote and
-                // on MFi pads that lack buttonOptions / thumbstick-button pause triggers.
-                // See PVUI/Sources/PVUIBase/Controller/GCControllerExtensions.swift.
-                return [[gamepad rightTrigger] isPressed];
+                /// The trigger, plus the pad's own Start button where reading it cannot also
+                /// open the pause menu (nil on a pad whose single Menu button is its pause button).
+                return [[gamepad rightTrigger] isPressed] || [PVStartButtonForController(controller) isPressed];
             case RETRO_DEVICE_ID_JOYPAD_SELECT: // Sega Mode
                 return [[gamepad leftTrigger] isPressed];
             default:

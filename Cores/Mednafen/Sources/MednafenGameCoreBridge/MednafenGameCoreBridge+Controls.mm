@@ -550,35 +550,15 @@
             case PVSaturnButtonL:
                 return [[gamepad leftTrigger] isPressed];
             case PVSaturnButtonStart:
-            {
-                BOOL isStart = self.isStartPressed;
-                GCDualSenseGamepad *dualSense = [gamepad isKindOfClass:[GCDualSenseGamepad class]] ? gamepad : nil;
-                GCDualShockGamepad *dualShock = [gamepad isKindOfClass:[GCDualShockGamepad class]] ? gamepad : nil;
-                GCXboxGamepad *xbox = [gamepad isKindOfClass:[GCXboxGamepad class]] ? gamepad : nil;
-
-                if (dualSense && dualSense.buttonOptions) {
-                    isStart = isStart || [dualSense.buttonOptions isPressed];
-                } else if (dualShock && dualShock.buttonOptions) {
-                    isStart = isStart || [dualShock.buttonOptions isPressed];
-                } else if (xbox && xbox.buttonMenu) {
-                    isStart = isStart || [xbox.buttonMenu isPressed];
-                }
-#if TARGET_OS_TV
-                isStart = isStart || [[gamepad buttonMenu] isPressed];
-#else
-                // no Access to the R Shoulder Button on the Saturn Controller using the M30 due to Start Mismapping on iOS, for now
-#endif
-                return isStart;
-            }
+                /// The pad's own Start button. Share/Create/View opens the pause menu on the
+                /// Saturn (it has no Select), so that button is no longer read as Start.
+                return self.isStartPressed || [PVStartButtonForController(controller) isPressed];
             case PVSaturnButtonR:
                 return [[gamepad rightTrigger] isPressed];
             default:
                 break;
             }
         } else { // Non 8BitdoM30
-            GCDualSenseGamepad *dualSense = [gamepad isKindOfClass:[GCDualSenseGamepad class]] ? gamepad : nil;
-            GCDualShockGamepad *dualShock = [gamepad isKindOfClass:[GCDualShockGamepad class]] ? gamepad : nil;
-            GCXboxGamepad *xbox = [gamepad isKindOfClass:[GCXboxGamepad class]] ? gamepad : nil;
 
             switch (buttonID) {
                 case PVSaturnButtonUp:
@@ -608,19 +588,18 @@
                 case PVSaturnButtonStart:
                 {
                     BOOL isStart = self.isStartPressed;
-                    if (dualSense && dualSense.buttonOptions) {
-                        isStart = isStart || [dualSense.buttonOptions isPressed];
-                    } else if (dualShock && dualShock.buttonOptions) {
-                        isStart = isStart || [dualShock.buttonOptions isPressed];
-                    } else if (xbox && xbox.buttonMenu) {
-                        isStart = isStart || [xbox.buttonMenu isPressed];
+                    /// The pad's own Start button; Share/Create/View opens the pause menu here.
+                    /// A pad without one (its single Menu button is its pause button) keeps
+                    /// the four-shoulders + X combination.
+                    GCControllerButtonInput *startButton = PVStartButtonForController(controller);
+                    if (startButton) {
+                        isStart = isStart || [startButton isPressed];
                     } else {
                         bool modifier1Pressed = [[gamepad leftShoulder] isPressed] && [[gamepad rightShoulder] isPressed];
                         bool modifier2Pressed = [[gamepad leftTrigger] isPressed] && [[gamepad rightTrigger] isPressed];
                         bool modifiersPressed = modifier1Pressed && modifier2Pressed;
                         isStart = isStart || (modifiersPressed && [[gamepad buttonX] isPressed]);
                     }
-                    DLOG("isStart: %@", isStart ? @"Yes" : @"No");
                     return isStart;
                 }
                 case PVSaturnButtonR:

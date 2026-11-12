@@ -1193,13 +1193,16 @@ static void FinalizeSamplesAudioCallback(void *) {
             S9xReportButton(playerMask | PVSNESButtonTriggerLeft, gamepad.leftShoulder.pressed);
             S9xReportButton(playerMask | PVSNESButtonTriggerRight, gamepad.rightShoulder.pressed);
 
-            // Switch Online SNES pad: Apple exposes no ZL/ZR, so its real Start and Select
-            // (buttonMenu / buttonOptions) carry them. Other pads keep the trigger mapping.
+            // Start and Select are on the triggers and on the pad's own Start and Select
+            // buttons (buttonMenu / buttonOptions). Neither opens the pause menu on its own
+            // on a system with a Select button; a pad whose single Menu button is its pause
+            // button has no Start button here (PVStartButtonForController) and keeps the triggers.
+            // The Switch Online SNES pad has no ZL/ZR in Apple's profile, so the buttons are all it has.
             BOOL synthesizedPad = PVIsPhysicalProfileController(controller);
-            S9xReportButton(playerMask | PVSNESButtonStart,
-                            gamepad.rightTrigger.pressed || (synthesizedPad && gamepad.buttonMenu.pressed));
-            S9xReportButton(playerMask | PVSNESButtonSelect,
-                            gamepad.leftTrigger.pressed || (synthesizedPad && gamepad.buttonOptions.pressed));
+            GCControllerButtonInput *startButton = synthesizedPad ? gamepad.buttonMenu : PVStartButtonForController(controller);
+            GCControllerButtonInput *selectButton = (synthesizedPad || startButton) ? gamepad.buttonOptions : nil;
+            S9xReportButton(playerMask | PVSNESButtonStart, gamepad.rightTrigger.pressed || startButton.pressed);
+            S9xReportButton(playerMask | PVSNESButtonSelect, gamepad.leftTrigger.pressed || selectButton.pressed);
 
         }
         else if ([controller gamepad])

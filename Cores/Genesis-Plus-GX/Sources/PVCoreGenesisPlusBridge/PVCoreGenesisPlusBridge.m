@@ -1056,7 +1056,7 @@ static const int SG1000Map[] = {
                case PVGenesisButtonC: // Button2
                    return [[gamepad buttonB] isPressed]?:[[gamepad buttonX] isPressed]?:[[gamepad leftTrigger] isPressed];
                case PVGenesisButtonStart: // MS Pause
-                   return [[gamepad leftShoulder] isPressed];
+                   return [[gamepad leftShoulder] isPressed] || [PVStartButtonForController(controller) isPressed];
                default:
                    break;
            }
@@ -1077,7 +1077,7 @@ static const int SG1000Map[] = {
                case PVGenesisButtonC: // Button2
                    return [[gamepad buttonB] isPressed]?:[[gamepad buttonX] isPressed];
                case PVGenesisButtonStart: // MS Pause
-                   return [[gamepad leftShoulder] isPressed];
+                   return [[gamepad leftShoulder] isPressed] || [PVStartButtonForController(controller) isPressed];
                default:
                    break;
            }
@@ -1133,7 +1133,8 @@ static const int SG1000Map[] = {
                 case PVGenesisButtonC: // Button2
                     return [[gamepad buttonB] isPressed]?:[[gamepad buttonX] isPressed];
                 case PVGenesisButtonStart: // GG Start
-                    return [[gamepad rightShoulder] isPressed]?:[[gamepad rightTrigger] isPressed];
+                    return [[gamepad rightShoulder] isPressed] || [[gamepad rightTrigger] isPressed]
+                        || [PVStartButtonForController(controller) isPressed];
                 default:
                     break;
             }
@@ -1226,7 +1227,7 @@ static const int SG1000Map[] = {
                 case PVGenesisButtonMode:
                     return [[gamepad buttonOptions] isPressed];
                 case PVGenesisButtonStart:
-                    return [[gamepad rightTrigger] isPressed];
+                    return [[gamepad rightTrigger] isPressed] || [PVStartButtonForController(controller) isPressed];
                 default:
                     break;
             }}
@@ -1234,7 +1235,8 @@ static const int SG1000Map[] = {
             // rationale. Same physical button = same Sega button across every Sega-platform core.
             //   buttonA  → A,  buttonB  → B,  rightShoulder → C
             //   buttonX  → X,  buttonY  → Y,  leftShoulder  → Z
-            //   rightTrigger → Start  (tvOS pads without R2 cannot Start; do NOT poll buttonMenu — it owns pause)
+            //   rightTrigger → Start, and the pad's own Start button where it has one
+            //                  (PVStartButtonForController)
             //   leftTrigger  → Mode
             { switch (buttonID) {
                 case PVGenesisButtonUp:
@@ -1260,11 +1262,9 @@ static const int SG1000Map[] = {
                 case PVGenesisButtonMode:
                     return [[gamepad leftTrigger] isPressed];
                 case PVGenesisButtonStart:
-                    // Do NOT fall back to buttonMenu on tvOS — buttonMenu is reserved
-                    // for the pause-menu pipeline (controllerPausedHandler / GCEventViewController),
-                    // and polling it from the bridge suppresses pause on Siri Remote
-                    // and on MFi pads that lack buttonOptions / thumbstick-button pause triggers.
-                    return [[gamepad rightTrigger] isPressed];
+                    /// The trigger, plus the pad's own Start button. That button is nil on a pad
+                    /// whose single Menu button is its pause button, which keeps Start on the trigger there.
+                    return [[gamepad rightTrigger] isPressed] || [PVStartButtonForController(controller) isPressed];
                 default:
                    break;
             }}

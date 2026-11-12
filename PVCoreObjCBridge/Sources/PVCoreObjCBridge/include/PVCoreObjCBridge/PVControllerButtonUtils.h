@@ -161,6 +161,27 @@ PVIsPhysicalProfileController(GCController * _Nullable controller) {
     return controller != nil && profileControllerClass != Nil && [controller isKindOfClass:profileControllerClass];
 }
 
+#pragma mark - Start Without Pause
+
+/**
+ The pad's Start button (`buttonMenu`), when reading it cannot also open the pause menu.
+
+ The pause menu opens from Options, a capture button, L3 + R3, Select + Start or Home
+ (`PauseMenuBindingPolicy` in PVUI), never from `buttonMenu` on its own. The exception
+ is a pad with neither an Options nor a Home button: its single Menu button is its pause
+ button, so this returns nil and the core keeps Start on a trigger for it.
+
+ Cores that put Start on a trigger because Menu used to be reserved for pause read this
+ as well, so Start is on the button labelled Start (PlayStation Options, Xbox Menu, Switch "+").
+ */
+static inline GCControllerButtonInput * _Nullable
+PVStartButtonForController(GCController * _Nonnull controller) {
+    GCExtendedGamepad *gamepad = controller.extendedGamepad;
+    if (!gamepad) { return nil; }
+    if (!gamepad.buttonOptions && !gamepad.buttonHome) { return nil; }
+    return gamepad.buttonMenu;
+}
+
 #pragma mark - Start / Select Resolution
 
 /**
