@@ -59,9 +59,12 @@ extension Defaults.Keys {
     static let userExplicitlySetScalingMode = Key<Bool>("userExplicitlySetScalingMode", default: false)
 
     /// How the game is presented when an external display (HDMI / USB-C / AirPlay) is connected.
-    /// Defaults to `.systemMirror` so that the device behaves identically to previous versions
-    /// unless the user opts into dedicated mode.
-    static let externalDisplayMode = Key<ExternalDisplayMode>("externalDisplayMode", default: .systemMirror)
+    /// Defaults to the game picture alone: mirroring also copies the touch controls, which
+    /// make no sense on a screen nobody can touch.
+    static let externalDisplayMode = Key<ExternalDisplayMode>("externalDisplayMode", default: .dedicated)
+
+    /// Whether the device keeps drawing the game picture while an external display shows it.
+    static let externalDisplayDevicePicture = Key<ExternalDisplayDevicePicture>("externalDisplayDevicePicture", default: .auto)
 
     static let showRecentSaveStates = Key<Bool>("showRecentSaveStates", default: true)
 

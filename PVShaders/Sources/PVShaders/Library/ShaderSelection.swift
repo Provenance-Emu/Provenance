@@ -80,15 +80,25 @@ public enum ShaderScope: Hashable, Sendable {
     case global
     case system(String)
     case game(String)
+    /// A screen other than the device. Set, it replaces the game's selection on that screen.
+    case screen(ShaderScreen)
 
     var key: String {
         switch self {
         case .global: return "global"
         case .system(let id): return Self.systemPrefix + id
         case .game(let md5): return Self.gamePrefix + md5
+        case .screen(let screen): return Self.screenPrefix + screen.rawValue
         }
     }
 
     static let systemPrefix = "system:"
     static let gamePrefix = "game:"
+    static let screenPrefix = "screen:"
+}
+
+/// A screen that shows the game picture besides the device's own.
+public enum ShaderScreen: String, Hashable, Sendable, CaseIterable {
+    /// A cabled display or an AirPlay screen.
+    case external
 }

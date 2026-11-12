@@ -1,5 +1,6 @@
 import UIKit
 import Intents
+import PVUIBase
 
 /// Receives platform callbacks without owning windows or navigation.
 /// SwiftUI has no equivalents for APNs registration or Home Screen shortcut delivery.
@@ -36,8 +37,13 @@ public final class PVSystemEvents: UIResponder, UIApplicationDelegate {
         configurationForConnecting connectingSceneSession: UISceneSession,
         options: UIScene.ConnectionOptions
     ) -> UISceneConfiguration {
-        let configuration = UISceneConfiguration(name: nil, sessionRole: connectingSceneSession.role)
-        configuration.delegateClass = PVSceneDelegate.self
+        let role = connectingSceneSession.role
+        let configuration = UISceneConfiguration(name: nil, sessionRole: role)
+        // A cabled display or AirPlay screen: no app window of its own, only what
+        // `ExternalDisplayCoordinator`'s clients put there (the game picture).
+        configuration.delegateClass = role == .windowExternalDisplayNonInteractive
+            ? PVExternalDisplaySceneDelegate.self
+            : PVSceneDelegate.self
         return configuration
     }
 

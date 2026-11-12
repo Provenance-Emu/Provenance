@@ -220,7 +220,7 @@ struct ShaderPauseSheet: View {
         switch store.effectiveScope(gameMD5: emulatorVC.shaderGameMD5, systemID: emulatorVC.shaderSystemID) {
         case .game: return .game
         case .system: return .system
-        case .global: return .everywhere
+        case .global, .screen: return .everywhere
         }
     }
 }

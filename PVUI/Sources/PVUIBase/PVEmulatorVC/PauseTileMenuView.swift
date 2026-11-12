@@ -149,6 +149,9 @@ struct PauseTileMenuView: View {
     @State private var showingShaderSettings = false
     @State private var showingShaderBrowser = false
     @State private var showingPortDevices = false
+    #if os(iOS)
+    @State private var showingExternalDisplay = false
+    #endif
     #if !os(tvOS)
     @State private var controllerLayoutContext: ControllerLayoutSheetContext?
     #endif
@@ -256,7 +259,11 @@ struct PauseTileMenuView: View {
     // MARK: - Rebuild cached sections via view model
 
     /// Triggers a full section rebuild. Call on appear and after any option mutation.
-    private func rebuildSections(hardwareSwitchPositions: [String: Int]? = nil) {
+    private func rebuildSections() {
+        rebuildSections(hardwareSwitchPositions: emulatorVC.coreInputHandler.hardwareSwitchPositionIndexes)
+    }
+
+    private func rebuildSections(hardwareSwitchPositions: [String: Int]) {
         viewModel.rebuild(
             emulatorVC: emulatorVC,
             showFPSCount: showFPSCount,
@@ -264,7 +271,7 @@ struct PauseTileMenuView: View {
             featureFlags: featureFlags,
             indicatorRegistry: indicatorRegistry,
             hasControllerProfiles: hasControllerProfiles,
-            hardwareSwitchStates: hardwareSwitchPositions ?? emulatorVC.coreInputHandler.hardwareSwitchPositionIndexes,
+            hardwareSwitchStates: hardwareSwitchPositions,
             coreOptionsMD5: currentCoreOptionsMD5Scope,
             route: currentRoute
         )
@@ -716,6 +723,11 @@ struct PauseTileMenuView: View {
         // MARK: Port device type picker
         case "portDevices":
             showingPortDevices = true
+
+        #if os(iOS)
+        case PauseTileMenuViewModel.externalDisplayTileID:
+            showingExternalDisplay = true
+        #endif
 
         // MARK: Programmatic touch overlay
         #if !os(tvOS)
@@ -1812,18 +1824,23 @@ struct PauseTileMenuView: View {
         }
         #endif
         #if os(tvOS)
-        .fullScreenCover(isPresented: $showingShaderBrowser, onDismiss: { rebuildSections() }) {
+        .fullScreenCover(isPresented: $showingShaderBrowser, onDismiss: rebuildSections) {
             ShaderPauseSheet(emulatorVC: emulatorVC)
         }
-        .fullScreenCover(isPresented: $showingShaderSettings, onDismiss: { rebuildSections() }) {
+        .fullScreenCover(isPresented: $showingShaderSettings, onDismiss: rebuildSections) {
             ShaderPauseSheet(emulatorVC: emulatorVC, startInEditor: true)
         }
         #else
-        .sheet(isPresented: $showingShaderBrowser, onDismiss: { rebuildSections() }) {
+        .sheet(isPresented: $showingShaderBrowser, onDismiss: rebuildSections) {
             ShaderPauseSheet(emulatorVC: emulatorVC)
         }
-        .sheet(isPresented: $showingShaderSettings, onDismiss: { rebuildSections() }) {
+        .sheet(isPresented: $showingShaderSettings, onDismiss: rebuildSections) {
             ShaderPauseSheet(emulatorVC: emulatorVC, startInEditor: true)
+        }
+        #endif
+        #if os(iOS)
+        .sheet(isPresented: $showingExternalDisplay, onDismiss: rebuildSections) {
+            ExternalDisplayPauseSheet()
         }
         #endif
         .sheet(isPresented: $showingPortDevices) {

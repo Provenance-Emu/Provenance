@@ -95,6 +95,11 @@ public final class ShaderLibraryStore {
         return selection(for: .global) ?? .off
     }
 
+    /// The selection drawn on `screen`: its own if one is set, else the game's.
+    public func effectiveSelection(on screen: ShaderScreen, gameMD5: String?, systemID: String?) -> ShaderSelection {
+        selection(for: .screen(screen)) ?? effectiveSelection(gameMD5: gameMD5, systemID: systemID)
+    }
+
     /// The scope whose selection is in effect, for "applies to" labels.
     public func effectiveScope(gameMD5: String?, systemID: String?) -> ShaderScope {
         if let md5 = gameMD5, !md5.isEmpty, selection(for: .game(md5)) != nil { return .game(md5) }
@@ -134,7 +139,18 @@ public final class ShaderLibraryStore {
     /// The filter in effect for a game, with its current parameter values, as a
     /// value that render threads can hold (see `ShaderPostProcessor`).
     public func resolvedShader(gameMD5: String?, systemID: String?, screenType: ScreenTypeObjC) -> ResolvedShader? {
-        guard let id = effectiveSelection(gameMD5: gameMD5, systemID: systemID).shader(for: screenType),
+        resolvedShader(effectiveSelection(gameMD5: gameMD5, systemID: systemID), screenType: screenType)
+    }
+
+    /// The filter in effect for a game on `screen`. A skin's own filter (`.skinFilter`)
+    /// belongs to the skin on the device, so it resolves to no filter here.
+    public func resolvedShader(on screen: ShaderScreen, gameMD5: String?, systemID: String?,
+                               screenType: ScreenTypeObjC) -> ResolvedShader? {
+        resolvedShader(effectiveSelection(on: screen, gameMD5: gameMD5, systemID: systemID), screenType: screenType)
+    }
+
+    private func resolvedShader(_ selection: ShaderSelection, screenType: ScreenTypeObjC) -> ResolvedShader? {
+        guard let id = selection.shader(for: screenType),
               let entry = catalog.entry(for: id) else { return nil }
         let values = Dictionary(entry.parameters.map { ($0.name, value(of: $0, in: id)) },
                                 uniquingKeysWith: { first, _ in first })
