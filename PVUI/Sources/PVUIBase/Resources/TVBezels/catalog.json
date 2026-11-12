@@ -59,7 +59,7 @@
         "AMBI_POWER": 1.0
       },
       "look": {
-        "shader": "slang:crt/crt-geom",
+        "shader": "slang:crt/crt-aperture",
         "values": {}
       }
     },
