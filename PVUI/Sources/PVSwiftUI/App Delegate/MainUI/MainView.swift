@@ -38,7 +38,10 @@ struct MainView: View {
     var body: some View {
         GeometryReader { proxy in
 #if os(iOS)
-            let rawUseTVMedia = shouldUseTVMediaUI(in: proxy.size)
+            // The whole window, not the area left beside the keyboard: an on-screen keyboard
+            // shrinks `proxy.size` below the media layout's minimum height, which dropped the
+            // layout and tore down any sheet over it each time a text field was focused.
+            let rawUseTVMedia = shouldUseTVMediaUI(in: Self.windowSize(of: proxy))
             let useTVMedia = effectiveUseTVMedia
 #endif
             ZStack {
@@ -220,6 +223,13 @@ struct MainView: View {
                 await MainActor.run { effectiveUseTVMedia = false }
             }
         }
+    }
+
+    /// The proxy's size plus its safe-area insets, which include the keyboard's.
+    static func windowSize(of proxy: GeometryProxy) -> CGSize {
+        let insets = proxy.safeAreaInsets
+        return CGSize(width: proxy.size.width + insets.leading + insets.trailing,
+                      height: proxy.size.height + insets.top + insets.bottom)
     }
 
     private func shouldUseTVMediaUI(in size: CGSize) -> Bool {
