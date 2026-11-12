@@ -1,0 +1,110 @@
+{
+  "version": 1,
+  "bezels": [
+    {
+      "id": "studio-monitor",
+      "name": "Studio Monitor",
+      "artwork": "studio-monitor.skin.json",
+      "lightsRoom": true,
+      "preferredSystems": [],
+      "frame": {
+        "bz_red": 22,
+        "bz_green": 23,
+        "bz_blue": 26,
+        "bz_inner_bezel_x": 0,
+        "bz_inner_bezel_y": 0,
+        "bz_middle_bezel_x": 0.075,
+        "bz_middle_bezel_y": 0.1,
+        "bz_outer_bezel_x": 0,
+        "bz_outer_bezel_y": 0,
+        "bz_radius": 0.012,
+        "bz_ref_str": 0.3,
+        "bz_shine": 0.08,
+        "h_curvature": 1,
+        "h_shape": 1,
+        "h_radius": 8,
+        "h_cornersize": 0.012,
+        "border_dimming": 0.6,
+        "AMBI_POWER": 0.7
+      },
+      "look": {
+        "shader": "slang:crt/crt-aperture",
+        "values": {}
+      }
+    },
+    {
+      "id": "living-room-tv",
+      "name": "Living Room TV",
+      "artwork": "living-room-tv.skin.json",
+      "lightsRoom": true,
+      "preferredSystems": [],
+      "frame": {
+        "bz_red": 30,
+        "bz_green": 26,
+        "bz_blue": 23,
+        "bz_inner_bezel_x": 0,
+        "bz_inner_bezel_y": 0,
+        "bz_middle_bezel_x": 0.085,
+        "bz_middle_bezel_y": 0.115,
+        "bz_outer_bezel_x": 0,
+        "bz_outer_bezel_y": 0,
+        "bz_radius": 0.07,
+        "bz_ref_str": 0.42,
+        "bz_shine": 0.12,
+        "h_curvature": 1,
+        "h_shape": 0,
+        "h_radius": 3.4,
+        "h_cornersize": 0.06,
+        "border_dimming": 0.55,
+        "AMBI_POWER": 1.0
+      },
+      "look": {
+        "shader": "slang:crt/crt-geom",
+        "values": {}
+      }
+    },
+    {
+      "id": "computer-monitor",
+      "name": "Computer Monitor",
+      "artwork": "computer-monitor.skin.json",
+      "lightsRoom": true,
+      "preferredSystems": [
+        "com.provenance.c64",
+        "com.provenance.atarist",
+        "com.provenance.atari8bit",
+        "com.provenance.msx",
+        "com.provenance.msx2",
+        "com.provenance.zxspectrum",
+        "com.provenance.appleII",
+        "com.provenance.dos",
+        "com.provenance.macintosh",
+        "com.provenance.pc98",
+        "com.provenance.ep128"
+      ],
+      "frame": {
+        "bz_red": 150,
+        "bz_green": 144,
+        "bz_blue": 126,
+        "bz_inner_bezel_x": 0,
+        "bz_inner_bezel_y": 0,
+        "bz_middle_bezel_x": 0.075,
+        "bz_middle_bezel_y": 0.1,
+        "bz_outer_bezel_x": 0,
+        "bz_outer_bezel_y": 0,
+        "bz_radius": 0.05,
+        "bz_ref_str": 0.25,
+        "bz_shine": 0.1,
+        "h_curvature": 1,
+        "h_shape": 0,
+        "h_radius": 5.5,
+        "h_cornersize": 0.035,
+        "border_dimming": 0.7,
+        "AMBI_POWER": 0.6
+      },
+      "look": {
+        "shader": "slang:crt/crt-lottes",
+        "values": {}
+      }
+    }
+  ]
+}

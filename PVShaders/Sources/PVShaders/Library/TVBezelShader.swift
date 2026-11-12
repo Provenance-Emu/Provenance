@@ -108,6 +108,19 @@ public enum TVBezelShader {
         return values
     }
 
+    /// A built-in filter that bends the picture itself and cannot be told not to here: its
+    /// settings are the player's saved ones. The TV's glass stays flat under it instead.
+    public static func bendsPictureItself(_ entry: ShaderCatalogEntry) -> Bool {
+        guard entry.id.kind == .native else { return false }
+        return entry.parameters.contains { parameter in
+            let name = parameter.name.lowercased()
+            return name.contains("curv") || name.contains("warp")
+        }
+    }
+
+    /// The parameter that switches the glass's own curvature.
+    public static let glassCurvatureName = "h_curvature"
+
     /// A filter that draws a frame of its own, which cannot go inside a TV.
     public static func isBezelFilter(_ entry: ShaderCatalogEntry) -> Bool {
         entry.looks.contains(.bezel)

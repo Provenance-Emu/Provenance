@@ -2684,40 +2684,73 @@ final class PVMetalViewController: PVGPUViewController, PVRenderDelegate, MTKVie
     /// when a skin is shown there: with that display's own filter when one is set and ready,
     /// else as the plain picture with the device's smoothing.
     ///
+    /// With a TV chosen it draws in two stages: the picture, filtered, into a texture the
+    /// shape of the TV's tube, then the TV around that texture over the whole scene. Until the
+    /// TV is ready, and if it fails, the picture is drawn alone as without one.
+    ///
     /// Called from `directRender` with the same frame snapshot the device draws, so it shares
     /// that path's guarantees about when the texture is safe to sample.
     private func presentOnExternalOutput(_ source: MTLTexture, emulatorCore: PVEmulatorCore, commandQueue: MTLCommandQueue) {
         guard let output = externalOutput, output.window != nil,
-              let pipeline = customPipeline,
-              let sampler = pictureSampler(for: renderSettings.smoothingMode),
               let drawable = output.metalLayer?.nextDrawable(),
               let commandBuffer = commandQueue.makeCommandBuffer() else { return }
         let target = drawable.texture
+        let drawableSize = CGSize(width: target.width, height: target.height)
         let aspectSize = emulatorCore.aspectSize
         let aspect = aspectSize.width > 0 && aspectSize.height > 0 ? aspectSize : emulatorCore.screenRect.size
-        let contentRect = output.pictureRect(aspect: aspect,
-                                             drawableSize: CGSize(width: target.width, height: target.height))
-        // OpenGL frames store the picture's bottom row first; software and Vulkan frames its top row.
-        let sourceIsBottomUp = emulatorCore.rendersToOpenGL && !emulatorCore.rendersToVulkan
 
-        let filtered = output.filter.render(source: source, target: target, commandBuffer: commandBuffer,
-                                            contentRect: contentRect, screenType: emulatorCore.screenType,
-                                            sourceIsBottomUp: sourceIsBottomUp)
-        if !filtered {
-            guard let encoder = commandBuffer.makeRenderCommandEncoder(descriptor: Self.clearPass(target: target)) else { return }
-            encoder.setViewport(MTLViewport(originX: Double(contentRect.minX), originY: Double(contentRect.minY),
-                                            width: Double(contentRect.width), height: Double(contentRect.height),
-                                            znear: 0, zfar: 1))
-            encoder.setRenderPipelineState(pipeline)
-            var flipY = !sourceIsBottomUp
-            encoder.setVertexBytes(&flipY, length: MemoryLayout<Bool>.size, index: 1)
-            encodePictureSampling(renderSettings.smoothingMode, sampler: sampler, encoder: encoder)
-            encoder.setFragmentTexture(source, index: 0)
-            encoder.drawPrimitives(type: .triangleStrip, vertexStart: 0, vertexCount: 4)
-            encoder.endEncoding()
+        if output.bezelScene != nil, output.bezelProcessor.isReady {
+            let sceneRect = RenderGeometry.sceneRect(aspect: TVBezelShader.sceneAspect, drawableSize: drawableSize)
+            if let tube = output.tubeTarget(sceneSize: sceneRect.size) {
+                let tubeBounds = CGRect(x: 0, y: 0, width: tube.width, height: tube.height)
+                // A picture that is not the tube's shape gets black bars inside the glass.
+                let pictureRect = RenderGeometry.aspectFit(aspect: aspect, in: tubeBounds).integral.intersection(tubeBounds)
+                if drawExternalPicture(source, into: tube, rect: pictureRect, filter: output.filter,
+                                       emulatorCore: emulatorCore, commandBuffer: commandBuffer),
+                   output.bezelProcessor.render(source: tube, target: target, commandBuffer: commandBuffer,
+                                                contentRect: sceneRect, screenType: emulatorCore.screenType) {
+                    commandBuffer.present(drawable)
+                    commandBuffer.commit()
+                    return
+                }
+            }
         }
+
+        let contentRect = output.pictureRect(aspect: aspect, drawableSize: drawableSize)
+        guard drawExternalPicture(source, into: target, rect: contentRect, filter: output.filter,
+                                  emulatorCore: emulatorCore, commandBuffer: commandBuffer) else { return }
         commandBuffer.present(drawable)
         commandBuffer.commit()
+    }
+
+    /// Encodes the game picture into `rect` of `target`, black around it: through `filter`
+    /// when it has one ready, else plain with the device's smoothing. `false` when nothing
+    /// could be encoded.
+    private func drawExternalPicture(_ source: MTLTexture, into target: MTLTexture, rect: CGRect,
+                                     filter: ShaderPostProcessor, emulatorCore: PVEmulatorCore,
+                                     commandBuffer: MTLCommandBuffer) -> Bool {
+        // OpenGL frames store the picture's bottom row first; software and Vulkan frames its top row.
+        let sourceIsBottomUp = emulatorCore.rendersToOpenGL && !emulatorCore.rendersToVulkan
+        if filter.render(source: source, target: target, commandBuffer: commandBuffer, contentRect: rect,
+                         screenType: emulatorCore.screenType, sourceIsBottomUp: sourceIsBottomUp) {
+            return true
+        }
+        guard let pipeline = customPipeline,
+              let sampler = pictureSampler(for: renderSettings.smoothingMode),
+              let encoder = commandBuffer.makeRenderCommandEncoder(descriptor: Self.clearPass(target: target)) else {
+            return false
+        }
+        encoder.setViewport(MTLViewport(originX: Double(rect.minX), originY: Double(rect.minY),
+                                        width: Double(rect.width), height: Double(rect.height),
+                                        znear: 0, zfar: 1))
+        encoder.setRenderPipelineState(pipeline)
+        var flipY = !sourceIsBottomUp
+        encoder.setVertexBytes(&flipY, length: MemoryLayout<Bool>.size, index: 1)
+        encodePictureSampling(renderSettings.smoothingMode, sampler: sampler, encoder: encoder)
+        encoder.setFragmentTexture(source, index: 0)
+        encoder.drawPrimitives(type: .triangleStrip, vertexStart: 0, vertexCount: 4)
+        encoder.endEncoding()
+        return true
     }
     #endif
 

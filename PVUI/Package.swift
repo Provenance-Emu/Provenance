@@ -136,6 +136,9 @@ let package = Package(
                 .product(name: "SkinCatalogKit", package: "SkinKit"),
                 .product(name: "SkinKitManager", package: "SkinKit"),
                 .product(name: "SkinKitUI", package: "SkinKit"),
+                // Format 2 documents draw the TVs around the picture on an external display.
+                .product(name: "SkinKit2Core", package: "SkinKit"),
+                .product(name: "SkinKit2Render", package: "SkinKit"),
                 "ActivityIndicatorView",
                 "AnimatedGradient",
                 "FloatingButton",
@@ -184,6 +187,8 @@ let package = Package(
                 .copy("Resources/PrivacyInfo.xcprivacy"),
                 .copy("Resources/catalog_seed.json"),
                 .copy("Resources/DefaultSkins"),
+                // TVs for the external display: catalog.json and one format 2 document each.
+                .copy("Resources/TVBezels"),
                 // Offline wiki navigation (SUMMARY.md); see ProvenanceWiki.
                 .copy("Resources/WikiContent"),
                 .process("Resources/en.lproj"),

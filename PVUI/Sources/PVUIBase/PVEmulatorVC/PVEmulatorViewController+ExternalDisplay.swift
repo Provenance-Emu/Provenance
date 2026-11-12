@@ -33,7 +33,17 @@ extension PVEmulatorViewController {
             hardwareControllerConnected: PVControllerManager.shared.hasControllers,
             deviceSkin: externalDisplayDeviceSkin,
             devicePicture: Defaults[.externalDisplayDevicePicture],
-            externalSkin: Defaults[.externalDisplaySkin]))
+            externalSkin: Defaults[.externalDisplaySkin],
+            bezelChosen: externalDisplayBezel != nil))
+    }
+
+    /// The TV set to surround this game's picture on an external display, from the settings
+    /// and the game's system. `nil` for none, and for layouts a TV cannot frame (two screens).
+    var externalDisplayBezel: TVBezel? {
+        guard filtersApplyToCurrentLayout else { return nil }
+        return TVBezelCatalog.bezel(chosen: Defaults[.externalDisplayBezel],
+                                    matchesSystem: Defaults[.externalDisplayBezelMatchesSystem],
+                                    systemID: shaderSystemID)
     }
 
     /// What supplies the controls on the device: the generated touch controls, a skin that
@@ -53,6 +63,8 @@ extension PVEmulatorViewController {
                                                name: ShaderLibraryStore.didChangeNotification, object: nil)
         externalDisplaySettingsObservation = Task { @MainActor [weak self] in
             for await _ in Defaults.updates([.externalDisplayMode, .externalDisplayDevicePicture, .externalDisplaySkin,
+                                             .externalDisplayBezel, .externalDisplayBezelMatchesSystem,
+                                             .externalDisplayBezelLightsRoom,
                                              .imageSmoothingMode, .hideOnScreenControlsWithController],
                                             initial: false) {
                 // The controls switch sits with the display options, and is otherwise read only
@@ -105,14 +117,47 @@ extension PVEmulatorViewController {
     }
 
     /// Hands the external display its filter: its own selection if one is set, else the game's.
+    ///
+    /// Inside a TV the filter is the tube's look: the TV's own until the player picks one for
+    /// this display, and never a filter that draws a frame of its own. The TV is updated with
+    /// it, since what the glass does depends on the filter under it.
     func updateExternalDisplayFilter() {
-        guard let output = (gpuViewController as? PVMetalViewController)?.externalOutput else { return }
-        let resolved = ShaderLibraryStore.shared.resolvedShader(on: .external,
-                                                                 gameMD5: shaderGameMD5,
-                                                                 systemID: shaderSystemID,
-                                                                 screenType: core.screenType)
-        output.filter.update(resolved, smoothing: Defaults[.imageSmoothingMode].usesLinearFiltering)
-        (gpuViewController as? PVMetalViewController)?.redrawPausedFrame()
+        guard let metalVC = gpuViewController as? PVMetalViewController, let output = metalVC.externalOutput else { return }
+        let store = ShaderLibraryStore.shared
+        let smoothing = Defaults[.imageSmoothingMode].usesLinearFiltering
+        var resolved = store.resolvedShader(on: .external, gameMD5: shaderGameMD5, systemID: shaderSystemID,
+                                            screenType: core.screenType)
+        let bezel = externalDisplayPlan.bezelOnExternalDisplay ? externalDisplayBezel : nil
+        if let bezel {
+            switch ExternalDisplayBezelRules.tubeFilter(
+                hasUserSelection: store.selection(for: .screen(.external)) != nil,
+                userSelectionIsOff: resolved == nil,
+                userSelectionIsBezel: resolved.map { TVBezelShader.isBezelFilter($0.entry) } ?? false) {
+            case .tvOwn:
+                resolved = bezel.look.flatMap { look in
+                    ShaderCatalog.shared.entry(for: look.shaderID).map { entry in
+                        // Never the player's saved values: this is the TV's look, not their pick.
+                        ResolvedShader(entry: entry,
+                                       values: look.values.merging(TVBezelShader.curvatureOffValues(for: entry)) { _, off in off },
+                                       revision: bezel.id.hashValue)
+                    }
+                }
+            case .user:
+                resolved = resolved.map { picked in
+                    ResolvedShader(entry: picked.entry,
+                                   values: picked.values.merging(TVBezelShader.curvatureOffValues(for: picked.entry)) { _, off in off },
+                                   revision: picked.revision)
+                }
+            case .off:
+                resolved = nil
+            }
+        }
+        output.filter.update(resolved, smoothing: smoothing)
+        let flatGlass = resolved.map { TVBezelShader.bendsPictureItself($0.entry) } ?? false
+        output.showBezel(bezel, lightsRoom: Defaults[.externalDisplayBezelLightsRoom], flatGlass: flatGlass) { [weak metalVC] in
+            metalVC?.redrawPausedFrame()
+        }
+        metalVC.redrawPausedFrame()
     }
 
     /// Draws the device's skin around the picture on the external display when the settings ask

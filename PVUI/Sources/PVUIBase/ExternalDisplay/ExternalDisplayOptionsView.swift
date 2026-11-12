@@ -18,6 +18,9 @@ public struct ExternalDisplayOptionsView: View {
     @Default(.externalDisplayMode) private var mode
     @Default(.externalDisplayDevicePicture) private var devicePicture
     @Default(.externalDisplaySkin) private var externalSkin
+    @Default(.externalDisplayBezel) private var bezelID
+    @Default(.externalDisplayBezelMatchesSystem) private var bezelMatchesSystem
+    @Default(.externalDisplayBezelLightsRoom) private var bezelLightsRoom
     @Default(.hideOnScreenControlsWithController) private var hideControlsWithController
     private let store = ShaderLibraryStore.shared
 
@@ -41,13 +44,36 @@ public struct ExternalDisplayOptionsView: View {
 
             if mode == .dedicated {
                 Section {
-                    Picker(String(localized: "Skin Around the Picture"), selection: $externalSkin) {
-                        ForEach(ExternalDisplaySkin.allCases, id: \.self) { choice in
-                            Text(choice.displayName).tag(choice)
+                    Picker(String(localized: "TV"), selection: $bezelID) {
+                        Text("None").tag(ExternalDisplayBezelRules.noBezelID)
+                        ForEach(TVBezelCatalog.bundled) { bezel in
+                            Text(bezel.name).tag(bezel.id)
                         }
                     }
+                    if hasBezel {
+                        Toggle(String(localized: "Match the System's Screen"), isOn: $bezelMatchesSystem)
+                        Toggle(String(localized: "Light the Room"), isOn: $bezelLightsRoom)
+                    }
+                } header: {
+                    Text("Around the Picture")
                 } footer: {
-                    Text("Draws this device's skin around the picture as artwork, when the skin has a landscape layout that frames the game screen. Real skins are the ones you installed.")
+                    Text(hasBezel
+                         ? "Systems with a screen of their own, such as home computers, use that TV instead of this one. "
+                           + "Lighting the room takes more graphics power; turn it off if the picture stutters."
+                         : "Puts the game inside an old TV, with the picture reflected in its frame.")
+                }
+
+                if !hasBezel {
+                    Section {
+                        Picker(String(localized: "Skin Around the Picture"), selection: $externalSkin) {
+                            ForEach(ExternalDisplaySkin.allCases, id: \.self) { choice in
+                                Text(choice.displayName).tag(choice)
+                            }
+                        }
+                    } footer: {
+                        Text("Draws this device's skin around the picture as artwork, when the skin has a landscape layout "
+                             + "that frames the game screen. Real skins are the ones you installed.")
+                    }
                 }
 
                 Section {
@@ -73,24 +99,36 @@ public struct ExternalDisplayOptionsView: View {
 
                 Section {
                     NavigationLink {
-                        ExternalDisplayFilterPicker()
+                        ExternalDisplayFilterPicker(insideTV: hasBezel)
                     } label: {
                         LabeledContent(String(localized: "Screen Filter"), value: filterSummary)
                     }
                 } footer: {
-                    Text("The external display can use a different filter from this device. Cores that draw into their own view, such as Dolphin and Azahar, are always mirrored.")
+                    Text(hasBezel
+                         ? "The filter runs inside the TV's glass. Each TV comes with a look of its own, used until you pick another. "
+                           + "Cores that draw into their own view, such as Dolphin and Azahar, are always mirrored."
+                         : "The external display can use a different filter from this device. "
+                           + "Cores that draw into their own view, such as Dolphin and Azahar, are always mirrored.")
                 }
             }
         }
         .navigationTitle(String(localized: "External Display"))
     }
 
+    /// A TV is chosen (the one shown may be another, when the system has a screen of its own).
+    private var hasBezel: Bool {
+        TVBezelCatalog.bezel(id: bezelID) != nil
+    }
+
     private var filterSummary: String {
         switch store.selection(for: .screen(.external)) {
         case nil:
-            return String(localized: "Same as Device")
+            return hasBezel ? String(localized: "The TV's Own") : String(localized: "Same as Device")
         case .always(let id):
-            return ShaderCatalog.shared.entry(for: id)?.displayName ?? String(localized: "Off")
+            guard let entry = ShaderCatalog.shared.entry(for: id) else { return String(localized: "Off") }
+            // A filter with a frame of its own cannot go inside a TV.
+            if hasBezel, TVBezelShader.isBezelFilter(entry) { return String(localized: "Off (has its own frame)") }
+            return entry.displayName
         case .off, .auto, .skinFilter:
             return String(localized: "Off")
         }
@@ -99,12 +137,14 @@ public struct ExternalDisplayOptionsView: View {
 
 /// Picks the external display's own filter, or hands it back to the game's.
 private struct ExternalDisplayFilterPicker: View {
+    /// A TV surrounds the picture, so an unset filter means the TV's own look.
+    let insideTV: Bool
     private let store = ShaderLibraryStore.shared
 
     var body: some View {
         VStack(spacing: 0) {
             if store.selection(for: .screen(.external)) != nil {
-                Button(String(localized: "Use the same filter as this device")) {
+                Button(insideTV ? String(localized: "Use the TV's own look") : String(localized: "Use the same filter as this device")) {
                     store.setSelection(nil, for: .screen(.external))
                 }
                 .font(.footnote)

@@ -1,0 +1,473 @@
+{
+  "formatVersion": "2.0",
+  "requires": [
+    "shapes.parametric",
+    "paint.gradients",
+    "effects.shadow",
+    "text",
+    "layout.repeat"
+  ],
+  "identifier": "org.provenance-emu.tv.studio-monitor",
+  "name": "Studio Monitor",
+  "author": "Provenance",
+  "gameTypes": [
+    "org.provenance-emu.tv"
+  ],
+  "reference": {
+    "shortSide": 1080,
+    "minScale": 1.0,
+    "maxScale": 1.0
+  },
+  "root": {
+    "type": "group",
+    "id": "root",
+    "children": [
+      {
+        "type": "shape",
+        "id": "wall",
+        "shape": {
+          "kind": "rect"
+        },
+        "fills": [
+          {
+            "type": "linear",
+            "start": [
+              0.5,
+              0
+            ],
+            "end": [
+              0.5,
+              1
+            ],
+            "stops": [
+              [
+                "#2B2E36",
+                0
+              ],
+              [
+                "#191A1F",
+                1
+              ]
+            ]
+          },
+          {
+            "type": "radial",
+            "center": [
+              0.5,
+              0.46
+            ],
+            "radius": 0.62,
+            "stops": [
+              [
+                "#000000",
+                0,
+                0.45
+              ],
+              [
+                "#000000",
+                0.6,
+                1
+              ]
+            ]
+          }
+        ]
+      },
+      {
+        "type": "shape",
+        "id": "shelf",
+        "layout": {
+          "frame": [
+            0,
+            1010,
+            1920,
+            70
+          ]
+        },
+        "shape": {
+          "kind": "rect"
+        },
+        "fills": [
+          {
+            "type": "linear",
+            "start": [
+              0.5,
+              0
+            ],
+            "end": [
+              0.5,
+              1
+            ],
+            "stops": [
+              [
+                "#30261C",
+                0
+              ],
+              [
+                "#120E0A",
+                1
+              ]
+            ]
+          }
+        ]
+      },
+      {
+        "type": "shape",
+        "id": "shelf-edge",
+        "layout": {
+          "frame": [
+            0,
+            1010,
+            1920,
+            3
+          ]
+        },
+        "shape": {
+          "kind": "rect"
+        },
+        "fills": [
+          {
+            "type": "solid",
+            "color": "#5A4733",
+            "opacity": 0.8
+          }
+        ]
+      },
+      {
+        "type": "shape",
+        "id": "foot-left",
+        "layout": {
+          "frame": [
+            444,
+            1004,
+            96,
+            16
+          ]
+        },
+        "shape": {
+          "kind": "rect",
+          "cornerRadius": 3
+        },
+        "fills": [
+          {
+            "type": "solid",
+            "color": "#0C0C0D"
+          }
+        ]
+      },
+      {
+        "type": "shape",
+        "id": "foot-right",
+        "layout": {
+          "frame": [
+            1380,
+            1004,
+            96,
+            16
+          ]
+        },
+        "shape": {
+          "kind": "rect",
+          "cornerRadius": 3
+        },
+        "fills": [
+          {
+            "type": "solid",
+            "color": "#0C0C0D"
+          }
+        ]
+      },
+      {
+        "type": "shape",
+        "id": "body",
+        "layout": {
+          "frame": [
+            372,
+            74,
+            1176,
+            934
+          ]
+        },
+        "shape": {
+          "kind": "rect",
+          "cornerRadius": 12
+        },
+        "fills": [
+          {
+            "type": "linear",
+            "start": [
+              0.5,
+              0
+            ],
+            "end": [
+              0.5,
+              1
+            ],
+            "stops": [
+              [
+                "#3A3D43",
+                0
+              ],
+              [
+                "#2A2C31",
+                0.08
+              ],
+              [
+                "#202226",
+                1
+              ]
+            ]
+          }
+        ],
+        "strokes": [
+          {
+            "color": "#5A5E66",
+            "opacity": 0.45,
+            "width": 2,
+            "align": "inner"
+          }
+        ],
+        "effects": [
+          {
+            "type": "shadow",
+            "color": "#000000",
+            "opacity": 0.75,
+            "radius": 70,
+            "offset": [
+              0,
+              26
+            ]
+          }
+        ]
+      },
+      {
+        "type": "shape",
+        "id": "face",
+        "layout": {
+          "frame": [
+            402,
+            104,
+            1116,
+            832
+          ]
+        },
+        "shape": {
+          "kind": "rect",
+          "cornerRadius": 8
+        },
+        "fills": [
+          {
+            "type": "linear",
+            "start": [
+              0.5,
+              0
+            ],
+            "end": [
+              0.5,
+              1
+            ],
+            "stops": [
+              [
+                "#141518",
+                0
+              ],
+              [
+                "#1B1C20",
+                1
+              ]
+            ]
+          }
+        ],
+        "strokes": [
+          {
+            "color": "#000000",
+            "opacity": 0.7,
+            "width": 3,
+            "align": "inner"
+          }
+        ]
+      },
+      {
+        "type": "shape",
+        "id": "tally",
+        "layout": {
+          "frame": [
+            430,
+            958,
+            18,
+            18
+          ]
+        },
+        "shape": {
+          "kind": "ellipse"
+        },
+        "fills": [
+          {
+            "type": "radial",
+            "center": [
+              0.4,
+              0.35
+            ],
+            "radius": 0.6,
+            "stops": [
+              [
+                "#FFB09A",
+                0
+              ],
+              [
+                "#F0382A",
+                0.45
+              ],
+              [
+                "#8E130A",
+                1
+              ]
+            ]
+          }
+        ],
+        "effects": [
+          {
+            "type": "shadow",
+            "color": "#FF3B2F",
+            "opacity": 0.8,
+            "radius": 16,
+            "offset": [
+              0,
+              0
+            ]
+          }
+        ]
+      },
+      {
+        "type": "text",
+        "id": "label",
+        "layout": {
+          "frame": [
+            466,
+            954,
+            360,
+            26
+          ]
+        },
+        "text": "STUDIO MONITOR",
+        "font": {
+          "size": 17,
+          "weight": "semibold"
+        },
+        "color": "#8B8F97",
+        "align": "leading"
+      },
+      {
+        "type": "shape",
+        "id": "buttons",
+        "layout": {
+          "frame": [
+            1118,
+            956,
+            38,
+            22
+          ]
+        },
+        "shape": {
+          "kind": "rect",
+          "cornerRadius": 3
+        },
+        "fills": [
+          {
+            "type": "linear",
+            "start": [
+              0.5,
+              0
+            ],
+            "end": [
+              0.5,
+              1
+            ],
+            "stops": [
+              [
+                "#3B3E44",
+                0
+              ],
+              [
+                "#26282C",
+                1
+              ]
+            ]
+          }
+        ],
+        "strokes": [
+          {
+            "color": "#0A0A0B",
+            "opacity": 0.9,
+            "width": 1.5,
+            "align": "outer"
+          }
+        ],
+        "repeat": {
+          "count": 6,
+          "offset": {
+            "x": 52,
+            "y": 0
+          }
+        }
+      },
+      {
+        "type": "shape",
+        "id": "knob",
+        "layout": {
+          "frame": [
+            1452,
+            948,
+            38,
+            38
+          ]
+        },
+        "shape": {
+          "kind": "ellipse"
+        },
+        "fills": [
+          {
+            "type": "linear",
+            "start": [
+              0.2,
+              0
+            ],
+            "end": [
+              0.8,
+              1
+            ],
+            "stops": [
+              [
+                "#4A4D54",
+                0
+              ],
+              [
+                "#18191C",
+                1
+              ]
+            ]
+          }
+        ],
+        "strokes": [
+          {
+            "color": "#0A0A0B",
+            "opacity": 0.9,
+            "width": 2,
+            "align": "outer"
+          }
+        ]
+      },
+      {
+        "type": "screen",
+        "id": "tube",
+        "layout": {
+          "frame": [
+            456,
+            162,
+            1008,
+            756
+          ]
+        }
+      }
+    ]
+  }
+}

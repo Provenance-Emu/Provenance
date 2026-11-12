@@ -79,6 +79,21 @@ struct TVBezelShaderTests {
         #expect(TVBezelShader.curvatureOffValues(for: radius).isEmpty)
     }
 
+    @Test("A built-in filter with its own curvature flattens the glass instead")
+    func nativeCurvature() {
+        let native = ShaderCatalogEntry(id: .native(.complexCRT), name: "Complex CRT", category: ShaderCatalog.nativeCategory,
+                                        passes: 1, historyFrames: 0, usesFeedback: false, lutCount: 0,
+                                        parameters: [parameter("complexCRTWarpX", initial: 0.03, maximum: 0.05)], directory: nil)
+        #expect(TVBezelShader.bendsPictureItself(native))
+        // A library filter is told to stop instead (curvatureOffValues), so the glass keeps its curve.
+        let library = entry("crt/crt-geom", parameters: [parameter("CURVATURE")])
+        #expect(!TVBezelShader.bendsPictureItself(library))
+        let flat = ShaderCatalogEntry(id: .native(.lcd), name: "LCD", category: ShaderCatalog.nativeCategory,
+                                      passes: 1, historyFrames: 0, usesFeedback: false, lutCount: 0,
+                                      parameters: [parameter("lcdGridOpacity")], directory: nil)
+        #expect(!TVBezelShader.bendsPictureItself(flat))
+    }
+
     @Test("Filters with a frame of their own are recognised")
     func bezelFilters() {
         #expect(TVBezelShader.isBezelFilter(entry("bezel/uborder/uborder-koko-ambi", category: "bezel", parameters: [])))

@@ -1,0 +1,636 @@
+{
+  "formatVersion": "2.0",
+  "requires": [
+    "shapes.parametric",
+    "paint.gradients",
+    "effects.shadow",
+    "layout.repeat"
+  ],
+  "identifier": "org.provenance-emu.tv.computer-monitor",
+  "name": "Computer Monitor",
+  "author": "Provenance",
+  "gameTypes": [
+    "org.provenance-emu.tv"
+  ],
+  "reference": {
+    "shortSide": 1080,
+    "minScale": 1.0,
+    "maxScale": 1.0
+  },
+  "root": {
+    "type": "group",
+    "id": "root",
+    "children": [
+      {
+        "type": "shape",
+        "id": "wall",
+        "shape": {
+          "kind": "rect"
+        },
+        "fills": [
+          {
+            "type": "linear",
+            "start": [
+              0.5,
+              0
+            ],
+            "end": [
+              0.5,
+              1
+            ],
+            "stops": [
+              [
+                "#5E6B72",
+                0
+              ],
+              [
+                "#3C464C",
+                1
+              ]
+            ]
+          },
+          {
+            "type": "radial",
+            "center": [
+              0.5,
+              0.45
+            ],
+            "radius": 0.62,
+            "stops": [
+              [
+                "#000000",
+                0,
+                0.45
+              ],
+              [
+                "#000000",
+                0.5,
+                1
+              ]
+            ]
+          }
+        ]
+      },
+      {
+        "type": "shape",
+        "id": "desk",
+        "layout": {
+          "frame": [
+            0,
+            1038,
+            1920,
+            42
+          ]
+        },
+        "shape": {
+          "kind": "rect"
+        },
+        "fills": [
+          {
+            "type": "linear",
+            "start": [
+              0.5,
+              0
+            ],
+            "end": [
+              0.5,
+              1
+            ],
+            "stops": [
+              [
+                "#B59A72",
+                0
+              ],
+              [
+                "#6E5B40",
+                1
+              ]
+            ]
+          }
+        ]
+      },
+      {
+        "type": "shape",
+        "id": "desk-edge",
+        "layout": {
+          "frame": [
+            0,
+            1038,
+            1920,
+            3
+          ]
+        },
+        "shape": {
+          "kind": "rect"
+        },
+        "fills": [
+          {
+            "type": "solid",
+            "color": "#E0C79C",
+            "opacity": 0.7
+          }
+        ]
+      },
+      {
+        "type": "shape",
+        "id": "base",
+        "layout": {
+          "frame": [
+            620,
+            1014,
+            680,
+            30
+          ]
+        },
+        "shape": {
+          "kind": "rect",
+          "cornerRadius": 10
+        },
+        "fills": [
+          {
+            "type": "linear",
+            "start": [
+              0.5,
+              0
+            ],
+            "end": [
+              0.5,
+              1
+            ],
+            "stops": [
+              [
+                "#CFC7B3",
+                0
+              ],
+              [
+                "#9A927E",
+                1
+              ]
+            ]
+          }
+        ],
+        "effects": [
+          {
+            "type": "shadow",
+            "color": "#000000",
+            "opacity": 0.5,
+            "radius": 26,
+            "offset": [
+              0,
+              10
+            ]
+          }
+        ]
+      },
+      {
+        "type": "shape",
+        "id": "neck",
+        "layout": {
+          "frame": [
+            800,
+            998,
+            320,
+            24
+          ]
+        },
+        "shape": {
+          "kind": "trapezoid",
+          "taper": 0.12
+        },
+        "fills": [
+          {
+            "type": "linear",
+            "start": [
+              0.5,
+              0
+            ],
+            "end": [
+              0.5,
+              1
+            ],
+            "stops": [
+              [
+                "#B9B19C",
+                0
+              ],
+              [
+                "#8E8773",
+                1
+              ]
+            ]
+          }
+        ]
+      },
+      {
+        "type": "shape",
+        "id": "case",
+        "layout": {
+          "frame": [
+            330,
+            56,
+            1260,
+            946
+          ]
+        },
+        "shape": {
+          "kind": "rect",
+          "cornerRadius": 30
+        },
+        "fills": [
+          {
+            "type": "linear",
+            "start": [
+              0.5,
+              0
+            ],
+            "end": [
+              0.5,
+              1
+            ],
+            "stops": [
+              [
+                "#E2DBC9",
+                0
+              ],
+              [
+                "#CFC8B4",
+                0.5
+              ],
+              [
+                "#B4AC97",
+                1
+              ]
+            ]
+          }
+        ],
+        "strokes": [
+          {
+            "color": "#F4EEDD",
+            "opacity": 0.7,
+            "width": 3,
+            "align": "inner"
+          }
+        ],
+        "effects": [
+          {
+            "type": "shadow",
+            "color": "#000000",
+            "opacity": 0.6,
+            "radius": 70,
+            "offset": [
+              0,
+              26
+            ]
+          }
+        ]
+      },
+      {
+        "type": "shape",
+        "id": "vents",
+        "layout": {
+          "frame": [
+            470,
+            76,
+            980,
+            4
+          ]
+        },
+        "shape": {
+          "kind": "rect",
+          "cornerRadius": 2
+        },
+        "fills": [
+          {
+            "type": "solid",
+            "color": "#7C7563",
+            "opacity": 0.55
+          }
+        ],
+        "repeat": {
+          "count": 4,
+          "offset": {
+            "x": 0,
+            "y": 10
+          }
+        }
+      },
+      {
+        "type": "shape",
+        "id": "recess",
+        "layout": {
+          "frame": [
+            392,
+            118,
+            1136,
+            838
+          ]
+        },
+        "shape": {
+          "kind": "rect",
+          "cornerRadius": 34
+        },
+        "fills": [
+          {
+            "type": "linear",
+            "start": [
+              0.5,
+              0
+            ],
+            "end": [
+              0.5,
+              1
+            ],
+            "stops": [
+              [
+                "#A39C88",
+                0
+              ],
+              [
+                "#BDB6A2",
+                1
+              ]
+            ]
+          }
+        ],
+        "strokes": [
+          {
+            "color": "#6F6957",
+            "opacity": 0.8,
+            "width": 3,
+            "align": "inner"
+          }
+        ]
+      },
+      {
+        "type": "shape",
+        "id": "badge",
+        "layout": {
+          "frame": [
+            420,
+            968,
+            150,
+            26
+          ]
+        },
+        "shape": {
+          "kind": "rect",
+          "cornerRadius": 4
+        },
+        "fills": [
+          {
+            "type": "linear",
+            "start": [
+              0.5,
+              0
+            ],
+            "end": [
+              0.5,
+              1
+            ],
+            "stops": [
+              [
+                "#B7AF9A",
+                0
+              ],
+              [
+                "#A19A86",
+                1
+              ]
+            ]
+          }
+        ],
+        "strokes": [
+          {
+            "color": "#7C7563",
+            "opacity": 0.8,
+            "width": 1.5,
+            "align": "inner"
+          }
+        ]
+      },
+      {
+        "type": "shape",
+        "id": "stripe-r",
+        "layout": {
+          "frame": [
+            430,
+            976,
+            18,
+            10
+          ]
+        },
+        "shape": {
+          "kind": "rect",
+          "cornerRadius": 2
+        },
+        "fills": [
+          {
+            "type": "solid",
+            "color": "#C94F3A"
+          }
+        ]
+      },
+      {
+        "type": "shape",
+        "id": "stripe-g",
+        "layout": {
+          "frame": [
+            452,
+            976,
+            18,
+            10
+          ]
+        },
+        "shape": {
+          "kind": "rect",
+          "cornerRadius": 2
+        },
+        "fills": [
+          {
+            "type": "solid",
+            "color": "#5E9B4C"
+          }
+        ]
+      },
+      {
+        "type": "shape",
+        "id": "stripe-b",
+        "layout": {
+          "frame": [
+            474,
+            976,
+            18,
+            10
+          ]
+        },
+        "shape": {
+          "kind": "rect",
+          "cornerRadius": 2
+        },
+        "fills": [
+          {
+            "type": "solid",
+            "color": "#3F6FB0"
+          }
+        ]
+      },
+      {
+        "type": "shape",
+        "id": "door",
+        "layout": {
+          "frame": [
+            1180,
+            964,
+            250,
+            34
+          ]
+        },
+        "shape": {
+          "kind": "rect",
+          "cornerRadius": 5
+        },
+        "fills": [
+          {
+            "type": "linear",
+            "start": [
+              0.5,
+              0
+            ],
+            "end": [
+              0.5,
+              1
+            ],
+            "stops": [
+              [
+                "#C9C2AE",
+                0
+              ],
+              [
+                "#B3AB96",
+                1
+              ]
+            ]
+          }
+        ],
+        "strokes": [
+          {
+            "color": "#7C7563",
+            "opacity": 0.7,
+            "width": 1.5,
+            "align": "inner"
+          }
+        ]
+      },
+      {
+        "type": "shape",
+        "id": "power",
+        "layout": {
+          "frame": [
+            1466,
+            968,
+            44,
+            26
+          ]
+        },
+        "shape": {
+          "kind": "rect",
+          "cornerRadius": 5
+        },
+        "fills": [
+          {
+            "type": "linear",
+            "start": [
+              0.5,
+              0
+            ],
+            "end": [
+              0.5,
+              1
+            ],
+            "stops": [
+              [
+                "#D7D0BC",
+                0
+              ],
+              [
+                "#A9A28D",
+                1
+              ]
+            ]
+          }
+        ],
+        "strokes": [
+          {
+            "color": "#6F6957",
+            "opacity": 0.9,
+            "width": 1.5,
+            "align": "outer"
+          }
+        ]
+      },
+      {
+        "type": "shape",
+        "id": "led",
+        "layout": {
+          "frame": [
+            1444,
+            975,
+            12,
+            12
+          ]
+        },
+        "shape": {
+          "kind": "ellipse"
+        },
+        "fills": [
+          {
+            "type": "radial",
+            "center": [
+              0.4,
+              0.35
+            ],
+            "radius": 0.6,
+            "stops": [
+              [
+                "#D8FFC8",
+                0
+              ],
+              [
+                "#4FD03A",
+                0.5
+              ],
+              [
+                "#1C6A10",
+                1
+              ]
+            ]
+          }
+        ],
+        "effects": [
+          {
+            "type": "shadow",
+            "color": "#55E03A",
+            "opacity": 0.8,
+            "radius": 12,
+            "offset": [
+              0,
+              0
+            ]
+          }
+        ]
+      },
+      {
+        "type": "screen",
+        "id": "tube",
+        "layout": {
+          "frame": [
+            456,
+            162,
+            1008,
+            756
+          ]
+        }
+      }
+    ]
+  }
+}

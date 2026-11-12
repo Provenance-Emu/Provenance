@@ -1,0 +1,828 @@
+{
+  "formatVersion": "2.0",
+  "requires": [
+    "shapes.parametric",
+    "paint.gradients",
+    "effects.shadow",
+    "layout.repeat"
+  ],
+  "identifier": "org.provenance-emu.tv.living-room",
+  "name": "Living Room TV",
+  "author": "Provenance",
+  "gameTypes": [
+    "org.provenance-emu.tv"
+  ],
+  "reference": {
+    "shortSide": 1080,
+    "minScale": 1.0,
+    "maxScale": 1.0
+  },
+  "root": {
+    "type": "group",
+    "id": "root",
+    "children": [
+      {
+        "type": "shape",
+        "id": "wall",
+        "shape": {
+          "kind": "rect"
+        },
+        "fills": [
+          {
+            "type": "linear",
+            "start": [
+              0.5,
+              0
+            ],
+            "end": [
+              0.5,
+              1
+            ],
+            "stops": [
+              [
+                "#6B4A2E",
+                0
+              ],
+              [
+                "#4A311D",
+                1
+              ]
+            ]
+          },
+          {
+            "type": "radial",
+            "center": [
+              0.5,
+              0.45
+            ],
+            "radius": 0.62,
+            "stops": [
+              [
+                "#000000",
+                0,
+                0.4
+              ],
+              [
+                "#000000",
+                0.55,
+                1
+              ]
+            ]
+          }
+        ]
+      },
+      {
+        "type": "shape",
+        "id": "panel-seams",
+        "layout": {
+          "frame": [
+            0,
+            0,
+            4,
+            1020
+          ]
+        },
+        "shape": {
+          "kind": "rect"
+        },
+        "fills": [
+          {
+            "type": "solid",
+            "color": "#2A1A0E",
+            "opacity": 0.55
+          }
+        ],
+        "repeat": {
+          "count": 13,
+          "offset": {
+            "x": 160,
+            "y": 0
+          }
+        }
+      },
+      {
+        "type": "shape",
+        "id": "panel-lights",
+        "layout": {
+          "frame": [
+            5,
+            0,
+            2,
+            1020
+          ]
+        },
+        "shape": {
+          "kind": "rect"
+        },
+        "fills": [
+          {
+            "type": "solid",
+            "color": "#8A6442",
+            "opacity": 0.25
+          }
+        ],
+        "repeat": {
+          "count": 13,
+          "offset": {
+            "x": 160,
+            "y": 0
+          }
+        }
+      },
+      {
+        "type": "shape",
+        "id": "carpet",
+        "layout": {
+          "frame": [
+            0,
+            1030,
+            1920,
+            50
+          ]
+        },
+        "shape": {
+          "kind": "rect"
+        },
+        "fills": [
+          {
+            "type": "linear",
+            "start": [
+              0.5,
+              0
+            ],
+            "end": [
+              0.5,
+              1
+            ],
+            "stops": [
+              [
+                "#3B2A20",
+                0
+              ],
+              [
+                "#1A120D",
+                1
+              ]
+            ]
+          }
+        ]
+      },
+      {
+        "type": "shape",
+        "id": "skirting",
+        "layout": {
+          "frame": [
+            0,
+            1012,
+            1920,
+            18
+          ]
+        },
+        "shape": {
+          "kind": "rect"
+        },
+        "fills": [
+          {
+            "type": "linear",
+            "start": [
+              0.5,
+              0
+            ],
+            "end": [
+              0.5,
+              1
+            ],
+            "stops": [
+              [
+                "#2C1D12",
+                0
+              ],
+              [
+                "#1B110A",
+                1
+              ]
+            ]
+          }
+        ]
+      },
+      {
+        "type": "shape",
+        "id": "leg-left",
+        "layout": {
+          "frame": [
+            250,
+            1002,
+            56,
+            44
+          ]
+        },
+        "shape": {
+          "kind": "trapezoid",
+          "taper": 0.22
+        },
+        "fills": [
+          {
+            "type": "linear",
+            "start": [
+              0.5,
+              0
+            ],
+            "end": [
+              0.5,
+              1
+            ],
+            "stops": [
+              [
+                "#2A1A0F",
+                0
+              ],
+              [
+                "#150C06",
+                1
+              ]
+            ]
+          }
+        ]
+      },
+      {
+        "type": "shape",
+        "id": "leg-right",
+        "layout": {
+          "frame": [
+            1614,
+            1002,
+            56,
+            44
+          ]
+        },
+        "shape": {
+          "kind": "trapezoid",
+          "taper": 0.22
+        },
+        "fills": [
+          {
+            "type": "linear",
+            "start": [
+              0.5,
+              0
+            ],
+            "end": [
+              0.5,
+              1
+            ],
+            "stops": [
+              [
+                "#2A1A0F",
+                0
+              ],
+              [
+                "#150C06",
+                1
+              ]
+            ]
+          }
+        ]
+      },
+      {
+        "type": "shape",
+        "id": "cabinet",
+        "layout": {
+          "frame": [
+            150,
+            84,
+            1620,
+            922
+          ]
+        },
+        "shape": {
+          "kind": "rect",
+          "cornerRadius": 18
+        },
+        "fills": [
+          {
+            "type": "linear",
+            "start": [
+              0.5,
+              0
+            ],
+            "end": [
+              0.5,
+              1
+            ],
+            "stops": [
+              [
+                "#8B5A33",
+                0
+              ],
+              [
+                "#6E4526",
+                0.5
+              ],
+              [
+                "#57351C",
+                1
+              ]
+            ]
+          }
+        ],
+        "strokes": [
+          {
+            "color": "#A9764A",
+            "opacity": 0.5,
+            "width": 2,
+            "align": "inner"
+          }
+        ],
+        "effects": [
+          {
+            "type": "shadow",
+            "color": "#000000",
+            "opacity": 0.7,
+            "radius": 80,
+            "offset": [
+              0,
+              30
+            ]
+          }
+        ]
+      },
+      {
+        "type": "shape",
+        "id": "top-trim",
+        "layout": {
+          "frame": [
+            150,
+            84,
+            1620,
+            26
+          ]
+        },
+        "shape": {
+          "kind": "rect",
+          "cornerRadius": 12
+        },
+        "fills": [
+          {
+            "type": "linear",
+            "start": [
+              0.5,
+              0
+            ],
+            "end": [
+              0.5,
+              1
+            ],
+            "stops": [
+              [
+                "#A8754A",
+                0
+              ],
+              [
+                "#6B4226",
+                1
+              ]
+            ]
+          }
+        ]
+      },
+      {
+        "type": "shape",
+        "id": "grain",
+        "layout": {
+          "frame": [
+            170,
+            128,
+            1580,
+            2
+          ]
+        },
+        "shape": {
+          "kind": "rect"
+        },
+        "fills": [
+          {
+            "type": "solid",
+            "color": "#3D2512",
+            "opacity": 0.22
+          }
+        ],
+        "repeat": {
+          "count": 40,
+          "offset": {
+            "x": 0,
+            "y": 21
+          }
+        }
+      },
+      {
+        "type": "shape",
+        "id": "cloth-left",
+        "layout": {
+          "frame": [
+            186,
+            138,
+            252,
+            806
+          ]
+        },
+        "shape": {
+          "kind": "rect",
+          "cornerRadius": 10
+        },
+        "fills": [
+          {
+            "type": "linear",
+            "start": [
+              0.5,
+              0
+            ],
+            "end": [
+              0.5,
+              1
+            ],
+            "stops": [
+              [
+                "#5C4A33",
+                0
+              ],
+              [
+                "#3F3223",
+                1
+              ]
+            ]
+          }
+        ],
+        "strokes": [
+          {
+            "color": "#2A1B0F",
+            "opacity": 0.9,
+            "width": 4,
+            "align": "inner"
+          }
+        ]
+      },
+      {
+        "type": "shape",
+        "id": "weave-left",
+        "layout": {
+          "frame": [
+            196,
+            148,
+            2,
+            786
+          ]
+        },
+        "shape": {
+          "kind": "rect"
+        },
+        "fills": [
+          {
+            "type": "solid",
+            "color": "#1E150C",
+            "opacity": 0.45
+          }
+        ],
+        "repeat": {
+          "count": 30,
+          "offset": {
+            "x": 8,
+            "y": 0
+          }
+        }
+      },
+      {
+        "type": "shape",
+        "id": "cloth-right",
+        "layout": {
+          "frame": [
+            1482,
+            138,
+            252,
+            806
+          ]
+        },
+        "shape": {
+          "kind": "rect",
+          "cornerRadius": 10
+        },
+        "fills": [
+          {
+            "type": "linear",
+            "start": [
+              0.5,
+              0
+            ],
+            "end": [
+              0.5,
+              1
+            ],
+            "stops": [
+              [
+                "#5C4A33",
+                0
+              ],
+              [
+                "#3F3223",
+                1
+              ]
+            ]
+          }
+        ],
+        "strokes": [
+          {
+            "color": "#2A1B0F",
+            "opacity": 0.9,
+            "width": 4,
+            "align": "inner"
+          }
+        ]
+      },
+      {
+        "type": "shape",
+        "id": "weave-right",
+        "layout": {
+          "frame": [
+            1492,
+            148,
+            2,
+            786
+          ]
+        },
+        "shape": {
+          "kind": "rect"
+        },
+        "fills": [
+          {
+            "type": "solid",
+            "color": "#1E150C",
+            "opacity": 0.45
+          }
+        ],
+        "repeat": {
+          "count": 30,
+          "offset": {
+            "x": 8,
+            "y": 0
+          }
+        }
+      },
+      {
+        "type": "shape",
+        "id": "surround",
+        "layout": {
+          "frame": [
+            440,
+            122,
+            1040,
+            830
+          ]
+        },
+        "shape": {
+          "kind": "rect",
+          "cornerRadius": 40
+        },
+        "fills": [
+          {
+            "type": "linear",
+            "start": [
+              0.5,
+              0
+            ],
+            "end": [
+              0.5,
+              1
+            ],
+            "stops": [
+              [
+                "#2A2420",
+                0
+              ],
+              [
+                "#191512",
+                1
+              ]
+            ]
+          }
+        ],
+        "strokes": [
+          {
+            "color": "#000000",
+            "opacity": 0.8,
+            "width": 4,
+            "align": "inner"
+          },
+          {
+            "color": "#B58A5A",
+            "opacity": 0.55,
+            "width": 3,
+            "align": "outer"
+          }
+        ]
+      },
+      {
+        "type": "shape",
+        "id": "dial-a",
+        "layout": {
+          "frame": [
+            690,
+            960,
+            32,
+            32
+          ]
+        },
+        "shape": {
+          "kind": "ellipse"
+        },
+        "fills": [
+          {
+            "type": "radial",
+            "center": [
+              0.4,
+              0.35
+            ],
+            "radius": 0.6,
+            "stops": [
+              [
+                "#D8CBB2",
+                0
+              ],
+              [
+                "#8B7B62",
+                0.7
+              ],
+              [
+                "#4A3F30",
+                1
+              ]
+            ]
+          }
+        ],
+        "strokes": [
+          {
+            "color": "#1A120B",
+            "opacity": 0.9,
+            "width": 2,
+            "align": "outer"
+          }
+        ]
+      },
+      {
+        "type": "shape",
+        "id": "dial-b",
+        "layout": {
+          "frame": [
+            744,
+            960,
+            32,
+            32
+          ]
+        },
+        "shape": {
+          "kind": "ellipse"
+        },
+        "fills": [
+          {
+            "type": "radial",
+            "center": [
+              0.4,
+              0.35
+            ],
+            "radius": 0.6,
+            "stops": [
+              [
+                "#D8CBB2",
+                0
+              ],
+              [
+                "#8B7B62",
+                0.7
+              ],
+              [
+                "#4A3F30",
+                1
+              ]
+            ]
+          }
+        ],
+        "strokes": [
+          {
+            "color": "#1A120B",
+            "opacity": 0.9,
+            "width": 2,
+            "align": "outer"
+          }
+        ]
+      },
+      {
+        "type": "shape",
+        "id": "channel",
+        "layout": {
+          "frame": [
+            1110,
+            963,
+            96,
+            26
+          ]
+        },
+        "shape": {
+          "kind": "rect",
+          "cornerRadius": 4
+        },
+        "fills": [
+          {
+            "type": "linear",
+            "start": [
+              0.5,
+              0
+            ],
+            "end": [
+              0.5,
+              1
+            ],
+            "stops": [
+              [
+                "#120D09",
+                0
+              ],
+              [
+                "#241A11",
+                1
+              ]
+            ]
+          }
+        ],
+        "strokes": [
+          {
+            "color": "#B58A5A",
+            "opacity": 0.6,
+            "width": 1.5,
+            "align": "outer"
+          }
+        ]
+      },
+      {
+        "type": "shape",
+        "id": "pilot",
+        "layout": {
+          "frame": [
+            1226,
+            969,
+            14,
+            14
+          ]
+        },
+        "shape": {
+          "kind": "ellipse"
+        },
+        "fills": [
+          {
+            "type": "radial",
+            "center": [
+              0.4,
+              0.35
+            ],
+            "radius": 0.6,
+            "stops": [
+              [
+                "#FFE2A8",
+                0
+              ],
+              [
+                "#F2A23A",
+                0.5
+              ],
+              [
+                "#8A4A0C",
+                1
+              ]
+            ]
+          }
+        ],
+        "effects": [
+          {
+            "type": "shadow",
+            "color": "#FFA83A",
+            "opacity": 0.8,
+            "radius": 14,
+            "offset": [
+              0,
+              0
+            ]
+          }
+        ]
+      },
+      {
+        "type": "screen",
+        "id": "tube",
+        "layout": {
+          "frame": [
+            480,
+            180,
+            960,
+            720
+          ]
+        }
+      }
+    ]
+  }
+}
