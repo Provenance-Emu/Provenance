@@ -68,6 +68,15 @@ final class ControllerPointerSettingsTests: XCTestCase {
         XCTAssertEqual(resolved.bindings(for: .mouse), .defaults(for: .mouse))
     }
 
+    func testShakeDefaultsOnAndResolvesPerScope() {
+        XCTAssertTrue(store.resolved(system: .Wii, gameMD5: "abc").shakeEnabled)
+        store.update(.system(.Wii)) { $0.shake = false }
+        XCTAssertFalse(store.resolved(system: .Wii, gameMD5: "abc").shakeEnabled)
+        store.update(.game(md5: "abc")) { $0.shake = true }
+        XCTAssertTrue(store.resolved(system: .Wii, gameMD5: "abc").shakeEnabled)
+        XCTAssertFalse(store.resolved(system: .Wii, gameMD5: "other").shakeEnabled)
+    }
+
     func testUpdatePrunesEmptyEntries() {
         store.update(.game(md5: "abc")) { $0.speed = 2.0 }
         XCTAssertNotNil(defaults.data(forKey: ControllerPointerSettingsStore.storageKey))

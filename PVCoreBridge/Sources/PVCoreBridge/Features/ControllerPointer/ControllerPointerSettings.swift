@@ -17,11 +17,13 @@ public struct ControllerPointerSettings: Codable, Equatable, Sendable {
     public var acceleration: Double?
     /// Click bindings by role (`ControllerPointerRole.rawValue`).
     public var bindings: [String: PointerClickBindings]?
+    /// Shaking a pad shakes the game's controller (the Wii Remote).
+    public var shake: Bool?
 
     public init() {}
 
     public var isEmpty: Bool {
-        mode == nil && speed == nil && acceleration == nil && (bindings?.isEmpty ?? true)
+        mode == nil && speed == nil && acceleration == nil && (bindings?.isEmpty ?? true) && shake == nil
     }
 }
 
@@ -62,6 +64,8 @@ public final class ControllerPointerSettingsStore: @unchecked Sendable {
     public struct Resolved: Equatable, Sendable {
         public var mode: ControllerPointerMode
         public var curve: PointerSpeedCurve
+        /// Shaking a pad shakes the game's controller. On unless the player turned it off.
+        public var shakeEnabled: Bool
         var bindingOverrides: [ControllerPointerRole: PointerClickBindings]
 
         public func bindings(for role: ControllerPointerRole) -> PointerClickBindings {
@@ -106,7 +110,8 @@ public final class ControllerPointerSettingsStore: @unchecked Sendable {
             overrides[role] = layers.lazy.compactMap { $0.bindings?[role.rawValue] }.first
         }
         return Resolved(
-            mode: layers.lazy.compactMap(\.mode).first ?? .automatic, curve: curve, bindingOverrides: overrides)
+            mode: layers.lazy.compactMap(\.mode).first ?? .automatic, curve: curve,
+            shakeEnabled: layers.lazy.compactMap(\.shake).first ?? true, bindingOverrides: overrides)
     }
 
     // MARK: - Write

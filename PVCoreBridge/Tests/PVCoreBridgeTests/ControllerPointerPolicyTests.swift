@@ -91,7 +91,9 @@ final class ControllerPointerPolicyTests: XCTestCase {
         XCTAssertEqual(gun[.twoFinger], .pauseMenu)
 
         let wii = PointerClickBindings.defaults(for: .wiiPointer)
-        for zone in TouchpadClickZone.allCases { XCTAssertEqual(wii[zone], .wiiA) }
+        XCTAssertEqual(wii[.left], .wiiA)
+        XCTAssertEqual(wii[.right], .wiiB)
+        XCTAssertEqual(wii[.twoFinger], .pauseMenu)
 
         let none = PointerClickBindings.defaults(for: .none)
         for zone in TouchpadClickZone.allCases { XCTAssertEqual(none[zone], PointerAction.none) }

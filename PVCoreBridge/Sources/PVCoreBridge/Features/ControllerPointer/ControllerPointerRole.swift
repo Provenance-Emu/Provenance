@@ -137,7 +137,9 @@ public struct PointerClickBindings: Codable, Equatable, Sendable {
         case .mouse:
             return PointerClickBindings(left: .leftButton, right: .leftButton, twoFinger: .rightButton)
         case .wiiPointer:
-            return PointerClickBindings(left: .wiiA, right: .wiiA, twoFinger: .wiiA)
+            /// The two-finger click opens the pause menu: with the touchpad taken, a PlayStation
+            /// pad has no other single free button in Wii games, which use both Minus and Plus.
+            return PointerClickBindings(left: .wiiA, right: .wiiB, twoFinger: .pauseMenu)
         case .lightGun:
             return PointerClickBindings(left: .trigger, right: .reload, twoFinger: .pauseMenu)
         }

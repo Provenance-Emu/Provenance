@@ -81,6 +81,29 @@ import UIKit
 	@objc optional func middleMouseUp(atPoint point: CGPoint)
 }
 
+/// A core whose game reads an absolute pointer, such as the Wii Remote's IR camera.
+///
+/// A controller's touchpad drives it through `ControllerPointerRouter`.
+@objc public protocol PointerResponder: AnyObject {
+    /// The running game reads the pointer now.
+    var gameSupportsPointer: Bool { get }
+    /// Points at `position` in the game picture: (0, 0) top left, (1, 1) bottom right.
+    /// `player` is 0-based.
+    func pointerMoved(toNormalized position: CGPoint, forPlayer player: Int)
+    /// The controller stopped driving the pointer; the core's other pointer sources may take over.
+    @objc optional func pointerEnded(forPlayer player: Int)
+}
+
+/// A core whose game reads a controller being shaken, such as the Wii Remote's shake.
+///
+/// A pad's accelerometer drives it through `ControllerMotionRouter`.
+@objc public protocol MotionResponder: AnyObject {
+    /// The running game reads shake now.
+    var gameSupportsShake: Bool { get }
+    /// Holds or lets go of `player`'s shake input. `player` is 0-based.
+    func setShaking(_ shaking: Bool, forPlayer player: Int)
+}
+
 /// Protocol for cores that support light gun peripherals (Zapper, Super Scope, Guncon, etc.).
 /// All coordinates are normalized to the emulator screen space (0.0–1.0 in both axes),
 /// where (0,0) is top-left and (1,1) is bottom-right.
