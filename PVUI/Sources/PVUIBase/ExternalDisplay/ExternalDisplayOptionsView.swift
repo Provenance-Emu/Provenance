@@ -17,6 +17,7 @@ import PVShaders
 public struct ExternalDisplayOptionsView: View {
     @Default(.externalDisplayMode) private var mode
     @Default(.externalDisplayDevicePicture) private var devicePicture
+    @Default(.externalDisplaySkin) private var externalSkin
     @Default(.hideOnScreenControlsWithController) private var hideControlsWithController
     private let store = ShaderLibraryStore.shared
 
@@ -39,6 +40,16 @@ public struct ExternalDisplayOptionsView: View {
             }
 
             if mode == .dedicated {
+                Section {
+                    Picker(String(localized: "Skin Around the Picture"), selection: $externalSkin) {
+                        ForEach(ExternalDisplaySkin.allCases, id: \.self) { choice in
+                            Text(choice.displayName).tag(choice)
+                        }
+                    }
+                } footer: {
+                    Text("Draws this device's skin around the picture as artwork, when the skin has a landscape layout that frames the game screen. Real skins are the ones you installed.")
+                }
+
                 Section {
                     Picker(String(localized: "Game picture on this device"), selection: $devicePicture) {
                         ForEach(ExternalDisplayDevicePicture.allCases, id: \.self) { choice in
