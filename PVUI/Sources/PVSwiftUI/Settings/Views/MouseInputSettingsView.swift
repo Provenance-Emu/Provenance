@@ -107,6 +107,20 @@ struct MouseSection: View {
 
             toggle("Shake Controller to Shake Wii Remote", systemImage: "iphone.radiowaves.left.and.right",
                    isOn: pointerBinding(\.shake, default: true))
+            Picker("Wii Remote Tilt", selection: Binding(
+                get: { pointer.wiiTilt ?? WiiTiltMode.off },
+                set: { mode in
+                    ControllerPointerSettingsStore.shared.update(.global) { $0.wiiTilt = mode }
+                    pointer = ControllerPointerSettingsStore.shared.settings(for: .global)
+                }
+            )) {
+                Text("Off").tag(WiiTiltMode.off)
+                Text("Upright").tag(WiiTiltMode.upright)
+                Text("Sideways").tag(WiiTiltMode.sideways)
+            }
+            Text("Hold the controller face up for neutral tilt.")
+                .font(.retroSettingsRowSubtitle)
+                .foregroundColor(.secondary)
         }
     }
 

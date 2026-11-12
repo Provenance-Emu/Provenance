@@ -33,6 +33,9 @@ final class ControllerMotionRouter {
     /// The game is paused or the app is not active; nothing is delivered.
     private var isSuspended = false
     private var shakeEnabled = true
+    private var tiltMode: WiiTiltMode = .off
+    private var tiltFilters: [Int: WiiTiltFilter] = [:]
+    private var sampledPads: [Int: ObjectIdentifier] = [:]
     private var settingsAreStale = true
 
     init(host: PVEmulatorViewController) {
@@ -75,7 +78,7 @@ final class ControllerMotionRouter {
     private func tick() {
         if settingsAreStale { reloadSettings() }
         guard let core = motionCore, let host else { return }
-        guard shakeEnabled, !host.isShowingMenu, UIApplication.shared.applicationState == .active else {
+        guard shakeEnabled || tiltMode != .off, !host.isShowingMenu, UIApplication.shared.applicationState == .active else {
             if !isSuspended {
                 isSuspended = true
                 releaseAll()
@@ -86,17 +89,32 @@ final class ControllerMotionRouter {
 
         let now = CACurrentMediaTime()
         let pads = PVControllerManager.shared.allLiveControllers
-        for (player, pad) in pads {
-            guard let motion = pad.hardwareController.motion else { continue }
-            activateSensorsIfNeeded(motion, on: pad.hardwareController)
-            var detector = detectors[player] ?? ShakeDetector()
-            let change = detector.update(acceleration: Self.totalAcceleration(of: motion), at: now)
-            detectors[player] = detector
-            if let change { core.setShaking(change, forPlayer: player - 1) }
+        for player in Array(sampledPads.keys) {
+            let current = pads[player]?.hardwareController
+            if current?.motion == nil || current.map(ObjectIdentifier.init) != sampledPads[player] {
+                release(player: player, on: core)
+            }
         }
-        /// A pad that went away lets go of its shake.
-        for player in detectors.keys where pads[player] == nil {
-            release(player: player, on: core)
+        for (player, pad) in pads {
+            let hardware = pad.hardwareController
+            guard let motion = hardware.motion else { continue }
+            sampledPads[player] = ObjectIdentifier(hardware)
+            activateSensorsIfNeeded(motion, on: hardware)
+            let acceleration = Self.totalAcceleration(of: motion)
+            if shakeEnabled {
+                var detector = detectors[player] ?? ShakeDetector()
+                let change = detector.update(acceleration: acceleration, at: now)
+                detectors[player] = detector
+                if let change { core.setShaking(change, forPlayer: player - 1) }
+            }
+            if tiltMode != .off {
+                let gravity = motion.hasGravityAndUserAcceleration
+                    ? SIMD3(motion.gravity.x, motion.gravity.y, motion.gravity.z) : acceleration
+                var filter = tiltFilters[player] ?? WiiTiltFilter()
+                let axes = filter.update(gravity: gravity, mode: tiltMode)
+                tiltFilters[player] = filter
+                core.setTilt?(axes, forPlayer: player - 1)
+            }
         }
     }
 
@@ -120,8 +138,12 @@ final class ControllerMotionRouter {
         settingsAreStale = false
         guard let host else { return }
         let system = SystemIdentifier(rawValue: host.core.systemIdentifier ?? "")
-        shakeEnabled = ControllerPointerSettingsStore.shared
-            .resolved(system: system, gameMD5: host.core.romMD5).shakeEnabled
+        let settings = ControllerPointerSettingsStore.shared.resolved(system: system, gameMD5: host.core.romMD5)
+        if shakeEnabled != settings.shakeEnabled || tiltMode != settings.wiiTilt {
+            releaseAll()
+        }
+        shakeEnabled = settings.shakeEnabled
+        tiltMode = settings.wiiTilt
     }
 
     // MARK: - Release
@@ -129,14 +151,21 @@ final class ControllerMotionRouter {
     private func releaseAll() {
         guard let core = host?.core as? MotionResponder else {
             detectors.removeAll()
+            tiltFilters.removeAll()
+            sampledPads.removeAll()
             return
         }
-        for player in Array(detectors.keys) { release(player: player, on: core) }
+        for player in Array(sampledPads.keys) { release(player: player, on: core) }
     }
 
     private func release(player: Int, on core: MotionResponder) {
-        guard var detector = detectors.removeValue(forKey: player) else { return }
-        if detector.reset() == false { core.setShaking(false, forPlayer: player - 1) }
+        sampledPads.removeValue(forKey: player)
+        if var detector = detectors.removeValue(forKey: player), detector.reset() == false {
+            core.setShaking(false, forPlayer: player - 1)
+        }
+        if tiltFilters.removeValue(forKey: player) != nil {
+            core.setTilt?(.zero, forPlayer: player - 1)
+        }
     }
 }
 #endif

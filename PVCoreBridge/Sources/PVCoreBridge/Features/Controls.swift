@@ -102,6 +102,8 @@ import UIKit
     var gameSupportsShake: Bool { get }
     /// Holds or lets go of `player`'s shake input. `player` is 0-based.
     func setShaking(_ shaking: Bool, forPlayer player: Int)
+    /// Normalized roll (right positive) and pitch (forward positive) for this player.
+    @objc optional func setTilt(_ axes: CGPoint, forPlayer player: Int)
 }
 
 /// Protocol for cores that support light gun peripherals (Zapper, Super Scope, Guncon, etc.).

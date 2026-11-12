@@ -1595,6 +1595,15 @@ static void PVSetGCSIDeviceIfConfigReady(int port) {
     s_padPointsIR[[self wiimotePortForPlayer:player] - 4] = false;
 }
 
+-(void)setWiimoteTiltRoll:(CGFloat)roll pitch:(CGFloat)pitch forPlayer:(NSInteger)player {
+    if (!self.isWii || !_isInitialized || (!self.multiPlayer && player != 0)) return;
+    const int port = [self wiimotePortForPlayer:player];
+    [self gamepadMoveEventOnPad:port axis:WIIMOTE_TILT_LEFT value:MAX(0, -roll)];
+    [self gamepadMoveEventOnPad:port axis:WIIMOTE_TILT_RIGHT value:MAX(0, roll)];
+    [self gamepadMoveEventOnPad:port axis:WIIMOTE_TILT_FORWARD value:MAX(0, pitch)];
+    [self gamepadMoveEventOnPad:port axis:WIIMOTE_TILT_BACKWARD value:MAX(0, -pitch)];
+}
+
 -(void)setWiimoteShakeHeld:(BOOL)held onPort:(int)port {
     if (!self.isWii || !_isInitialized || port < 4 || port > 7) return;
     const int action = held ? 1 : 0;

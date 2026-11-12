@@ -19,6 +19,7 @@ public struct ControllerPointerSettings: Codable, Equatable, Sendable {
     public var bindings: [String: PointerClickBindings]?
     /// Shaking a pad shakes the game's controller (the Wii Remote).
     public var shake: Bool?
+    public var wiiTilt: WiiTiltMode?
     /// Turning the pad moves the pointer too.
     public var gyro: Bool?
     public var gyroInvertX: Bool?
@@ -28,7 +29,7 @@ public struct ControllerPointerSettings: Codable, Equatable, Sendable {
 
     public var isEmpty: Bool {
         mode == nil && speed == nil && acceleration == nil && (bindings?.isEmpty ?? true) && shake == nil
-            && gyro == nil && gyroInvertX == nil && gyroInvertY == nil
+            && wiiTilt == nil && gyro == nil && gyroInvertX == nil && gyroInvertY == nil
     }
 }
 
@@ -76,6 +77,7 @@ public final class ControllerPointerSettingsStore: @unchecked Sendable {
         public var curve: PointerSpeedCurve
         /// Shaking a pad shakes the game's controller. On unless the player turned it off.
         public var shakeEnabled: Bool
+        public var wiiTilt: WiiTiltMode
         /// Turning the pad moves the pointer too.
         public var gyroEnabled: Bool
         public var gyroFilter: GyroPointerFilter
@@ -126,6 +128,7 @@ public final class ControllerPointerSettingsStore: @unchecked Sendable {
         return Resolved(
             mode: layers.lazy.compactMap(\.mode).first ?? .automatic, curve: curve,
             shakeEnabled: layers.lazy.compactMap(\.shake).first ?? true,
+            wiiTilt: layers.lazy.compactMap(\.wiiTilt).first ?? .off,
             gyroEnabled: layers.lazy.compactMap(\.gyro).first ?? false,
             gyroFilter: GyroPointerFilter(
                 sensitivity: double(Self.gyroSensitivityKey), deadZone: double(Self.gyroDeadZoneKey),

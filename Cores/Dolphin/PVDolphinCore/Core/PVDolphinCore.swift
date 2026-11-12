@@ -97,6 +97,10 @@ extension PVDolphinCore: PointerResponder {
 extension PVDolphinCore: MotionResponder {
     public var gameSupportsShake: Bool { _bridge.isWii }
 
+    public func setTilt(_ axes: CGPoint, forPlayer player: Int) {
+        _bridge.setWiimoteTiltRoll(axes.x, pitch: axes.y, forPlayer: player)
+    }
+
     public func setShaking(_ shaking: Bool, forPlayer player: Int) {
         let port = Int(_bridge.wiimotePort(forPlayer: player))
         guard let held = shakingPorts.set(shaking, player: player, port: port) else { return }

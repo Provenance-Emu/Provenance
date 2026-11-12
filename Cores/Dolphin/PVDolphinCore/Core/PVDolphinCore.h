@@ -204,6 +204,7 @@
 /// The pad stopped pointing; the on-screen stick drives the pointer again.
 -(void)endIRPointerForPlayer:(NSInteger)player;
 /// Holds or lets go of Shake on a Wii Remote port (buttons 132-134).
+-(void)setWiimoteTiltRoll:(CGFloat)roll pitch:(CGFloat)pitch forPlayer:(NSInteger)player;
 -(void)setWiimoteShakeHeld:(BOOL)held onPort:(int)port;
 
 // Haptic feedback setup
