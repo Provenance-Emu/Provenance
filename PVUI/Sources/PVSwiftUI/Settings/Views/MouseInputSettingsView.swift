@@ -14,6 +14,7 @@ import PVSettings
 import Defaults
 import PVThemes
 import PVUIBase
+import PVCoreBridge
 
 // MARK: - MouseInputSettingsView (full-page navigation target)
 
@@ -58,6 +59,8 @@ struct MouseSection: View {
     @Default(.gyroMouseDeadZone) private var gyroDeadZone
     @Default(.lightGunCrosshairStyle) private var crosshairStyle
     @ObservedObject private var themeManager = ThemeManager.shared
+    /// The controller pointer's own global values, kept in `ControllerPointerSettingsStore`.
+    @State private var pointer = ControllerPointerSettingsStore.shared.settings(for: .global)
 
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
@@ -78,37 +81,95 @@ struct MouseSection: View {
                 value: $sensitivity
             )
 
-            // Gyro-specific controls (only relevant when gyro or auto)
-            if inputSource == .gyro || inputSource == .auto {
-                RetroSettingsDivider()
+            accelerationSlider
 
-                Toggle(isOn: $gyroMouseEnabled) {
-                    Label("Enable Gyro Mouse", systemImage: "gyroscope")
-                        .font(.retroSettingsLabel)
-                        .foregroundColor(themeManager.currentPalette.settingsCellText?.swiftUIColor
-                            ?? themeManager.currentPalette.gameLibraryText.swiftUIColor)
-                }
-                .tint(.retroBlue)
-                #if os(tvOS)
-                .retroThemedFocus()
-                #endif
+            RetroSettingsDivider()
 
-                if gyroMouseEnabled {
-                    sensitivitySlider(
-                        title: "Gyro Sensitivity",
-                        subtitle: "Multiplier for gyroscope mouse movement",
-                        value: $gyroSensitivity
-                    )
+            // A controller's gyro moves the same pointer as its touchpad, in every pointer role.
+            toggle("Aim with Controller Gyro", systemImage: "gyroscope", isOn: $gyroMouseEnabled)
 
-                    deadZoneSlider
-                }
+            if gyroMouseEnabled {
+                sensitivitySlider(
+                    title: "Gyro Sensitivity",
+                    subtitle: "How far the pointer moves when you turn the controller",
+                    value: $gyroSensitivity
+                )
 
-                Text("Note: Gyro mouse settings are stored but not yet applied during gameplay in this build.")
-                    .font(.retroSettingsRowSubtitle)
-                    .foregroundColor(.secondary)
-                    .padding(.top, 4)
+                deadZoneSlider
+
+                toggle("Invert Gyro Left–Right", systemImage: "arrow.left.and.right",
+                       isOn: pointerBinding(\.gyroInvertX))
+                toggle("Invert Gyro Up–Down", systemImage: "arrow.up.and.down",
+                       isOn: pointerBinding(\.gyroInvertY))
             }
+
+            RetroSettingsDivider()
+
+            toggle("Shake Controller to Shake Wii Remote", systemImage: "iphone.radiowaves.left.and.right",
+                   isOn: pointerBinding(\.shake, default: true))
         }
+    }
+
+    // MARK: - Controller pointer values
+
+    /// A switch over one of the pointer store's global values. Off means "not set" so the default holds.
+    private func pointerBinding(_ field: WritableKeyPath<ControllerPointerSettings, Bool?>,
+                                default fallback: Bool = false) -> Binding<Bool> {
+        Binding(
+            get: { pointer[keyPath: field] ?? fallback },
+            set: { isOn in
+                let stored: Bool? = isOn == fallback ? nil : isOn
+                ControllerPointerSettingsStore.shared.update(.global) { $0[keyPath: field] = stored }
+                pointer = ControllerPointerSettingsStore.shared.settings(for: .global)
+            })
+    }
+
+    private var accelerationBinding: Binding<Double> {
+        Binding(
+            get: { pointer.acceleration ?? PointerSpeedCurve().acceleration },
+            set: { value in
+                ControllerPointerSettingsStore.shared.update(.global) { $0.acceleration = value }
+                pointer = ControllerPointerSettingsStore.shared.settings(for: .global)
+            })
+    }
+
+    private var accelerationSlider: some View {
+        VStack(alignment: .leading, spacing: 6) {
+            HStack {
+                Label("Touchpad Acceleration", systemImage: "hand.draw")
+                    .font(.retroSettingsLabel)
+                    .foregroundColor(labelColor)
+                Spacer()
+                Text(String(format: "%.0f%%", accelerationBinding.wrappedValue * 100))
+                    .font(.retroSettingsValue)
+                    .foregroundColor(.retroBlue)
+            }
+            Text("Fast swipes on a controller touchpad travel further. Slide two fingers to change speed in game.")
+                .font(.retroSettingsRowSubtitle)
+                .foregroundColor(.secondary)
+            RetroWaveSlider(value: accelerationBinding, in: PointerSpeedCurve.accelerationRange, step: 0.05)
+                .accentColor(.retroBlue)
+                #if os(tvOS)
+                .padding(.bottom, 8)
+                #endif
+        }
+    }
+
+    private func toggle(_ title: LocalizedStringKey, systemImage: String, isOn: Binding<Bool>) -> some View {
+        Toggle(isOn: isOn) {
+            Label(title, systemImage: systemImage)
+                .font(.retroSettingsLabel)
+                .foregroundColor(labelColor)
+        }
+        .tint(.retroBlue)
+        #if os(tvOS)
+        .retroThemedFocus()
+        #endif
+    }
+
+    private var labelColor: Color {
+        themeManager.currentPalette.settingsCellText?.swiftUIColor
+            ?? themeManager.currentPalette.gameLibraryText.swiftUIColor
     }
 
     // MARK: - Input Source Picker

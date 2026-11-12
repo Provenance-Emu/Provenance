@@ -51,6 +51,14 @@ public struct ControllerPointerSession: Sendable {
         cursor.set(position)
     }
 
+    /// Moves the cursor by a delta from another pointer input on the same pad (its gyro),
+    /// so the touchpad and the gyro move one cursor. Returns nil when nothing moved.
+    public mutating func nudge(dx: Double, dy: Double) -> PointerOutput? {
+        let applied = cursor.apply(dx: dx, dy: dy)
+        guard applied != .zero else { return nil }
+        return .moved(delta: applied, position: cursor.position)
+    }
+
     /// Releases everything that is held and forgets the touch in progress.
     ///
     /// Call when the pad goes away, the role changes, the game pauses or the session ends,

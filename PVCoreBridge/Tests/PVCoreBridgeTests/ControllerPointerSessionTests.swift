@@ -202,4 +202,22 @@ final class ControllerPointerSessionTests: XCTestCase {
         XCTAssertFalse(hasMovement(feed((0.8, 0.6), after: 3)))
         XCTAssertTrue(hasMovement(feed((0.7, 0.6))))
     }
+
+    // MARK: - Gyro
+
+    func testNudgeMovesTheSameCursor() {
+        guard case let .moved(delta, position) = session.nudge(dx: 0.1, dy: -0.2) else {
+            return XCTFail("expected a move")
+        }
+        XCTAssertEqual(delta.x, 0.1, accuracy: 1e-9)
+        XCTAssertEqual(delta.y, -0.2, accuracy: 1e-9)
+        XCTAssertEqual(position.x, 0.6, accuracy: 1e-9)
+        XCTAssertEqual(position.y, 0.3, accuracy: 1e-9)
+        XCTAssertEqual(session.cursor.position, position)
+    }
+
+    func testNudgeAgainstTheEdgeReportsNothing() {
+        session.adoptCursor(CGPoint(x: 1, y: 0.5))
+        XCTAssertNil(session.nudge(dx: 0.3, dy: 0))
+    }
 }

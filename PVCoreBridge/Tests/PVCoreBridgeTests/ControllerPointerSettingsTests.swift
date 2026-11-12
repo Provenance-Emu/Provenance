@@ -77,6 +77,32 @@ final class ControllerPointerSettingsTests: XCTestCase {
         XCTAssertFalse(store.resolved(system: .Wii, gameMD5: "other").shakeEnabled)
     }
 
+    func testGyroComesFromTheExistingSettings() {
+        XCTAssertFalse(store.resolved(system: nil, gameMD5: nil).gyroEnabled)
+        defaults.set(true, forKey: ControllerPointerSettingsStore.gyroEnabledKey.name)
+        defaults.set(2.0, forKey: ControllerPointerSettingsStore.gyroSensitivityKey.name)
+        defaults.set(0.2, forKey: ControllerPointerSettingsStore.gyroDeadZoneKey.name)
+        let resolved = store.resolved(system: nil, gameMD5: nil)
+        XCTAssertTrue(resolved.gyroEnabled)
+        XCTAssertEqual(resolved.gyroFilter.sensitivity, 2.0)
+        XCTAssertEqual(resolved.gyroFilter.deadZone, 0.2)
+    }
+
+    func testGameCanTurnGyroOnAndInvert() {
+        store.update(.game(md5: "abc")) { $0.gyro = true; $0.gyroInvertY = true }
+        let resolved = store.resolved(system: .NES, gameMD5: "abc")
+        XCTAssertTrue(resolved.gyroEnabled)
+        XCTAssertTrue(resolved.gyroFilter.invertY)
+        XCTAssertFalse(resolved.gyroFilter.invertX)
+        XCTAssertFalse(store.resolved(system: .NES, gameMD5: "other").gyroEnabled)
+    }
+
+    func testGlobalGyroIsWrittenToTheGyroSetting() {
+        store.update(.global) { $0.gyro = true }
+        XCTAssertTrue(defaults.bool(forKey: ControllerPointerSettingsStore.gyroEnabledKey.name))
+        XCTAssertNil(defaults.data(forKey: ControllerPointerSettingsStore.storageKey))
+    }
+
     func testUpdatePrunesEmptyEntries() {
         store.update(.game(md5: "abc")) { $0.speed = 2.0 }
         XCTAssertNotNil(defaults.data(forKey: ControllerPointerSettingsStore.storageKey))

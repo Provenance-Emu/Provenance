@@ -309,31 +309,24 @@ public extension Defaults.Keys {
 
     // MARK: Gyro Mouse
 
-    /// Master toggle for gyroscope-driven virtual mouse cursor.
-    /// When `true` and the active core conforms to `MouseResponder`, rotation-rate
-    /// input from the connected GCController (or device IMU on iPhone/iPad) is
-    /// translated into `mouseMoved(atPoint:)` calls.
+    /// Aim with a controller's gyro: turning the pad moves the controller pointer (mouse,
+    /// light gun or Wii pointer). The device's own sensors are not used.
     ///
-    /// NOTE: This key is currently **not consumed by the gyro mouse runtime /
-    /// GyroMouseAdapter**. It is stored and exposed in the UI for future wiring, but
-    /// toggling it will not yet enable or disable gyro-based cursor translation in-game.
+    /// Read by `ControllerPointerSettingsStore` as the global "aim with the controller gyro"
+    /// switch; a game or system can override it.
     static let gyroMouseEnabled = Key<Bool>("gyroMouseEnabled", default: false)
 
     /// Sensitivity multiplier intended to be applied only to gyroscope-driven mouse input.
     /// Kept separate so gyro feel can be tuned independently of touch/mouse.
     /// Range 0.1 – 5.0; default 1.0.
     ///
-    /// NOTE: This value is currently **not consumed by any gyro mouse handler**. It is
-    /// reserved for future wiring so that gyro-based pointing can be scaled using this
-    /// setting without requiring a migration.
+    /// Read by `ControllerPointerSettingsStore` (`GyroPointerFilter.sensitivity`).
     static let gyroMouseSensitivity = Key<Double>("gyroMouseSensitivity", default: 1.0)
 
     /// Gyroscope dead zone in rad/s. Rotations below this threshold are intended to be
     /// ignored to prevent drift from a stationary device. Range 0.0 – 0.5; default 0.05.
     ///
-    /// NOTE: This key is currently **not read by the gyro mouse input path**, so adjusting
-    /// it will not change behavior yet. It exists to support a future dead-zone
-    /// implementation without breaking stored preferences.
+    /// Read by `ControllerPointerSettingsStore` (`GyroPointerFilter.deadZone`).
     static let gyroMouseDeadZone = Key<Double>("gyroMouseDeadZone", default: 0.05)
 
     /// Enable turbo/autofire: when a button has turbo active, it rapidly toggles press/release.

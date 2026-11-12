@@ -284,6 +284,12 @@ code, including a shake detector, never runs because motion is never started (`:
 - Recenter for gyro: two-finger tap on PS pads. A pad with no touchpad recenters from the pause-menu tile
   only: cores read its buttons directly, so no button can be taken from the game for this. Pushing the
   cursor against a screen edge also re-aligns it, as the cursor is clamped.
+- As built (2026-11-12): `GyroPointerFilter` (dead zone subtracted, sensitivity, invert X/Y) feeds
+  `ControllerPointerSession.nudge`, read on the pointer router's tick, so a Switch Pro pad without a
+  touchpad can point too. Yaw is the turn about the pad's z axis and pitch about its x axis, unchecked on
+  hardware; invert switches cover a pad that disagrees. Settings > Controllers > Mouse Input now has
+  the gyro switch (live), its sensitivity and dead zone, invert switches, touchpad acceleration and the
+  Wii shake switch, all global. Not built: the device's own sensors, per-game editing, profiles, tilt.
 
 ### Step 7: GameCube triggers
 

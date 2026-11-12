@@ -54,6 +54,12 @@ final class ControllerPointerRouter {
     /// Triggers still held from before a pause; they act again only once let go.
     private var triggersAwaitingRelease: Set<PointerAction> = []
 
+    /// Gyro: when it was last read, and the pads whose sensors this router switched on.
+    private var lastGyroTime: TimeInterval?
+    private var activatedMotion: [ObjectIdentifier: GCMotion] = [:]
+    /// Longest gap between gyro reads that still counts as movement (after a hitch, skip it).
+    private static let maxGyroInterval: TimeInterval = 0.1
+
     private let store = ControllerPointerSettingsStore.shared
     /// The player's settings for this game: mode, speed, acceleration and click bindings.
     private var settings: ControllerPointerSettingsStore.Resolved
@@ -111,6 +117,8 @@ final class ControllerPointerRouter {
         observers.forEach(NotificationCenter.default.removeObserver)
         observers.removeAll()
         setRole(.none)
+        for motion in activatedMotion.values { motion.sensorsActive = false }
+        activatedMotion.removeAll()
     }
 
     // MARK: - Role
@@ -166,12 +174,16 @@ final class ControllerPointerRouter {
         return ControllerMappingStore.shared.destination(forSource: .touchpadButton, vendor: vendor) != .touchpadButton
     }
 
-    /// Player 1's pad if it has a touchpad, otherwise the first connected pad that has one.
-    /// Whichever it is, the pointer belongs to player 1.
+    /// Player 1's pad if it can point (a touchpad, or a gyro while gyro aiming is on), otherwise
+    /// the first connected pad that can. Whichever it is, the pointer belongs to player 1.
     private func pointerPad() -> GCController? {
         let manager = PVControllerManager.shared
-        if let first = manager.player1, first.hasTouchpad { return first }
-        return manager.controllers.first { $0.hasTouchpad }
+        if let first = manager.player1, canPoint(first) { return first }
+        return manager.controllers.first(where: canPoint)
+    }
+
+    private func canPoint(_ pad: GCController) -> Bool {
+        pad.hasTouchpad || (settings.gyroEnabled && pad.hardwareController.motion?.hasRotationRate == true)
     }
 
     // MARK: - Sampling
@@ -204,7 +216,7 @@ final class ControllerPointerRouter {
         }
         isSuspended = false
 
-        guard let pad = pointerPad(), let sample = pad.touchpadSample else {
+        guard let pad = pointerPad() else {
             releaseHeldInput()
             sessionPad = nil
             return
@@ -212,13 +224,37 @@ final class ControllerPointerRouter {
         if sessionPad !== pad {
             releaseHeldInput()
             sessionPad = pad
+            lastGyroTime = nil
         }
 
+        let now = CACurrentMediaTime()
         var current = session ?? ControllerPointerSession(curve: settings.curve, bindings: settings.bindings(for: role))
-        let outputs = current.update(sample, at: CACurrentMediaTime())
+        var outputs = pad.touchpadSample.map { current.update($0, at: now) } ?? []
+        if let moved = gyroMovement(of: pad, at: now, session: &current) { outputs.append(moved) }
         session = current
         deliver(outputs, ignoringActions: Self.isTouchpadClickRemapped(on: pad))
         if role == .lightGun { sampleGunTriggers(on: pad) }
+    }
+
+    /// Turning the pad moves the same cursor as the touchpad, so the two add up.
+    private func gyroMovement(of pad: GCController, at now: TimeInterval,
+                              session: inout ControllerPointerSession) -> PointerOutput? {
+        guard settings.gyroEnabled, let motion = pad.hardwareController.motion, motion.hasRotationRate else {
+            lastGyroTime = nil
+            return nil
+        }
+        if motion.sensorsRequireManualActivation, !motion.sensorsActive {
+            motion.sensorsActive = true
+            activatedMotion[ObjectIdentifier(pad.hardwareController)] = motion
+        }
+        defer { lastGyroTime = now }
+        guard let last = lastGyroTime, now - last <= Self.maxGyroInterval else { return nil }
+        /// The pad's frame: x to the right, z out of its face. Turning right is a negative turn
+        /// about z; tilting the top up is a positive turn about x. Not yet checked on hardware;
+        /// the invert settings cover a pad that disagrees.
+        let rate = motion.rotationRate
+        let delta = settings.gyroFilter.screenDelta(yawRate: -rate.z, pitchRate: rate.x, dt: now - last)
+        return session.nudge(dx: Double(delta.x), dy: Double(delta.y))
     }
 
     /// R2 fires and L2 reloads, so the gun works with the pad held normally.

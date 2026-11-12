@@ -19,11 +19,16 @@ public struct ControllerPointerSettings: Codable, Equatable, Sendable {
     public var bindings: [String: PointerClickBindings]?
     /// Shaking a pad shakes the game's controller (the Wii Remote).
     public var shake: Bool?
+    /// Turning the pad moves the pointer too.
+    public var gyro: Bool?
+    public var gyroInvertX: Bool?
+    public var gyroInvertY: Bool?
 
     public init() {}
 
     public var isEmpty: Bool {
         mode == nil && speed == nil && acceleration == nil && (bindings?.isEmpty ?? true) && shake == nil
+            && gyro == nil && gyroInvertX == nil && gyroInvertY == nil
     }
 }
 
@@ -59,6 +64,11 @@ public final class ControllerPointerSettingsStore: @unchecked Sendable {
     static let speedKey = Defaults.Keys.mouseSensitivity
     /// The "Input Source" setting: decides the global mode.
     static let inputSourceKey = Defaults.Keys.mouseInputSource
+    /// The existing gyro settings: on/off is the global gyro value, sensitivity and dead zone
+    /// apply everywhere.
+    static let gyroEnabledKey = Defaults.Keys.gyroMouseEnabled
+    static let gyroSensitivityKey = Defaults.Keys.gyroMouseSensitivity
+    static let gyroDeadZoneKey = Defaults.Keys.gyroMouseDeadZone
 
     /// What a game plays with, after the scopes are combined.
     public struct Resolved: Equatable, Sendable {
@@ -66,6 +76,9 @@ public final class ControllerPointerSettingsStore: @unchecked Sendable {
         public var curve: PointerSpeedCurve
         /// Shaking a pad shakes the game's controller. On unless the player turned it off.
         public var shakeEnabled: Bool
+        /// Turning the pad moves the pointer too.
+        public var gyroEnabled: Bool
+        public var gyroFilter: GyroPointerFilter
         var bindingOverrides: [ControllerPointerRole: PointerClickBindings]
 
         public func bindings(for role: ControllerPointerRole) -> PointerClickBindings {
@@ -87,6 +100,7 @@ public final class ControllerPointerSettingsStore: @unchecked Sendable {
         if scope == .global {
             settings.speed = globalSpeed
             settings.mode = settings.mode ?? globalMode
+            settings.gyro = defaults.object(forKey: Self.gyroEnabledKey.name) as? Bool ?? Self.gyroEnabledKey.defaultValue
         }
         return settings
     }
@@ -111,7 +125,13 @@ public final class ControllerPointerSettingsStore: @unchecked Sendable {
         }
         return Resolved(
             mode: layers.lazy.compactMap(\.mode).first ?? .automatic, curve: curve,
-            shakeEnabled: layers.lazy.compactMap(\.shake).first ?? true, bindingOverrides: overrides)
+            shakeEnabled: layers.lazy.compactMap(\.shake).first ?? true,
+            gyroEnabled: layers.lazy.compactMap(\.gyro).first ?? false,
+            gyroFilter: GyroPointerFilter(
+                sensitivity: double(Self.gyroSensitivityKey), deadZone: double(Self.gyroDeadZoneKey),
+                invertX: layers.lazy.compactMap(\.gyroInvertX).first ?? false,
+                invertY: layers.lazy.compactMap(\.gyroInvertY).first ?? false),
+            bindingOverrides: overrides)
     }
 
     // MARK: - Write
@@ -121,12 +141,18 @@ public final class ControllerPointerSettingsStore: @unchecked Sendable {
         lock.withLock {
             var all = stored()
             var settings = all[scope.key] ?? ControllerPointerSettings()
-            if scope == .global { settings.speed = globalSpeed }
+            if scope == .global {
+                settings.speed = globalSpeed
+                settings.gyro = defaults.object(forKey: Self.gyroEnabledKey.name) as? Bool ?? Self.gyroEnabledKey.defaultValue
+            }
             change(&settings)
             if scope == .global {
                 /// The global speed has one home: the Mouse Sensitivity setting.
                 if let speed = settings.speed { defaults.set(speed, forKey: Self.speedKey.name) }
                 settings.speed = nil
+                /// And the global gyro switch has one home: the Enable Gyro Mouse setting.
+                if let gyro = settings.gyro { defaults.set(gyro, forKey: Self.gyroEnabledKey.name) }
+                settings.gyro = nil
             }
             all[scope.key] = settings.isEmpty ? nil : settings
             save(all)
@@ -139,7 +165,11 @@ public final class ControllerPointerSettingsStore: @unchecked Sendable {
     // MARK: - Storage
 
     private var globalSpeed: Double {
-        defaults.object(forKey: Self.speedKey.name) as? Double ?? Self.speedKey.defaultValue
+        double(Self.speedKey)
+    }
+
+    private func double(_ key: Defaults.Key<Double>) -> Double {
+        defaults.object(forKey: key.name) as? Double ?? key.defaultValue
     }
 
     /// "Input Source" set to the touch screen or a hardware mouse means the pad is not the pointer.
