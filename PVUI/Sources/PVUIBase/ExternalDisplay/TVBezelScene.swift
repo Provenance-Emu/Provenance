@@ -17,7 +17,7 @@ struct TVBezelScene: Sendable {
     /// The bezel preset with this TV's values.
     let shader: ResolvedShader
     /// The cabinet and room, as the preset's background texture.
-    let textures: ShaderTextureOverrides
+    let textures: ShaderTextureOverrides?
 
     /// The tube's width over its height: the shape the picture is fitted into.
     var tubeAspect: CGSize { tubeRect.size }
@@ -32,6 +32,17 @@ struct TVBezelScene: Sendable {
     ///   - key: identifies this TV at this size (`ShaderTextureOverrides.key`).
     static func make(bezel: TVBezel, lightsRoom: Bool, flatGlass: Bool, scenePixelWidth: CGFloat,
                      key: String, catalog: ShaderCatalog = .shared) -> TVBezelScene? {
+        if let presetID = bezel.presetID {
+            guard let entry = catalog.entry(for: presetID) else { return nil }
+            // Both standalone presets place a centred 4:3 tube at 37.8% of the scene width.
+            let canvas = TVBezelArtwork.canvas
+            let height = canvas.width * 0.378
+            let width = height * 4 / 3
+            let tube = CGRect(x: (canvas.width - width) / 2, y: (canvas.height - height) / 2,
+                              width: width, height: height)
+            let shader = ResolvedShader(entry: entry, values: [:], revision: key.hashValue)
+            return TVBezelScene(tubeRect: tube, shader: shader, textures: nil)
+        }
         let lit = lightsRoom && catalog.entry(for: TVBezelShader.ambientID) != nil
         guard let entry = catalog.entry(for: TVBezelShader.presetID(lightsRoom: lit)) else {
             ELOG("TV bezels: the shader library has no \(TVBezelShader.presetID(lightsRoom: lit))")

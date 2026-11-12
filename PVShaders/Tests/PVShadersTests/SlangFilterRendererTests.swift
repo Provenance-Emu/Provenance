@@ -14,15 +14,17 @@ struct SlangFilterRendererTests {
     @Test("loads in the background, then draws only inside the content rect")
     func drawsInsideContentRect() async throws {
         let device = try #require(MTLCreateSystemDefaultDevice())
-        let fixture = Bundle.module.bundleURL.appendingPathComponent("Fixtures/nearest")
+        let fixture = try #require(Bundle.module.resourceURL).appendingPathComponent("Fixtures/nearest")
         let entry = ShaderCatalogEntry(id: .slang("test/nearest"), name: "nearest", category: "test", passes: 1,
                                        historyFrames: 0, usesFeedback: false, lutCount: 0, parameters: [],
                                        directory: fixture)
-        let renderer = SlangFilterRenderer(device: device)
+        var ready = false
+        let renderer = SlangFilterRenderer(device: device) { ready = true }
         #expect(!renderer.prepare(entry))
-        for _ in 0 ..< 100 where !renderer.prepare(entry) {
-            try await Task.sleep(nanoseconds: 50_000_000)
+        for _ in 0 ..< 100 where !ready {
+            try await Task.sleep(for: .milliseconds(50))
         }
+        #expect(ready)
         #expect(renderer.loadedID == entry.id)
 
         let pixel = try renderRows(renderer: renderer, device: device)

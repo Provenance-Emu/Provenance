@@ -39,6 +39,8 @@ public struct ShaderBrowserView: View {
     let current: ShaderBrowserChoice?
     /// Offer "Skin's filter" (only when the current skin ships one).
     let showsSkinFilter: Bool
+    /// Presets offered by a separate picker for this output.
+    private let excludedIDs: Set<ShaderID>
     let onSelect: (ShaderBrowserChoice) -> Void
     /// Keeps the paused game in step when editing a filter from the browser.
     let onParametersChange: (() -> Void)?
@@ -56,13 +58,17 @@ public struct ShaderBrowserView: View {
 
     public init(current: ShaderBrowserChoice?, showsSkinFilter: Bool = false, onParametersChange: (() -> Void)? = nil,
                 onEdit: ((ShaderCatalogEntry) -> Void)? = nil,
+                excludedIDs: Set<ShaderID> = [],
                 onSelect: @escaping (ShaderBrowserChoice) -> Void) {
         self.current = current
         self.showsSkinFilter = showsSkinFilter
+        self.excludedIDs = excludedIDs
         self.onSelect = onSelect
         self.onParametersChange = onParametersChange
         self.onEdit = onEdit
     }
+
+    private var availableCount: Int { catalog.entries.count { !excludedIDs.contains($0.id) } }
 
     private var palette: UXThemePalette { themeManager.currentPalette }
     private var isFiltering: Bool { !query.isEmpty || !looks.isEmpty }
@@ -83,7 +89,7 @@ public struct ShaderBrowserView: View {
     private var content: some View {
         #if os(tvOS)
         VStack(spacing: 16) {
-            TextField(String(localized: "Search \(catalog.entries.count) filters"), text: $query)
+            TextField(String(localized: "Search \(availableCount) filters"), text: $query)
                 .padding(12)
                 .background(RetroPauseSearchFieldBackground())
             filterList
@@ -91,7 +97,7 @@ public struct ShaderBrowserView: View {
         }
         #else
         filterList
-            .searchable(text: $query, prompt: Text(String(localized: "Search \(catalog.entries.count) filters")))
+            .searchable(text: $query, prompt: Text(String(localized: "Search \(availableCount) filters")))
         #endif
     }
 
@@ -107,8 +113,8 @@ public struct ShaderBrowserView: View {
                         choiceRow(title: String(localized: "Skin's Filter"), systemImage: "paintpalette", choice: .skinFilter)
                     }
                 }
-                listSection(String(localized: "Favorites"), entries: store.favoriteIDs.compactMap(catalog.entry(for:)))
-                listSection(String(localized: "Recent"), entries: store.recents.compactMap(catalog.entry(for:)))
+                listSection(String(localized: "Favorites"), entries: store.favoriteIDs.filter { !excludedIDs.contains($0) }.compactMap(catalog.entry(for:)))
+                listSection(String(localized: "Recent"), entries: store.recents.filter { !excludedIDs.contains($0) }.compactMap(catalog.entry(for:)))
                 ForEach(catalog.categories, id: \.self) { category in
                     categorySection(category)
                 }
@@ -147,7 +153,7 @@ public struct ShaderBrowserView: View {
 
     @ViewBuilder
     private var searchResults: some View {
-        let results = catalog.search(query, looks: looks)
+        let results = catalog.search(query, looks: looks).filter { !excludedIDs.contains($0.id) }
         if results.isEmpty {
             Text(String(localized: "No filters match."))
                 .foregroundColor(.secondary)
@@ -170,7 +176,7 @@ public struct ShaderBrowserView: View {
 
     @ViewBuilder
     private func categorySection(_ category: String) -> some View {
-        let entries = catalog.entries.filter { $0.category == category }
+        let entries = catalog.entries.filter { $0.category == category && !excludedIDs.contains($0.id) }
         let isExpanded = expandedCategories.contains(category)
         SwiftUI.Section {
             Button {

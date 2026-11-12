@@ -28,9 +28,10 @@ public final class ShaderPostProcessor: @unchecked Sendable {
     private var nativePixelFormat: MTLPixelFormat?
     private let slangRenderer: SlangFilterRenderer
 
-    public init(device: MTLDevice) {
+    /// Calls `onReady` when an asynchronously compiled shader is ready for a redraw.
+    public init(device: MTLDevice, onReady: (@MainActor @Sendable () -> Void)? = nil) {
         self.device = device
-        slangRenderer = SlangFilterRenderer(device: device)
+        slangRenderer = SlangFilterRenderer(device: device, onReady: onReady)
     }
 
     /// Sets the filter to draw (`nil` for none). Starts compiling a library preset

@@ -79,7 +79,9 @@ public struct ExternalDisplayOptionsView: View {
                     }
                     if hasBezel {
                         Toggle(String(localized: "Match the System's Screen"), isOn: $bezelMatchesSystem)
-                        Toggle(String(localized: "Light the Room"), isOn: $bezelLightsRoom)
+                        if hasGlassTV {
+                            Toggle(String(localized: "Light the Room"), isOn: $bezelLightsRoom)
+                        }
                     }
                 } header: {
                     Text(game == nil ? "Around the Picture" : "For Every Game")
@@ -134,18 +136,8 @@ public struct ExternalDisplayOptionsView: View {
                     Text("Turn off to keep the touch controls on this device while a hardware controller is connected.")
                 }
 
-                Section {
-                    NavigationLink {
-                        ExternalDisplayFilterPicker(insideTV: hasGlassTV)
-                    } label: {
-                        LabeledContent(String(localized: "Screen Filter"), value: filterSummary)
-                    }
-                } footer: {
-                    Text(hasGlassTV
-                         ? "The filter runs inside the TV's glass. Each TV comes with a look of its own, used until you pick another. "
-                           + "Cores that draw into their own view, such as Dolphin and Azahar, are always mirrored."
-                         : "The external display can use a different filter from this device. "
-                           + "Cores that draw into their own view, such as Dolphin and Azahar, are always mirrored.")
+                if chosenBezel?.presetID == nil {
+                    screenFilterSection
                 }
             }
         }
@@ -154,6 +146,22 @@ public struct ExternalDisplayOptionsView: View {
             libraryRevision += 1
         }
         .task { TVBezelLibrary.shared.refreshIfNeeded() }
+    }
+
+    private var screenFilterSection: some View {
+        Section {
+            NavigationLink {
+                ExternalDisplayFilterPicker(insideTV: hasGlassTV)
+            } label: {
+                LabeledContent(String(localized: "Screen Filter"), value: filterSummary)
+            }
+        } footer: {
+            Text(hasGlassTV
+                 ? "The filter runs inside the TV's glass. Each TV comes with a look of its own, used until you pick another. "
+                   + "Cores that draw into their own view, such as Dolphin and Azahar, are always mirrored."
+                 : "The external display can use a different filter from this device. "
+                   + "Cores that draw into their own view, such as Dolphin and Azahar, are always mirrored.")
+        }
     }
 
     private var chosenBezel: TVBezel? {
@@ -167,7 +175,7 @@ public struct ExternalDisplayOptionsView: View {
 
     /// The chosen TV is a built-in one, with glass and a look of its own.
     private var hasGlassTV: Bool {
-        chosenBezel.map { $0.image == nil } ?? false
+        chosenBezel.map { $0.image == nil && $0.presetID == nil } ?? false
     }
 
     /// The TV pinned to `game`: `nil` is automatic.
@@ -222,7 +230,8 @@ private struct ExternalDisplayFilterPicker: View {
                 .font(.footnote)
                 .padding(.vertical, 8)
             }
-            ShaderBrowserView(current: store.selection(for: .screen(.external)).map(ShaderBrowserChoice.init)) { choice in
+            ShaderBrowserView(current: store.selection(for: .screen(.external)).map(ShaderBrowserChoice.init),
+                              excludedIDs: Set(TVBezelCatalog.shaderPresets.compactMap(\.presetID))) { choice in
                 store.setSelection(choice.selection, for: .screen(.external))
             }
         }

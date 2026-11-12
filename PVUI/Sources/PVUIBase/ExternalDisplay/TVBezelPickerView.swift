@@ -5,7 +5,7 @@
 //  Picks the TV around the picture on an external display, and brings in bezels.
 //
 
-#if os(iOS)
+#if os(iOS) || os(tvOS)
 import SwiftUI
 import UniformTypeIdentifiers
 import PVLogging
@@ -48,6 +48,14 @@ struct TVBezelPickerView: View {
                 }
             }
 
+            if !TVBezelCatalog.shaderPresets.isEmpty {
+                Section(String(localized: "Shader Bezels")) {
+                    ForEach(TVBezelCatalog.shaderPresets) { bezel in
+                        row(bezel.name, id: bezel.id)
+                    }
+                }
+            }
+
             Section {
                 ForEach(myBezels) { bezel in
                     HStack {
@@ -64,11 +72,13 @@ struct TVBezelPickerView: View {
                 .onDelete { offsets in
                     offsets.map { myBezels[$0].id }.forEach(TVBezelLibrary.shared.delete(id:))
                 }
+                #if os(iOS)
                 Button {
                     isImporting = true
                 } label: {
                     Label(String(localized: "Import a Bezel…"), systemImage: "square.and.arrow.down")
                 }
+                #endif
             } header: {
                 Text("My Bezels")
             } footer: {
@@ -85,7 +95,9 @@ struct TVBezelPickerView: View {
             }
         }
         .navigationTitle(allowsAutomatic ? String(localized: "TV for This Game") : String(localized: "TV"))
+        #if os(iOS)
         .navigationBarTitleDisplayMode(.inline)
+        #endif
         .onReceive(NotificationCenter.default.publisher(for: TVBezelLibrary.didChangeNotification)) { _ in
             myBezels = TVBezelLibrary.shared.listed
         }
@@ -93,6 +105,7 @@ struct TVBezelPickerView: View {
             // Picks up files put in the folder by hand since the app started.
             await Task.detached(priority: .userInitiated) { TVBezelLibrary.shared.refresh() }.value
         }
+        #if os(iOS)
         .fileImporter(isPresented: $isImporting, allowedContentTypes: Self.importTypes, allowsMultipleSelection: true) { result in
             guard case .success(let urls) = result else { return }
             importFiles(urls)
@@ -102,6 +115,7 @@ struct TVBezelPickerView: View {
         } message: {
             Text(importReport ?? "")
         }
+        #endif
         .sheet(item: $editing) { bezel in
             TVBezelInfoView(bezel: bezel)
         }
@@ -195,7 +209,9 @@ private struct TVBezelInfoView: View {
                 }
             }
             .navigationTitle(String(localized: "Bezel"))
-            .navigationBarTitleDisplayMode(.inline)
+            #if os(iOS)
+        .navigationBarTitleDisplayMode(.inline)
+        #endif
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button(String(localized: "Cancel")) { dismiss() }

@@ -128,7 +128,9 @@ extension PVEmulatorViewController {
            let metalVC, let device = metalVC.device {
             if externalDisplayWindow?.windowScene !== scene {
                 removeExternalDisplayWindow()
-                let output = GameExternalOutputView(device: device)
+                let output = GameExternalOutputView(device: device) { [weak metalVC] in
+                    metalVC?.redrawPausedFrame()
+                }
                 let controller = UIViewController()
                 controller.view = output
                 let window = UIWindow(windowScene: scene)
@@ -163,7 +165,10 @@ extension PVEmulatorViewController {
         var resolved = store.resolvedShader(on: .external, gameMD5: shaderGameMD5, systemID: shaderSystemID,
                                             screenType: core.screenType)
         let bezel = externalDisplayPlan.bezelOnExternalDisplay ? externalDisplayBezel : nil
-        if let bezel, bezel.image != nil {
+        if bezel?.presetID != nil {
+            // A standalone preset includes its own tube treatment.
+            resolved = nil
+        } else if let bezel, bezel.image != nil {
             // An image bezel has no look or glass of its own: the filter runs as it does with
             // no TV, except one that brings a frame, which cannot go inside another.
             if let picked = resolved, TVBezelShader.isBezelFilter(picked.entry) { resolved = nil }

@@ -5,7 +5,7 @@
 //  The game picture on a second screen.
 //
 
-#if os(iOS)
+#if os(iOS) || os(tvOS)
 import UIKit
 import Metal
 import QuartzCore
@@ -46,6 +46,7 @@ final class GameExternalOutputView: UIView {
     private var imageBezel: TVBezel.ImageArtwork?
     /// The image bezel's screen in this view's coordinates, while one is shown.
     private var bezelScreenFrame: CGRect?
+    var hasImageBezel: Bool { bezelScreenFrame != nil }
 
     /// The skin's artwork, above the picture: a skin leaves its screen area clear.
     private let skinImageView = UIImageView()
@@ -56,9 +57,9 @@ final class GameExternalOutputView: UIView {
     /// The skin's screen in this view's coordinates, while a skin is shown.
     private var skinScreenFrame: CGRect?
 
-    init(device: MTLDevice) {
-        filter = ShaderPostProcessor(device: device)
-        bezelProcessor = ShaderPostProcessor(device: device)
+    init(device: MTLDevice, onShaderReady: @escaping @MainActor @Sendable () -> Void) {
+        filter = ShaderPostProcessor(device: device, onReady: onShaderReady)
+        bezelProcessor = ShaderPostProcessor(device: device, onReady: onShaderReady)
         super.init(frame: .zero)
         backgroundColor = .black
         isUserInteractionEnabled = false

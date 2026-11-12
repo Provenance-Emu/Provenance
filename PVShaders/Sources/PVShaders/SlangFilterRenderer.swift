@@ -35,8 +35,12 @@ public final class SlangFilterRenderer: @unchecked Sendable {
     private var appliedParameterRevision: Int?
     private let loadQueue = DispatchQueue(label: "org.provenance-emu.shaders.load", qos: .userInitiated)
 
-    public init(device: MTLDevice) {
+    private let onReady: (@MainActor @Sendable () -> Void)?
+
+    /// Calls `onReady` on the main actor after an asynchronously loaded preset can render.
+    public init(device: MTLDevice, onReady: (@MainActor @Sendable () -> Void)? = nil) {
         self.device = device
+        self.onReady = onReady
     }
 
     /// The preset the current chain runs.
@@ -117,6 +121,9 @@ public final class SlangFilterRenderer: @unchecked Sendable {
             loadedTextureKey = textureKey
             appliedParameterRevision = nil
             ILOG("Shader library: loaded \(id)")
+            if let onReady {
+                Task { @MainActor in onReady() }
+            }
         case .failure(let error):
             _failedIDs.insert(id)
             ELOG("Shader library: \(id) failed to load: \(error)")

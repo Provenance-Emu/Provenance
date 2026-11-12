@@ -72,6 +72,8 @@ public struct TVBezel: Decodable, Identifiable, Equatable, Sendable {
     public let artwork: String
     /// The image of a bezel the player imported or downloaded; `nil` for a built-in TV.
     public let image: ImageArtwork?
+    /// A standalone shader that draws its own cabinet and screen.
+    public let presetID: ShaderID?
     public let source: Source
     /// Shown in the picker. Artwork fetched for a single game is on the device without
     /// being listed.
@@ -89,6 +91,22 @@ public struct TVBezel: Decodable, Identifiable, Equatable, Sendable {
         lightsRoom = try container.decodeIfPresent(Bool.self, forKey: .lightsRoom) ?? true
         artwork = try container.decode(String.self, forKey: .artwork)
         image = nil
+        presetID = nil
+        source = .builtIn
+        isListed = true
+    }
+
+    /// A bundled shader bezel that was checked with its own artwork.
+    init(presetID: ShaderID, name: String) {
+        id = presetID.rawValue
+        self.name = name
+        preferredSystems = []
+        frame = [:]
+        look = nil
+        lightsRoom = false
+        artwork = ""
+        image = nil
+        self.presetID = presetID
         source = .builtIn
         isListed = true
     }
@@ -103,6 +121,7 @@ public struct TVBezel: Decodable, Identifiable, Equatable, Sendable {
         lightsRoom = false
         artwork = ""
         self.image = image
+        presetID = nil
         self.source = source
         self.isListed = isListed
     }
@@ -143,11 +162,22 @@ public enum TVBezelCatalog {
         }
     }()
 
-    /// Every TV on the device: the bundled ones, then the player's own, listed or not.
-    public static var all: [TVBezel] { bundled + TVBezelLibrary.shared.bezels }
+    /// Standalone presets that showed a usable picture and frame at both preview sizes and at 1080p.
+    /// The shader browser's Bezels category also includes append presets and border effects.
+    public static let shaderPresets: [TVBezel] = [
+        TVBezel(presetID: .slang("bezel/uborder/uborder-bezel-reflections"), name: "uBorder Reflections"),
+        TVBezel(presetID: TVBezelShader.ambientID, name: "uBorder Ambient")
+    ].filter { bezel in
+        bezel.presetID.flatMap { ShaderCatalog.shared.entry(for: $0) } != nil
+    }
+
+    /// Every TV on the device, including artwork fetched for a single game.
+    public static var all: [TVBezel] { bundled + shaderPresets + TVBezelLibrary.shared.bezels }
 
     public static func bezel(id: String) -> TVBezel? {
-        bundled.first { $0.id == id } ?? TVBezelLibrary.shared.bezel(id: id)
+        bundled.first { $0.id == id }
+            ?? shaderPresets.first { $0.id == id }
+            ?? TVBezelLibrary.shared.bezel(id: id)
     }
 
     /// The catalogue as the selection rules see it. Only a TV shown in the picker can stand
