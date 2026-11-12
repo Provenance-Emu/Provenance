@@ -293,19 +293,18 @@ public extension Defaults.Keys {
     // MARK: - Mouse Input Settings
 
     /// Which physical input source delivers mouse / pointer events to the emulated core.
-    /// Defaults to `.auto` so the engine picks the best available device at runtime.
+    /// Defaults to `.auto`: every source that is present works.
     ///
-    /// NOTE: As of this version, this key is **not yet read by the runtime mouse input
-    /// pipeline**, and changing it will not affect emulator behavior. It is reserved for
-    /// future use so that the input system can route mouse events based on this value.
+    /// Read by the controller pointer (`ControllerPointerSettingsStore` in PVCoreBridge):
+    /// `.touchscreen` and `.physicalMouse` stop a controller's touchpad from driving the
+    /// pointer; the other values allow it. The touch trackpad and a hardware mouse do not
+    /// consult this key.
     static let mouseInputSource = Key<MouseInputSource>("mouseInputSource", default: .auto)
 
-    /// Global sensitivity multiplier intended to be applied to all mouse delta events
-    /// (touch, controller touchpad, and physical mouse). Range 0.1 – 5.0; default 1.0.
+    /// Pointer speed for a controller's touchpad, everywhere a game or system has no speed
+    /// of its own (`ControllerPointerSettingsStore`). Range 0.1 – 5.0; default 1.0.
     ///
-    /// NOTE: This value is currently **not applied by the runtime mouse input pipeline**.
-    /// It is stored and exposed in the UI for future use, but modifying it will not yet
-    /// change pointer sensitivity in-game.
+    /// The touch trackpad and a hardware mouse do not apply this value yet.
     static let mouseSensitivity = Key<Double>("mouseSensitivity", default: 1.0)
 
     // MARK: Gyro Mouse

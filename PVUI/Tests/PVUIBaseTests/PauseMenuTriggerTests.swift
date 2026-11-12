@@ -13,6 +13,9 @@ private enum Pad {
     /// DualSense / DualShock 4: Create/Share is `buttonOptions`, PS is Home, no separate capture button.
     static let dualSense = PauseMenuPadCapabilities(
         hasExtendedProfile: true, hasOptions: true, hasHome: true, hasThumbstickButtons: true)
+    /// The same pad with its touchpad click counted (the monitor reports it; most tests leave it out).
+    static let dualSenseWithTouchpad = PauseMenuPadCapabilities(
+        hasExtendedProfile: true, hasOptions: true, hasHome: true, hasThumbstickButtons: true, hasTouchpadButton: true)
     /// Xbox Series: View is `buttonOptions`, plus a Share button.
     static let xboxSeries = PauseMenuPadCapabilities(
         hasExtendedProfile: true, hasOptions: true, hasShareButton: true, hasHome: true, hasThumbstickButtons: true)
@@ -49,6 +52,28 @@ struct PauseMenuBindingPolicyTests {
     @Test("DualSense: Create stays Select where the system uses it, and the chords open the menu")
     func dualSenseWithSelect() {
         #expect(triggers(Pad.dualSense, select: true) == [.thumbstickChord, .startSelectChord])
+    }
+
+    @Test("DualSense: the touchpad click comes first on every system while the touchpad is free",
+          arguments: [true, false])
+    func touchpadTriggerLeadsWhenFree(select: Bool) {
+        let plan = PauseMenuBindingPolicy.plan(for: Pad.dualSenseWithTouchpad, systemUsesSelect: select, touchpadIsFree: true)
+        #expect(plan.primary == .touchpadButton)
+        /// The other inputs stay as backups, unchanged.
+        #expect(plan.backups == triggers(Pad.dualSense, select: select))
+    }
+
+    @Test("DualSense: the touchpad click leaves the plan while the touchpad is the game's pointer or remapped",
+          arguments: [true, false])
+    func touchpadTriggerLeavesWhenNotFree(select: Bool) {
+        let plan = PauseMenuBindingPolicy.plan(for: Pad.dualSenseWithTouchpad, systemUsesSelect: select, touchpadIsFree: false)
+        #expect(plan.triggers == triggers(Pad.dualSense, select: select))
+    }
+
+    @Test("A pad without a touchpad is unchanged by a free touchpad", arguments: [Pad.xboxSeries, Pad.switchPro, Pad.mfiBare])
+    func padWithoutTouchpadIsUnchanged(pad: PauseMenuPadCapabilities) {
+        #expect(PauseMenuBindingPolicy.plan(for: pad, systemUsesSelect: true, touchpadIsFree: true)
+                == PauseMenuBindingPolicy.plan(for: pad, systemUsesSelect: true))
     }
 
     @Test("Xbox Series and Switch Pro: the capture button comes first on every system",
@@ -160,6 +185,32 @@ struct PauseMenuTriggerDetectorTests {
     func pressFiresOnce() {
         let down = PauseMenuButtonSample(options: true)
         #expect(fired(Pad.dualSense, select: false, idle, down, down, down, idle) == [nil, .options, nil, nil, nil])
+    }
+
+    @Test("The touchpad click fires on the press, once")
+    func touchpadClickFiresOnPressEdge() {
+        var detector = PauseMenuTriggerDetector(plan: PauseMenuBindingPolicy.plan(
+            for: Pad.dualSenseWithTouchpad, systemUsesSelect: true, touchpadIsFree: true))
+        let down = PauseMenuButtonSample(touchpadButton: true)
+        let fired = [idle, down, down, idle, down].map { detector.update(with: $0) }
+        #expect(fired == [nil, .touchpadButton, nil, nil, .touchpadButton])
+    }
+
+    @Test("A touchpad held down when its trigger joins the plan fires nothing until pressed again")
+    func touchpadHeldAtStartDoesNotFire() {
+        /// The monitor builds a fresh detector when the touchpad becomes free; the click that
+        /// was the game's mouse button a moment ago must not open the menu.
+        var detector = PauseMenuTriggerDetector(plan: PauseMenuBindingPolicy.plan(
+            for: Pad.dualSenseWithTouchpad, systemUsesSelect: true, touchpadIsFree: true))
+        let down = PauseMenuButtonSample(touchpadButton: true)
+        let fired = [down, down, idle, down].map { detector.update(with: $0) }
+        #expect(fired == [nil, nil, nil, .touchpadButton])
+    }
+
+    @Test("The touchpad click fires nothing while it is not in the plan")
+    func touchpadClickIgnoredWhenNotFree() {
+        let down = PauseMenuButtonSample(touchpadButton: true)
+        #expect(fired(Pad.dualSenseWithTouchpad, select: true, idle, down, idle) == [nil, nil, nil])
     }
 
     @Test("A second press fires again")

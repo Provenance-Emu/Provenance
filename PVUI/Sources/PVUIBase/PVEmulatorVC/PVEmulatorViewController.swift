@@ -1368,11 +1368,14 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, Emulato
     /// the running system (`PauseMenuBindingPolicy`). Pads that pause through
     /// `controllerPausedHandler` are bound by `reestablishPauseHandlers`.
     func startPauseTriggers() {
+        /// First, so the monitor can ask whether a touchpad click is free to open the menu.
+        startControllerPointer()
         if pauseTriggerMonitor == nil {
             let system = SystemIdentifier(rawValue: core.systemIdentifier ?? "")
             let monitor = PauseMenuTriggerMonitor(
                 systemUsesSelect: PauseMenuBindingPolicy.systemUsesSelect(system),
                 controllers: { PVControllerManager.shared.controllers },
+                touchpadIsFree: { [weak self] in self?.touchpadIsFree(on: $0) ?? false },
                 onTrigger: { $0.postPauseRequest() })
             monitor.start()
             pauseTriggerMonitor = monitor
@@ -1383,6 +1386,7 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, Emulato
     func stopPauseTriggers() {
         pauseTriggerMonitor?.stop()
         pauseTriggerMonitor = nil
+        stopControllerPointer()
         PVControllerManager.shared.controllers.forEach { $0.clearPauseHandler() }
     }
 

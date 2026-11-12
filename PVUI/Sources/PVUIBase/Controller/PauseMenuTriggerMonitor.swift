@@ -37,7 +37,8 @@ public extension GCController {
             hasShareButton: gamepad != nil && pauseMenuShareButton != nil,
             hasHome: gamepad?.buttonHome != nil,
             hasThumbstickButtons: gamepad?.leftThumbstickButton != nil && gamepad?.rightThumbstickButton != nil,
-            hasProfileTrigger: hasPauseMenuProfileTrigger)
+            hasProfileTrigger: hasPauseMenuProfileTrigger,
+            hasTouchpadButton: hasTouchpad)
     }
 
     private var hasPauseMenuProfileTrigger: Bool {
@@ -57,7 +58,8 @@ public extension GCController {
             share: pauseMenuShareButton?.isPressed ?? false,
             home: gamepad.buttonHome?.isPressed ?? false,
             leftThumbstickButton: gamepad.leftThumbstickButton?.isPressed ?? false,
-            rightThumbstickButton: gamepad.rightThumbstickButton?.isPressed ?? false)
+            rightThumbstickButton: gamepad.rightThumbstickButton?.isPressed ?? false,
+            touchpadButton: isTouchpadClicked)
     }
 
     /// Keeps the system's own gestures (screenshot and clip recording on Share/Create,
@@ -80,21 +82,28 @@ public extension GCController {
 final class PauseMenuTriggerMonitor {
     private let systemUsesSelect: Bool
     private let controllers: () -> [GCController]
+    /// Whether a pad's touchpad click is free to open the menu right now. It is not while
+    /// the touchpad is the game's pointer or the player has remapped the click, and either
+    /// can change while a game runs.
+    private let touchpadIsFree: (GCController) -> Bool
     private let onTrigger: (PauseMenuTrigger) -> Void
     private var detectors: [ObjectIdentifier: PauseMenuTriggerDetector] = [:]
     private var displayLink: OwnedDisplayLink?
 
     init(systemUsesSelect: Bool,
          controllers: @escaping () -> [GCController],
+         touchpadIsFree: @escaping (GCController) -> Bool = { _ in false },
          onTrigger: @escaping (PauseMenuTrigger) -> Void) {
         self.systemUsesSelect = systemUsesSelect
         self.controllers = controllers
+        self.touchpadIsFree = touchpadIsFree
         self.onTrigger = onTrigger
     }
 
     /// The pause inputs of a pad under this monitor's system.
     func bindingPlan(for controller: GCController) -> PauseMenuBindingPlan {
-        PauseMenuBindingPolicy.plan(for: controller.pauseMenuCapabilities, systemUsesSelect: systemUsesSelect)
+        PauseMenuBindingPolicy.plan(for: controller.pauseMenuCapabilities, systemUsesSelect: systemUsesSelect,
+                                    touchpadIsFree: touchpadIsFree(controller))
     }
 
     func start() {
@@ -117,7 +126,7 @@ final class PauseMenuTriggerMonitor {
         for pad in pads where pad.extendedGamepad != nil && !pad.isSnapshot {
             let id = ObjectIdentifier(pad)
             seen.insert(id)
-            var detector = detectors[id] ?? makeDetector(for: pad)
+            var detector = currentDetector(for: pad, id: id)
             let fired = detector.update(with: pad.pauseMenuButtonSample)
             detectors[id] = detector
             if let fired {
@@ -126,6 +135,16 @@ final class PauseMenuTriggerMonitor {
             }
         }
         detectors = detectors.filter { seen.contains($0.key) }
+    }
+
+    /// The pad's detector, rebuilt when its plan has changed (the touchpad became the game's
+    /// pointer or stopped being it). A fresh detector only records its first sample, so a
+    /// button held across the change fires nothing.
+    private func currentDetector(for pad: GCController, id: ObjectIdentifier) -> PauseMenuTriggerDetector {
+        if let detector = detectors[id], !pad.hasTouchpad || detector.plan == bindingPlan(for: pad) {
+            return detector
+        }
+        return makeDetector(for: pad)
     }
 
     private func makeDetector(for pad: GCController) -> PauseMenuTriggerDetector {

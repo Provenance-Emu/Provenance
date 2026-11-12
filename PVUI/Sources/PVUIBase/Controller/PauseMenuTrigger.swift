@@ -11,6 +11,8 @@ import PVTouchOverlay
 
 /// A controller input that opens (and closes) the pause menu.
 public enum PauseMenuTrigger: String, Equatable, Sendable, CaseIterable {
+    /// The touchpad click of a PlayStation pad, while the touchpad is not the game's pointer.
+    case touchpadButton
     /// The extra capture button that no emulated system uses: Xbox Share, Switch Pro Capture.
     case shareButton
     /// `buttonOptions`: PlayStation Create/Share, Xbox View, Switch "−".
@@ -40,15 +42,19 @@ public struct PauseMenuPadCapabilities: Equatable, Sendable {
     public var hasThumbstickButtons: Bool
     /// The pad is a synthesized Switch Online profile that pauses from its own trigger.
     public var hasProfileTrigger: Bool
+    /// The pad has a touchpad that clicks (DualSense, DualShock 4).
+    public var hasTouchpadButton: Bool
 
     public init(hasExtendedProfile: Bool, hasOptions: Bool = false, hasShareButton: Bool = false,
-                hasHome: Bool = false, hasThumbstickButtons: Bool = false, hasProfileTrigger: Bool = false) {
+                hasHome: Bool = false, hasThumbstickButtons: Bool = false, hasProfileTrigger: Bool = false,
+                hasTouchpadButton: Bool = false) {
         self.hasExtendedProfile = hasExtendedProfile
         self.hasOptions = hasOptions
         self.hasShareButton = hasShareButton
         self.hasHome = hasHome
         self.hasThumbstickButtons = hasThumbstickButtons
         self.hasProfileTrigger = hasProfileTrigger
+        self.hasTouchpadButton = hasTouchpadButton
     }
 }
 
@@ -73,9 +79,15 @@ public struct PauseMenuBindingPlan: Equatable, Sendable {
 /// opens the menu with a single press only where the system has no Select button.
 /// `buttonHome` belongs to the system (Game Center, app switching) and is used only by
 /// pads with no Options button.
+///
+/// A PlayStation pad's touchpad click is the one button no emulated system has, so it
+/// opens the menu on every system. It stops doing so while the touchpad is the game's
+/// pointer (a mouse, a light gun, the Wii pointer), where the click belongs to the game,
+/// and when the player has remapped it.
 public enum PauseMenuBindingPolicy {
 
-    public static func plan(for pad: PauseMenuPadCapabilities, systemUsesSelect: Bool) -> PauseMenuBindingPlan {
+    public static func plan(for pad: PauseMenuPadCapabilities, systemUsesSelect: Bool,
+                            touchpadIsFree: Bool = false) -> PauseMenuBindingPlan {
         if pad.hasProfileTrigger {
             return PauseMenuBindingPlan(triggers: [.profileTrigger])
         }
@@ -83,6 +95,7 @@ public enum PauseMenuBindingPolicy {
             return PauseMenuBindingPlan(triggers: [.legacyPause])
         }
         var triggers: [PauseMenuTrigger] = []
+        if pad.hasTouchpadButton, touchpadIsFree { triggers.append(.touchpadButton) }
         if pad.hasShareButton { triggers.append(.shareButton) }
         if pad.hasOptions, !systemUsesSelect { triggers.append(.options) }
         if pad.hasThumbstickButtons { triggers.append(.thumbstickChord) }
@@ -123,19 +136,23 @@ public struct PauseMenuButtonSample: Equatable, Sendable {
     public var home = false
     public var leftThumbstickButton = false
     public var rightThumbstickButton = false
+    public var touchpadButton = false
 
     public init(options: Bool = false, menu: Bool = false, share: Bool = false, home: Bool = false,
-                leftThumbstickButton: Bool = false, rightThumbstickButton: Bool = false) {
+                leftThumbstickButton: Bool = false, rightThumbstickButton: Bool = false,
+                touchpadButton: Bool = false) {
         self.options = options
         self.menu = menu
         self.share = share
         self.home = home
         self.leftThumbstickButton = leftThumbstickButton
         self.rightThumbstickButton = rightThumbstickButton
+        self.touchpadButton = touchpadButton
     }
 
     func isActive(_ trigger: PauseMenuTrigger) -> Bool {
         switch trigger {
+        case .touchpadButton: return touchpadButton
         case .shareButton: return share
         case .options: return options
         case .thumbstickChord: return leftThumbstickButton && rightThumbstickButton
@@ -201,6 +218,7 @@ public extension PauseMenuTrigger {
     /// How to open the pause menu with this trigger, for the on-screen hint.
     var hint: String {
         switch self {
+        case .touchpadButton: return String(localized: "Press the touchpad to open the pause menu")
         case .shareButton: return String(localized: "Press Share / Capture to open the pause menu")
         case .options: return String(localized: "Press Share / Create / View to open the pause menu")
         case .thumbstickChord: return String(localized: "Click both thumbsticks (L3 + R3) to open the pause menu")
@@ -213,6 +231,7 @@ public extension PauseMenuTrigger {
 
     var hintSymbol: String {
         switch self {
+        case .touchpadButton: return "hand.tap.fill"
         case .shareButton, .options: return "square.and.arrow.up"
         case .thumbstickChord: return "l.joystick.fill"
         case .startSelectChord, .home, .legacyPause, .profileTrigger: return "gamecontroller.fill"
