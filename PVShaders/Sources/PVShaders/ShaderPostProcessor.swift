@@ -21,6 +21,7 @@ public final class ShaderPostProcessor: @unchecked Sendable {
     private let device: MTLDevice
     private let lock = NSLock()
     private var resolved: ResolvedShader?
+    private var textures: ShaderTextureOverrides?
     private var smoothing = false
 
     private let nativeRenderer = PVMetalFilterRenderer()
@@ -34,13 +35,16 @@ public final class ShaderPostProcessor: @unchecked Sendable {
 
     /// Sets the filter to draw (`nil` for none). Starts compiling a library preset
     /// right away so it is ready by the time frames ask for it.
-    public func update(_ resolved: ResolvedShader?, smoothing: Bool) {
+    ///
+    /// - Parameter textures: replacements for some of a library preset's textures.
+    public func update(_ resolved: ResolvedShader?, smoothing: Bool, textures: ShaderTextureOverrides? = nil) {
         lock.withLock {
             self.resolved = resolved
+            self.textures = textures
             self.smoothing = smoothing
         }
         if let entry = resolved?.entry, entry.id.kind == .slang {
-            slangRenderer.prepare(entry)
+            slangRenderer.prepare(entry, textures: textures)
         } else if slangRenderer.loadedID != nil {
             slangRenderer.unload()
         }
@@ -48,6 +52,15 @@ public final class ShaderPostProcessor: @unchecked Sendable {
 
     /// Whether a filter is selected (it may still be compiling).
     public var hasFilter: Bool { lock.withLock { resolved != nil } }
+
+    /// Whether the selected filter would draw right now: a native filter always, a library
+    /// preset once it has compiled. Lets a caller that draws in stages skip the earlier ones.
+    public var isReady: Bool {
+        let (resolved, textures) = lock.withLock { (self.resolved, self.textures) }
+        guard let resolved else { return false }
+        if resolved.entry.id.nativeOption != nil { return true }
+        return slangRenderer.prepare(resolved.entry, textures: textures)
+    }
 
     /// Encodes the filter from `source` into `contentRect` of `target` (default: all of it),
     /// clearing the rest to black. Returns `false` when nothing was drawn (no filter, or a
@@ -60,14 +73,14 @@ public final class ShaderPostProcessor: @unchecked Sendable {
                        contentRect: CGRect? = nil,
                        screenType: ScreenTypeObjC = .crt,
                        sourceIsBottomUp: Bool = false) -> Bool {
-        let (resolved, smoothing) = lock.withLock { (self.resolved, self.smoothing) }
+        let (resolved, textures, smoothing) = lock.withLock { (self.resolved, self.textures, self.smoothing) }
         guard let resolved else { return false }
         let rect = contentRect ?? CGRect(x: 0, y: 0, width: target.width, height: target.height)
         if let option = resolved.entry.id.nativeOption {
             return renderNative(option, source: source, target: target, commandBuffer: commandBuffer,
                                 rect: rect, screenType: screenType, smoothing: smoothing, flip: sourceIsBottomUp)
         }
-        guard slangRenderer.prepare(resolved.entry) else { return false }
+        guard slangRenderer.prepare(resolved.entry, textures: textures) else { return false }
         slangRenderer.applyParameters(revision: resolved.revision,
                                       value: { resolved.values[$0.name] ?? $0.initial },
                                       parameters: resolved.entry.parameters)

@@ -27,6 +27,9 @@ public final class SlangFilterRenderer: @unchecked Sendable {
     private var chain: FilterChain?
     private var _loadedID: ShaderID?
     private var loadingID: ShaderID?
+    /// The texture overrides the loaded and the loading chain were built with.
+    private var loadedTextureKey: String?
+    private var loadingTextureKey: String?
     private var _failedIDs: Set<ShaderID> = []
     private var generation = 0
     private var appliedParameterRevision: Int?
@@ -51,17 +54,35 @@ public final class SlangFilterRenderer: @unchecked Sendable {
         case noPasses
     }
 
+    /// A preset's own container with some of its textures replaced.
+    private struct OverridingContainer: CompiledShaderContainer {
+        let base: DirectoryCompiledShaderContainer
+        let textures: [String: Data]
+
+        var shader: Compiled.Shader { base.shader }
+
+        func getLUTByName(_ name: String) throws -> Data {
+            if let data = textures[name] { return data }
+            return try base.getLUTByName(name)
+        }
+    }
+
     /// Returns `true` when `entry`'s chain is ready to render; otherwise starts loading it
     /// (once) and returns `false`.
+    ///
+    /// - Parameter textures: replacements for some of the preset's textures. A chain loaded
+    ///   with a different `key` (or with none) is reloaded.
     @discardableResult
-    public func prepare(_ entry: ShaderCatalogEntry) -> Bool {
+    public func prepare(_ entry: ShaderCatalogEntry, textures: ShaderTextureOverrides? = nil) -> Bool {
         lock.lock()
         defer { lock.unlock() }
-        if _loadedID == entry.id { return true }
-        guard loadingID != entry.id, !_failedIDs.contains(entry.id), let directory = entry.directory else {
+        if _loadedID == entry.id, loadedTextureKey == textures?.key { return true }
+        let isLoading = loadingID == entry.id && loadingTextureKey == textures?.key
+        guard !isLoading, !_failedIDs.contains(entry.id), let directory = entry.directory else {
             return false
         }
         loadingID = entry.id
+        loadingTextureKey = textures?.key
         generation += 1
         let token = generation
         let device = device
@@ -69,24 +90,31 @@ public final class SlangFilterRenderer: @unchecked Sendable {
         loadQueue.async { [weak self] in
             let result: Result<ChainBox, Error> = Result {
                 let chain = try FilterChain(device: device)
-                try chain.setCompiledShader(DirectoryCompiledShaderContainer(directory: directory))
+                let container = try DirectoryCompiledShaderContainer(directory: directory)
+                if let textures {
+                    try chain.setCompiledShader(OverridingContainer(base: container, textures: textures.textures))
+                } else {
+                    try chain.setCompiledShader(container)
+                }
                 guard chain.hasShader else { throw LoadError.noPasses }
                 return ChainBox(chain: chain)
             }
-            self?.finishLoad(result, id: id, token: token)
+            self?.finishLoad(result, id: id, textureKey: textures?.key, token: token)
         }
         return false
     }
 
-    private func finishLoad(_ result: Result<ChainBox, Error>, id: ShaderID, token: Int) {
+    private func finishLoad(_ result: Result<ChainBox, Error>, id: ShaderID, textureKey: String?, token: Int) {
         lock.lock()
         defer { lock.unlock() }
         guard token == generation else { return }
         loadingID = nil
+        loadingTextureKey = nil
         switch result {
         case .success(let box):
             chain = box.chain
             _loadedID = id
+            loadedTextureKey = textureKey
             appliedParameterRevision = nil
             ILOG("Shader library: loaded \(id)")
         case .failure(let error):
@@ -103,6 +131,8 @@ public final class SlangFilterRenderer: @unchecked Sendable {
         chain = nil
         _loadedID = nil
         loadingID = nil
+        loadedTextureKey = nil
+        loadingTextureKey = nil
         appliedParameterRevision = nil
     }
 

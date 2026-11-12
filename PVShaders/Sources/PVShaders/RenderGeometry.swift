@@ -22,6 +22,22 @@ public enum RenderGeometry {
                       height: size.height)
     }
 
+    /// A scene of `aspect` fitted into a drawable, in whole pixels: all of it when the display
+    /// has the scene's proportions, letterboxed or pillarboxed otherwise.
+    public static func sceneRect(aspect: CGSize, drawableSize: CGSize) -> CGRect {
+        let full = CGRect(origin: .zero, size: drawableSize)
+        return aspectFit(aspect: aspect, in: full).integral.intersection(full)
+    }
+
+    /// The pixel size of a part of a scene (`part`, in the units of `canvas`) once the scene
+    /// is drawn `sceneSize` pixels large. At least one pixel each way.
+    public static func pixelSize(of part: CGSize, canvas: CGSize, sceneSize: CGSize) -> (width: Int, height: Int) {
+        guard canvas.width > 0, canvas.height > 0 else { return (1, 1) }
+        let width = part.width / canvas.width * sceneSize.width
+        let height = part.height / canvas.height * sceneSize.height
+        return (max(1, Int(width.rounded())), max(1, Int(height.rounded())))
+    }
+
     /// The picture's rect in drawable pixels.
     ///
     /// The view's frame normally already has the picture's proportions, so the
