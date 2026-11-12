@@ -226,6 +226,7 @@ struct TVMediaMainView: View {
     }
 
     private struct TVMediaMainRootView<ContentArea: View, Overlays: View, ModalContent: View, RenameAlertContent: View>: View {
+        @EnvironmentObject private var themeManager: ThemeManager
         @ObservedObject var appState: AppState
 
         @Binding var lastDestinationRaw: String
