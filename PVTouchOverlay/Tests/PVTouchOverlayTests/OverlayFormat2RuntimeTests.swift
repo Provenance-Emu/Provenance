@@ -107,14 +107,32 @@ final class OverlayFormat2RuntimeTests: XCTestCase {
                                    safeArea: .init(top: 24, left: 0, bottom: 20, right: 0))
         let template = binding.template(padKind: pad, orientation: canvas.orientation)
         let directory = URL(fileURLWithPath: snapshotCandidates, isDirectory: true)
-        let document = try XCTUnwrap(OverlayFormat2Sources.document(in: directory, pad: pad, binding: binding, style: .flat))
-        for position in ["B", "A"] {
-            let layout = OverlayLayoutEngine.resolve(template: template, canvas: canvas, overrides: .empty, gameAspect: 4.0 / 3.0,
-                                                    reservesControlSpace: false, arrangesConsoleRow: true,
-                                                    switchPositionLabels: ["left_diff": position])
-            let artwork = OverlayFormat2Artwork(document: document, layout: layout, environment: profile.environment)
-            let control = try XCTUnwrap(artwork.control("switch-left_diff", in: "switches"))
-            XCTAssertEqual(control.root.children.compactMap { $0.node.text }, ["L DIFF: \(position)"])
+        let paletteColor = binding.palette.color(for: .utility)
+        for style in OverlayStyle.allCases {
+            let document = try XCTUnwrap(OverlayFormat2Sources.document(in: directory, pad: pad, binding: binding, style: style))
+            for position in ["B", "A"] {
+                let controls = [(id: "left_diff", label: "L DIFF: \(position)")]
+                let presented = OverlayFamilyKit.presentingConsoleControls(controls, in: template, vertically: false)
+                let layout = OverlayLayoutEngine.resolve(template: presented, canvas: canvas, overrides: .empty,
+                                                        gameAspect: 4.0 / 3.0, reservesControlSpace: false, arrangesConsoleRow: true)
+                let artwork = OverlayFormat2Artwork(document: document, layout: layout, environment: profile.environment)
+                let control = try XCTUnwrap(artwork.control("switch-left_diff", in: "switches"))
+                XCTAssertEqual(control.root.children.compactMap { $0.node.text }, ["L DIFF: \(position)"])
+                let shape = try XCTUnwrap(control.root.children.first { $0.node.type == .shape }?.node)
+                let color: Skin2Color
+                switch style {
+                case .outline:
+                    XCTAssertTrue(shape.fills.isEmpty)
+                    color = try XCTUnwrap(shape.strokes.first?.color)
+                case .flat:
+                    color = try XCTUnwrap(shape.fills.first?.color)
+                case .glossy:
+                    color = try XCTUnwrap(shape.fills.first?.stops.first?.color)
+                }
+                XCTAssertEqual(color.red, paletteColor.red, accuracy: 1 / 255)
+                XCTAssertEqual(color.green, paletteColor.green, accuracy: 1 / 255)
+                XCTAssertEqual(color.blue, paletteColor.blue, accuracy: 1 / 255)
+            }
         }
     }
 }

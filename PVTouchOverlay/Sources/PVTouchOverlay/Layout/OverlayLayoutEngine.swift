@@ -19,8 +19,7 @@ public enum OverlayLayoutEngine {
                                gameAspect: CGFloat,
                                shownToggles: Set<OverlayAction> = [],
                                reservesControlSpace: Bool = true,
-                               arrangesConsoleRow: Bool = false,
-                               switchPositionLabels: [String: String] = [:]) -> OverlayLayout {
+                               arrangesConsoleRow: Bool = false) -> OverlayLayout {
         let unit = referenceScale(for: canvas)
         // A toggled group that is off takes no part in the layout, so the screen planner never reserves room for it.
         let present = template.groups.filter { $0.toggledBy.map(shownToggles.contains) ?? true }
@@ -43,12 +42,7 @@ public enum OverlayLayoutEngine {
                 let midX = origin.x + (control.frame.midX * unit * scale.width) + ctl.offset.x
                 let midY = origin.y + (control.frame.midY * unit * scale.height) + ctl.offset.y
                 let frame = CGRect(x: midX - width / 2, y: midY - height / 2, width: width, height: height)
-                var displayed = control
-                if group.id == "switches", let label = control.label,
-                   let position = switchPositionLabels[String(control.id.dropFirst("switch-".count))] {
-                    displayed.label = "\(label): \(position)"
-                }
-                return ResolvedControl(control: displayed, frame: frame,
+                return ResolvedControl(control: control, frame: frame,
                                        hitFrame: frame.insetBy(dx: -extendedEdges * unit, dy: -extendedEdges * unit))
             }
             return ResolvedGroup(group: group, frame: CGRect(origin: origin, size: size), controls: controls,

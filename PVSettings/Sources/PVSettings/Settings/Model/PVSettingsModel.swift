@@ -1104,6 +1104,9 @@ public extension Defaults.Keys {
 
     /// Visual style of the programmatic overlay controls.
     static let overlayStyle = Key<OverlayStyle>("overlayStyle", default: .defaultStyle)
+    static let overlayConsoleLayout = Key<OverlayConsoleLayout>("overlayConsoleLayout", default: .automatic)
+    static let overlayConsoleSwitchNames = Key<Bool>("overlayConsoleSwitchNames", default: true)
+    static let overlayConsoleVisibility = Key<[String: Bool]>("overlayConsoleVisibility", default: [:])
 
     /// Haptic strength for programmatic overlay presses: 0 disables, 1 is full strength.
     static let overlayHapticIntensity = Key<Double>("overlayHapticIntensity", default: 0.8)

@@ -26,13 +26,31 @@ struct OverlayLayoutEngineTests {
         return OverlayTemplate(padKind: .standard(.SNES), orientation: .portrait, groups: [grp], screenPolicy: .topBand)
     }
 
+    @Test("Console controls preserve edit IDs when stacked and disappear when collapsed")
+    func consoleControlsPresentation() throws {
+        let binding = try #require(SystemOverlayBindings.binding(for: .Atari2600))
+        let template = binding.template(padKind: .standard(.Atari2600), orientation: .landscape)
+        let labels = [(id: "left_diff", label: "L DIFF: B"), (id: "right_diff", label: "R DIFF: A"), (id: "color_bw", label: "TV: CLR")]
+        let stacked = OverlayFamilyKit.presentingConsoleControls(labels, in: template, vertically: true)
+        let group = try #require(stacked.groups.first { $0.id == "switches" })
+        let row = OverlayFamilyKit.presentingConsoleControls(labels, in: template, vertically: false)
+        let rowGroup = try #require(row.groups.first { $0.id == "switches" })
+        #expect(group.controls.map(\.id) == rowGroup.controls.map(\.id))
+        #expect(Set(group.controls.map { $0.frame.minY }).count == 3)
+        #expect(Set(rowGroup.controls.map { $0.frame.minY }).count == 1)
+        #expect(group.controls[0].kind == .hardwareSwitch(descriptorID: "left_diff"))
+        let collapsed = OverlayFamilyKit.presentingConsoleControls([], in: template, vertically: false)
+        #expect(collapsed.groups.map(\.id) == template.groups.filter { $0.id != "switches" }.map(\.id))
+    }
+
     @Test("Atari console switches and system controls fit a single tablet row with position labels")
     func tabletConsoleRow() throws {
         let binding = try #require(SystemOverlayBindings.binding(for: .Atari2600))
         let template = binding.template(padKind: .standard(.Atari2600), orientation: .landscape)
-        let layout = OverlayLayoutEngine.resolve(template: template, canvas: Self.padLandscape, overrides: .empty,
-                                                gameAspect: 4.0 / 3.0, reservesControlSpace: false, arrangesConsoleRow: true,
-                                                switchPositionLabels: ["left_diff": "B", "color_bw": "CLR"])
+        let labels = [(id: "left_diff", label: "L DIFF: B"), (id: "right_diff", label: "R DIFF: B"), (id: "color_bw", label: "TV: CLR")]
+        let presented = OverlayFamilyKit.presentingConsoleControls(labels, in: template, vertically: false)
+        let layout = OverlayLayoutEngine.resolve(template: presented, canvas: Self.padLandscape, overrides: .empty,
+                                                gameAspect: 4.0 / 3.0, reservesControlSpace: false, arrangesConsoleRow: true)
         let switches = try #require(layout.groups.first { $0.id == "switches" })
         let buttons = try #require(layout.groups.first { $0.id == "system" })
         #expect(switches.frame.maxY == buttons.frame.maxY)

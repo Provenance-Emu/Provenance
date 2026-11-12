@@ -20,6 +20,8 @@ struct OverlayInputSinkAdapterTests {
         var sticks: [(id: String, horizontal: Float, vertical: Float)] = []
         var ndsTouches: [CGPoint] = []
         var ndsReleases = 0
+        var nextConsoleButton: String?
+        var hardwareEdges: [String] = []
 
         override func buttonPressed(_ buttonId: String) { pressed.append(buttonId) }
         override func buttonReleased(_ buttonId: String) { released.append(buttonId) }
@@ -28,6 +30,10 @@ struct OverlayInputSinkAdapterTests {
         }
         override func ndsBottomScreenTouched(at normalizedPoint: CGPoint) { ndsTouches.append(normalizedPoint) }
         override func ndsBottomScreenTouchReleased() { ndsReleases += 1 }
+        override func nextConsoleButtonID(for descriptorID: String) -> String? { nextConsoleButton }
+        override func sendHardwareSwitch(_ buttonId: String, isPressed: Bool) {
+            hardwareEdges.append("\(buttonId) \(isPressed)")
+        }
     }
 
     @Test("Tokens pass straight through; sticks use the thumbstick ids; actions map to skin function tokens")
@@ -77,7 +83,7 @@ struct OverlayInputSinkAdapterTests {
         adapter.overlayAction(.toggleMouse)
         adapter.overlayAction(.flip)
         adapter.overlayAction(.diskSide)
-        adapter.overlayHardwareSwitch(descriptorID: "tvType", isOn: true)
+        adapter.overlayConsoleControl("unknown", isPressed: true)
         #expect(spy.pressed.isEmpty)
         #expect(spy.released.isEmpty)
     }
@@ -125,6 +131,18 @@ struct OverlayInputSinkAdapterTests {
             adapter.overlayPress(OverlayInputID(system: .Atari2600, token: entry.token))
         }
         #expect(spy.pressed == ["leftdiff", "rightdiff", "tvtype"])
+    }
+
+    @Test("A console control releases the position it pressed even after the shared selection changes")
+    func consoleReleaseMatchesPress() async throws {
+        let spy = SpyHandler()
+        let adapter = OverlayInputSinkAdapter(handler: spy)
+        spy.nextConsoleButton = "fast"
+        adapter.overlayConsoleControl("speed", isPressed: true)
+        spy.nextConsoleButton = "slow"
+        adapter.overlayConsoleControl("speed", isPressed: false)
+        try await Task.sleep(for: .seconds(HardwareSwitchTiming.pressDuration * 4))
+        #expect(spy.hardwareEdges == ["fast true", "fast false"])
     }
 
     @Test("WonderSwan d-pad directions resolve to the X cluster, PS3 shape names stay shape names")

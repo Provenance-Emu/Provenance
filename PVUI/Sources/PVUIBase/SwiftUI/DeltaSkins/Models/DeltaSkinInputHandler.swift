@@ -1484,6 +1484,17 @@ open class DeltaSkinInputHandler: ObservableObject {
         forwardButtonPress(normalizedId, isPressed: isPressed)
     }
 
+    /// Resolves a console control to the input for its next position or its momentary button.
+    @MainActor
+    func nextConsoleButtonID(for descriptorID: String) -> String? {
+        guard let system = currentSystemIdentifier else { return nil }
+        if let descriptor = system.hardwareSwitches?.first(where: { $0.id == descriptorID }) {
+            let current = hardwareSwitchPositionIndexes[descriptorID] ?? descriptor.initialPositionIndex
+            return descriptor.positionList[descriptor.nextPosition(after: current)].buttonId
+        }
+        return system.hardwareMomentaryButtons?.first { $0.id == descriptorID }?.buttonId
+    }
+
     /// Sends a console hardware switch (difficulty, TV type, ...) to the core. Switch ids are
     /// the system button enum's own names, so they skip skin-token normalization.
     @MainActor

@@ -260,6 +260,10 @@ struct PauseTileMenuView: View {
 
     /// Triggers a full section rebuild. Call on appear and after any option mutation.
     private func rebuildSections() {
+        rebuildSections(hardwareSwitchPositions: emulatorVC.coreInputHandler.hardwareSwitchPositionIndexes)
+    }
+
+    private func rebuildSections(hardwareSwitchPositions: [String: Int]) {
         viewModel.rebuild(
             emulatorVC: emulatorVC,
             showFPSCount: showFPSCount,
@@ -267,7 +271,7 @@ struct PauseTileMenuView: View {
             featureFlags: featureFlags,
             indicatorRegistry: indicatorRegistry,
             hasControllerProfiles: hasControllerProfiles,
-            hardwareSwitchStates: emulatorVC.coreInputHandler.hardwareSwitchPositionIndexes,
+            hardwareSwitchStates: hardwareSwitchPositions,
             coreOptionsMD5: currentCoreOptionsMD5Scope,
             route: currentRoute
         )
@@ -885,11 +889,9 @@ struct PauseTileMenuView: View {
         case CoreOptionTileProvider.coreSettingsTileID:
             dismissForSubSheetThen { self.emulatorVC.showCoreOptions() }
         case let id where id.hasPrefix(PauseTileMenuViewModel.hardwareSwitchTilePrefix):
-            guard let descriptor = hardwareSwitchDescriptor(forTileID: id) else { return }
-            let current = emulatorVC.coreInputHandler.hardwareSwitchPositionIndexes[descriptor.id] ?? descriptor.initialPositionIndex
-            let next = descriptor.nextPosition(after: current)
-            dispatchHardwareSwitchButton(descriptor.positionList[next].buttonId)
-            rebuildSections()
+            guard let descriptor = hardwareSwitchDescriptor(forTileID: id),
+                  let input = emulatorVC.coreInputHandler.nextConsoleButtonID(for: descriptor.id) else { return }
+            dispatchHardwareSwitchButton(input)
         case let id where id.hasPrefix(PauseTileMenuViewModel.hardwareMomentaryTilePrefix):
             guard let descriptor = hardwareMomentaryDescriptor(forTileID: id) else { return }
             dispatchHardwareSwitchButton(descriptor.buttonId)
@@ -1643,6 +1645,10 @@ struct PauseTileMenuView: View {
                 .task(id: panelWidth) { currentPanelWidth = panelWidth }
                 #endif
             }
+        }
+        .onReceive(emulatorVC.coreInputHandler.$hardwareSwitchPositionIndexes.removeDuplicates()) { positions in
+            // @Published sends before assignment. Rebuild with the new positions.
+            rebuildSections(hardwareSwitchPositions: positions)
         }
         .sheet(isPresented: $showingSaveStateBrowser) {
             PauseMenuSaveStateBrowserView(emulatorVC: emulatorVC) { stateToLoad in

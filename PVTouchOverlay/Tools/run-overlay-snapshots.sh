@@ -56,15 +56,16 @@ for source in OverlayTouchTracker TouchInputRole; do
     sed -i '' 's/^import SkinKitUI$/import SnapshotTouchSelection/' "$scratch/Legacy/Touch/$source.swift"
 done
 if [[ "$runtime_art" == 1 ]]; then
-    cp "$overlay/Sources/PVTouchOverlay/Render/"{OverlayFormat2Artwork,OverlayHostView,OverlayGroupView,OverlayEditorView,OverlayEditController}.swift "$scratch/Legacy/Render/"
+    cp "$overlay/Sources/PVTouchOverlay/Render/"{OverlayFormat2Artwork,OverlayHostView,OverlayGroupView,OverlayEditorView,OverlayEditController,OverlayInputSink}.swift "$scratch/Legacy/Render/"
     cp "$overlay/Sources/PVTouchOverlay/Layout/"{OverlayLayoutEngine,OverlayScreenPlanner}.swift "$scratch/Legacy/Layout/"
+    cp "$overlay/Sources/PVTouchOverlay/Families/OverlayFamilyKit.swift" "$scratch/Legacy/Families/"
     cp -R "$overlay/Sources/PVTouchOverlay/Store" "$scratch/Legacy/"
     sed -i '' '/^import PVLogging$/d' "$scratch/Legacy/Store/OverlayLayoutStore.swift"
     cat > "$scratch/Legacy/Store/SnapshotLogging.swift" <<'SWIFT'
 func WLOG(_ message: String) { print(message) }
 func ELOG(_ message: String) { print(message) }
 SWIFT
-    cp "$overlay/Tests/PVTouchOverlayTests/"{OverlayFormat2RuntimeTests,OverlayLayoutEngineTests,OverlayTouchTrackerTests,OverlayMultiButtonTouchTests}.swift "$scratch/Tests/"
+    cp "$overlay/Tests/PVTouchOverlayTests/"{OverlayFormat2RuntimeTests,OverlayLayoutEngineTests,OverlayTouchTrackerTests,OverlayMultiButtonTouchTests,OverlayHostDispatchTests}.swift "$scratch/Tests/"
 else
     rm "$scratch/Legacy/Render/OverlayEditorView.swift" "$scratch/Legacy/Render/OverlayEditController.swift"
 fi
