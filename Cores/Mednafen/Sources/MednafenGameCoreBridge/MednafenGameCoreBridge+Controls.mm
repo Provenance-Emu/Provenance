@@ -1227,11 +1227,13 @@
         GCExtendedGamepad *gamepad = [controller extendedGamepad];
         GCControllerDirectionPad *dpad = [gamepad dpad];
 
-        GCDualSenseGamepad *dualSense = [gamepad isKindOfClass:[GCDualSenseGamepad class]] ? gamepad : nil;
-        GCDualShockGamepad *dualShock = [gamepad isKindOfClass:[GCDualShockGamepad class]] ? gamepad : nil;
         GCXboxGamepad *xbox = [gamepad isKindOfClass:[GCXboxGamepad class]] ? gamepad : nil;
-        GCControllerButtonInput *selectButton = dualSense ? dualSense.touchpadButton : dualShock ? dualShock.touchpadButton : nil;
-        GCControllerButtonInput *startButton = gamepad.buttonOptions ? gamepad.buttonOptions : (xbox ? xbox.buttonMenu : nil);
+        // A pad with its own Start button (Options, Menu, "+") has Select on the button beside it
+        // (Create, Share, View, "−"). The touchpad click is never a game button: it opens the pause menu.
+        // A pad with one Menu button and nothing else keeps Start there, and Select on the fallbacks below.
+        GCControllerButtonInput *padStart = PVStartButtonForController(controller);
+        GCControllerButtonInput *selectButton = padStart ? gamepad.buttonOptions : nil;
+        GCControllerButtonInput *startButton = padStart ?: (gamepad.buttonOptions ? gamepad.buttonOptions : (xbox ? xbox.buttonMenu : nil));
 
         if (PVSettingsWrapper.use8BitdoM30) // M30 Mode
         {switch (buttonID) {
@@ -1442,11 +1444,13 @@
         GCExtendedGamepad *gamepad = [[controller extendedGamepad] capture];
         GCControllerDirectionPad *dpad = [gamepad dpad];
 
-        GCDualSenseGamepad *dualSense = [gamepad isKindOfClass:[GCDualSenseGamepad class]] ? gamepad : nil;
-        GCDualShockGamepad *dualShock = [gamepad isKindOfClass:[GCDualShockGamepad class]] ? gamepad : nil;
         GCXboxGamepad *xbox = [gamepad isKindOfClass:[GCXboxGamepad class]] ? gamepad : nil;
-        GCControllerButtonInput *selectButton = dualSense ? dualSense.touchpadButton : dualShock ? dualShock.touchpadButton : nil;
-        GCControllerButtonInput *startButton = gamepad.buttonOptions ? gamepad.buttonOptions : (xbox ? xbox.buttonMenu : nil);
+        // A pad with its own Start button (Options, Menu, "+") has Select on the button beside it
+        // (Create, Share, View, "−"). The touchpad click is never a game button: it opens the pause menu.
+        // A pad with one Menu button and nothing else keeps Start there, and Select on the fallbacks below.
+        GCControllerButtonInput *padStart = PVStartButtonForController(controller);
+        GCControllerButtonInput *selectButton = padStart ? gamepad.buttonOptions : nil;
+        GCControllerButtonInput *startButton = padStart ?: (gamepad.buttonOptions ? gamepad.buttonOptions : (xbox ? xbox.buttonMenu : nil));
 
         bool modifier1Pressed = [[gamepad leftShoulder] isPressed] && [[gamepad rightShoulder] isPressed];
         bool modifier2Pressed = [[gamepad leftTrigger] isPressed] && [[gamepad rightTrigger] isPressed];

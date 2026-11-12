@@ -107,30 +107,6 @@ PVShareLikeButtonForController(GCController * _Nonnull controller) {
     return button;
 }
 
-#pragma mark - Touchpad Button Detection
-
-/**
- Returns the PlayStation touchpad button for DualShock 4 or DualSense controllers.
-
- The touchpad button provides an additional input point useful for mapping to Select
- on systems with limited button counts (NES, Game Boy, etc.).
-
- @param controller The GCController to inspect.
- @return The touchpad GCControllerButtonInput, or nil for non-PlayStation controllers.
- */
-static inline GCControllerButtonInput * _Nullable
-PVTouchpadButtonForController(GCController * _Nonnull controller) {
-    GCExtendedGamepad *gamepad = controller.extendedGamepad;
-    if (!gamepad) { return nil; }
-    if ([gamepad isKindOfClass:[GCDualSenseGamepad class]]) {
-        return [(GCDualSenseGamepad *)gamepad touchpadButton];
-    }
-    if ([gamepad isKindOfClass:[GCDualShockGamepad class]]) {
-        return [(GCDualShockGamepad *)gamepad touchpadButton];
-    }
-    return nil;
-}
-
 #pragma mark - Synthesized Pads
 
 /**
@@ -249,22 +225,25 @@ PVResolveStartSelectButtons(GCController * _Nonnull controller,
 }
 
 /**
- Resolves Start and Select buttons with additional share-like and touchpad fallbacks.
+ Resolves Start and Select buttons with an additional share-like fallback.
 
  Extends PVResolveStartSelectButtons with fallback detection via the physical input
- profile (Share/Create/Capture buttons) and PlayStation touchpad. Prefer this variant
- for systems that benefit from alternative Select inputs (NES, GB, SNES, etc.).
+ profile (Share/Create/Capture buttons). Prefer this variant for systems that benefit
+ from alternative Select inputs (NES, GB, SNES, etc.).
 
  For PlayStation controllers, Select priority:
-   1. PlayStation touchpad (DualSense/DualShock only)
-   2. buttonOptions (logical Share/Create button)
-   3. Physical profile Share/Create button (fallback via PVShareLikeButtonForController)
+   1. buttonOptions (logical Share/Create button)
+   2. Physical profile Share/Create button (fallback via PVShareLikeButtonForController)
+
+ The touchpad click is never a game button: it opens the pause menu, or belongs to the
+ game's pointer when the touchpad is one (`PauseMenuBindingPolicy`, `ControllerPointerRouter`
+ in PVUI).
 
  For Xbox controllers, Select is:
    - buttonOptions (View button) only; the physical "Button Share" is exposed via outShareLike.
 
  For Nintendo Switch Pro, Select is:
-   - buttonOptions (− button) only; no additional share-like or touchpad input exists.
+   - buttonOptions (− button) only; no additional share-like input exists.
  @param controller   The GCController to inspect.
  @param outStart     Written with the resolved Start button input, or nil.
  @param outSelect    Written with the resolved Select button input, or nil.
@@ -292,16 +271,10 @@ PVResolveStartSelectShareButtons(GCController * _Nonnull controller,
     BOOL isXbox      = [gamepad isKindOfClass:[GCXboxGamepad class]];
 
     if (isDualSense || isDualShock) {
-        // PlayStation: Options→Start, touchpad OR Create/Share→Select
+        // PlayStation: Options→Start, Create/Share→Select
         *outStart = gamepad.buttonMenu;
-
-        // Prefer touchpad for Select (most ergonomic on PS4/PS5 for NES-era games)
-        *outSelect = PVTouchpadButtonForController(controller);
-        // Fall back to logical Share/Create (buttonOptions)
-        if (!*outSelect) {
-            *outSelect = gamepad.buttonOptions;
-        }
-        // Final fallback: physical profile button
+        *outSelect = gamepad.buttonOptions;
+        // Fallback: physical profile button
         if (!*outSelect) {
             *outSelect = shareLike;
         }
