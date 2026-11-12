@@ -393,9 +393,7 @@ public final class PVControllerManager: NSObject, ObservableObject {
         CaseControllerDetector.notifyIfCase(controller)
         #endif
 
-        controller.setupPauseHandler(onPause: {
-            NotificationCenter.default.post(name: NSNotification.Name("PauseGame"), object: nil)
-        })
+        controller.setupPauseHandler(onPause: { $0.postPauseRequest() })
         assign(controller)
         #if os(iOS)
         if self.controllerUserInteractionEnabled {

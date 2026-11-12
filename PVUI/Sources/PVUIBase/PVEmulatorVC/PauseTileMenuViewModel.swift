@@ -41,6 +41,10 @@ final class PauseTileMenuViewModel: ObservableObject {
 
     @Published private(set) var sections: [PauseMenuTileSection] = []
 
+    /// Whether quitting now would lose progress an automatic save state can keep, so the
+    /// menu offers Save & Quit beside Quit.
+    @Published private(set) var offersSaveAndQuit = false
+
     /// Flat lookup table: tile ID -> description text.
     /// Built alongside `sections` so the info shelf can resolve descriptions in O(1).
     private(set) var descriptionsByTileID: [String: String] = [:]
@@ -85,6 +89,7 @@ final class PauseTileMenuViewModel: ObservableObject {
         let gameSystemID = emulatorVC.game?.systemIdentifier ?? emulatorVC.core.systemIdentifier
         let supportsCheatCodes = (emulatorVC.core as? GameWithCheat)?.supportsCheatCode == true
         let shouldSave = Self.shouldSaveOnQuit(emulatorVC: emulatorVC)
+        offersSaveAndQuit = shouldSave
 
         // Resume + quit tiles are placed at the top (positions 0-2), so quit is near the top.
         var gameTiles: [PauseMenuTile] = [

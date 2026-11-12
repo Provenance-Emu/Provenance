@@ -409,16 +409,19 @@ public extension PVEmualatorControllerProtocol {
 }
 
 extension PVEmualatorControllerProtocol {
-    /// Toggles the pause menu when the controller's pause/menu button is pressed.
+    /// Toggles the pause menu when a controller asks for it.
     ///
-    /// On tvOS there is no on-screen menu button, so the hardware controller must
-    /// always be able to open the pause menu. On iOS the behaviour is gated by the
-    /// `pauseButtonIsMenuButton` user preference.
+    /// The inputs chosen by `PauseMenuBindingPolicy` are never ones the game also reads,
+    /// so they always open the menu. The exception is a pad whose single Menu button is
+    /// all it has (`PauseMenuTrigger.legacyPause`): on iOS, where the screen has a menu
+    /// button, that one still answers to the `pauseButtonIsMenuButton` preference. On
+    /// tvOS nothing else can open the menu, so it always does.
     public func controllerPauseButtonPressed(_ sender: Any? = nil) {
         #if os(tvOS)
         let shouldToggle = true
         #else
-        let shouldToggle = Defaults[.pauseButtonIsMenuButton]
+        let trigger = PauseMenuTrigger(pauseRequest: sender as? Notification)
+        let shouldToggle = trigger?.alwaysOpensMenu == true || Defaults[.pauseButtonIsMenuButton]
         #endif
         ILOG("controllerPauseButtonPressed: shouldToggle=\(shouldToggle), isShowingMenu=\(isShowingMenu)")
         guard shouldToggle else { return }

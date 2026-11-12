@@ -24,6 +24,7 @@ import PVFeatureFlags
 import PVLogging
 import PVRealm
 import PVSettings
+import PVSystems
 import PVThemes
 import SwiftUI
 import PVArchiving
@@ -300,6 +301,9 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, Emulato
     /// Drops the duplicate `PauseGame` signals one button press can produce.
     var pauseToggleCoalescer = PauseToggleCoalescer()
 
+    /// Samples the connected gamepads for their pause-menu triggers while the game runs.
+    var pauseTriggerMonitor: PauseMenuTriggerMonitor?
+
     /// Set once the skin layer reports its controls are on screen.
     var skinDidReportLoaded = false
     /// Set when the skin layer has had its chance to come up; see
@@ -342,11 +346,9 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, Emulato
     private var bootHUD: RetroProgressHUD?
     private var bootHUDIsVisible = false
 
-    #if os(tvOS)
     /// True after the first `isRunning` transition has fired the pause-menu hint toast,
     /// so pause/unpause cycles don't re-trigger it.
     private var pauseHintToastShown = false
-    #endif
 
     public required init(game: PVGame, core: PVEmulatorCore) {
         self.core = core
@@ -414,17 +416,14 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, Emulato
                     DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) { [weak self] in
                         self?.reestablishPauseHandlers()
                     }
-                    #if os(tvOS)
-                    /// Remote/controller pause buttons are discoverable on iOS via on-screen
-                    /// controls, but on tvOS users have no visual hint. Surface one once per
-                    /// session, tailored to whatever pad is connected.
+                    /// Which input opens the pause menu depends on the pad and the system,
+                    /// so say it once per game. Nothing is shown with no controller connected.
                     if !self.pauseHintToastShown {
                         self.pauseHintToastShown = true
                         DispatchQueue.main.asyncAfter(deadline: .now() + 0.6) { [weak self] in
                             self?.showPauseMenuHintToast()
                         }
                     }
-                    #endif
                 } else {
                     self.playTimeTracker?.didPause()
                 }
@@ -547,7 +546,7 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, Emulato
         #endif
         NotificationCenter.default.addObserver(self, selector: #selector(PVEmulatorViewController.handleControllerManagerControllerReassigned(_:)), name: .PVControllerManagerControllerReassigned, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(PVEmulatorViewController.handleControllerMappingsChanged(_:)), name: ControllerMappingStore.didChangeNotification, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(PVEmulatorViewController.handlePause(_:)), name: Notification.Name("PauseGame"), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(PVEmulatorViewController.handlePause(_:)), name: .pvPauseGame, object: nil)
 
         // DualSense microphone button → toggle audio mute
         NotificationCenter.default.addObserver(self, selector: #selector(PVEmulatorViewController.handleMicButtonToggleMute(_:)), name: .PVControllerMicButtonToggleMute, object: nil)
@@ -1284,11 +1283,7 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, Emulato
         // Set up gesture recognizers for menu button interactions
         setupTVOSMenuGestures()
         #endif
-        for controller in PVControllerManager.shared.controllers {
-            controller.setupPauseHandler(onPause: {
-                NotificationCenter.default.post(name: NSNotification.Name("PauseGame"), object: nil)
-            })
-        }
+        startPauseTriggers()
         enableControllerInput(false)
 
         // Update the singleton state
@@ -1350,7 +1345,7 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, Emulato
             return
         }
         ILOG("tvOS: menu press consumed — opening pause menu")
-        NotificationCenter.default.post(name: NSNotification.Name("PauseGame"), object: nil)
+        NotificationCenter.default.post(name: .pvPauseGame, object: nil)
     }
 
     /// Re-install the recognizer after a modal.
@@ -1367,53 +1362,55 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, Emulato
     }
     #endif
 
-    /// Re-establish controller pause handlers after they were clobbered by a core's
-    /// own input bindings, a presented modal, or a Control Center roundtrip. Cores
-    /// such as RetroArch, Dolphin, Citra, PPSSPP, Play, and emuThree all overwrite
-    /// `buttonOptions.pressedChangedHandler` (and on iOS, `buttonMenu`/`buttonHome`)
-    /// during their own `setupController:`. Our pause binding from `setupControllers`
-    /// therefore gets silently erased as soon as the core finishes initializing —
-    /// which is *exactly* when the user would want to hit pause. Calling this after
-    /// core init, after menu dismissal, and after app foregrounding makes pause
-    /// survive the boot race consistently.
+    /// Starts watching the controllers for their pause-menu inputs.
+    ///
+    /// Extended gamepads are sampled by `pauseTriggerMonitor`, with the inputs chosen for
+    /// the running system (`PauseMenuBindingPolicy`). Pads that pause through
+    /// `controllerPausedHandler` are bound by `reestablishPauseHandlers`.
+    func startPauseTriggers() {
+        if pauseTriggerMonitor == nil {
+            let system = SystemIdentifier(rawValue: core.systemIdentifier ?? "")
+            let monitor = PauseMenuTriggerMonitor(
+                systemUsesSelect: PauseMenuBindingPolicy.systemUsesSelect(system),
+                controllers: { PVControllerManager.shared.controllers },
+                onTrigger: { $0.postPauseRequest() })
+            monitor.start()
+            pauseTriggerMonitor = monitor
+        }
+        reestablishPauseHandlers()
+    }
+
+    func stopPauseTriggers() {
+        pauseTriggerMonitor?.stop()
+        pauseTriggerMonitor = nil
+        PVControllerManager.shared.controllers.forEach { $0.clearPauseHandler() }
+    }
+
+    /// Re-binds `controllerPausedHandler` on the pads that pause through it (Siri Remote,
+    /// Switch Online pads, first-generation MFi). A core's own controller setup, a
+    /// presented modal or a Control Center round trip can clear it, so this runs again
+    /// after core start, after the menu closes and after the app returns to the foreground.
+    /// Extended gamepads need none of that: their buttons are sampled, not bound.
     @objc func reestablishPauseHandlers() {
         for controller in PVControllerManager.shared.controllers {
-            controller.setupPauseHandler(onPause: {
-                NotificationCenter.default.post(name: NSNotification.Name("PauseGame"), object: nil)
-            })
+            controller.setupPauseHandler(onPause: { $0.postPauseRequest() })
         }
     }
 
-    #if os(tvOS)
-    /// Show a one-time toast explaining how to open the pause menu, tailored to the
-    /// controller that's most likely to trigger it. tvOS has no on-screen pause button,
-    /// and the mapping varies by pad (Share/Options on DualSense, View on Xbox, Menu on
-    /// Siri Remote, L3+R3 on older MFi). Surfacing the exact gesture avoids the common
-    /// "how do I pause this?" support question.
+    /// Shows, once per game, how to open the pause menu with the connected controller.
+    /// The input depends on the pad and on whether the system uses Select, and on tvOS
+    /// nothing on screen opens the menu.
     private func showPauseMenuHintToast() {
-        let controllers = PVControllerManager.shared.controllers
-        let message: String
-        let icon: String
-
-        if controllers.contains(where: { $0.extendedGamepad?.buttonOptions != nil }) {
-            message = "Press Share / Create / View to open the pause menu"
-            icon = "square.and.arrow.up"
-        } else if controllers.contains(where: {
-            $0.extendedGamepad?.leftThumbstickButton != nil && $0.extendedGamepad?.rightThumbstickButton != nil
-        }) {
-            message = "Click both thumbsticks (L3 + R3) to open the pause menu"
-            icon = "l.joystick.fill"
-        } else if controllers.contains(where: { $0.microGamepad != nil && $0.extendedGamepad == nil }) {
-            message = "Press Menu on the Siri Remote to open the pause menu"
-            icon = "av.remote.fill"
-        } else {
-            message = "Press Menu / Options on your controller to open the pause menu"
-            icon = "gamecontroller.fill"
+        let controllers = PVControllerManager.shared.controllers.filter { !$0.isSnapshot }
+        let plans = controllers.map { controller in
+            pauseTriggerMonitor?.bindingPlan(for: controller)
+                ?? PauseMenuBindingPolicy.plan(for: controller.pauseMenuCapabilities, systemUsesSelect: true)
         }
-
-        PVToastManager.post(message, type: .info, duration: 5.0, icon: icon)
+        /// A gamepad's hint over the Siri Remote's: the remote is always there on tvOS.
+        guard let trigger = plans.compactMap(\.primary).first(where: { $0 != .legacyPause })
+                ?? plans.compactMap(\.primary).first else { return }
+        PVToastManager.post(trigger.hint, type: .info, duration: 5.0, icon: trigger.hintSymbol)
     }
-    #endif
 
     override public func viewDidAppear(_: Bool) {
         super.viewDidAppear(true)
@@ -2007,11 +2004,9 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, Emulato
         #if os(iOS)
         externalDisplaySettingsObservation?.cancel()
         removeExternalDisplayWindow()
-        for controller in PVControllerManager.shared.controllers {
-            controller.clearPauseHandler()
-        }
-
         #endif
+        stopPauseTriggers()
+
         playTimeTracker?.didPause()
 
         #if canImport(PVAppIntents)

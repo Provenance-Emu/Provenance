@@ -53,8 +53,14 @@ enum PauseTilePanelMetrics {
     /// Height of the pinned title row on iOS.
     static let headerHeight: CGFloat = 34
     static let tvHeaderHeight: CGFloat = 56
-    /// How much shorter than the row the Resume capsule is drawn.
+    /// How much shorter than the row the header capsules are drawn.
     static let headerButtonInset: CGFloat = 6
+    /// Below this panel width Quit and Save & Quit show their glyphs alone.
+    static let compactHeaderWidth: CGFloat = 430
+    /// The narrowest the panel gets when its sections need few columns: room for the
+    /// title, search and the three header capsules.
+    static let minimumWidth: CGFloat = 380
+    static let tvMinimumWidth: CGFloat = 680
 
     /// Fraction of the window width the panel occupies on macOS.
     ///
@@ -183,9 +189,16 @@ struct PauseTileMenuView: View {
     /// Controls display of restart prompt when user exits the pause menu.
     @State private var showingDeferredRestartPrompt = false
 
-    // MARK: tvOS Focus
+    // MARK: Focus
 
+    /// The tile the controller is on. tvOS keeps it in the focus engine. iOS has no focus
+    /// engine for buttons without a hardware keyboard (a `@FocusState` there never takes
+    /// a value), so it is plain state moved by `controllerInput`.
+    #if os(tvOS)
     @FocusState private var focusedTileID: String?
+    #else
+    @State private var focusedTileID: String?
+    #endif
     @State private var routeStack: [PauseTileMenuRoute] = []
     #if os(tvOS)
     /// System uptime when the menu took focus; see `handleRemoteBackCommand`.
@@ -218,11 +231,12 @@ struct PauseTileMenuView: View {
     #endif
 
     #if os(iOS)
-    @StateObject private var gamepadManager = GamepadManager.shared
-    /// Live width of the floating tile panel (driven by GeometryReader in `body`).
-    /// Mirrors the `panelWidth` local in the layout so that controller nav helpers
-    /// can compute the actual column count per row without re-deriving from UIScreen.
-    @State private var currentPanelWidth: CGFloat = 0
+    @ObservedObject private var gamepadManager = GamepadManager.shared
+    /// Samples the connected pads while the menu is up; see `handleControllerCommand`.
+    @State private var controllerInput = PauseMenuControllerInput()
+    /// Columns the grid is drawn with (set from the layout in `body`), so controller
+    /// navigation walks the same rows the panel shows.
+    @State private var currentColumns = 0
     #endif
 
     /// Black laid over the panel's material: enough for white labels over a bright game.
@@ -353,22 +367,12 @@ struct PauseTileMenuView: View {
     }
 
     #if os(iOS)
-    /// Current column count, derived from the live panel width measured by
-    /// the GeometryReader in `body`. Falls back to `fallbackPanelWidth` if the
-    /// width hasn't propagated yet (e.g. first frame).
+    /// Columns the grid is drawn with. Before the first layout pass has reported them,
+    /// the count for a panel at its widest: the grid then has at most that many.
     private func currentColumnCount() -> Int {
-        let width = currentPanelWidth > 0 ? currentPanelWidth : fallbackPanelWidth
+        if currentColumns > 0 { return currentColumns }
+        let width = ProcessInfo.processInfo.isiOSAppOnMac ? PauseTilePanelMetrics.desktopMinWidth : panelMaxWidth
         return columnCount(for: width)
-    }
-
-    /// Panel width assumed before the GeometryReader has propagated a real value.
-    ///
-    /// Must agree with `panelWidth(forAvailableWidth:)`, otherwise keyboard/controller
-    /// focus moves against a different column count than the grid actually renders
-    /// and lands on the wrong cell. On a Mac the old `panelMaxWidth` fallback was the
-    /// 420pt portrait value (3 columns) while the panel drew 6-8.
-    private var fallbackPanelWidth: CGFloat {
-        ProcessInfo.processInfo.isiOSAppOnMac ? PauseTilePanelMetrics.desktopMinWidth : panelMaxWidth
     }
     #endif
 
@@ -448,10 +452,14 @@ struct PauseTileMenuView: View {
         handle(tile)
     }
 
-    /// Reattaches focus to a valid tile when tvOS focus is lost after lifecycle transitions.
+    /// Puts the cursor back on a valid tile when the one it was on is gone: a submenu
+    /// replaced the grid, or tvOS dropped focus across a lifecycle transition.
     private func reattachTVOSFocusIfNeeded() {
-        #if os(tvOS)
         let focusedID = focusedTileID
+        #if !os(tvOS)
+        /// No cursor means touch is driving the menu; leave it without one.
+        guard focusedID != nil else { return }
+        #endif
         let hasValidFocus = viewModel.sections.contains { section in
             section.tiles.contains(where: { $0.id == focusedID && $0.isEnabled })
         }
@@ -460,7 +468,6 @@ struct PauseTileMenuView: View {
         DispatchQueue.main.async {
             focusedTileID = fallbackID
         }
-        #endif
     }
 
     /// Pushes a submenu route and refreshes section data/focus.
@@ -490,6 +497,31 @@ struct PauseTileMenuView: View {
             requestPauseMenuClose()
         }
     }
+
+    #if os(iOS)
+    /// Whether something is presented over the menu (a sheet, a cover or an alert).
+    /// Those screens take the controller themselves, so the grid behind them stays put.
+    private var isCoveredByPresentation: Bool {
+        emulatorVC.menuPresentationViewController?.presentedViewController != nil
+            || emulatorVC.isPresentingPVAlert
+            || gamepadManager.isModalAlertPresented
+    }
+
+    /// One step from the controller: the d-pad or left stick moves the cursor, A opens
+    /// the tile under it and B goes back a level, then closes the menu.
+    private func handleControllerCommand(_ command: PauseMenuNavigationCommand) {
+        guard !isCoveredByPresentation else { return }
+        let cols = currentColumnCount()
+        switch command {
+        case .left: moveFocus(deltaCol: -1, cols: cols)
+        case .right: moveFocus(deltaCol: 1, cols: cols)
+        case .up: moveFocus(deltaRow: -1, cols: cols)
+        case .down: moveFocus(deltaRow: 1, cols: cols)
+        case .activate: activateFocusedTile()
+        case .back: handleBackCommand()
+        }
+    }
+    #endif
 
     #if os(tvOS)
     /// Back / Play-Pause from the focus engine.
@@ -537,6 +569,28 @@ struct PauseTileMenuView: View {
         #else
         return false
         #endif
+    }
+
+    /// Creates an automatic save state, then exits to the library.
+    private func saveAndQuit() {
+        dismissAction(false)
+        let image = emulatorVC.captureScreenshot()
+        Task { @MainActor in
+            do {
+                try await emulatorVC.createNewSaveState(auto: true, screenshot: image)
+                await emulatorVC.quit(optionallySave: false)
+            } catch {
+                ELOG("Tile menu save & quit error: \(error.localizedDescription)")
+            }
+        }
+    }
+
+    /// Exits to the library without saving.
+    private func quitWithoutSaving() {
+        dismissAction(false)
+        Task { @MainActor in
+            await emulatorVC.quit(optionallySave: false)
+        }
     }
 
     private func handle(_ tile: PauseMenuTile) {
@@ -615,21 +669,9 @@ struct PauseTileMenuView: View {
         case "appSettings":
             showingAppSettings = true
         case "saveQuit":
-            dismissAction(false)
-            let image = emulatorVC.captureScreenshot()
-            Task { @MainActor in
-                do {
-                    try await emulatorVC.createNewSaveState(auto: true, screenshot: image)
-                    await emulatorVC.quit(optionallySave: false)
-                } catch {
-                    ELOG("Tile menu save & quit error: \(error.localizedDescription)")
-                }
-            }
+            saveAndQuit()
         case "quit":
-            dismissAction(false)
-            Task { @MainActor in
-                await emulatorVC.quit(optionallySave: false)
-            }
+            quitWithoutSaving()
 
         // MARK: Companion Controller
         case "companionController":
@@ -1193,7 +1235,9 @@ struct PauseTileMenuView: View {
         .opacity(opacity)
         .disabled(!tile.isEnabled)
         .id(tile.id)
+        #if os(tvOS)
         .focused($focusedTileID, equals: tile.id)
+        #endif
         .animation(.spring(response: 0.25, dampingFraction: 0.72), value: isFocused)
         .optionalContextMenu(tile.longPressOptions) { opt in
             handleLongPressOption(opt, for: tile)
@@ -1227,7 +1271,8 @@ struct PauseTileMenuView: View {
 
     /// One slim pinned row: it stays put while the grid scrolls, so it is kept short.
     /// Buttons keep a 44 pt wide target; the row's height is the compromise.
-    private var panelHeader: some View {
+    /// Leaving the game sits beside going back to it: Quit, Save & Quit, Resume.
+    private func panelHeader(compact: Bool) -> some View {
         let rowHeight = tvOSAdjusted(PauseTilePanelMetrics.headerHeight, tvOS: PauseTilePanelMetrics.tvHeaderHeight)
         return HStack(spacing: 4) {
             if routeStack.count > 1 {
@@ -1250,21 +1295,42 @@ struct PauseTileMenuView: View {
                     .contentShape(Rectangle())
             }
             .accessibilityLabel("Search settings")
-            Button { requestPauseMenuClose() } label: {
-                Text("Resume")
-                    .font(.system(size: tvOSAdjusted(12, tvOS: 18), weight: .medium))
-                    .padding(.horizontal, RetroPauseChrome.chromeInset)
-                    .frame(height: rowHeight - PauseTilePanelMetrics.headerButtonInset)
-                    .foregroundStyle(Color.retroGreen)
-                    .background(Color.retroGreen.opacity(RetroPauseChrome.menuCellFillOpacityUnfocused), in: Capsule())
-                    .frame(height: rowHeight)
-                    .contentShape(Rectangle())
+            headerCapsule(String(localized: "Quit"), symbol: compact ? "xmark.circle" : nil,
+                          tint: .retroPink, rowHeight: rowHeight, action: quitWithoutSaving)
+            if viewModel.offersSaveAndQuit {
+                headerCapsule(String(localized: "Save & Quit"), symbol: compact ? "square.and.arrow.down.on.square" : nil,
+                              tint: .retroCyan, rowHeight: rowHeight, action: saveAndQuit)
             }
+            headerCapsule(String(localized: "Resume"), symbol: nil,
+                          tint: .retroGreen, rowHeight: rowHeight, action: requestPauseMenuClose)
         }
         .buttonStyle(.plain)
         .foregroundStyle(Color.retroBlue)
         .padding(.horizontal, tvOSAdjusted(RetroPauseChrome.chromeInset, tvOS: 20))
         .padding(.top, 4)
+    }
+
+    /// A tinted capsule in the header row. With a `symbol` it shows the glyph alone and
+    /// keeps `title` for VoiceOver.
+    private func headerCapsule(_ title: String, symbol: String?, tint: Color, rowHeight: CGFloat,
+                               action: @escaping () -> Void) -> some View {
+        Button(action: action) {
+            Group {
+                if let symbol {
+                    Image(systemName: symbol)
+                } else {
+                    Text(title).lineLimit(1)
+                }
+            }
+            .font(.system(size: tvOSAdjusted(12, tvOS: 18), weight: .medium))
+            .padding(.horizontal, RetroPauseChrome.chromeInset)
+            .frame(height: rowHeight - PauseTilePanelMetrics.headerButtonInset)
+            .foregroundStyle(tint)
+            .background(tint.opacity(RetroPauseChrome.menuCellFillOpacityUnfocused), in: Capsule())
+            .frame(height: rowHeight)
+            .contentShape(Rectangle())
+        }
+        .accessibilityLabel(title)
     }
 
     // MARK: - Section view
@@ -1544,13 +1610,24 @@ struct PauseTileMenuView: View {
                 // Floating grid panel. Derived from the live GeometryReader width on
                 // every layout pass so macOS window resizes re-flow the panel and its
                 // column count instead of keeping a width cached at first layout.
-                let panelWidth = self.panelWidth(forAvailableWidth: geo.size.width)
-                let cols = columnCount(for: panelWidth)
+                let fullWidth = self.panelWidth(forAvailableWidth: geo.size.width)
                 let spacing: CGFloat = tvOSAdjusted(6, tvOS: 12)
                 let sections = viewModel.sections
+                /// Only as wide as the sections need: four cells in a row do not get an
+                /// eight-column panel. Search results are a list and keep the full width.
+                let showsGrid = searchText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+                let fit = PauseTileLayout.fit(
+                    fullWidth: fullWidth,
+                    maxColumns: columnCount(for: fullWidth),
+                    tileCounts: showsGrid ? sections.map(\.tiles.count) : [],
+                    inset: tvOSAdjusted(RetroPauseChrome.chromeInset, tvOS: 20),
+                    spacing: spacing,
+                    minimumWidth: tvOSAdjusted(PauseTilePanelMetrics.minimumWidth, tvOS: PauseTilePanelMetrics.tvMinimumWidth))
+                let panelWidth = fit.width
+                let cols = fit.columns
 
                 VStack(spacing: 0) {
-                    panelHeader
+                    panelHeader(compact: panelWidth < PauseTilePanelMetrics.compactHeaderWidth)
                     ScrollViewReader { scrollProxy in
                     ScrollView(.vertical, showsIndicators: true) {
                         VStack(alignment: .leading, spacing: tvOSAdjusted(12, tvOS: 20)) {
@@ -1562,7 +1639,7 @@ struct PauseTileMenuView: View {
                                 coreScopeControlsView
                             }
 
-                            if searchText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+                            if showsGrid {
                                 // Grouped sections — one outer focus section for the whole
                                 // tile grid so tvOS treats it as a single focus region.
                                 // Per-section focusSections caused focus to snap to the top
@@ -1620,14 +1697,12 @@ struct PauseTileMenuView: View {
                     .onChange(of: routeStack) { _ in
                         scrollProxy.scrollTo(Self.panelTopID, anchor: .top)
                     }
-                    #if os(tvOS)
                     .onChange(of: focusedTileID) { newID in
                         guard let newID else { return }
                         withAnimation(.easeInOut(duration: 0.2)) {
                             scrollProxy.scrollTo(newID, anchor: .center)
                         }
                     }
-                    #endif
                     } // ScrollViewReader
 
                     if showsInfoShelf {
@@ -1640,9 +1715,9 @@ struct PauseTileMenuView: View {
                 .fixedSize(horizontal: false, vertical: true)
                 .position(x: geo.size.width / 2, y: geo.size.height / 2)
                 #if os(iOS)
-                // Mirror the live panel width into @State so iOS controller
-                // navigation helpers can compute the active column count.
-                .task(id: panelWidth) { currentPanelWidth = panelWidth }
+                // Mirror the drawn column count into @State so controller navigation
+                // walks the same grid the panel shows.
+                .task(id: cols) { currentColumns = cols }
                 #endif
             }
         }
@@ -1911,44 +1986,20 @@ struct PauseTileMenuView: View {
             routeStack = initialRoute == .root ? [.root] : [.root, initialRoute]
             refreshControllerProfileState()
             rebuildSections()
-            if focusedTileID == nil, let first = firstEnabledTileID() {
-                focusedTileID = first
+            /// A cursor only where something can move it: touch users see no highlight.
+            if focusedTileID == nil, gamepadManager.isNavigationInputAvailable {
+                focusedTileID = firstEnabledTileID()
             }
+            controllerInput.start()
             openNetworkPlayIfRequested()
         }
+        .onDisappear { controllerInput.stop() }
         .onChange(of: focusedTileID) { newID in
             withAnimation(.easeInOut(duration: 0.2)) {
                 infoText = viewModel.description(forTileID: newID)
             }
         }
-        .onReceive(gamepadManager.eventPublisher) { event in
-            guard gamepadManager.isControllerConnected else { return }
-            let cols = currentColumnCount()
-            switch event {
-            case .horizontalNavigation(let value, let isPressed):
-                guard isPressed else { return }
-                moveFocus(deltaCol: value < 0 ? -1 : 1, cols: cols)
-            case .verticalNavigation(let value, let isPressed):
-                guard isPressed else { return }
-                // Gamepad vertical: positive value = "up" semantically; we
-                // walk rows so positive value should move to the previous row.
-                moveFocus(deltaRow: value > 0 ? -1 : 1, cols: cols)
-            case .buttonPress(let isPressed):
-                guard isPressed else { return }
-                activateFocusedTile()
-            case .buttonB(let isPressed):
-                guard isPressed else { return }
-                handleBackCommand()
-            case .menuToggle(let isPressed):
-                guard isPressed else { return }
-                handleBackCommand()
-            case .start(let isPressed):
-                guard isPressed else { return }
-                handleBackCommand()
-            default:
-                break
-            }
-        }
+        .onReceive(controllerInput.commands) { handleControllerCommand($0) }
         #elseif os(tvOS)
         .onAppear {
             appearedUptime = ProcessInfo.processInfo.systemUptime

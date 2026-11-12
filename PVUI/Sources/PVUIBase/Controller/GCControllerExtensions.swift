@@ -33,136 +33,36 @@ public extension GCController {
 
 // MARK: Pause/Home
 public extension GCController {
-    /// Configure controller to fire `onPause` when the user presses the pause/menu button.
+    /// Binds the pause triggers that arrive through a handler the pad calls.
     ///
-    /// **tvOS** (PVEmulatorViewController is a GCEventViewController):
-    /// - `buttonHome` (PS/Xbox/Guide) is system-reserved for Control Center. App lifecycle
-    ///   handling (`shouldShowPauseMenuOnNextActive`) brings the pause menu back when the
-    ///   user returns from Control Center.
-    /// - `buttonMenu` (Options on PS / Menu on Xbox) is mapped to Start in emulator cores,
-    ///   so we cannot also use it for pause without breaking gameplay.
-    /// - **`buttonOptions`** (Share/Create on PS, View on Xbox) — primary pause trigger.
-    ///   Universally present on every modern controller, never used by retro games.
-    /// - **L3 + R3** (both thumbstick buttons pressed simultaneously) — secondary trigger
-    ///   for legacy MFi pads that lack `buttonOptions`.
-    /// - Siri Remote / legacy MFi without thumbstick buttons: `controllerPausedHandler`
-    ///   fires for the single Menu button.
+    /// An extended gamepad's own buttons (Options, Share, L3 + R3, Select + Start, Home)
+    /// are not bound here: `PauseMenuTriggerMonitor` samples them while a game runs, so
+    /// they neither replace a core's button handlers nor get replaced by them. What is
+    /// left is `controllerPausedHandler`, for:
+    /// - a Switch Online pad, whose wrapper fires it from its own trigger (Home, or
+    ///   Select + Start on the SNES pad);
+    /// - the Siri Remote and other pads with no extended profile;
+    /// - a first-generation MFi pad whose one Menu button is all it has.
     ///
-    /// **iOS**: Both `buttonHome` and `buttonMenu` handlers are bound (no system
-    /// interception). `controllerPausedHandler` is set as fallback for legacy controllers.
-    func setupPauseHandler(onPause: @escaping () -> Void) {
+    /// `buttonMenu` is the emulated Start on every extended gamepad and `buttonHome`
+    /// belongs to the system, so neither opens the menu on a pad that has an Options button.
+    func setupPauseHandler(onPause: @escaping (PauseMenuTrigger) -> Void) {
         let name = vendorName ?? "unknown"
-        #if canImport(UIKit)
-        /// Switch Online pads: the wrapper fires `controllerPausedHandler` from its own
-        /// trigger (Home, or Select + Start on the SNES pad). Their Start and Select are
-        /// game buttons, so neither `buttonOptions` nor `buttonMenu` may pause. A pad
-        /// with no trigger keeps the generic binding below so it can still pause.
-        if let profileController = self as? PVPhysicalProfileController, profileController.pauseTrigger != nil {
-            ILOG("setupPauseHandler[\(name)]: synthesized pad — pause on \(String(describing: profileController.pauseTrigger))")
-            controllerPausedHandler = { _ in
-                ILOG("setupPauseHandler[\(name)]: pad pause trigger fired — firing pause")
-                onPause()
-            }
+        /// The handler-driven triggers do not depend on the running system.
+        let plan = PauseMenuBindingPolicy.plan(for: pauseMenuCapabilities, systemUsesSelect: true)
+        guard let trigger = plan.triggers.first(where: { $0 == .profileTrigger || $0 == .legacyPause }) else {
+            controllerPausedHandler = nil
             return
         }
-        #endif
-        #if os(tvOS)
-        var hasModernTrigger = false
-
-        /// Primary trigger: buttonOptions. Fires on a single, non-combo press.
-        /// PS5 "Create", Xbox "View", Switch Pro "−" all surface as buttonOptions.
-        if let options = extendedGamepad?.buttonOptions {
-            ILOG("setupPauseHandler[\(name)]: binding buttonOptions (Share/Create/View)")
-            options.pressedChangedHandler = { _, _, isPressed in
-                if isPressed {
-                    ILOG("setupPauseHandler[\(name)]: buttonOptions pressed — firing pause")
-                    onPause()
-                }
-            }
-            hasModernTrigger = true
+        ILOG("setupPauseHandler[\(name)]: \(trigger.rawValue) through controllerPausedHandler")
+        controllerPausedHandler = { _ in
+            ILOG("setupPauseHandler[\(name)]: \(trigger.rawValue) fired")
+            onPause(trigger)
         }
-
-        /// Secondary trigger: L3 + R3 combo. Kept for legacy MFi controllers and as a
-        /// muscle-memory fallback for users who have learned the combo.
-        if let gamepad = extendedGamepad,
-           let l3 = gamepad.leftThumbstickButton,
-           let r3 = gamepad.rightThumbstickButton {
-            ILOG("setupPauseHandler[\(name)]: binding L3+R3 combo")
-            l3.pressedChangedHandler = { [weak gamepad] _, _, isPressed in
-                if isPressed, gamepad?.rightThumbstickButton?.isPressed == true {
-                    ILOG("setupPauseHandler[\(name)]: L3+R3 combo — firing pause")
-                    onPause()
-                }
-            }
-            r3.pressedChangedHandler = { [weak gamepad] _, _, isPressed in
-                if isPressed, gamepad?.leftThumbstickButton?.isPressed == true {
-                    ILOG("setupPauseHandler[\(name)]: R3+L3 combo — firing pause")
-                    onPause()
-                }
-            }
-            hasModernTrigger = true
-        }
-
-        if !hasModernTrigger {
-            /// Last resort: Siri Remote and legacy MFi without thumbstick buttons.
-            /// `controllerPausedHandler` fires for their single Menu button on a
-            /// plain single press — no double-tap needed.
-            ILOG("setupPauseHandler[\(name)]: no modern triggers — using controllerPausedHandler")
-            controllerPausedHandler = { _ in
-                ILOG("setupPauseHandler[\(name)]: controllerPausedHandler fired — firing pause")
-                onPause()
-            }
-        } else if microGamepad != nil && extendedGamepad == nil {
-            /// Siri Remote on tvOS exposes `microGamepad` only. Make sure a single press
-            /// of its Menu button triggers pause directly via the legacy handler, since
-            /// it has no buttonOptions or thumbstick buttons.
-            ILOG("setupPauseHandler[\(name)]: microGamepad — also binding controllerPausedHandler")
-            controllerPausedHandler = { _ in
-                ILOG("setupPauseHandler[\(name)]: Siri Remote menu press — firing pause")
-                onPause()
-            }
-        }
-        #else
-        var hasHandler = false
-        if let buttonHome = buttonHome {
-            buttonHome.pressedChangedHandler = { _, _, isPressed in
-                if isPressed {
-                    onPause()
-                }
-            }
-            hasHandler = true
-        }
-        if let buttonMenu = buttonMenu {
-            buttonMenu.pressedChangedHandler = { _, _, isPressed in
-                if isPressed {
-                    onPause()
-                }
-            }
-            hasHandler = true
-        }
-        if !hasHandler {
-            controllerPausedHandler = { _ in
-                onPause()
-            }
-        }
-        #endif
     }
 
     func clearPauseHandler() {
         controllerPausedHandler = nil
-        #if canImport(UIKit)
-        if (self as? PVPhysicalProfileController)?.pauseTrigger != nil { return }
-        #endif
-        #if os(tvOS)
-        if let gamepad = extendedGamepad {
-            gamepad.buttonOptions?.pressedChangedHandler = nil
-            gamepad.leftThumbstickButton?.pressedChangedHandler = nil
-            gamepad.rightThumbstickButton?.pressedChangedHandler = nil
-        }
-        #else
-        buttonHome?.pressedChangedHandler = nil
-        buttonMenu?.pressedChangedHandler = nil
-        #endif
     }
 
     public var buttonMenu: GCControllerButtonInput? {

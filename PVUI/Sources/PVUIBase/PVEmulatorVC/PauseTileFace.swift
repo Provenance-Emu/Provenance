@@ -11,6 +11,39 @@ enum PauseTileLayout {
         let available = max(0, panelWidth - contentInset * 2)
         return max(1, min(8, Int((available + spacing) / (minimum + spacing))))
     }
+
+    /// The fewest columns that lay every section out in as few rows as `maxColumns` would.
+    ///
+    /// A section of four cells needs four columns however many fit, and nine cells on an
+    /// eight-column panel take two rows either way, so five columns hold them. The grid
+    /// is as wide as its widest section needs and no wider.
+    static func balancedColumns(tileCounts: [Int], maxColumns: Int) -> Int {
+        let limit = max(1, maxColumns)
+        let needed = tileCounts.filter { $0 > 0 }.map { count -> Int in
+            let rows = (count + limit - 1) / limit
+            return (count + rows - 1) / rows
+        }
+        return min(limit, needed.max() ?? limit)
+    }
+
+    /// A column count and the panel width that holds it.
+    struct Fit: Equatable {
+        let columns: Int
+        let width: CGFloat
+    }
+
+    /// Shrinks a panel to the columns its sections need, keeping each cell the width it
+    /// has on the full panel. `tileCounts` is empty when the panel shows something other
+    /// than the grid (search results), which keeps the full width.
+    static func fit(fullWidth: CGFloat, maxColumns: Int, tileCounts: [Int],
+                    inset: CGFloat, spacing: CGFloat, minimumWidth: CGFloat) -> Fit {
+        let limit = max(1, maxColumns)
+        let columns = balancedColumns(tileCounts: tileCounts, maxColumns: limit)
+        guard columns < limit else { return Fit(columns: limit, width: fullWidth) }
+        let cell = (fullWidth - inset * 2 - spacing * CGFloat(limit - 1)) / CGFloat(limit)
+        let width = cell * CGFloat(columns) + spacing * CGFloat(columns - 1) + inset * 2
+        return Fit(columns: columns, width: min(fullWidth, max(width, minimumWidth)))
+    }
 }
 
 /// Tile face: a light glyph over its label, on a tinted translucent cell with a hairline rim.
