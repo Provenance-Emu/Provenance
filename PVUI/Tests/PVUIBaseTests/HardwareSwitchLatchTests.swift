@@ -154,10 +154,17 @@ struct HardwareSwitchDescriptorTests {
         all += PV7800Button.hardwareSwitches ?? []
         all += PV5200Button.hardwareSwitches ?? []
         all += PVMSXButton.hardwareSwitches ?? []
-        all += PVA8Button.hardwareSwitches ?? []
         all += PVPCEButton.hardwareSwitches ?? []
         #expect(!all.isEmpty)
         #expect(all.allSatisfy { $0.isPressToToggle })
+    }
+
+    @Test("Atari 8-bit console keys send distinct momentary inputs")
+    func atari8BitConsoleKeysAreMomentary() throws {
+        #expect(PVA8Button.hardwareSwitches == nil)
+        let keys = try #require(PVA8Button.hardwareMomentaryButtons)
+        #expect(keys.map(\.id) == ["option_key", "select_key", "start_key"])
+        #expect(keys.map { PVA8Button($0.buttonId) } == [.optionKey, .selectKey, .startKey])
     }
 
     @Test("The two 2600 position ids both parse to distinct buttons")

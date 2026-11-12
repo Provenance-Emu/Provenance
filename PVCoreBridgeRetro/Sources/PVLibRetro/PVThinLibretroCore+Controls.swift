@@ -2160,7 +2160,7 @@ extension PVThinLibretroCore: PVA8SystemResponderClient {
         case .left:  return .left
         case .right: return .right
         case .fire:  return .b
-        case .optionKey: return .select
+        case .optionKey: return .l // Atari800's Option console key.
         case .selectKey: return .select
         case .startKey: return .start
         case .count: return .b

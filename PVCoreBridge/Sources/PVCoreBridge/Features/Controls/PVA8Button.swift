@@ -55,32 +55,14 @@
     }
 }
 
-// MARK: - Hardware switches
+// MARK: - Console keys
 
 extension PVA8Button: HardwareSwitchProvider {
-    public static var hardwareSwitches: [HardwareSwitchDescriptor]? {
+    public static var hardwareMomentaryButtons: [HardwareMomentaryDescriptor]? {
         [
-            HardwareSwitchDescriptor(
-                id: "option_key",
-                title: "OPTION",
-                offPosition: HardwareSwitchPosition(label: "OFF", buttonId: "option"),
-                onPosition:  HardwareSwitchPosition(label: "ON", buttonId: "option"),
-                defaultState: false
-            ),
-            HardwareSwitchDescriptor(
-                id: "select_key",
-                title: "SELECT",
-                offPosition: HardwareSwitchPosition(label: "OFF", buttonId: "select"),
-                onPosition:  HardwareSwitchPosition(label: "ON", buttonId: "select"),
-                defaultState: false
-            ),
-            HardwareSwitchDescriptor(
-                id: "start_key",
-                title: "START",
-                offPosition: HardwareSwitchPosition(label: "OFF", buttonId: "start"),
-                onPosition:  HardwareSwitchPosition(label: "ON", buttonId: "start"),
-                defaultState: false
-            )
+            HardwareMomentaryDescriptor(id: "option_key", title: "OPTION", label: "OPT", buttonId: PVA8Button.optionKey.stringValue),
+            HardwareMomentaryDescriptor(id: "select_key", title: "SELECT", label: "SEL", buttonId: PVA8Button.selectKey.stringValue),
+            HardwareMomentaryDescriptor(id: "start_key", title: "START", label: "START", buttonId: PVA8Button.startKey.stringValue)
         ]
     }
 }

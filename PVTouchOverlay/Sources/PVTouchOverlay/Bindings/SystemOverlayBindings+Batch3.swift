@@ -40,8 +40,7 @@ extension SystemOverlayBindings {
             palette: .computer, hardwareSwitches: [])
     }
 
-    /// Fire, Start and Select. Option is left out: `PVThinLibretroCore` maps both `PVA8Button.optionKey` and
-    /// `.selectKey` to RetroPad Select, so an Option pill would only duplicate Select.
+    /// Fire, Start and Select. Option is available in the console controls group.
     private static let atari8bit = SystemOverlayBinding(
         system: .Atari8bit, families: [standardSubtype: TwoButtonFamily.self], defaultSubtype: standardSubtype,
         tokens: [.a: "fire", .start: "start", .select: "select"],
