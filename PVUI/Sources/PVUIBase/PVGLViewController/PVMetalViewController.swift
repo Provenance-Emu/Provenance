@@ -76,8 +76,9 @@ enum EffectFilterShaderError: Error {
 }
 
 // MARK: - PVMetalViewController
-final
-class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDelegate {
+// The existing renderer owns several pipelines that share its render state.
+// swiftlint:disable:next type_body_length
+final class PVMetalViewController: PVGPUViewController, PVRenderDelegate, MTKViewDelegate {
     func setPreferredRefreshRate(_ rate: Float) {
         ILOG("Setting preferred refresh rate to \(rate) Hz")
 
