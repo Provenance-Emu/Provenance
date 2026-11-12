@@ -133,7 +133,26 @@ final class MouseGameRegistryTests: XCTestCase {
         )
     }
 
+    func testSNESMousePortDefaults() {
+        let registry = MouseGameRegistry.shared
+        XCTAssertEqual(registry.snesMousePortIndex(md5: nil, title: "Mario Paint (Europe)"), 0)
+        XCTAssertEqual(registry.snesMousePortIndex(md5: "881D3772A3EB37A8A0FB254E940C6767", title: nil), 0)
+        XCTAssertEqual(registry.snesMousePortIndex(md5: nil, title: "Mario & Wario"), 1)
+        XCTAssertNil(registry.snesMousePortIndex(md5: nil, title: "Super Mario World"))
+    }
+
     // MARK: - User override
+
+    func testSNESMousePortHonorsUserOverride() {
+        let registry = MouseGameRegistry.shared
+        let md5 = "881d3772a3eb37a8a0fb254e940c6767"
+        defer { registry.setUserOverride(nil, forMD5: md5) }
+
+        registry.setUserOverride(false, forMD5: md5)
+        XCTAssertNil(registry.snesMousePortIndex(md5: md5, title: "Mario Paint"))
+        registry.setUserOverride(true, forMD5: md5)
+        XCTAssertEqual(registry.snesMousePortIndex(md5: md5, title: "Mario Paint"), 0)
+    }
 
     func testUserOverrideForcesMouseOnForUnknownGame() {
         let md5 = "unknownmd5hash"
