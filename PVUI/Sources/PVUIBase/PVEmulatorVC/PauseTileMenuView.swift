@@ -1270,7 +1270,8 @@ struct PauseTileMenuView: View {
     }
 
     /// The pinned title row: back, the title, search, and the exit buttons where the shape puts them here.
-    private func titleRow(theme: PauseMenuTheme, showsExits: Bool, compactExits: Bool) -> some View {
+    private func titleRow(theme: PauseMenuTheme, showsExits: Bool, compactExits: Bool,
+                          inlineInfo: String? = nil) -> some View {
         let rowHeight = tvOSAdjusted(PauseTilePanelMetrics.headerHeight, tvOS: PauseTilePanelMetrics.tvHeaderHeight)
         return HStack(spacing: 6) {
             if routeStack.count > 1 {
@@ -1286,7 +1287,18 @@ struct PauseTileMenuView: View {
                 .font(.system(size: tvOSAdjusted(15, tvOS: 22), weight: .semibold, design: .rounded))
                 .lineLimit(1)
                 .minimumScaleFactor(PauseTileMetrics.labelMinimumScale)
-            Spacer(minLength: 0)
+            if let inlineInfo {
+                Text(inlineInfo)
+                    .font(.system(size: PauseMenuChromeMetrics.fontSize))
+                    .foregroundStyle(Color.secondary)
+                    .lineLimit(1)
+                    .minimumScaleFactor(PauseTileMetrics.labelMinimumScale)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding(.leading, 6)
+                    .transition(.opacity)
+            } else {
+                Spacer(minLength: 0)
+            }
             Button { showsSearch.toggle() } label: {
                 Image(systemName: "magnifyingglass")
                     .frame(width: RetroPauseChrome.controlHeight, height: rowHeight)
@@ -1459,7 +1471,7 @@ struct PauseTileMenuView: View {
                         .overlay(alignment: .trailing) { theme.divider.frame(width: 1) }
                 }
                 VStack(spacing: 0) {
-                    titleRow(theme: theme, showsExits: true, compactExits: compactExits)
+                    titleRow(theme: theme, showsExits: true, compactExits: compactExits, inlineInfo: infoText)
                     if isRoot { saveRow(theme: theme) }
                     gridScroll(sections: sections, cols: cols, spacing: spacing, showsGrid: showsGrid)
                 }
@@ -1467,17 +1479,19 @@ struct PauseTileMenuView: View {
         }
     }
 
-    /// The description of the control under the cursor, floating beside the panel: above
-    /// the phone sheet, below a centred panel, and over the foot of a panel that fills the screen.
+    /// The description of the control under the cursor, floating outside the panel: above
+    /// the phone sheet and below a centred panel. A phone on its side has no room outside,
+    /// so there it is written into the title row's empty space (`titleRow`).
     @ViewBuilder
     private func infoPill(mode: PauseMenuLayoutMode, theme: PauseMenuTheme) -> some View {
-        if let infoText {
+        if let infoText, mode != .rail {
             let gap = PauseTilePanelMetrics.infoPillGap
+            /// A frame of no height on the panel's edge, with the pill hanging off its far side.
             PauseMenuInfoPill(text: infoText, theme: theme)
                 .padding(.horizontal, RetroPauseChrome.chromeInset)
-                .alignmentGuide(mode == .sheet ? .top : .bottom) { dimensions in
-                    mode == .panel ? dimensions[.top] - gap : dimensions[.bottom] + gap
-                }
+                .fixedSize(horizontal: false, vertical: true)
+                .frame(height: 0, alignment: mode == .sheet ? .bottom : .top)
+                .offset(y: mode == .sheet ? -gap : gap)
         }
     }
 
