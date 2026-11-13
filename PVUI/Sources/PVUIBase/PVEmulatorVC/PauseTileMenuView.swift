@@ -943,6 +943,12 @@ struct PauseTileMenuView: View {
         case PauseTileMenuViewModel.systemButtonsTileID:
             Defaults[.missingButtonsAlwaysOn].toggle()
             rebuildSections()
+        case PauseTileMenuViewModel.launchSaveTileID:
+            PauseLaunchSaveMode.current.next.apply()
+            rebuildSections()
+        case let id where PauseTileMenuViewModel.preferenceKey(forCellID: id) != nil:
+            if let key = PauseTileMenuViewModel.preferenceKey(forCellID: id) { Defaults[key].toggle() }
+            rebuildSections()
 
         default:
             break
@@ -966,6 +972,13 @@ struct PauseTileMenuView: View {
                 store.setSelection(.always(id), for: scope)
             }
             emulatorVC.shaderSelectionDidChange()
+            rebuildSections()
+            return
+        }
+
+        if tile.id == PauseTileMenuViewModel.launchSaveTileID {
+            let raw = lpOption.id.dropFirst(PauseTileMenuViewModel.launchSaveOptionPrefix.count)
+            PauseLaunchSaveMode(rawValue: String(raw))?.apply()
             rebuildSections()
             return
         }

@@ -318,6 +318,7 @@ final class PauseTileMenuViewModel: ObservableObject {
                                              icon: emulatorVC.isAudioMuted ? "speaker.slash.fill" : "speaker.wave.2",
                                              label: String(localized: "Mute"),
                                              description: String(localized: "Silence the game until you unmute it.")))
+        settingsTiles += Self.preferenceCells()
         settingsTiles.append(PauseMenuTile(
             id: "appSettings",
             icon: "gearshape",
