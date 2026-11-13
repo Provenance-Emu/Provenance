@@ -69,10 +69,12 @@ public struct MouseCursorOverlayView: View {
     /// over such a system it would be a second cursor drifting away from the real one.
     ///
     /// The Amiga is matched by core (PUAE), since it runs under the generic RetroArch system.
+    /// The SNES Mouse reports only movement, so every game that reads it (Mario Paint's hand)
+    /// draws its own.
     public static func systemDrawsOwnPointer(_ systemIdentifier: String?, coreIdentifier: String? = nil) -> Bool {
         if coreIdentifier?.lowercased().contains("puae") == true { return true }
         switch SystemIdentifier(rawValue: systemIdentifier ?? "") {
-        case .AtariST, .DOS, .MSX, .MSX2: return true
+        case .AtariST, .DOS, .MSX, .MSX2, .SNES: return true
         default: return false
         }
     }

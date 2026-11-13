@@ -18,7 +18,7 @@ struct GamePointerSettingsView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
             Text("Pointer Settings").font(.headline)
-            Picker("Pointer Mode", selection: override(\.mode)) {
+            menu("Pointer Mode", selection: override(\.mode)) {
                 Text("Inherit").tag(nil as ControllerPointerMode?)
                 Text("Automatic").tag(Optional(ControllerPointerMode.automatic))
                 Text("Off").tag(Optional(ControllerPointerMode.off))
@@ -43,7 +43,7 @@ struct GamePointerSettingsView: View {
             choice("Invert Gyro Up–Down", field: \.gyroInvertY, fallback: inherited.gyroFilter.invertY)
 
             if system == .Wii {
-                Picker("Wii Remote Tilt", selection: override(\.wiiTilt)) {
+                menu("Wii Remote Tilt", selection: override(\.wiiTilt)) {
                     Text("Inherit").tag(nil as WiiTiltMode?)
                     Text("Off").tag(Optional(WiiTiltMode.off))
                     Text("Upright").tag(Optional(WiiTiltMode.upright))
@@ -65,8 +65,20 @@ struct GamePointerSettingsView: View {
         })
     }
 
+    /// A picker with its title beside it: outside a `Form` a menu picker shows only its value.
+    private func menu<Value: Hashable, Options: View>(
+        _ title: LocalizedStringKey, selection: Binding<Value>, @ViewBuilder options: () -> Options
+    ) -> some View {
+        HStack {
+            Text(title)
+            Spacer()
+            Picker(title, selection: selection, content: options)
+                .labelsHidden()
+        }
+    }
+
     private func choice(_ title: LocalizedStringKey, field: WritableKeyPath<ControllerPointerSettings, Bool?>, fallback: Bool) -> some View {
-        Picker(title, selection: override(field)) {
+        menu(title, selection: override(field)) {
             Text(fallback ? "Inherit (On)" : "Inherit (Off)").tag(nil as Bool?)
             Text("On").tag(Optional(true))
             Text("Off").tag(Optional(false))

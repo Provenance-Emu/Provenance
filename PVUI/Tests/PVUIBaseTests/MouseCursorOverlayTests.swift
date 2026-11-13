@@ -16,6 +16,7 @@ struct MouseCursorOverlayTests {
         #expect(MouseCursorOverlayView.systemDrawsOwnPointer(SystemIdentifier.DOS.rawValue))
         #expect(MouseCursorOverlayView.systemDrawsOwnPointer(SystemIdentifier.MSX.rawValue))
         #expect(MouseCursorOverlayView.systemDrawsOwnPointer(SystemIdentifier.MSX2.rawValue))
+        #expect(MouseCursorOverlayView.systemDrawsOwnPointer(SystemIdentifier.SNES.rawValue))
     }
 
     @Test func amigaIsMatchedByCore() {
