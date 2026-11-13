@@ -90,11 +90,16 @@ public actor EmulationState {
 public final class EmulationStateSync {
     public static let shared = EmulationStateSync()
 
-    private var cachedState = EmulationState.State()
+    private var cachedState: EmulationState.State
     private var cancellable: AnyCancellable?
 
-    private init() {
-        cancellable = EmulationState.shared.stateSubject
+    /// Starts from the subject's current value: this object is created by its first reader, and
+    /// the subscription below only delivers on a later main-queue turn. Starting from the
+    /// defaults made that first read report `isOn == false` for a running game, which dropped
+    /// the pause menu a netplay host launch opens.
+    init(subject: CurrentValueSubject<EmulationState.State, Never> = EmulationState.shared.stateSubject) {
+        cachedState = subject.value
+        cancellable = subject
             .receive(on: DispatchQueue.main)
             .sink { [weak self] state in
                 self?.cachedState = state
