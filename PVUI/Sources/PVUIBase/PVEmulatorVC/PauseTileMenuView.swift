@@ -1983,6 +1983,10 @@ struct PauseTileMenuView: View {
             }
         }
         .onReceive(emulatorVC.coreInputHandler.$hardwareSwitchPositionIndexes.removeDuplicates()) { positions in
+            // A rebuild re-evaluates this body, which can subscribe again, and a new subscription
+            // is sent the current positions at once. Rebuilding for positions already drawn
+            // would then repeat without end and hang the menu.
+            guard positions != viewModel.renderedHardwareSwitchStates else { return }
             // @Published sends before assignment. Rebuild with the new positions.
             rebuildSections(hardwareSwitchPositions: positions)
         }

@@ -49,6 +49,10 @@ final class PauseTileMenuViewModel: ObservableObject {
     @Published private(set) var latestSaveDate: Date?
     @Published private(set) var saveStateCount = 0
 
+    /// The switch positions the current `sections` were built from. Not published: the view
+    /// only compares against it.
+    private(set) var renderedHardwareSwitchStates: [String: Int]?
+
     /// Flat lookup table: tile ID -> description text.
     /// Built alongside `sections` so the info shelf can resolve descriptions in O(1).
     private(set) var descriptionsByTileID: [String: String] = [:]
@@ -98,6 +102,7 @@ final class PauseTileMenuViewModel: ObservableObject {
         coreOptionsPerGame: Bool,
         route: PauseTileMenuRoute
     ) {
+        renderedHardwareSwitchStates = hardwareSwitchStates
         var built: [PauseMenuTileSection] = []
 
         // ── GAME section ────────────────────────────────────────────────
