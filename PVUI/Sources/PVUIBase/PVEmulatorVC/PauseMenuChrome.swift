@@ -153,6 +153,8 @@ struct PauseChromeButtonStyle: ButtonStyle {
 struct PauseMenuTabBar: View {
     enum Style { case labels, stacked, rail }
 
+    /// The pages on show, in their fixed order.
+    var pages: [PauseMenuTab] = PauseMenuTab.allCases
     let selection: PauseMenuTab
     let style: Style
     let theme: PauseMenuTheme
@@ -176,7 +178,7 @@ struct PauseMenuTabBar: View {
     }
 
     @ViewBuilder private var tabs: some View {
-        ForEach(PauseMenuTab.allCases) { tab in
+        ForEach(pages) { tab in
             Button { select(tab) } label: { label(for: tab) }
                 .buttonStyle(.plain)
                 .accessibilityLabel(tab.title)

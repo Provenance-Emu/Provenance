@@ -13,24 +13,26 @@ struct PauseMenuTabTests {
     private let root: [(id: String, tileIDs: [String])] = [
         (id: "game", tileIDs: ["resume", "saveQuit", "quit", "fastForwardToggle", "reset"]),
         (id: "statesData", tileIDs: ["saveState", "loadState", "browseSaves", "autoSaveState"]),
-        (id: "menu", tileIDs: ["menu_recording"]),
-        (id: "settingsData", tileIDs: ["core", "appSettings"]),
+        (id: "recording", tileIDs: ["recording"]),
+        (id: "settingsData", tileIDs: ["volume", "appSettings"]),
+        (id: "core", tileIDs: ["hardwareSwitch_tv", "coreSettings"]),
+        (id: "coreOptions_0", tileIDs: ["coreOption_0_video"]),
+        (id: "coreOptions_1", tileIDs: ["coreOption_1_audio"]),
         (id: "controlsData", tileIDs: ["controllerProfile"]),
         (id: "quickSettingsData", tileIDs: ["rewindToggle"]),
-        (id: "displayData", tileIDs: ["filterCycle", "fpsCounterToggle"])
+        (id: "displayData", tileIDs: ["scalingCycle", "filterCycle", "fpsCounterToggle"])
     ]
 
-    @Test("The pages are always in the same order")
+    @Test("The pages are always in the same order, Core last")
     func fixedOrder() {
-        #expect(PauseMenuTab.allCases == [.game, .display, .controls, .settings])
+        #expect(PauseMenuTab.allCases == [.game, .display, .controls, .settings, .core])
     }
 
     @Test("The Game page keeps its sections in a fixed order whatever order they were built in")
     func gamePageOrder() {
-        #expect(PauseMenuTab.game.tileIDs(inRootSections: root)
-                == ["fastForwardToggle", "reset", "autoSaveState", "rewindToggle", "menu_recording"])
-        #expect(PauseMenuTab.game.tileIDs(inRootSections: root.reversed())
-                == ["fastForwardToggle", "reset", "autoSaveState", "rewindToggle", "menu_recording"])
+        let expected = ["fastForwardToggle", "reset", "autoSaveState", "rewindToggle", "recording"]
+        #expect(PauseMenuTab.game.tileIDs(inRootSections: root) == expected)
+        #expect(PauseMenuTab.game.tileIDs(inRootSections: root.reversed()) == expected)
     }
 
     @Test("Exit buttons and the save row are chrome, not cells of a page")
@@ -42,9 +44,32 @@ struct PauseMenuTabTests {
 
     @Test("Each section is on one page")
     func sectionsMapToPages() {
-        #expect(PauseMenuTab.display.tileIDs(inRootSections: root) == ["filterCycle", "fpsCounterToggle"])
+        #expect(PauseMenuTab.display.tileIDs(inRootSections: root)
+                == ["scalingCycle", "filterCycle", "fpsCounterToggle"])
         #expect(PauseMenuTab.controls.tileIDs(inRootSections: root) == ["controllerProfile"])
-        #expect(PauseMenuTab.settings.tileIDs(inRootSections: root) == ["core", "appSettings"])
+        #expect(PauseMenuTab.settings.tileIDs(inRootSections: root) == ["volume", "appSettings"])
+    }
+
+    @Test("Core options, actions and the system's switches are on the Core page, one group per category")
+    func corePageKeepsItsCategories() {
+        let groups = PauseMenuTab.core.groups(inRootSections: root)
+        #expect(groups.map(\.id) == ["core", "coreOptions_0", "coreOptions_1"])
+        #expect(groups.first?.tileIDs == ["hardwareSwitch_tv", "coreSettings"])
+        #expect(PauseMenuTab.tab(forSectionID: "coreOptions_7") == .core)
+    }
+
+    @Test("The other pages are one grid")
+    func otherPagesAreOneGroup() {
+        #expect(PauseMenuTab.game.groups(inRootSections: root).count == 1)
+        #expect(PauseMenuTab.display.groups(inRootSections: root).count == 1)
+    }
+
+    @Test("Core shows only when the core has something on it")
+    func coreHiddenWhenEmpty() {
+        #expect(PauseMenuTab.visible(inRootSections: root) == PauseMenuTab.allCases)
+        let noCore = root.filter { PauseMenuTab.tab(forSectionID: $0.id) != .core }
+        #expect(PauseMenuTab.visible(inRootSections: noCore) == [.game, .display, .controls, .settings])
+        #expect(PauseMenuTab.visible(inRootSections: noCore + [(id: "core", tileIDs: [])]).contains(.core) == false)
     }
 
     @Test("A section no page claims shows on Game, after the known ones")
@@ -62,11 +87,26 @@ struct PauseMenuTabTests {
         #expect(Set(onPages).union(PauseMenuTab.chromeTileIDs) == Set(all))
     }
 
-    @Test("L1 and R1 wrap around the ends")
+    @Test("L1 and R1 wrap around the ends of the pages on show")
     func shoulderButtonsWrap() {
         #expect(PauseMenuTab.game.next(by: 1) == .display)
-        #expect(PauseMenuTab.settings.next(by: 1) == .game)
-        #expect(PauseMenuTab.game.next(by: -1) == .settings)
+        #expect(PauseMenuTab.core.next(by: 1) == .game)
+        #expect(PauseMenuTab.game.next(by: -1) == .core)
+        let noCore: [PauseMenuTab] = [.game, .display, .controls, .settings]
+        #expect(PauseMenuTab.settings.next(by: 1, in: noCore) == .game)
+        #expect(PauseMenuTab.game.next(by: -1, in: noCore) == .settings)
+    }
+
+    /// The owner's iPad report: the panel changed size with every page.
+    @Test("One fit for every page, so changing page keeps the panel's width")
+    func widthIsTheSameOnEveryPage() {
+        let counts = PauseMenuTab.allCases.flatMap { tab in
+            tab.groups(inRootSections: root).map(\.tileIDs.count)
+        }
+        let fit = PauseTileLayout.fit(fullWidth: 840, maxColumns: 8, tileCounts: counts,
+                                      inset: 12, spacing: 6, minimumWidth: 380)
+        #expect(fit.columns == PauseTileLayout.balancedColumns(tileCounts: counts, maxColumns: 8))
+        #expect(fit.columns >= PauseTileLayout.balancedColumns(tileCounts: [counts.max() ?? 0], maxColumns: 8))
     }
 }
 

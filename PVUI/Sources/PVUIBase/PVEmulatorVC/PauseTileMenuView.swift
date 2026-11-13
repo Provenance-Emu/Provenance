@@ -188,6 +188,8 @@ struct PauseTileMenuView: View {
     @State private var pendingCoreReset = false
     /// Controls display of restart prompt when user exits the pause menu.
     @State private var showingDeferredRestartPrompt = false
+    /// Asks before "Reset Options" puts the core's options back to their defaults.
+    @State private var showingResetCoreOptionsConfirm = false
 
     // MARK: Focus
 
@@ -292,6 +294,7 @@ struct PauseTileMenuView: View {
             hasControllerProfiles: hasControllerProfiles,
             hardwareSwitchStates: hardwareSwitchPositions,
             coreOptionsMD5: currentCoreOptionsMD5Scope,
+            coreOptionsPerGame: coreOptionsPerGame,
             route: currentRoute
         )
         refreshSearchResults()
@@ -300,8 +303,7 @@ struct PauseTileMenuView: View {
     /// What the grid shows: one page of the first level, or a submenu's sections.
     private var visibleSections: [PauseMenuTileSection] {
         guard currentRoute == .root else { return viewModel.sections }
-        let page = viewModel.section(for: rootTab)
-        return page.tiles.isEmpty ? [] : [page]
+        return viewModel.sections(for: rootTab).filter { !$0.tiles.isEmpty }
     }
 
     /// Returns the first focusable tile identifier in display order.
@@ -406,7 +408,7 @@ struct PauseTileMenuView: View {
     /// Shows the page `offset` steps away and puts the cursor on its first control.
     private func switchTab(by offset: Int) {
         guard currentRoute == .root else { return }
-        selectTab(rootTab.next(by: offset))
+        selectTab(rootTab.next(by: offset, in: viewModel.visibleTabs))
     }
 
     private func selectTab(_ tab: PauseMenuTab) {
@@ -915,6 +917,30 @@ struct PauseTileMenuView: View {
         case let id where id.hasPrefix(SystemButtonTileProvider.tileIDPrefix):
             dispatchSystemButton(tileID: id)
 
+        // MARK: Core page scope
+        case PauseTileMenuViewModel.coreOptionsScopeTileID:
+            coreOptionsPerGame.toggle()
+            rebuildSections()
+        case PauseTileMenuViewModel.resetCoreOptionsTileID:
+            showingResetCoreOptionsConfirm = true
+
+        // MARK: Audio and quick preferences
+        case PauseTileMenuViewModel.volumeTileID:
+            emulatorVC.setGameVolume(PauseTileMenuViewModel.nextVolumePreset(after: Defaults[.volume]))
+            rebuildSections()
+        case PauseTileMenuViewModel.muteTileID:
+            emulatorVC.setAudioMuted(!emulatorVC.isAudioMuted)
+            rebuildSections()
+        case PauseTileMenuViewModel.saveOnQuitTileID:
+            Defaults[.autoSave].toggle()
+            rebuildSections()
+        case PauseTileMenuViewModel.buttonHapticsTileID:
+            Defaults[.buttonVibration].toggle()
+            rebuildSections()
+        case PauseTileMenuViewModel.systemButtonsTileID:
+            Defaults[.missingButtonsAlwaysOn].toggle()
+            rebuildSections()
+
         default:
             break
         }
@@ -938,6 +964,15 @@ struct PauseTileMenuView: View {
             }
             emulatorVC.shaderSelectionDidChange()
             rebuildSections()
+            return
+        }
+
+        if tile.id == PauseTileMenuViewModel.volumeTileID {
+            let prefix = PauseTileMenuViewModel.volumeOptionPrefix
+            if lpOption.id.hasPrefix(prefix), let percent = Float(lpOption.id.dropFirst(prefix.count)) {
+                emulatorVC.setGameVolume(percent / 100)
+                rebuildSections()
+            }
             return
         }
 
@@ -1416,7 +1451,7 @@ struct PauseTileMenuView: View {
     }
 
     private func tabBar(_ style: PauseMenuTabBar.Style, theme: PauseMenuTheme) -> some View {
-        PauseMenuTabBar(selection: rootTab, style: style, theme: theme,
+        PauseMenuTabBar(pages: viewModel.visibleTabs, selection: rootTab, style: style, theme: theme,
                         showsShoulderKeys: style == .labels && showsShoulderKeys, select: selectTab)
             .padding(.horizontal, style == .rail ? 0 : tvOSAdjusted(RetroPauseChrome.chromeInset, tvOS: 20))
             .padding(.vertical, 4)
@@ -1497,7 +1532,8 @@ struct PauseTileMenuView: View {
 
     // MARK: - Section view
 
-    private func sectionView(section: PauseMenuTileSection, cols: Int, spacing: CGFloat) -> some View {
+    private func sectionView(section: PauseMenuTileSection, cols: Int, spacing: CGFloat,
+                             placeholder: Bool = false) -> some View {
         return VStack(alignment: .leading, spacing: 6) {
             if let title = section.title {
                 Text(title)
@@ -1507,6 +1543,14 @@ struct PauseTileMenuView: View {
                     .lineLimit(1)
                     .padding(.horizontal, 2)
             }
+            if placeholder {
+                /// Faces only: the same height as the tiles, with nothing to focus or tap.
+                LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: spacing), count: cols), spacing: spacing) {
+                    ForEach(section.tiles) { tile in
+                        PauseTileFace(label: tile.label, icon: tile.icon, badge: tile.badge, accent: .clear, isFocused: false)
+                    }
+                }
+            } else {
             #if os(tvOS)
             /// Eager row layout on tvOS: `LazyVGrid` defers rendering of rows below
             /// the scroll viewport, which the focus engine reads as "no downward
@@ -1521,6 +1565,7 @@ struct PauseTileMenuView: View {
                 }
             }
             #endif
+            }
         }
     }
 
@@ -1751,6 +1796,10 @@ struct PauseTileMenuView: View {
 
     /// The scrolling part of the panel: search, the grid or the search results, and a submenu's own rows.
     private func gridScroll(sections: [PauseMenuTileSection], cols: Int, spacing: CGFloat, showsGrid: Bool) -> some View {
+        ZStack(alignment: .top) {
+        if currentRoute == .root {
+            pageHeightPlaceholders(cols: cols, spacing: spacing)
+        }
         ScrollViewReader { scrollProxy in
         ScrollView(.vertical, showsIndicators: true) {
             VStack(alignment: .leading, spacing: tvOSAdjusted(12, tvOS: 20)) {
@@ -1827,6 +1876,32 @@ struct PauseTileMenuView: View {
             }
         }
         } // ScrollViewReader
+        } // ZStack
+    }
+
+    /// Every page of the first level drawn invisibly behind the grid, so the panel is as
+    /// tall as its tallest page whichever page is on show and keeps its size when the page
+    /// changes. Flexible, so once the panel is capped the scroll view decides the height.
+    private func pageHeightPlaceholders(cols: Int, spacing: CGFloat) -> some View {
+        ZStack(alignment: .top) {
+            ForEach(viewModel.visibleTabs) { tab in
+                VStack(alignment: .leading, spacing: tvOSAdjusted(12, tvOS: 20)) {
+                    let sections = viewModel.sections(for: tab).filter { !$0.tiles.isEmpty }
+                    ForEach(sections) { section in
+                        sectionView(section: section, cols: cols, spacing: spacing, placeholder: true)
+                        if section.id != sections.last?.id {
+                            Color.clear.frame(height: 1)
+                        }
+                    }
+                }
+                .padding([.horizontal, .top], tvOSAdjusted(RetroPauseChrome.chromeInset, tvOS: 20))
+                .padding(.bottom, RetroPauseChrome.scrollEdgeFade)
+            }
+        }
+        .frame(minHeight: 0, maxHeight: .infinity, alignment: .top)
+        .hidden()
+        .accessibilityHidden(true)
+        .allowsHitTesting(false)
     }
 
     // MARK: - Body
@@ -1863,7 +1938,7 @@ struct PauseTileMenuView: View {
                     ? PauseTileLayout.fit(
                         fullWidth: fullWidth,
                         maxColumns: columnCount(for: fullWidth),
-                        tileCounts: showsGrid ? sections.map(\.tiles.count) : [],
+                        tileCounts: viewModel.pageTileCounts,
                         inset: tvOSAdjusted(RetroPauseChrome.chromeInset, tvOS: 20),
                         spacing: spacing,
                         minimumWidth: tvOSAdjusted(PauseTilePanelMetrics.minimumWidth, tvOS: PauseTilePanelMetrics.tvMinimumWidth))
@@ -2118,6 +2193,21 @@ struct PauseTileMenuView: View {
                 }
             }
             return PVAlert(title: action.title, style: .actionSheet, actions: optionActions + [.cancel()])
+        }
+        .pvAlert(isPresented: $showingResetCoreOptionsConfirm) {
+            PVAlert(
+                title: String(localized: "Reset Core Options?"),
+                message: coreOptionsPerGame
+                    ? String(localized: "This game's options for this core go back to their defaults.")
+                    : String(localized: "This core's options go back to their defaults for every game."),
+                type: .warning,
+                actions: [
+                    PVAlertAction(String(localized: "Reset"), role: .destructive) {
+                        resetCoreSettingsForCurrentScope()
+                    },
+                    .cancel()
+                ]
+            )
         }
         .pvAlert(isPresented: $showingDeferredRestartPrompt) {
             PVAlert(
@@ -2620,6 +2710,9 @@ struct PauseTileMenuView: View {
         if result.route != currentRoute {
             routeStack = result.route == .root ? [.root] : [.root, result.route]
             rebuildSections()
+        }
+        if result.route == .root, let tab = viewModel.tab(containingTileID: result.tile.id) {
+            rootTab = tab
         }
         handle(result.tile)
     }

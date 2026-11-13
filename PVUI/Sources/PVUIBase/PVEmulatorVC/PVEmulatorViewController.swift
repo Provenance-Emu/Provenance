@@ -3677,13 +3677,22 @@ extension PVEmulatorViewController {
             DispatchQueue.main.async { [weak self] in self?.handleMicButtonToggleMute(notification) }
             return
         }
-        isAudioMuted.toggle()
-        if isAudioMuted {
-            gameAudio.setVolume(0)
-            ILOG("DualSense mic button: audio muted")
-        } else {
-            gameAudio.setVolume(Defaults[.volume])
-            ILOG("DualSense mic button: audio unmuted")
+        setAudioMuted(!isAudioMuted)
+        ILOG("DualSense mic button: audio \(isAudioMuted ? "muted" : "unmuted")")
+    }
+
+    /// Silences the game, or brings it back at the saved volume.
+    func setAudioMuted(_ muted: Bool) {
+        isAudioMuted = muted
+        gameAudio.setVolume(muted ? 0 : Defaults[.volume])
+    }
+
+    /// Saves `volume` (0...1) as the game volume and applies it now, unless the game is muted.
+    func setGameVolume(_ volume: Float) {
+        let clamped = min(max(volume, 0), 1)
+        Defaults[.volume] = clamped
+        if !isAudioMuted {
+            gameAudio.setVolume(clamped)
         }
     }
 

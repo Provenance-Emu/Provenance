@@ -55,7 +55,23 @@ final class PauseTileMenuViewModel: ObservableObject {
     static let hardwareSwitchTilePrefix = "hardwareSwitch_"
     static let hardwareMomentaryTilePrefix = "hardwareMomentary_"
     /// Section ID prefix for the per-category core option sections.
-    static let coreOptionSectionPrefix = "coreOptions_"
+    static let coreOptionSectionPrefix = PauseMenuTab.coreOptionSectionPrefix
+    /// Core page: whether core option edits apply to this game or to every game.
+    static let coreOptionsScopeTileID = "coreOptionsScope"
+    /// Core page: put the core's options back to their defaults (asks first).
+    static let resetCoreOptionsTileID = "resetCoreOptions"
+    /// Settings page: game audio volume, cycled through `volumePresets`.
+    static let volumeTileID = "volume"
+    static let volumeOptionPrefix = "volume_"
+    static let volumePresets: [Float] = [0, 0.25, 0.5, 0.75, 1]
+    /// Settings page: silence the game without changing the volume.
+    static let muteTileID = "muteAudio"
+    /// Game page: make a save state when quitting.
+    static let saveOnQuitTileID = "saveOnQuit"
+    /// Controls page: vibrate when an on-screen button is pressed.
+    static let buttonHapticsTileID = "buttonHaptics"
+    /// Controls page: always offer Start, Select and the like as tiles, not only when the pad lacks them.
+    static let systemButtonsTileID = "systemButtonsAlways"
     /// Header of the section holding the core's actions and uncategorised options.
     static var coreSectionTitle: String { String(localized: "CORE") }
     /// Cache of route -> visible sections to support global search.
@@ -79,6 +95,7 @@ final class PauseTileMenuViewModel: ObservableObject {
         hasControllerProfiles: Bool,
         hardwareSwitchStates: [String: Int],
         coreOptionsMD5: String?,
+        coreOptionsPerGame: Bool,
         route: PauseTileMenuRoute
     ) {
         var built: [PauseMenuTileSection] = []
@@ -155,7 +172,11 @@ final class PauseTileMenuViewModel: ObservableObject {
                 colorKey: .purple,
                 dismissOnTap: false
             ),
-            Self.timedAutoSaveTile(isEnabled: supportsSaveStates)
+            Self.timedAutoSaveTile(isEnabled: supportsSaveStates),
+            Self.toggleTile(id: Self.saveOnQuitTileID, isOn: Defaults[.autoSave],
+                            icon: "rectangle.portrait.and.arrow.right", label: String(localized: "Save on Quit"),
+                            description: String(localized: "Make a save state when you quit a game."),
+                            isEnabled: supportsSaveStates)
         ]
 
         gameTiles.append(PauseMenuTile(
@@ -292,15 +313,11 @@ final class PauseTileMenuViewModel: ObservableObject {
             colorKey: .blue
         ))
 
-        settingsTiles.append(PauseMenuTile(
-            id: "menu_core",
-            icon: "cpu",
-            label: String(localized: "Core"),
-            description: String(localized: "Core options, actions, and hardware controls."),
-            colorKey: .purple,
-            dismissOnTap: false,
-            destinationRoute: .core
-        ))
+        settingsTiles.append(Self.volumeTile(volume: Defaults[.volume]))
+        settingsTiles.append(Self.toggleTile(id: Self.muteTileID, isOn: emulatorVC.isAudioMuted,
+                                             icon: emulatorVC.isAudioMuted ? "speaker.slash.fill" : "speaker.wave.2",
+                                             label: String(localized: "Mute"),
+                                             description: String(localized: "Silence the game until you unmute it.")))
         settingsTiles.append(PauseMenuTile(
             id: "appSettings",
             icon: "gearshape",
@@ -381,11 +398,6 @@ final class PauseTileMenuViewModel: ObservableObject {
             ))
         }
 
-        // ── SCALING — single tile with long-press picker, added to gameTiles
-        if Self.coreSupportsVideoScaling(emulatorVC: emulatorVC) {
-            gameTiles.append(Self.scalingModeTile())
-        }
-
         built.append(PauseMenuTileSection(id: "game", title: String(localized: "GAME"), tiles: gameTiles))
         built.append(PauseMenuTileSection(id: "statesData", title: String(localized: "STATES"), tiles: stateTiles))
 
@@ -397,18 +409,15 @@ final class PauseTileMenuViewModel: ObservableObject {
             coreOptionsMD5: coreOptionsMD5
         )
 
-        var screenDisplayTiles: [PauseMenuTile] = [
-            PauseMenuTile(
-                id: "menu_skins",
-                icon: "paintbrush.pointed",
-                label: String(localized: "Skins"),
-                description: String(localized: "Controller skins and on-screen layout"),
-                colorKey: .orange,
-                dismissOnTap: false,
-                destinationRoute: .skins
-            ),
-            Self.fpsCounterToggleTile(showFPSCount: showFPSCount)
-        ]
+        var screenDisplayTiles: [PauseMenuTile] = []
+        if Self.coreSupportsVideoScaling(emulatorVC: emulatorVC) {
+            screenDisplayTiles.append(Self.scalingModeTile())
+        }
+        // Skins sit on the page itself rather than behind a submenu.
+        if emulatorVC.core.supportsSkins {
+            screenDisplayTiles += [Self.chooseSkinTile, Self.skinCatalogTile]
+        }
+        screenDisplayTiles.append(Self.fpsCounterToggleTile(showFPSCount: showFPSCount))
         // Screen filter (shader) controls only for cores whose video the Metal filter can reach.
         let supportsFilters = emulatorVC.filtersApplyToCurrentLayout
         // The filter in effect for this game (game, system, then global choice).
@@ -417,9 +426,9 @@ final class PauseTileMenuViewModel: ObservableObject {
         if supportsFilters {
             screenDisplayTiles.append(Self.filterTile(active: activeShader))
         }
-        // Shader parameters live under **SETTINGS** with other configuration tiles.
+        // Shader parameters sit beside the filter they tune.
         if supportsFilters, !(activeShader?.editableParameters.isEmpty ?? true) {
-            settingsTiles.append(PauseMenuTile(
+            screenDisplayTiles.append(PauseMenuTile(
                 id: "shaderSettings",
                 icon: "slider.horizontal.3",
                 label: String(localized: "Shader Settings"),
@@ -460,7 +469,17 @@ final class PauseTileMenuViewModel: ObservableObject {
         if let mouseTile = Self.mouseToggleTile(emulatorVC: emulatorVC) {
             controlsTiles.append(mouseTile)
         }
+        // Feedback for the on-screen buttons; there are none on tvOS.
+        controlsTiles.append(Self.toggleTile(
+            id: Self.buttonHapticsTileID, isOn: Defaults[.buttonVibration],
+            icon: "hand.tap", label: String(localized: "Button Haptics"),
+            description: String(localized: "Vibrate when you press an on-screen button.")))
+        controlsTiles += [Self.buttonEffectTile, Self.buttonSoundTile]
         #endif
+        controlsTiles.append(Self.toggleTile(
+            id: Self.systemButtonsTileID, isOn: Defaults[.missingButtonsAlwaysOn],
+            icon: "button.horizontal.top.press", label: String(localized: "Always Show Start/Select"),
+            description: String(localized: "Offer Start, Select and other system buttons here for every controller.")))
         if !settingsTiles.isEmpty {
             built.append(PauseMenuTileSection(id: "settingsData", title: String(localized: "SETTINGS"), tiles: settingsTiles))
         }
@@ -699,6 +718,15 @@ final class PauseTileMenuViewModel: ObservableObject {
             }
         }
 
+        // The system's own switches and buttons lead the Core page: they are what a
+        // player reaches for mid-game. The core's options follow, then their scope.
+        let isDeviceControl: (PauseMenuTile) -> Bool = {
+            $0.id.hasPrefix(Self.hardwareSwitchTilePrefix) || $0.id.hasPrefix(Self.hardwareMomentaryTilePrefix)
+        }
+        coreTiles = coreTiles.filter(isDeviceControl) + coreTiles.filter { !isDeviceControl($0) }
+        if let coreClass = type(of: emulatorVC.core) as? CoreOptional.Type, !coreClass.options.isEmpty {
+            coreTiles += Self.coreOptionScopeTiles(perGame: coreOptionsPerGame)
+        }
         if !coreTiles.isEmpty {
             built.append(PauseMenuTileSection(id: "core", title: Self.coreSectionTitle, tiles: coreTiles))
         }
@@ -707,19 +735,6 @@ final class PauseTileMenuViewModel: ObservableObject {
         if !controlsTiles.isEmpty {
             built.append(PauseMenuTileSection(id: "controlsData", title: String(localized: "CONTROLS"), tiles: controlsTiles))
         }
-
-        let menuTiles: [PauseMenuTile] = [
-            PauseMenuTile(
-                id: "menu_recording",
-                icon: "record.circle",
-                label: String(localized: "Recording"),
-                description: String(localized: "Recording, broadcasting, and clip tools."),
-                colorKey: .pink,
-                dismissOnTap: false,
-                destinationRoute: .recording
-            )
-        ]
-        built.insert(PauseMenuTileSection(id: "menu", title: String(localized: "MENU"), tiles: menuTiles), at: 2)
 
         if !screenDisplayTiles.isEmpty {
             built.append(PauseMenuTileSection(id: "displayData", title: String(localized: "DISPLAY"), tiles: screenDisplayTiles))
@@ -752,10 +767,8 @@ final class PauseTileMenuViewModel: ObservableObject {
     ) -> [PauseMenuTileSection] {
         switch route {
         case .root:
-            // Peer sections on the root grid (like STATES); CONTROLS is not a MENU drill-in.
-            let rootSectionOrder = ["game", "statesData", "settingsData", "controlsData", "quickSettingsData", "menu", "displayData"]
-            let byID = Dictionary(uniqueKeysWithValues: rootSections.map { ($0.id, $0) })
-            return rootSectionOrder.compactMap { byID[$0] }
+            // Every section; `PauseMenuTab` decides the page each one is drawn on.
+            return rootSections
         case .states:
             let stateIDs: Set<String> = ["saveState", "loadState", "browseSaves", "autoSaveState", "screenshot", "screenshots"]
             let tiles = tiles(matching: stateIDs, from: rootSections)
@@ -773,7 +786,12 @@ final class PauseTileMenuViewModel: ObservableObject {
             let tiles = tiles(matching: recordingIDs, from: rootSections)
             return [PauseMenuTileSection(id: "recording_route", title: String(localized: "RECORDING"), tiles: tiles)]
         case .core:
-            let core = rootSections.first(where: { $0.id == "core" })
+            // This submenu draws the scope as toggle rows of its own.
+            let scopeTileIDs: Set<String> = [Self.coreOptionsScopeTileID, Self.resetCoreOptionsTileID]
+            let core = rootSections.first(where: { $0.id == "core" }).map { section in
+                PauseMenuTileSection(id: section.id, title: section.title,
+                                     tiles: section.tiles.filter { !scopeTileIDs.contains($0.id) })
+            }
             let optionCategories = rootSections.filter { $0.id.hasPrefix(Self.coreOptionSectionPrefix) }
             return (core.map { [PauseMenuTileSection(id: "core_route", title: Self.coreSectionTitle, tiles: $0.tiles)] } ?? [])
                 + optionCategories
@@ -792,44 +810,14 @@ final class PauseTileMenuViewModel: ObservableObject {
                 ]
                 return [PauseMenuTileSection(id: "skins_root", title: String(localized: "SKINS"), tiles: tiles)]
             }
-            let tiles: [PauseMenuTile] = [
-                PauseMenuTile(
-                    id: "skins_choose",
-                    icon: "paintbrush.pointed",
-                    label: String(localized: "Choose Skin"),
-                    description: String(localized: "Pick a controller skin for this session, game, or system."),
-                    colorKey: .orange,
-                    dismissOnTap: false
-                ),
-                PauseMenuTile(
-                    id: Self.skinCatalogTileID,
-                    icon: "square.grid.2x2",
-                    label: String(localized: "Skin Catalog"),
-                    description: String(localized: "Browse and download skins for this system from the community catalog."),
-                    colorKey: .pink,
-                    dismissOnTap: false
-                ),
-                PauseMenuTile(
-                    id: "skins_button_effect",
-                    icon: "wand.and.sparkles",
-                    label: String(localized: "Button Effect"),
-                    badge: Defaults[.buttonPressEffect].description,
-                    description: String(localized: "Visual effect played when on-screen buttons are pressed."),
-                    colorKey: .purple,
-                    dismissOnTap: false
-                ),
-                PauseMenuTile(
-                    id: "skins_button_sound",
-                    icon: "speaker.wave.2",
-                    label: String(localized: "Button Sound"),
-                    badge: Defaults[.buttonSound].description,
-                    description: String(localized: "Audible feedback played when on-screen buttons are pressed."),
-                    colorKey: .blue,
-                    dismissOnTap: false
-                )
-            ]
+            let tiles = [Self.chooseSkinTile, Self.skinCatalogTile, Self.buttonEffectTile, Self.buttonSoundTile]
             return [PauseMenuTileSection(id: "skins_root", title: String(localized: "SKINS"), tiles: tiles)]
         }
+    }
+
+    /// The preset after `volume`, wrapping to silence after full.
+    static func nextVolumePreset(after volume: Float) -> Float {
+        volumePresets.first { $0 > volume + 0.01 } ?? volumePresets[0]
     }
 
     /// Searches all routes by tile label/description and ranks current-route title hits first.
@@ -900,12 +888,35 @@ final class PauseTileMenuViewModel: ObservableObject {
         rootSections.lazy.flatMap(\.tiles).first { $0.id == id }
     }
 
-    /// One page of the first level as a single grid, in the page's fixed order.
-    func section(for tab: PauseMenuTab) -> PauseMenuTileSection {
+    private var rootSectionIDs: [(id: String, tileIDs: [String])] {
+        rootSections.map { (id: $0.id, tileIDs: $0.tiles.map(\.id)) }
+    }
+
+    /// One page of the first level, in the page's fixed order: a single untitled grid, or
+    /// for Core its general controls followed by a titled grid per option category.
+    func sections(for tab: PauseMenuTab) -> [PauseMenuTileSection] {
         let root = rootSections
-        let ids = tab.tileIDs(inRootSections: root.map { (id: $0.id, tileIDs: $0.tiles.map(\.id)) })
         let byID = Dictionary(root.flatMap(\.tiles).map { ($0.id, $0) }, uniquingKeysWith: { first, _ in first })
-        return PauseMenuTileSection(id: "page_\(tab.rawValue)", tiles: ids.compactMap { byID[$0] })
+        let titles = Dictionary(root.map { ($0.id, $0.title) }, uniquingKeysWith: { first, _ in first })
+        return tab.groups(inRootSections: rootSectionIDs).map { group in
+            /// The page names Core, so its general group needs no header of its own.
+            let title = tab.keepsSections && group.id != "core" ? titles[group.id] ?? nil : nil
+            return PauseMenuTileSection(id: group.id, title: title, tiles: group.tileIDs.compactMap { byID[$0] })
+        }
+    }
+
+    /// The pages on show; Core only when the core has something to put on it.
+    var visibleTabs: [PauseMenuTab] { PauseMenuTab.visible(inRootSections: rootSectionIDs) }
+
+    /// Cell counts of every section of every page on show, so the panel can take one
+    /// width for all of them and keep it when the page changes.
+    var pageTileCounts: [Int] {
+        visibleTabs.flatMap { sections(for: $0).map(\.tiles.count) }
+    }
+
+    /// The page a first-level control is drawn on, for jumping to a search hit.
+    func tab(containingTileID id: String) -> PauseMenuTab? {
+        visibleTabs.first { $0.tileIDs(inRootSections: rootSectionIDs).contains(id) }
     }
 
     /// Looks up the description for a tile by ID, returning nil when none exists.
@@ -1172,6 +1183,112 @@ extension MetalFilterModeOption {
 }
 
 private extension PauseTileMenuViewModel {
+    /// An on/off tile: green with ON when set, grey with OFF when not.
+    static func toggleTile(id: String, isOn: Bool, icon: String, label: String, description: String,
+                           isEnabled: Bool = true) -> PauseMenuTile {
+        PauseMenuTile(
+            id: id,
+            icon: icon,
+            label: label,
+            badge: isOn ? "ON" : "OFF",
+            description: description,
+            isEnabled: isEnabled,
+            colorKey: isOn ? .green : .gray,
+            dismissOnTap: false
+        )
+    }
+
+    /// Game volume: tap steps through the presets, long-press picks one.
+    static func volumeTile(volume: Float) -> PauseMenuTile {
+        let percent: (Float) -> String = { "\(Int(($0 * 100).rounded()))%" }
+        let options = volumePresets.map { preset in
+            PauseMenuTileLongPressOption(
+                id: "\(volumeOptionPrefix)\(Int((preset * 100).rounded()))",
+                title: percent(preset),
+                isSelected: abs(preset - volume) < 0.01
+            )
+        }
+        return PauseMenuTile(
+            id: volumeTileID,
+            icon: volume <= 0 ? "speaker" : (volume < 0.5 ? "speaker.wave.1" : "speaker.wave.3"),
+            label: String(localized: "Volume"),
+            badge: percent(volume),
+            description: String(localized: "Tap to step the game's volume. Long-press to pick a level."),
+            colorKey: .blue,
+            dismissOnTap: false,
+            longPressOptions: options
+        )
+    }
+
+    /// Whether option edits apply to this game or every game, and a reset back to defaults.
+    static func coreOptionScopeTiles(perGame: Bool) -> [PauseMenuTile] {
+        [
+            PauseMenuTile(
+                id: coreOptionsScopeTileID,
+                icon: perGame ? "scope" : "globe",
+                label: String(localized: "Options Apply To"),
+                badge: perGame ? String(localized: "This Game") : String(localized: "All Games"),
+                description: String(localized: "Keep option changes for this game, or for every game on this core."),
+                colorKey: perGame ? .teal : .blue,
+                dismissOnTap: false
+            ),
+            PauseMenuTile(
+                id: resetCoreOptionsTileID,
+                icon: "arrow.uturn.backward.circle",
+                label: String(localized: "Reset Options"),
+                description: String(localized: "Put this core's options back to their defaults."),
+                colorKey: .red,
+                dismissOnTap: false
+            )
+        ]
+    }
+
+    static var chooseSkinTile: PauseMenuTile {
+        PauseMenuTile(
+            id: "skins_choose",
+            icon: "paintbrush.pointed",
+            label: String(localized: "Choose Skin"),
+            description: String(localized: "Pick a controller skin for this session, game, or system."),
+            colorKey: .orange,
+            dismissOnTap: false
+        )
+    }
+
+    static var skinCatalogTile: PauseMenuTile {
+        PauseMenuTile(
+            id: skinCatalogTileID,
+            icon: "square.grid.2x2",
+            label: String(localized: "Skin Catalog"),
+            description: String(localized: "Browse and download skins for this system from the community catalog."),
+            colorKey: .pink,
+            dismissOnTap: false
+        )
+    }
+
+    static var buttonEffectTile: PauseMenuTile {
+        PauseMenuTile(
+            id: "skins_button_effect",
+            icon: "wand.and.sparkles",
+            label: String(localized: "Button Effect"),
+            badge: Defaults[.buttonPressEffect].description,
+            description: String(localized: "Visual effect played when on-screen buttons are pressed."),
+            colorKey: .purple,
+            dismissOnTap: false
+        )
+    }
+
+    static var buttonSoundTile: PauseMenuTile {
+        PauseMenuTile(
+            id: "skins_button_sound",
+            icon: "speaker.wave.2",
+            label: String(localized: "Button Sound"),
+            badge: Defaults[.buttonSound].description,
+            description: String(localized: "Audible feedback played when on-screen buttons are pressed."),
+            colorKey: .blue,
+            dismissOnTap: false
+        )
+    }
+
     static func fastForwardToggleTile(core: PVEmulatorCore) -> PauseMenuTile {
         let isFastForwarding = core.gameSpeed == .fast || core.gameSpeed == .veryFast
         return PauseMenuTile(
