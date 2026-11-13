@@ -326,6 +326,10 @@ final class PVMetalViewController: PVGPUViewController, PVRenderDelegate, MTKVie
     private var commandBufferPool: [MTLCommandBuffer] = []
     private var renderPassDescriptor: MTLRenderPassDescriptor?
     private var lastBufferSize: CGSize = .zero
+#if targetEnvironment(simulator)
+    /// Reused each frame by `SimulatorPackedPixelConverter`.
+    private var simulatorUploadBuffer: [UInt8] = []
+#endif
     private var lastPixelFormat: GLenum = 0
     private var lastPixelType: GLenum = 0
     private var lastScreenBounds: CGRect = .zero
@@ -1162,11 +1166,7 @@ final class PVMetalViewController: PVGPUViewController, PVRenderDelegate, MTKVie
         }
 
         // Determine the pixel format
-#if targetEnvironment(simulator)
-        let mtlPixelFormat: MTLPixelFormat = .rgba8Unorm
-#else
-        let mtlPixelFormat: MTLPixelFormat = emulatorCore.rendersToOpenGL ? .rgba8Unorm : getMTLPixelFormat(from: emulatorCore.pixelFormat, type: emulatorCore.pixelType)
-#endif
+        let mtlPixelFormat = inputTexturePixelFormat(for: emulatorCore)
 
         // Create a texture descriptor - always use the effective dimensions
         let textureDescriptor = MTLTextureDescriptor.texture2DDescriptor(
@@ -1353,6 +1353,21 @@ final class PVMetalViewController: PVGPUViewController, PVRenderDelegate, MTKVie
         }
 
         return UInt(componentSize * componentsPerPixel)
+    }
+
+    /// The format of the frames the core hands over.
+    private func corePixelFormat(for emulatorCore: PVEmulatorCore) -> MTLPixelFormat {
+        emulatorCore.rendersToOpenGL ? .rgba8Unorm : getMTLPixelFormat(from: emulatorCore.pixelFormat, type: emulatorCore.pixelType)
+    }
+
+    /// The format of the texture those frames are uploaded to. It is the core's own, except in
+    /// the simulator for packed 16-bit formats (see `SimulatorPackedPixelConverter`).
+    private func inputTexturePixelFormat(for emulatorCore: PVEmulatorCore) -> MTLPixelFormat {
+#if targetEnvironment(simulator)
+        return SimulatorPackedPixelConverter.textureFormat(for: corePixelFormat(for: emulatorCore))
+#else
+        return corePixelFormat(for: emulatorCore)
+#endif
     }
 
     func getMTLPixelFormat(from pixelFormat: GLenum, type pixelType: GLenum) -> MTLPixelFormat {
@@ -2251,11 +2266,7 @@ final class PVMetalViewController: PVGPUViewController, PVRenderDelegate, MTKVie
         }
 
         // Check if pixel format has changed
-#if targetEnvironment(simulator)
-        let mtlPixelFormat: MTLPixelFormat = .rgba8Unorm
-#else
-        let mtlPixelFormat: MTLPixelFormat = emulatorCore.rendersToOpenGL ? .rgba8Unorm : getMTLPixelFormat(from: emulatorCore.pixelFormat, type: emulatorCore.pixelType)
-#endif
+        let mtlPixelFormat = inputTexturePixelFormat(for: emulatorCore)
 
         if inputTexture?.pixelFormat != mtlPixelFormat {
             DLOG("isTextureUpdateNeeded: pixel format changed")
@@ -3021,6 +3032,24 @@ final class PVMetalViewController: PVGPUViewController, PVRenderDelegate, MTKVie
             blitEncoder.endEncoding()
             commandBuffer.commit()
             commandBuffer.waitUntilCompleted()
+            return true
+        }
+        #endif
+        #if targetEnvironment(simulator)
+        let coreFormat = corePixelFormat(for: emulatorCore)
+        if SimulatorPackedPixelConverter.needsConversion(coreFormat) {
+            SimulatorPackedPixelConverter.convert(videoBuffer.advanced(by: finalSourceOffset), sourceBytesPerRow: bytesPerRow,
+                                                  width: finalWidth, height: finalHeight, format: coreFormat,
+                                                  into: &simulatorUploadBuffer)
+            simulatorUploadBuffer.withUnsafeBytes { converted in
+                guard let bytes = converted.baseAddress else { return }
+                inputTexture.replace(
+                    region: MTLRegionMake2D(0, 0, finalWidth, finalHeight),
+                    mipmapLevel: 0,
+                    withBytes: bytes,
+                    bytesPerRow: finalWidth * SimulatorPackedPixelConverter.outputBytesPerPixel
+                )
+            }
             return true
         }
         #endif
