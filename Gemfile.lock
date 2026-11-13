@@ -6,7 +6,7 @@ GEM
       nkf
       rexml
     abbrev (0.1.2)
-    addressable (2.9.0)
+    addressable (2.9.1)
       public_suffix (>= 2.0.2, < 8.0)
     apktools (0.7.6)
       rubyzip (>= 2.0, < 4.0)
@@ -213,7 +213,7 @@ GEM
     prettyprint (0.2.0)
     prism (1.9.0)
     pstore (0.2.1)
-    public_suffix (6.0.2)
+    public_suffix (7.0.5)
     rake (13.2.1)
     rbs (4.2.0)
       logger
@@ -233,7 +233,7 @@ GEM
     retriable (3.1.2)
     rexml (3.4.4)
     rouge (3.28.0)
-    rubyzip (3.4.0)
+    rubyzip (3.7.0)
     security (0.3.0)
     signet (0.22.0)
       addressable (~> 2.8)
