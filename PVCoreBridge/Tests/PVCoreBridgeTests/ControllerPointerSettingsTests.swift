@@ -155,4 +155,20 @@ final class ControllerPointerSettingsTests: XCTestCase {
         store.update(.game(md5: "abc")) { $0.mode = .mouse }
         XCTAssertEqual(store.resolved(system: .SNES, gameMD5: "abc").mode, .mouse)
     }
+    func testGameTiltAndGyroTuningInheritIndependently() {
+        store.update(.system(.Wii)) {
+            $0.wiiTilt = .sideways
+            $0.gyroSensitivity = 2
+        }
+        store.update(.game(md5: "abc")) {
+            $0.wiiTilt = WiiTiltMode.off
+            $0.gyroDeadZone = 0.2
+        }
+        let game = store.resolved(system: .Wii, gameMD5: "abc")
+        XCTAssertEqual(game.wiiTilt, .off)
+        XCTAssertEqual(game.gyroFilter.sensitivity, 2)
+        XCTAssertEqual(game.gyroFilter.deadZone, 0.2)
+        store.update(.game(md5: "abc")) { $0.wiiTilt = nil }
+        XCTAssertEqual(store.resolved(system: .Wii, gameMD5: "abc").wiiTilt, .sideways)
+    }
 }

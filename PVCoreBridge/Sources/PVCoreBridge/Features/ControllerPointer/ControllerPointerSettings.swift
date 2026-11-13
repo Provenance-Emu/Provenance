@@ -22,6 +22,8 @@ public struct ControllerPointerSettings: Codable, Equatable, Sendable {
     public var wiiTilt: WiiTiltMode?
     /// Turning the pad moves the pointer too.
     public var gyro: Bool?
+    public var gyroSensitivity: Double?
+    public var gyroDeadZone: Double?
     public var gyroInvertX: Bool?
     public var gyroInvertY: Bool?
 
@@ -29,7 +31,7 @@ public struct ControllerPointerSettings: Codable, Equatable, Sendable {
 
     public var isEmpty: Bool {
         mode == nil && speed == nil && acceleration == nil && (bindings?.isEmpty ?? true) && shake == nil
-            && wiiTilt == nil && gyro == nil && gyroInvertX == nil && gyroInvertY == nil
+            && wiiTilt == nil && gyro == nil && gyroSensitivity == nil && gyroDeadZone == nil && gyroInvertX == nil && gyroInvertY == nil
     }
 }
 
@@ -131,7 +133,8 @@ public final class ControllerPointerSettingsStore: @unchecked Sendable {
             wiiTilt: layers.lazy.compactMap(\.wiiTilt).first ?? .off,
             gyroEnabled: layers.lazy.compactMap(\.gyro).first ?? false,
             gyroFilter: GyroPointerFilter(
-                sensitivity: double(Self.gyroSensitivityKey), deadZone: double(Self.gyroDeadZoneKey),
+                sensitivity: layers.lazy.compactMap(\.gyroSensitivity).first ?? double(Self.gyroSensitivityKey),
+                deadZone: layers.lazy.compactMap(\.gyroDeadZone).first ?? double(Self.gyroDeadZoneKey),
                 invertX: layers.lazy.compactMap(\.gyroInvertX).first ?? false,
                 invertY: layers.lazy.compactMap(\.gyroInvertY).first ?? false),
             bindingOverrides: overrides)

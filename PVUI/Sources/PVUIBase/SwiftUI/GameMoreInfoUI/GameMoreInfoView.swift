@@ -505,6 +505,7 @@ struct GameMoreInfoView: View {
 
                         // Light gun settings section (only for light-gun-capable systems)
                         lightGunPreferenceSection
+                        pointerPreferenceSection
 
                         // Core Options section (always shown; enabled only when the game has a configurable CoreOptional core)
                         coreOptionsSection
@@ -548,6 +549,7 @@ struct GameMoreInfoView: View {
 
                 // Light gun settings section (only for light-gun-capable systems)
                 lightGunPreferenceSection
+                pointerPreferenceSection
                     .padding(.horizontal)
 
                 // Core Options section (always shown; enabled only when the game has a configurable CoreOptional core)
@@ -972,6 +974,18 @@ struct GameMoreInfoView: View {
                 backgroundColor: cellBackgroundColor,
                 borderGradient: accentGradient()
             )
+        }
+    }
+
+    @ViewBuilder
+    private var pointerPreferenceSection: some View {
+        if let md5 = viewModel.pvGame?.md5Hash, !md5.isEmpty,
+           let identifier = viewModel.pvGame?.systemIdentifier,
+           let system = SystemIdentifier(rawValue: identifier),
+           system != .DS,
+           system == .Wii || system.supportsLightGun || MouseGameRegistry.shared.systemHasAnyMouseSupport(system) {
+            GamePointerSettingsView(md5: md5, system: system)
+                .id(md5)
         }
     }
 
