@@ -19,6 +19,21 @@ The working list for the 3.4.0 release. Update it in the same commit as the work
     - Fixed on the way: the simulator drew every 16-bit core at half width with wrong colors (its Metal has no packed 16-bit texture formats, so frames are now expanded to RGBA8 there; devices were never affected). The app's arrow cursor was drawn over the hand the game draws on SNES; it is now hidden. The per-game pointer pickers in Game Info had no labels.
     - Still needs a device: bundled libretro Snes9x, Flycast, and a physical mouse.
 - [ ] **LAN netplay smoke test.** Use two peers with the same build, native mGBA, and a known link-capable game. Check discovery, manual join, input from both players, disconnect, and rejoin. Then repeat on one thin libretro core that registers netpacket, such as gpSP. Simulators can exercise the app flow. Use devices to confirm Wi-Fi discovery and permissions. [#2483](https://github.com/Provenance-Emu/Provenance/issues/2483)
+  - Simulator run on 2026-11-13: two iPhone simulators on one Mac, Provenance-Dev-UI at `develop`, native mGBA, Super Mario Advance 2. Buttons were pressed through the debug API (`POST /api/debug/input`, which now takes GBA buttons).
+    - Passed: hosting from the library and from the in-game menu; Bonjour discovery in the library page and the in-game browser; joining a discovered room; joining by typed address; both games running in step, also across a reset on both; button input on each side; the host's "partner disconnected" notice when the joiner quit; hosting again and rejoining.
+    - Fixed on the way, all of which blocked the flow:
+      - The pause menu hung at 100% CPU as soon as it opened. Its hardware-switch subscription re-ran the menu rebuild on every redraw. It now skips positions it has already drawn.
+      - "Host This Game" launched the game and then did nothing. The first read of the cached "emulation is on" flag returned false, so the pause menu request was dropped with "Core isn't on".
+      - The host's waiting room stayed at 1/2 after a join, and the advertised room kept `players=1`. Hosting states that differed only in player count compared as equal, so mGBA (and PPSSPP) never published the change.
+      - The port was shown as "55,435".
+    - Not confirmed: that game data crosses the link. In Mario Bros. inside Super Mario Advance 2, Start on the host began a one-player game and the joiner stayed on its title screen. That may be the wrong menu steps or a real fault in the link driver; check with a game whose link flow is known (a Pokémon trade).
+    - Rough edges seen, not fixed:
+      - "Start Game" in the waiting room closes only the room. The host is left in the pause menu and the joiner shows "waiting for partner" until the host taps Resume.
+      - After a typed-address join the joiner stays on Browse Rooms with no confirmation, the list still says 1/2 until Refresh, and Network Play still offers Host and Browse while connected.
+      - Player 2 is labelled "Connecting" in the waiting room after the link is up.
+      - On iPhone the library hub's search field is squeezed to "…", and the keyboard covers Save in the multiplayer details form.
+      - A ROM that is not in the multiplayer catalog must have its details confirmed on every device before Join is enabled.
+    - Still needs devices: Wi-Fi discovery between two devices, the local network permission prompt, and a thin libretro netpacket core such as gpSP (the buildbot dylibs cannot load in a simulator).
 
 ## Backlog
 
