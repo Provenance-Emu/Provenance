@@ -1183,6 +1183,9 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, Emulato
                                      preStartAspectSize: preStartAspectSize)
         }
         core.startEmulation()
+        #if os(iOS) || os(tvOS)
+        updateGameplayBezel()
+        #endif
         #if os(iOS)
         // An external display may already be connected.
         updateExternalDisplay()

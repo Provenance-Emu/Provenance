@@ -229,6 +229,38 @@ final class PVMetalViewController: PVGPUViewController, PVRenderDelegate, MTKVie
     weak var externalOutput: GameExternalOutputView?
     #endif
 
+    #if os(iOS) || os(tvOS)
+    private var localBezelOutput: GameExternalOutputView?
+
+    func updateLocalBezel(_ bezel: TVBezel?, filter: ResolvedShader?, lightsRoom: Bool, flatGlass: Bool) {
+        guard let bezel, let mtlView, let device else {
+            localBezelOutput?.removeFromSuperview()
+            localBezelOutput = nil
+            redrawPausedFrame()
+            return
+        }
+        let output: GameExternalOutputView
+        if let current = localBezelOutput, current.superview === mtlView {
+            output = current
+        } else {
+            localBezelOutput?.removeFromSuperview()
+            output = GameExternalOutputView(device: device) { [weak self] in self?.redrawPausedFrame() }
+            output.backgroundColor = .clear
+            output.isOpaque = false
+            output.frame = mtlView.bounds
+            output.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+            mtlView.addSubview(output)
+            output.layoutIfNeeded()
+            localBezelOutput = output
+        }
+        output.filter.update(filter, smoothing: renderSettings.smoothingMode.usesLinearFiltering)
+        output.showBezel(bezel, lightsRoom: lightsRoom, flatGlass: flatGlass) { [weak self] in
+            self?.redrawPausedFrame()
+        }
+        redrawPausedFrame()
+    }
+    #endif
+
     /// Draws black on the device instead of the game picture, while an external display shows
     /// it. The view keeps its place and keeps presenting, so skins and layout are untouched.
     var blanksPicture = false {
@@ -1521,7 +1553,9 @@ final class PVMetalViewController: PVGPUViewController, PVRenderDelegate, MTKVie
                                    drawableSize: CGSize,
                                    emulatorCore: PVEmulatorCore) -> Bool {
         if slangFilterRenderer == nil, let device {
-            slangFilterRenderer = SlangFilterRenderer(device: device)
+            slangFilterRenderer = SlangFilterRenderer(device: device) { [weak self] in
+                self?.redrawPausedFrame()
+            }
         }
         guard let renderer = slangFilterRenderer, renderer.prepare(entry) else { return false }
         let store = ShaderLibraryStore.shared
@@ -2423,10 +2457,25 @@ final class PVMetalViewController: PVGPUViewController, PVRenderDelegate, MTKVie
             return
         }
 
+        #if os(iOS) || os(tvOS)
+        localBezelOutput?.isHidden = blanksPicture || dualScreenLayout != nil
+        #endif
         if blanksPicture {
             presentBlankFrame(to: drawable, commandBuffer: commandBuffer)
             return
         }
+
+        #if os(iOS) || os(tvOS)
+        if dualScreenLayout == nil, let output = localBezelOutput, output.superview === view,
+           drawBezel(inputTexture, into: drawable.texture, output: output, emulatorCore: emulatorCore, commandBuffer: commandBuffer) {
+            commandBuffer.present(drawable)
+            commandBuffer.commit()
+            previousCommandBuffer = commandBuffer
+            frameCount += 1
+            markFramePresented()
+            return
+        }
+        #endif
 
         let drawableSize = CGSize(width: drawable.texture.width, height: drawable.texture.height)
         let activeShader = dualScreenLayout == nil ? activeShaderEntry(for: emulatorCore) : nil
@@ -2708,21 +2757,10 @@ final class PVMetalViewController: PVGPUViewController, PVRenderDelegate, MTKVie
         let aspectSize = emulatorCore.aspectSize
         let aspect = aspectSize.width > 0 && aspectSize.height > 0 ? aspectSize : emulatorCore.screenRect.size
 
-        if output.bezelScene != nil, output.bezelProcessor.isReady {
-            let sceneRect = RenderGeometry.sceneRect(aspect: TVBezelShader.sceneAspect, drawableSize: drawableSize)
-            if let tube = output.tubeTarget(sceneSize: sceneRect.size) {
-                let tubeBounds = CGRect(x: 0, y: 0, width: tube.width, height: tube.height)
-                // A picture that is not the tube's shape gets black bars inside the glass.
-                let pictureRect = RenderGeometry.aspectFit(aspect: aspect, in: tubeBounds).integral.intersection(tubeBounds)
-                if drawExternalPicture(source, into: tube, rect: pictureRect, filter: output.filter,
-                                       emulatorCore: emulatorCore, commandBuffer: commandBuffer),
-                   output.bezelProcessor.render(source: tube, target: target, commandBuffer: commandBuffer,
-                                                contentRect: sceneRect, screenType: emulatorCore.screenType) {
-                    commandBuffer.present(drawable)
-                    commandBuffer.commit()
-                    return
-                }
-            }
+        if drawBezel(source, into: target, output: output, emulatorCore: emulatorCore, commandBuffer: commandBuffer) {
+            commandBuffer.present(drawable)
+            commandBuffer.commit()
+            return
         }
 
         let contentRect = output.pictureRect(aspect: aspect, drawableSize: drawableSize)
@@ -2730,6 +2768,29 @@ final class PVMetalViewController: PVGPUViewController, PVRenderDelegate, MTKVie
                                   emulatorCore: emulatorCore, commandBuffer: commandBuffer) else { return }
         commandBuffer.present(drawable)
         commandBuffer.commit()
+    }
+
+    #endif
+
+    #if os(iOS) || os(tvOS)
+    private func drawBezel(_ source: MTLTexture, into target: MTLTexture, output: GameExternalOutputView,
+                           emulatorCore: PVEmulatorCore, commandBuffer: MTLCommandBuffer) -> Bool {
+        let drawableSize = CGSize(width: target.width, height: target.height)
+        let coreAspect = emulatorCore.aspectSize
+        let aspect = coreAspect.width > 0 && coreAspect.height > 0 ? coreAspect : emulatorCore.screenRect.size
+        if output.hasImageBezel {
+            return drawExternalPicture(source, into: target, rect: output.pictureRect(aspect: aspect, drawableSize: drawableSize),
+                                       filter: output.filter, emulatorCore: emulatorCore, commandBuffer: commandBuffer)
+        }
+        guard output.bezelScene != nil, output.bezelProcessor.isReady else { return false }
+        let scene = RenderGeometry.sceneRect(aspect: TVBezelShader.sceneAspect, drawableSize: drawableSize)
+        guard let tube = output.tubeTarget(sceneSize: scene.size) else { return false }
+        let bounds = CGRect(x: 0, y: 0, width: tube.width, height: tube.height)
+        let picture = RenderGeometry.aspectFit(aspect: aspect, in: bounds).integral.intersection(bounds)
+        return drawExternalPicture(source, into: tube, rect: picture, filter: output.filter,
+                                   emulatorCore: emulatorCore, commandBuffer: commandBuffer)
+            && output.bezelProcessor.render(source: tube, target: target, commandBuffer: commandBuffer,
+                                            contentRect: scene, screenType: emulatorCore.screenType)
     }
 
     /// Encodes the game picture into `rect` of `target`, black around it: through `filter`

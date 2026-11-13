@@ -794,17 +794,17 @@ public struct RetroSaveSelectionAlertView: View {
     #if os(iOS)
     /// Ordered list of focus IDs as they appear top-to-bottom in the picker.
     /// Used by d-pad vertical / grid navigation. Quick Continue (mostRecent)
-    /// is followed by the remaining saves grid (if any), then Start Fresh,
-    /// then Back (optional), then Cancel.
+    /// is followed by Start Fresh, the remaining saves grid (if any),
+    /// then Back (optional) and Cancel.
     private var orderedFocusIDs: [String] {
         var ids: [String] = []
         if let mostRecent = viewModel.mostRecentSave {
             ids.append(mostRecent.id)
         }
+        ids.append(Self.startFreshFocusID)
         if viewModel.saves.count > 1 {
             ids.append(contentsOf: viewModel.saves.dropFirst().map { $0.id })
         }
-        ids.append(Self.startFreshFocusID)
         if showBackButton {
             ids.append(Self.backFocusID)
         }
@@ -820,7 +820,7 @@ public struct RetroSaveSelectionAlertView: View {
     /// horizontal navigation can stay within a row.
     private var gridIndexRange: Range<Int>? {
         guard viewModel.saves.count > 1 else { return nil }
-        let start = viewModel.mostRecentSave == nil ? 0 : 1
+        let start = viewModel.mostRecentSave == nil ? 1 : 2
         let end = start + (viewModel.saves.count - 1)
         return start..<end
     }

@@ -23,6 +23,7 @@ import PVPrimitives
 import PVSettings
 import PVShaders
 import PVThemes
+import SkinKitManager
 import SkinKitUI
 #if canImport(UIKit)
 import UIKit
@@ -154,6 +155,7 @@ struct PauseTileMenuView: View {
     #endif
     @State private var showingShaderSettings = false
     @State private var showingShaderBrowser = false
+    @State private var showingBezels = false
     @State private var showingPortDevices = false
     #if os(iOS)
     @State private var showingExternalDisplay = false
@@ -478,6 +480,7 @@ struct PauseTileMenuView: View {
     private var isCoveredByPresentation: Bool {
         emulatorVC.menuPresentationViewController?.presentedViewController != nil
             || emulatorVC.isPresentingPVAlert
+            || showingBezels
             || gamepadManager.isModalAlertPresented
     }
 
@@ -630,6 +633,10 @@ struct PauseTileMenuView: View {
             emulatorVC.core.resetEmulation()
         case "cheats":
             dismissForSubSheetThen { self.emulatorVC.showCheatsMenu() }
+        #if os(iOS) || os(tvOS)
+        case PauseTileMenuViewModel.bezelsTileID:
+            showingBezels = true
+        #endif
         case "gameInfo":
             dismissForSubSheetThen { self.emulatorVC.showMoreInfo() }
         case "networkPlay":
@@ -1085,6 +1092,14 @@ struct PauseTileMenuView: View {
             }
             rebuildSections()
         }
+    }
+
+    private var pauseSkinOrientation: SkinOrientation {
+        #if os(tvOS)
+        return .landscape
+        #else
+        return .portrait
+        #endif
     }
 
     private func dismissForSubSheetThen(_ action: @escaping () -> Void) {
@@ -2030,17 +2045,28 @@ struct PauseTileMenuView: View {
             }
         }
         #endif
-        .sheet(isPresented: $showingSystemSkinSelection) {
+        #if os(iOS) || os(tvOS)
+        .fullScreenCover(isPresented: $showingBezels, onDismiss: rebuildSections) {
+            GameplayBezelOptionsView(emulatorVC: emulatorVC)
+        }
+        #endif
+        .pauseSkinPresentation(isPresented: $showingSystemSkinSelection) {
             NavigationStack {
                 SystemSkinSelectionView(
                     system: activeSystemIdentifier.deltaSkinSystem,
                     game: emulatorVC.game.deltaSkinGameContext,
+                    preferredOrientation: pauseSkinOrientation,
                     emptySelectionMeansBuiltIn: ProgrammaticOverlaySupport.skinPickerDefaultsToBuiltIn(for: emulatorVC.core)
                 )
+                .toolbar {
+                    ToolbarItem(placement: .confirmationAction) {
+                        Button("Done") { showingSystemSkinSelection = false }
+                    }
+                }
             }
         }
         // The catalog, filtered to the running system; a download can be applied to this game.
-        .sheet(isPresented: $showingSkinCatalog) {
+        .pauseSkinPresentation(isPresented: $showingSkinCatalog) {
             NavigationStack {
                 SkinCatalogBrowserView(
                     preselectedSystem: activeSystemIdentifier.skinCatalogSystemCode,
@@ -2274,6 +2300,7 @@ struct PauseTileMenuView: View {
         .onDisappear { controllerInput.stop() }
         /// The focus engine moves the cursor here; the shoulder buttons change page.
         .onReceive(controllerInput.commands) { command in
+            guard !showingBezels else { return }
             if command == .previousTab { switchTab(by: -1) }
             if command == .nextTab { switchTab(by: 1) }
         }

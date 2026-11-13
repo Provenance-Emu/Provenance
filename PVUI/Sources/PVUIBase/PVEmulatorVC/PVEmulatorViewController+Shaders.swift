@@ -35,12 +35,18 @@ extension PVEmulatorViewController {
     /// Applies a changed selection: swaps the skin's own filter in or out and redraws
     /// the paused frame so the pause menu shows the new look behind it.
     func shaderSelectionDidChange() {
+        #if os(iOS) || os(tvOS)
+        updateGameplayBezel()
+        #endif
         applyScreenFiltersFromCurrentSkin()
         (gpuViewController as? PVMetalViewController)?.redrawPausedFrame()
     }
 
     /// Redraws the paused frame after a parameter edit.
     func shaderParametersDidChange() {
+        #if os(iOS) || os(tvOS)
+        updateGameplayBezel()
+        #endif
         (gpuViewController as? PVMetalViewController)?.redrawPausedFrame()
     }
 }

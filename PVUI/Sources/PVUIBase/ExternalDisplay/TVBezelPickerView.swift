@@ -6,6 +6,7 @@
 //
 
 #if os(iOS) || os(tvOS)
+import Combine
 import SwiftUI
 import UniformTypeIdentifiers
 import PVLogging
@@ -20,6 +21,16 @@ struct TVBezelPickerView: View {
     var allowsAutomatic = false
     /// The running game, to choose its artwork from The Bezel Project by hand.
     var game: ExternalDisplayGameContext?
+    var controllerCommands: AnyPublisher<PauseMenuNavigationCommand, Never>? = nil
+    @Environment(\.dismiss) private var dismiss
+    @State private var cursor = 0
+    @State private var pickerVisible = false
+
+    private var choices: [String?] {
+        (allowsAutomatic ? [nil] : []) + [ExternalDisplayBezelRules.noBezelID]
+            + (TVBezelCatalog.bundled + TVBezelCatalog.shaderPresets + myBezels).map { Optional($0.id) }
+    }
+
 
     @State private var myBezels = TVBezelLibrary.shared.listed
     @State private var isImporting = false
@@ -30,6 +41,33 @@ struct TVBezelPickerView: View {
     private static let importTypes: [UTType] = [.png, .folder] + [UTType(filenameExtension: TVBezelLibrary.configExtension)].compactMap { $0 }
 
     var body: some View {
+        ScrollViewReader { scroll in
+            pickerList
+                .onChange(of: cursor) { _, index in
+                    guard choices.indices.contains(index) else { return }
+                    scroll.scrollTo(choices[index], anchor: .center)
+                }
+        }
+        .onAppear {
+            pickerVisible = true
+            cursor = choices.firstIndex(of: selection) ?? 0
+        }
+        .onDisappear { pickerVisible = false }
+        .onReceive(controllerCommands ?? Empty().eraseToAnyPublisher()) { command in
+            guard pickerVisible, editing == nil, !isImporting, !choices.isEmpty else { return }
+            switch command {
+            case .up: cursor = max(0, cursor - 1)
+            case .down: cursor = min(choices.count - 1, cursor + 1)
+            case .activate:
+                guard choices.indices.contains(cursor) else { return }
+                selection = choices[cursor]
+            case .back: dismiss()
+            default: break
+            }
+        }
+    }
+
+    private var pickerList: some View {
         List {
             Section {
                 if allowsAutomatic {
@@ -139,6 +177,8 @@ struct TVBezelPickerView: View {
             }
             .contentShape(Rectangle())
         }
+        .id(id)
+        .listRowBackground(controllerCommands != nil && choices.firstIndex(of: id) == cursor ? Color.accentColor.opacity(0.25) : nil)
         .accessibilityAddTraits(selection == id ? .isSelected : [])
     }
 
@@ -210,8 +250,8 @@ private struct TVBezelInfoView: View {
             }
             .navigationTitle(String(localized: "Bezel"))
             #if os(iOS)
-        .navigationBarTitleDisplayMode(.inline)
-        #endif
+            .navigationBarTitleDisplayMode(.inline)
+            #endif
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button(String(localized: "Cancel")) { dismiss() }

@@ -136,6 +136,7 @@ extension PVEmulatorViewController {
         tap.allowedPressTypes = [.menu]
         hostingController.view.addGestureRecognizer(tap)
         newNav.preferredContentSize = CGSize(width: UIScreen.main.bounds.width * 0.9, height: UIScreen.main.bounds.height * 0.9)
+        enableControllerInput(true)
         self.present(TVFullscreenController(rootViewController: newNav), animated: true)
 #endif
         // hideMoreInfo will handle re-enabling controller input

@@ -65,3 +65,17 @@ public extension View {
         #endif
     }
 }
+
+extension View {
+    @ViewBuilder
+    func pauseSkinPresentation<Content: View>(
+        isPresented: Binding<Bool>,
+        @ViewBuilder content: @escaping () -> Content
+    ) -> some View {
+        #if os(tvOS)
+        fullScreenCover(isPresented: isPresented, content: content)
+        #else
+        settingsPresentation(isPresented: isPresented, content: content)
+        #endif
+    }
+}

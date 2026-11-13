@@ -166,7 +166,11 @@ public enum TVBezelCatalog {
     /// The shader browser's Bezels category also includes append presets and border effects.
     public static let shaderPresets: [TVBezel] = [
         TVBezel(presetID: .slang("bezel/uborder/uborder-bezel-reflections"), name: "uBorder Reflections"),
-        TVBezel(presetID: TVBezelShader.ambientID, name: "uBorder Ambient")
+        TVBezel(presetID: TVBezelShader.ambientID, name: "uBorder Ambient"),
+        TVBezel(presetID: .slang("bezel/uborder/base_presets/uborder-bezel-reflections/crt/crt-geom"), name: "uBorder CRT Geom"),
+        TVBezel(presetID: .slang("bezel/uborder/base_presets/uborder-bezel-reflections/crt/phosphor-persistence"), name: "uBorder Phosphor Persistence"),
+        TVBezel(presetID: .slang("bezel/uborder/base_presets/uborder-bezel-reflections/vector/uborder-bezel-reflections-vector"), name: "uBorder Vector"),
+        TVBezel(presetID: .slang("bezel/uborder/base_presets/uborder-koko-ambi/crt/crt-geom"), name: "uBorder Ambient CRT Geom")
     ].filter { bezel in
         bezel.presetID.flatMap { ShaderCatalog.shared.entry(for: $0) } != nil
     }

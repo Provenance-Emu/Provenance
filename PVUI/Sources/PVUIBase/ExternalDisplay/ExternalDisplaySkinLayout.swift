@@ -5,7 +5,7 @@
 //  Which of a skin's layouts is drawn around the picture on an external display.
 //
 
-#if os(iOS)
+#if os(iOS) || os(tvOS)
 import CoreGraphics
 import SkinKitCore
 

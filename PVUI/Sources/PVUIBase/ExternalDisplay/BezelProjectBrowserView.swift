@@ -5,7 +5,7 @@
 //  Browses The Bezel Project's artwork by system and downloads single bezels.
 //
 
-#if os(iOS)
+#if os(iOS) || os(tvOS)
 import SwiftUI
 import Defaults
 import PVSettings
@@ -60,7 +60,9 @@ struct BezelProjectBrowserView: View {
             }
         }
         .navigationTitle(String(localized: "The Bezel Project"))
+        #if os(iOS)
         .navigationBarTitleDisplayMode(.inline)
+        #endif
     }
 }
 
@@ -132,7 +134,9 @@ struct BezelProjectSystemView: View {
         }
         .searchable(text: $search, prompt: String(localized: "Game"))
         .navigationTitle(SystemIdentifier(rawValue: systemID)?.systemName ?? String(localized: "Bezels"))
+        #if os(iOS)
         .navigationBarTitleDisplayMode(.inline)
+        #endif
         .task(id: style) { await load(forceRefresh: false) }
         .refreshable { await load(forceRefresh: true) }
         .onReceive(NotificationCenter.default.publisher(for: TVBezelLibrary.didChangeNotification)) { _ in
@@ -232,7 +236,9 @@ private struct BezelProjectEntryView: View {
             }
         }
         .navigationTitle(item.name)
+        #if os(iOS)
         .navigationBarTitleDisplayMode(.inline)
+        #endif
         .task { await fetch(listed: false) }
     }
 

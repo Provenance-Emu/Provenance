@@ -75,6 +75,7 @@ extension PVEmulatorViewController {
         updateOnScreenControlsVisibility()
         #if os(iOS)
         updateExternalDisplay()
+        updateGameplayBezel()
         #endif
         /// Rebind pause handlers for the freshly connected controller. Deferred by
         /// one runloop tick so the core's own `controllerDidConnect` observer runs
@@ -95,6 +96,7 @@ extension PVEmulatorViewController {
         updateOnScreenControlsVisibility()
         #if os(iOS)
         updateExternalDisplay()
+        updateGameplayBezel()
         #endif
         pauseIfLastGamepadDisconnected(note?.object as? GCController)
     }

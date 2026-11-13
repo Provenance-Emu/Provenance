@@ -418,6 +418,18 @@ final class PauseTileMenuViewModel: ObservableObject {
         if emulatorVC.core.supportsSkins {
             screenDisplayTiles += [Self.chooseSkinTile, Self.skinCatalogTile]
         }
+        #if os(iOS) || os(tvOS)
+        if emulatorVC.canShowGameplayBezels {
+            screenDisplayTiles.append(PauseMenuTile(
+                id: Self.bezelsTileID,
+                icon: "tv",
+                label: String(localized: "Bezels"),
+                description: String(localized: "Frame the game with a TV, overlay, or shader bezel"),
+                colorKey: .cyan,
+                dismissOnTap: false
+            ))
+        }
+        #endif
         screenDisplayTiles.append(Self.fpsCounterToggleTile(showFPSCount: showFPSCount))
         // Screen filter (shader) controls only for cores whose video the Metal filter can reach.
         let supportsFilters = emulatorVC.filtersApplyToCurrentLayout
@@ -778,7 +790,7 @@ final class PauseTileMenuViewModel: ObservableObject {
             let optionIDs: Set<String> = [
                 "fastForwardToggle", "gameSpeedCycle", "fpsCounterToggle", "rewindToggle",
                 "filterCycle", "shaderSettings", "airPlay",
-                "audioVisualizer", Self.externalDisplayTileID
+                "audioVisualizer", Self.externalDisplayTileID, Self.bezelsTileID
             ]
             let tiles = tiles(matching: optionIDs, from: rootSections)
             return [PauseMenuTileSection(id: "options_route", title: String(localized: "OPTIONS"), tiles: tiles)]
@@ -991,6 +1003,7 @@ final class PauseTileMenuViewModel: ObservableObject {
 
     /// Opens the filter browser; long-press offers Off plus favorites and recents.
     /// Shown while an external display is connected; opens `ExternalDisplayPauseSheet`.
+    static let bezelsTileID = "bezels"
     static let externalDisplayTileID = "externalDisplay"
 
     private static func filterTile(active: ShaderCatalogEntry?) -> PauseMenuTile {
