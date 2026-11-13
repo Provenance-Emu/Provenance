@@ -252,6 +252,8 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, Emulato
     var quickActionBar: EmulatorQuickActionBar?
     /// The system volume HUD (`Defaults[.volumeHUD]`), shown over every session.
     var volumeHUD: SubtleVolume?
+    /// Adds and removes `volumeHUD` when its setting changes mid-game.
+    var volumeHUDSettingObservation: Task<Void, Never>?
     #endif
 
     #if os(tvOS)
@@ -474,6 +476,9 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, Emulato
             #if os(iOS)
             externalDisplaySettingsObservation?.cancel()
             removeExternalDisplayWindow()
+            #endif
+            #if os(iOS) && !targetEnvironment(macCatalyst)
+            volumeHUDSettingObservation?.cancel()
             #endif
         }
         core.touchViewController = nil
@@ -740,6 +745,26 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, Emulato
         let width = available * Self.volumeHUDWidthFraction
         volumeHUD.frame = CGRect(x: insets.left + (available - width) / 2, y: insets.top + Self.volumeHUDTopPadding,
                                  width: width, height: Self.volumeHUDHeight)
+    }
+
+    /// Shows the volume bar now if it is on, then adds or removes it whenever the setting
+    /// changes, from the pause menu or App Settings, without restarting the game.
+    private func observeVolumeHUDSetting() {
+        installVolumeHUDIfNeeded()
+        volumeHUDSettingObservation?.cancel()
+        volumeHUDSettingObservation = Task { @MainActor [weak self] in
+            for await isOn in Defaults.updates(.volumeHUD, initial: false) {
+                guard let self else { return }
+                if isOn { installVolumeHUDIfNeeded() } else { removeVolumeHUD() }
+            }
+        }
+    }
+
+    private func removeVolumeHUD() {
+        guard let hud = volumeHUD else { return }
+        NotificationCenter.default.removeObserver(hud)
+        hud.removeFromSuperview()
+        volumeHUD = nil
     }
     #endif
 
@@ -1063,7 +1088,7 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, Emulato
                 quickActionBar = EmulatorQuickActionBar(host: self)
             }
         }
-        installVolumeHUDIfNeeded()
+        observeVolumeHUDSetting()
         initMenuButton()
         // Install cursor overlay + touch trackpad for mouse-supporting cores, then wire
         // all virtual-input toggle closures and honour keyboard auto-show config.
@@ -2008,6 +2033,9 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, Emulato
         #if os(iOS)
         externalDisplaySettingsObservation?.cancel()
         removeExternalDisplayWindow()
+        #endif
+        #if os(iOS) && !targetEnvironment(macCatalyst)
+        volumeHUDSettingObservation?.cancel()
         #endif
         stopPauseTriggers()
 

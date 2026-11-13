@@ -1695,7 +1695,7 @@ private struct AudioSection: View {
             }
             ThemedToggle(isOn: $volumeHUD) {
                 SettingsRow(title: "Volume HUD",
-                            subtitle: "In a game, show a slim volume bar instead of the system volume overlay. Takes effect from the next game.",
+                            subtitle: "In a game, show a slim volume bar instead of the system volume overlay.",
                             icon: .sfSymbol("speaker.wave.2.circle"),
                             showChevron: false)
             }

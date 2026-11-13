@@ -121,8 +121,10 @@ public extension PVEmulatorViewController {
     }
 
     /// Restores the indicator overlay visibility based on settings.
-    /// Call this after menus are dismissed.
+    /// Call this after menus are dismissed. Adds or removes the overlay first, so turning
+    /// the lights on or off in a menu applies when the menu closes.
     func restoreIndicatorOverlay() {
+        refreshIndicatorOverlay()
         indicatorOverlayViewController?.restoreVisibility()
     }
 

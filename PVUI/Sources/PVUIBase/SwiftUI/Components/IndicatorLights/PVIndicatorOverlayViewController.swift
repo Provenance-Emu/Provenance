@@ -64,6 +64,9 @@ public final class PVIndicatorOverlayViewController: UIViewController {
 
     private var hostingController: UIHostingController<PVIndicatorOverlayView>?
     private var cancellables = Set<AnyCancellable>()
+    /// Set while a menu covers the game, so a settings or indicator change cannot show the
+    /// overlay over the menu before `restoreVisibility()`.
+    private var isTemporarilyHidden = false
 
     /// Whether the overlay should be visible (controlled by user preference).
     public var isOverlayEnabled: Bool {
@@ -147,7 +150,7 @@ public final class PVIndicatorOverlayViewController: UIViewController {
     // MARK: - Visibility
 
     private func updateVisibility() {
-        let shouldShow = isOverlayEnabled && PVIndicatorRegistry.shared.hasVisibleIndicators
+        let shouldShow = !isTemporarilyHidden && isOverlayEnabled && PVIndicatorRegistry.shared.hasVisibleIndicators
         if shouldShow {
             ensureHostingControllerLoaded()
         }
@@ -174,6 +177,7 @@ public final class PVIndicatorOverlayViewController: UIViewController {
 
     /// Temporarily hides the overlay (e.g., during menu presentation).
     public func temporarilyHide() {
+        isTemporarilyHidden = true
         view.isHidden = true
         view.isUserInteractionEnabled = false
         hostingController?.view.isUserInteractionEnabled = false
@@ -181,6 +185,7 @@ public final class PVIndicatorOverlayViewController: UIViewController {
 
     /// Restores the overlay visibility based on settings.
     public func restoreVisibility() {
+        isTemporarilyHidden = false
         updateVisibility()
     }
 }

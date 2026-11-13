@@ -3,7 +3,8 @@
 //  PVUI
 //
 //  App preferences the pause menu's Settings page changes in place. Each takes effect
-//  at once (audio, screen lock) or the next time a game starts (launch save).
+//  at once (audio, screen lock, volume bar), when the menu closes (status lights) or the
+//  next time a game starts (launch save).
 //
 
 import Foundation
@@ -60,6 +61,8 @@ extension PauseTileMenuViewModel {
     static let headphonesPauseTileID = "pauseOnHeadphones"
     static let keepAwakeTileID = "keepScreenAwake"
     static let screenshotsToPhotosTileID = "screenshotsToPhotos"
+    static let volumeHUDTileID = "volumeHUD"
+    static let statusLightsTileID = "statusLights"
     static let launchSaveTileID = "launchSave"
     static let launchSaveOptionPrefix = "launchSave_"
 
@@ -80,10 +83,20 @@ extension PauseTileMenuViewModel {
             id: headphonesPauseTileID, isOn: Defaults[.pauseOnHeadphonesDisconnect],
             icon: "headphones", label: String(localized: "Pause on Unplug"),
             description: String(localized: "Pause when AirPods or Bluetooth headphones disconnect.")))
+        #if os(iOS) && !targetEnvironment(macCatalyst)
+        cells.append(switchCell(
+            id: volumeHUDTileID, isOn: Defaults[.volumeHUD], icon: "speaker.wave.2.circle",
+            label: String(localized: "Volume HUD"),
+            description: String(localized: "Show a slim volume bar instead of the system volume overlay.")))
+        #endif
         cells.append(launchSaveCell(mode: .current))
         cells.append(switchCell(id: keepAwakeTileID, isOn: Defaults[.disableAutoLock], icon: "sun.max",
                                 label: String(localized: "Keep Screen On"),
                                 description: String(localized: "Stop the screen dimming and locking while you play.")))
+        cells.append(switchCell(
+            id: statusLightsTileID, isOn: Defaults[.showStatusIndicators], icon: "circle.grid.2x1.fill",
+            label: String(localized: "Status Lights"),
+            description: String(localized: "Show small lights for JIT, netplay and more once the menu closes.")))
         #if os(iOS)
         cells.append(switchCell(id: screenshotsToPhotosTileID, isOn: Defaults[.saveScreenshotsToPhotoLibrary],
                                 icon: "photo.badge.plus", label: String(localized: "Screenshots to Photos"),
@@ -100,6 +113,8 @@ extension PauseTileMenuViewModel {
         case headphonesPauseTileID: return .pauseOnHeadphonesDisconnect
         case keepAwakeTileID: return .disableAutoLock
         case screenshotsToPhotosTileID: return .saveScreenshotsToPhotoLibrary
+        case volumeHUDTileID: return .volumeHUD
+        case statusLightsTileID: return .showStatusIndicators
         default: return nil
         }
     }
