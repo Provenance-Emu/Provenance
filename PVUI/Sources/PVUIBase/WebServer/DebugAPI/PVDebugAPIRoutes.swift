@@ -27,7 +27,8 @@
 //    GET  /api/debug/shader                current + available Metal filters
 //    POST /api/debug/shader {filter: none|simpleCRT|complexCRT|lcd|…}
 //    POST /api/debug/pixelate {enabled: Bool}
-//    POST /api/debug/input {button: up|down|left|right|a|b|start|select, duration_ms: 100} (NES, player 0)
+//    POST /api/debug/input {button: up|down|left|right|a|b|start|select, duration_ms: 100} (NES or GBA, player 0;
+//         GBA also takes l|r)
 //
 
 import Foundation
@@ -165,7 +166,7 @@ public enum PVDebugAPIRoutes {
         }
 
         registry.register("POST", "/api/debug/input") { request in
-            await pressNESButton(request)
+            await pressButton(request)
         }
 
         registry.register("POST", "/api/debug/savestate") { _ in
@@ -334,15 +335,18 @@ public enum PVDebugAPIRoutes {
     }
 
     /// A bounded pulse, with release guaranteed even if the request is cancelled.
-    private static func pressNESButton(_ request: PVDebugAPIRequest) async -> PVDebugAPIResponse {
-        let buttons: [String: PVNESButton] = [
-            "up": .up, "down": .down, "left": .left, "right": .right,
-            "a": .a, "b": .b, "start": .start, "select": .select
-        ]
+    private static let nesButtons: [String: PVNESButton] = [
+        "up": .up, "down": .down, "left": .left, "right": .right,
+        "a": .a, "b": .b, "start": .start, "select": .select
+    ]
+    private static let gbaButtons: [String: PVGBAButton] = [
+        "up": .up, "down": .down, "left": .left, "right": .right,
+        "a": .a, "b": .b, "l": .l, "r": .r, "start": .start, "select": .select
+    ]
+
+    /// Holds one button for a moment on the running NES or GBA game.
+    private static func pressButton(_ request: PVDebugAPIRequest) async -> PVDebugAPIResponse {
         let name = request.value("button")?.lowercased() ?? ""
-        guard let button = buttons[name] else {
-            return .error("unknown NES button (up, down, left, right, a, b, start, select)")
-        }
         let durationText = request.value("duration_ms") ?? "100"
         guard let duration = UInt64(durationText), (16...500).contains(duration) else {
             return .error("duration_ms must be an integer from 16 to 500")
@@ -350,16 +354,32 @@ public enum PVDebugAPIRoutes {
         guard request.value("player") == nil || request.value("player") == "0" else {
             return .error("only player 0 is supported")
         }
-        guard let core = AppState.shared.emulationUIState.core,
-              let responder = core as? PVNESSystemResponderClient else {
-            return .error("no NES game running", status: 409)
+        guard let core = AppState.shared.emulationUIState.core else {
+            return .error("no NES or GBA game running", status: 409)
+        }
+        let push: () -> Void
+        let release: () -> Void
+        if let responder = core as? PVNESSystemResponderClient {
+            guard let button = nesButtons[name] else {
+                return .error("unknown NES button (up, down, left, right, a, b, start, select)")
+            }
+            push = { responder.didPush(button, forPlayer: 0) }
+            release = { responder.didRelease(button, forPlayer: 0) }
+        } else if let responder = core as? PVGBASystemResponderClient {
+            guard let button = gbaButtons[name] else {
+                return .error("unknown GBA button (up, down, left, right, a, b, l, r, start, select)")
+            }
+            push = { responder.didPush(button, forPlayer: 0) }
+            release = { responder.didRelease(button, forPlayer: 0) }
+        } else {
+            return .error("no NES or GBA game running", status: 409)
         }
         guard !core.isEmulationPaused else { return .error("resume the game before input", status: 409) }
         guard !inputInProgress else { return .error("input pulse already in progress", status: 409) }
         inputInProgress = true
-        responder.didPush(button, forPlayer: 0)
+        push()
         defer {
-            responder.didRelease(button, forPlayer: 0)
+            release()
             inputInProgress = false
         }
         do {
