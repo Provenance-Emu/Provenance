@@ -491,7 +491,7 @@ typedef struct PVThinLibretroSymbols {
     void     (*retro_set_input_poll)(retro_input_poll_t cb);
     void     (*retro_set_input_state)(retro_input_state_t cb);
 
-    // Controller port device type (e.g. mouse on port 2 for Mario Paint)
+    // Controller port device type (e.g. mouse on port 1 for Mario Paint)
     void     (*retro_set_controller_port_device)(unsigned port, unsigned device);
 
     // State / cheats

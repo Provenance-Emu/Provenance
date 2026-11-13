@@ -127,23 +127,29 @@ public final class MouseGameRegistry: @unchecked Sendable {
         .N64,       // 64DD titles (very rare)
     ]
 
-    /// MD5 hashes (lowercased) of games that are known to use a mouse.
-    ///
-    /// Source: No-Intro / Redump databases.  Add new entries by calling
-    /// `registerKnownMouseGameMD5(_:)` at runtime.
-    static let knownMouseGameMD5s: Set<String> = [
-        // ── SNES ──────────────────────────────────────────────────────────────
+    private static let marioPaintTitlePattern = "mario paint"
+
+    private static let marioPaintMD5s: Set<String> = [
         // Mario Paint (USA)
         "d6f64fd0642a514a5fba4707fca4f1ed",
         // Mario Paint (Japan)
         "c28bf66ac5d2d7d436a1c06e35ce2b6c",
         // Mario Paint (Europe)
         "1f3f05b1c5e0e42e25a60fe07b5c88f1",
+        // Mario Paint (Japan, USA)
+        "881d3772a3eb37a8a0fb254e940c6767"
+    ]
+
+    /// MD5 hashes (lowercased) of games that are known to use a mouse.
+    ///
+    /// Source: No-Intro / Redump databases.  Add new entries by calling
+    /// `registerKnownMouseGameMD5(_:)` at runtime.
+    static let knownMouseGameMD5s: Set<String> = marioPaintMD5s.union([
         // Mario & Wario (Japan) — requires SNES Mouse
         "f38d7df7e27c7b08a3c40be30049d74d",
         // Undead Line (Japan)
-        "a8f95e8e0c47acef4aad5d855f785e6e",
-    ]
+        "a8f95e8e0c47acef4aad5d855f785e6e"
+    ])
 
     /// Title keyword fragments (lowercased) per system.  A game matches if its
     /// lowercased title **contains** any entry in the list for its system.
@@ -151,7 +157,7 @@ public final class MouseGameRegistry: @unchecked Sendable {
     /// Keep patterns specific enough to avoid false positives.
     static let knownMouseGameTitlePatterns: [SystemIdentifier: [String]] = [
         .SNES: [
-            "mario paint",
+            marioPaintTitlePattern,
             "mario & wario",
             "mario and wario",
             "undead line",
@@ -341,6 +347,16 @@ public final class MouseGameRegistry: @unchecked Sendable {
         return false
     }
 
+    /// The zero-based SNES mouse port to configure automatically, if the game uses a mouse.
+    public func snesMousePortIndex(md5: String?, title: String?) -> Int? {
+        guard gameSupportsMouse(systemIdentifier: .SNES, md5: md5, title: title) else { return nil }
+
+        // Mario Paint reads the mouse on controller port 1.
+        if let md5, Self.marioPaintMD5s.contains(md5.lowercased()) { return 0 }
+        if title?.lowercased().contains(Self.marioPaintTitlePattern) == true { return 0 }
+        return 1
+    }
+
     // MARK: - Testing
 
     /// Resets the registry to factory defaults.  **For unit tests only.**
@@ -356,3 +372,15 @@ public final class MouseGameRegistry: @unchecked Sendable {
         _titlePatterns = patterns
     }
 }
+
+#if canImport(ObjectiveC)
+/// Lets native Objective-C cores apply the per-game setting over their own automatic detection.
+@objc(PVMouseGameRegistry)
+public final class MouseGameRegistryObjC: NSObject {
+    @objc(shouldEnableMouseForROMMD5:autoDetected:)
+    public static func shouldEnableMouse(forROMMD5 md5: String?, autoDetected: Bool) -> Bool {
+        guard let md5, !md5.isEmpty else { return autoDetected }
+        return MouseGameRegistry.shared.userOverride(forMD5: md5) ?? autoDetected
+    }
+}
+#endif

@@ -1181,8 +1181,12 @@ extension PVThinLibretroCore: PortDeviceConfigurable {
     /// A saved choice under the current key or one of the legacy keys `restorePortDeviceTypes` migrates.
     public func hasSavedPortDevice(forPort port: Int) -> Bool {
         guard port >= 0, port < thinMaxPlayers else { return false }
-        return ([portDevicePersistenceKey(port: port)] + legacyPortDevicePersistenceKeys(port: port))
-            .contains { UserDefaults.standard.object(forKey: $0) != nil }
+        return savedPortDeviceKey(forPort: port) != nil
+    }
+
+    private func savedPortDeviceKey(forPort port: Int) -> String? {
+        ([portDevicePersistenceKey(port: port)] + legacyPortDevicePersistenceKeys(port: port))
+            .first { UserDefaults.standard.object(forKey: $0) != nil }
     }
 
     /// Restore saved device type selections (called after core loads).
@@ -1242,18 +1246,13 @@ extension PVThinLibretroCore: PortDeviceConfigurable {
     /// Called from `restorePortDeviceTypes()` only when no user preference has been saved for that port.
     private func platformDefaultPortDevice(forPort port: Int) -> UInt? {
         guard let sysID = SystemIdentifier(rawValue: systemIdentifier ?? "") else { return nil }
-        // SNES: set port 2 (index 1) to RETRO_DEVICE_MOUSE for games that use the SNES Mouse peripheral.
-        // Port 2 defaults to joypad after retro_load_game; override here for known mouse-only titles.
-        // Delegates to MouseGameRegistry for consistent detection with gameSupportsMouse.
-        // Users can always reconfigure via the in-game Port Device picker for any SNES game.
-        if sysID == .SNES && port == 1 {
-            if MouseGameRegistry.shared.gameSupportsMouse(
-                systemIdentifier: sysID,
-                md5: romMD5,
-                title: romTitleForLookup
-            ) {
-                return LibretroDeviceType.mouse.rawValue
-            }
+        if sysID == .SNES && port < 2 {
+            guard MouseGameRegistry.shared.snesMousePortIndex(md5: romMD5, title: romTitleForLookup) == port else { return nil }
+            // A saved mouse on the other port already consumes the shared relative motion.
+            let mouse = LibretroDeviceType.mouse.rawValue
+            if let otherPortKey = savedPortDeviceKey(forPort: 1 - port),
+               UserDefaults.standard.integer(forKey: otherPortKey) == Int(mouse) { return nil }
+            return mouse
         }
         // Dreamcast (Flycast): explicitly set port 0 device type so the core never silently
         // activates mouse input for standard games. For known mouse titles (Typing of the Dead,
