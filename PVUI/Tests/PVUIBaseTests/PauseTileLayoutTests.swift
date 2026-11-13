@@ -99,4 +99,19 @@ struct PauseTileLayoutTests {
         #expect(PauseTileLayout.fit(fullWidth: 840, maxColumns: 8, tileCounts: [],
                                     inset: 12, spacing: 6, minimumWidth: 380) == full)
     }
+
+    @Test("A page's grid height counts its rows, titles and dividers")
+    func gridHeight() {
+        let height = { (groups: [(titled: Bool, count: Int)]) in
+            PauseTileLayout.gridHeight(groups: groups, columns: 4, tileHeight: 70, spacing: 6,
+                                       titleHeight: 14, titleGap: 6, sectionSpacing: 12)
+        }
+        #expect(height([]) == 0)
+        #expect(height([(titled: false, count: 0)]) == 0)
+        // One row, then two rows (70 + 6 + 70).
+        #expect(height([(titled: false, count: 4)]) == 70)
+        #expect(height([(titled: false, count: 5)]) == 146)
+        // A titled group adds its title and gap; the next group adds a divider with spacing around it.
+        #expect(height([(titled: true, count: 3), (titled: true, count: 1)]) == (20 + 70) + 25 + (20 + 70))
+    }
 }

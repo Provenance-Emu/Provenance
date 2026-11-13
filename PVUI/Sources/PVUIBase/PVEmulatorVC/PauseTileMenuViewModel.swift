@@ -914,6 +914,14 @@ final class PauseTileMenuViewModel: ObservableObject {
         visibleTabs.flatMap { sections(for: $0).map(\.tiles.count) }
     }
 
+    /// Each page on show as its drawn groups: whether the group has a title line, and how
+    /// many cells it holds. The panel works out the tallest page's height from these.
+    var pageGroupShapes: [[(titled: Bool, count: Int)]] {
+        visibleTabs.map { tab in
+            sections(for: tab).map { (titled: $0.title != nil, count: $0.tiles.count) } // swiftlint:disable:this tiles_deprecated
+        }
+    }
+
     /// The page a first-level control is drawn on, for jumping to a search hit.
     func tab(containingTileID id: String) -> PauseMenuTab? {
         visibleTabs.first { $0.tileIDs(inRootSections: rootSectionIDs).contains(id) }

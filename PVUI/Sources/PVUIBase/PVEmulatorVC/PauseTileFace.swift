@@ -26,6 +26,24 @@ enum PauseTileLayout {
         return min(limit, needed.max() ?? limit)
     }
 
+    /// How tall a page's grid is, worked out from its groups rather than measured, so every
+    /// page can be given the tallest page's height without a layout pass feeding back.
+    /// A titled group has a title line and a gap above its cells; groups are split by a
+    /// one-point divider with `sectionSpacing` on each side.
+    static func gridHeight(groups: [(titled: Bool, count: Int)], columns: Int, tileHeight: CGFloat,
+                           spacing: CGFloat, titleHeight: CGFloat, titleGap: CGFloat,
+                           sectionSpacing: CGFloat) -> CGFloat {
+        let drawn = groups.filter { $0.count >= 1 }
+        guard !drawn.isEmpty else { return 0 }
+        let cols = max(1, columns)
+        let cells = drawn.reduce(CGFloat(0)) { total, group in
+            let rows = CGFloat((group.count + cols - 1) / cols)
+            let title = group.titled ? titleHeight + titleGap : 0
+            return total + title + rows * tileHeight + (rows - 1) * spacing
+        }
+        return cells + CGFloat(drawn.count - 1) * (sectionSpacing * 2 + 1)
+    }
+
     /// A column count and the panel width that holds it.
     struct Fit: Equatable {
         let columns: Int
@@ -58,13 +76,19 @@ struct PauseTileFace: View {
     @ScaledMetric(relativeTo: .caption) private var labelSize = PauseTileMetrics.labelSize
 
     private var height: CGFloat {
+        Self.height(accessibility: dynamicTypeSize.isAccessibilitySize,
+                    regular: horizontalSizeClass == .regular, labelSize: labelSize)
+    }
+
+    /// A cell's height. The pause menu also sizes its pages from this, so the two never differ.
+    static func height(accessibility: Bool, regular: Bool, labelSize: CGFloat) -> CGFloat {
         #if os(tvOS)
         return PauseTileMetrics.tileHeight
         #else
-        if dynamicTypeSize.isAccessibilitySize {
+        if accessibility {
             return max(PauseTileMetrics.accessibilityTileHeight, labelSize * 3.6 + 33)
         }
-        return horizontalSizeClass == .regular ? PauseTileMetrics.regularTileHeight : PauseTileMetrics.tileHeight
+        return regular ? PauseTileMetrics.regularTileHeight : PauseTileMetrics.tileHeight
         #endif
     }
 

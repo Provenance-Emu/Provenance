@@ -210,6 +210,9 @@ struct PauseTileMenuView: View {
     // MARK: Layout and environment
 
     @Environment(\.dynamicTypeSize) private var dynamicTypeSize
+    @Environment(\.horizontalSizeClass) private var horizontalSizeClass
+    /// The cell label size, scaled as `PauseTileFace` scales it, for sizing the pages.
+    @ScaledMetric(relativeTo: .caption) private var cellLabelSize = PauseTileMetrics.labelSize
     @Environment(\.featureFlags) private var featureFlags
     @Environment(\.scenePhase) private var scenePhase
 
@@ -1532,9 +1535,8 @@ struct PauseTileMenuView: View {
 
     // MARK: - Section view
 
-    private func sectionView(section: PauseMenuTileSection, cols: Int, spacing: CGFloat,
-                             placeholder: Bool = false) -> some View {
-        return VStack(alignment: .leading, spacing: 6) {
+    private func sectionView(section: PauseMenuTileSection, cols: Int, spacing: CGFloat) -> some View {
+        return VStack(alignment: .leading, spacing: Self.sectionTitleGap) {
             if let title = section.title {
                 Text(title)
                     .font(.system(size: PauseTileMetrics.sectionTitleSize, weight: .heavy))
@@ -1543,14 +1545,6 @@ struct PauseTileMenuView: View {
                     .lineLimit(1)
                     .padding(.horizontal, 2)
             }
-            if placeholder {
-                /// Faces only: the same height as the tiles, with nothing to focus or tap.
-                LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: spacing), count: cols), spacing: spacing) {
-                    ForEach(section.tiles) { tile in
-                        PauseTileFace(label: tile.label, icon: tile.icon, badge: tile.badge, accent: .clear, isFocused: false)
-                    }
-                }
-            } else {
             #if os(tvOS)
             /// Eager row layout on tvOS: `LazyVGrid` defers rendering of rows below
             /// the scroll viewport, which the focus engine reads as "no downward
@@ -1565,7 +1559,6 @@ struct PauseTileMenuView: View {
                 }
             }
             #endif
-            }
         }
     }
 
@@ -1796,10 +1789,6 @@ struct PauseTileMenuView: View {
 
     /// The scrolling part of the panel: search, the grid or the search results, and a submenu's own rows.
     private func gridScroll(sections: [PauseMenuTileSection], cols: Int, spacing: CGFloat, showsGrid: Bool) -> some View {
-        ZStack(alignment: .top) {
-        if currentRoute == .root {
-            pageHeightPlaceholders(cols: cols, spacing: spacing)
-        }
         ScrollViewReader { scrollProxy in
         ScrollView(.vertical, showsIndicators: true) {
             VStack(alignment: .leading, spacing: tvOSAdjusted(12, tvOS: 20)) {
@@ -1825,6 +1814,9 @@ struct PauseTileMenuView: View {
                             }
                         }
                     }
+                    // Every page is as tall as the tallest, so changing page never resizes the panel.
+                    .frame(minHeight: currentRoute == .root ? rootGridMinHeight(cols: cols, spacing: spacing) : 0,
+                           alignment: .topLeading)
                     #if os(tvOS)
                     .focusSection()
                     #endif
@@ -1876,33 +1868,32 @@ struct PauseTileMenuView: View {
             }
         }
         } // ScrollViewReader
-        } // ZStack
     }
 
-    /// Every page of the first level drawn invisibly behind the grid, so the panel is as
-    /// tall as its tallest page whichever page is on show and keeps its size when the page
-    /// changes. Flexible, so once the panel is capped the scroll view decides the height.
-    private func pageHeightPlaceholders(cols: Int, spacing: CGFloat) -> some View {
-        ZStack(alignment: .top) {
-            ForEach(viewModel.visibleTabs) { tab in
-                VStack(alignment: .leading, spacing: tvOSAdjusted(12, tvOS: 20)) {
-                    let sections = viewModel.sections(for: tab).filter { !$0.tiles.isEmpty }
-                    ForEach(sections) { section in
-                        sectionView(section: section, cols: cols, spacing: spacing, placeholder: true)
-                        if section.id != sections.last?.id {
-                            Color.clear.frame(height: 1)
-                        }
-                    }
-                }
-                .padding([.horizontal, .top], tvOSAdjusted(RetroPauseChrome.chromeInset, tvOS: 20))
-                .padding(.bottom, RetroPauseChrome.scrollEdgeFade)
-            }
-        }
-        .frame(minHeight: 0, maxHeight: .infinity, alignment: .top)
-        .hidden()
-        .accessibilityHidden(true)
-        .allowsHitTesting(false)
+    /// The tallest first-level page's grid height, so every page is drawn that tall and the
+    /// panel keeps its size when the page changes. Worked out from cell counts and fixed
+    /// cell heights rather than laid out, so no hidden copy of every page is drawn.
+    private func rootGridMinHeight(cols: Int, spacing: CGFloat) -> CGFloat {
+        let cellHeight = PauseTileFace.height(accessibility: dynamicTypeSize.isAccessibilitySize,
+                                              regular: horizontalSizeClass == .regular, labelSize: cellLabelSize)
+        return viewModel.pageGroupShapes.map { groups in
+            PauseTileLayout.gridHeight(groups: groups, columns: cols, tileHeight: cellHeight, spacing: spacing,
+                                       titleHeight: Self.sectionTitleLineHeight, titleGap: Self.sectionTitleGap,
+                                       sectionSpacing: tvOSAdjusted(12, tvOS: 20))
+        }.max() ?? 0
     }
+
+    /// Gap between a section title and its cells.
+    private static let sectionTitleGap: CGFloat = 6
+
+    /// Line height of a section title (`sectionView`), which is a fixed size.
+    private static let sectionTitleLineHeight: CGFloat = {
+        #if canImport(UIKit)
+        return ceil(UIFont.systemFont(ofSize: PauseTileMetrics.sectionTitleSize, weight: .heavy).lineHeight)
+        #else
+        return ceil(PauseTileMetrics.sectionTitleSize * 1.2)
+        #endif
+    }()
 
     // MARK: - Body
 
