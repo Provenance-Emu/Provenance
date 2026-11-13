@@ -36,7 +36,11 @@ public enum NetplayState: Sendable, Equatable {
     public static func == (lhs: NetplayState, rhs: NetplayState) -> Bool {
         switch (lhs, rhs) {
         case (.idle, .idle): return true
-        case (.hosting(let a), .hosting(let b)): return a.id == b.id
+        case (.hosting(let a), .hosting(let b)):
+            // The same room with the same occupancy. Cores drop repeats of their polled state
+            // with `==`; a player joining changes only these counts, and comparing the id alone
+            // kept the host's waiting room at "1/2" after a join.
+            return a.id == b.id && a.currentPlayers == b.currentPlayers && a.spectatorCount == b.spectatorCount
         case (.connecting(let a), .connecting(let b)): return a.id == b.id
         case (.connected(let a), .connected(let b)): return a.id == b.id
         case (.disconnected(let a), .disconnected(let b)): return a == b

@@ -123,7 +123,7 @@ public struct NetplayCreateRoomView: View {
                     HStack {
                         Text("Port")
                         Spacer()
-                        Text("\(settings.port)")
+                        Text(verbatim: String(settings.port))
                             .foregroundStyle(.secondary)
                     }
                     HStack {

@@ -203,7 +203,7 @@ public struct NetplayWaitingRoomView: View {
                     Text("Auto (OS-assigned)")
                         .foregroundStyle(.secondary)
                 } else {
-                    Text("\(settings.port)")
+                    Text(verbatim: String(settings.port))
                 }
             }
             if !localIP.isEmpty && settings.port != 0 {
