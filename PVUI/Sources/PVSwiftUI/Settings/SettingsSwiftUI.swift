@@ -13,7 +13,6 @@ import PVUIKit
 import RxRealm
 import RxSwift
 import RealmSwift
-import PVFeatureFlags
 import Defaults
 import AudioToolbox
 import PVCheevos
@@ -2463,7 +2462,6 @@ private struct LibrarySection2: View {
     @Default(.autoNormalizeROMTitles) var autoNormalizeROMTitles
     @Default(.unsupportedCores) var unsupportedCores
     @State private var showSaveImportWizard = false
-    @ObservedObject private var featureFlags = PVFeatureFlagsManager.shared
 
     var body: some View {
         Section {
@@ -2530,16 +2528,14 @@ private struct LibrarySection2: View {
             .retroFocusButtonStyle(showBorder: false)
             #endif
 
-            if featureFlags.nearbyLibraries {
-                NavigationLink(destination: NearbyLibrariesView()) {
-                    SettingsRow(title: "Nearby Libraries",
-                                subtitle: "Browse iFly and iCube libraries on this Wi-Fi network.",
-                                icon: .sfSymbol("antenna.radiowaves.left.and.right"))
-                }
-                #if os(tvOS)
-                .retroFocusButtonStyle(showBorder: false)
-                #endif
+            NavigationLink(destination: NearbyLibrariesView()) {
+                SettingsRow(title: "Nearby Libraries",
+                            subtitle: "Browse iFly and iCube libraries on this Wi-Fi network.",
+                            icon: .sfSymbol("antenna.radiowaves.left.and.right"))
             }
+            #if os(tvOS)
+            .retroFocusButtonStyle(showBorder: false)
+            #endif
             #endif
 
             #if os(iOS) && canImport(CoreNFC)

@@ -20,7 +20,6 @@ internal struct GameplayFeaturesSection: View {
     #endif
     @Default(.clipBufferingEnabled) var clipBufferingEnabled
     @Default(.liveBroadcast) var liveBroadcast
-    @Default(.airPlayMenu) var airPlayMenu
     @Default(.showMatureSkins) var showMatureSkins
 
     var body: some View {
@@ -80,13 +79,6 @@ internal struct GameplayFeaturesSection: View {
                 SettingsRow(title: "Live Broadcast",
                             subtitle: "ReplayKit Go Live button in the pause menu. Cast gameplay to Twitch, Facebook and other ReplayKit-compatible services.",
                             icon: .sfSymbol("dot.radiowaves.left.and.right"),
-                            showChevron: false)
-            }
-
-            ThemedToggle(isOn: $airPlayMenu) {
-                SettingsRow(title: "AirPlay Audio Menu",
-                            subtitle: "Show an AirPlay audio route-picker button in the pause menu. Audio only — video AirPlay is not yet implemented.",
-                            icon: .sfSymbol("airplayaudio"),
                             showChevron: false)
             }
         }

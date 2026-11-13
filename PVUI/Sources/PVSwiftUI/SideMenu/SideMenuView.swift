@@ -12,7 +12,6 @@ import SwiftUI
 import RealmSwift
 import PVLibrary
 import PVThemes
-import PVFeatureFlags
 import Combine
 import Defaults
 import PVSettings
@@ -61,8 +60,6 @@ SideMenuView: SwiftUI.View {
 
 
 
-    @ObservedObject private var featureFlags = PVFeatureFlagsManager.shared
-
     /// Focus id of the Nearby Libraries row (gamepad navigation).
     private static let nearbyItem = "nearby"
     /// How much of the theme's menu colour covers the material behind the drawer.
@@ -72,7 +69,7 @@ SideMenuView: SwiftUI.View {
     /// shared libraries on this network are one tap away.
     private var showsNearbyLibraries: Bool {
         #if os(iOS) || os(tvOS)
-        return featureFlags.nearbyLibraries
+        return true
         #else
         return false
         #endif

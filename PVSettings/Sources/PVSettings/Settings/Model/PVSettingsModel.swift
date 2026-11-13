@@ -1084,10 +1084,8 @@ public extension Defaults.Keys {
 
     // MARK: - Promoted from FeatureFlags (2026-05-31)
     // Second wave of promotions. Each was an internal PVFeature enum case with
-    // no user-visible toggle; surfaced in Advanced Settings (off by default) so
-    // they can ship "available but disabled" for this release. The PVFeature
-    // enum cases remain for the Feature Flags debug/remote-config path; the
-    // consumers now read these Defaults keys instead.
+    // no user-visible toggle; surfaced in Settings › Gameplay Features. The
+    // PVFeature cases were removed in Nov 2026; these keys are the only switch.
 
     /// Companion-controller overlay (trackball / numpad / DSU peripherals) in
     /// the pause menu. DSU integration still incomplete.
@@ -1096,10 +1094,6 @@ public extension Defaults.Keys {
     /// Light-gun crosshair overlay for lightgun-capable cores. Style is
     /// configured separately via `lightGunCrosshairStyle`.
     static let lightGunCrosshair = Key<Bool>("lightGunCrosshair", default: true)
-
-    /// Drag-to-reposition on-screen skin buttons (layout editor). iOS only.
-    /// On by default; no Advanced toggle (EmulatorWithSkinView reads it).
-    static let skinButtonReposition = Key<Bool>("skinButtonReposition", default: true)
 
     /// Programmatic touch overlay (PVTouchOverlay) replaces the generated default skin
     /// and the classic on-screen pad when no packaged skin is selected. iOS only.
@@ -1112,10 +1106,6 @@ public extension Defaults.Keys {
 
     /// Haptic strength for programmatic overlay presses: 0 disables, 1 is full strength.
     static let overlayHapticIntensity = Key<Double>("overlayHapticIntensity", default: 0.8)
-
-    /// AirPlay audio route-picker button in the pause menu. Audio only —
-    /// video AirPlay not yet implemented.
-    static let airPlayMenu = Key<Bool>("airPlayMenu", default: false)
 
     /// Preferred console region for region-aware thin-wrapper cores (currently
     /// Sega Saturn / Beetle Saturn via `beetle_saturn_region`). `.auto` lets the

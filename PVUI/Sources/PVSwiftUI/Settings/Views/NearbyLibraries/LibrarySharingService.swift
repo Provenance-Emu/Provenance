@@ -8,10 +8,8 @@
 //
 
 #if os(iOS) || os(tvOS)
-import Combine
 import Foundation
 import Observation
-import PVFeatureFlags
 import PVLibrary
 import PVLibrarySharing
 import PVLogging
@@ -66,7 +64,6 @@ public final class LibrarySharingService {
 
     @ObservationIgnored private var host: LibrarySharingHost?
     @ObservationIgnored private var appActive = true
-    @ObservationIgnored private var flagObserver: AnyCancellable?
     @ObservationIgnored let trust = FileHostTrustStore(fileURL: LibrarySharingService.supportFolder.appendingPathComponent("trusted-peers.json"))
 
     static var supportFolder: URL {
@@ -77,16 +74,6 @@ public final class LibrarySharingService {
     private init() {
         isEnabled = UserDefaults.standard.bool(forKey: Keys.enabled)
         excludedSystems = Set(UserDefaults.standard.stringArray(forKey: Keys.excludedSystems) ?? [])
-        // Turning the flag on or off (Feature Flags screen, remote config)
-        // starts or stops a saved "Share This Library" at once, not at the
-        // next trip through the background.
-        flagObserver = PVFeatureFlags.shared.stateDidChange
-            .map { _ in PVFeatureFlags.shared.isEnabled(.nearbyLibraries) }
-            .removeDuplicates()
-            .receive(on: DispatchQueue.main)
-            .sink { _ in
-                Task { @MainActor in await LibrarySharingService.shared.apply() }
-            }
     }
 
     /// Systems with at least one game in the library, for the settings list.
@@ -122,11 +109,7 @@ public final class LibrarySharingService {
         Task { await shared.apply() }
     }
 
-    private var shouldRun: Bool {
-        // The engine, not PVFeatureFlagsManager: the manager's copy updates on
-        // its own main-queue hop, possibly after this one.
-        isEnabled && appActive && PVFeatureFlags.shared.isEnabled(.nearbyLibraries)
-    }
+    private var shouldRun: Bool { isEnabled && appActive }
 
     private func apply() async {
         if shouldRun {

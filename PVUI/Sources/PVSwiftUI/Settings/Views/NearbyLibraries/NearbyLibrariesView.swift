@@ -10,7 +10,6 @@
 //
 
 #if os(iOS) || os(tvOS)
-import PVFeatureFlags
 import PVLibrarySharing
 import PVSystems
 import PVThemes
@@ -20,7 +19,6 @@ struct NearbyLibrariesView: View {
     @State private var model = NearbyLibrariesModel()
     @State private var showingAddServer = false
     @State private var cursorID: String?
-    @ObservedObject private var featureFlags = PVFeatureFlagsManager.shared
     @Environment(NearbyNavigator.self) private var navigator: NearbyNavigator?
     #if os(tvOS)
     @Environment(\.dismiss) private var dismiss
@@ -42,7 +40,7 @@ struct NearbyLibrariesView: View {
         NearbyCursor.home(
             peerIDs: model.visiblePeers.map(\.id),
             serverPeerIDs: model.contentServers.map { model.contentServerPeer($0).id },
-            showsContentServers: featureFlags.contentServerLibraries,
+            showsContentServers: true,
             showsOpenSettings: showsOpenSettings
         )
     }
@@ -69,9 +67,7 @@ struct NearbyLibrariesView: View {
                 }
             }
 
-            if featureFlags.contentServerLibraries {
-                contentServers
-            }
+            contentServers
 
             if model.snapshot.localNetworkDenied {
                 localNetworkDenied
@@ -93,9 +89,6 @@ struct NearbyLibrariesView: View {
         }
         .onChange(of: showingAddServer) { _, isShowing in
             navigator?.isSubsheetPresented = isShowing
-        }
-        .onChange(of: featureFlags.contentServerLibraries) { _, enabled in
-            if !enabled { showingAddServer = false }
         }
         .nearbyControllerCursor(cursorLayout, cursor: $cursorID, scope: .screen(nil), onActivate: activate)
         .onAppear { model.start() }

@@ -6,7 +6,6 @@
 //
 
 #if os(iOS) || os(tvOS)
-import PVFeatureFlags
 import PVLibrarySharing
 import PVSystems
 import PVThemes
@@ -17,21 +16,11 @@ struct NearbyPeerLibraryView: View {
     @State private var code = ""
     @State private var cursorID: String?
     @FocusState private var editingField: String?
-    @ObservedObject private var featureFlags = PVFeatureFlagsManager.shared
     @Environment(NearbyNavigator.self) private var navigator: NearbyNavigator?
 
     private var route: NearbyRoute { .peer(id: model.peer.id) }
 
     var body: some View {
-        if model.peer.app == .contentServer && !featureFlags.contentServerLibraries {
-            ContentUnavailableView("Content Servers Disabled", systemImage: "server.rack")
-                .nearbyControllerCursor(.empty, cursor: .constant(nil), scope: .screen(route)) { _ in }
-        } else {
-            library
-        }
-    }
-
-    private var library: some View {
         NearbyScreen(title: model.title, cursorID: cursorID) {
             switch model.phase {
             case .idle, .loading:

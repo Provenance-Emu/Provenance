@@ -2,7 +2,6 @@
 import Combine
 import Foundation
 import Observation
-import PVFeatureFlags
 import PVLibrary
 import PVLibrarySharing
 import PVLogging
@@ -56,7 +55,7 @@ import UIKit
         })
 
     private var receiptsURL: URL { LibrarySharingService.supportFolder.appendingPathComponent("automatic-receipts.json") }
-    private var canRun: Bool { active && booted && !emulating && PVFeatureFlags.shared.isEnabled(.nearbyLibraries) && !GameImporter.shared.isPausedForEmulation }
+    private var canRun: Bool { active && booted && !emulating && !GameImporter.shared.isPausedForEmulation }
 
     private init() {
         let savedPeerIDs = UserDefaults.standard.stringArray(forKey: Self.enabledKey) ?? []
@@ -73,9 +72,6 @@ import UIKit
         }.store(in: &observations)
         AppState.shared.bootupStateManager.$isBootupCompleted.sink { [weak self] value in
             Task { @MainActor in self?.booted = value; self?.environmentChanged() }
-        }.store(in: &observations)
-        PVFeatureFlags.shared.stateDidChange.sink { [weak self] _ in
-            Task { @MainActor in self?.environmentChanged() }
         }.store(in: &observations)
         Task {
             await LibrarySharingService.shared.refreshTrust()

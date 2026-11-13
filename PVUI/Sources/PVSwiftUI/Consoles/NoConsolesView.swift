@@ -11,7 +11,6 @@ import PVThemes
 import PVUIBase
 import PVHelp
 import AnimatedGradient
-import PVFeatureFlags
 
 /// Animated gradient background for the NoConsolesView
 public struct PVAnimatedGradient: View {
@@ -113,15 +112,13 @@ public struct NoConsolesView: SwiftUI.View {
             }
             .shadow(color: .retroCyan.opacity(0.12), radius: 12)
             .frame(maxWidth: 280)
-            if PVFeatureFlagsManager.shared.featureStates[.inAppFreeROMs] == true {
-                Button { delegate?.didTapFreeROMs() } label: {
-                    Text("Explore free games")
-                        .font(.body.weight(.semibold))
-                        .frame(maxWidth: 280, minHeight: 50)
-                        .contentShape(Rectangle())
-                }
-                .background(Color.retroDarkBlue, in: RoundedRectangle(cornerRadius: 15))
+            Button { delegate?.didTapFreeROMs() } label: {
+                Text("Explore free games")
+                    .font(.body.weight(.semibold))
+                    .frame(maxWidth: 280, minHeight: 50)
+                    .contentShape(Rectangle())
             }
+            .background(Color.retroDarkBlue, in: RoundedRectangle(cornerRadius: 15))
         }
     }
 

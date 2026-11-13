@@ -18,19 +18,6 @@ public extension RomDatabase {
     @MainActor
     private static var isAddingContentlessCores = false
 
-    /// Clears all contentless PVGame entries from the database
-    @MainActor
-    static func clearContentlessCores() async throws {
-        let realm = try await Realm()
-
-        let existingContentlessGames = realm.objects(PVGame.self).filter("contentless == true")
-        ILOG("Removing \(existingContentlessGames.count) existing contentless PVGames")
-
-        try await realm.asyncWrite {
-            realm.delete(existingContentlessGames)
-        }
-    }
-
     /// Adds contentless PVGame entries for cores that support running without ROM files
     /// Uses atomic transactions and upsert to prevent race condition crashes
     @MainActor

@@ -17,7 +17,6 @@ import PVLogging
 import Combine
 import Observation
 import RxSwift
-import PVFeatureFlags
 #if canImport(CoreSpotlight)
 import CoreSpotlight
 #endif
@@ -665,16 +664,9 @@ public class AppState: ObservableObject {
         }
         #endif
 
-        let contentlessEnabled = PVFeatureFlagsManager.shared.featureStates[.contentlessCores] ?? false
-        if contentlessEnabled {
-            ILOG("AppState: RomDatabase Loading dummy cores...")
-            try? await bootWorker.addContentlessCores()
-            ILOG("AppState: RomDatabase dummy cores loaded.")
-        } else {
-            ILOG("AppState: RomDatabase Clearing dummy cores...")
-            try? await bootWorker.clearContentlessCores()
-            ILOG("AppState: RomDatabase dummy cores cleared.")
-        }
+        ILOG("AppState: RomDatabase Loading dummy cores...")
+        try? await bootWorker.addContentlessCores()
+        ILOG("AppState: RomDatabase dummy cores loaded.")
 
         ILOG("AppState: Bootup state transitioning to completed...")
 
@@ -781,10 +773,6 @@ actor BootWorker {
 
     func addContentlessCores() async throws {
         try await RomDatabase.addContentlessCores(overwrite: true)
-    }
-
-    func clearContentlessCores() async throws {
-        try await RomDatabase.clearContentlessCores()
     }
 }
 

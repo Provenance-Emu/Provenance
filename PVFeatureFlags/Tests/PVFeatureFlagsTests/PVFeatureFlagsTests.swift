@@ -10,22 +10,12 @@ import Combine
 private let sampleJSON = """
 {
     "features": {
-        "inAppFreeROMs": {
+        "romPathMigrator": {
             "enabled": true,
             "minVersion": "1.0.0",
             "minBuildNumber": "100",
             "allowedAppTypes": ["standard", "standard.appstore"],
-            "description": "Allows downloading free ROMs directly in the app"
-        },
-        "romPathMigrator": {
-            "enabled": true,
             "description": "Enables the ROM path migration tool."
-        },
-        "contentlessCores": {
-            "enabled": false,
-            "minVersion": "3.0.5",
-            "allowedAppTypes": ["standard", "lite", "standard.appstore", "lite.appstore"],
-            "description": "Enables contentless cores."
         },
         "netplayEnabled": {
             "enabled": false,
@@ -35,6 +25,8 @@ private let sampleJSON = """
         },
         "tapToRemapUI": {
             "enabled": false,
+            "minVersion": "3.0.5",
+            "allowedAppTypes": ["standard", "lite", "standard.appstore", "lite.appstore"],
             "description": "Tap-to-remap UX in button remapping settings."
         }
     }
@@ -60,12 +52,11 @@ struct PVFeatureFlagsTests {
     @Test func testFeatureFlagParsing() throws {
         let config = try makeConfig()
 
-        #expect(config.features["inAppFreeROMs"]?.enabled == true)
-        #expect(config.features["inAppFreeROMs"]?.minVersion == "1.0.0")
-        #expect(config.features["inAppFreeROMs"]?.minBuildNumber == "100")
-        #expect(config.features["inAppFreeROMs"]?.allowedAppTypes?.contains("standard") == true)
         #expect(config.features["romPathMigrator"]?.enabled == true)
-        #expect(config.features["contentlessCores"]?.enabled == false)
+        #expect(config.features["romPathMigrator"]?.minVersion == "1.0.0")
+        #expect(config.features["romPathMigrator"]?.minBuildNumber == "100")
+        #expect(config.features["romPathMigrator"]?.allowedAppTypes?.contains("standard") == true)
+        #expect(config.features["tapToRemapUI"]?.enabled == false)
     }
 
     // MARK: - PVAppType
@@ -95,18 +86,16 @@ struct PVFeatureFlagsTests {
         let config = try makeConfig()
         let flags = PVFeatureFlags(configuration: config, appType: .standard, buildNumber: "101", appVersion: "1.1.0")
         flags.clearDebugOverrides()
-        #expect(flags.isEnabled(.inAppFreeROMs) == true)
         #expect(flags.isEnabled(.romPathMigrator) == true)
-        #expect(flags.isEnabled(.contentlessCores) == false)
+        #expect(flags.isEnabled(.tapToRemapUI) == false)
     }
 
     @Test func testIsEnabledByString() throws {
         let config = try makeConfig()
         let flags = PVFeatureFlags(configuration: config, appType: .standard, buildNumber: "101", appVersion: "1.1.0")
         flags.clearDebugOverrides()
-        #expect(flags.isEnabled("inAppFreeROMs") == true)
         #expect(flags.isEnabled("romPathMigrator") == true)
-        #expect(flags.isEnabled("contentlessCores") == false)
+        #expect(flags.isEnabled("tapToRemapUI") == false)
         #expect(flags.isEnabled("unknownFeature") == false)
     }
 
@@ -115,8 +104,8 @@ struct PVFeatureFlagsTests {
         let config = try makeConfig()
         let flags = PVFeatureFlags(configuration: config, appType: .standard, buildNumber: "101", appVersion: "1.1.0")
         flags.clearDebugOverrides()
-        #expect(flags[.inAppFreeROMs] == true)
-        #expect(flags[.contentlessCores] == false)
+        #expect(flags[.romPathMigrator] == true)
+        #expect(flags[.tapToRemapUI] == false)
     }
 
     @Test func testAppTypeRestriction() throws {
@@ -130,12 +119,12 @@ struct PVFeatureFlagsTests {
         appStoreFlags.clearDebugOverrides()
         #expect(appStoreFlags.isEnabled("netplayEnabled") == false)
 
-        // contentlessCores allows all 4 app types but enabled: false in JSON
+        // tapToRemapUI allows all 4 app types but enabled: false in JSON
         let liteFlags = PVFeatureFlags(
             configuration: config, appType: .lite, buildNumber: "101", appVersion: "3.1.0"
         )
         liteFlags.clearDebugOverrides()
-        #expect(liteFlags.isEnabled(.contentlessCores) == false)
+        #expect(liteFlags.isEnabled(.tapToRemapUI) == false)
     }
 
     @Test func testVersionRestriction() throws {
@@ -152,12 +141,12 @@ struct PVFeatureFlagsTests {
     @Test func testBuildNumberRestriction() throws {
         let config = try makeConfig()
 
-        // build number below minimum for inAppFreeROMs (minBuildNumber: "100")
+        // build number below minimum for romPathMigrator (minBuildNumber: "100")
         let lowBuildFlags = PVFeatureFlags(
             configuration: config, appType: .standard, buildNumber: "50", appVersion: "2.0.0"
         )
         lowBuildFlags.clearDebugOverrides()
-        #expect(lowBuildFlags.isEnabled(.inAppFreeROMs) == false)
+        #expect(lowBuildFlags.isEnabled(.romPathMigrator) == false)
     }
 
     // MARK: - PVPlatform
@@ -258,12 +247,12 @@ struct PVFeatureFlagsTests {
 
     @Test func testLiteAppTypeIsBlocked() throws {
         let config = try makeConfig()
-        // inAppFreeROMs only allows "standard" and "standard.appstore"
+        // romPathMigrator only allows "standard" and "standard.appstore" here
         let liteFlags = PVFeatureFlags(
             configuration: config, appType: .lite, buildNumber: "101", appVersion: "1.1.0"
         )
         liteFlags.clearDebugOverrides()
-        #expect(liteFlags.isEnabled(.inAppFreeROMs) == false)
+        #expect(liteFlags.isEnabled(.romPathMigrator) == false)
     }
 
     // MARK: - Debug Overrides
@@ -273,17 +262,17 @@ struct PVFeatureFlagsTests {
         let flags = PVFeatureFlags(configuration: config, appType: .standard, buildNumber: "101", appVersion: "1.1.0")
         flags.clearDebugOverrides()
 
-        // contentlessCores is disabled in config; override to enable
-        flags.setDebugOverride(for: .contentlessCores, enabled: true)
-        #expect(flags.isEnabled(.contentlessCores) == true)
+        // tapToRemapUI is disabled in config; override to enable
+        flags.setDebugOverride(for: .tapToRemapUI, enabled: true)
+        #expect(flags.isEnabled(.tapToRemapUI) == true)
 
         // nil clears the per-feature override — should revert to config value (false)
-        flags.setDebugOverride(for: .contentlessCores, enabled: nil)
-        #expect(flags.isEnabled(.contentlessCores) == false)
+        flags.setDebugOverride(for: .tapToRemapUI, enabled: nil)
+        #expect(flags.isEnabled(.tapToRemapUI) == false)
 
         // Clear all overrides
         flags.clearDebugOverrides()
-        #expect(flags.isEnabled(.contentlessCores) == false)
+        #expect(flags.isEnabled(.tapToRemapUI) == false)
     }
 
     // MARK: - Nonisolated reads from a background actor
@@ -297,7 +286,7 @@ struct PVFeatureFlagsTests {
         // isEnabled must be callable without await.
         let result = await Task.detached {
             // No await needed — isEnabled is synchronous
-            flags.isEnabled(.inAppFreeROMs)
+            flags.isEnabled(.romPathMigrator)
         }.value
 
         #expect(result == true)
@@ -322,7 +311,7 @@ struct PVFeatureFlagsTests {
         flags.clearDebugOverrides()
         let loaded = flags.loadBundledConfiguration()
         #expect(loaded == true)
-        #expect(flags.configuration?.features["inAppFreeROMs"] != nil)
+        #expect(flags.configuration?.features["romPathMigrator"] != nil)
     }
 
     // MARK: - Local File Configuration Loading
@@ -332,16 +321,16 @@ struct PVFeatureFlagsTests {
         let flags = PVFeatureFlags(appType: .standard, buildNumber: "101", appVersion: "1.1.0")
         flags.clearDebugOverrides()
         flags.setConfiguration(config)
-        #expect(flags.isEnabled(.inAppFreeROMs) == true)
         #expect(flags.isEnabled(.romPathMigrator) == true)
+        #expect(flags.isEnabled(.tapToRemapUI) == false)
     }
 
     // MARK: - Remote Configuration Merging
 
-    /// A remote file that lists only `inAppFreeROMs`: remote wins for that key,
+    /// A remote file that lists only `tapToRemapUI`: remote wins for that key,
     /// every other flag keeps its bundled entry.
     private static let partialRemoteJSON = """
-    { "features": { "inAppFreeROMs": { "enabled": false } } }
+    { "features": { "tapToRemapUI": { "enabled": true } } }
     """
 
     @Test func testRemoteConfigurationKeepsBundledFlagsItOmits() async throws {
@@ -352,14 +341,14 @@ struct PVFeatureFlagsTests {
 
         let flags = PVFeatureFlags(appType: .standard, buildNumber: "200", appVersion: "3.0.5")
         flags.clearDebugOverrides()
-        #expect(flags.isEnabled(.inAppFreeROMs) == true)
+        #expect(flags.isEnabled(.tapToRemapUI) == false)
         #expect(flags.isEnabled(.romPathMigrator) == true)
 
         try await flags.loadConfiguration(from: file)
 
-        #expect(flags.isEnabled(.inAppFreeROMs) == false, "a key the remote file lists overrides the bundled one")
+        #expect(flags.isEnabled(.tapToRemapUI) == true, "a key the remote file lists overrides the bundled one")
         #expect(flags.isEnabled(.romPathMigrator) == true, "a key the remote file omits keeps its bundled value")
-        #expect(flags.configuration?.features["nearbyLibraries"] != nil)
+        #expect(flags.configuration?.features["romPathMigrator"] != nil)
     }
 
     @MainActor @Test func testManagerRemoteCacheKeepsBundledFlagsItOmits() async throws {
@@ -378,14 +367,14 @@ struct PVFeatureFlagsTests {
         try await manager.loadRemoteConfiguration()
 
         // Read the engine: the manager's published copy updates on a later main-queue hop.
-        #expect(flags.isEnabled(.inAppFreeROMs) == false)
+        #expect(flags.isEnabled(.tapToRemapUI) == true)
         #expect(flags.isEnabled(.romPathMigrator) == true)
     }
 
     @Test func testDebugConfigurationStillReplacesEverything() throws {
         let flags = PVFeatureFlags(appType: .standard, buildNumber: "200", appVersion: "3.0.5")
         flags.clearDebugOverrides()
-        flags.setDebugConfiguration(features: ["inAppFreeROMs": FeatureFlag(enabled: true)])
+        flags.setDebugConfiguration(features: ["tapToRemapUI": FeatureFlag(enabled: true)])
         #expect(flags.isEnabled(.romPathMigrator) == false)
         #expect(flags.configuration?.features.count == 1)
     }
@@ -403,7 +392,7 @@ struct PVFeatureFlagsTests {
         let config = try makeConfig()
         fetcher.saveToCache(config)
         #expect(fetcher.isCacheValid() == true)
-        #expect(fetcher.loadCached()?.features["inAppFreeROMs"] != nil)
+        #expect(fetcher.loadCached()?.features["romPathMigrator"] != nil)
 
         fetcher.clearCache()
         #expect(fetcher.isCacheValid() == false)
@@ -432,8 +421,8 @@ struct PVFeatureFlagsTests {
 
         let loaded = fetcher.loadCached()
         #expect(loaded != nil)
-        #expect(loaded?.features["inAppFreeROMs"]?.enabled == true)
         #expect(loaded?.features["romPathMigrator"]?.enabled == true)
+        #expect(loaded?.features["tapToRemapUI"]?.enabled == false)
 
         fetcher.clearCache()
     }
@@ -447,9 +436,8 @@ struct PVFeatureFlagsTests {
         flags.clearDebugOverrides()
         let manager = PVFeatureFlagsManager(featureFlags: flags)
 
-        #expect(manager.inAppFreeROMs == true)
         #expect(manager.romPathMigrator == true)
-        #expect(manager.contentlessCores == false)
+        #expect(manager.tapToRemapUI == false)
     }
 
     @MainActor @Test func testManagerIsEnabledByString() throws {
@@ -458,8 +446,8 @@ struct PVFeatureFlagsTests {
         flags.clearDebugOverrides()
         let manager = PVFeatureFlagsManager(featureFlags: flags)
 
-        #expect(manager.isEnabled("inAppFreeROMs") == true)
-        #expect(manager.isEnabled("contentlessCores") == false)
+        #expect(manager.isEnabled("romPathMigrator") == true)
+        #expect(manager.isEnabled("tapToRemapUI") == false)
         #expect(manager.isEnabled("unknownFeature") == false)
     }
 
@@ -494,16 +482,14 @@ struct PVFeatureFlagsTests {
         let manager = PVFeatureFlagsManager(featureFlags: flags)
 
         // PVFeatureFlags.init() eagerly loads the bundled features.json, so
-        // inAppFreeROMs is already enabled for the "standard" app type (minBuild 100,
-        // minVersion 1.0.0 satisfied). netplayEnabled is enabled: false in both
+        // romPathMigrator is already enabled. tapToRemapUI is enabled: false in both
         // bundled config and sampleJSON, so it stays false either way.
-        #expect(manager.inAppFreeROMs == true)   // enabled in bundled features.json
+        #expect(manager.romPathMigrator == true)   // enabled in bundled features.json
 
         manager.setDebugConfiguration(features: config.features)
         RunLoop.main.run(until: Date(timeIntervalSinceNow: 0.05))
-        #expect(manager.inAppFreeROMs == true)
         #expect(manager.romPathMigrator == true)
-        #expect(manager.contentlessCores == false)
+        #expect(manager.tapToRemapUI == false)
 
         fetcher.clearCache()
     }
@@ -523,8 +509,8 @@ struct PVFeatureFlagsTests {
 
         try await manager.loadRemoteConfiguration()
 
-        #expect(manager.inAppFreeROMs == true)
         #expect(manager.romPathMigrator == true)
+        #expect(manager.tapToRemapUI == false)
 
         seedFetcher.clearCache()
     }
@@ -545,7 +531,7 @@ struct PVFeatureFlagsTests {
 
         try await manager.loadRemoteConfiguration()
 
-        #expect(manager.inAppFreeROMs == true)
+        #expect(manager.romPathMigrator == true)
 
         seedFetcher.clearCache()
     }
@@ -563,7 +549,7 @@ struct PVFeatureFlagsTests {
 
         try await manager.loadRemoteConfiguration()
 
-        #expect(flags.configuration?.features["inAppFreeROMs"] != nil)
+        #expect(flags.configuration?.features["romPathMigrator"] != nil)
     }
 
     @MainActor @Test func testManagerNotConfiguredThrows() async {
@@ -585,8 +571,8 @@ struct PVFeatureFlagsTests {
         let allFlags = manager.getAllFeatureFlags()
         #expect(allFlags.count == PVFeature.allCases.count)
 
-        let inAppROMs = allFlags.first { $0.key == "inAppFreeROMs" }
-        #expect(inAppROMs?.enabled == true)
+        let migrator = allFlags.first { $0.key == "romPathMigrator" }
+        #expect(migrator?.enabled == true)
     }
     #endif
 }
@@ -603,11 +589,11 @@ struct ExampleView: View {
 
     var body: some View {
         VStack {
-            if featureFlags.inAppFreeROMs {
-                Text("Free ROMs feature is enabled!")
+            if featureFlags.romPathMigrator {
+                Text("ROM path migrator is enabled!")
             }
-            if featureFlags.contentlessCores {
-                Text("Contentless cores enabled!")
+            if featureFlags.tapToRemapUI {
+                Text("Tap to remap enabled!")
             }
         }
         .task {
@@ -621,8 +607,8 @@ struct EnvironmentExampleView: View {
     @Environment(\.featureFlags) var featureFlags
 
     var body: some View {
-        if featureFlags.inAppFreeROMs {
-            Text("Free ROMs feature is enabled!")
+        if featureFlags.romPathMigrator {
+            Text("ROM path migrator is enabled!")
         }
     }
 }

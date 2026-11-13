@@ -12,7 +12,6 @@
 import Combine
 import Foundation
 import Observation
-import PVFeatureFlags
 import PVLibrary
 import PVLibrarySharing
 import PVLogging
@@ -91,7 +90,6 @@ final class NearbyLibrariesModel {
     }
 
     func addContentServer(url: URL, username: String, password: String, accessToken: String? = nil) {
-        guard PVFeatureFlags.shared.isEnabled(.contentServerLibraries) else { return }
         let server = ContentServer(url: url, username: username)
         contentServers.removeAll { $0.url == url }
         contentServers.append(server)
@@ -442,7 +440,7 @@ final class NearbyPeerLibraryModel {
     }
 
     func load() {
-        guard browsingAllowed, loadTask == nil else { return }
+        guard loadTask == nil else { return }
         phase = .loading(.connecting)
         loadTask = Task { [weak self] in
             await self?.runLoad()
@@ -552,7 +550,7 @@ final class NearbyPeerLibraryModel {
     /// importer with the mapped system. Tapping again after a failure resumes
     /// from the partial files and the cached pull manifest.
     func copy(_ item: RemoteLibraryItem, playAfterImport: Bool = false) {
-        guard browsingAllowed, copyTasks[item.id] == nil, let owner, let system = item.systemIdentifier else { return }
+        guard copyTasks[item.id] == nil, let owner, let system = item.systemIdentifier else { return }
         guard peer.app != .iCube || manualReceiveEligible else { return }
         let generation = UUID()
         copyGenerations[item.id] = generation
@@ -611,7 +609,7 @@ final class NearbyPeerLibraryModel {
                     if let self { UserDefaults.standard.set(self.importedGameIDs, forKey: "LibrarySharing.games." + self.peer.id) }
                     staging.markHandedOff(pulled.folder)
                     self?.copies[item.id] = .completed
-                    if playAfterImport, self?.browsingAllowed == true { SceneCoordinator.shared.launchGame(game.freeze()) }
+                    if playAfterImport { SceneCoordinator.shared.launchGame(game.freeze()) }
                     self?.copyTasks[item.id] = nil
                     self?.copyGenerations[item.id] = nil
                     return
@@ -665,14 +663,10 @@ final class NearbyPeerLibraryModel {
     }
 }
 extension NearbyPeerLibraryModel {
-    private var browsingAllowed: Bool {
-        peer.app != .contentServer || PVFeatureFlags.shared.isEnabled(.contentServerLibraries)
-    }
-
     func canPlay(_ item: RemoteLibraryItem) -> Bool { localGame(item) != nil }
 
     func play(_ item: RemoteLibraryItem) {
-        guard browsingAllowed, let game = localGame(item) else { return }
+        guard let game = localGame(item) else { return }
         SceneCoordinator.shared.launchGame(game.freeze())
     }
 

@@ -5,7 +5,6 @@ import UniformTypeIdentifiers
 import PVLibrary
 import PVUIBase
 import PVThemes
-import PVFeatureFlags
 import PVSettings
 #if canImport(UIKit)
 import UIKit
@@ -293,9 +292,7 @@ public struct PVLibraryRootView: View {
         #if canImport(PVWebServerHost)
         actions.append(PVAlertAction(isWebServerRunning ? "Web Server — Running" : "Web Server") { startWebServer() })
         #endif
-        if PVFeatureFlagsManager.shared.featureStates[.inAppFreeROMs] == true {
-            actions.append(PVAlertAction("Free ROMs") { navigation.sheet = .freeROMs })
-        }
+        actions.append(PVAlertAction("Free ROMs") { navigation.sheet = .freeROMs })
         actions.append(PVAlertAction("Import Queue") { navigation.didTapImports() })
         actions.append(.cancel())
         return actions

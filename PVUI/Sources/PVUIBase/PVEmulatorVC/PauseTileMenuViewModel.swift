@@ -336,18 +336,16 @@ final class PauseTileMenuViewModel: ObservableObject {
             dismissOnTap: false
         ))
 
-        // AirPlay — iOS / Catalyst only; hidden until video AirPlay is implemented
+        // AirPlay audio route picker — iOS / Catalyst only
         #if os(iOS) || targetEnvironment(macCatalyst)
-        if Defaults[.airPlayMenu] {
-            settingsTiles.append(PauseMenuTile(
-                id: "airPlay",
-                icon: "airplayaudio",
-                label: String(localized: "AirPlay"),
-                description: String(localized: "Stream audio to AirPlay devices"),
-                colorKey: .cyan,
-                dismissOnTap: false
-            ))
-        }
+        settingsTiles.append(PauseMenuTile(
+            id: "airPlay",
+            icon: "airplayaudio",
+            label: String(localized: "AirPlay"),
+            description: String(localized: "Stream audio to AirPlay devices"),
+            colorKey: .cyan,
+            dismissOnTap: false
+        ))
         #endif
 
         // Input/controller-related tiles shown under **Controls** (not on the root GAME grid).

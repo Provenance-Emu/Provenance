@@ -3,7 +3,6 @@ import Combine
 import PVUIBase
 import PVThemes
 import PVLibrary
-import PVFeatureFlags
 import PVHelp
 import RealmSwift
 import PVRealm
@@ -239,7 +238,6 @@ struct TVMediaMainView: View {
         @ObservedObject var gameActions: TVMediaGameActions
 
         @State private var showingImportsAlert = false
-        @StateObject private var featureFlagsManager = PVFeatureFlagsManager.shared
 
         let sidebarCollapsedWidth: CGFloat
         let mainNamespace: Namespace.ID
@@ -440,9 +438,7 @@ struct TVMediaMainView: View {
             var items = [
                 RetroSelectionItem(id: "importQueue", title: "Import Queue", subtitle: "View active and completed imports")
             ]
-            if featureFlagsManager.featureStates[.inAppFreeROMs] ?? false {
-                items.append(RetroSelectionItem(id: "freeROMs", title: "Free ROMs", subtitle: "Browse open-source and public domain ROMs"))
-            }
+            items.append(RetroSelectionItem(id: "freeROMs", title: "Free ROMs", subtitle: "Browse open-source and public domain ROMs"))
             items.append(RetroSelectionItem(id: "rescanROMs", title: "Rescan ROM Folders", subtitle: "Find ROMs copied into system folders"))
             items.append(RetroSelectionItem(id: "romInstructions", title: "How to Add ROMs", subtitle: "Web server, CloudKit, and more"))
             return items
@@ -626,9 +622,9 @@ struct TVMediaMainView: View {
                 onSelectImports: {
                     showingImportsAlert = true
                 },
-                onSelectNearby: featureFlagsManager.nearbyLibraries ? {
+                onSelectNearby: {
                     router.present(.nearbyLibraries)
-                } : nil,
+                },
                 onSelectNetplay: {
                     router.activeModal = .netplayLobby
                 },

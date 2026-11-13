@@ -536,7 +536,7 @@ private struct DebugControlsSection: View {
     @MainActor
     private func loadTestConfiguration() {
         let testFeatures: [String: FeatureFlag] = [
-            "inAppFreeROMs": FeatureFlag(
+            "tapToRemapUI": FeatureFlag(
                 enabled: true,
                 minVersion: "1.0.0",
                 minBuildNumber: "100",

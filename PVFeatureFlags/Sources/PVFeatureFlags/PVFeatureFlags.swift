@@ -19,38 +19,11 @@ import Combine
 
 /// Enum representing all available feature flags
 public enum PVFeature: String, CaseIterable, Sendable {
-    case inAppFreeROMs = "inAppFreeROMs"
     case romPathMigrator = "romPathMigrator"
-    case contentlessCores = "contentlessCores"
     /// Enables tap-to-remap UX in the button remapping settings: instead of selecting a
     /// destination button from a list, the user presses a physical button on their controller.
     /// Disabled by default while the feature is being developed.
     case tapToRemapUI = "tapToRemapUI"
-    /// Companion Controller overlay — lets the device act as a secondary controller
-    /// for systems that have non-standard input peripherals (trackball, numpad, Atari 5200 stick).
-    /// Disabled by default while the DSU integration is still in progress.
-    case companionController = "companionController"
-    /// Enables the light-gun crosshair overlay that renders a configurable crosshair
-    /// at the cursor position during light-gun gameplay. When disabled, no crosshair
-    /// is shown regardless of the `lightGunCrosshairStyle` setting.
-    /// Disabled by default; enable in Settings > Advanced > Feature Flags.
-    case lightGunCrosshair = "lightGunCrosshair"
-    /// Enables the drag-to-reposition button layout editor for custom skins.
-    /// When active, an "Edit Layout" toolbar appears over the skin view; users can drag
-    /// individual buttons to new positions. Offsets are persisted per skin in UserDefaults.
-    /// iOS only (tvOS lacks DragGesture). Disabled by default; enable in
-    /// Settings > Advanced > Feature Flags.
-    case skinButtonReposition = "skinButtonReposition"
-    /// Shows the AirPlay route-picker button in the pause menu (both tile and retro-menu styles).
-    /// Currently only audio AirPlay is supported; video mirroring to Apple TV is not yet
-    /// implemented. Disabled by default until full video AirPlay support lands.
-    case airPlayMenu = "airPlayMenu"
-    /// Settings › Library › Nearby Libraries: browse iFly and iCube libraries on the
-    /// local network (read-only; copying is phase 2 of the cross-app sharing spec).
-    /// Disabled by default; enable in Settings > Advanced > Feature Flags.
-    case nearbyLibraries
-    /// Browse and download games from an Emulation Server in Nearby Libraries.
-    case contentServerLibraries
 }
 
 /// Enum representing supported OS platforms for feature flag filtering
@@ -131,39 +104,9 @@ public struct FeatureFlag: Codable, Sendable {
         self.description = description
     }
 
-    public static let contentlessCores = FeatureFlag(
-        enabled: false,
-        minVersion: "3.0.5",
-        allowedAppTypes: ["standard", "lite", "standard.appstore", "lite.appstore"],
-        description: "Enables contentless cores like DOOM, Quake, etc. Disabled for App Store builds."
-    )
-
-
     public static let tapToRemapUI = FeatureFlag(
         enabled: false,
         description: "Tap-to-remap UX: press a physical controller button to select the remapping destination instead of choosing from a list. Disabled by default during development."
-    )
-
-    public static let companionController = FeatureFlag(
-        enabled: false,
-        description: "Companion Controller overlay — use this device as a secondary controller for systems with non-standard input peripherals (trackball, numpad, Atari 5200). Disabled until DSU integration is complete."
-    )
-
-    public static let skinButtonReposition = FeatureFlag(
-        enabled: false,
-        allowedPlatforms: ["ios"],
-        description: "Drag-to-reposition button layout editor for custom skins. Shows an 'Edit Layout' toolbar over the skin; users drag buttons to reposition them. Offsets persist per skin in UserDefaults. iOS only. Disabled by default — enable in Settings > Advanced > Feature Flags."
-    )
-
-    public static let airPlayMenu = FeatureFlag(
-        enabled: false,
-        description: "AirPlay route-picker button in the pause menu. Only audio AirPlay is currently supported; disabled by default until video AirPlay to Apple TV is implemented."
-    )
-
-    public static let nearbyLibraries = FeatureFlag(
-        enabled: false,
-        description: "Nearby Libraries: browse and copy games from iFly and iCube libraries on the local network, "
-            + "and share this library with them (Settings > Library). Disabled by default — enable in Settings > Advanced > Feature Flags."
     )
 }
 
@@ -263,8 +206,8 @@ public final class PVFeatureFlags: @unchecked Sendable {
         _appType = appType ?? PVFeatureFlags.getCurrentAppType()
         _buildNumber = buildNumber ?? PVFeatureFlags.getCurrentBuildNumber()
         _appVersion = appVersion ?? PVFeatureFlags.getCurrentAppVersion()
-        // Eagerly load the bundled features.json so flags like skinButtonReposition
-        // reflect their correct defaults (including allowedPlatforms) from the very
+        // Eagerly load the bundled features.json so every flag reflects its correct
+        // defaults (including allowedPlatforms) from the very
         // first isEnabled(_:) call, before any remote config has been fetched.
         _ = loadBundledConfiguration()
     }
@@ -578,16 +521,8 @@ public final class PVFeatureFlags: @unchecked Sendable {
 
     // MARK: - Convenience Feature Properties
 
-    public var inAppFreeROMs: Bool { featureStates[.inAppFreeROMs] ?? false }
     public var romPathMigrator: Bool { featureStates[.romPathMigrator] ?? false }
-    public var contentlessCores: Bool { featureStates[.contentlessCores] ?? false }
     public var tapToRemapUI: Bool { featureStates[.tapToRemapUI] ?? false }
-    public var companionController: Bool { featureStates[.companionController] ?? false }
-    public var lightGunCrosshair: Bool { featureStates[.lightGunCrosshair] ?? false }
-    public var skinButtonReposition: Bool { featureStates[.skinButtonReposition] ?? false }
-    public var airPlayMenu: Bool { featureStates[.airPlayMenu] ?? false }
-    public var nearbyLibraries: Bool { featureStates[.nearbyLibraries] ?? false }
-    public var contentServerLibraries: Bool { featureStates[.contentServerLibraries] ?? false }
 
     // MARK: - Feature Queries
 

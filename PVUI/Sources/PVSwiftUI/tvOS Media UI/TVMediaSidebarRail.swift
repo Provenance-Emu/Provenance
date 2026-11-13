@@ -19,7 +19,7 @@ struct TVMediaSidebarRail: View {
     let onSelectSettings: () -> Void
     let onSelectStatus: () -> Void
     let onSelectImports: () -> Void
-    /// Opens Nearby Libraries; nil hides the item (`nearbyLibraries` flag off).
+    /// Opens Nearby Libraries; nil hides the item.
     var onSelectNearby: (() -> Void)?
 
     let onSelectNetplay: () -> Void
