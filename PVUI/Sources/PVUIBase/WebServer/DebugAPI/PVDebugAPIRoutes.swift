@@ -29,12 +29,16 @@
 //    POST /api/debug/pixelate {enabled: Bool}
 //    POST /api/debug/input {button: up|down|left|right|a|b|start|select, duration_ms: 100} (NES or GBA, player 0;
 //         GBA also takes l|r)
+//    POST /api/debug/netplay {action: host|join|disconnect|status, host, port} (the running game)
 //
 
 import Foundation
 import PVCoreBridge
 import PVLibrary
 import PVLogging
+#if canImport(PVNetplay)
+import PVNetplay
+#endif
 import PVSettings
 import Defaults
 import UIKit
@@ -168,6 +172,12 @@ public enum PVDebugAPIRoutes {
         registry.register("POST", "/api/debug/input") { request in
             await pressButton(request)
         }
+
+        #if canImport(PVNetplay)
+        registry.register("POST", "/api/debug/netplay") { request in
+            await netplay(request)
+        }
+        #endif
 
         registry.register("POST", "/api/debug/savestate") { _ in
             await saveOrLoad(save: true)
@@ -389,6 +399,39 @@ public enum PVDebugAPIRoutes {
         }
         return .ok(["button": name, "player": 0, "duration_ms": duration] as [String: Any])
     }
+
+    #if canImport(PVNetplay)
+    /// Hosts, joins or leaves a netplay session on the running game without the lobby screens,
+    /// so two simulators can be linked from a script.
+    private static func netplay(_ request: PVDebugAPIRequest) async -> PVDebugAPIResponse {
+        let manager = PVNetplayManager.shared
+        do {
+            switch request.value("action") ?? "status" {
+            case "host":
+                var settings = NetplaySettings.defaultLAN
+                if let port = request.value("port").flatMap({ UInt16($0) }) { settings.port = port }
+                try await manager.host(settings: settings)
+            case "join":
+                guard let host = request.value("host"), !host.isEmpty,
+                      let port = UInt16(request.value("port") ?? "\(NetplaySettings.defaultLAN.port)") else {
+                    return .error("join needs host, and port when it isn't the default")
+                }
+                let room = NetplayRoom(hostName: host, gameName: "", gameHash: "", coreIdentifier: "", maxPlayers: 2,
+                                       currentPlayers: 1, isLAN: true, hostAddress: host, port: port, discoverySource: .manual)
+                try await manager.join(room: room, settings: .defaultLAN)
+            case "disconnect":
+                await manager.disconnect()
+            case "status":
+                break
+            default:
+                return .error("unknown action (host, join, disconnect, status)")
+            }
+        } catch {
+            return .error(error.localizedDescription, status: 409)
+        }
+        return .ok(["state": String(describing: await manager.state)])
+    }
+    #endif
 
     private static func saveOrLoad(save: Bool) async -> PVDebugAPIResponse {
         guard let emulator = await MainActor.run(body: { AppState.shared.emulationUIState.emulator }) else {
