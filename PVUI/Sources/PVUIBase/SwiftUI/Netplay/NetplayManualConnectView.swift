@@ -29,6 +29,7 @@ public struct NetplayManualConnectView: View {
     @State private var portError: String?
 
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.netplayReturnToGame) private var returnToGame
 
     public init(gameName: String, coreIdentifier: String, defaultSpectate: Bool = false) {
         self.gameName = gameName
@@ -137,7 +138,7 @@ public struct NetplayManualConnectView: View {
                 } else {
                     try await netplay.join(room: room, settings: settings)
                 }
-                dismiss()
+                NetplayJoinFeedback.joined(hostAddress, returnToGame: returnToGame, dismiss: dismiss)
             } catch {
                 errorMessage = error.localizedDescription
                 showError = true

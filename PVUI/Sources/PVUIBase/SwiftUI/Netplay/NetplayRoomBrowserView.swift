@@ -40,6 +40,7 @@ public struct NetplayRoomBrowserView: View {
     @FocusState private var passwordFocused: Bool
 
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.netplayReturnToGame) private var returnToGame
 
     public init(gameName: String, coreIdentifier: String, localGameHash: String = "", spectateMode: Bool = false) {
         self.gameName = gameName
@@ -300,7 +301,7 @@ public struct NetplayRoomBrowserView: View {
                 } else {
                     try await netplay.join(room: room, settings: settings)
                 }
-                dismiss()
+                NetplayJoinFeedback.joined(room.hostName, returnToGame: returnToGame, dismiss: dismiss)
             } catch {
                 errorMessage = error.localizedDescription
                 showError = true

@@ -55,6 +55,35 @@ private struct NetplayTitleModifier: ViewModifier {
     }
 }
 
+/// Closes the netplay screens and resumes the game they were opened over. Set by whoever
+/// presents them from a paused game; nil in the library, where there is no game to return to.
+struct NetplayReturnToGameAction {
+    let perform: @MainActor () -> Void
+
+    @MainActor
+    func callAsFunction() { perform() }
+}
+
+/// What a successful join from the in-game screens does: say so, then go back to the game.
+@MainActor
+enum NetplayJoinFeedback {
+    static func joined(_ hostName: String, returnToGame: NetplayReturnToGameAction?, dismiss: DismissAction) {
+        PVToastManager.post(String(localized: "Joined \(hostName)."), type: .success, icon: "antenna.radiowaves.left.and.right")
+        if let returnToGame { returnToGame() } else { dismiss() }
+    }
+}
+
+private struct NetplayReturnToGameKey: EnvironmentKey {
+    static var defaultValue: NetplayReturnToGameAction? { nil }
+}
+
+extension EnvironmentValues {
+    var netplayReturnToGame: NetplayReturnToGameAction? {
+        get { self[NetplayReturnToGameKey.self] }
+        set { self[NetplayReturnToGameKey.self] = newValue }
+    }
+}
+
 extension View {
     func netplayScreen() -> some View {
         modifier(NetplayScreenModifier())
@@ -200,17 +229,34 @@ struct NetplayChoiceRow<Value: Hashable>: View {
 
 /// Shared form layout with room for TV focus rings and readable sections on phones.
 struct NetplayForm<Content: View>: View {
+    /// The `.id` of a field to bring into view, set while it is being edited: the keyboard
+    /// otherwise covers a field near the bottom of a sheet.
+    var scrollTarget: String?
     @ViewBuilder let content: Content
 
+    /// Long enough for the keyboard to finish sliding in, so the scroll lands above it.
+    private static var keyboardSettleDelay: Duration { .milliseconds(350) }
+
     var body: some View {
-        ScrollView {
-            VStack(alignment: .leading, spacing: 28) {
-                content
+        ScrollViewReader { proxy in
+            ScrollView {
+                VStack(alignment: .leading, spacing: 28) {
+                    content
+                }
+                .padding(.vertical, 28)
+                .padding(.horizontal, horizontalInset)
+                .frame(maxWidth: 1100)
+                .frame(maxWidth: .infinity)
             }
-            .padding(.vertical, 28)
-            .padding(.horizontal, horizontalInset)
-            .frame(maxWidth: 1100)
-            .frame(maxWidth: .infinity)
+            #if os(iOS)
+            .scrollDismissesKeyboard(.interactively)
+            #endif
+            .task(id: scrollTarget) {
+                guard let scrollTarget else { return }
+                try? await Task.sleep(for: Self.keyboardSettleDelay)
+                guard !Task.isCancelled else { return }
+                withAnimation { proxy.scrollTo(scrollTarget, anchor: .center) }
+            }
         }
         #if os(tvOS)
         .safeAreaInset(edge: .top, spacing: 0) { Color.clear.frame(height: 64) }

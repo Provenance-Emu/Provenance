@@ -34,6 +34,7 @@ public struct NetplayWaitingRoomView: View {
     @State private var cursor: String?
 
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.netplayReturnToGame) private var returnToGame
 
     public init(gameName: String, coreIdentifier: String, settings: NetplaySettings, gameStarted: Binding<Bool> = .constant(false)) {
         self.gameName = gameName
@@ -386,7 +387,8 @@ extension NetplayWaitingRoomView {
                     } else if isHost {
                         Label("Local", systemImage: "house.fill")
                     } else {
-                        Label("Connecting", systemImage: "ellipsis")
+                        // A player is listed only once the core reports them in the room.
+                        Label("Connected", systemImage: "checkmark.circle")
                     }
                 }
                 .font(.caption)
@@ -408,7 +410,9 @@ extension NetplayWaitingRoomView {
                 // Cores that start every player together (Dolphin) do it here.
                 try await netplay.startGame()
                 gameStarted = true
-                dismiss()
+                // Opened over a paused game: close every netplay screen and play. Players who
+                // joined wait on the host's game, which stays paused behind these screens.
+                if let returnToGame { returnToGame() } else { dismiss() }
             } catch {
                 startError = error.localizedDescription
             }

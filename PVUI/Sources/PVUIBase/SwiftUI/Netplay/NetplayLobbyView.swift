@@ -50,6 +50,7 @@ public struct NetplayLobbyView: View {
     }
 
     @Environment(\.dismiss) private var dismiss
+    @ObservedObject private var netplay = ObservableNetplayManager.shared
 
     public init(
         gameName: String,
@@ -101,6 +102,9 @@ public struct NetplayLobbyView: View {
                                 .multilineTextAlignment(.center)
                         }
 
+                        if let session = sessionSummary {
+                            sessionCard(session)
+                        } else {
                         actionCard(
                             icon: "antenna.radiowaves.left.and.right",
                             title: "Host a Room",
@@ -149,6 +153,7 @@ public struct NetplayLobbyView: View {
                         .disabled(!isNetplayEnabled)
                         .netplayCursorItem(NetplayLobbyCursor.gameCenter, cursor: cursor, cornerRadius: 18)
 #endif
+                        }
 
                         actionCard(
                             icon: "gearshape",
@@ -206,6 +211,12 @@ public struct NetplayLobbyView: View {
 
     /// What the iOS controller cursor can reach, in the order it is drawn.
     private var cursorRows: [NetplayCursorRow] {
+        if sessionSummary != nil {
+            return [
+                .single(NetplayCursorTarget(id: NetplayLobbyCursor.leave, action: leaveSession)),
+                .single(NetplayCursorTarget(id: NetplayLobbyCursor.settings) { showSettings = true })
+            ]
+        }
         var targets = [
             NetplayCursorTarget(id: NetplayLobbyCursor.host, isEnabled: isNetplayEnabled) { showCreateRoom = true },
             NetplayCursorTarget(id: NetplayLobbyCursor.browse, isEnabled: isNetplayEnabled) { showRoomBrowser = true }
@@ -218,6 +229,53 @@ public struct NetplayLobbyView: View {
         #endif
         targets.append(NetplayCursorTarget(id: NetplayLobbyCursor.settings) { showSettings = true })
         return targets.map { .single($0) }
+    }
+
+    // MARK: - Session in progress
+
+    private struct SessionSummary {
+        let title: String
+        let detail: String
+        let leaveTitle: String
+    }
+
+    /// The session in progress, if any. While one is up the screen shows it in place of the
+    /// host and join choices, which could only fail.
+    private var sessionSummary: SessionSummary? {
+        switch netplay.state {
+        case .hosting(let room):
+            return SessionSummary(title: String(localized: "Hosting a room"),
+                                  detail: String(localized: "\(room.currentPlayers) of \(room.maxPlayers) players"),
+                                  leaveTitle: String(localized: "Close Room"))
+        case .connected(let session):
+            return SessionSummary(title: String(localized: "Connected to \(session.room.hostName)"),
+                                  detail: String(localized: "Playing over the network"),
+                                  leaveTitle: String(localized: "Leave Room"))
+        case .connecting(let room):
+            return SessionSummary(title: String(localized: "Connecting to \(room.hostName)…"),
+                                  detail: "",
+                                  leaveTitle: String(localized: "Cancel"))
+        case .idle, .disconnected:
+            return nil
+        }
+    }
+
+    private func leaveSession() {
+        Task { @MainActor in await netplay.disconnect() }
+    }
+
+    private func sessionCard(_ session: SessionSummary) -> some View {
+        NetplayFormSection {
+            Label(session.title, systemImage: "antenna.radiowaves.left.and.right")
+                .font(.headline)
+            if !session.detail.isEmpty {
+                Text(session.detail)
+                    .font(.subheadline)
+                    .foregroundStyle(.secondary)
+            }
+            Button(session.leaveTitle, role: .destructive, action: leaveSession)
+                .netplayCursorItem(NetplayLobbyCursor.leave, cursor: cursor)
+        }
     }
 
     // MARK: - Subviews
@@ -280,6 +338,7 @@ enum NetplayLobbyCursor {
     static let spectate = "spectate"
     static let gameCenter = "gameCenter"
     static let settings = "settings"
+    static let leave = "leave"
 }
 
 #endif

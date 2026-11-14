@@ -20,7 +20,7 @@ struct NetplayMetadataEditor: View {
 
     var body: some View {
         NavigationStack {
-            NetplayForm {
+            NetplayForm(scrollTarget: referenceFocused ? NetplayMetadataCursor.save : nil) {
                 NetplayFormSection("Multiplayer Details") {
                     Text(title).font(.title2.bold())
                     Text("Confirm the game's multiplayer mode from its manual or your own play. This applies only to this ROM; it does not verify emulator compatibility.")
@@ -41,6 +41,7 @@ struct NetplayMetadataEditor: View {
                         .buttonStyle(.borderedProminent)
                         .disabled(!canSave)
                         .netplayCursorItem(NetplayMetadataCursor.save, cursor: cursor)
+                        .id(NetplayMetadataCursor.save)
                     Button("Reset to Catalog", role: .destructive, action: reset)
                         .netplayCursorItem(NetplayMetadataCursor.reset, cursor: cursor)
                 }

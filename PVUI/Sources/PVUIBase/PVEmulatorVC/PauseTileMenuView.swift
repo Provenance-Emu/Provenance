@@ -149,6 +149,8 @@ struct PauseTileMenuView: View {
     @State private var showingPalettePicker = false
     @State private var showingNetworkPlay = false
     @State private var startNetplayHosting = false
+    /// Close the pause menu once the Network Play sheet has gone (see `netplayReturnToGame`).
+    @State private var resumeAfterNetworkPlay = false
     /// Triggers the AirPlay route-picker sheet via the hidden AVRoutePickerView bridge.
     #if os(iOS) || targetEnvironment(macCatalyst)
     @State private var triggerAirPlayPicker = false
@@ -2161,7 +2163,13 @@ struct PauseTileMenuView: View {
             }
         }
         #if !os(watchOS)
-        .netplayPresentation(isPresented: $showingNetworkPlay, onDismiss: { startNetplayHosting = false }) {
+        .netplayPresentation(isPresented: $showingNetworkPlay, onDismiss: {
+            startNetplayHosting = false
+            if resumeAfterNetworkPlay {
+                resumeAfterNetworkPlay = false
+                requestPauseMenuClose()
+            }
+        }, content: {
             NetplayLobbyView(
                 gameName: emulatorVC.game?.title ?? "",
                 coreIdentifier: emulatorVC.core.coreIdentifier ?? "",
@@ -2172,7 +2180,13 @@ struct PauseTileMenuView: View {
                 isPatched: emulatorVC.game?.isPatchVariant ?? false,
                 startHosting: startNetplayHosting
             )
-        }
+            // The host started the game or this device joined a room: close the netplay
+            // screens, then the menu, once the sheet is gone.
+            .environment(\.netplayReturnToGame, NetplayReturnToGameAction {
+                resumeAfterNetworkPlay = true
+                showingNetworkPlay = false
+            })
+        })
         #endif
         #if os(tvOS)
         .fullScreenCover(isPresented: $showingShaderBrowser, onDismiss: rebuildSections) {
