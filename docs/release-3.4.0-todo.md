@@ -29,12 +29,13 @@ The working list for the 3.4.0 release. Update it in the same commit as the work
     - Game data crosses the link (checked later the same day). In Super Mario Advance 2 both consoles choose Multiplayer on the title screen, the host presses Start, picks Classic and presses Start again. Both screens then show the same two-player Mario Bros. game, and moving Mario from the host and Luigi from the joiner shows on both. Seven of seven scripted runs from fresh launches reached that game. The first attempt had gone through Single Player, which never uses the link.
       - One more fix came out of it: linking after the game had booted left the host reading "child" on the cable, so Multiplayer did nothing unless both games were reset after connecting. The driver now sets the parent and child lines when the link connects or drops.
       - The debug API can now host and join without the lobby (`POST /api/debug/netplay`), which is how those runs were scripted.
-    - Rough edges seen, not fixed:
-      - "Start Game" in the waiting room closes only the room. The host is left in the pause menu and the joiner shows "waiting for partner" until the host taps Resume.
-      - After a typed-address join the joiner stays on Browse Rooms with no confirmation, the list still says 1/2 until Refresh, and Network Play still offers Host and Browse while connected.
-      - Player 2 is labelled "Connecting" in the waiting room after the link is up.
-      - On iPhone the library hub's search field is squeezed to "…", and the keyboard covers Save in the multiplayer details form.
-      - A ROM that is not in the multiplayer catalog must have its details confirmed on every device before Join is enabled.
+    - Rough edges from that run, fixed the same day and checked on the two simulators:
+      - "Start Game" in the waiting room now closes the netplay screens and the pause menu, and the game resumes.
+      - Joining from the in-game browser or by typed address now returns to the game with a "Joined" notice.
+      - While a session is up, the in-game Network Play screen shows it ("Hosting a room, 2 of 2 players", or who you are connected to) with Close Room or Leave Room, in place of Host and Browse.
+      - A joined player reads "Connected" in the waiting room.
+      - On a phone the library hub's search field has its own row, and the multiplayer details form scrolls its notes field and Save above the keyboard.
+    - Left as designed: a ROM that is not in the multiplayer catalog must have its details confirmed on every device before Join is enabled.
     - Still needs devices: Wi-Fi discovery between two devices, the local network permission prompt, and a thin libretro netpacket core such as gpSP (the buildbot dylibs cannot load in a simulator).
 
 ## Backlog
