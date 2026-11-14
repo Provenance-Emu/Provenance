@@ -15,6 +15,9 @@ public struct NetplayLibraryLobbyView: View {
     private let initialGameMD5: String?
     @StateObject private var discovery = PVNetplayBonjourDiscovery()
     @Environment(\.dismiss) private var dismiss
+    #if !os(tvOS)
+    @Environment(\.horizontalSizeClass) private var horizontalSizeClass
+    #endif
     @AppStorage(NetplayDefaultsKey.showUnverified) private var showUnverified = false
     @AppStorage(NetplayDefaultsKey.playStyle) private var playStyle = "any"
     @State private var query = ""
@@ -116,38 +119,86 @@ public struct NetplayLibraryLobbyView: View {
 
     /// Search, the games/rooms switch (iOS; TV shows both side by side) and Settings, in the
     /// content rather than the toolbar, so the focus engine and the controller cursor reach them.
+    @ViewBuilder
     private var headerControls: some View {
+        #if os(tvOS)
         HStack(spacing: 12) {
-            #if !os(tvOS)
-            ForEach([false, true], id: \.self) { rooms in
-                let id = NetplayHubCursor.tab(rooms: rooms)
-                NetplayChoiceChip(title: rooms ? "Nearby Rooms" : "Your Games", selected: showRooms == rooms, isCursor: cursor == id) {
-                    showRooms = rooms
-                }
-                .fixedSize()
-                .netplayCursorItem(id, cursor: cursor, cornerRadius: 16)
-            }
-            .accessibilityIdentifier("netplay.panes")
-            #endif
-            TextField("Game or system", text: $query)
-                .textFieldStyle(.plain)
-                .autocorrectionDisabled()
-                .focused($searchFocused)
-                .padding(searchPadding)
-                .background(Color.primary.opacity(0.08), in: RoundedRectangle(cornerRadius: 12))
-                .netplayCursorItem(NetplayHubCursor.search, cursor: cursor)
-                .accessibilityIdentifier("netplay.hub.search")
-            Button {
-                showSettings = true
-            } label: {
-                Label("Settings", systemImage: "gearshape")
-                    .padding(searchPadding)
-                    .contentShape(Rectangle())
-            }
-            .retroFocusButtonStyle(focusScale: 1.05)
-            .netplayCursorItem(NetplayHubCursor.settings, cursor: cursor)
-            .accessibilityIdentifier("netplay.hub.settings")
+            searchField
+            settingsButton
         }
+        #else
+        if searchHasOwnRow {
+            // A phone has no room for the field beside the panes: it shrank to an ellipsis.
+            VStack(spacing: 12) {
+                HStack(spacing: 12) {
+                    paneChips
+                    Spacer(minLength: 0)
+                    settingsButton
+                }
+                searchField
+            }
+        } else {
+            HStack(spacing: 12) {
+                paneChips
+                searchField
+                settingsButton
+            }
+        }
+        #endif
+    }
+
+    #if !os(tvOS)
+    private var searchHasOwnRow: Bool { horizontalSizeClass == .compact }
+
+    private var paneChips: some View {
+        ForEach([false, true], id: \.self) { rooms in
+            let id = NetplayHubCursor.tab(rooms: rooms)
+            NetplayChoiceChip(title: rooms ? "Nearby Rooms" : "Your Games", selected: showRooms == rooms, isCursor: cursor == id) {
+                showRooms = rooms
+            }
+            .fixedSize()
+            .netplayCursorItem(id, cursor: cursor, cornerRadius: 16)
+        }
+        .accessibilityIdentifier("netplay.panes")
+    }
+    #endif
+
+    private var searchField: some View {
+        TextField("Game or system", text: $query)
+            .textFieldStyle(.plain)
+            .autocorrectionDisabled()
+            .focused($searchFocused)
+            .padding(searchPadding)
+            .background(Color.primary.opacity(0.08), in: RoundedRectangle(cornerRadius: 12))
+            .netplayCursorItem(NetplayHubCursor.search, cursor: cursor)
+            .accessibilityIdentifier("netplay.hub.search")
+    }
+
+    /// Beside the panes on a phone there is room for the gear alone: the word wrapped mid-syllable.
+    @ViewBuilder
+    private var settingsLabel: some View {
+        #if os(tvOS)
+        Label("Settings", systemImage: "gearshape")
+        #else
+        if searchHasOwnRow {
+            Label("Settings", systemImage: "gearshape").labelStyle(.iconOnly)
+        } else {
+            Label("Settings", systemImage: "gearshape")
+        }
+        #endif
+    }
+
+    private var settingsButton: some View {
+        Button {
+            showSettings = true
+        } label: {
+            settingsLabel
+                .padding(searchPadding)
+                .contentShape(Rectangle())
+        }
+        .retroFocusButtonStyle(focusScale: 1.05)
+        .netplayCursorItem(NetplayHubCursor.settings, cursor: cursor)
+        .accessibilityIdentifier("netplay.hub.settings")
     }
 
     private var searchPadding: CGFloat {
@@ -287,11 +338,19 @@ public struct NetplayLibraryLobbyView: View {
             NetplayCursorTarget(id: NetplayHubCursor.tab(rooms: rooms)) { showRooms = rooms }
         }
         #endif
-        header += [
-            NetplayCursorTarget(id: NetplayHubCursor.search) { searchFocused = true },
-            NetplayCursorTarget(id: NetplayHubCursor.settings) { showSettings = true }
-        ]
-        var rows = [NetplayCursorRow(id: "row.header", isHeader: true, targets: header)]
+        let search = NetplayCursorTarget(id: NetplayHubCursor.search) { searchFocused = true }
+        let settings = NetplayCursorTarget(id: NetplayHubCursor.settings) { showSettings = true }
+        var rows: [NetplayCursorRow]
+        #if os(tvOS)
+        rows = [NetplayCursorRow(id: "row.header", isHeader: true, targets: header + [search, settings])]
+        #else
+        if searchHasOwnRow {
+            rows = [NetplayCursorRow(id: "row.header", isHeader: true, targets: header + [settings]),
+                    NetplayCursorRow(id: "row.search", isHeader: true, targets: [search])]
+        } else {
+            rows = [NetplayCursorRow(id: "row.header", isHeader: true, targets: header + [search, settings])]
+        }
+        #endif
         if showRooms {
             rows += sortedRooms.map { room in
                 let entry = entry(for: room)
