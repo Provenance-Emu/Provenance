@@ -26,7 +26,9 @@ The working list for the 3.4.0 release. Update it in the same commit as the work
       - "Host This Game" launched the game and then did nothing. The first read of the cached "emulation is on" flag returned false, so the pause menu request was dropped with "Core isn't on".
       - The host's waiting room stayed at 1/2 after a join, and the advertised room kept `players=1`. Hosting states that differed only in player count compared as equal, so mGBA (and PPSSPP) never published the change.
       - The port was shown as "55,435".
-    - Not confirmed: that game data crosses the link. In Mario Bros. inside Super Mario Advance 2, Start on the host began a one-player game and the joiner stayed on its title screen. That may be the wrong menu steps or a real fault in the link driver; check with a game whose link flow is known (a Pokémon trade).
+    - Game data crosses the link (checked later the same day). In Super Mario Advance 2 both consoles choose Multiplayer on the title screen, the host presses Start, picks Classic and presses Start again. Both screens then show the same two-player Mario Bros. game, and moving Mario from the host and Luigi from the joiner shows on both. Seven of seven scripted runs from fresh launches reached that game. The first attempt had gone through Single Player, which never uses the link.
+      - One more fix came out of it: linking after the game had booted left the host reading "child" on the cable, so Multiplayer did nothing unless both games were reset after connecting. The driver now sets the parent and child lines when the link connects or drops.
+      - The debug API can now host and join without the lobby (`POST /api/debug/netplay`), which is how those runs were scripted.
     - Rough edges seen, not fixed:
       - "Start Game" in the waiting room closes only the room. The host is left in the pause menu and the joiner shows "waiting for partner" until the host taps Resume.
       - After a typed-address join the joiner stays on Browse Rooms with no confirmation, the list still says 1/2 until Refresh, and Network Play still offers Host and Browse while connected.
