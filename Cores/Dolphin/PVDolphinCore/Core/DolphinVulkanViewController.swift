@@ -582,7 +582,9 @@ final class DolphinShaderPostProcessor: NSObject {
     private var blitter: MetalBlitter?
 
     override private init() {
-        processor = MTLCreateSystemDefaultDevice().map(ShaderPostProcessor.init(device:))
+        // A closure, not a reference to the initializer: its `onReady` parameter has a default,
+        // which a function reference cannot leave out.
+        processor = MTLCreateSystemDefaultDevice().map { ShaderPostProcessor(device: $0) }
         super.init()
     }
 
