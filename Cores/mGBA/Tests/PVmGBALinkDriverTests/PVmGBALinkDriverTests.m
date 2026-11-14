@@ -275,6 +275,38 @@ static void RunOnThread(PVmGBALinkTestGBA *gba, useconds_t pauseMicroseconds, BO
     [self runLinkedTransfersWithClientPause:kSlowClientPause];
 }
 
+/// The app links after the game has booted, and most games already sit in
+/// multiplayer mode at their title screen. Each console must still learn
+/// which end of the cable it is on: before this was handled, the host kept
+/// the "child" reading of a lone console and no game ever started a transfer.
+- (void)testLinkingAfterTheGameEnteredMultiplayerModeSetsParentAndChild {
+    static const uint16_t kMultiplayerMode = 0x2000;
+    static const uint16_t kFastestBaud = 0x0003;
+    PVmGBALinkTestGBA *host = [[PVmGBALinkTestGBA alloc] initWithSession:_hostSession];
+    PVmGBALinkTestGBA *client = [[PVmGBALinkTestGBA alloc] initWithSession:_clientSession];
+    struct GBASIO *hostSIO = &((struct GBA *) host.core->board)->sio;
+    struct GBASIO *clientSIO = &((struct GBA *) client.core->board)->sio;
+
+    for (PVmGBALinkTestGBA *gba in @[host, client]) {
+        struct GBASIO *sio = &((struct GBA *) gba.core->board)->sio;
+        // Pull the cable, let the game pick multiplayer mode, plug it back in.
+        GBASIOSetDriver(sio, NULL);
+        GBASIOWriteRCNT(sio, 0);
+        GBASIOWriteSIOCNT(sio, kMultiplayerMode);
+        XCTAssertTrue(GBASIOMultiplayerIsSlave(sio->siocnt), @"a lone console reads as a child");
+        GBASIOSetDriver(sio, PVmGBANetLinkDriverBase(gba.driver));
+    }
+
+    XCTAssertFalse(GBASIOMultiplayerIsSlave(hostSIO->siocnt));
+    XCTAssertFalse(GBASIORegisterRCNTIsSi(hostSIO->rcnt));
+    XCTAssertTrue(GBASIOMultiplayerIsSlave(clientSIO->siocnt));
+    XCTAssertTrue(GBASIORegisterRCNTIsSi(clientSIO->rcnt));
+
+    // The game's next write must not bring the stale reading back.
+    GBASIOWriteSIOCNT(hostSIO, kMultiplayerMode | kFastestBaud);
+    XCTAssertFalse(GBASIOMultiplayerIsSlave(hostSIO->siocnt));
+}
+
 - (void)testHostCarriesOnWhenTheClientLeaves {
     static const uint32_t kClientLeavesAfter = 4;
     PVmGBALinkTestGBA *host = [[PVmGBALinkTestGBA alloc] initWithSession:_hostSession];

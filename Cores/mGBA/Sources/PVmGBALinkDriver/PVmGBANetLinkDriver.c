@@ -169,6 +169,22 @@ static void _updateReady(PVmGBANetLinkDriver *link) {
     sio->rcnt = GBASIORegisterRCNTSetSd(sio->rcnt, ready);
 }
 
+/// Which end of the cable this GBA is on. mGBA works this out only when the
+/// game writes SIOCNT or changes mode, and then keeps the child bit once it is
+/// set. A cable that goes in or comes out while the game already sits in
+/// multiplayer mode has to move the lines itself, or the host keeps reading
+/// "child" from before the link and no console ever acts as the parent.
+static void _updateTerminals(PVmGBANetLinkDriver *link) {
+    struct GBASIO *sio = link->d.p;
+    if (!sio || sio->mode != GBA_SIO_MULTI) {
+        return;
+    }
+    int id = link->linked ? link->playerId : 0;
+    bool connected = link->linked && link->playerCount > 1;
+    sio->siocnt = GBASIOMultiplayerSetSlave(sio->siocnt, id || !connected);
+    sio->rcnt = GBASIORegisterRCNTSetSi(sio->rcnt, !!id);
+}
+
 static void _abortTransfer(PVmGBANetLinkDriver *link) {
     link->transferActive = false;
     link->waitingAcks = 0;
@@ -190,6 +206,7 @@ static void _linkLost(PVmGBANetLinkDriver *link, PVmGBANetLinkFailure failure) {
     link->pendingCount = 0;
     _abortTransfer(link);
     _updateReady(link);
+    _updateTerminals(link);
 }
 
 /// Stops the CPU after the current instruction, as upstream's lockstep does,
@@ -549,6 +566,7 @@ static void _driverReset(struct GBASIODriver *driver) {
     link->otherModes[link->playerId] = sio->mode;
     _send(link, PVGBALinkMessageMode, _now(link), 0, sio->mode, NULL);
     _updateReady(link);
+    _updateTerminals(link);
     if (!mTimingIsScheduled(&sio->p->timing, &link->event)) {
         mTimingSchedule(&sio->p->timing, &link->event, 0);
     }
