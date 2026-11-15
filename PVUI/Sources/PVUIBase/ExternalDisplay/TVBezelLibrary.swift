@@ -163,9 +163,7 @@ public final class TVBezelLibrary: @unchecked Sendable {
 
     /// Every bezel on the device, listed in the picker or not, by name.
     public var bezels: [TVBezel] {
-        lock.lock()
-        defer { lock.unlock() }
-        return stored
+        lock.withLock { stored }
     }
 
     /// The ones the picker shows.
@@ -203,10 +201,11 @@ public final class TVBezelLibrary: @unchecked Sendable {
 
     /// Runs `refresh()` once per launch, in the background.
     public func refreshIfNeeded() {
-        lock.lock()
-        let needed = !hasScanned
-        hasScanned = true
-        lock.unlock()
+        let needed = lock.withLock { () -> Bool in
+            let needed = !hasScanned
+            hasScanned = true
+            return needed
+        }
         guard needed else { return }
         Task.detached(priority: .utility) { [self] in refresh() }
     }
@@ -381,12 +380,12 @@ public final class TVBezelLibrary: @unchecked Sendable {
     }
 
     private func mutate(_ change: (inout [TVBezel]) -> Void) {
-        lock.lock()
-        let before = stored
-        change(&stored)
-        let changed = stored != before
-        hasScanned = true
-        lock.unlock()
+        let changed = lock.withLock { () -> Bool in
+            let before = stored
+            change(&stored)
+            hasScanned = true
+            return stored != before
+        }
         guard changed else { return }
         DispatchQueue.main.async {
             NotificationCenter.default.post(name: Self.didChangeNotification, object: self)

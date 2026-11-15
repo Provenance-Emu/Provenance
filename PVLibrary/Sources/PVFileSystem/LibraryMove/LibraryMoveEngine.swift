@@ -11,6 +11,7 @@
 //
 
 import Foundation
+import os
 import PVHashing
 import PVLogging
 
@@ -412,25 +413,18 @@ public actor LibraryMoveEngine {
 }
 
 /// Thread-safe cancel request, so `cancel()` can be called from any context without hopping onto the actor.
-private final class CancelFlag: @unchecked Sendable {
-    private let lock = NSLock()
-    private var requested = false
+private final class CancelFlag: Sendable {
+    private let requested = OSAllocatedUnfairLock(initialState: false)
 
     var isSet: Bool {
-        lock.lock()
-        defer { lock.unlock() }
-        return requested
+        requested.withLock { $0 }
     }
 
     func set() {
-        lock.lock()
-        requested = true
-        lock.unlock()
+        requested.withLock { $0 = true }
     }
 
     func reset() {
-        lock.lock()
-        requested = false
-        lock.unlock()
+        requested.withLock { $0 = false }
     }
 }
