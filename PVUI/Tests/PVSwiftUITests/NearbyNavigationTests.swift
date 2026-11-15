@@ -153,12 +153,13 @@ final class NearbyNavigationTests: XCTestCase {
     }
 
     func testAddServerFieldsFollowTheTokenSwitch() {
-        XCTAssertEqual(NearbyCursor.addServer(usesToken: true).rows.flatMap(\.items), [
-            NearbyCursor.address, NearbyCursor.useToken, NearbyCursor.token, NearbyCursor.cancel, NearbyCursor.add
+        XCTAssertEqual(NearbyCursor.addServer(usesToken: true, showsHTTPConsent: true).rows.flatMap(\.items), [
+            NearbyCursor.address, NearbyCursor.useToken, NearbyCursor.token, NearbyCursor.allowPairingHTTP,
+            NearbyCursor.requestAccess, NearbyCursor.cancel, NearbyCursor.add
         ])
-        XCTAssertEqual(NearbyCursor.addServer(usesToken: false).rows.flatMap(\.items), [
+        XCTAssertEqual(NearbyCursor.addServer(usesToken: false, showsHTTPConsent: false).rows.flatMap(\.items), [
             NearbyCursor.address, NearbyCursor.useToken, NearbyCursor.username, NearbyCursor.password,
-            NearbyCursor.cancel, NearbyCursor.add
+            NearbyCursor.requestAccess, NearbyCursor.cancel, NearbyCursor.add
         ])
     }
 

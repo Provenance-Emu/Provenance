@@ -10,6 +10,7 @@
 //
 
 #if os(iOS) || os(tvOS)
+import EmulatorContentClient
 import PVLibrarySharing
 import PVSystems
 import PVThemes
@@ -247,6 +248,16 @@ private struct AddContentServerView: View {
     @State private var password = ""
     @State private var accessToken = ""
     @State private var useToken = true
+    @State private var allowPairingHTTP = false
+    @State private var pairing: PairingTarget?
+    @State private var paired = false
+    @State private var pairingError: String?
+
+    private struct PairingTarget: Identifiable {
+        let origin: URL
+        let client: DevicePairingClient
+        var id: URL { origin }
+    }
     @State private var cursorID: String?
     @FocusState private var editingField: String?
 
@@ -288,6 +299,15 @@ private struct AddContentServerView: View {
                         )
                     }
                 }
+                NearbySection {
+                    if url?.scheme == "http" {
+                        NearbySwitchRow(title: "Allow pairing over local HTTP", cursorID: NearbyCursor.allowPairingHTTP, isOn: $allowPairingHTTP)
+                    }
+                    Button("Request Access", action: requestAccess)
+                        .buttonStyle(NearbyChipButtonStyle(cursorID: NearbyCursor.requestAccess))
+                        .disabled(url == nil)
+                    if let pairingError { NearbyNote(text: pairingError) }
+                }
                 HStack(spacing: NearbyMetrics.rowSpacing) {
                     Spacer()
                     Button("Cancel", role: .cancel) { dismiss() }
@@ -298,14 +318,37 @@ private struct AddContentServerView: View {
                 }
             }
         }
+        .sheet(item: $pairing, onDismiss: { if paired { dismiss() } }) { target in
+            DevicePairingView(client: target.client, name: "Provenance", legacyApprovalURL: { pin in
+                DevicePairingClient.legacyApprovalURL(origin: target.origin, pin: pin)
+            }) { token in
+                onAdd(target.origin, "", "", token)
+                paired = true
+            }
+        }
+        .onChange(of: address) { allowPairingHTTP = false; pairingError = nil }
         .nearbyControllerCursor(
-            NearbyCursor.addServer(usesToken: useToken),
+            NearbyCursor.addServer(usesToken: useToken, showsHTTPConsent: url?.scheme == "http"),
             cursor: $cursorID,
             scope: .subsheet,
             isEditingText: editingField != nil,
             onBack: back,
             onActivate: activate
         )
+    }
+
+    private func requestAccess() {
+        guard let url else { return }
+        guard url.scheme == "https" || allowPairingHTTP else {
+            pairingError = "Enable pairing over HTTP only on a trusted network."
+            return
+        }
+        do {
+            pairing = PairingTarget(origin: url, client: try DevicePairingClient(origin: url, allowHTTP: allowPairingHTTP))
+            pairingError = nil
+        } catch {
+            pairingError = error.localizedDescription
+        }
     }
 
     private func add() {
@@ -326,6 +369,8 @@ private struct AddContentServerView: View {
     private func activate(_ item: String) {
         switch item {
         case NearbyCursor.useToken: useToken.toggle()
+        case NearbyCursor.allowPairingHTTP: allowPairingHTTP.toggle()
+        case NearbyCursor.requestAccess: requestAccess()
         case NearbyCursor.cancel: dismiss()
         case NearbyCursor.add: if canAdd { add() }
         default: editingField = item

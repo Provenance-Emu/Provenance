@@ -237,12 +237,16 @@ enum NearbyCursor {
     static let token = "server|token"
     static let username = "server|username"
     static let password = "server|password"
+    static let allowPairingHTTP = "server|allowPairingHTTP"
+    static let requestAccess = "server|requestAccess"
     static let cancel = "server|cancel"
     static let add = "server|add"
 
     /// The fields top to bottom, then Cancel and Add side by side.
-    static func addServer(usesToken: Bool) -> TVMediaCursorLayout {
-        let fields = usesToken ? [address, useToken, token] : [address, useToken, username, password]
+    static func addServer(usesToken: Bool, showsHTTPConsent: Bool) -> TVMediaCursorLayout {
+        var fields = usesToken ? [address, useToken, token] : [address, useToken, username, password]
+        if showsHTTPConsent { fields.append(allowPairingHTTP) }
+        fields.append(requestAccess)
         let fieldRows = fields.map { Row(id: $0, items: [$0]) }
         return TVMediaCursorLayout(rows: fieldRows + [Row(id: "server|actions", items: [cancel, add])])
     }
