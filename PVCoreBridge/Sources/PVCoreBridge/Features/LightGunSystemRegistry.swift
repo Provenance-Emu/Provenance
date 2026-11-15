@@ -36,6 +36,7 @@
 //  ```
 
 import Foundation
+import os
 import PVSystems
 
 // MARK: - LightGunSystemsProvider
@@ -73,7 +74,7 @@ public protocol LightGunSystemsProvider: AnyObject {
 ///   `registerProvider(_:)`, or
 /// - running cores that detect lightgun support via
 ///   `RETRO_ENVIRONMENT_SET_CONTROLLER_INFO` calling `register(system:)`.
-public final class LightGunSystemRegistry: @unchecked Sendable {
+public final class LightGunSystemRegistry: Sendable {
 
     // MARK: Singleton
 
@@ -81,10 +82,12 @@ public final class LightGunSystemRegistry: @unchecked Sendable {
 
     // MARK: State
 
-    private let lock = NSLock()
-
-    /// The current set of known lightgun-capable systems.
-    private var _systems: Set<SystemIdentifier>
+    /// The current set of known lightgun-capable systems. It lives inside the lock that guards it.
+    ///
+    /// Cores that register themselves at runtime extend this set; they will
+    /// NOT shrink it (registry is append-only so discoveries persist for the
+    /// session even after a core is unloaded).
+    private let systems = OSAllocatedUnfairLock(initialState: LightGunSystemRegistry.baseline)
 
     // MARK: Init
 
@@ -101,27 +104,20 @@ public final class LightGunSystemRegistry: @unchecked Sendable {
         .Atari2600, // Crossbow, other gun games
     ]
 
-    private init() {
-        // Cores that register themselves at runtime extend this set; they will
-        // NOT shrink it (registry is append-only so discoveries persist for the
-        // session even after a core is unloaded).
-        _systems = LightGunSystemRegistry.baseline
-    }
+    private init() {}
 
     // MARK: Registration
 
     /// Register a single system identifier as lightgun-capable.
     /// Safe to call from any thread; safe to call multiple times with the same value.
     public func register(system: SystemIdentifier) {
-        lock.lock(); defer { lock.unlock() }
-        _systems.insert(system)
+        systems.withLock { _ = $0.insert(system) }
     }
 
     /// Register a set of system identifiers as lightgun-capable.
     /// Safe to call from any thread.
     public func register(systems: Set<SystemIdentifier>) {
-        lock.lock(); defer { lock.unlock() }
-        _systems.formUnion(systems)
+        self.systems.withLock { $0.formUnion(systems) }
     }
 
     /// Convenience: pull supported systems from a `LightGunSystemsProvider`
@@ -140,21 +136,18 @@ public final class LightGunSystemRegistry: @unchecked Sendable {
     /// Returns `true` if *any* registered core or the built-in baseline
     /// indicates lightgun support for `system`.
     public func supportsLightGun(_ system: SystemIdentifier) -> Bool {
-        lock.lock(); defer { lock.unlock() }
-        return _systems.contains(system)
+        systems.withLock { $0.contains(system) }
     }
 
     /// A snapshot of all currently registered lightgun-capable system identifiers.
     public var registeredSystems: Set<SystemIdentifier> {
-        lock.lock(); defer { lock.unlock() }
-        return _systems
+        systems.withLock { $0 }
     }
 
     // MARK: Testing
 
     /// Replaces the entire registry with the given set.  **For unit tests only.**
     func _reset(to systems: Set<SystemIdentifier> = []) {
-        lock.lock(); defer { lock.unlock() }
-        _systems = systems
+        self.systems.withLock { $0 = systems }
     }
 }

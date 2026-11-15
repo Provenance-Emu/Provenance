@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import os
 
 // MARK: - ButtonIdentifier
 
@@ -91,7 +92,7 @@ public struct ButtonMapping: Codable, Equatable, Sendable {
 ///
 /// Vendor key is `GCController.vendorName ?? "unknown"`. The store does
 /// not know about specific controllers — callers pass the vendor string.
-public final class ControllerMappingStore: @unchecked Sendable {
+public final class ControllerMappingStore: Sendable {
 
     public static let shared = ControllerMappingStore()
 
@@ -102,10 +103,16 @@ public final class ControllerMappingStore: @unchecked Sendable {
 
     // MARK: State
 
-    private let defaults: UserDefaults
-    private let lock = NSLock()
-    private var cache: [String: [ButtonIdentifier: ButtonMapping]] = [:]
-    private var observerInstalled = false
+    /// `UserDefaults` is thread-safe but not declared `Sendable`.
+    private nonisolated(unsafe) let defaults: UserDefaults
+
+    /// Lives inside the lock that guards it.
+    private struct State: Sendable {
+        var cache: [String: [ButtonIdentifier: ButtonMapping]] = [:]
+        var observerInstalled = false
+    }
+
+    private let state = OSAllocatedUnfairLock(initialState: State())
 
     /// `defaults` is injectable for tests; the app uses ``shared`` (standard defaults).
     public init(defaults: UserDefaults = .standard) {
@@ -125,12 +132,18 @@ public final class ControllerMappingStore: @unchecked Sendable {
     /// no mappings are stored. Result is cached until the next
     /// UserDefaults change.
     public func mappings(forVendor vendor: String) -> [ButtonIdentifier: ButtonMapping] {
-        lock.lock(); defer { lock.unlock() }
-        installObserverIfNeeded_locked()
-        if let cached = cache[vendor] { return cached }
-        let result = loadFromDefaults(vendor: vendor)
-        cache[vendor] = result
-        return result
+        // The load stays inside the lock: a load that finished after a newer write was cached
+        // would put the old table back.
+        state.withLock { state in
+            if !state.observerInstalled {
+                state.observerInstalled = true
+                installObserver()
+            }
+            if let cached = state.cache[vendor] { return cached }
+            let result = loadFromDefaults(vendor: vendor)
+            state.cache[vendor] = result
+            return result
+        }
     }
 
     /// Resolve a source identifier to its destination, applying the
@@ -152,9 +165,8 @@ public final class ControllerMappingStore: @unchecked Sendable {
     /// Replace the entire mapping table for `vendor` and persist.
     public func setMappings(_ mappings: [ButtonIdentifier: ButtonMapping],
                             forVendor vendor: String) {
-        lock.lock()
-        cache[vendor] = mappings
-        lock.unlock()
+        state.withLock { $0.cache[vendor] = mappings }
+        // Saved outside the lock: saving posts the defaults notification, whose observer takes it.
         saveToDefaults(mappings: mappings, vendor: vendor)
         postDidChange(vendor: vendor)
     }
@@ -177,9 +189,7 @@ public final class ControllerMappingStore: @unchecked Sendable {
 
     /// Drop every mapping for `vendor`.
     public func clearAll(forVendor vendor: String) {
-        lock.lock()
-        cache[vendor] = [:]
-        lock.unlock()
+        state.withLock { $0.cache[vendor] = [:] }
         defaults.removeObject(forKey: Self.storageKey(forVendor: vendor))
         postDidChange(vendor: vendor)
     }
@@ -208,20 +218,16 @@ public final class ControllerMappingStore: @unchecked Sendable {
     /// `userInfo` key of ``didChangeNotification``: the vendor whose mappings changed.
     public static let vendorUserInfoKey = "vendor"
 
-    private func installObserverIfNeeded_locked() {
-        guard !observerInstalled else { return }
-        observerInstalled = true
+    /// Called once, with the lock held, before the first value is cached.
+    private func installObserver() {
         NotificationCenter.default.addObserver(
             forName: UserDefaults.didChangeNotification,
             object: defaults,
             queue: nil
         ) { [weak self] _ in
-            guard let self = self else { return }
-            self.lock.lock()
             // Drop everything — cheap to refill on next read and saves us
             // from tracking which vendor changed.
-            self.cache.removeAll()
-            self.lock.unlock()
+            self?.state.withLock { $0.cache.removeAll() }
         }
     }
 }

@@ -15,6 +15,7 @@
 //
 
 import Foundation
+import os
 import PVSystems
 
 // MARK: - LightGunGamesProvider
@@ -44,7 +45,7 @@ public protocol LightGunGamesProvider: AnyObject {
 ///     systemIdentifier: sysID, md5: romMD5, title: romTitle
 /// )
 /// ```
-public final class LightGunGameRegistry: @unchecked Sendable {
+public final class LightGunGameRegistry: Sendable {
 
     // MARK: Singleton
 
@@ -52,12 +53,16 @@ public final class LightGunGameRegistry: @unchecked Sendable {
 
     // MARK: State
 
-    private let lock = NSLock()
+    /// The lists, with what cores have registered on top of the baseline below.
+    private let state = OSAllocatedUnfairLock(initialState: LightGunGameRegistry.baselineState)
 
-    private var _alwaysSystems: Set<SystemIdentifier>
-    private var _conditionalSystems: Set<SystemIdentifier>
-    private var _knownMD5s: Set<String>
-    private var _titlePatterns: [SystemIdentifier: Set<String>]
+    /// The registry as shipped, before any core registers more.
+    private static var baselineState: PeripheralGameRegistryState {
+        PeripheralGameRegistryState(alwaysSystems: alwaysLightGunSystems,
+                                    conditionalSystems: conditionalLightGunSystems,
+                                    knownMD5s: knownLightGunGameMD5s,
+                                    titlePatterns: knownLightGunGameTitlePatterns)
+    }
 
     // MARK: - Baseline data
 
@@ -204,73 +209,50 @@ public final class LightGunGameRegistry: @unchecked Sendable {
 
     // MARK: Init
 
-    private init() {
-        _alwaysSystems = Self.alwaysLightGunSystems
-        _conditionalSystems = Self.conditionalLightGunSystems
-        _knownMD5s = Set(Self.knownLightGunGameMD5s.map { $0.lowercased() })
-
-        var patterns: [SystemIdentifier: Set<String>] = [:]
-        for (sys, list) in Self.knownLightGunGameTitlePatterns {
-            patterns[sys] = Set(list.map { $0.lowercased() })
-        }
-        _titlePatterns = patterns
-    }
+    private init() {}
 
     // MARK: - Dynamic Registration
 
     /// Register a system where every game supports a light gun.
     /// Safe to call from any thread.
     public func registerAlwaysLightGunSystem(_ system: SystemIdentifier) {
-        lock.lock(); defer { lock.unlock() }
-        _alwaysSystems.insert(system)
-        _conditionalSystems.remove(system)
+        state.withLock { $0.addAlwaysSystem(system) }
     }
 
     /// Register a system where only specific games use a light gun.
-    /// Has no effect if the system is already in `_alwaysSystems`.
+    /// Has no effect if the system is already an always-gun system.
     /// Safe to call from any thread.
     public func registerConditionalLightGunSystem(_ system: SystemIdentifier) {
-        lock.lock(); defer { lock.unlock() }
-        guard !_alwaysSystems.contains(system) else { return }
-        _conditionalSystems.insert(system)
+        state.withLock { $0.addConditionalSystem(system) }
     }
 
     /// Register the MD5 hash of a light-gun-supporting game.
     /// `md5` may be any case — it is normalised to lowercase internally.
     /// Safe to call from any thread.
     public func registerKnownLightGunGameMD5(_ md5: String) {
-        lock.lock(); defer { lock.unlock() }
-        _knownMD5s.insert(md5.lowercased())
+        state.withLock { $0.addMD5(md5) }
     }
 
     /// Register a title keyword fragment for a light-gun-supporting game.
     /// `pattern` may be any case — it is normalised to lowercase internally.
     /// Safe to call from any thread.
     public func registerTitlePattern(_ pattern: String, forSystem system: SystemIdentifier) {
-        lock.lock(); defer { lock.unlock() }
-        let key = pattern.lowercased()
-        if _titlePatterns[system] == nil {
-            _titlePatterns[system] = [key]
-        } else {
-            _titlePatterns[system]!.insert(key)
-        }
+        state.withLock { $0.addTitlePattern(pattern, forSystem: system) }
     }
 
     /// Convenience: pull all light-gun game data from a `LightGunGamesProvider` class.
+    ///
+    /// The provider's lists are read before the lock is taken (they are the core's code), then
+    /// added in one step, so a query never sees a provider half registered.
     public func registerProvider(_ provider: LightGunGamesProvider.Type) {
-        for sys in provider.lightGunAlwaysSupportedSystems {
-            registerAlwaysLightGunSystem(sys)
-        }
-        for sys in provider.lightGunConditionalSystems {
-            registerConditionalLightGunSystem(sys)
-        }
-        for md5 in provider.knownLightGunGameMD5s {
-            registerKnownLightGunGameMD5(md5)
-        }
-        for (sys, list) in provider.knownLightGunGameTitlePatterns {
-            for pattern in list {
-                registerTitlePattern(pattern, forSystem: sys)
-            }
+        let alwaysSystems = provider.lightGunAlwaysSupportedSystems
+        let conditionalSystems = provider.lightGunConditionalSystems
+        let md5s = provider.knownLightGunGameMD5s
+        let titlePatterns = provider.knownLightGunGameTitlePatterns
+
+        state.withLock {
+            $0.add(alwaysSystems: alwaysSystems, conditionalSystems: conditionalSystems,
+                   md5s: md5s, titlePatterns: titlePatterns)
         }
     }
 
@@ -298,10 +280,7 @@ public final class LightGunGameRegistry: @unchecked Sendable {
     /// Returns `true` if the system has any light-gun support (always-on or
     /// conditional).
     public func systemHasAnyLightGunSupport(_ system: SystemIdentifier) -> Bool {
-        lock.lock()
-        let result = _alwaysSystems.contains(system) || _conditionalSystems.contains(system)
-        lock.unlock()
-        return result
+        state.withLock { $0.hasAnySupport(system) }
     }
 
     /// Determine whether the currently loaded game supports a light gun.
@@ -323,45 +302,18 @@ public final class LightGunGameRegistry: @unchecked Sendable {
             return override
         }
 
-        lock.lock()
-        let alwaysSystems = _alwaysSystems
-        let conditionalSystems = _conditionalSystems
-        let knownMD5s = _knownMD5s
-        let patterns = _titlePatterns
-        lock.unlock()
-
-        // 2. Always-gun systems never need a game-level check.
-        if alwaysSystems.contains(systemIdentifier) { return true }
-
-        // 3. Not a gun-capable system at all.
-        if !conditionalSystems.contains(systemIdentifier) { return false }
-
-        // 4. Check known MD5 database.
-        if let md5, knownMD5s.contains(md5.lowercased()) { return true }
-
-        // 5. Check title keyword patterns for the system.
-        if let title, let systemPatterns = patterns[systemIdentifier] {
-            let lowTitle = title.lowercased()
-            if systemPatterns.contains(where: { lowTitle.contains($0) }) { return true }
-        }
-
-        // 6. Unknown game on a conditional system — no gun by default.
-        return false
+        // The lock is held only for the copy; the title search runs on the snapshot.
+        // Steps 2 to 6 are `PeripheralGameRegistryState.supports`.
+        let snapshot = state.withLock { $0 }
+        return snapshot.supports(systemIdentifier: systemIdentifier, md5: md5, title: title)
     }
 
     // MARK: - Testing
 
     /// Resets the registry to factory defaults. **For unit tests only.**
     func _reset() {
-        lock.lock(); defer { lock.unlock() }
-        _alwaysSystems = Self.alwaysLightGunSystems
-        _conditionalSystems = Self.conditionalLightGunSystems
-        _knownMD5s = Set(Self.knownLightGunGameMD5s.map { $0.lowercased() })
-        var patterns: [SystemIdentifier: Set<String>] = [:]
-        for (sys, list) in Self.knownLightGunGameTitlePatterns {
-            patterns[sys] = Set(list.map { $0.lowercased() })
-        }
-        _titlePatterns = patterns
+        let baseline = Self.baselineState
+        state.withLock { $0 = baseline }
     }
 }
 

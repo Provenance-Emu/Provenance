@@ -90,65 +90,16 @@ public final class MouseGameRegistry: Sendable {
 
     // MARK: State
 
-    /// Everything the registry can change at runtime. It lives inside the lock, so it can
-    /// only be read or written while the lock is held.
-    private struct State: Sendable {
-        var alwaysSystems: Set<SystemIdentifier>
-        var conditionalSystems: Set<SystemIdentifier>
-        /// All lowercased.
-        var knownMD5s: Set<String>
-        /// All lowercased.
-        var titlePatterns: [SystemIdentifier: Set<String>]
+    /// The lists, with what cores have registered on top of the baseline below.
+    private let state = OSAllocatedUnfairLock(initialState: MouseGameRegistry.baselineState)
 
-        /// The registry as shipped, before any core registers more.
-        static var baseline: State {
-            State(alwaysSystems: MouseGameRegistry.alwaysMouseSystems,
-                  conditionalSystems: MouseGameRegistry.conditionalMouseSystems,
-                  knownMD5s: Set(MouseGameRegistry.knownMouseGameMD5s.map { $0.lowercased() }),
-                  titlePatterns: MouseGameRegistry.knownMouseGameTitlePatterns.mapValues { Set($0.map { $0.lowercased() }) })
-        }
-
-        mutating func addAlwaysSystem(_ system: SystemIdentifier) {
-            alwaysSystems.insert(system)
-            conditionalSystems.remove(system)
-        }
-
-        mutating func addConditionalSystem(_ system: SystemIdentifier) {
-            guard !alwaysSystems.contains(system) else { return }
-            conditionalSystems.insert(system)
-        }
-
-        mutating func addMD5(_ md5: String) {
-            knownMD5s.insert(md5.lowercased())
-        }
-
-        mutating func addTitlePattern(_ pattern: String, forSystem system: SystemIdentifier) {
-            titlePatterns[system, default: []].insert(pattern.lowercased())
-        }
-
-        /// Steps 2 to 6 of `gameSupportsMouse`: everything after the user's own choice.
-        func supportsMouse(systemIdentifier: SystemIdentifier, md5: String?, title: String?) -> Bool {
-            // 2. Always-mouse systems never need a game-level check.
-            if alwaysSystems.contains(systemIdentifier) { return true }
-
-            // 3. Not a mouse-capable system at all.
-            if !conditionalSystems.contains(systemIdentifier) { return false }
-
-            // 4. Check known MD5 database.
-            if let md5, knownMD5s.contains(md5.lowercased()) { return true }
-
-            // 5. Check title keyword patterns for the system.
-            if let title, let systemPatterns = titlePatterns[systemIdentifier] {
-                let lowTitle = title.lowercased()
-                if systemPatterns.contains(where: { lowTitle.contains($0) }) { return true }
-            }
-
-            // 6. Unknown game on a conditional system — no mouse by default.
-            return false
-        }
+    /// The registry as shipped, before any core registers more.
+    private static var baselineState: PeripheralGameRegistryState {
+        PeripheralGameRegistryState(alwaysSystems: alwaysMouseSystems,
+                                    conditionalSystems: conditionalMouseSystems,
+                                    knownMD5s: knownMouseGameMD5s,
+                                    titlePatterns: knownMouseGameTitlePatterns)
     }
-
-    private let state = OSAllocatedUnfairLock(initialState: State.baseline)
 
     // MARK: - Baseline data
 
@@ -284,13 +235,9 @@ public final class MouseGameRegistry: Sendable {
         let md5s = provider.knownMouseGameMD5s
         let titlePatterns = provider.knownMouseGameTitlePatterns
 
-        state.withLock { state in
-            alwaysSystems.forEach { state.addAlwaysSystem($0) }
-            conditionalSystems.forEach { state.addConditionalSystem($0) }
-            md5s.forEach { state.addMD5($0) }
-            for (system, patterns) in titlePatterns {
-                patterns.forEach { state.addTitlePattern($0, forSystem: system) }
-            }
+        state.withLock {
+            $0.add(alwaysSystems: alwaysSystems, conditionalSystems: conditionalSystems,
+                   md5s: md5s, titlePatterns: titlePatterns)
         }
     }
 
@@ -326,7 +273,7 @@ public final class MouseGameRegistry: Sendable {
     ///
     /// - Parameter system: The system to check.
     public func systemHasAnyMouseSupport(_ system: SystemIdentifier) -> Bool {
-        state.withLock { $0.alwaysSystems.contains(system) || $0.conditionalSystems.contains(system) }
+        state.withLock { $0.hasAnySupport(system) }
     }
 
     /// Determine whether the currently loaded game supports a mouse peripheral.
@@ -355,7 +302,7 @@ public final class MouseGameRegistry: Sendable {
 
         // The lock is held only for the copy; the title search runs on the snapshot.
         let snapshot = state.withLock { $0 }
-        return snapshot.supportsMouse(systemIdentifier: systemIdentifier, md5: md5, title: title)
+        return snapshot.supports(systemIdentifier: systemIdentifier, md5: md5, title: title)
     }
 
     /// The zero-based SNES mouse port to configure automatically, if the game uses a mouse.
@@ -372,7 +319,8 @@ public final class MouseGameRegistry: Sendable {
 
     /// Resets the registry to factory defaults.  **For unit tests only.**
     func _reset() {
-        state.withLock { $0 = .baseline }
+        let baseline = Self.baselineState
+        state.withLock { $0 = baseline }
     }
 }
 

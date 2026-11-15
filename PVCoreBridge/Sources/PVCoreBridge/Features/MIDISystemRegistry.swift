@@ -35,6 +35,7 @@
 //
 
 import Foundation
+import os
 import PVSystems
 
 // MARK: - MIDISystemsProvider
@@ -70,7 +71,7 @@ public protocol MIDISystemsProvider: AnyObject {
 ///   `registerProvider(_:)`, or
 /// - running cores that detect MIDI support dynamically calling
 ///   `register(system:)`.
-public final class MIDISystemRegistry: @unchecked Sendable {
+public final class MIDISystemRegistry: Sendable {
 
     // MARK: Singleton
 
@@ -78,8 +79,8 @@ public final class MIDISystemRegistry: @unchecked Sendable {
 
     // MARK: State
 
-    private let lock = NSLock()
-    private var _systems: Set<SystemIdentifier>
+    /// The registered systems. They live inside the lock that guards them.
+    private let systems = OSAllocatedUnfairLock(initialState: MIDISystemRegistry.baseline)
 
     // MARK: Init
 
@@ -104,24 +105,20 @@ public final class MIDISystemRegistry: @unchecked Sendable {
         .C64,           // MIDI cartridges (Sequential Circuits, Passport)
     ]
 
-    private init() {
-        _systems = MIDISystemRegistry.baseline
-    }
+    private init() {}
 
     // MARK: Registration
 
     /// Register a single system identifier as MIDI-capable.
     /// Safe to call from any thread; idempotent.
     public func register(system: SystemIdentifier) {
-        lock.lock(); defer { lock.unlock() }
-        _systems.insert(system)
+        systems.withLock { _ = $0.insert(system) }
     }
 
     /// Register a set of system identifiers as MIDI-capable.
     /// Safe to call from any thread; idempotent.
     public func register(systems: Set<SystemIdentifier>) {
-        lock.lock(); defer { lock.unlock() }
-        _systems.formUnion(systems)
+        self.systems.withLock { $0.formUnion(systems) }
     }
 
     /// Convenience: pull supported systems from a `MIDISystemsProvider`
@@ -140,22 +137,19 @@ public final class MIDISystemRegistry: @unchecked Sendable {
     /// Returns `true` if *any* registered core or the built-in baseline
     /// indicates MIDI support for `system`.
     public func supportsMIDI(_ system: SystemIdentifier) -> Bool {
-        lock.lock(); defer { lock.unlock() }
-        return _systems.contains(system)
+        systems.withLock { $0.contains(system) }
     }
 
     /// A snapshot of all currently registered MIDI-capable system identifiers.
     public var registeredSystems: Set<SystemIdentifier> {
-        lock.lock(); defer { lock.unlock() }
-        return _systems
+        systems.withLock { $0 }
     }
 
     // MARK: Testing
 
     /// Replaces the entire registry with the given set.  **For unit tests only.**
     func _reset(to systems: Set<SystemIdentifier> = []) {
-        lock.lock(); defer { lock.unlock() }
-        _systems = systems
+        self.systems.withLock { $0 = systems }
     }
 }
 
