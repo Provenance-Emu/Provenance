@@ -41,6 +41,17 @@ The working list for the 3.4.0 release. Update it in the same commit as the work
 ## Backlog
 
 - [ ] **Core capability coverage.** Verify link cable, mouse, camera, microphone, and netplay support for specific shipped cores before adding badges. Extend the curated recommendations to more systems. [#3341](https://github.com/Provenance-Emu/Provenance/issues/3341)
+  - First pass on 2026-11-15. A badge is added only where the feature was seen working.
+    - Added: a Link Cable capability, declared for native mGBA (two-player Mario Bros. in Super Mario Advance 2 between two simulators, 2026-11-13). Native Snes9x already declares mouse support, and that was checked the same day.
+    - Added picker recommendations for Genesis, Sega CD, Master System, Game Gear and SG-1000 (Genesis Plus GX) and 32X (PicoDrive), the cores the capability notes already single out.
+    - Not badged yet, needs a device:
+      - Mouse: libretro Snes9x with the bundled core, the bsnes cores (they already declare it, unchecked), Flycast.
+      - Microphone and camera: melonDS DS on the thin wrapper, which implements both interfaces. The only declarations today sit on the native melonDS core, which was pruned.
+      - Local wireless and netplay: melonDS DS and gpSP (netpacket), PPSSPP ad hoc, Mednafen, Dolphin.
+    - Still to do:
+      - `CoreCapabilities.json` keeps entries for five pruned cores (native melonDS, DeSmuME 2015, Mupen64Plus-NX, DuckStation, PCSX ReARMed). The ranking tests use them as fixtures, so removing them means rewriting those tests.
+      - Recommendations for NES, N64, PlayStation, Dreamcast, PSP, GameCube and Wii need a decision on native versus libretro for each.
+      - `PVPrimitives` tests do not build on the host: `AspectRatioOverrideTests.swift:72` passes an optional `Float` to `XCTAssertEqual(_:_:accuracy:)`.
 - [ ] **Internet netplay.** Update the WAN ticket for the current thin wrapper. After LAN passes, scope the first WAN milestone to one supported core and a private invite that connects across two networks without port forwarding. This needs transport design and device testing. [#3087](https://github.com/Provenance-Emu/Provenance/issues/3087)
 - [ ] **Swift lock cleanup.** Review Swift-only critical sections in `MouseGameRegistry` and `EntityStores` first. Use scoped locking and evaluate state-owning locks where appropriate. Preserve the timing and shutdown semantics of the bridge locks. [#1681](https://github.com/Provenance-Emu/Provenance/issues/1681)
 - [ ] **Disc import.** Add compressed CHD serial reads, define the CRC matching rules for discs without useful serials, and scope the remaining serial-first performance work around the importer's MD5 identity requirement. [#872](https://github.com/Provenance-Emu/Provenance/issues/872) · [#2786](https://github.com/Provenance-Emu/Provenance/issues/2786) · [#2787](https://github.com/Provenance-Emu/Provenance/issues/2787) · [#2788](https://github.com/Provenance-Emu/Provenance/issues/2788)
