@@ -15,8 +15,11 @@ struct NearbyPeerLibraryView: View {
     let model: NearbyPeerLibraryModel
     @State private var code = ""
     @State private var cursorID: String?
+    @State private var downloadSelection: RemoteLibraryItem?
     @FocusState private var editingField: String?
     @Environment(NearbyNavigator.self) private var navigator: NearbyNavigator?
+
+    private var isServer: Bool { model.peer.app == .contentServer }
 
     private var route: NearbyRoute { .peer(id: model.peer.id) }
 
@@ -47,9 +50,50 @@ struct NearbyPeerLibraryView: View {
             cursorLayout, cursor: $cursorID, scope: .screen(route), isEditingText: editingField != nil,
             onBack: back, onActivate: activate
         )
+        .safeAreaInset(edge: .bottom) {
+            if let current = model.activeServerGame {
+                transferBar(current)
+            }
+        }
         .onAppear { model.appear() }
         .onDisappear { model.cancel() }
+        .alert(
+            downloadSelection?.title ?? "Play Game",
+            isPresented: Binding(get: { downloadSelection != nil }, set: { if !$0 { downloadSelection = nil } }),
+            presenting: downloadSelection
+        ) { item in
+            Button("Play Temporarily") { model.copy(item, temporarily: true) }
+            Button("Download and Run") { model.copy(item, playAfterImport: true) }
+            Button("Cancel", role: .cancel) {}
+        } message: { _ in
+            Text("Play with a temporary copy or keep the game in your library.")
+        }
         .settingsSubpageTracking()
+    }
+
+    private func transferBar(_ item: RemoteLibraryItem) -> some View {
+        let progress = model.copies[item.id]
+        return HStack {
+            VStack(alignment: .leading, spacing: 6) {
+                Text(item.title).font(.headline).lineLimit(1)
+                switch progress {
+                case .downloading(let fraction):
+                    ProgressView("Downloading", value: fraction)
+                case .verifying:
+                    ProgressView("Verifying files")
+                case .importing:
+                    ProgressView("Adding to Library")
+                default:
+                    ProgressView("Preparing download")
+                }
+            }
+            if progress != .importing {
+                Button("Cancel", systemImage: "xmark.circle") { model.cancelCopy(item) }
+                    .labelStyle(.iconOnly)
+            }
+        }
+        .padding()
+        .background(.regularMaterial)
     }
 
     private var progressText: String {
@@ -81,6 +125,10 @@ struct NearbyPeerLibraryView: View {
 
     @ViewBuilder
     private var catalogueSections: some View {
+        if isServer {
+            Button("Refresh", systemImage: "arrow.clockwise") { model.load(keepCatalogue: true) }
+                .disabled(model.activeServerGame != nil)
+        }
         NearbyTextFieldRow(
             placeholder: "Search games",
             text: Binding(get: { model.searchText }, set: { model.searchText = $0 }),
@@ -113,11 +161,12 @@ struct NearbyPeerLibraryView: View {
                     NearbyItemRow(
                         item: item,
                         image: model.artwork[item.id],
-                        copyState: model.copies[item.id],
+                        copyState: model.activeServerGame?.id == item.id ? nil : model.copies[item.id],
                         peerName: model.title,
                         action: itemAction(item),
                         perform: { perform(itemAction(item), on: item) }
                     )
+                    .disabled(isServer && model.activeServerGame != nil)
                     .task(id: item.id) { await model.loadArtwork(for: item) }
                 }
             }
@@ -152,7 +201,9 @@ struct NearbyPeerLibraryView: View {
         switch action {
         case .stop: model.cancelCopy(item)
         case .play: model.play(item)
-        case .copy, .retry, .downloadAndPlay: model.copy(item, playAfterImport: model.peer.app == .contentServer)
+        case .downloadAndPlay: downloadSelection = item
+        case .retry where isServer: downloadSelection = item
+        case .copy, .retry: model.copy(item)
         case .importing, .inLibrary: break
         }
     }

@@ -26,7 +26,7 @@ let package = Package(
     dependencies: [
         .package(url: "https://github.com/Provenance-Emu/PVSystems.git", from: "1.0.0"),
         .package(path: "../PVLogging"),
-        .package(url: "https://github.com/Provenance-Emu/emulator-content-server.git", revision: "688d603f5a028ba27579b2a5be02ff852baca70d")
+        .package(url: "https://github.com/Provenance-Emu/emulator-content-server.git", revision: "7b30839778e502573ee0cfb91c4bf94a1de51fa8")
     ],
     targets: [
         .target(

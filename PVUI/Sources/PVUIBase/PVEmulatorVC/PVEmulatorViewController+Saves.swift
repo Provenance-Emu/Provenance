@@ -245,6 +245,7 @@ public extension PVEmulatorViewController {
 
 public extension PVEmulatorViewController {
     func convertOldSaveStatesToNewIfNeeded() {
+        guard !game.isTemporaryServerGame else { return }
         let fileManager = FileManager.default
         let saveStatePath = self.saveStatePath
         let infoURL = saveStatePath.appendingPathComponent("Info.plist", isDirectory: false)

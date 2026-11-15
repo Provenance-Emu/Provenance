@@ -17,13 +17,28 @@ import PVThemes
 import SwiftUI
 
 struct NearbyLibrariesView: View {
-    @State private var model = NearbyLibrariesModel()
-    @State private var showingAddServer = false
+    @State private var model: NearbyLibrariesModel
+    var onOpenServer: ((String) -> Void)?
+    @State private var discovery = ContentServerDiscovery()
+    @State private var addServer: AddServerTarget?
+    @State private var initialServer: DiscoveredContentServer?
+    @State private var addedPeerID: String?
     @State private var cursorID: String?
     @Environment(NearbyNavigator.self) private var navigator: NearbyNavigator?
     #if os(tvOS)
     @Environment(\.dismiss) private var dismiss
     #endif
+
+    init(initialServer: DiscoveredContentServer? = nil, model: NearbyLibrariesModel? = nil, onOpenServer: ((String) -> Void)? = nil) {
+        _initialServer = State(initialValue: initialServer)
+        _model = State(initialValue: model ?? NearbyLibrariesModel())
+        self.onOpenServer = onOpenServer
+    }
+
+    private struct AddServerTarget: Identifiable {
+        let address: String
+        var id: String { address }
+    }
 
     private static let footer = "Turn on Library Sharing in iFly, iCube or Provenance on another device "
         + "on the same Wi-Fi. Copied games are imported into your library; "
@@ -39,11 +54,17 @@ struct NearbyLibrariesView: View {
 
     private var cursorLayout: TVMediaCursorLayout {
         NearbyCursor.home(
-            peerIDs: model.visiblePeers.map(\.id),
+            peerIDs: model.visiblePeers.map(\.id) + unconfiguredServers.map { $0.id.uuidString },
             serverPeerIDs: model.contentServers.map { model.contentServerPeer($0).id },
             showsContentServers: true,
             showsOpenSettings: showsOpenSettings
         )
+    }
+
+    private var unconfiguredServers: [DiscoveredContentServer] {
+        discovery.servers.filter { candidate in
+            !model.contentServers.contains { $0.url == candidate.origin }
+        }
     }
 
     var body: some View {
@@ -60,11 +81,19 @@ struct NearbyLibrariesView: View {
             }
 
             NearbySection(header: "On This Network", footer: Self.footer) {
-                if model.visiblePeers.isEmpty {
+                if model.visiblePeers.isEmpty && unconfiguredServers.isEmpty {
                     NearbyNote(text: "Looking for libraries on this network…", showsProgress: true)
                 }
                 ForEach(model.visiblePeers) { peer in
                     peerRow(peer, summary: model.loadedSummaries[peer.id])
+                }
+                ForEach(unconfiguredServers) { server in
+                    Button {
+                        addServer = AddServerTarget(address: server.origin.absoluteString)
+                    } label: {
+                        NearbyRowLabel(title: server.name, subtitle: "Emulation Server", systemImage: "server.rack")
+                    }
+                    .buttonStyle(NearbyRowButtonStyle(cursorID: NearbyCursor.peer(server.id.uuidString)))
                 }
             }
 
@@ -82,22 +111,53 @@ struct NearbyLibrariesView: View {
             destination(route)
         }
         // Keep the presenter outside the scroll content, which discovery rebuilds as peers come and go.
-        .sheet(isPresented: $showingAddServer) {
-            AddContentServerView { url, username, password, token in
+        .sheet(item: $addServer, onDismiss: openAddedServer) { target in
+            AddContentServerView(address: target.address) { url, username, password, token in
                 model.addContentServer(url: url, username: username, password: password, accessToken: token)
+                if let server = model.contentServers.first(where: { $0.url == url }) {
+                    addedPeerID = model.contentServerPeer(server).id
+                }
             }
             .environment(navigator)
         }
-        .onChange(of: showingAddServer) { _, isShowing in
-            navigator?.isSubsheetPresented = isShowing
+        .onChange(of: addServer?.id) { _, id in
+            navigator?.isSubsheetPresented = id != nil
         }
         .nearbyControllerCursor(cursorLayout, cursor: $cursorID, scope: .screen(nil), onActivate: activate)
-        .onAppear { model.start() }
-        .onDisappear { model.stop() }
+        .onAppear {
+            model.start()
+            discovery.start()
+            if let target = initialServer {
+                initialServer = nil
+                if let server = model.contentServers.first(where: { $0.url == target.origin }) {
+                    openServer(model.contentServerPeer(server).id)
+                } else {
+                    addServer = AddServerTarget(address: target.origin.absoluteString)
+                }
+            }
+        }
+        .onDisappear {
+            model.stop()
+            discovery.stop()
+        }
         #if os(tvOS)
         .onExitCommand { dismiss() }
         #endif
         .settingsSubpageTracking()
+    }
+
+    private func openAddedServer() {
+        guard let id = addedPeerID else { return }
+        addedPeerID = nil
+        openServer(id)
+    }
+
+    private func openServer(_ id: String) {
+        if let onOpenServer {
+            onOpenServer(id)
+        } else {
+            navigator?.push(.peer(id: id))
+        }
     }
 
     private func peerRow(_ peer: DiscoveredPeer, summary: String?) -> some View {
@@ -130,7 +190,7 @@ struct NearbyLibrariesView: View {
                 }
             }
             Button {
-                showingAddServer = true
+                addServer = AddServerTarget(address: "")
             } label: {
                 NearbyRowLabel(title: "Add Content Server…", systemImage: "plus.circle")
             }
@@ -178,13 +238,15 @@ struct NearbyLibrariesView: View {
         case NearbyCursor.automaticCopies:
             navigator?.push(.automaticCopies)
         case NearbyCursor.addServer:
-            showingAddServer = true
+            addServer = AddServerTarget(address: "")
         case NearbyCursor.openSettings:
             openSystemSettings()
         default:
             let peers = model.visiblePeers + model.contentServers.map(model.contentServerPeer)
             if let peer = peers.first(where: { NearbyCursor.peer($0.id) == item }) {
                 navigator?.push(.peer(id: peer.id))
+            } else if let server = unconfiguredServers.first(where: { NearbyCursor.peer($0.id.uuidString) == item }) {
+                addServer = AddServerTarget(address: server.origin.absoluteString)
             } else if let index = model.contentServers.firstIndex(where: {
                 NearbyCursor.removeServer(model.contentServerPeer($0).id) == item
             }) {
@@ -206,12 +268,15 @@ struct NearbyLibrariesView: View {
 /// TV sidebar rail), not pushed from Settings: it owns its navigation path, so
 /// a controller can push and pop its screens.
 struct NearbyLibrariesSheet: View {
+    var initialServer: DiscoveredContentServer? = nil
+    var model: NearbyLibrariesModel? = nil
+    var onOpenServer: ((String) -> Void)? = nil
     @Environment(\.dismiss) private var dismiss
     @State private var navigator = NearbyNavigator()
 
     var body: some View {
         NavigationStack(path: $navigator.path) {
-            NearbyLibrariesView()
+            NearbyLibrariesView(initialServer: initialServer, model: model, onOpenServer: onOpenServer)
                 #if os(iOS)
                 .toolbar {
                     ToolbarItem(placement: .confirmationAction) {
@@ -251,6 +316,9 @@ private struct AddContentServerView: View {
     @State private var allowPairingHTTP = false
     @State private var pairing: PairingTarget?
     @State private var paired = false
+    #if os(iOS)
+    @State private var showingInvitationScanner = false
+    #endif
     @State private var pairingError: String?
 
     private struct PairingTarget: Identifiable {
@@ -261,10 +329,15 @@ private struct AddContentServerView: View {
     @State private var cursorID: String?
     @FocusState private var editingField: String?
 
+    init(address: String, onAdd: @escaping (URL, String, String, String?) -> Void) {
+        _address = State(initialValue: address)
+        self.onAdd = onAdd
+    }
+
     private var url: URL? { try? ECSConnection.origin(for: address) }
 
     private var canAdd: Bool {
-        url != nil && (useToken ? !accessToken.isEmpty : !(username.isEmpty || password.isEmpty))
+        url != nil && (useToken ? !accessToken.isEmpty : username.isEmpty == password.isEmpty)
     }
 
     var body: some View {
@@ -300,6 +373,12 @@ private struct AddContentServerView: View {
                     }
                 }
                 NearbySection {
+                    #if os(iOS)
+                    Button("Scan Server QR", systemImage: "qrcode.viewfinder") {
+                        showingInvitationScanner = true
+                    }
+                    .buttonStyle(NearbyChipButtonStyle(cursorID: NearbyCursor.scanServerQR))
+                    #endif
                     if url?.scheme == "http" {
                         NearbySwitchRow(title: "Allow pairing over local HTTP", cursorID: NearbyCursor.allowPairingHTTP, isOn: $allowPairingHTTP)
                     }
@@ -326,6 +405,14 @@ private struct AddContentServerView: View {
                 paired = true
             }
         }
+        #if os(iOS)
+        .sheet(isPresented: $showingInvitationScanner, onDismiss: { if paired { dismiss() } }) {
+            DevicePairingInvitationView(deviceName: "Provenance") { origin, token in
+                onAdd(origin, "", "", token)
+                paired = true
+            }
+        }
+        #endif
         .onChange(of: address) { allowPairingHTTP = false; pairingError = nil }
         .nearbyControllerCursor(
             NearbyCursor.addServer(usesToken: useToken, showsHTTPConsent: url?.scheme == "http"),
@@ -371,6 +458,9 @@ private struct AddContentServerView: View {
         case NearbyCursor.useToken: useToken.toggle()
         case NearbyCursor.allowPairingHTTP: allowPairingHTTP.toggle()
         case NearbyCursor.requestAccess: requestAccess()
+        #if os(iOS)
+        case NearbyCursor.scanServerQR: showingInvitationScanner = true
+        #endif
         case NearbyCursor.cancel: dismiss()
         case NearbyCursor.add: if canAdd { add() }
         default: editingField = item

@@ -105,7 +105,11 @@ public struct LibraryPuller: Sendable {
         if let cached = Self.cachedManifest(in: folder), cached.itemId == item.id {
             manifest = cached
         } else {
-            manifest = try await source.pullManifest(for: item) { progress(.preparing($0)) }
+            if let server = source as? ECSSource {
+                manifest = try await server.pullManifest(for: item, progress: { progress(.preparing($0)) }, preparationProgress: progress)
+            } else {
+                manifest = try await source.pullManifest(for: item) { progress(.preparing($0)) }
+            }
             try Task.checkCancellation()
             try Self.cache(manifest, in: folder)
         }

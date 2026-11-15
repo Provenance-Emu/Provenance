@@ -307,6 +307,7 @@ public extension GameLaunchingViewController {
     }
 
     func updateRecentGames(_ game: PVGame) {
+        guard !game.isTemporaryServerGame else { return }
         defer { writeWidgetGameData() }
         let database = RomDatabase.sharedInstance
         RomDatabase.refresh()

@@ -81,6 +81,17 @@ final class NearbyLibrariesModel {
         guard let data = UserDefaults.standard.data(forKey: NearbyLibrariesModel.contentServersKey) else { return [] }
         return (try? JSONDecoder().decode([ContentServer].self, from: data)) ?? []
     }()
+    func reloadContentServers() {
+        let data = UserDefaults.standard.data(forKey: Self.contentServersKey)
+        let servers = data.flatMap { try? JSONDecoder().decode([ContentServer].self, from: $0) } ?? []
+        guard servers != contentServers else { return }
+        let ids = Set(servers.map { contentServerPeer($0).id })
+        for removed in contentServers.map(contentServerPeer) where !ids.contains(removed.id) {
+            peerModels.removeValue(forKey: removed.id)?.cancel()
+        }
+        contentServers = servers
+    }
+
     @ObservationIgnored private var pendingPasswords: [URL: String] = [:]
 
     init() {
@@ -252,7 +263,7 @@ final class NearbyLibrariesModel {
     /// Reads which systems have a core and the MD5s of the games on the
     /// systems peers can serve. Single-file images only: Provenance hashes the
     /// cue/m3u/gdi text of CD sets, which never matches a peer's MD5.
-    private func loadLocalLibrary() {
+    func loadLocalLibrary() {
         do {
             let realm = try Realm(configuration: RealmConfiguration.realmConfig)
             playableSystems = Set(realm.objects(PVSystem.self)
@@ -333,8 +344,21 @@ final class NearbyPeerLibraryModel {
     }
     private(set) var serverLibraries: [ServerLibrary] = []
     var selectedLibraryID = ""
-    var searchText = ""
+    var searchText = "" {
+        didSet {
+            guard peer.app == .contentServer, searchText != oldValue else { return }
+            searchTask?.cancel()
+            searchTask = Task { [weak self] in
+                do { try await Task.sleep(for: .milliseconds(250)) }
+                catch { return }
+                self?.loadTask?.cancel()
+                self?.loadTask = nil
+                self?.load(keepCatalogue: true)
+            }
+        }
+    }
     private(set) var importedGameIDs: [String: String] = [:]
+    private(set) var activeServerGame: RemoteLibraryItem?
 
     /// Set when a code entry was rejected, shown under the code field.
     private(set) var codeError: String?
@@ -348,6 +372,8 @@ final class NearbyPeerLibraryModel {
     @ObservationIgnored private var receiveEnvironmentObservation: AnyCancellable?
     @ObservationIgnored private let source: any LibrarySource
     @ObservationIgnored private var loadTask: Task<Void, Never>?
+    @ObservationIgnored private var loadID = UUID()
+    @ObservationIgnored private var searchTask: Task<Void, Never>?
     @ObservationIgnored private var pairedThisSession = false
     @ObservationIgnored private var artRequested: Set<String> = []
 
@@ -386,7 +412,7 @@ final class NearbyPeerLibraryModel {
     var sections: [SystemSection] {
         guard let catalogue, let owner else { return [] }
         let playable = catalogue.filtered(to: owner.playableSystems).items.filter {
-            searchText.isEmpty || $0.title.localizedCaseInsensitiveContains(searchText)
+            peer.app == .contentServer || searchText.isEmpty || $0.title.localizedCaseInsensitiveContains(searchText)
         }
         return Dictionary(grouping: playable) { $0.systemIdentifier ?? .Unknown }
             .sorted { $0.key < $1.key }
@@ -439,12 +465,14 @@ final class NearbyPeerLibraryModel {
         if phase == .idle { load() }
     }
 
-    func load() {
+    func load(keepCatalogue: Bool = false) {
         guard loadTask == nil else { return }
-        phase = .loading(.connecting)
+        if !keepCatalogue || catalogue == nil { phase = .loading(.connecting) }
+        let id = UUID()
+        loadID = id
         loadTask = Task { [weak self] in
             await self?.runLoad()
-            self?.loadTask = nil
+            if self?.loadID == id { self?.loadTask = nil }
         }
     }
 
@@ -452,6 +480,7 @@ final class NearbyPeerLibraryModel {
     func cancel() {
         if peer.app == .iCube || peer.app == .contentServer { cancelManualCopies() }
         owner?.peerDidDisappear(peer.id)
+        searchTask?.cancel()
         loadTask?.cancel()
         loadTask = nil
         if case .loading = phase { phase = .idle }
@@ -460,8 +489,10 @@ final class NearbyPeerLibraryModel {
 
     private func runLoad() async {
         do {
-            if let ecs = source as? ECSSource {
-                serverLibraries = try await ecs.libraries().map { ServerLibrary(id: $0.id, name: $0.name) }
+            if let ecs = source as? ECSSource, serverLibraries.isEmpty {
+                let available = try await ecs.libraries()
+                try Task.checkCancellation()
+                serverLibraries = available.map { ServerLibrary(id: $0.id, name: $0.name) }
             }
             let report: @Sendable (LibraryBrowseProgress) -> Void = { [weak self] progress in
                 Task { @MainActor in
@@ -471,7 +502,7 @@ final class NearbyPeerLibraryModel {
             }
             let loaded: RemoteCatalogue
             if let ecs = source as? ECSSource {
-                loaded = try await ecs.catalogue(libraryID: selectedLibraryID.isEmpty ? nil : selectedLibraryID, progress: report)
+                loaded = try await ecs.catalogue(libraryID: selectedLibraryID.isEmpty ? nil : selectedLibraryID, search: searchText, progress: report)
             } else {
                 loaded = try await source.catalogue(progress: report)
             }
@@ -549,16 +580,31 @@ final class NearbyPeerLibraryModel {
     /// Copies `item` into staging, verified, then hands every game file to the
     /// importer with the mapped system. Tapping again after a failure resumes
     /// from the partial files and the cached pull manifest.
-    func copy(_ item: RemoteLibraryItem, playAfterImport: Bool = false) {
+    func copy(_ item: RemoteLibraryItem, playAfterImport: Bool = false, temporarily: Bool = false) {
         guard copyTasks[item.id] == nil, let owner, let system = item.systemIdentifier else { return }
         guard peer.app != .iCube || manualReceiveEligible else { return }
+        guard peer.app != .contentServer || activeServerGame == nil else { return }
+        if peer.app == .contentServer { activeServerGame = item }
         let generation = UUID()
         copyGenerations[item.id] = generation
-        let puller = LibraryPuller(staging: owner.staging, peerKey: peer.id)
-        let staging = owner.staging
+        #if os(tvOS)
+        let localRoot = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask)[0]
+        #else
+        let localRoot = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
+        #endif
+        let temporaryRoot = temporarily
+            ? localRoot.appendingPathComponent(PVGame.temporaryServerGamesDirectory).appendingPathComponent(generation.uuidString)
+            : nil
+        let staging = temporaryRoot.map(LibraryStaging.init(root:)) ?? owner.staging
+        let puller = LibraryPuller(staging: staging, peerKey: peer.id)
         let source = source
         copies[item.id] = .preparing(.connecting)
         copyTasks[item.id] = Task { [weak self] in
+            var handedOff = false
+            defer {
+                if let temporaryRoot, !handedOff { staging.discard(temporaryRoot) }
+                if self?.activeServerGame?.id == item.id { self?.activeServerGame = nil }
+            }
             do {
                 if let iCube = source as? ICubeContinuitySource {
                     _ = try await NearbyLibraryReceiveService.receive(
@@ -589,6 +635,31 @@ final class NearbyPeerLibraryModel {
                     guard !GameImporter.shared.isPausedForEmulation else { throw CancellationError() }
                     let queued = ImportQueueItem(url: pulled.primaryFile)
                     queued.userChosenSystem = system
+                    if let temporaryRoot {
+                        let gameID = await queued.gameMD5Async()?.uppercased()
+                        try Task.checkCancellation()
+                        guard let gameID, let realm = try? await Realm(configuration: RealmConfiguration.realmConfig),
+                              let systemInfo = realm.object(ofType: PVSystem.self, forPrimaryKey: system.rawValue) else {
+                            throw LibrarySharingError.itemUnavailable
+                        }
+                        let path = pulled.primaryFile.resolvingSymlinksInPath().path
+                        let base = localRoot.resolvingSymlinksInPath().path + "/"
+                        guard path.hasPrefix(base) else { throw LibrarySharingError.itemUnavailable }
+                        let relativePath = String(path.dropFirst(base.count))
+                        let game = PVGame()
+                        game.title = item.title
+                        game.md5Hash = gameID
+                        game.romPath = relativePath
+                        game.file = PVFile(withPartialPath: relativePath)
+                        game.system = systemInfo
+                        game.systemIdentifier = system.rawValue
+                        self?.copyTasks[item.id] = nil
+                        self?.copyGenerations[item.id] = nil
+                        self?.copies[item.id] = nil
+                        handedOff = true
+                        SceneCoordinator.shared.launchTemporaryServerGame(game, folder: temporaryRoot)
+                        return
+                    }
                     queued.requiresContentBasedDuplicateCheck = true
                     await GameImporter.shared.addImport(queued)
                     let accepted = await GameImporter.shared.importQueue.contains { $0.id == queued.id }
@@ -648,7 +719,9 @@ final class NearbyPeerLibraryModel {
         case .preparing(let step):
             copies[itemId] = .preparing(step)
         case let .downloading(_, _, _, done, total):
-            copies[itemId] = .downloading(total > 0 ? Double(done) / Double(total) : 0)
+            let fraction = total > 0 ? Double(done) / Double(total) : 0
+            if case .downloading(let previous) = copies[itemId], previous > fraction { return }
+            copies[itemId] = .downloading(fraction)
         case .verifying:
             copies[itemId] = .verifying
         }
