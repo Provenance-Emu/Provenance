@@ -640,10 +640,8 @@ void FCEUD_HideMenuToggle(void) {}
         if (!strongSelf) return;
 
         AVAudioSession *session = [AVAudioSession sharedInstance];
-        // Save current session state so we can restore it when mic monitoring stops,
-        // preventing disruption to the emulator's existing audio output pipeline.
-        strongSelf->_savedSessionCategory = session.category;
-        strongSelf->_savedSessionOptions  = session.categoryOptions;
+        AVAudioSessionCategory previousCategory = session.category;
+        AVAudioSessionCategoryOptions previousOptions = session.categoryOptions;
 
         NSError *sessionError = nil;
         [session setCategory:AVAudioSessionCategoryPlayAndRecord
@@ -653,6 +651,12 @@ void FCEUD_HideMenuToggle(void) {}
         if (sessionError) {
             ELOG(@"[FCEU] AVAudioSession error: %@", sessionError.localizedDescription);
             return;
+        }
+        // Remember the category we replaced so it can be restored when the mic stops.
+        // Keep the first one: a repeated start would otherwise save PlayAndRecord itself.
+        if (!strongSelf->_savedSessionCategory) {
+            strongSelf->_savedSessionCategory = previousCategory;
+            strongSelf->_savedSessionOptions  = previousOptions;
         }
         [session setActive:YES error:nil];
 
@@ -689,6 +693,7 @@ void FCEUD_HideMenuToggle(void) {}
             ELOG(@"[FCEU] AVAudioEngine start error: %@", engineError.localizedDescription);
             [inputNode removeTapOnBus:0];
             strongSelf->_micEngine = nil;
+            [strongSelf restoreFamicomMicAudioSession];
         } else {
             // Enable mic mode only after the engine starts successfully.
             // replaceP2StartWithMicrophone nullifies P2 Start reads (FCEU input.cpp:128-131),
@@ -715,25 +720,30 @@ void FCEUD_HideMenuToggle(void) {}
 }
 
 #if !TARGET_OS_TV
+/// Puts back the audio session category that was in effect before the mic switched it
+/// to PlayAndRecord, so the emulator's audio output is not left in record mode.
+- (void)restoreFamicomMicAudioSession {
+    if (!_savedSessionCategory) {
+        return;
+    }
+    NSError *restoreError = nil;
+    [[AVAudioSession sharedInstance] setCategory:_savedSessionCategory
+                                     withOptions:_savedSessionOptions
+                                           error:&restoreError];
+    if (restoreError) {
+        WLOG(@"[FCEU] Failed to restore AVAudioSession: %@", restoreError.localizedDescription);
+    }
+    _savedSessionCategory = nil;
+}
+
 - (void)stopFamicomMicMonitoring {
     if (_micEngine) {
         [_micEngine.inputNode removeTapOnBus:0];
         [_micEngine stop];
         _micEngine = nil;
-
-        // Restore the audio session category that was in effect before we switched
-        // to PlayAndRecord, so the emulator's audio pipeline is not permanently affected.
-        if (_savedSessionCategory) {
-            NSError *restoreError = nil;
-            [[AVAudioSession sharedInstance] setCategory:_savedSessionCategory
-                                             withOptions:_savedSessionOptions
-                                                   error:&restoreError];
-            if (restoreError) {
-                WLOG(@"[FCEU] Failed to restore AVAudioSession: %@", restoreError.localizedDescription);
-            }
-            _savedSessionCategory = nil;
-        }
     }
+    // Restore whether or not an engine is running; it is a no-op when nothing was saved.
+    [self restoreFamicomMicAudioSession];
     _micAudioActive = NO;
     pad[1][0] &= ~kFCMicBit;
     ILOG(@"[FCEU] Famicom microphone monitoring stopped.");
