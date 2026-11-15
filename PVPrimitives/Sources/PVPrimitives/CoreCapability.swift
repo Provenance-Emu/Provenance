@@ -35,6 +35,8 @@ public enum CoreCapability: String, Codable, CaseIterable, Sendable, Hashable {
     case rumble = "rumble"
 
     // MARK: - Network capabilities
+    /// Core joins two devices with an emulated link cable over the local network.
+    case linkCable = "linkCable"
 
     /// Core supports local wireless (ad-hoc) multiplayer.
     case localWireless = "localWireless"
@@ -116,6 +118,7 @@ public extension CoreCapability {
         case .realMicrophone:      return "Real Microphone"
         case .cameraSupport:       return "Camera"
         case .rumble:              return "Rumble"
+        case .linkCable:           return "Link Cable"
         case .localWireless:       return "Local Wireless"
         case .netplay:             return "Netplay"
         case .highAccuracy:        return "High Accuracy"
@@ -146,6 +149,7 @@ public extension CoreCapability {
         case .realMicrophone:      return "mic.fill"
         case .cameraSupport:       return "camera.fill"
         case .rumble:              return "iphone.radiowaves.left.and.right"
+        case .linkCable:           return "cable.connector"
         case .localWireless:       return "wifi"
         case .netplay:             return "network"
         case .highAccuracy:        return "checkmark.seal.fill"

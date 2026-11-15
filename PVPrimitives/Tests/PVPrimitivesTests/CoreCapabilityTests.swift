@@ -72,6 +72,11 @@ final class CoreCapabilityTests: XCTestCase {
         }
     }
 
+    func testLinkCableDecodesAndIsNamed() {
+        XCTAssertEqual(CoreCapability(rawValue: "linkCable"), .linkCable)
+        XCTAssertEqual(CoreCapability.linkCable.displayName, "Link Cable")
+    }
+
     // MARK: - Codable round-trip via CoreCapabilityMetadata
 
     func testRetroAchievementsEncodesDecodesViaMetadata() throws {

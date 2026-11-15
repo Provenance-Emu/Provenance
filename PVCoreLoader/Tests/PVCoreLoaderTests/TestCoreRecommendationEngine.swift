@@ -144,6 +144,28 @@ final class TestCoreRecommendationEngine: XCTestCase {
         XCTAssertNil(CoreRecommendationEngine.pickerDefault(for: "com.provenance.3ds", availableCoreIdentifiers: [emuThree]))
     }
 
+    /// The Sega systems each have one native core that the capability notes already single out.
+    func testBundledPickerDefaultsCoverTheSegaSystems() {
+        let genesisPlus = "com.provenance.core.genplusgx"
+        let picoDrive = "com.provenance.core.picodrive"
+        let available: Set<String> = [genesisPlus, picoDrive]
+
+        for system in ["com.provenance.genesis", "com.provenance.segacd", "com.provenance.mastersystem",
+                       "com.provenance.gamegear", "com.provenance.sg1000"] {
+            XCTAssertEqual(CoreRecommendationEngine.pickerDefault(for: system, availableCoreIdentifiers: available)?.coreIdentifier,
+                           genesisPlus, system)
+        }
+        XCTAssertEqual(CoreRecommendationEngine.pickerDefault(for: "com.provenance.32X", availableCoreIdentifiers: available)?.coreIdentifier,
+                       picoDrive)
+        XCTAssertNil(CoreRecommendationEngine.pickerDefault(for: "com.provenance.32X", availableCoreIdentifiers: [genesisPlus]))
+    }
+
+    /// Checked on two simulators on 2026-11-13: a two-player link game ran on native mGBA.
+    func testNativeMGBADeclaresLinkCable() throws {
+        let meta = try XCTUnwrap(engine.capabilityMetadata(for: "com.provenance.core.mGBA"))
+        XCTAssertTrue(meta.capabilities.contains(.linkCable))
+    }
+
     // MARK: - Multi-source manifest building
 
     /// Verifies that a manifest built from an explicit CoreCapabilitiesManifest (no CoreLoader)
