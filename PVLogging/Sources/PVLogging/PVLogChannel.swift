@@ -138,8 +138,8 @@ public struct PVLogChannelSummary: Sendable {
 /// if let contents = syncLog.readLogFile() { ... }
 /// ```
 ///
-/// Thread safety: all mutable state is protected by `NSLock`.
-public final class PVLogChannel: @unchecked Sendable {
+/// Thread safety: all mutable state lives inside the lock that guards it (`LockedState`).
+public final class PVLogChannel: Sendable {
 
     // MARK: - Properties
 
@@ -157,18 +157,22 @@ public final class PVLogChannel: @unchecked Sendable {
 
     // MARK: - Private State
 
-    private let lock = NSLock()
-    private var events: [PVLogEvent] = []
-    private var messages: [ChannelMessage] = []
-    private var counters: [String: Int] = [:]
-    private var errorCount: Int = 0
-    private var totalEvents: Int = 0
-    private var lastEventTime: Date?
+    /// The ring buffers and counters.
+    private struct Buffers {
+        var events: [PVLogEvent] = []
+        var messages: [ChannelMessage] = []
+        var counters: [String: Int] = [:]
+        var errorCount = 0
+        var totalEvents = 0
+        var lastEventTime: Date?
+    }
 
-    /// File handle for log output.
-    private var fileHandle: FileHandle?
-    private let fileLock = NSLock()
-    private var logFilePath: String?
+    private let buffers = LockedState(Buffers())
+
+    /// The open log file: `nil` when file output is off or the file could not be opened.
+    /// Its own lock, so a slow disk never holds up readers of the buffers.
+    private let fileHandle: LockedState<FileHandle?>
+    private let logFilePath: String?
 
     /// Maximum log file size before rotation (1MB).
     private static let maxFileSize: UInt64 = 1_024 * 1_024
@@ -200,14 +204,17 @@ public final class PVLogChannel: @unchecked Sendable {
         self.forwardToPublisher = forwardToPublisher
 
         if fileOutput {
-            setupFileOutput()
+            let file = Self.openLogFile(named: name)
+            logFilePath = file.path
+            fileHandle = LockedState(file.handle)
+        } else {
+            logFilePath = nil
+            fileHandle = LockedState(nil)
         }
     }
 
     deinit {
-        fileLock.lock()
-        fileHandle?.closeFile()
-        fileLock.unlock()
+        fileHandle.withLock { $0?.closeFile() }
     }
 
     // MARK: - Structured Event Logging
@@ -232,20 +239,19 @@ public final class PVLogChannel: @unchecked Sendable {
 
         let line = "[\(name)] \(event.compactDescription)"
 
-        lock.lock()
-        events.append(event)
-        if events.count > maxEntries {
-            events.removeFirst(events.count - maxEntries)
-        }
-        totalEvents += 1
-        lastEventTime = event.timestamp
-        if status == .failed {
-            errorCount += 1
-        }
-        // Increment action counter
         let counterKey = "\(action.rawValue).\(status.rawValue)"
-        counters[counterKey, default: 0] += 1
-        lock.unlock()
+        buffers.withLock { buffers in
+            buffers.events.append(event)
+            if buffers.events.count > maxEntries {
+                buffers.events.removeFirst(buffers.events.count - maxEntries)
+            }
+            buffers.totalEvents += 1
+            buffers.lastEventTime = event.timestamp
+            if status == .failed {
+                buffers.errorCount += 1
+            }
+            buffers.counters[counterKey, default: 0] += 1
+        }
 
         writeToFile(event.timestamp, line)
 
@@ -268,15 +274,15 @@ public final class PVLogChannel: @unchecked Sendable {
     public func log(_ message: String, level: LogLevel = .info) {
         let msg = ChannelMessage(timestamp: Date(), message: message, level: level)
 
-        lock.lock()
-        messages.append(msg)
-        if messages.count > maxEntries {
-            messages.removeFirst(messages.count - maxEntries)
+        buffers.withLock { buffers in
+            buffers.messages.append(msg)
+            if buffers.messages.count > maxEntries {
+                buffers.messages.removeFirst(buffers.messages.count - maxEntries)
+            }
+            if level == .error { buffers.errorCount += 1 }
+            buffers.totalEvents += 1
+            buffers.lastEventTime = msg.timestamp
         }
-        if level == .error { errorCount += 1 }
-        totalEvents += 1
-        lastEventTime = msg.timestamp
-        lock.unlock()
 
         let line = "[\(name)] [\(level.shortName)] \(message)"
         writeToFile(msg.timestamp, line)
@@ -306,11 +312,8 @@ public final class PVLogChannel: @unchecked Sendable {
 
     /// Get recent structured events, optionally filtered.
     public func recentEvents(action: PVLogEvent.Action? = nil, limit: Int = 50) -> [PVLogEvent] {
-        lock.lock()
-        let snapshot = events
-        lock.unlock()
-
-        var result = snapshot
+        // Filtered after the lock is released.
+        var result = buffers.withLock { $0.events }
         if let action {
             result = result.filter { $0.action == action }
         }
@@ -319,28 +322,20 @@ public final class PVLogChannel: @unchecked Sendable {
 
     /// Get a summary snapshot of channel activity.
     public func summary() -> PVLogChannelSummary {
-        lock.lock()
-        let s = PVLogChannelSummary(
-            channelName: name,
-            totalEvents: totalEvents,
-            errorCount: errorCount,
-            lastEventTime: lastEventTime,
-            counters: counters
-        )
-        lock.unlock()
-        return s
+        buffers.withLock { buffers in
+            PVLogChannelSummary(
+                channelName: name,
+                totalEvents: buffers.totalEvents,
+                errorCount: buffers.errorCount,
+                lastEventTime: buffers.lastEventTime,
+                counters: buffers.counters
+            )
+        }
     }
 
     /// Clear all buffered events and counters.
     public func clear() {
-        lock.lock()
-        events.removeAll()
-        messages.removeAll()
-        counters.removeAll()
-        errorCount = 0
-        totalEvents = 0
-        lastEventTime = nil
-        lock.unlock()
+        buffers.withLock { $0 = Buffers() }
     }
 
     // MARK: - File Output
@@ -354,14 +349,13 @@ public final class PVLogChannel: @unchecked Sendable {
     /// The path to the current log file, if file output is enabled.
     public var currentLogFilePath: String? { logFilePath }
 
-    private func setupFileOutput() {
-        let logsDir = Self.logsDirectory()
+    /// Opens (rotating first if needed) `Logs/<name>.log` and writes the start header.
+    private static func openLogFile(named name: String) -> (path: String, handle: FileHandle?) {
+        let logsDir = logsDirectory()
         try? FileManager.default.createDirectory(atPath: logsDir, withIntermediateDirectories: true)
 
         let path = (logsDir as NSString).appendingPathComponent("\(name).log")
-        logFilePath = path
 
-        // Rotate if needed
         rotateIfNeeded(path: path)
 
         // Create file if it doesn't exist
@@ -369,33 +363,29 @@ public final class PVLogChannel: @unchecked Sendable {
             FileManager.default.createFile(atPath: path, contents: nil)
         }
 
-        fileHandle = FileHandle(forWritingAtPath: path)
-        fileHandle?.seekToEndOfFile()
+        let handle = FileHandle(forWritingAtPath: path)
+        handle?.seekToEndOfFile()
 
-        // Write header
         let header = "--- \(name) log started \(ISO8601DateFormatter().string(from: Date())) ---\n"
         if let data = header.data(using: .utf8) {
-            fileHandle?.write(data)
+            handle?.write(data)
         }
+        return (path, handle)
     }
 
     private func writeToFile(_ timestamp: Date, _ line: String) {
         guard fileOutputEnabled else { return }
 
         let ts = Self.timestampFormatter.string(from: timestamp)
-        let fullLine = "\(ts) \(line)\n"
+        guard let data = "\(ts) \(line)\n".data(using: .utf8) else { return }
 
-        fileLock.lock()
-        if let data = fullLine.data(using: .utf8) {
-            fileHandle?.write(data)
-        }
-        fileLock.unlock()
+        fileHandle.withLock { $0?.write(data) }
     }
 
-    private func rotateIfNeeded(path: String) {
+    private static func rotateIfNeeded(path: String) {
         guard let attrs = try? FileManager.default.attributesOfItem(atPath: path),
               let fileSize = attrs[.size] as? UInt64,
-              fileSize > Self.maxFileSize else { return }
+              fileSize > maxFileSize else { return }
 
         let rotatedPath = path + ".1"
         try? FileManager.default.removeItem(atPath: rotatedPath)
@@ -423,49 +413,36 @@ private struct ChannelMessage: Sendable {
 // MARK: - Channel Registry
 
 /// Global registry of active log channels for discovery and debugging.
-public final class PVLogChannelRegistry: @unchecked Sendable {
+public final class PVLogChannelRegistry: Sendable {
     public static let shared = PVLogChannelRegistry()
 
-    private let lock = NSLock()
-    private var channels: [String: PVLogChannel] = [:]
+    private let channels = LockedState([String: PVLogChannel]())
 
     private init() {}
 
     /// Register a channel for global discovery.
     public func register(_ channel: PVLogChannel) {
-        lock.lock()
-        channels[channel.name] = channel
-        lock.unlock()
+        channels.withLock { $0[channel.name] = channel }
     }
 
     /// Unregister a channel.
     public func unregister(_ channel: PVLogChannel) {
-        lock.lock()
-        channels.removeValue(forKey: channel.name)
-        lock.unlock()
+        channels.withLock { _ = $0.removeValue(forKey: channel.name) }
     }
 
     /// Get a registered channel by name.
     public func channel(named name: String) -> PVLogChannel? {
-        lock.lock()
-        let ch = channels[name]
-        lock.unlock()
-        return ch
+        channels.withLock { $0[name] }
     }
 
     /// Get all registered channel names.
     public var channelNames: [String] {
-        lock.lock()
-        let names = Array(channels.keys).sorted()
-        lock.unlock()
-        return names
+        channels.withLock { Array($0.keys) }.sorted()
     }
 
     /// Get summaries for all registered channels.
     public func allSummaries() -> [PVLogChannelSummary] {
-        lock.lock()
-        let chs = Array(channels.values)
-        lock.unlock()
-        return chs.map { $0.summary() }
+        // Each channel takes its own lock, after this one is released.
+        channels.withLock { Array($0.values) }.map { $0.summary() }
     }
 }
