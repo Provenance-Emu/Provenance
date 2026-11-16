@@ -4,10 +4,10 @@
 
 ## Summary
 
-- **Total Contributors**: 101
-- **Total Commits**: 10623
-- **Total Lines Added**: 16466465
-- **Total Lines Removed**: 11751667
+- **Total Contributors**: 100
+- **Total Commits**: 11213
+- **Total Lines Added**: 16940164
+- **Total Lines Removed**: 12184602
 
 ## Contributor Details
 
@@ -18,9 +18,9 @@
 ![Joseph Mattiello](https://www.gravatar.com/avatar/79585fbd531fa1438a73a53fb2c9eacd?s=100&d=identicon)
 
 - **Emails Used**: git@joemattiello.com, jmattiello@MacBook-Pro-M2.local, jmattiello@hearst.com, joe.mattiello@salido.com, mail@joemattiello.com
-- **Commits**: `8274`
-- **Lines Added**: `13848179`
-- **Lines Removed**: `10846751`
+- **Commits**: `8846`
+- **Lines Added**: `14317297`
+- **Lines Removed**: `11271648`
 - **Most Active File**: `Provenance.xcodeproj/project.pbxproj`
 - **Activity**: `▰▰▰▰▰▰▰▰▰▰`
 
@@ -69,10 +69,10 @@
 
 ![github-actions[bot]](https://www.gravatar.com/avatar/af2ab225b7c0eec44a8d0eba6b5c869a?s=100&d=identicon)
 
-- **Emails Used**: 41898282+github-actions[bot]@users.noreply.github.com
-- **Commits**: `466`
-- **Lines Added**: `389742`
-- **Lines Removed**: `109877`
+- **Emails Used**: 41898282+github-actions[bot]@users.noreply.github.com, github-actions[bot]@users.noreply.github.com
+- **Commits**: `476`
+- **Lines Added**: `394697`
+- **Lines Removed**: `117857`
 - **Most Active File**: `CHANGELOG.md`
 - **Activity**: `▰▰▰▰▰▰▰▰▰▰`
 
@@ -148,9 +148,9 @@
 ![claude[bot]](https://www.gravatar.com/avatar/1b30942c176ccc9aa137c4834447eb3d?s=100&d=identicon)
 
 - **Emails Used**: 41898282+claude[bot]@users.noreply.github.com
-- **Commits**: `83`
-- **Lines Added**: `12847`
-- **Lines Removed**: `2316`
+- **Commits**: `89`
+- **Lines Added**: `13011`
+- **Lines Removed**: `2428`
 - **Most Active File**: `PVLibrary/Sources/PVLibrary/Migration/RealmToSwiftDataMigration.swift`
 - **Activity**: `▰▰▰▰▰▰▰▰▰▰`
 
@@ -278,7 +278,7 @@
 ![Cursor Agent](https://www.gravatar.com/avatar/aaec642e8dc542f81beff3c51968cae4?s=100&d=identicon)
 
 - **Emails Used**: cursoragent@cursor.com
-- **Commits**: `10`
+- **Commits**: `11`
 - **Lines Added**: `790`
 - **Lines Removed**: `452`
 - **Most Active File**: `PVCoreBridgeRetro/Sources/PVLibRetro/PVLibRetroGLESCore.m`
@@ -338,19 +338,6 @@
 
 ---
 
-### Kimi Code Agent
-
-![Kimi Code Agent](https://www.gravatar.com/avatar/cb7b7994e594270ea25948a7bf186123?s=100&d=identicon)
-
-- **Emails Used**: github-actions[bot]@users.noreply.github.com
-- **Commits**: `2`
-- **Lines Added**: `562`
-- **Lines Removed**: `78`
-- **Most Active File**: `PVSettings/Sources/PVSettings/Settings/Model/PVSettingsModel.swift`
-- **Activity**: `▰▰▱▱▱▱▱▱▱▱`
-
----
-
 ### Raf
 
 ![Raf](https://www.gravatar.com/avatar/765ff8a1a3a66c75bd00554fbcffa450?s=100&d=identicon)
@@ -364,6 +351,19 @@
 
 ---
 
+### dependabot[bot]
+
+![dependabot[bot]](https://www.gravatar.com/avatar/48ea49be76d0c68403a7f3df87e3487d?s=100&d=identicon)
+
+- **Emails Used**: 49699333+dependabot[bot]@users.noreply.github.com
+- **Commits**: `6`
+- **Lines Added**: `290`
+- **Lines Removed**: `184`
+- **Most Active File**: `Packages/RxRealm/Gemfile.lock`
+- **Activity**: `▰▰▰▰▰▰▱▱▱▱`
+
+---
+
 ### Gabriel O'Flaherty-Chan
 
 ![Gabriel O'Flaherty-Chan](https://www.gravatar.com/avatar/85bdeecb159ed57813707e6a473392c3?s=100&d=identicon)
@@ -373,19 +373,6 @@
 - **Lines Added**: `241`
 - **Lines Removed**: `195`
 - **Most Active File**: `Provenance/Controller/PVControllerViewController.m`
-- **Activity**: `▰▰▰▱▱▱▱▱▱▱`
-
----
-
-### dependabot[bot]
-
-![dependabot[bot]](https://www.gravatar.com/avatar/48ea49be76d0c68403a7f3df87e3487d?s=100&d=identicon)
-
-- **Emails Used**: 49699333+dependabot[bot]@users.noreply.github.com
-- **Commits**: `3`
-- **Lines Added**: `266`
-- **Lines Removed**: `160`
-- **Most Active File**: `Packages/RxRealm/Gemfile.lock`
 - **Activity**: `▰▰▰▱▱▱▱▱▱▱`
 
 ---
