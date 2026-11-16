@@ -141,7 +141,12 @@ struct OverlayInputSinkAdapterTests {
         adapter.overlayConsoleControl("speed", isPressed: true)
         spy.nextConsoleButton = "slow"
         adapter.overlayConsoleControl("speed", isPressed: false)
-        try await Task.sleep(for: .seconds(HardwareSwitchTiming.pressDuration * 4))
+        // The release runs in a main-actor task, which a loaded CI simulator can hold back
+        // well past the press duration.
+        let deadline = ContinuousClock.now + .seconds(5)
+        while spy.hardwareEdges.count < 2, ContinuousClock.now < deadline {
+            try await Task.sleep(for: .seconds(HardwareSwitchTiming.pressDuration))
+        }
         #expect(spy.hardwareEdges == ["fast true", "fast false"])
     }
 
