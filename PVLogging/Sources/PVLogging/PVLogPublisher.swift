@@ -16,11 +16,10 @@ import OSLog
 
 /// A Combine- and AsyncStream-based publisher for PVLogging.
 ///
-/// Thread safety: all mutable state is protected by `NSLock` (faster than
-/// `DispatchQueue.async` on the hot logging path). The class is marked
-/// `@unchecked Sendable` because the lock guarantees safety across threads
-/// without requiring `async`/`await` at every call site.
-public final class PVLogPublisher: @unchecked Sendable {
+/// Thread safety: each piece of mutable state lives inside its own lock (`LockedState`,
+/// an `NSLock`, which is faster than `DispatchQueue.async` on the hot logging path), so
+/// no call site needs `async`/`await`.
+public final class PVLogPublisher: Sendable {
     // MARK: - Singleton
 
     /// Shared instance.
@@ -28,11 +27,8 @@ public final class PVLogPublisher: @unchecked Sendable {
 
     // MARK: - Private Storage
 
-    /// Lock protecting `recentLogs` and stream continuations.
-    private let logsLock = NSLock()
-
     /// In-memory ring buffer of recent log entries.
-    private var recentLogs: [LogEntry] = []
+    private let recentLogs = LockedState([LogEntry]())
 
     /// Maximum number of entries kept in memory.
     private let maxLogCount = 2000
@@ -40,24 +36,19 @@ public final class PVLogPublisher: @unchecked Sendable {
     // MARK: - Per-Category Level Filtering
 
     /// Minimum log levels per category name. Defaults to `.verbose` (log everything).
-    private var categoryMinLevels: [String: LogLevel] = [:]
-
-    /// Lock protecting `categoryMinLevels`.
-    private let filterLock = NSLock()
+    private let categoryMinLevels = LockedState([String: LogLevel]())
 
     // MARK: - AsyncStream Support
 
     /// Active AsyncStream continuations keyed by their UUID.
-    private var streamContinuations: [UUID: AsyncStream<LogEntry>.Continuation] = [:]
-
-    /// Lock protecting `streamContinuations`.
-    private let continuationsLock = NSLock()
+    private let streamContinuations = LockedState([UUID: AsyncStream<LogEntry>.Continuation]())
 
     // MARK: - Combine Support
 
     #if canImport(Combine)
     /// Subject that publishes each log entry to Combine subscribers.
-    private let logSubject = PassthroughSubject<LogEntry, Never>()
+    /// `PassthroughSubject` is thread-safe but not declared `Sendable`.
+    private nonisolated(unsafe) let logSubject = PassthroughSubject<LogEntry, Never>()
 
     /// Combine publisher for log entries.
     public var logPublisher: AnyPublisher<LogEntry, Never> {
@@ -210,20 +201,19 @@ public final class PVLogPublisher: @unchecked Sendable {
         #endif
 
         // Publish to all active AsyncStreams
-        continuationsLock.lock()
-        let continuations = Array(streamContinuations.values)
-        continuationsLock.unlock()
+        // Yielded after the lock is released: a stream's consumer may log.
+        let continuations = streamContinuations.withLock { Array($0.values) }
         for continuation in continuations {
             continuation.yield(entry)
         }
 
         // Append to ring buffer
-        logsLock.lock()
-        recentLogs.append(entry)
-        if recentLogs.count > maxLogCount {
-            recentLogs = Array(recentLogs.suffix(maxLogCount))
+        recentLogs.withLock { logs in
+            logs.append(entry)
+            if logs.count > maxLogCount {
+                logs = Array(logs.suffix(maxLogCount))
+            }
         }
-        logsLock.unlock()
     }
 
     // MARK: - AsyncStream API
@@ -243,15 +233,10 @@ public final class PVLogPublisher: @unchecked Sendable {
     public func makeLogStream() -> AsyncStream<LogEntry> {
         AsyncStream { continuation in
             let id = UUID()
-            continuationsLock.lock()
-            streamContinuations[id] = continuation
-            continuationsLock.unlock()
+            streamContinuations.withLock { $0[id] = continuation }
 
             continuation.onTermination = { [weak self] _ in
-                guard let self else { return }
-                self.continuationsLock.lock()
-                self.streamContinuations.removeValue(forKey: id)
-                self.continuationsLock.unlock()
+                self?.streamContinuations.withLock { _ = $0.removeValue(forKey: id) }
             }
         }
     }
@@ -268,51 +253,37 @@ public final class PVLogPublisher: @unchecked Sendable {
     /// PVLogPublisher.shared.setMinLevel(.info, forCategory: "audio")
     /// ```
     public func setMinLevel(_ level: LogLevel, forCategory category: String) {
-        filterLock.lock()
-        categoryMinLevels[category] = level
-        filterLock.unlock()
+        categoryMinLevels.withLock { $0[category] = level }
     }
 
     /// Return the current minimum log level for a category.
     public func minLevel(forCategory category: String) -> LogLevel {
-        filterLock.lock()
-        let level = categoryMinLevels[category]
-        filterLock.unlock()
-        return level ?? .verbose
+        categoryMinLevels.withLock { $0[category] } ?? .verbose
     }
 
     /// Reset per-category filters so all levels are logged.
     public func resetCategoryFilters() {
-        filterLock.lock()
-        categoryMinLevels.removeAll()
-        filterLock.unlock()
+        categoryMinLevels.withLock { $0.removeAll() }
     }
 
     // MARK: - Query API
 
     /// Return recent log entries, optionally filtered by minimum level.
     public func getRecentLogs(minLevel: LogLevel? = nil) -> [LogEntry] {
-        logsLock.lock()
-        let snapshot = recentLogs
-        logsLock.unlock()
+        let snapshot = recentLogs.withLock { $0 }
         guard let minLevel else { return snapshot }
         return snapshot.filter { $0.level >= minLevel }
     }
 
     /// Remove all cached log entries.
     public func clearLogs() {
-        logsLock.lock()
-        recentLogs.removeAll()
-        logsLock.unlock()
+        recentLogs.withLock { $0.removeAll() }
     }
 
     // MARK: - Private Helpers
 
     private func shouldLog(level: LogLevel, forCategory categoryName: String) -> Bool {
-        filterLock.lock()
-        let min = categoryMinLevels[categoryName] ?? .verbose
-        filterLock.unlock()
-        return level >= min
+        level >= minLevel(forCategory: categoryName)
     }
 }
 

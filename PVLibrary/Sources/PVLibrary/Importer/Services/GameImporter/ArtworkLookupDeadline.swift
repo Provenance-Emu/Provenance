@@ -1,4 +1,5 @@
 import Foundation
+import os
 
 /// Releases the importer at the deadline even when a provider ignores cancellation.
 /// A task group cannot implement this contract: its scope waits for every child.
@@ -30,45 +31,48 @@ enum ArtworkLookupDeadline {
         }
     }
 
-    private final class Race: @unchecked Sendable {
-        private let lock = NSLock()
-        private var continuation: CheckedContinuation<String?, Never>?
-        private var tasks: [Task<Void, Never>] = []
-        private var finished = false
-        private var result: String?
+    private final class Race: Sendable {
+        /// Lives inside the lock that guards it.
+        private struct State: Sendable {
+            var continuation: CheckedContinuation<String?, Never>?
+            var tasks: [Task<Void, Never>] = []
+            var finished = false
+            var result: String?
+        }
+
+        private let state = OSAllocatedUnfairLock(initialState: State())
 
         func install(_ continuation: CheckedContinuation<String?, Never>) {
-            lock.lock()
-            let alreadyFinished = finished
-            let value = result
-            if !alreadyFinished { self.continuation = continuation }
-            lock.unlock()
-            if alreadyFinished { continuation.resume(returning: value) }
+            let outcome = state.withLock { state -> (finished: Bool, value: String?) in
+                if !state.finished { state.continuation = continuation }
+                return (state.finished, state.result)
+            }
+            // Resumed after the lock is released.
+            if outcome.finished { continuation.resume(returning: outcome.value) }
         }
 
         func add(_ task: Task<Void, Never>) {
-            lock.lock()
-            let alreadyFinished = finished
-            if !alreadyFinished { tasks.append(task) }
-            lock.unlock()
+            let alreadyFinished = state.withLock { state -> Bool in
+                if !state.finished { state.tasks.append(task) }
+                return state.finished
+            }
             if alreadyFinished { task.cancel() }
         }
 
         func finish(_ value: String?) {
-            lock.lock()
-            guard !finished else {
-                lock.unlock()
-                return
+            let pending = state.withLock { state -> (waiter: CheckedContinuation<String?, Never>?, workers: [Task<Void, Never>])? in
+                guard !state.finished else { return nil }
+                state.finished = true
+                state.result = value
+                let pending = (state.continuation, state.tasks)
+                state.continuation = nil
+                state.tasks.removeAll()
+                return pending
             }
-            finished = true
-            result = value
-            let waiter = continuation
-            continuation = nil
-            let workers = tasks
-            tasks.removeAll()
-            lock.unlock()
-            waiter?.resume(returning: value)
-            for task in workers { task.cancel() }
+            // The first finish wins; the waiter and workers are released outside the lock.
+            guard let pending else { return }
+            pending.waiter?.resume(returning: value)
+            for task in pending.workers { task.cancel() }
         }
     }
 }

@@ -22,14 +22,32 @@
     ],
     "com.provenance.3ds": [
       { "coreIdentifier": "com.provenance.core.azahar", "reason": "Use Azahar for new 3DS games. Existing emuThreeDS save states still need emuThreeDS." }
+    ],
+    "com.provenance.genesis": [
+      { "coreIdentifier": "com.provenance.core.genplusgx", "reason": "An accurate core for Genesis and Mega Drive games." }
+    ],
+    "com.provenance.segacd": [
+      { "coreIdentifier": "com.provenance.core.genplusgx", "reason": "An accurate core for Sega CD and Mega-CD games." }
+    ],
+    "com.provenance.mastersystem": [
+      { "coreIdentifier": "com.provenance.core.genplusgx", "reason": "An accurate core for Master System games." }
+    ],
+    "com.provenance.gamegear": [
+      { "coreIdentifier": "com.provenance.core.genplusgx", "reason": "An accurate core for Game Gear games." }
+    ],
+    "com.provenance.sg1000": [
+      { "coreIdentifier": "com.provenance.core.genplusgx", "reason": "An accurate core for SG-1000 games." }
+    ],
+    "com.provenance.32X": [
+      { "coreIdentifier": "com.provenance.core.picodrive", "reason": "The core built for 32X games." }
     ]
   },
   "cores": [
     {
       "coreIdentifier": "com.provenance.core.mGBA",
       "summary": "Best GBA emulator: high accuracy, RTC, link cable, and e-Reader support.",
-      "capabilities": ["highAccuracy", "cheats", "rumble", "rewind", "runAhead"],
-      "notes": [],
+      "capabilities": ["highAccuracy", "cheats", "rumble", "rewind", "runAhead", "linkCable"],
+      "notes": ["Link cable play with another device on the same network"],
       "qualityRank": 100
     },
     {

@@ -10,6 +10,7 @@
 //
 
 import Foundation
+import os
 
 public struct PVDebugAPIRequest: Sendable {
     public let method: String
@@ -75,11 +76,11 @@ public struct PVDebugAPIResponse: Sendable {
 
 public typealias PVDebugAPIHandler = @Sendable (PVDebugAPIRequest) async -> PVDebugAPIResponse
 
-public final class PVDebugAPIRegistry: @unchecked Sendable {
+public final class PVDebugAPIRegistry: Sendable {
     public static let shared = PVDebugAPIRegistry()
 
-    private let lock = NSLock()
-    private var handlers: [String: PVDebugAPIHandler] = [:]
+    /// The registered handlers, inside the lock that guards them.
+    private let handlers = OSAllocatedUnfairLock(initialState: [String: PVDebugAPIHandler]())
 
     public init() {}
 
@@ -89,18 +90,17 @@ public final class PVDebugAPIRegistry: @unchecked Sendable {
 
     /// Register (or replace) the handler for `method path`, e.g. `GET /api/debug/screenshot`.
     public func register(_ method: String, _ path: String, handler: @escaping PVDebugAPIHandler) {
-        lock.lock(); defer { lock.unlock() }
-        handlers[Self.key(method, path)] = handler
+        let key = Self.key(method, path)
+        handlers.withLock { $0[key] = handler }
     }
 
     public func handler(method: String, path: String) -> PVDebugAPIHandler? {
-        lock.lock(); defer { lock.unlock() }
-        return handlers[Self.key(method, path)]
+        let key = Self.key(method, path)
+        return handlers.withLock { $0[key] }
     }
 
     /// Sorted `"METHOD /path"` list, served by `GET /api/debug`.
     public var routes: [String] {
-        lock.lock(); defer { lock.unlock() }
-        return handlers.keys.sorted()
+        handlers.withLock { Array($0.keys) }.sorted()
     }
 }

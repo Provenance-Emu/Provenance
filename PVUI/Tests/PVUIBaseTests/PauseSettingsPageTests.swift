@@ -29,6 +29,7 @@ struct PauseSettingsPageTests {
         #expect(Set(seen) == Set(PauseLaunchSaveMode.allCases))
     }
 
+    @MainActor
     @Test("Every switch cell maps to a setting, and the launch cell offers each mode")
     func cells() {
         let cells = PauseTileMenuViewModel.preferenceCells()

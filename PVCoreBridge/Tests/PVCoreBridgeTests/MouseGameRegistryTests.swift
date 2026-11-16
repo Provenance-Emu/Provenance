@@ -366,4 +366,31 @@ final class MouseGameRegistryTests: XCTestCase {
             MouseGameRegistry.shared.gameSupportsMouse(systemIdentifier: .Dreamcast, md5: nil, title: "Floigan Brothers")
         )
     }
+
+    // MARK: - Concurrency
+
+    /// Cores register from their own load paths while the UI asks about the running game.
+    func testRegistrationAndQueriesFromManyThreads() {
+        final class LateProvider: MouseGamesProvider {
+            static var mouseAlwaysSupportedSystems: Set<SystemIdentifier> { [] }
+            static var mouseConditionalSystems: Set<SystemIdentifier> { [.GameGear] }
+            static var knownMouseGameMD5s: Set<String> { ["00112233445566778899AABBCCDDEEFF"] }
+            static var knownMouseGameTitlePatterns: [SystemIdentifier: [String]] { [.GameGear: ["late mouse game"]] }
+        }
+        let registry = MouseGameRegistry.shared
+
+        DispatchQueue.concurrentPerform(iterations: 2_000) { iteration in
+            switch iteration % 4 {
+            case 0: registry.registerProvider(LateProvider.self)
+            case 1: registry.registerTitlePattern("Pattern \(iteration)", forSystem: .GameGear)
+            case 2: XCTAssertTrue(registry.gameSupportsMouse(systemIdentifier: .SNES, md5: nil, title: "Mario Paint"))
+            default: XCTAssertTrue(registry.systemHasAnyMouseSupport(.SNES))
+            }
+        }
+
+        XCTAssertTrue(registry.gameSupportsMouse(systemIdentifier: .GameGear, md5: "00112233445566778899aabbccddeeff", title: nil))
+        XCTAssertTrue(registry.gameSupportsMouse(systemIdentifier: .GameGear, md5: nil, title: "Late Mouse Game"))
+        XCTAssertTrue(registry.gameSupportsMouse(systemIdentifier: .GameGear, md5: nil, title: "pattern 1997"))
+        XCTAssertFalse(registry.gameSupportsMouse(systemIdentifier: .GameGear, md5: nil, title: "Sonic"))
+    }
 }

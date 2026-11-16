@@ -18,8 +18,8 @@ import PVSlangRuntime
 /// queue and the chain is swapped in once ready. Until then callers draw without
 /// the filter.
 ///
-/// Thread-safe: state is guarded by a lock, so it can be driven from the main
-/// thread (`PVMetalViewController`) or from a core's own render thread
+/// Thread-safe: state is guarded by a lock, taken only through `withLock`, so it can be driven
+/// from the main thread (`PVMetalViewController`) or from a core's own render thread
 /// (`ShaderPostProcessor`). Calls are expected from one thread at a time.
 public final class SlangFilterRenderer: @unchecked Sendable {
     private let device: MTLDevice
@@ -78,80 +78,80 @@ public final class SlangFilterRenderer: @unchecked Sendable {
     ///   with a different `key` (or with none) is reloaded.
     @discardableResult
     public func prepare(_ entry: ShaderCatalogEntry, textures: ShaderTextureOverrides? = nil) -> Bool {
-        lock.lock()
-        defer { lock.unlock() }
-        if _loadedID == entry.id, loadedTextureKey == textures?.key { return true }
-        let isLoading = loadingID == entry.id && loadingTextureKey == textures?.key
-        guard !isLoading, !_failedIDs.contains(entry.id), let directory = entry.directory else {
+        lock.withLock {
+            if _loadedID == entry.id, loadedTextureKey == textures?.key { return true }
+            let isLoading = loadingID == entry.id && loadingTextureKey == textures?.key
+            guard !isLoading, !_failedIDs.contains(entry.id), let directory = entry.directory else {
+                return false
+            }
+            loadingID = entry.id
+            loadingTextureKey = textures?.key
+            generation += 1
+            let token = generation
+            let device = device
+            let id = entry.id
+            loadQueue.async { [weak self] in
+                let result: Result<ChainBox, Error> = Result {
+                    let chain = try FilterChain(device: device)
+                    let container = try DirectoryCompiledShaderContainer(directory: directory)
+                    if let textures {
+                        try chain.setCompiledShader(OverridingContainer(base: container, textures: textures.textures))
+                    } else {
+                        try chain.setCompiledShader(container)
+                    }
+                    guard chain.hasShader else { throw LoadError.noPasses }
+                    return ChainBox(chain: chain)
+                }
+                self?.finishLoad(result, id: id, textureKey: textures?.key, token: token)
+            }
             return false
         }
-        loadingID = entry.id
-        loadingTextureKey = textures?.key
-        generation += 1
-        let token = generation
-        let device = device
-        let id = entry.id
-        loadQueue.async { [weak self] in
-            let result: Result<ChainBox, Error> = Result {
-                let chain = try FilterChain(device: device)
-                let container = try DirectoryCompiledShaderContainer(directory: directory)
-                if let textures {
-                    try chain.setCompiledShader(OverridingContainer(base: container, textures: textures.textures))
-                } else {
-                    try chain.setCompiledShader(container)
-                }
-                guard chain.hasShader else { throw LoadError.noPasses }
-                return ChainBox(chain: chain)
-            }
-            self?.finishLoad(result, id: id, textureKey: textures?.key, token: token)
-        }
-        return false
     }
 
     private func finishLoad(_ result: Result<ChainBox, Error>, id: ShaderID, textureKey: String?, token: Int) {
-        lock.lock()
-        defer { lock.unlock() }
-        guard token == generation else { return }
-        loadingID = nil
-        loadingTextureKey = nil
-        switch result {
-        case .success(let box):
-            chain = box.chain
-            _loadedID = id
-            loadedTextureKey = textureKey
-            appliedParameterRevision = nil
-            ILOG("Shader library: loaded \(id)")
-            if let onReady {
-                Task { @MainActor in onReady() }
+        lock.withLock {
+            guard token == generation else { return }
+            loadingID = nil
+            loadingTextureKey = nil
+            switch result {
+            case .success(let box):
+                chain = box.chain
+                _loadedID = id
+                loadedTextureKey = textureKey
+                appliedParameterRevision = nil
+                ILOG("Shader library: loaded \(id)")
+                if let onReady {
+                    Task { @MainActor in onReady() }
+                }
+            case .failure(let error):
+                _failedIDs.insert(id)
+                ELOG("Shader library: \(id) failed to load: \(error)")
             }
-        case .failure(let error):
-            _failedIDs.insert(id)
-            ELOG("Shader library: \(id) failed to load: \(error)")
         }
     }
 
     /// Drops the loaded chain (for example when no library filter is selected).
     public func unload() {
-        lock.lock()
-        defer { lock.unlock() }
-        generation += 1
-        chain = nil
-        _loadedID = nil
-        loadingID = nil
-        loadedTextureKey = nil
-        loadingTextureKey = nil
-        appliedParameterRevision = nil
+        lock.withLock {
+            generation += 1
+            chain = nil
+            _loadedID = nil
+            loadingID = nil
+            loadedTextureKey = nil
+            loadingTextureKey = nil
+            appliedParameterRevision = nil
+        }
     }
 
     /// Pushes parameter values into the chain when `revision` changed since the last call.
     public func applyParameters(revision: Int, value: (ShaderParameterDescriptor) -> Float,
                                 parameters: [ShaderParameterDescriptor]) {
-        lock.lock()
-        defer { lock.unlock() }
-        guard let chain, appliedParameterRevision != revision else { return }
-        appliedParameterRevision = revision
-        for parameter in parameters where !parameter.isHeading {
-            chain.setValue(CGFloat(value(parameter)), forParameterName: parameter.name)
+        lock.withLock {
+            guard let chain, appliedParameterRevision != revision else { return }
+            appliedParameterRevision = revision
+            for parameter in parameters where !parameter.isHeading {
+                chain.setValue(CGFloat(value(parameter)), forParameterName: parameter.name)
+            }
         }
     }
 
@@ -167,21 +167,21 @@ public final class SlangFilterRenderer: @unchecked Sendable {
                        contentRect: CGRect,
                        flipVertically: Bool,
                        linear: Bool) -> Bool {
-        lock.lock()
-        defer { lock.unlock() }
-        guard let chain else { return false }
-        chain.finalBlitLinear = linear
-        chain.drawableSize = contentRect.size
-        chain.outputOffset = contentRect.origin
-        chain.setSourceRect(CGRect(x: 0, y: 0, width: source.width, height: source.height),
-                            aspect: contentRect.size)
-        let pass = MTLRenderPassDescriptor()
-        pass.colorAttachments[0].texture = target
-        pass.colorAttachments[0].loadAction = .clear
-        pass.colorAttachments[0].storeAction = .store
-        pass.colorAttachments[0].clearColor = MTLClearColor(red: 0, green: 0, blue: 0, alpha: 1)
-        chain.render(sourceTexture: source, commandBuffer: commandBuffer, renderPassDescriptor: pass,
-                     flipVertically: flipVertically)
-        return true
+        lock.withLock {
+            guard let chain else { return false }
+            chain.finalBlitLinear = linear
+            chain.drawableSize = contentRect.size
+            chain.outputOffset = contentRect.origin
+            chain.setSourceRect(CGRect(x: 0, y: 0, width: source.width, height: source.height),
+                                aspect: contentRect.size)
+            let pass = MTLRenderPassDescriptor()
+            pass.colorAttachments[0].texture = target
+            pass.colorAttachments[0].loadAction = .clear
+            pass.colorAttachments[0].storeAction = .store
+            pass.colorAttachments[0].clearColor = MTLClearColor(red: 0, green: 0, blue: 0, alpha: 1)
+            chain.render(sourceTexture: source, commandBuffer: commandBuffer, renderPassDescriptor: pass,
+                         flipVertically: flipVertically)
+            return true
+        }
     }
 }
