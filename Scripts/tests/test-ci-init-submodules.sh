@@ -106,6 +106,18 @@ else
     fail "cached tree: rc=$rc output: $out"
 fi
 
+# A job killed mid-checkout leaves index.lock in a cached module, and every later
+# build on that runner failed on it (2026-11-13, Cores/Azahar/azahar).
+touch .git/modules/c/index.lock
+out="$(bash "$INIT_SCRIPT" 2>&1)"
+rc=$?
+if [ "$rc" -eq 0 ] && [ ! -e .git/modules/c/index.lock ] && grep -qF "Submodule init complete." <<< "$out"; then
+    pass "stale lock: script removes it and succeeds"
+else
+    fail "stale lock: rc=$rc output: $out"
+fi
+expect_contains "stale lock is named in the log" "$out" "Removing stale lock: .git/modules/c/index.lock"
+
 git submodule deinit -q -f a "d e/f"
 out="$(verify)"
 expect_contains "deinited submodule is reported" "$out" "a (not cloned)"

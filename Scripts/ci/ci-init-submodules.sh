@@ -16,6 +16,11 @@
 #   * An aborted pass leaves submodules registered with an EMPTY worktree. A plain
 #     `git submodule update` sees the recorded SHA and skips the checkout, so
 #     --force is required to recover.
+#   * A job killed mid-checkout (cancelled run, runner restart) leaves
+#     `index.lock` inside a cached `.git/modules/<path>`. On a self-hosted runner
+#     the workspace survives, so every later build failed with "Unable to create
+#     ...index.lock: File exists" until someone deleted it by hand (2026-11-13,
+#     Cores/Azahar/azahar, three days of failed TestFlight builds).
 #   * A third-party host has an outage mid-clone (gitlab.com returned HTTP 500 for
 #     Dolphin's bzip2 dependency). Nothing here can fix that, but the build must
 #     fail HERE, naming the submodule, instead of proceeding and dying six minutes
@@ -87,6 +92,19 @@ incomplete_submodules() {
     done
 }
 
+# Deletes lock files a killed job left under .git. A runner runs one job per
+# workspace, so when this script starts no git process owns them. Only git's own
+# locks end in ".lock": it refuses ref names with that suffix.
+remove_stale_locks() {
+    local lock
+    [ -d .git ] || return 0
+    while IFS= read -r lock; do
+        [ -n "$lock" ] || continue
+        echo "::warning::Removing stale lock: $lock"
+        rm -f -- "$lock"
+    done < <(find .git -type f -name '*.lock' 2>/dev/null)
+}
+
 report_and_exit() {
     local missing="$1" rc="$2"
     echo "::error::Submodules are still not checked out after 3 attempts. The most" \
@@ -105,6 +123,8 @@ report_and_exit() {
 
 main() {
     local rc missing delay="${CI_SUBMODULE_RETRY_DELAY:-15}"
+
+    remove_stale_locks
 
     # Whether the cache actually restored anything, decided from the filesystem
     # rather than from actions/cache's `cache-hit`. That output is only true for an
