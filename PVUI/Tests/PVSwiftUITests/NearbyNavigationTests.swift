@@ -153,14 +153,22 @@ final class NearbyNavigationTests: XCTestCase {
     }
 
     func testAddServerFieldsFollowTheTokenSwitch() {
-        XCTAssertEqual(NearbyCursor.addServer(usesToken: true, showsHTTPConsent: true).rows.flatMap(\.items), [
-            NearbyCursor.address, NearbyCursor.useToken, NearbyCursor.token, NearbyCursor.allowPairingHTTP,
-            NearbyCursor.requestAccess, NearbyCursor.cancel, NearbyCursor.add
-        ])
-        XCTAssertEqual(NearbyCursor.addServer(usesToken: false, showsHTTPConsent: false).rows.flatMap(\.items), [
-            NearbyCursor.address, NearbyCursor.useToken, NearbyCursor.username, NearbyCursor.password,
-            NearbyCursor.requestAccess, NearbyCursor.cancel, NearbyCursor.add
-        ])
+        // Only iOS can scan a server's QR code, so only iOS has the row.
+        #if os(iOS)
+        let scan = [NearbyCursor.scanServerQR]
+        #else
+        let scan: [String] = []
+        #endif
+        XCTAssertEqual(
+            NearbyCursor.addServer(usesToken: true, showsHTTPConsent: true).rows.flatMap(\.items),
+            [NearbyCursor.address, NearbyCursor.useToken, NearbyCursor.token] + scan
+                + [NearbyCursor.allowPairingHTTP, NearbyCursor.requestAccess, NearbyCursor.cancel, NearbyCursor.add]
+        )
+        XCTAssertEqual(
+            NearbyCursor.addServer(usesToken: false, showsHTTPConsent: false).rows.flatMap(\.items),
+            [NearbyCursor.address, NearbyCursor.useToken, NearbyCursor.username, NearbyCursor.password] + scan
+                + [NearbyCursor.requestAccess, NearbyCursor.cancel, NearbyCursor.add]
+        )
     }
 
     // MARK: Game rows
