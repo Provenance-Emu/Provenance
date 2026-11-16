@@ -112,6 +112,8 @@ struct PauseTileLayoutTests {
         #expect(height([(titled: false, count: 4)]) == 70)
         #expect(height([(titled: false, count: 5)]) == 146)
         // A titled group adds its title and gap; the next group adds a divider with spacing around it.
-        #expect(height([(titled: true, count: 3), (titled: true, count: 1)]) == (20 + 70) + 25 + (20 + 70))
+        // Typed first: `#expect` reports a CGFloat and a sum of integer literals as unequal.
+        let twoTitledGroups: CGFloat = (20 + 70) + 25 + (20 + 70)
+        #expect(height([(titled: true, count: 3), (titled: true, count: 1)]) == twoTitledGroups)
     }
 }
