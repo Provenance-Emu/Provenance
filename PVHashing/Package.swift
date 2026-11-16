@@ -47,7 +47,7 @@ let package = Package(
         .testTarget(
             name: "PVHashingTests",
             dependencies: ["PVHashing"],
-            resources: [ .copy("Resources/testFile.txt") ]
+            resources: [ .copy("Resources/testFile.txt"), .copy("Resources/CHD") ]
         )
     ],
     swiftLanguageModes: [.v5, .v6],
