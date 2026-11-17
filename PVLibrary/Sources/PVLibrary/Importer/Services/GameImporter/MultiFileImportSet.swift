@@ -213,10 +213,12 @@ extension MultiFileIndexReferences {
     static let gdiDataTrackType = 4
 
     /// The referenced file whose content identifies the game (see `MultiFileSetIdentity`), as written:
-    /// - cue: the first `FILE` holding a data track (`TRACK nn MODE1/…`, `MODE2/…` or `CDI/…`);
+    /// - cue: the first `FILE` holding a data track (`TRACK nn MODE1/…`, `MODE2/…` or `CDI/…`).
+    ///   A sheet with no data track but a second session (`REM SESSION 02`: a Jaguar CD)
+    ///   gives the `FILE` of that session's first track;
     /// - gdi: the last data track (type 4), the high-density area with the game's IP.BIN;
     /// - m3u: the first disc.
-    /// nil when there is no such reference (an audio-only cue, an empty playlist).
+    /// nil when there is no such reference (a one-session audio cue, an empty playlist).
     public static func identityReference(of kind: MultiFileIndexKind, contents: String) -> String? {
         switch kind {
         case .cue: return cueDataTrackFile(in: contents)
@@ -225,22 +227,39 @@ extension MultiFileIndexReferences {
         }
     }
 
+    /// The session a Jaguar CD's game starts in. Its tracks are all audio, so the sheet has
+    /// no data track; libretrodb and RetroArch's scanner identify the disc by this session's
+    /// first track.
+    static let cueGameSessionOfAudioDisc = 2
+
     private static func cueDataTrackFile(in contents: String) -> String? {
         let dataModes = ["MODE1", "MODE2", "CDI"]
         var currentFile: String?
+        var inGameSession = false
+        var gameSessionFile: String?
         for line in lines(of: contents) {
             if let found = cueReference(in: line.text) {
                 currentFile = found.name
                 continue
             }
             let words = line.text.split(whereSeparator: \.isWhitespace)
-            guard words.count >= 3, words[0].uppercased() == "TRACK" else { continue }
-            let mode = words[2].uppercased()
-            if dataModes.contains(where: { mode.hasPrefix($0) }), let currentFile {
-                return currentFile
+            guard words.count >= 3 else { continue }
+            switch words[0].uppercased() {
+            case "REM" where words[1].uppercased() == "SESSION":
+                inGameSession = Int(words[2]) == cueGameSessionOfAudioDisc
+            case "TRACK":
+                let mode = words[2].uppercased()
+                if dataModes.contains(where: { mode.hasPrefix($0) }), let currentFile {
+                    return currentFile
+                }
+                if inGameSession, gameSessionFile == nil {
+                    gameSessionFile = currentFile
+                }
+            default:
+                continue
             }
         }
-        return nil
+        return gameSessionFile
     }
 
     private static func gdiHighDensityTrackFile(in contents: String) -> String? {

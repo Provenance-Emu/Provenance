@@ -56,6 +56,68 @@ struct MultiFileSetIdentityReferenceTests {
         #expect(reference(.cue, "FILE \"cdi.bin\" BINARY\nTRACK 01 CDI/2352\n") == "cdi.bin")
     }
 
+    // Jaguar CD: every track is audio and the game starts in the second session.
+    @Test func audioOnlyCueWithASecondSessionTakesThatSessionsFirstTrack() {
+        let jaguarCD = """
+        REM SESSION 01
+        FILE "Game (Track 01).bin" BINARY
+          TRACK 01 AUDIO
+            INDEX 01 00:00:00
+        REM LEAD-OUT 00:10:00
+        REM SESSION 02
+        REM LEAD-IN 01:00:00
+        REM PREGAP 00:02:00
+        FILE "Game (Track 02).bin" BINARY
+          TRACK 02 AUDIO
+            INDEX 01 00:00:00
+        FILE "Game (Track 03).bin" BINARY
+          TRACK 03 AUDIO
+            INDEX 01 00:00:00
+        """
+        #expect(reference(.cue, jaguarCD) == "Game (Track 02).bin")
+        #expect(reference(.cue, "file a.bin binary\ntrack 1 audio\nrem session 2\nfile b.bin binary\ntrack 2 audio\n") == "b.bin")
+    }
+
+    @Test func aDataTrackIsTakenBeforeTheSecondSessionsFirstTrack() {
+        // Enhanced CD: music in session 1, the data track later in session 2.
+        let enhanced = """
+        REM SESSION 01
+        FILE "Disc (Track 1).bin" BINARY
+          TRACK 01 AUDIO
+        REM SESSION 02
+        FILE "Disc (Track 2).bin" BINARY
+          TRACK 02 AUDIO
+        FILE "Disc (Track 3).bin" BINARY
+          TRACK 03 MODE2/2352
+        """
+        #expect(reference(.cue, enhanced) == "Disc (Track 3).bin")
+
+        let dataFirst = """
+        REM SESSION 01
+        FILE "Disc (Track 1).bin" BINARY
+          TRACK 01 MODE1/2352
+        REM SESSION 02
+        FILE "Disc (Track 2).bin" BINARY
+          TRACK 02 AUDIO
+        """
+        #expect(reference(.cue, dataFirst) == "Disc (Track 1).bin")
+    }
+
+    @Test func aThirdSessionIsNotTheGameSession() {
+        let threeSessions = """
+        FILE "a.bin" BINARY
+          TRACK 01 AUDIO
+        REM SESSION 02
+        FILE "b.bin" BINARY
+          TRACK 02 AUDIO
+        REM SESSION 03
+        FILE "c.bin" BINARY
+          TRACK 03 AUDIO
+        """
+        #expect(reference(.cue, threeSessions) == "b.bin")
+        #expect(reference(.cue, "FILE \"a.bin\" BINARY\nTRACK 01 AUDIO\nREM SESSION 03\nFILE \"c.bin\" BINARY\nTRACK 02 AUDIO\n") == nil)
+    }
+
     @Test func audioOnlyCueHasNoIdentityTrack() {
         #expect(reference(.cue, "FILE \"a.wav\" WAVE\n  TRACK 01 AUDIO\nFILE \"b.wav\" WAVE\n  TRACK 02 AUDIO\n") == nil)
         #expect(reference(.cue, "TRACK 01 MODE1/2352\n") == nil)

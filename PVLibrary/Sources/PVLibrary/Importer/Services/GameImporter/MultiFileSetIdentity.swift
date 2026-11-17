@@ -10,7 +10,10 @@
 //  byte for byte (most GD-ROM dumps have the same track table), so the second game was
 //  refused as a duplicate. For games imported from now on, a set's identity is:
 //
-//  - cue: the MD5 of the first FILE that holds a data track (MODE1, MODE2 or CDI);
+//  - cue: the MD5 of the first FILE that holds a data track (MODE1, MODE2 or CDI). A sheet
+//    with no data track but a second session (a Jaguar CD: every track is audio and the
+//    game starts in session 2) uses the FILE of that session's first track, the one
+//    libretrodb hashes for Jaguar CD;
 //  - gdi: the MD5 of the last data track (type 4), the high-density area with the
 //    game's IP.BIN (the track `GdiDiscSerialPlugin` reads). Track 1, the low-density
 //    area, is not unique: in the bundled ShiraGame redump data 8 Track 1 hashes are
