@@ -182,6 +182,8 @@ extension PVThinLibretroCore {
             ILOG("[INPUT-DIAG] pollControllers: first poll post-resume, inputPollBlock=\(bridgeAlive ? "valid" : "nil"), core.isRunning=\(isRunning), touchViewController=\(touchViewController != nil)")
         }
 
+        advancePendingButtonPulse()
+
         // Snapshot responder-asserted joypad mask for this poll cycle. OR'd into
         // every per-button `setButton(...)` below so on-screen / turbo presses
         // asserted via the responder protocol aren't clobbered by physical-pad
@@ -406,6 +408,35 @@ extension PVThinLibretroCore {
             }
         }
         _bridge.setButton(btn.rawValue, pressed: false, forPlayer: UInt32(player))
+    }
+
+    /// Starts a press that `pollControllers()` holds for the pulse's frames and then
+    /// releases. A pulse already running is released first, so its button never sticks.
+    func queueButtonPulse(_ pulse: ThinButtonPulse) {
+        let replaced = _pendingButtonPulseLock.withLock { pending -> ThinButtonPulse? in
+            let old = pending
+            pending = pulse
+            return old
+        }
+        if let replaced, replaced.button != pulse.button {
+            releaseButton(replaced.button, forPlayer: ThinButtonPulse.player)
+        }
+    }
+
+    /// One frame of the pending pulse, if there is one. Emulation thread, once per poll.
+    fileprivate func advancePendingButtonPulse() {
+        let step = _pendingButtonPulseLock.withLock { pending -> (ThinButtonPulse.Step, RetroJoypad)? in
+            guard var pulse = pending else { return nil }
+            let step = pulse.advance()
+            pending = pulse.isFinished ? nil : pulse
+            return (step, pulse.button)
+        }
+        guard let (step, button) = step else { return }
+        switch step {
+        case .press:   pressButton(button, forPlayer: ThinButtonPulse.player)
+        case .hold:    break
+        case .release: releaseButton(button, forPlayer: ThinButtonPulse.player)
+        }
     }
 
     /// Set analog stick axis value (CGFloat -1..1 range mapped to libretro int16).

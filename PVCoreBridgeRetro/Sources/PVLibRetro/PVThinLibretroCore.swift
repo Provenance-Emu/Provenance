@@ -143,6 +143,11 @@ class PVThinLibretroCore: PVEmulatorCore, @unchecked Sendable {
     /// reads come from the emulation thread (`pollControllers`).
     @nonobjc let _responderJoypadMaskLock = OSAllocatedUnfairLock<[UInt16]>(initialState: [0, 0, 0, 0])
 
+    /// A button press asked for by a pause-menu action, counted down in emulated frames
+    /// by `pollControllers()` (see `ThinButtonPulse`). Set on the main thread, advanced
+    /// on the emulation thread.
+    @nonobjc let _pendingButtonPulseLock = OSAllocatedUnfairLock<ThinButtonPulse?>(initialState: nil)
+
     // MARK: - Mouse / pointer input state
     /// Previous normalized cursor position (0–1 range) used to compute per-event deltas
     /// for RETRO_DEVICE_MOUSE systems. Updated by `mouseMoved(atPoint:)`.
@@ -383,6 +388,7 @@ class PVThinLibretroCore: PVEmulatorCore, @unchecked Sendable {
         _responderJoypadMaskLock.withLock { mask in
             for i in 0..<mask.count { mask[i] = 0 }
         }
+        _pendingButtonPulseLock.withLock { $0 = nil }
         super.stopEmulation()
     }
 
