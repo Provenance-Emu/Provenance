@@ -56,20 +56,20 @@ final class AspectRatioOverrideTests: XCTestCase {
         XCTAssertNil(AspectRatioOverride.stretch.aspectRatioValue)
     }
 
-    func testRatio4_3Value() {
-        XCTAssertEqual(AspectRatioOverride.ratio_4_3.aspectRatioValue, 4.0 / 3.0, accuracy: 0.0001)
+    func testRatio4_3Value() throws {
+        XCTAssertEqual(try XCTUnwrap(AspectRatioOverride.ratio_4_3.aspectRatioValue), 4.0 / 3.0, accuracy: 0.0001)
     }
 
-    func testRatio16_9Value() {
-        XCTAssertEqual(AspectRatioOverride.ratio_16_9.aspectRatioValue, 16.0 / 9.0, accuracy: 0.0001)
+    func testRatio16_9Value() throws {
+        XCTAssertEqual(try XCTUnwrap(AspectRatioOverride.ratio_16_9.aspectRatioValue), 16.0 / 9.0, accuracy: 0.0001)
     }
 
-    func testRatio1_1Value() {
-        XCTAssertEqual(AspectRatioOverride.ratio_1_1.aspectRatioValue, 1.0, accuracy: 0.0001)
+    func testRatio1_1Value() throws {
+        XCTAssertEqual(try XCTUnwrap(AspectRatioOverride.ratio_1_1.aspectRatioValue), 1.0, accuracy: 0.0001)
     }
 
-    func testRatio8_7Value() {
-        XCTAssertEqual(AspectRatioOverride.ratio_8_7.aspectRatioValue, 8.0 / 7.0, accuracy: 0.0001)
+    func testRatio8_7Value() throws {
+        XCTAssertEqual(try XCTUnwrap(AspectRatioOverride.ratio_8_7.aspectRatioValue), 8.0 / 7.0, accuracy: 0.0001)
     }
 
     // MARK: - isWidescreen

@@ -17,7 +17,8 @@ final class GameMatchSourceTests: XCTestCase {
     }
 
     func testMatchSourceFromValidRawValues() {
-        XCTAssertEqual(GameMatchSource(rawValue: 0), .none)
+        // Spelled out: a bare `.none` here is `Optional.none`, which this would never equal.
+        XCTAssertEqual(GameMatchSource(rawValue: 0), GameMatchSource.none)
         XCTAssertEqual(GameMatchSource(rawValue: 1), .md5)
         XCTAssertEqual(GameMatchSource(rawValue: 2), .nameLookup)
         XCTAssertEqual(GameMatchSource(rawValue: 3), .userImported)
