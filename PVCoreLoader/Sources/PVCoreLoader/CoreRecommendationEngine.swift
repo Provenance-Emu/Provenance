@@ -70,7 +70,8 @@ public final class CoreRecommendationEngine: Sendable {
 
     public static let shared = CoreRecommendationEngine()
 
-    private static let enrichmentManifest = loadEnrichmentManifest()
+    /// The bundled `CoreCapabilities.json` on its own, without the Core.plist layer. Internal for tests.
+    static let enrichmentManifest = loadEnrichmentManifest()
 
     /// Looks up the first curated default present in the caller's available core list.
     public static func pickerDefault(for systemIdentifier: String, availableCoreIdentifiers: Set<String>) -> CorePickerDefault? {

@@ -40,6 +40,15 @@
     ],
     "com.provenance.32X": [
       { "coreIdentifier": "com.provenance.core.picodrive", "reason": "The core built for 32X games." }
+    ],
+    "com.provenance.psp": [
+      { "coreIdentifier": "com.provenance.core.ppsspp", "reason": "The native PPSSPP core. Start here for PSP games." }
+    ],
+    "com.provenance.gamecube": [
+      { "coreIdentifier": "com.provenance.core.dolphin", "reason": "The native Dolphin core. The libretro build needs JIT." }
+    ],
+    "com.provenance.wii": [
+      { "coreIdentifier": "com.provenance.core.dolphin", "reason": "The native Dolphin core. The libretro build needs JIT." }
     ]
   },
   "cores": [
@@ -114,32 +123,11 @@
       "qualityRank": 80
     },
     {
-      "coreIdentifier": "com.provenance.core.MelonDS",
-      "summary": "High-accuracy DS emulator with real microphone, local wireless, and camera support.",
-      "capabilities": ["realMicrophone", "cameraSupport", "localWireless", "highAccuracy", "cheats", "enhancedResolution"],
-      "notes": ["Alpha — may be disabled in some build variants", "Best choice for games using microphone or camera", "Supports local wireless multiplayer"],
-      "qualityRank": 100
-    },
-    {
-      "coreIdentifier": "com.provenance.core.desmume2015",
-      "summary": "Legacy DS emulator. Better compatibility with some older homebrew.",
-      "capabilities": ["cheats"],
-      "notes": ["Alpha — may be disabled in some build variants", "Older engine — melonDS is preferred for most titles", "No real microphone or local wireless"],
-      "qualityRank": 55
-    },
-    {
       "coreIdentifier": "com.provenance.core.mupen64plus",
       "summary": "Classic N64 emulator with Transfer Pak and rumble support.",
       "capabilities": ["rumble", "transferPak", "cheats"],
       "notes": ["JIT optional for better performance"],
       "qualityRank": 80
-    },
-    {
-      "coreIdentifier": "com.provenance.core.mupen64plusnx",
-      "summary": "Mupen64Plus-Next. Improved accuracy and GLideN64 graphics plugin.",
-      "capabilities": ["rumble", "transferPak", "cheats", "enhancedResolution"],
-      "notes": ["Better graphics than classic Mupen64Plus"],
-      "qualityRank": 90
     },
     {
       "coreIdentifier": "mupen64plus.next.libretro.framework",
@@ -154,20 +142,6 @@
       "capabilities": ["highAccuracy", "testRomAccurate", "requiresJIT", "retroAchievements"],
       "notes": ["Requires JIT for full speed", "Not available on App Store"],
       "qualityRank": 85
-    },
-    {
-      "coreIdentifier": "com.provenance.core.duckstation",
-      "summary": "DuckStation PS1 emulator. Hardware-accurate with enhanced resolution.",
-      "capabilities": ["highAccuracy", "enhancedResolution", "cheats", "rewind", "runAhead", "cdAudio"],
-      "notes": ["Alpha — not yet enabled in all build variants"],
-      "qualityRank": 100
-    },
-    {
-      "coreIdentifier": "com.provenance.core.PCSXRearmed",
-      "summary": "Lightweight PS1 emulator. Fastest option for low-end devices.",
-      "capabilities": ["highPerformance", "cdAudio"],
-      "notes": ["Lower accuracy than DuckStation", "Best for devices with limited CPU"],
-      "qualityRank": 65
     },
     {
       "coreIdentifier": "mednafen.psx.hw.libretro.framework",

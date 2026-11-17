@@ -65,11 +65,11 @@ final class TestCoreRecommendationEngine: XCTestCase {
 
     func testTitleContainsMatchSurfacesCapabilityTip() {
         let recs = engine.recommendations(
-            gameTitle: "Nintendogs",
-            systemIdentifier: "com.provenance.ds",
+            gameTitle: "Yoshi's Safari",
+            systemIdentifier: "com.provenance.snes",
             availableCoreIdentifiers: [
-                "com.provenance.core.MelonDS",
-                "com.provenance.core.desmume2015"
+                "bsnes.hd.beta.libretro.framework",   // no light gun
+                "com.provenance.core.snes9x"
             ]
         )
 
@@ -78,37 +78,61 @@ final class TestCoreRecommendationEngine: XCTestCase {
             return
         }
 
-        // melonDS has realMicrophone capability; should be surfaced
-        XCTAssertEqual(best.coreIdentifier, "com.provenance.core.MelonDS")
-        XCTAssertTrue(best.highlightedCapabilities.contains(.realMicrophone))
+        // The game wants the Super Scope, and only Snes9x declares a light gun here.
+        XCTAssertEqual(best.coreIdentifier, "com.provenance.core.snes9x")
+        XCTAssertTrue(best.highlightedCapabilities.contains(.lightgunSupport))
         XCTAssertNotNil(best.recommendationTip)
+    }
+
+    /// The DS microphone rules stay, but the only core that declared a microphone (native
+    /// melonDS) was pruned and melonDS DS has not been checked on a device. A tip must not
+    /// tell the player to pick a core that no shipped core is.
+    func testNoMicrophoneTipWhileNoShippedCoreDeclaresOne() {
+        let recs = engine.recommendations(
+            gameTitle: "Nintendogs",
+            systemIdentifier: "com.provenance.ds",
+            availableCoreIdentifiers: ["melondsds.libretro.framework", "melonds.libretro.framework"]
+        )
+
+        XCTAssertEqual(recs.count, 2)
+        XCTAssertTrue(recs.allSatisfy { $0.highlightedCapabilities.isEmpty })
+        XCTAssertTrue(recs.allSatisfy { $0.recommendationTip == nil })
+    }
+
+    /// Cores removed from the app must not linger in the bundled data.
+    func testPrunedCoresHaveNoBundledMetadata() {
+        for pruned in ["com.provenance.core.MelonDS", "com.provenance.core.desmume2015",
+                       "com.provenance.core.mupen64plusnx", "com.provenance.core.duckstation",
+                       "com.provenance.core.PCSXRearmed"] {
+            XCTAssertNil(engine.capabilityMetadata(for: pruned), pruned)
+        }
     }
 
     // MARK: - System-level recommendation
 
     func testSystemIdentifierMatchRanksHighAccuracyCoreFirst() {
         let recs = engine.recommendations(
-            gameTitle: "Some PS1 Game",
-            systemIdentifier: "com.provenance.psx",
+            gameTitle: "Some GBA Game",
+            systemIdentifier: "com.provenance.gba",
             availableCoreIdentifiers: [
-                "com.provenance.core.PCSXRearmed",   // lower rank
-                "com.provenance.core.duckstation"    // higher rank
+                "com.provenance.core.visualboyadvance",   // lower rank, not high accuracy
+                "com.provenance.core.mGBA"                // higher rank, high accuracy
             ]
         )
 
         XCTAssertEqual(recs.count, 2)
-        XCTAssertEqual(recs.first?.coreIdentifier, "com.provenance.core.duckstation")
+        XCTAssertEqual(recs.first?.coreIdentifier, "com.provenance.core.mGBA")
     }
 
     // MARK: - Recommendation rank labels
 
     func testBestCoreReceivesRecommendedBadge() {
         let recs = engine.recommendations(
-            gameTitle: "Pokemon Black",
-            systemIdentifier: "com.provenance.ds",
+            gameTitle: "Pokemon Emerald",
+            systemIdentifier: "com.provenance.gba",
             availableCoreIdentifiers: [
-                "com.provenance.core.MelonDS",
-                "com.provenance.core.desmume2015"
+                "com.provenance.core.mGBA",
+                "com.provenance.core.visualboyadvance"
             ]
         )
 
@@ -158,6 +182,37 @@ final class TestCoreRecommendationEngine: XCTestCase {
         XCTAssertEqual(CoreRecommendationEngine.pickerDefault(for: "com.provenance.32X", availableCoreIdentifiers: available)?.coreIdentifier,
                        picoDrive)
         XCTAssertNil(CoreRecommendationEngine.pickerDefault(for: "com.provenance.32X", availableCoreIdentifiers: [genesisPlus]))
+    }
+
+    /// Systems whose native core is the one Provenance ships and extends; the libretro
+    /// builds of both need JIT or are the fallback.
+    func testBundledPickerDefaultsCoverPSPAndDolphinSystems() {
+        let ppsspp = "com.provenance.core.ppsspp"
+        let dolphin = "com.provenance.core.dolphin"
+        let available: Set<String> = [ppsspp, "ppsspp.libretro.framework", dolphin, "dolphin.libretro.framework"]
+
+        XCTAssertEqual(CoreRecommendationEngine.pickerDefault(for: "com.provenance.psp", availableCoreIdentifiers: available)?.coreIdentifier, ppsspp)
+        for system in ["com.provenance.gamecube", "com.provenance.wii"] {
+            XCTAssertEqual(CoreRecommendationEngine.pickerDefault(for: system, availableCoreIdentifiers: available)?.coreIdentifier,
+                           dolphin, system)
+        }
+        // Without the native core there is nothing curated to fall back to.
+        XCTAssertNil(CoreRecommendationEngine.pickerDefault(for: "com.provenance.psp", availableCoreIdentifiers: ["ppsspp.libretro.framework"]))
+        XCTAssertNil(CoreRecommendationEngine.pickerDefault(for: "com.provenance.wii", availableCoreIdentifiers: ["dolphin.libretro.framework"]))
+    }
+
+    /// Every curated default must name a core the app can actually contain.
+    func testBundledPickerDefaultsNameNoPrunedCore() throws {
+        let manifest = try XCTUnwrap(CoreRecommendationEngine.enrichmentManifest)
+        let pruned: Set<String> = ["com.provenance.core.MelonDS", "com.provenance.core.desmume2015",
+                                   "com.provenance.core.mupen64plusnx", "com.provenance.core.duckstation",
+                                   "com.provenance.core.PCSXRearmed"]
+        XCTAssertFalse(manifest.pickerDefaults.isEmpty)
+        for (system, defaults) in manifest.pickerDefaults {
+            for entry in defaults {
+                XCTAssertFalse(pruned.contains(entry.coreIdentifier), "\(system) recommends \(entry.coreIdentifier)")
+            }
+        }
     }
 
     /// Checked on two simulators on 2026-11-13: a two-player link game ran on native mGBA.
@@ -268,8 +323,8 @@ final class TestCoreRecommendationEngine: XCTestCase {
             gameTitle: "Crash Bandicoot",
             systemIdentifier: "com.provenance.psx",
             availableCoreIdentifiers: [
-                "mednafen.psx.libretro.framework",   // has retroAchievements
-                "com.provenance.core.PCSXRearmed"    // does not
+                "pcsx.rearmed.libretro.framework",   // no entry in the bundled data, so no capabilities
+                "mednafen.psx.libretro.framework"    // has retroAchievements
             ]
         )
 
