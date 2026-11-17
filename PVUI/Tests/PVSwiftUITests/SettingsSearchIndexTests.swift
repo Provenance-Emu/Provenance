@@ -147,4 +147,35 @@ struct SettingsSearchIndexTests {
         let ids = SettingsSearchIndex.search("deadzone").map(\.id)
         #expect(ids.contains("deadzone.universal"))
     }
+
+    // MARK: Scroll targets
+
+    // The Advanced section opens with a banner, toggles and a picker; scrolling to its title
+    // left the Logs row a screen below.
+    @Test("A row deep in a long section scrolls to itself, not to the section title")
+    func deepRowsScrollToTheirOwnAnchor() throws {
+        let logs = try #require(SettingsSearchIndex.entries.first { $0.id == "adv.logs" })
+        #expect(logs.scrollTarget == SettingsSearchAnchor.logs)
+        #expect(logs.section == SettingsSectionTitle.advanced)
+
+        let sessionLogs = try #require(SettingsSearchIndex.entries.first { $0.id == "adv.sessionlogs" })
+        #expect(sessionLogs.scrollTarget == SettingsSearchAnchor.sessionLogs)
+
+        let fileBrowser = try #require(SettingsSearchIndex.entries.first { $0.id == "adv.appgroupfiles" })
+        #expect(fileBrowser.scrollTarget == SettingsSearchAnchor.developerTools)
+    }
+
+    @Test("A row with no anchor scrolls to its section title")
+    func rowsWithoutAnAnchorScrollToTheirSection() throws {
+        let autoLock = try #require(SettingsSearchIndex.entries.first { $0.id == "adv.autolock" })
+        #expect(autoLock.anchor == nil)
+        #expect(autoLock.scrollTarget == SettingsSectionTitle.advanced)
+    }
+
+    @Test("Anchors are distinct from each other and from every section title")
+    func anchorsDoNotCollideWithSectionIDs() {
+        let anchors = [SettingsSearchAnchor.developerTools, SettingsSearchAnchor.logs, SettingsSearchAnchor.sessionLogs]
+        #expect(Set(anchors).count == anchors.count)
+        #expect(anchors.allSatisfy { !SettingsSectionTitle.all.contains($0) })
+    }
 }

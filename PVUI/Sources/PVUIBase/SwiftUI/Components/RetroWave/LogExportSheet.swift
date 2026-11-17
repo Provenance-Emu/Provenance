@@ -58,7 +58,8 @@ public struct LogExportSheet: View {
             #endif
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button("Cancel") { dismiss() }
+                    // Once the export exists there is nothing left to cancel.
+                    Button(exportResult == nil ? "Cancel" : "Done") { dismiss() }
                         .foregroundColor(RetroTheme.retroPink)
                 }
             }
@@ -126,7 +127,7 @@ public struct LogExportSheet: View {
 
             Text(options.format == .text
                  ? "Selected files are appended to the text export."
-                 : "Selected files are copied into the bundle next to manifest.json.")
+                 : "Selected files are copied into the bundle next to provenance_log_manifest.json.")
                 .font(.system(size: 11))
                 .foregroundColor(.gray)
         }

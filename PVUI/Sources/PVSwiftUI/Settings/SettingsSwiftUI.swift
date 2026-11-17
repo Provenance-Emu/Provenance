@@ -793,7 +793,7 @@ public struct PVSettingsView: View {
     private func selectSearchResult(_ entry: SettingsSearchEntry) {
         searchQuery = ""
         searchFocused = false
-        pendingScrollSection = entry.section
+        pendingScrollSection = entry.scrollTarget
         if let pane = SettingsPane(section: entry.section) {
             selectedPane = pane
         }
@@ -2660,6 +2660,7 @@ private struct AdvancedSection: View {
             AdvancedTogglesView()
 
             SettingsSubheading(title: "Developer Tools")
+                .id(SettingsSearchAnchor.developerTools)
 
             ThemedToggle(isOn: $showTestSkins) {
                 SettingsRow(title: "Show test skins",
@@ -2703,6 +2704,7 @@ private struct AdvancedSection: View {
                             subtitle: "View, search, and export app logs.",
                             icon: .sfSymbol("doc.text.magnifyingglass"))
             }
+            .id(SettingsSearchAnchor.logs)
             #if os(tvOS)
             .retroFocusButtonStyle(showBorder: false)
             #endif
@@ -2713,6 +2715,7 @@ private struct AdvancedSection: View {
                             subtitle: "View and manage file-based session log archives.",
                             icon: .sfSymbol("doc.on.doc"))
             }
+            .id(SettingsSearchAnchor.sessionLogs)
             #if os(tvOS)
             .retroFocusButtonStyle(showBorder: false)
             #endif

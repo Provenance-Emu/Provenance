@@ -64,12 +64,18 @@ struct SettingsSearchEntry: Identifiable, Hashable {
     /// Exact section title (see `SettingsSectionTitle`) that contains the row on iOS; `SettingsPane(section:)`
     /// gives the sidebar pane that shows it.
     let section: String
+    /// Scroll id of the row itself (or of a subheading above it) inside `section`, for rows deep in a long
+    /// section. `nil` scrolls to the section's title.
+    let anchor: String?
     /// `false` for rows that only exist in the iOS layout (or are compiled out on tvOS).
     let isAvailableOnTVOS: Bool
     /// `false` for rows that only exist on tvOS.
     let isAvailableOnIOS: Bool
     /// `true` for rows the app hides in App Store builds (sideload-only features).
     let hiddenInAppStore: Bool
+
+    /// Where a chosen result scrolls to on iOS: the row's own anchor when it has one, else its section.
+    var scrollTarget: String { anchor ?? section }
 
     /// Whether the row is actually shown on this platform and build, so search never lands on a missing row.
     func isVisible(isAppStore: Bool) -> Bool {

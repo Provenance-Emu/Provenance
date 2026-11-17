@@ -196,18 +196,223 @@ public struct RetroLogView: View {
 
     // MARK: - Subviews
 
+    /// The header's title. Fixed size, so a narrow header moves controls down a line
+    /// instead of wrapping the word.
+    private var logsTitle: some View {
+        Text("LOGS")
+            .font(.system(size: 14, weight: .bold, design: .monospaced))
+            .foregroundColor(RetroTheme.retroPink)
+            .shadow(color: RetroTheme.retroPink.opacity(0.7), radius: 2, x: 0, y: 0)
+            .lineLimit(1)
+            .fixedSize()
+    }
+
+    #if !os(tvOS)
+    /// Log level picker
+    private var levelMenu: some View {
+        Menu {
+            Picker("Log Level", selection: $viewModel.minLogLevel) {
+                Text("Verbose").tag(LogLevel.verbose)
+                Text("Debug").tag(LogLevel.debug)
+                Text("Info").tag(LogLevel.info)
+                Text("Warning").tag(LogLevel.warning)
+                Text("Error").tag(LogLevel.error)
+            }
+        } label: {
+            HStack(spacing: 4) {
+                Text("Level: \(viewModel.minLogLevel.name)")
+                    .lineLimit(1)
+                    .fixedSize()
+                    .font(.system(size: 12))
+                    .foregroundColor(RetroTheme.retroBlue)
+
+                Image(systemName: "chevron.down")
+                    .font(.system(size: 10))
+                    .foregroundColor(RetroTheme.retroBlue)
+            }
+            .padding(.vertical, 4)
+            .padding(.horizontal, 8)
+            .background(
+                RoundedRectangle(cornerRadius: 4)
+                    .strokeBorder(RetroTheme.retroBlue, lineWidth: 1)
+            )
+        }
+    }
+
+    /// The header's buttons as one group, so the header can put them beside the title
+    /// or on a line of their own.
+    @ViewBuilder private var controlButtons: some View {
+        // Auto-scroll toggle
+        Button(action: {
+            viewModel.autoScroll.toggle()
+        }) {
+            Image(systemName: viewModel.autoScroll ? "arrow.down.to.line.compact" : "arrow.up.to.line.compact")
+                .font(.system(size: 12))
+                .foregroundColor(viewModel.autoScroll ? RetroTheme.retroBlue : RetroTheme.retroPink.opacity(0.7))
+                .padding(6)
+                .background(
+                    RoundedRectangle(cornerRadius: 4)
+                        .strokeBorder(viewModel.autoScroll ? RetroTheme.retroBlue : RetroTheme.retroPink.opacity(0.7), lineWidth: 1)
+                )
+        }
+        .overlay(controllerRing(.autoScroll))
+
+        // Sort order toggle button
+        Button(action: {
+            viewModel.toggleSortOrder()
+        }) {
+            Image(systemName: viewModel.sortOrder == .newestFirst ? "arrow.down" : "arrow.up")
+                .font(.system(size: 12))
+                .foregroundColor(RetroTheme.retroBlue)
+                .padding(6)
+                .background(
+                    RoundedRectangle(cornerRadius: 4)
+                        .strokeBorder(RetroTheme.retroBlue, lineWidth: 1)
+                )
+        }
+        .overlay(controllerRing(.sortOrder))
+
+        // Detail toggle
+        Button(action: {
+            viewModel.showFullDetails.toggle()
+        }) {
+            Image(systemName: viewModel.showFullDetails ? "list.bullet.indent" : "list.bullet")
+                .font(.system(size: 12))
+                .foregroundColor(viewModel.showFullDetails ? RetroTheme.retroBlue : RetroTheme.retroPink.opacity(0.7))
+                .padding(6)
+                .background(
+                    RoundedRectangle(cornerRadius: 4)
+                        .strokeBorder(viewModel.showFullDetails ? RetroTheme.retroBlue : RetroTheme.retroPink.opacity(0.7), lineWidth: 1)
+                )
+        }
+        .overlay(controllerRing(.details))
+
+        // Copy Filtered logs button
+        Button(action: {
+            viewModel.copyFilteredLogsToClipboard()
+        }) {
+            Image(systemName: "doc.on.doc")
+                .font(.system(size: 12))
+                .foregroundColor((viewModel.searchText.isEmpty || viewModel.copyableLinesAreEmpty) ? RetroTheme.retroPink.opacity(0.3) : RetroTheme.retroBlue)
+                .padding(6)
+                .background(
+                    RoundedRectangle(cornerRadius: 4)
+                        .strokeBorder((viewModel.searchText.isEmpty || viewModel.copyableLinesAreEmpty) ? RetroTheme.retroPink.opacity(0.3) : RetroTheme.retroBlue, lineWidth: 1)
+                )
+        }
+        .disabled(viewModel.searchText.isEmpty || viewModel.copyableLinesAreEmpty)
+
+        // Export / share button — exports the live session, so it is
+        // disabled while an imported file is on screen to avoid
+        // silently sharing different logs than the ones displayed.
+        Button(action: {
+            showingExportSheet = true
+        }) {
+            Image(systemName: "square.and.arrow.up")
+                .font(.system(size: 12))
+                .foregroundColor(RetroTheme.retroBlue)
+                .padding(6)
+                .background(
+                    RoundedRectangle(cornerRadius: 4)
+                        .strokeBorder(RetroTheme.retroBlue, lineWidth: 1)
+                )
+        }
+        .disabled(viewModel.importedSession != nil)
+
+        // Import log button
+        Button(action: {
+            showingImporter = true
+        }) {
+            Image(systemName: "square.and.arrow.down")
+                .font(.system(size: 12))
+                .foregroundColor(RetroTheme.retroBlue)
+                .padding(6)
+                .background(
+                    RoundedRectangle(cornerRadius: 4)
+                        .strokeBorder(RetroTheme.retroBlue, lineWidth: 1)
+                )
+        }
+        .accessibilityLabel("Import Log File")
+        .accessibilityHint("Open a saved log file to view it in place of the live logs")
+
+        // Session log files button
+        Button(action: {
+            showingLogFiles = true
+        }) {
+            Image(systemName: "folder")
+                .font(.system(size: 12))
+                .foregroundColor(RetroTheme.retroBlue)
+                .padding(6)
+                .background(
+                    RoundedRectangle(cornerRadius: 4)
+                        .strokeBorder(RetroTheme.retroBlue, lineWidth: 1)
+                )
+        }
+        .accessibilityLabel("Log Files")
+        .accessibilityHint("View, share or delete the log files saved on this device")
+
+        // Clear logs button
+        Button(action: {
+            viewModel.clearLogs()
+        }) {
+            Image(systemName: "trash")
+                .font(.system(size: 12))
+                .foregroundColor(RetroTheme.retroPink.opacity(0.7))
+                .padding(6)
+                .background(
+                    RoundedRectangle(cornerRadius: 4)
+                        .strokeBorder(RetroTheme.retroPink.opacity(0.7), lineWidth: 1)
+                )
+        }
+        .disabled(viewModel.importedSession != nil)
+        .overlay(controllerRing(.clear))
+
+        Spacer()
+
+        // Fullscreen toggle button
+        if isFullscreen {
+            // Close fullscreen button
+            Button {
+                isFullscreen = false
+            } label: {
+                Image(systemName: "xmark")
+                    .font(.system(size: 12))
+                    .foregroundColor(RetroTheme.retroPink)
+                    .padding(6)
+                    .background(
+                        RoundedRectangle(cornerRadius: 4)
+                            .strokeBorder(RetroTheme.retroPink, lineWidth: 1)
+                    )
+            }
+            .overlay(controllerRing(.fullscreen))
+        } else {
+            // Expand to fullscreen button
+            Button {
+                isFullscreen = true
+            } label: {
+                Image(systemName: "arrow.up.left.and.arrow.down.right")
+                    .font(.system(size: 12))
+                    .foregroundColor(RetroTheme.retroBlue)
+                    .padding(6)
+                    .background(
+                        RoundedRectangle(cornerRadius: 4)
+                            .strokeBorder(RetroTheme.retroBlue, lineWidth: 1)
+                    )
+            }
+            .overlay(controllerRing(.fullscreen))
+        }
+    }
+    #endif
+
     /// Header view with controls
     private var headerView: some View {
         VStack(spacing: 8) {
+            #if os(tvOS)
             HStack {
-                Text("LOGS")
-                    .font(.system(size: 14, weight: .bold, design: .monospaced))
-                    .foregroundColor(RetroTheme.retroPink)
-                    .shadow(color: RetroTheme.retroPink.opacity(0.7), radius: 2, x: 0, y: 0)
+                logsTitle
 
                 Spacer()
 
-                #if os(tvOS)
                 // Log level picker
                 headerButton(
                     button: .logLevel,
@@ -282,195 +487,30 @@ public struct RetroLogView: View {
                 ) {
                     isFullscreen.toggle()
                 }
-                #else
-                // Log level picker
-                Menu {
-                    Picker("Log Level", selection: $viewModel.minLogLevel) {
-                        Text("Verbose").tag(LogLevel.verbose)
-                        Text("Debug").tag(LogLevel.debug)
-                        Text("Info").tag(LogLevel.info)
-                        Text("Warning").tag(LogLevel.warning)
-                        Text("Error").tag(LogLevel.error)
-                    }
-                } label: {
-                    HStack(spacing: 4) {
-                        Text("Level: \(viewModel.minLogLevel.name)")
-                            .font(.system(size: 12))
-                            .foregroundColor(RetroTheme.retroBlue)
-
-                        Image(systemName: "chevron.down")
-                            .font(.system(size: 10))
-                            .foregroundColor(RetroTheme.retroBlue)
-                    }
-                    .padding(.vertical, 4)
-                    .padding(.horizontal, 8)
-                    .background(
-                        RoundedRectangle(cornerRadius: 4)
-                            .strokeBorder(RetroTheme.retroBlue, lineWidth: 1)
-                    )
-                }
-
-                // Auto-scroll toggle
-                Button(action: {
-                    viewModel.autoScroll.toggle()
-                }) {
-                    Image(systemName: viewModel.autoScroll ? "arrow.down.to.line.compact" : "arrow.up.to.line.compact")
-                        .font(.system(size: 12))
-                        .foregroundColor(viewModel.autoScroll ? RetroTheme.retroBlue : RetroTheme.retroPink.opacity(0.7))
-                        .padding(6)
-                        .background(
-                            RoundedRectangle(cornerRadius: 4)
-                                .strokeBorder(viewModel.autoScroll ? RetroTheme.retroBlue : RetroTheme.retroPink.opacity(0.7), lineWidth: 1)
-                        )
-                }
-                .overlay(controllerRing(.autoScroll))
-
-                // Sort order toggle button
-                Button(action: {
-                    viewModel.toggleSortOrder()
-                }) {
-                    Image(systemName: viewModel.sortOrder == .newestFirst ? "arrow.down" : "arrow.up")
-                        .font(.system(size: 12))
-                        .foregroundColor(RetroTheme.retroBlue)
-                        .padding(6)
-                        .background(
-                            RoundedRectangle(cornerRadius: 4)
-                                .strokeBorder(RetroTheme.retroBlue, lineWidth: 1)
-                        )
-                }
-                .overlay(controllerRing(.sortOrder))
-
-                // Detail toggle
-                Button(action: {
-                    viewModel.showFullDetails.toggle()
-                }) {
-                    Image(systemName: viewModel.showFullDetails ? "list.bullet.indent" : "list.bullet")
-                        .font(.system(size: 12))
-                        .foregroundColor(viewModel.showFullDetails ? RetroTheme.retroBlue : RetroTheme.retroPink.opacity(0.7))
-                        .padding(6)
-                        .background(
-                            RoundedRectangle(cornerRadius: 4)
-                                .strokeBorder(viewModel.showFullDetails ? RetroTheme.retroBlue : RetroTheme.retroPink.opacity(0.7), lineWidth: 1)
-                        )
-                }
-                .overlay(controllerRing(.details))
-
-                // Copy Filtered logs button
-                Button(action: {
-                    viewModel.copyFilteredLogsToClipboard()
-                }) {
-                    Image(systemName: "doc.on.doc")
-                        .font(.system(size: 12))
-                        .foregroundColor((viewModel.searchText.isEmpty || viewModel.copyableLinesAreEmpty) ? RetroTheme.retroPink.opacity(0.3) : RetroTheme.retroBlue)
-                        .padding(6)
-                        .background(
-                            RoundedRectangle(cornerRadius: 4)
-                                .strokeBorder((viewModel.searchText.isEmpty || viewModel.copyableLinesAreEmpty) ? RetroTheme.retroPink.opacity(0.3) : RetroTheme.retroBlue, lineWidth: 1)
-                        )
-                }
-                .disabled(viewModel.searchText.isEmpty || viewModel.copyableLinesAreEmpty)
-
-                // Export / share button — exports the live session, so it is
-                // disabled while an imported file is on screen to avoid
-                // silently sharing different logs than the ones displayed.
-                Button(action: {
-                    showingExportSheet = true
-                }) {
-                    Image(systemName: "square.and.arrow.up")
-                        .font(.system(size: 12))
-                        .foregroundColor(RetroTheme.retroBlue)
-                        .padding(6)
-                        .background(
-                            RoundedRectangle(cornerRadius: 4)
-                                .strokeBorder(RetroTheme.retroBlue, lineWidth: 1)
-                        )
-                }
-                .disabled(viewModel.importedSession != nil)
-
-                // Import log button
-                Button(action: {
-                    showingImporter = true
-                }) {
-                    Image(systemName: "square.and.arrow.down")
-                        .font(.system(size: 12))
-                        .foregroundColor(RetroTheme.retroBlue)
-                        .padding(6)
-                        .background(
-                            RoundedRectangle(cornerRadius: 4)
-                                .strokeBorder(RetroTheme.retroBlue, lineWidth: 1)
-                        )
-                }
-                .accessibilityLabel("Import Log File")
-                .accessibilityHint("Open a saved log file to view it in place of the live logs")
-
-                // Session log files button
-                Button(action: {
-                    showingLogFiles = true
-                }) {
-                    Image(systemName: "folder")
-                        .font(.system(size: 12))
-                        .foregroundColor(RetroTheme.retroBlue)
-                        .padding(6)
-                        .background(
-                            RoundedRectangle(cornerRadius: 4)
-                                .strokeBorder(RetroTheme.retroBlue, lineWidth: 1)
-                        )
-                }
-                .accessibilityLabel("Log Files")
-                .accessibilityHint("View, share or delete the log files saved on this device")
-
-                // Clear logs button
-                Button(action: {
-                    viewModel.clearLogs()
-                }) {
-                    Image(systemName: "trash")
-                        .font(.system(size: 12))
-                        .foregroundColor(RetroTheme.retroPink.opacity(0.7))
-                        .padding(6)
-                        .background(
-                            RoundedRectangle(cornerRadius: 4)
-                                .strokeBorder(RetroTheme.retroPink.opacity(0.7), lineWidth: 1)
-                        )
-                }
-                .disabled(viewModel.importedSession != nil)
-                .overlay(controllerRing(.clear))
-
-                Spacer()
-
-                // Fullscreen toggle button
-                if isFullscreen {
-                    // Close fullscreen button
-                    Button {
-                        isFullscreen = false
-                    } label: {
-                        Image(systemName: "xmark")
-                            .font(.system(size: 12))
-                            .foregroundColor(RetroTheme.retroPink)
-                            .padding(6)
-                            .background(
-                                RoundedRectangle(cornerRadius: 4)
-                                    .strokeBorder(RetroTheme.retroPink, lineWidth: 1)
-                            )
-                    }
-                    .overlay(controllerRing(.fullscreen))
-                } else {
-                    // Expand to fullscreen button
-                    Button {
-                        isFullscreen = true
-                    } label: {
-                        Image(systemName: "arrow.up.left.and.arrow.down.right")
-                            .font(.system(size: 12))
-                            .foregroundColor(RetroTheme.retroBlue)
-                            .padding(6)
-                            .background(
-                                RoundedRectangle(cornerRadius: 4)
-                                    .strokeBorder(RetroTheme.retroBlue, lineWidth: 1)
-                            )
-                    }
-                    .overlay(controllerRing(.fullscreen))
-                }
-                #endif
             }
+            #else
+            // An iPhone is too narrow for the title, the level menu and the buttons on one
+            // line: squeezed, the two labels wrapped to a letter per line. Use one line where
+            // it fits (iPad, landscape) and two where it does not.
+            ViewThatFits(in: .horizontal) {
+                HStack {
+                    logsTitle
+                    Spacer()
+                    levelMenu
+                    controlButtons
+                }
+                VStack(spacing: 8) {
+                    HStack {
+                        logsTitle
+                        Spacer()
+                        levelMenu
+                    }
+                    HStack {
+                        controlButtons
+                    }
+                }
+            }
+            #endif
 
             // Search field
             HStack {

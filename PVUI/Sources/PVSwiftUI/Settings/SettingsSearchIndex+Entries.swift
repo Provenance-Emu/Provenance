@@ -7,6 +7,14 @@
 
 import PVUIBase
 
+/// Scroll ids for rows that sit far below their section's title. The Advanced section opens with a banner,
+/// toggles and a picker, so a result that scrolled to its title left the row a screen away.
+enum SettingsSearchAnchor {
+    static let developerTools = "settings.anchor.developer-tools"
+    static let logs = "settings.anchor.logs"
+    static let sessionLogs = "settings.anchor.session-logs"
+}
+
 extension SettingsSearchIndex {
     // MARK: Index data
 
@@ -17,12 +25,13 @@ extension SettingsSearchIndex {
         _ tab: SettingsTab,
         _ section: String,
         keywords: [String] = [],
+        anchor: String? = nil,
         tvOS: Bool = true,
         iOS: Bool = true,
         hiddenInAppStore: Bool = false
     ) -> SettingsSearchEntry {
         SettingsSearchEntry(
-            id: id, title: title, subtitle: subtitle, keywords: keywords, tab: tab, section: section,
+            id: id, title: title, subtitle: subtitle, keywords: keywords, tab: tab, section: section, anchor: anchor,
             isAvailableOnTVOS: tvOS, isAvailableOnIOS: iOS, hiddenInAppStore: hiddenInAppStore
         )
     }
@@ -248,13 +257,17 @@ extension SettingsSearchIndex {
         entry("adv.uimode", "UI Mode", "Choose between different UI modes.",
               .advanced, SettingsSectionTitle.advanced, keywords: ["interface", "layout", "library", "home"]),
         entry("adv.appgroupfiles", "App Group File Browser", "Browse files in the app group container for debugging.",
-              .advanced, SettingsSectionTitle.advanced, keywords: ["files", "debug", "container", "storage"]),
+              .advanced, SettingsSectionTitle.advanced, keywords: ["files", "debug", "container", "storage"],
+              anchor: SettingsSearchAnchor.developerTools),
         entry("adv.spotlight", "Spotlight Debug", "View and manage Spotlight indexing for games and save states.",
-              .advanced, SettingsSectionTitle.advanced, keywords: ["search", "index", "debug"], tvOS: false),
+              .advanced, SettingsSectionTitle.advanced, keywords: ["search", "index", "debug"],
+              anchor: SettingsSearchAnchor.developerTools, tvOS: false),
         entry("adv.logs", "Logs", "View, search, and export app logs.",
-              .advanced, SettingsSectionTitle.advanced, keywords: ["log", "debug", "diagnostics", "export", "console"]),
+              .advanced, SettingsSectionTitle.advanced, keywords: ["log", "debug", "diagnostics", "export", "console"],
+              anchor: SettingsSearchAnchor.logs),
         entry("adv.sessionlogs", "Session Logs", "View and manage file-based session log archives.",
-              .advanced, SettingsSectionTitle.advanced, keywords: ["log", "debug", "archive"]),
+              .advanced, SettingsSectionTitle.advanced, keywords: ["log", "debug", "archive"],
+              anchor: SettingsSearchAnchor.sessionLogs),
         entry("adv.topshelflog", "TopShelf Log", "View logs from the TopShelf extension.",
               .advanced, SettingsSectionTitle.advanced, keywords: ["log", "debug", "apple tv"], iOS: false)
     ]
