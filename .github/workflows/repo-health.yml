@@ -32,8 +32,20 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      # Check 4's rules are a script, so a regression in them would fail
+      # silently (it would just stop finding orphans). Run its tests here, next
+      # to the only consumer. continue-on-error keeps checks 1-5 running; the
+      # health step reads this step's outcome and reports the failure in the
+      # Check 4 row instead of a verdict from an unverified script.
+      - name: Check 4a — self-test the orphan check
+        id: orphan_selftest
+        continue-on-error: true
+        run: python3 .github/scripts/test_orphaned_agent_issues.py
+
       - name: Run health checks
         id: health
+        env:
+          ORPHAN_SELFTEST: ${{ steps.orphan_selftest.outcome }}
         run: |
           set -e
           TIMESTAMP=$(date -u '+%Y-%m-%d %H:%M UTC')
@@ -186,42 +198,33 @@ jobs:
           fi
 
           # ── Check 4: Orphaned agent-work issues ───────────────────────────────
-          # Issues with agent-work label but no open PR for >24h
+          # Open agent-work issues older than 24h that no pull request is linked
+          # to. The rules (closing references, mentions, branch names; open or
+          # merged) live in .github/scripts/orphaned-agent-issues.py, which is
+          # self-tested in the step above. This report's own issue is skipped.
           echo ""
           echo "--- Check 4: Orphaned agent-work issues ---"
 
-          orphan_count=0
-          orphan_detail=""
-
-          agent_issues=$(gh api "repos/$REPO/issues?labels=agent-work&state=open&per_page=100" \
-            --jq '.[] | select(.pull_request == null) | {number: .number, title: .title, created_at: .created_at}' \
-            2>/dev/null || echo "")
-
-          while IFS= read -r issue; do
-            issue_num=$(echo "$issue" | jq -r '.number')
-            issue_title=$(echo "$issue" | jq -r '.title')
-            created_at=$(echo "$issue" | jq -r '.created_at')
-
-            age_seconds=$(( $(date -u +%s) - $(iso_to_epoch "$created_at") ))
-            age_hours=$(( age_seconds / 3600 ))
-
-            if [ "$age_hours" -ge 24 ]; then
-              # Check if there's actually a PR for this issue (linked or branch named agent/issue-N)
-              linked_pr=$(gh pr list --repo "$REPO" --search "agent/issue-${issue_num}" --state open --json number --jq '.[0].number' 2>/dev/null || echo "")
-              if [ -z "$linked_pr" ]; then
-                echo "  Issue #$issue_num orphaned for ${age_hours}h: $issue_title"
-                orphan_count=$((orphan_count + 1))
-                orphan_detail="$orphan_detail #$issue_num (${age_hours}h)"
-              fi
-            fi
-          done < <(echo "$agent_issues" | jq -c '.' 2>/dev/null | grep -v '^$' || true)
-
-          if [ "$orphan_count" -eq 0 ]; then
-            check4_status="✅ None"
+          if [ "$ORPHAN_SELFTEST" != "success" ]; then
+            # An unverified check must not report "none".
+            check4_status="⚠️ Check failed its self-test"
             check4_detail=""
+          elif orphans_json=$(python3 .github/scripts/orphaned-agent-issues.py \
+                --repo "$REPO" --skip-title "Automation Health Monitor" --format json); then
+            orphan_count=$(echo "$orphans_json" | jq -r '.count')
+            orphan_detail=$(echo "$orphans_json" | jq -r '.detail')
+            echo "$orphans_json" | jq -r '.orphans[] | "  Issue #\(.number) orphaned for \(.age_hours)h: \(.title)"'
+            if [ "$orphan_count" -eq 0 ]; then
+              check4_status="✅ None"
+              check4_detail=""
+            else
+              check4_status="⚠️ $orphan_count found"
+              check4_detail="$orphan_detail"
+            fi
           else
-            check4_status="⚠️ $orphan_count found"
-            check4_detail="$orphan_detail"
+            # Reading GitHub failed. Say so instead of reporting zero orphans.
+            check4_status="⚠️ Could not read agent-work issues"
+            check4_detail=""
           fi
 
           # ── Check 5: Workflow failure rate (last 24h) ─────────────────────────
