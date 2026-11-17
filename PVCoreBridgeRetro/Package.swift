@@ -119,6 +119,7 @@ let package = Package(
             ],
             sources: [
                 "PVThinLibretroCore+Controls.swift",
+                "PVThinLibretroCore+FDSDiskActions.swift",
                 "PVThinLibretroCore+Features.swift",
                 "PVThinLibretroCore+LayoutVariant.swift",
                 "PVThinLibretroCore+MIDI.swift",
@@ -161,6 +162,7 @@ let package = Package(
                 "PVLibRetroCore.h",
                 "PVLibRetroGLESCore.h",
                 "PVThinLibretroCore+Controls.swift",
+                "PVThinLibretroCore+FDSDiskActions.swift",
                 "PVThinLibretroCore+Features.swift",
                 "PVThinLibretroCore+LayoutVariant.swift",
                 "PVThinLibretroCore+MIDI.swift",
@@ -195,6 +197,7 @@ let package = Package(
             path: "Sources/PVLibRetro",
             exclude: [
                 "PVThinLibretroCore+Controls.swift",
+                "PVThinLibretroCore+FDSDiskActions.swift",
                 "PVThinLibretroCore+Features.swift",
                 "PVThinLibretroCore+LayoutVariant.swift",
                 "PVThinLibretroCore+MIDI.swift",
