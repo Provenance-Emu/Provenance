@@ -154,6 +154,7 @@ enum NearbyCursor {
 
     static let search = "peer|search"
     static let tryAgain = "peer|tryAgain"
+    static let loadMore = "peer|loadMore"
     static let pair = "peer|pair"
     static let code = "peer|code"
     /// iCube shows a 6-digit pairing code.
@@ -173,24 +174,26 @@ enum NearbyCursor {
         case loaded(libraryIDs: [String], itemIDs: [String])
     }
 
-    /// Search (only once the games are listed), then the screen's controls, one per row;
-    /// a content server's libraries share one row.
-    static func peerLibrary(_ content: PeerContent) -> TVMediaCursorLayout {
+    /// A content server's libraries share one row.
+    static func peerLibrary(_ content: PeerContent, searchWhileLoading: Bool = false, canLoadMore: Bool = false) -> TVMediaCursorLayout {
+        let searchRow = Row(id: search, items: [search], isHeader: true)
+        let initialRows = searchWhileLoading ? [searchRow] : []
         switch content {
         case .waiting:
-            return .empty
+            return TVMediaCursorLayout(rows: initialRows)
         case .failed:
-            return TVMediaCursorLayout(rows: [Row(id: tryAgain, items: [tryAgain])])
+            return TVMediaCursorLayout(rows: initialRows + [Row(id: tryAgain, items: [tryAgain])])
         case .needsPairing:
             return TVMediaCursorLayout(rows: [Row(id: pair, items: [pair])])
         case .enteringCode:
             return TVMediaCursorLayout(rows: [Row(id: code, items: [code]), Row(id: submitCode, items: [submitCode])])
         case .loaded(let libraryIDs, let itemIDs):
-            var rows = [Row(id: search, items: [search], isHeader: true)]
+            var rows = [searchRow]
             if !libraryIDs.isEmpty {
                 rows.append(Row(id: "peer|libraries", items: libraryIDs.map(library)))
             }
             rows += itemIDs.map { Row(id: item($0), items: [item($0)]) }
+            if canLoadMore { rows.append(Row(id: loadMore, items: [loadMore])) }
             return TVMediaCursorLayout(rows: rows)
         }
     }
@@ -237,12 +240,20 @@ enum NearbyCursor {
     static let token = "server|token"
     static let username = "server|username"
     static let password = "server|password"
+    static let allowPairingHTTP = "server|allowPairingHTTP"
+    static let requestAccess = "server|requestAccess"
+    static let scanServerQR = "server|scanQR"
     static let cancel = "server|cancel"
     static let add = "server|add"
 
     /// The fields top to bottom, then Cancel and Add side by side.
-    static func addServer(usesToken: Bool) -> TVMediaCursorLayout {
-        let fields = usesToken ? [address, useToken, token] : [address, useToken, username, password]
+    static func addServer(usesToken: Bool, showsHTTPConsent: Bool) -> TVMediaCursorLayout {
+        var fields = usesToken ? [address, useToken, token] : [address, useToken, username, password]
+        #if os(iOS)
+        fields.append(scanServerQR)
+        #endif
+        if showsHTTPConsent { fields.append(allowPairingHTTP) }
+        fields.append(requestAccess)
         let fieldRows = fields.map { Row(id: $0, items: [$0]) }
         return TVMediaCursorLayout(rows: fieldRows + [Row(id: "server|actions", items: [cancel, add])])
     }

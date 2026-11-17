@@ -106,18 +106,15 @@ final class PauseTileMenuViewModel: ObservableObject {
         var built: [PauseMenuTileSection] = []
 
         // ── GAME section ────────────────────────────────────────────────
-        let supportsSaveStates = emulatorVC.core.supportsSaveStates
-        let hasSave: Bool = {
-            guard let game = emulatorVC.game, !game.isInvalidated else { return false }
-            return !game.saveStates.isEmpty
-        }()
-        if let game = emulatorVC.game, !game.isInvalidated {
+        let supportsSaveStates = emulatorVC.core.supportsSaveStates && emulatorVC.game?.isTemporaryServerGame != true
+        if let game = emulatorVC.game, !game.isInvalidated, !game.isTemporaryServerGame {
             saveStateCount = game.saveStates.count
             latestSaveDate = game.saveStates.sorted(byKeyPath: "date", ascending: false).first?.date
         } else {
             saveStateCount = 0
             latestSaveDate = nil
         }
+        let hasSave = saveStateCount > 0
         let n64ID = SystemIdentifier.N64.rawValue
         let gameSystemID = emulatorVC.game?.systemIdentifier ?? emulatorVC.core.systemIdentifier
         let supportsCheatCodes = (emulatorVC.core as? GameWithCheat)?.supportsCheatCode == true
@@ -1112,7 +1109,7 @@ final class PauseTileMenuViewModel: ObservableObject {
     }
 
     private static func shouldSaveOnQuit(emulatorVC: PVEmulatorViewController) -> Bool {
-        guard let game = emulatorVC.game, !game.isInvalidated else { return false }
+        guard let game = emulatorVC.game, !game.isInvalidated, !game.isTemporaryServerGame else { return false }
         let twoMinutes: TimeInterval = 120
         let oneMinute: TimeInterval = 60
         let minimumPlayTime: TimeInterval = 60 * 2

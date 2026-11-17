@@ -40,6 +40,7 @@ public actor ECSSource: LibrarySource {
     private var token: String?
     private var pageSize = 100
     private var indexedSources: [String: EmulatorContentClient.SourceFile] = [:]
+    private var coverRoutes: [String: URL] = [:]
     private var preparedFiles: [String: URL] = [:]
     private let preparationRoot = FileManager.default.temporaryDirectory.appendingPathComponent("ecs-" + UUID().uuidString)
 
@@ -96,47 +97,123 @@ public actor ECSSource: LibrarySource {
     }
 
     /// A selected library, or every accessible library when nil.
-    public func catalogue(libraryID: String?, progress: @escaping @Sendable (LibraryBrowseProgress) -> Void) async throws -> RemoteCatalogue {
+    public func catalogue(
+        libraryID: String?, search: String = "", progress: @escaping @Sendable (LibraryBrowseProgress) -> Void
+    ) async throws -> RemoteCatalogue {
         progress(.connecting)
         let libraries = try await libraries()
         progress(.loadingCatalogue)
+        let ids = libraries.map(\.id).filter { libraryID == nil || $0 == libraryID }
+        var position: CatalogueCursor? = CatalogueCursor(libraries: ids[...], search: search, systems: systems)
         var items: [RemoteLibraryItem] = []
-        for library in libraries where libraryID == nil || library.id == libraryID {
-            let query = [URLQueryItem(name: "libraryId", value: library.id), URLQueryItem(name: "category", value: "games")]
-            let page: [EmulatorContentClient.LibraryBrowseEntry] = try await pages(path: "/api/v1/browse", query: query)
-            for entry in page {
-                if let item = entry.item, entry.entityType == "item" {
-                    items.append(Self.item(item))
-                } else if let file = entry.source, entry.entityType == "source", let system = file.systemId {
-                    let id = "source:" + file.id
-                    indexedSources[id] = file
-                    items.append(RemoteLibraryItem(id: id, title: file.title ?? entry.name, platform: system,
-                                                  systemIdentifier: SystemMap.systemIdentifier(compact: system),
-                                                  md5: nil, sizeBytes: file.size, artKey: nil, source: .contentServer))
-                }
-            }
+        var seen = Set<CatalogueCursor>()
+        while let cursor = position {
+            guard seen.insert(cursor).inserted else { throw LibrarySharingError.invalidResponse(status: 200) }
+            let page = try await browsePage(after: cursor, limit: pageSize)
+            items += page.catalogue.items
+            position = page.next
         }
+        return catalogue(items, systems: systems)
+    }
+
+    /// The continuation of a server browse, including the original search and library selection.
+    public struct CatalogueCursor: Sendable, Hashable {
+        fileprivate let libraries: ArraySlice<String>
+        fileprivate let search: String
+        fileprivate let systems: Set<SystemIdentifier>?
+        fileprivate var serverCursor: String?
+    }
+
+    public struct CataloguePage: Sendable {
+        public let catalogue: RemoteCatalogue
+        public let next: CatalogueCursor?
+    }
+
+    /// Loads a small page for interactive browsing without fetching the entire server catalog.
+    public func browseCatalogue(libraryIDs: [String], search: String, playableSystems: Set<SystemIdentifier>? = nil) async throws -> CataloguePage {
+        try await browseCatalogue(after: CatalogueCursor(libraries: libraryIDs[...], search: search, systems: playableSystems ?? systems))
+    }
+
+    public func browseCatalogue(after cursor: CatalogueCursor) async throws -> CataloguePage {
+        try await browsePage(after: cursor, limit: min(pageSize, 40))
+    }
+
+    private func browsePage(after cursor: CatalogueCursor, limit: Int) async throws -> CataloguePage {
+        guard let library = cursor.libraries.first else { return CataloguePage(catalogue: catalogue([], systems: cursor.systems), next: nil) }
+        var query = [URLQueryItem(name: "libraryId", value: library), URLQueryItem(name: "category", value: "games")]
+        if !cursor.search.isEmpty {
+            query.append(URLQueryItem(name: "search", value: String(cursor.search.unicodeScalars.prefix(256))))
+        }
+        if let systems = cursor.systems, !systems.isEmpty {
+            query.append(URLQueryItem(name: "systemIds", value: systems.map(\.rawValue).sorted().joined(separator: ",")))
+        }
+        let page: Page<EmulatorContentClient.LibraryBrowseEntry> = try await readPage(
+            path: "/api/v1/browse", query: query, limit: limit, cursor: cursor.serverCursor
+        )
+        let next: CatalogueCursor?
+        if let serverCursor = page.nextCursor {
+            guard serverCursor != cursor.serverCursor else { throw LibrarySharingError.invalidResponse(status: 200) }
+            next = CatalogueCursor(libraries: cursor.libraries, search: cursor.search, systems: cursor.systems, serverCursor: serverCursor)
+        } else if cursor.libraries.count > 1 {
+            next = CatalogueCursor(libraries: cursor.libraries.dropFirst(), search: cursor.search, systems: cursor.systems)
+        } else {
+            next = nil
+        }
+        let items = page.items.compactMap { entry -> RemoteLibraryItem? in
+            if let item = entry.item, entry.entityType == "item" {
+                if let cover = entry.previewAsset, cover.kind == "artwork" {
+                    coverRoutes[item.id] = server.appendingRoute("/api/v1/files").appendingPathComponent(cover.id).appendingPathComponent("content")
+                }
+                return Self.item(item, hasCover: coverRoutes[item.id] != nil)
+            }
+            guard let file = entry.source, entry.entityType == "source", let system = file.systemId else { return nil }
+            let id = "source:" + file.id
+            indexedSources[id] = file
+            if file.artworkAvailable == true {
+                coverRoutes[id] = server.appendingRoute("/api/v1/sources").appendingPathComponent(file.id)
+                    .appendingPathComponent("matches/selections/artwork/content")
+            }
+            return RemoteLibraryItem(id: id, title: file.title ?? entry.name, platform: system,
+                                     systemIdentifier: SystemMap.systemIdentifier(compact: system),
+                                     md5: nil, sizeBytes: file.size, artKey: coverRoutes[id] == nil ? nil : id, source: .contentServer)
+        }
+        return CataloguePage(catalogue: catalogue(items, systems: cursor.systems), next: next)
+    }
+
+    private func catalogue(_ items: [RemoteLibraryItem], systems: Set<SystemIdentifier>?) -> RemoteCatalogue {
         let catalogue = RemoteCatalogue(deviceName: server.host ?? server.absoluteString, items: items, source: .contentServer)
         return systems.map { catalogue.filtered(to: $0) } ?? catalogue
     }
 
-    static func item(_ item: Item) -> RemoteLibraryItem {
+    static func item(_ item: Item, hasCover: Bool = false) -> RemoteLibraryItem {
         RemoteLibraryItem(
             id: item.id, title: item.title, platform: item.systemIdentifier,
             systemIdentifier: SystemMap.systemIdentifier(compact: item.systemIdentifier),
-            md5: item.md5, sizeBytes: 0, artKey: nil, source: .contentServer
+            md5: item.md5, sizeBytes: 0, artKey: hasCover ? item.id : nil, source: .contentServer
         )
     }
 
-    public func artwork(for item: RemoteLibraryItem) async throws -> Data? { nil }
+    public func artwork(for item: RemoteLibraryItem) async throws -> Data? {
+        guard let url = coverRoutes[item.id] else { return nil }
+        let response = try await authorized(LibraryHTTPRequest(url: url))
+        guard response.status == 200, response.body.count <= 8 * 1024 * 1024 else { return nil }
+        return response.body
+    }
 
     public func pullManifest(
         for item: RemoteLibraryItem,
         progress: @escaping @Sendable (LibraryBrowseProgress) -> Void
     ) async throws -> RemoteManifest {
+        try await pullManifest(for: item, progress: progress, preparationProgress: { _ in })
+    }
+
+    func pullManifest(
+        for item: RemoteLibraryItem, progress: @escaping @Sendable (LibraryBrowseProgress) -> Void,
+        preparationProgress: @escaping @Sendable (LibraryPullProgress) -> Void
+    ) async throws -> RemoteManifest {
         progress(.connecting)
         if let source = indexedSources[item.id] {
-            return try await prepareIndexedManifest(source, itemID: item.id, progress: progress)
+            return try await prepareIndexedManifest(source, itemID: item.id, progress: progress, preparationProgress: preparationProgress)
         }
         // appendingPathComponent percent-encodes the id itself.
         let url = server.appendingRoute("/api/v1/items").appendingPathComponent(item.id).appendingPathComponent("manifest")
@@ -189,10 +266,9 @@ public actor ECSSource: LibrarySource {
             return LibraryDownloadResponse(status: 200, writtenFrom: 0, bytesOnDisk: file.size)
         }
         for attempt in 0..<2 {
-            let token = try await currentToken()
-            guard token.unicodeScalars.allSatisfy({ $0.value >= 32 && $0.value != 127 }) else { throw LibrarySharingError.signInFailed }
+            let request = try await signedRequest(LibraryHTTPRequest(url: url))
             let response = try await transport.download(
-                .authorizedGet(url: url, token: token), to: partialFile, resumeOffset: resumeOffset, progress: progress
+                request, to: partialFile, resumeOffset: resumeOffset, progress: progress
             )
             if isPullerHandledDownloadStatus(response.status) { return response }
             if response.status == 401, attempt == 0 {
@@ -210,7 +286,8 @@ public actor ECSSource: LibrarySource {
     private func prepareIndexedManifest(
         _ source: EmulatorContentClient.SourceFile,
         itemID: String,
-        progress: @escaping @Sendable (LibraryBrowseProgress) -> Void
+        progress: @escaping @Sendable (LibraryBrowseProgress) -> Void,
+        preparationProgress: @escaping @Sendable (LibraryPullProgress) -> Void
     ) async throws -> RemoteManifest {
         guard source.availability == "local" else { throw LibrarySharingError.itemUnavailable }
         var files: [EmulatorContentClient.SourceGroupFile]
@@ -238,8 +315,11 @@ public actor ECSSource: LibrarySource {
         try FileManager.default.createDirectory(at: preparationRoot, withIntermediateDirectories: true)
         var manifestFiles: [RemoteFile] = []
         var added: [String] = []
+        var completed: Int64 = 0
+        let totalBytes = total
+        let fileCount = files.count
         do {
-            for file in files {
+            for (index, file) in files.enumerated() {
                 try Task.checkCancellation()
                 let endpoint = "/api/v1/sources/" + (file.id.addingPercentEncoding(withAllowedCharacters: .alphanumerics) ?? file.id) + "/content"
                 let temporary = preparationRoot.appendingPathComponent(UUID().uuidString)
@@ -247,12 +327,17 @@ public actor ECSSource: LibrarySource {
                 let remote = RemoteFile(kind: RemoteFile.gameFileKind, relativePath: file.relativePath ?? file.name,
                                         sha256: "", size: file.size, contentPath: endpoint)
                 preparedFiles[endpoint] = nil
+                let bytesBeforeFile = completed
                 let response = try await download(remote, of: RemoteManifest(itemId: itemID, files: []),
-                                                  to: temporary, resumeOffset: 0) { _ in }
+                                                  to: temporary, resumeOffset: 0) { bytes in
+                    preparationProgress(.downloading(file: file.name, fileIndex: index, fileCount: fileCount,
+                                                     bytesDone: bytesBeforeFile + min(max(bytes, 0), file.size), totalBytes: totalBytes))
+                }
                 guard response.status == 200, response.bytesOnDisk == file.size else {
                     try? FileManager.default.removeItem(at: temporary)
                     throw LibrarySharingError.fileUnavailable(file.name)
                 }
+                completed += file.size
                 var verified = remote
                 verified.sha256 = try FileSHA256.hex(of: temporary)
                 preparedFiles[endpoint] = temporary
@@ -271,7 +356,7 @@ public actor ECSSource: LibrarySource {
     // MARK: - Requests
 
     private func checkCapabilities() async throws {
-        let response = try await transport.send(LibraryHTTPRequest(url: server.appendingRoute("/api/v1/capabilities")))
+        let response = try await sendCatalogueRead(LibraryHTTPRequest(url: server.appendingRoute("/api/v1/capabilities")))
         guard response.status == 200 else { throw Self.error(forStatus: response.status) }
         let capabilities = try JSONDecoder().decode(Capabilities.self, from: response.body)
         guard capabilities.protocol.major == Self.supportedMajor else {
@@ -286,14 +371,7 @@ public actor ECSSource: LibrarySource {
         var cursor: String?
         var seen = Set<String>()
         repeat {
-            try Task.checkCancellation()
-            var components = URLComponents(url: server.appendingRoute(path), resolvingAgainstBaseURL: false)
-            components?.queryItems = query + [URLQueryItem(name: "limit", value: String(pageSize))]
-                + (cursor.map { [URLQueryItem(name: "cursor", value: $0)] } ?? [])
-            guard let url = components?.url else { throw LibrarySharingError.unreachable }
-            let response = try await authorized(LibraryHTTPRequest(url: url))
-            guard response.status == 200 else { throw Self.error(forStatus: response.status) }
-            let page = try JSONDecoder().decode(Page<T>.self, from: response.body)
+            let page: Page<T> = try await readPage(path: path, query: query, limit: pageSize, cursor: cursor)
             all += page.items
             cursor = page.nextCursor
             if let cursor, !seen.insert(cursor).inserted { throw LibrarySharingError.invalidResponse(status: 200) }
@@ -301,13 +379,33 @@ public actor ECSSource: LibrarySource {
         return all
     }
 
+    private func readPage<T: Decodable>(path: String, query: [URLQueryItem], limit: Int, cursor: String?) async throws -> Page<T> {
+        try Task.checkCancellation()
+        var components = URLComponents(url: server.appendingRoute(path), resolvingAgainstBaseURL: false)
+        components?.queryItems = query + [URLQueryItem(name: "limit", value: String(limit))]
+            + (cursor.map { [URLQueryItem(name: "cursor", value: $0)] } ?? [])
+        guard let url = components?.url else { throw LibrarySharingError.unreachable }
+        let response = try await authorized(LibraryHTTPRequest(url: url), catalogueRead: true)
+        guard response.status == 200 else { throw Self.error(forStatus: response.status) }
+        return try JSONDecoder().decode(Page<T>.self, from: response.body)
+    }
+
+    /// A transient timeout can interrupt the first catalog read after app launch.
+    /// Retry the same read once without redoing sign-in or changing the server.
+    private func sendCatalogueRead(_ request: LibraryHTTPRequest) async throws -> LibraryHTTPResponse {
+        do {
+            return try await transport.send(request)
+        } catch let error as URLError where error.code == .timedOut {
+            try Task.checkCancellation()
+            return try await transport.send(request)
+        }
+    }
+
     /// Sends with the bearer token, signing in again once on 401.
-    private func authorized(_ request: LibraryHTTPRequest) async throws -> LibraryHTTPResponse {
+    private func authorized(_ request: LibraryHTTPRequest, catalogueRead: Bool = false) async throws -> LibraryHTTPResponse {
         for attempt in 0..<2 {
-            var signed = request
-            signed.headers["Authorization"] = "Bearer \(try await currentToken())"
-            guard signed.headers["Authorization"]?.unicodeScalars.allSatisfy({ $0.value >= 32 && $0.value != 127 }) == true else { throw LibrarySharingError.signInFailed }
-            let response = try await transport.send(signed)
+            let signed = try await signedRequest(request)
+            let response = try await (catalogueRead ? sendCatalogueRead(signed) : transport.send(signed))
             if response.status == 401, attempt == 0 {
                 forgetToken()
                 continue
@@ -317,12 +415,21 @@ public actor ECSSource: LibrarySource {
         throw LibrarySharingError.signInFailed
     }
 
-    private func currentToken() async throws -> String {
+    private func signedRequest(_ request: LibraryHTTPRequest) async throws -> LibraryHTTPRequest {
+        guard let token = try await currentToken() else { return request }
+        guard token.unicodeScalars.allSatisfy({ $0.value >= 32 && $0.value != 127 }) else { throw LibrarySharingError.signInFailed }
+        var result = request
+        result.headers["Authorization"] = "Bearer \(token)"
+        return result
+    }
+
+    private func currentToken() async throws -> String? {
         if let token { return token }
         if let stored = tokens.token(for: server) {
             token = stored
             return stored
         }
+        guard password != nil else { return nil }
         let fresh = try await signIn()
         token = fresh
         tokens.setToken(fresh, for: server)

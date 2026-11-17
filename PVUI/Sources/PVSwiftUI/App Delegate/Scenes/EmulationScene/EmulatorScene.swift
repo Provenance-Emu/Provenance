@@ -329,6 +329,7 @@ struct EmulatorContainerView: UIViewControllerRepresentable {
     }
 
     func updateRecentGames(_ game: PVGame) {
+        guard !game.isTemporaryServerGame else { return }
         // Update recent games in app state
         if let gameLibrary = appState.gameLibrary {
             // Add game to recent games list
@@ -444,6 +445,7 @@ class EmulatorContainerViewController: UIViewController, GameLaunchingViewContro
     }
 
     func updateRecentGames(_ game: PVGame) {
+        guard !game.isTemporaryServerGame else { return }
         // Update Realm recents database (inlined from protocol default to avoid infinite recursion)
         defer {
 #if canImport(PVAppIntents)

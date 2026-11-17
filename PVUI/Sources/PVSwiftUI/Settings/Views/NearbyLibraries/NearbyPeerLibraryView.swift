@@ -15,13 +15,17 @@ struct NearbyPeerLibraryView: View {
     let model: NearbyPeerLibraryModel
     @State private var code = ""
     @State private var cursorID: String?
+    @State private var downloadSelection: RemoteLibraryItem?
     @FocusState private var editingField: String?
     @Environment(NearbyNavigator.self) private var navigator: NearbyNavigator?
+
+    private var isServer: Bool { model.peer.app == .contentServer }
 
     private var route: NearbyRoute { .peer(id: model.peer.id) }
 
     var body: some View {
         NearbyScreen(title: model.title, cursorID: cursorID) {
+            if isServer { searchField }
             switch model.phase {
             case .idle, .loading:
                 NearbyNote(text: progressText, showsProgress: true)
@@ -47,9 +51,50 @@ struct NearbyPeerLibraryView: View {
             cursorLayout, cursor: $cursorID, scope: .screen(route), isEditingText: editingField != nil,
             onBack: back, onActivate: activate
         )
+        .safeAreaInset(edge: .bottom) {
+            if let current = model.activeServerGame {
+                transferBar(current)
+            }
+        }
         .onAppear { model.appear() }
         .onDisappear { model.cancel() }
+        .alert(
+            downloadSelection?.title ?? "Play Game",
+            isPresented: Binding(get: { downloadSelection != nil }, set: { if !$0 { downloadSelection = nil } }),
+            presenting: downloadSelection
+        ) { item in
+            Button("Play Temporarily") { model.copy(item, temporarily: true) }
+            Button("Download and Run") { model.copy(item, playAfterImport: true) }
+            Button("Cancel", role: .cancel) {}
+        } message: { _ in
+            Text("Play with a temporary copy or keep the game in your library.")
+        }
         .settingsSubpageTracking()
+    }
+
+    private func transferBar(_ item: RemoteLibraryItem) -> some View {
+        let progress = model.copies[item.id]
+        return HStack {
+            VStack(alignment: .leading, spacing: 6) {
+                Text(item.title).font(.headline).lineLimit(1)
+                switch progress {
+                case .downloading(let fraction):
+                    ProgressView("Downloading", value: fraction)
+                case .verifying:
+                    ProgressView("Verifying files")
+                case .importing:
+                    ProgressView("Adding to Library")
+                default:
+                    ProgressView("Preparing download")
+                }
+            }
+            if progress != .importing {
+                Button("Cancel", systemImage: "xmark.circle") { model.cancelCopy(item) }
+                    .labelStyle(.iconOnly)
+            }
+        }
+        .padding()
+        .background(.regularMaterial)
     }
 
     private var progressText: String {
@@ -63,36 +108,46 @@ struct NearbyPeerLibraryView: View {
         }
     }
 
-    private var libraryChoices: [String] {
-        model.serverLibraries.isEmpty ? [] : [""] + model.serverLibraries.map(\.id)
-    }
-
-    private var cursorLayout: TVMediaCursorLayout {
-        switch model.phase {
-        case .idle, .loading, .confirmingCode: return NearbyCursor.peerLibrary(.waiting)
-        case .failed: return NearbyCursor.peerLibrary(.failed)
-        case .needsPairing: return NearbyCursor.peerLibrary(.needsPairing)
-        case .enteringCode: return NearbyCursor.peerLibrary(.enteringCode)
-        case .loaded:
-            let items = model.sections.flatMap(\.items).map(\.id)
-            return NearbyCursor.peerLibrary(.loaded(libraryIDs: libraryChoices, itemIDs: items))
-        }
-    }
-
-    @ViewBuilder
-    private var catalogueSections: some View {
+    private var searchField: some View {
         NearbyTextFieldRow(
             placeholder: "Search games",
             text: Binding(get: { model.searchText }, set: { model.searchText = $0 }),
             cursorID: NearbyCursor.search,
             editing: $editingField
         )
+    }
+
+    private var libraryChoices: [String] {
+        model.serverLibraries.isEmpty ? [] : [""] + model.serverLibraries.map(\.id)
+    }
+
+    private var cursorLayout: TVMediaCursorLayout {
+        switch model.phase {
+        case .idle, .loading, .confirmingCode: return NearbyCursor.peerLibrary(.waiting, searchWhileLoading: isServer)
+        case .failed: return NearbyCursor.peerLibrary(.failed, searchWhileLoading: isServer)
+        case .needsPairing: return NearbyCursor.peerLibrary(.needsPairing)
+        case .enteringCode: return NearbyCursor.peerLibrary(.enteringCode)
+        case .loaded:
+            let items = model.sections.flatMap(\.items).map(\.id)
+            return NearbyCursor.peerLibrary(
+                .loaded(libraryIDs: libraryChoices, itemIDs: items), canLoadMore: model.nextServerPage != nil && !model.loadingMore
+            )
+        }
+    }
+
+    @ViewBuilder
+    private var catalogueSections: some View {
+        if isServer {
+            Button("Refresh", systemImage: "arrow.clockwise") { model.load(keepCatalogue: true) }
+                .disabled(model.activeServerGame != nil)
+        }
+        if !isServer { searchField }
         if !model.serverLibraries.isEmpty {
             NearbySection(header: "Library") {
                 ScrollView(.horizontal, showsIndicators: false) {
                     HStack(spacing: NearbyMetrics.rowSpacing) {
                         ForEach(libraryChoices, id: \.self) { id in
-                            Button(libraryName(id)) { selectLibrary(id) }
+                            Button(libraryName(id)) { model.selectLibrary(id) }
                                 .buttonStyle(NearbyChipButtonStyle(
                                     cursorID: NearbyCursor.library(id), isSelected: model.selectedLibraryID == id
                                 ))
@@ -102,7 +157,7 @@ struct NearbyPeerLibraryView: View {
                 }
             }
         }
-        if model.sections.isEmpty {
+        if model.sections.isEmpty && model.nextServerPage == nil {
             NearbyNote(text: model.searchText.isEmpty
                        ? "\(model.title) isn't sharing any games Provenance can play."
                        : "No games match your search.")
@@ -113,11 +168,12 @@ struct NearbyPeerLibraryView: View {
                     NearbyItemRow(
                         item: item,
                         image: model.artwork[item.id],
-                        copyState: model.copies[item.id],
+                        copyState: model.activeServerGame?.id == item.id ? nil : model.copies[item.id],
                         peerName: model.title,
                         action: itemAction(item),
                         perform: { perform(itemAction(item), on: item) }
                     )
+                    .disabled(isServer && model.activeServerGame != nil)
                     .task(id: item.id) { await model.loadArtwork(for: item) }
                 }
             }
@@ -127,15 +183,24 @@ struct NearbyPeerLibraryView: View {
             NearbyNote(text: "\(count) more game\(count == 1 ? " isn't" : "s aren't") supported by Provenance.")
                 .font(.caption)
         }
+        if let message = model.pageError {
+            NearbyNote(text: message, systemImage: "exclamationmark.triangle", tint: .orange)
+        }
+        if model.nextServerPage != nil {
+            if model.loadingMore {
+                ProgressView("Loading more games")
+            } else {
+                Button { model.load(more: true) } label: {
+                    NearbyRowLabel(title: "Load More Games", systemImage: "arrow.down")
+                }
+                    .buttonStyle(NearbyRowButtonStyle(cursorID: NearbyCursor.loadMore))
+                    .disabled(model.activeServerGame != nil)
+            }
+        }
     }
 
     private func libraryName(_ id: String) -> String {
         id.isEmpty ? "All libraries" : (model.serverLibraries.first { $0.id == id }?.name ?? id)
-    }
-
-    private func selectLibrary(_ id: String) {
-        model.selectedLibraryID = id
-        model.load()
     }
 
     private func itemAction(_ item: RemoteLibraryItem) -> NearbyItemAction {
@@ -152,7 +217,9 @@ struct NearbyPeerLibraryView: View {
         switch action {
         case .stop: model.cancelCopy(item)
         case .play: model.play(item)
-        case .copy, .retry, .downloadAndPlay: model.copy(item, playAfterImport: model.peer.app == .contentServer)
+        case .downloadAndPlay: downloadSelection = item
+        case .retry where isServer: downloadSelection = item
+        case .copy, .retry: model.copy(item)
         case .importing, .inLibrary: break
         }
     }
@@ -208,13 +275,14 @@ struct NearbyPeerLibraryView: View {
     private func activate(_ id: String) {
         switch id {
         case NearbyCursor.tryAgain: model.load()
+        case NearbyCursor.loadMore: model.load(more: true)
         case NearbyCursor.pair: model.beginPairing()
         case NearbyCursor.search, NearbyCursor.code: editingField = id
         case NearbyCursor.submitCode:
             if case .enteringCode(let handle) = model.phase { submitCode(handle) }
         default:
             if let library = libraryChoices.first(where: { NearbyCursor.library($0) == id }) {
-                selectLibrary(library)
+                model.selectLibrary(library)
             } else if let item = model.sections.flatMap(\.items).first(where: { NearbyCursor.item($0.id) == id }) {
                 perform(itemAction(item), on: item)
             }

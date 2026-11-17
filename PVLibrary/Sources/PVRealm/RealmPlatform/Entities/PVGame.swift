@@ -26,6 +26,13 @@ public final class PVGame: RealmSwift.Object, Identifiable, PVGameLibraryEntry {
     // fully qualified path, but if we add network / cloud storage that may or may not change that.
     @Persisted public var romPath: String = ""
     @Persisted public var file: PVFile?
+
+    public static let temporaryServerGamesDirectory = "TemporaryServerGames"
+
+    public var isTemporaryServerGame: Bool {
+        realm == nil && file?.partialPath.hasPrefix(Self.temporaryServerGamesDirectory + "/") == true
+    }
+
     @Persisted public private(set) var relatedFiles: List<PVFile>
 
     @Persisted public var customArtworkURL: String = ""

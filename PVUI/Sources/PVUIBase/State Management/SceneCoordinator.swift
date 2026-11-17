@@ -181,6 +181,7 @@ public class SceneCoordinator: ObservableObject {
         launchTimeoutTask?.cancel()
         launchTimeoutTask = nil
         syncStatusManager.hide()
+        if !showEmulator { removeTemporaryServerGame() }
     }
 
     /// Clears the launch guard when the launch that set it ends. A launch that was
@@ -188,6 +189,7 @@ public class SceneCoordinator: ObservableObject {
     private func finishLaunch(_ launchID: UUID) {
         guard launchGate.finish(launchID) else { return }
         activeLaunchTask = nil
+        if !showEmulator { removeTemporaryServerGame() }
         // A battery-save restore kicked off during this launch never gates
         // it (see downloadBatterySavesIfNeeded) and may still be running
         // now that the launch task itself is done — don't hide its status
@@ -268,6 +270,27 @@ public class SceneCoordinator: ObservableObject {
 
         /// Pause all background services via the central registry
         BackgroundServiceRegistry.shared.pauseAll(reason: .emulation)
+    }
+
+    private var temporaryServerFolder: URL?
+
+    /// Takes ownership of the verified staging directory for the duration of play.
+    public func launchTemporaryServerGame(_ game: PVGame, folder: URL) {
+        let hasActiveGame = showEmulator && AppState.shared.emulationUIState.currentGame != nil
+        guard game.isTemporaryServerGame, activeLaunchTask == nil, !hasActiveGame else {
+            try? FileManager.default.removeItem(at: folder)
+            return
+        }
+        removeTemporaryServerGame()
+        temporaryServerFolder = folder
+        launchOriginalGame(game)
+    }
+
+    private func removeTemporaryServerGame() {
+        if let folder = temporaryServerFolder {
+            temporaryServerFolder = nil
+            try? FileManager.default.removeItem(at: folder)
+        }
     }
 
     /// Launch a specific game with error handling and sync validation
@@ -717,7 +740,7 @@ public class SceneCoordinator: ObservableObject {
 
     /// Returns the freshest game row for launch, falling back to the provided object.
     private func refreshedGameForLaunch(from game: PVGame) -> PVGame {
-        guard !game.md5Hash.isEmpty else {
+        guard !game.isTemporaryServerGame, !game.md5Hash.isEmpty else {
             return game
         }
         return RomDatabase.sharedInstance.game(withMD5: game.md5Hash) ?? game
@@ -1814,6 +1837,7 @@ public class SceneCoordinator: ObservableObject {
         AppState.shared.emulationUIState.core = nil
         AppState.shared.emulationUIState.emulator = nil
         AppState.shared.emulationUIState.currentGame = nil
+        removeTemporaryServerGame()
         ILOG("SceneCoordinator: Cleared emulation state")
 
         /// Resume all background services via the central registry

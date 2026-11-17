@@ -26,6 +26,13 @@ public struct PVLibraryRootView: View {
     @State private var navigationTask: Task<Void, Never>?
     @State private var netplayRequest: NetplayLibraryRequest?
     @State private var isWebServerRunning = false
+    #if os(iOS) || os(tvOS)
+    @State private var contentServerDiscovery = ContentServerDiscovery()
+    @State private var selectedContentServer: DiscoveredContentServer?
+    @State private var showingContentServers = false
+    @State private var contentLibraries = NearbyLibrariesModel()
+    @AppStorage("LibrarySharing.selectedContentServer") private var selectedContentServerID = ""
+    #endif
 
     public init(gameLibrary: PVGameLibrary<RealmDatabaseDriver>, updatesController: PVGameLibraryUpdatesController, gameImporter: GameImporter) {
         #if DEBUG
@@ -62,6 +69,25 @@ public struct PVLibraryRootView: View {
                 }
             }
             .modifier(LibrarySidebarSheetPresenter(viewModel: navigation.viewModel))
+            #if os(iOS) || os(tvOS)
+            .sheet(isPresented: $showingContentServers, onDismiss: { selectedContentServer = nil }) {
+                NearbyLibrariesSheet(initialServer: selectedContentServer, model: contentLibraries) { id in
+                    selectedContentServerID = id
+                    showingContentServers = false
+                }
+            }
+            .onReceive(NotificationCenter.default.publisher(for: UserDefaults.didChangeNotification)) { _ in
+                contentLibraries.reloadContentServers()
+                if !selectedContentServerID.isEmpty, !contentLibraries.contentServers.contains(where: { contentLibraries.contentServerPeer($0).id == selectedContentServerID }) {
+                    selectedContentServerID = ""
+                }
+            }
+            .onAppear {
+                contentLibraries.loadLocalLibrary()
+                contentServerDiscovery.start()
+            }
+            .onDisappear { contentServerDiscovery.stop() }
+            #endif
             .sheet(item: presentedBinding(.sheet), onDismiss: navigation.didDismissSheet) { sheet in
                 presentedSheet(sheet)
             }
@@ -181,14 +207,59 @@ public struct PVLibraryRootView: View {
     }
     #endif
 
+    private func localLibrary(bottomInset: CGFloat) -> some View {
+        ConsolesWrapperView(consolesWrapperViewDelegate: navigation.tabs, viewModel: navigation.viewModel, rootDelegate: navigation)
+            .environment(\.libraryBottomSafeAreaInset, bottomInset)
+    }
+
+    #if os(iOS) || os(tvOS)
+    private var serverTabs: some View {
+        ScrollView(.horizontal, showsIndicators: false) {
+            HStack(spacing: 8) {
+                Button("Library", systemImage: "books.vertical") { selectedContentServerID = "" }
+                    .tint(selectedContentServerID.isEmpty ? .accentColor : .secondary)
+                ForEach(contentLibraries.contentServers) { server in
+                    let peer = contentLibraries.contentServerPeer(server)
+                    Button(server.url.host ?? peer.serviceName, systemImage: "server.rack") {
+                        selectedContentServerID = peer.id
+                    }
+                    .tint(selectedContentServerID == peer.id ? .accentColor : .secondary)
+                }
+                Button("Add Emulation Server", systemImage: "plus") { showingContentServers = true }
+            }
+            .buttonStyle(.bordered)
+            .padding(.horizontal)
+        }
+        .padding(.bottom, 6)
+    }
+    #endif
+
     private var libraryContent: some View {
         PVLibraryDrawerHost(viewModel: navigation.viewModel) {
             GeometryReader { geometry in
                 VStack(spacing: 0) {
+                    #if os(iOS) || os(tvOS)
+                    LibraryHeader(viewModel: navigation.viewModel, navigation: navigation, servers: contentServerDiscovery.servers) { server in
+                        selectedContentServer = server
+                        showingContentServers = true
+                    }
+                    serverTabs
+                    #else
                     LibraryHeader(viewModel: navigation.viewModel, navigation: navigation)
+                    #endif
                     NavigationStack {
-                        ConsolesWrapperView(consolesWrapperViewDelegate: navigation.tabs, viewModel: navigation.viewModel, rootDelegate: navigation)
-                            .environment(\.libraryBottomSafeAreaInset, geometry.safeAreaInsets.bottom)
+                        Group {
+                            #if os(iOS) || os(tvOS)
+                            if !selectedContentServerID.isEmpty, let server = contentLibraries.peerModel(forPeerID: selectedContentServerID) {
+                                NearbyPeerLibraryView(model: server)
+                                    .id(selectedContentServerID)
+                            } else {
+                                localLibrary(bottomInset: geometry.safeAreaInsets.bottom)
+                            }
+                            #else
+                            localLibrary(bottomInset: geometry.safeAreaInsets.bottom)
+                            #endif
+                        }
                         #if !os(tvOS)
                         .toolbar(.hidden, for: .navigationBar)
                         #endif
@@ -294,6 +365,15 @@ public struct PVLibraryRootView: View {
         #endif
         actions.append(PVAlertAction("Free ROMs") { navigation.sheet = .freeROMs })
         actions.append(PVAlertAction("Import Queue") { navigation.didTapImports() })
+        #if os(iOS) || os(tvOS)
+        actions += contentServerDiscovery.servers.map { server in
+            PVAlertAction(server.name) {
+                selectedContentServer = server
+                showingContentServers = true
+            }
+        }
+        actions.append(PVAlertAction("Nearby Libraries") { navigation.viewModel.sidebarSheet = .nearbyLibraries })
+        #endif
         actions.append(.cancel())
         return actions
     }
@@ -409,6 +489,10 @@ private enum LibraryChrome {
 private struct LibraryHeader: View {
     @ObservedObject var viewModel: PVRootViewModel
     @ObservedObject var navigation: PVLibraryNavigation
+    #if os(iOS) || os(tvOS)
+    var servers: [DiscoveredContentServer]
+    var openServer: (DiscoveredContentServer) -> Void
+    #endif
     @ObservedObject private var themeManager = ThemeManager.shared
     @Environment(\.verticalSizeClass) private var verticalSizeClass
 
@@ -434,6 +518,18 @@ private struct LibraryHeader: View {
                         Label(destination.title, systemImage: destination.symbol)
                     }
                 }
+                #if os(iOS) || os(tvOS)
+                Section("Nearby Libraries") {
+                    ForEach(servers) { server in
+                        Button { openServer(server) } label: {
+                            Label(server.name, systemImage: "server.rack")
+                        }
+                    }
+                    Button("Browse Nearby Libraries", systemImage: "network") {
+                        viewModel.sidebarSheet = .nearbyLibraries
+                    }
+                }
+                #endif
             } label: {
                 HStack(spacing: 6) {
                     Text("Library").font(.system(size: 16, weight: .medium))

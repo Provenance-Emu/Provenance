@@ -122,6 +122,27 @@ final class FakeContentServer: @unchecked Sendable {
     }
 }
 
+private actor CatalogueTimeoutTransport: LibraryHTTPTransport {
+    let transport: InProcessTransport
+    var failures: [String: Int]
+    private(set) var attempts: [String: Int] = [:]
+
+    init(server: FakeContentServer, failures: [String: Int]) {
+        transport = InProcessTransport { server.handle($0) }
+        self.failures = failures
+    }
+
+    func send(_ request: LibraryHTTPRequest) async throws -> LibraryHTTPResponse {
+        let path = request.url.path
+        attempts[path, default: 0] += 1
+        if failures[path, default: 0] > 0 {
+            failures[path, default: 0] -= 1
+            throw URLError(.timedOut)
+        }
+        return try await transport.send(request)
+    }
+}
+
 final class ECSSourceTests: XCTestCase {
     private let server = URL(string: "https://ecs.local:8443")!
 
@@ -149,6 +170,49 @@ final class ECSSourceTests: XCTestCase {
         XCTAssertEqual(selected.items.count, 3)
         let absent = try await ecs.catalogue(libraryID: "missing") { _ in }
         XCTAssertTrue(absent.items.isEmpty)
+    }
+
+    func testInteractiveBrowseReturnsFirstPageBeforeRequestingContinuation() async throws {
+        let ecs = source(FakeContentServer(), systems: [])
+        let libraries = try await ecs.libraries()
+        let first = try await ecs.browseCatalogue(libraryIDs: libraries.map(\.id), search: "", playableSystems: [.SNES, .Wii])
+        XCTAssertEqual(first.catalogue.items.map(\.id), ["i1"])
+
+        let next = try XCTUnwrap(first.next)
+        let second = try await ecs.browseCatalogue(after: next)
+        XCTAssertEqual(second.catalogue.items.map(\.id), ["i3"])
+        XCTAssertNil(second.next)
+    }
+
+    func testCatalogueReadsRecoverFromOneTimeoutWithoutSigningInAgain() async throws {
+        let fake = FakeContentServer()
+        let paths = ["/api/v1/capabilities", "/api/v1/browse-libraries", "/api/v1/browse"]
+        let transport = CatalogueTimeoutTransport(server: fake, failures: Dictionary(uniqueKeysWithValues: paths.map { ($0, 1) }))
+        let ecs = ECSSource(server: server, username: "joe", password: "hunter2", deviceName: "Provenance",
+                            tokens: InMemoryECSTokenStore(), transport: transport)
+
+        let libraries = try await ecs.libraries()
+        let first = try await ecs.browseCatalogue(libraryIDs: libraries.map(\.id), search: "")
+        XCTAssertEqual(first.catalogue.items.map(\.id), ["i1", "i2"])
+        XCTAssertEqual(fake.logins, 1)
+        let attempts = await transport.attempts
+        for path in paths { XCTAssertEqual(attempts[path], 2, path) }
+    }
+
+    func testCatalogueReadSurfacesARepeatedTimeout() async throws {
+        let path = "/api/v1/browse"
+        let transport = CatalogueTimeoutTransport(server: FakeContentServer(), failures: [path: 3])
+        let ecs = ECSSource(server: server, username: "joe", password: "hunter2", deviceName: "Provenance",
+                            tokens: InMemoryECSTokenStore(), transport: transport)
+
+        do {
+            _ = try await ecs.browseCatalogue(libraryIDs: ["lib1"], search: "")
+            XCTFail("Expected the second catalog timeout to be reported")
+        } catch let error as URLError {
+            XCTAssertEqual(error.code, .timedOut)
+        }
+        let attempts = await transport.attempts
+        XCTAssertEqual(attempts[path], 2)
     }
 
     func testContentCannotUseAnotherPortOrScheme() async throws {

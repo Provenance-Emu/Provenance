@@ -307,6 +307,7 @@ public extension GameLaunchingViewController {
     }
 
     func updateRecentGames(_ game: PVGame) {
+        guard !game.isTemporaryServerGame else { return }
         defer { writeWidgetGameData() }
         let database = RomDatabase.sharedInstance
         RomDatabase.refresh()
@@ -643,7 +644,8 @@ public extension GameLaunchingViewController {
             // Helper to get saves for a core
             // Note: saveStates already includes autoSaves (autoSaves is a filtered subset of saveStates)
             let getSavesForCore: (PVCore) -> [PVSaveState] = { core in
-                game.saveStates.filter("core.identifier == %@", core.identifier)
+                guard !game.isTemporaryServerGame else { return [] }
+                return game.saveStates.filter("core.identifier == %@", core.identifier)
                     .sorted(byKeyPath: "date", ascending: false)
                     .toArray()
             }
@@ -665,9 +667,7 @@ public extension GameLaunchingViewController {
             let createSaveSelectionView: @MainActor (PVCore, Bool) -> AnyView = { core, showBack in
                 let allSaves = getSavesForCore(core)
 
-                // Debug logging for save count verification
-                let totalInRealm = game.saveStates.filter("core.identifier == %@", core.identifier).count
-                DLOG("[LaunchFlow] Save count for \(core.projectName): Realm total=\(totalInRealm), getSavesForCore=\(allSaves.count)")
+                DLOG("[LaunchFlow] Save count for \(core.projectName): \(allSaves.count)")
 
                 if allSaves.isEmpty {
                     dismissAndResume(.startFresh(core: core))
@@ -947,9 +947,15 @@ extension GameLaunchingViewController where Self: UIViewController {
     }
 
     @MainActor
-    func load(_ game: PVGame, sender: Any? = nil, core: PVCore? = nil, saveState: PVSaveState? = nil) async {
-        guard game.realm != nil else {
-            return
+    func load(_ requestedGame: PVGame, sender: Any? = nil, core: PVCore? = nil, saveState: PVSaveState? = nil) async {
+        let temporaryGame = requestedGame.isTemporaryServerGame ? requestedGame : nil
+        guard temporaryGame != nil || requestedGame.realm != nil else { return }
+
+        // A temporary game stays on the main actor and has no Realm reference to resolve.
+        let managedGame = ThreadSafe(wrappedValue: temporaryGame == nil ? requestedGame : nil)
+        var game: PVGame! {
+            get { temporaryGame ?? managedGame.wrappedValue }
+            set { managedGame.wrappedValue = newValue }
         }
 
         ILOG("Loading game: \(game.title) at romPath: \(game.romPath), url: \(game.url?.absoluteString ?? "nil"), partialPath: \(game.file?.partialPath ?? "nil")")
@@ -965,12 +971,14 @@ extension GameLaunchingViewController where Self: UIViewController {
             }
         }
 
-        @ThreadSafe var game: PVGame! = game
         @ThreadSafe var core = core
-        @ThreadSafe var saveState = saveState
+        @ThreadSafe var saveState = temporaryGame == nil ? saveState : nil
 
-        Task.detached { [weak self] in
-            self?.donateShortcut(forGame: game)
+        if temporaryGame == nil {
+            Task.detached { [weak self] in
+                guard let game = managedGame.wrappedValue else { return }
+                self?.donateShortcut(forGame: game)
+            }
         }
 
         guard !(presentedViewController is PVEmualatorControllerProtocol) else {
@@ -1009,7 +1017,13 @@ extension GameLaunchingViewController where Self: UIViewController {
 
         // Check if file exists locally - handle race condition where CloudKit sync created PVGame before local scan
         let localFileCheckResult: (fileExists: Bool, updated: Bool)
-        if isContentless {
+        if let temporaryGame {
+            guard let fileURL = temporaryGame.file?.url, FileManager.default.fileExists(atPath: fileURL.path) else {
+                displayAndLogError(withTitle: "Cannot open game", message: "The temporary download is no longer available.")
+                return
+            }
+            localFileCheckResult = (fileExists: true, updated: false)
+        } else if isContentless {
             localFileCheckResult = (fileExists: true, updated: false)
         } else {
             let result = await checkAndUpdateLocalFile(for: game, system: system)
@@ -1348,11 +1362,12 @@ extension GameLaunchingViewController where Self: UIViewController {
         source: UIView?,
         skipSaveStatePrompt: Bool = false
     ) async {
-        guard let realm = await try? Realm() else {
+        guard let realm = try? await Realm() else {
             ELOG("Realm initialization failed")
             return
         }
-        guard let game = realm.object(ofType: PVGame.self, forPrimaryKey: game.md5Hash) else {
+        let resolvedGame = game.isTemporaryServerGame ? game : realm.object(ofType: PVGame.self, forPrimaryKey: game.md5Hash)
+        guard let game = resolvedGame else {
             ELOG("No game found for id: \(game.md5Hash)")
             return
         }
@@ -1367,6 +1382,10 @@ extension GameLaunchingViewController where Self: UIViewController {
         }
 
         let emulatorViewController = PVEmulatorViewController(game: game, core: coreInstance)
+        if game.isTemporaryServerGame {
+            presentEMUVC(emulatorViewController, withGame: game)
+            return
+        }
 
         // Check if Save State exists
         // Check both core.supportsSaveStates AND if saves exist in DB for this core

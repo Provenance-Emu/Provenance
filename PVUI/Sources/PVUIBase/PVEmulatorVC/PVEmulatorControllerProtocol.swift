@@ -208,6 +208,7 @@ public extension PVEmualatorControllerProtocol {
     @discardableResult
     @MainActor
     func quickload() async throws -> Bool {
+        guard !game.isTemporaryServerGame else { throw SaveStateError.ineligibleError }
         guard core.supportsSaveStates else {
             WLOG("Core \(core.description) doesn't support save states.")
             throw SaveStateError.saveStatesUnsupportedByCore
@@ -268,6 +269,7 @@ public extension PVEmualatorControllerProtocol {
     @discardableResult
     @MainActor
     func autoSaveState() async throws -> Bool {
+        guard !game.isTemporaryServerGame else { throw SaveStateError.ineligibleError }
         guard core.supportsSaveStates else {
             WLOG("Core \(core.description) doesn't support save states.")
             throw SaveStateError.saveStatesUnsupportedByCore
@@ -340,6 +342,7 @@ public extension PVEmualatorControllerProtocol {
             ELOG("createNewSaveState: game is nil or invalidated")
             return false
         }
+        guard !rawGame.isTemporaryServerGame else { throw SaveStateError.ineligibleError }
         let game = rawGame.isFrozen ? rawGame : rawGame.freeze()
 
         /// Create temporary unmanaged copies of core and game for thread safety

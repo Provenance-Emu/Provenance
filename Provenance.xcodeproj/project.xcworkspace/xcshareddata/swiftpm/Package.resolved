@@ -77,7 +77,7 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Provenance-Emu/emulator-content-server.git",
       "state" : {
-        "revision" : "4a46d3f357ec0cb82bcf50f152ea72de6d3b9d7e"
+        "revision" : "7b30839778e502573ee0cfb91c4bf94a1de51fa8"
       }
     },
     {
