@@ -442,6 +442,11 @@ def evaluate(job: Job, state: dict, *, run_checks: bool = True, refresh: bool = 
     now = time.time()
 
     inputs = sorted(set(job.inputs) | job.referenced_paths())
+    # "An input was committed after the outputs", and where it goes in `reasons`.
+    # Held back until the check has run: a passing check overrides it.
+    behind_reason: str | None = None
+    behind_slot = 0
+    in_commit = None
     if job.outputs:
         out_commit = last_commit(job.outputs)
         if out_commit is None:
@@ -462,7 +467,8 @@ def evaluate(job: Job, state: dict, *, run_checks: bool = True, refresh: bool = 
                     changed = git("log", "-1", "--format=", "--name-only", in_commit[0], "--",
                                   *pathspecs(inputs)).split()
                     what = changed[0] if changed else "an input"
-                    reasons.append(f"{what} changed in {behind} commit(s) since the outputs were regenerated")
+                    behind_reason = f"{what} changed in {behind} commit(s) since the outputs were regenerated"
+                    behind_slot = len(reasons)
         dirty_inputs = dirty_paths(job.inputs)
         if dirty_inputs and not dirty_paths(job.outputs):
             reasons.append(f"uncommitted change to {dirty_inputs[0]}")
@@ -482,19 +488,28 @@ def evaluate(job: Job, state: dict, *, run_checks: bool = True, refresh: bool = 
 
     if job.check:
         cached = state.get("checks", {}).get(job.id)
-        fresh = cached and now - cached.get("ts", 0) < CHECK_CACHE_SECONDS
+        # A result from before the newest input commit says nothing about that commit.
+        checked_inputs = in_commit[0] if in_commit else None
+        fresh = (cached and now - cached.get("ts", 0) < CHECK_CACHE_SECONDS
+                 and cached.get("inputs") == checked_inputs)
         if fresh and not refresh:
             code, message = cached["exit"], cached["message"]
         elif run_checks and not blocked:
             code, message = run_check(job)
             update_state(lambda s: s["checks"].__setitem__(
-                job.id, {"ts": time.time(), "exit": code, "message": message}))
+                job.id, {"ts": time.time(), "exit": code, "message": message, "inputs": checked_inputs}))
         else:
             code, message = None, None
         if code == CHECK_STALE:
             reasons.append(message)
-        elif code not in (None, CHECK_CURRENT):
+        elif code == CHECK_CURRENT:
+            # The check compared the outputs with what the inputs produce now.
+            behind_reason = None
+        elif code is not None:
             errors.append(f"check failed: {message}")
+
+    if behind_reason:
+        reasons.insert(behind_slot, behind_reason)
 
     if reasons:
         state_name = STALE

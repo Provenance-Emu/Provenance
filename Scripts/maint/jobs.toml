@@ -9,9 +9,12 @@
 #   run       command, run from the repo root. A string runs in bash; a list runs directly.
 #   check     command whose exit code decides staleness: 0 current, 1 stale, other = error.
 #             The last output line (or the first matching `reason_pattern`) is the reason.
+#             Exit 0 also overrides the `inputs` rule: the check has looked at the outputs,
+#             so an input that changed without changing them is not stale.
 #   mode      "auto": deterministic and safe for CI / the launchd schedule to run and PR.
 #             "manual": needs judgement, secrets or your machine; only ever reported.
-#   inputs    globs; stale when one changed in a commit newer than the outputs' last commit.
+#   inputs    globs; stale when one changed in a commit newer than the outputs' last commit,
+#             unless the job has a `check` and it passes.
 #             Scripts named in `run`/`check` count as inputs automatically.
 #   outputs   globs of committed files the job writes.
 #   max_age   "30d", "12h", "2w": stale when the outputs (or the last successful run on
@@ -88,6 +91,15 @@ inputs = ["Scripts/shaders/slang-shaders.lock.json", "PVShaders/Library/**", "PV
 outputs = ["Scripts/shaders/slang-shaders-excluded.json"]
 needs = ["network", "macos", "swift"]
 
+[jobs.bezel-audit]
+title = "Bezel preset review sheet"
+category = "Audits"
+description = "Renders every bezel and border preset of a fetched slang library on this Mac's GPU and writes an HTML sheet for choosing the TV bezel presets."
+run = ["python3", "Scripts/shaders/audit_bezels.py"]
+args_hint = "SLANG_LIBRARY OUTPUT_DIRECTORY [--reuse] [--preset ID]"
+needs = ["macos", "xcrun"]
+files = ["Scripts/shaders/bezel-audit/**"]
+
 [jobs.contributors]
 title = "Contributors list"
 category = "Generated files"
@@ -153,10 +165,13 @@ title = "Controller mapping audit"
 category = "Generated files"
 description = "docs/controller-mapping-audit.md: which GameController button drives each input, per native core."
 run = ["python3", "Scripts/audits/audit_controls.py"]
+# Most bridge commits move no button (save states, video, audio), so the report is compared
+# instead of trusting commit order. No `needs`: the bridges inside submodules bind no
+# GameController inputs, and the script stops if the report ever lists one that is absent.
+check = ["python3", "Scripts/audits/audit_controls.py", "--check"]
 mode = "auto"
 inputs = ["Cores/*/**/*Bridge*.m", "Cores/*/**/*Bridge*.mm"]
 outputs = ["docs/controller-mapping-audit.md"]
-needs = ["submodules"]   # some bridge files live in submodules; without them rows vanish
 
 [jobs.skin-catalog]
 title = "Delta skin catalog"
@@ -395,6 +410,7 @@ run = """python3 Scripts/tests/test_check_pbxproj_sources.py \
   && python3 Scripts/tests/test_skinkit_alignment.py \
   && python3 Scripts/tests/test_build_failure_logs.py \
   && python3 Scripts/tests/test_capture_device_screenshots.py \
+  && python3 Scripts/tests/test_audit_controls.py \
   && python3 -m unittest discover -s Scripts/maint -p 'test_*.py' \
   && python3 -m unittest discover -s Scripts/cores/tests -p 'test_*.py' \
   && bash Scripts/tests/test-get-modules-validation.sh \

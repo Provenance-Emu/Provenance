@@ -242,6 +242,67 @@ class MaxAgeAndCheckTests(RepoTestCase):
         self.status(registry, "c")
         self.assertEqual(marker.read_text().count("x"), 1)
 
+    CHECKED_GEN_TOML = """
+        [jobs.gen]
+        title = "gen"
+        run = ["python3", "gen.py"]
+        check = ["python3", "gen.py", "--check"]
+        mode = "auto"
+        inputs = ["data/*.txt", "notes/*.txt"]
+        outputs = ["out.txt"]
+        """
+
+    def checked_gen(self):
+        """A generator whose --check regenerates in memory and compares, like audit_controls.py."""
+        self.write("gen.py", textwrap.dedent("""\
+            import pathlib, sys
+            fresh = pathlib.Path('data/a.txt').read_text().upper()
+            out = pathlib.Path('out.txt')
+            if '--check' in sys.argv:
+                if out.read_text() != fresh:
+                    print('out.txt is out of date')
+                    sys.exit(1)
+            else:
+                out.write_text(fresh)
+            """))
+        self.write("data/a.txt", "one\n")
+        self.write("notes/n.txt", "first\n")
+        self.write("out.txt", "ONE\n")
+        registry = self.registry(self.CHECKED_GEN_TOML)
+        self.commit()
+        return registry
+
+    def test_a_passing_check_overrides_an_input_that_changed_nothing(self):
+        registry = self.checked_gen()
+        self.write("notes/n.txt", "second\n")   # an input, but not one that moves the output
+        self.commit()
+        status = self.status(registry, "gen")
+        self.assertEqual((status.state, status.reasons), (maint.CURRENT, []))
+
+    def test_a_failing_check_keeps_the_input_reason(self):
+        registry = self.checked_gen()
+        self.write("data/a.txt", "two\n")
+        self.commit()
+        status = self.status(registry, "gen")
+        self.assertEqual(status.state, maint.STALE)
+        self.assertIn("data/a.txt changed in 1 commit(s)", status.reasons[0])
+        self.assertEqual(status.reasons[1], "out.txt is out of date")
+
+    def test_a_cached_pass_does_not_cover_a_later_input_commit(self):
+        registry = self.checked_gen()
+        self.assertEqual(self.status(registry, "gen").state, maint.CURRENT)   # pass, now cached
+        self.write("data/a.txt", "two\n")
+        self.commit()
+        self.assertEqual(self.status(registry, "gen").state, maint.STALE)
+
+    def test_without_a_check_result_the_input_rule_stands(self):
+        registry = self.checked_gen()
+        self.write("notes/n.txt", "second\n")
+        self.commit()
+        status = maint.evaluate(registry.jobs["gen"], maint.load_state(), run_checks=False)
+        self.assertEqual(status.state, maint.STALE)
+        self.assertIn("notes/n.txt changed", status.reasons[0])
+
     def test_unmet_needs_block_checks_and_runs(self):
         self.write("x", "x")
         self.commit()

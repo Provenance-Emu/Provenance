@@ -34,18 +34,33 @@ attributed and will be silently skipped.
 
 Output: docs/controller-mapping-audit.md (markdown report).
 
-Usage:  python3 Scripts/audits/audit_controls.py
+Usage:  python3 Scripts/audits/audit_controls.py           write the report
+        python3 Scripts/audits/audit_controls.py --check   exit 1 when the committed report
+                                                           differs from a fresh audit
+
+Submodules do not have to be checked out: no bridge inside one binds GameController
+inputs today. If the committed report ever lists a file from a submodule that is not
+checked out, the script stops (exit 2) instead of writing a report without it.
 """
 
 from __future__ import annotations
 
+import argparse
+import difflib
 import re
+import subprocess
 import sys
 from collections import defaultdict
 from dataclasses import dataclass, field
 from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
+REPORT_PATH = "docs/controller-mapping-audit.md"
+
+# Exit codes of --check, as Scripts/maint/maint.py reads them.
+CHECK_CURRENT = 0
+CHECK_STALE = 1
+CANNOT_AUDIT = 2
 
 # --- Sources to scan -------------------------------------------------------
 
@@ -428,22 +443,84 @@ def render(native: dict[str, SystemReport]) -> str:
 
 # --- main ------------------------------------------------------------------
 
-def main() -> int:
+def generate(root: Path) -> tuple[str, int, int]:
+    """(report text, files scanned, systems found) for the bridge files under `root`."""
     native_files: list[Path] = []
     for pat in NATIVE_BRIDGE_GLOBS:
-        native_files.extend(sorted(REPO_ROOT.glob(pat)))
-
-    if not native_files:
-        print("audit_controls.py: no bridge files matched any glob — check globs.", file=sys.stderr)
-        return 1
-
+        native_files.extend(sorted(root.glob(pat)))
     native = merge([scan_file(p) for p in native_files])
+    return render(native), len(native_files), len(native)
 
-    out_path = REPO_ROOT / "docs" / "controller-mapping-audit.md"
+
+REPORT_FILE_RE = re.compile(r"^- `(?P<file>[^`]+)`$", re.MULTILINE)
+
+
+def uninitialized_submodules(root: Path) -> list[str]:
+    """Paths of the submodules in .gitmodules that are not checked out under `root`."""
+    listing = subprocess.run(
+        ["git", "config", "-f", ".gitmodules", "--get-regexp", r"\.path$"],
+        cwd=root, text=True, capture_output=True,
+    ).stdout.split()[1::2]
+    return [path for path in listing if not (root / path / ".git").exists()]
+
+
+def sources_out_of_reach(report: str, root: Path) -> list[str]:
+    """Files `report` lists that are missing because their submodule is not checked out.
+
+    A fresh audit would drop their rows, and that would look like a mapping change.
+    """
+    missing = [m.group("file") for m in REPORT_FILE_RE.finditer(report)
+               if not (root / m.group("file")).exists()]
+    if not missing:
+        return []
+    absent = uninitialized_submodules(root)
+    return [f for f in missing if any(f.startswith(path.rstrip("/") + "/") for path in absent)]
+
+
+def difference(committed: str, fresh: str) -> str:
+    """One line saying how `fresh` differs from `committed`."""
+    changed = [line for line in difflib.unified_diff(committed.splitlines(), fresh.splitlines(), n=0, lineterm="")
+               if line[:1] in "+-" and not line.startswith(("+++", "---"))]
+
+    def sections(text: str) -> dict[str, str]:
+        parts = re.split(r"^### (.+)$", text, flags=re.MULTILINE)
+        return dict(zip(parts[1::2], parts[2::2]))
+
+    old, new = sections(committed), sections(fresh)
+    systems = sorted(name for name in old.keys() | new.keys() if old.get(name) != new.get(name))
+    where = f" ({', '.join(systems)})" if systems else ""
+    return f"{REPORT_PATH} is out of date: {len(changed)} line(s) differ from a fresh audit{where}"
+
+
+def main(argv: list[str] | None = None) -> int:
+    parser = argparse.ArgumentParser(description="Audit which GameController button drives each input, per native core.")
+    parser.add_argument("--check", action="store_true",
+                        help="write nothing; exit 1 when the committed report differs from a fresh audit")
+    args = parser.parse_args(argv)
+
+    fresh, file_count, system_count = generate(REPO_ROOT)
+    if not file_count:
+        print("audit_controls.py: no bridge files matched any glob — check globs.", file=sys.stderr)
+        return CANNOT_AUDIT if args.check else 1
+
+    out_path = REPO_ROOT / REPORT_PATH
+    committed = out_path.read_text() if out_path.exists() else ""
+    unreachable = sources_out_of_reach(committed, REPO_ROOT)
+    if unreachable:
+        print(f"audit_controls: {REPORT_PATH} lists {unreachable[0]}, whose submodule is not checked out; "
+              "run `git submodule update --init` for it first", file=sys.stderr)
+        return CANNOT_AUDIT
+
+    if args.check:
+        if fresh == committed:
+            print(f"audit_controls: {REPORT_PATH} matches a fresh audit of {file_count} files")
+            return CHECK_CURRENT
+        print(f"audit_controls: {difference(committed, fresh)}")
+        return CHECK_STALE
+
     out_path.parent.mkdir(parents=True, exist_ok=True)
-    out_path.write_text(render(native))
-
-    print(f"audit_controls: scanned {len(native_files)} files, {len(native)} systems → {out_path.relative_to(REPO_ROOT)}")
+    out_path.write_text(fresh)
+    print(f"audit_controls: scanned {file_count} files, {system_count} systems → {REPORT_PATH}")
     return 0
 
 
