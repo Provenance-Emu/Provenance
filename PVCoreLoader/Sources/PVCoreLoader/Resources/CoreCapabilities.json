@@ -49,6 +49,31 @@
     ],
     "com.provenance.wii": [
       { "coreIdentifier": "com.provenance.core.dolphin", "reason": "The native Dolphin core. The libretro build needs JIT." }
+    ],
+    "com.provenance.nes": [
+      { "coreIdentifier": "mesen.libretro.framework", "reason": "An accuracy-focused core, the one most often recommended for NES games." },
+      { "coreIdentifier": "fceumm.libretro.framework", "reason": "A fast, widely used core for NES games." },
+      { "coreIdentifier": "nestopia.libretro.framework", "reason": "An accuracy-focused core for NES games." },
+      { "coreIdentifier": "com.provenance.core.fceu", "reason": "Provenance's own core for NES games." }
+    ],
+    "com.provenance.fds": [
+      { "coreIdentifier": "mesen.libretro.framework", "reason": "An accuracy-focused core, the one most often recommended for Famicom Disk System games." },
+      { "coreIdentifier": "fceumm.libretro.framework", "reason": "A fast, widely used core for Famicom Disk System games." },
+      { "coreIdentifier": "nestopia.libretro.framework", "reason": "An accuracy-focused core for Famicom Disk System games." },
+      { "coreIdentifier": "com.provenance.core.fceu", "reason": "Provenance's own core for Famicom Disk System games." }
+    ],
+    "com.provenance.n64": [
+      { "coreIdentifier": "mupen64plus.next.libretro.framework", "reason": "A general-purpose core for Nintendo 64 games." },
+      { "coreIdentifier": "com.provenance.core.mupen64plus", "reason": "Provenance's own core for Nintendo 64 games." }
+    ],
+    "com.provenance.psx": [
+      { "coreIdentifier": "mednafen.psx.hw.libretro.framework", "reason": "A PlayStation core with a GPU renderer for higher resolutions." },
+      { "coreIdentifier": "mednafen.psx.libretro.framework", "reason": "An accuracy-focused PlayStation core with a software renderer." },
+      { "coreIdentifier": "com.provenance.core.mednafen", "reason": "Provenance's own core for PlayStation games." }
+    ],
+    "com.provenance.dreamcast": [
+      { "coreIdentifier": "flycast-jitless.libretro.framework", "reason": "Runs without JIT, so it works on every install." },
+      { "coreIdentifier": "flycast.libretro.framework", "reason": "The faster Flycast build. It needs JIT." }
     ]
   },
   "cores": [

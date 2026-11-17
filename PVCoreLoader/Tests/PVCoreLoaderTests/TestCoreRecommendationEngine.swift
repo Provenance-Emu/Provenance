@@ -201,6 +201,37 @@ final class TestCoreRecommendationEngine: XCTestCase {
         XCTAssertNil(CoreRecommendationEngine.pickerDefault(for: "com.provenance.wii", availableCoreIdentifiers: ["dolphin.libretro.framework"]))
     }
 
+    /// Owner decisions of 2026-11-16: prefer the libretro cores, which are updated often, and
+    /// fall back to Provenance's own core. Mesen is hidden in App Store builds, where FCEUmm is next.
+    func testBundledPickerDefaultsPreferTheLibretroCoresChosenByTheOwner() {
+        func pick(_ system: String, _ available: Set<String>) -> String? {
+            CoreRecommendationEngine.pickerDefault(for: system, availableCoreIdentifiers: available)?.coreIdentifier
+        }
+        let mesen = "mesen.libretro.framework", fceumm = "fceumm.libretro.framework"
+        let nestopia = "nestopia.libretro.framework", fceu = "com.provenance.core.fceu"
+        for system in ["com.provenance.nes", "com.provenance.fds"] {
+            XCTAssertEqual(pick(system, [mesen, fceumm, nestopia, fceu]), mesen, system)
+            XCTAssertEqual(pick(system, [fceumm, nestopia, fceu]), fceumm, system)
+            XCTAssertEqual(pick(system, [nestopia, fceu]), nestopia, system)
+            XCTAssertEqual(pick(system, [fceu, "quicknes.libretro.framework"]), fceu, system)
+        }
+
+        let mupenNext = "mupen64plus.next.libretro.framework", mupen = "com.provenance.core.mupen64plus"
+        XCTAssertEqual(pick("com.provenance.n64", [mupen, mupenNext, "parallel.n64.libretro.framework"]), mupenNext)
+        XCTAssertEqual(pick("com.provenance.n64", [mupen, "parallel.n64.libretro.framework"]), mupen)
+
+        let beetleHW = "mednafen.psx.hw.libretro.framework", beetle = "mednafen.psx.libretro.framework"
+        let mednafen = "com.provenance.core.mednafen"
+        XCTAssertEqual(pick("com.provenance.psx", [mednafen, beetle, beetleHW, "pcsx.rearmed.libretro.framework"]), beetleHW)
+        XCTAssertEqual(pick("com.provenance.psx", [mednafen, beetle]), beetle)
+        XCTAssertEqual(pick("com.provenance.psx", [mednafen, "pcsx.rearmed.libretro.framework"]), mednafen)
+
+        // The picker cannot tell whether JIT is active, so the build that always runs comes first.
+        let flycast = "flycast.libretro.framework", jitless = "flycast-jitless.libretro.framework"
+        XCTAssertEqual(pick("com.provenance.dreamcast", [flycast, jitless]), jitless)
+        XCTAssertEqual(pick("com.provenance.dreamcast", [flycast]), flycast)
+    }
+
     /// Every curated default must name a core the app can actually contain.
     func testBundledPickerDefaultsNameNoPrunedCore() throws {
         let manifest = try XCTUnwrap(CoreRecommendationEngine.enrichmentManifest)
