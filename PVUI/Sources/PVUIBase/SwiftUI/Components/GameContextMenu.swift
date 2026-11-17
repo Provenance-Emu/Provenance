@@ -102,6 +102,8 @@ private struct GameContextMenuItems: View {
     @State private var hasBatterySaves: Bool = false
     @State private var hasCloudRecord: Bool = false
     @State private var isDownloaded: Bool = true
+    /// "Send to iCube" when the direct drop-box route exists; nil hides the row.
+    @State private var handoffOffer: EcosystemHandoffSendAction.Offer?
     @Default(.iCloudSync) private var iCloudSyncEnabled
 
     private var rootDelegate: PVRootDelegate? { menu.rootDelegate }
@@ -319,6 +321,13 @@ private struct GameContextMenuItems: View {
                     }
                 }
                 #endif
+                if let handoffOffer {
+                    Button {
+                        EcosystemHandoffSendAction.send(handoffOffer)
+                    } label: {
+                        Label(handoffOffer.title, systemImage: handoffOffer.symbolName)
+                    }
+                }
                 // Show download option for games available in CloudKit but not downloaded locally
                 if iCloudSyncEnabled && hasCloudRecord && !isDownloaded {
                     Button {
@@ -409,6 +418,9 @@ private struct GameContextMenuItems: View {
                     } label: { Label("Delete", systemImage: "trash") }
                 }
             }
+        }
+        .task {
+            handoffOffer = await EcosystemHandoffSendAction.offer(for: game)
         }
         .task {
             // Compute hasBatterySaves on a background thread — Paths.batterySavesPath may

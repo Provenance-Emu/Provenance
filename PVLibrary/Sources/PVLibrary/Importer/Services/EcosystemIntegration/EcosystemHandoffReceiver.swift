@@ -11,7 +11,8 @@ import PVLogging
 
 /// Runs Provenance's side of the shared drop box (see `EcosystemHandoff`) when the
 /// app comes to the front: publishes the presence entry that tells iFly and iCube
-/// to send games directly, and takes the hand-offs waiting for Provenance.
+/// to send games directly, takes the hand-offs waiting for Provenance, and
+/// removes Provenance's own sends nobody picked up (`EcosystemHandoffStager`).
 ///
 /// Everything runs on one serial queue, so a launch, a scene activation and a
 /// `provenance://handoff` URL arriving together drain the inbox one after the
@@ -45,12 +46,13 @@ public final class EcosystemHandoffReceiver: @unchecked Sendable {
         self.fileManager = fileManager
     }
 
-    /// Launch and every scene activation: rewrite the presence entry, then take
-    /// whatever is waiting.
+    /// Launch and every scene activation: rewrite the presence entry, take
+    /// whatever is waiting, then clear out stale sends of our own.
     public func appBecameActive() {
         queue.async { [self] in
             publishPresenceNow()
             postOutcomes(receivePendingNow())
+            collectGarbageNow()
         }
     }
 
@@ -73,6 +75,18 @@ public final class EcosystemHandoffReceiver: @unchecked Sendable {
         } catch {
             WLOG("Ecosystem: couldn't write presence: \(error.localizedDescription)")
         }
+    }
+
+    /// Removes Provenance's hand-offs nobody picked up within a week and staging
+    /// directories of sends that died.
+    @discardableResult
+    func collectGarbageNow(now: Date = Date()) -> Int {
+        guard let root = rootProvider() else { return 0 }
+        let removed = EcosystemHandoffStager.collectGarbage(root: root, now: now, fileManager: fileManager)
+        if removed > 0 {
+            ILOG("Ecosystem: removed \(removed) stale hand-off(s) nobody picked up")
+        }
+        return removed
     }
 
     func receivePendingNow() -> [Outcome] {

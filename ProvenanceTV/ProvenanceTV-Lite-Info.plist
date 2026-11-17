@@ -204,6 +204,7 @@
 	<key>LSApplicationQueriesSchemes</key>
 	<array>
 		<string>ifly</string>
+		<string>dolphinios</string>
 		<string>provenance</string>
 	</array>
 	<key>LSRequiresIPhoneOS</key>
