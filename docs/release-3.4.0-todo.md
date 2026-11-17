@@ -48,10 +48,20 @@ The working list for the 3.4.0 release. Update it in the same commit as the work
       - Mouse: libretro Snes9x with the bundled core, the bsnes cores (they already declare it, unchecked), Flycast.
       - Microphone and camera: melonDS DS on the thin wrapper, which implements both interfaces. The only declarations today sit on the native melonDS core, which was pruned.
       - Local wireless and netplay: melonDS DS and gpSP (netpacket), PPSSPP ad hoc, Mednafen, Dolphin.
+  - Second pass on 2026-11-16, the parts that need no device:
+    - `CoreCapabilities.json` no longer describes the five pruned cores (native melonDS, DeSmuME 2015, Mupen64Plus-NX, DuckStation, PCSX ReARMed). The four ranking tests that used them as fixtures now use cores that ship. The DS microphone rules stay, and a test holds that no microphone tip shows while no shipped core declares one.
+    - Picker recommendations now cover every system the list named. Owner decisions (Nov 16): prefer the libretro cores, which are updated often, and fall back to Provenance's own core; use our own core first only where it is the best one.
+      - NES and Famicom Disk System: Mesen, then FCEUmm, Nestopia, FCEUX. Mesen is the core most often recommended online; FCEUmm is next because Mesen is hidden in App Store builds.
+      - N64: Mupen64Plus-Next, then native Mupen64Plus.
+      - PlayStation: Beetle PSX HW, then Beetle PSX, native Mednafen.
+      - Dreamcast: Flycast JIT-less first. The picker cannot tell whether JIT is active, so the build that always runs is the default.
+      - PSP: native PPSSPP. GameCube and Wii: native Dolphin (the libretro build needs JIT and is hidden in App Store builds). These three were not put to the owner; PSP is the one that could go the other way under the rule above.
+    - `PVPrimitives` tests build and pass on the host again (220 tests). The aspect ratio assertions unwrap their optional. Behind the build break one `GameMatchSource` assertion had never passed: it compared against a bare `.none`, which is `Optional.none` there.
+    - Tested: the recommendation tests live in a package that cannot build on the host (it pulls in the cores), so they were run through a scratch package holding the real engine file, the real JSON and the real test file, with the Core.plist loader stubbed empty: 27 pass (22 before, all passing before the change too). They were not run in the real `PVCoreLoader` target.
+    - Found on the way: Mesen is `appstore: true` in `cores.yml` and `PVAppStoreDisabled` in `CoresRetro/RetroArch/Core.plist`, and the two are meant to match. As it stands the dylib is listed for App Store builds while the app hides the core there. Which one is right is an owner decision.
     - Still to do:
-      - `CoreCapabilities.json` keeps entries for five pruned cores (native melonDS, DeSmuME 2015, Mupen64Plus-NX, DuckStation, PCSX ReARMed). The ranking tests use them as fixtures, so removing them means rewriting those tests.
-      - Recommendations for NES, N64, PlayStation, Dreamcast, PSP, GameCube and Wii need a decision on native versus libretro for each.
-      - `PVPrimitives` tests do not build on the host: `AspectRatioOverrideTests.swift:72` passes an optional `Float` to `XCTAssertEqual(_:_:accuracy:)`.
+      - From the owner (Nov 16): check what the recommended libretro NES cores lack on the thin wrapper against native FCEUX (Zapper light gun, cheats, RetroAchievements, FDS disk swapping) and add what is missing.
+      - The device checks listed under "Not badged yet" above.
 - [ ] **Internet netplay.** Update the WAN ticket for the current thin wrapper. After LAN passes, scope the first WAN milestone to one supported core and a private invite that connects across two networks without port forwarding. This needs transport design and device testing. [#3087](https://github.com/Provenance-Emu/Provenance/issues/3087)
   - Scoped on 2026-11-15. The ticket still describes the RA.ME relay and the RetroArch lobby API, which went away with the RetroArch runtime. The replacement scope is posted on the ticket ([comment](https://github.com/Provenance-Emu/Provenance/issues/3087#issuecomment-6891579385)); the ticket's title and original body are unchanged.
     - Proposed first milestone: gpSP (thin wrapper, netpacket) between two friends through a Game Center invite, with the session's packets carried over the match itself. Apple relays match data across networks, so there is no port forwarding and no server to run.
