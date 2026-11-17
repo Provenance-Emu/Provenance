@@ -228,6 +228,10 @@ private actor MockArtworkMatchingLookupUncooperative: ArtworkMatchingLookupProvi
 
 final class ArtworkMatchingServiceTests: XCTestCase {
 
+    // CI can pause simulator tasks for tens of seconds. The tests advance the artwork
+    // deadline manually, so this wall-clock watchdog only needs to catch deadlocks.
+    private let timeoutRaceWatchdog: TimeInterval = 60
+
     // MARK: setUp / tearDown
 
     override func setUp() async throws {
@@ -512,13 +516,12 @@ final class ArtworkMatchingServiceTests: XCTestCase {
             return result
         }
 
-        // The timeout wins while the provider is still suspended. The generous expectation
-        // deadline is a deadlock watchdog, not an artwork performance benchmark.
-        await fulfillment(of: [lookupStarted, timeoutScheduled], timeout: 10)
+        // The timeout wins while the provider is still suspended.
+        await fulfillment(of: [lookupStarted, timeoutScheduled], timeout: timeoutRaceWatchdog)
         let requestedTimeout = await timeout.requestedNanoseconds
         XCTAssertEqual(requestedTimeout, timeoutNs)
         await timeout.fire()
-        await fulfillment(of: [completed, lookupCancelled], timeout: 10)
+        await fulfillment(of: [completed, lookupCancelled], timeout: timeoutRaceWatchdog)
         let cancelled = await mock.cancellationObserved
         let searches = await mock.searchCount
         // Release a broken implementation as well, so a regression fails rather than hanging.
@@ -546,9 +549,9 @@ final class ArtworkMatchingServiceTests: XCTestCase {
             completed.fulfill()
             return result
         }
-        await fulfillment(of: [lookupStarted, timeoutScheduled], timeout: 10)
+        await fulfillment(of: [lookupStarted, timeoutScheduled], timeout: timeoutRaceWatchdog)
         await mock.finish(with: [makeArtwork(urlString: expected)])
-        await fulfillment(of: [completed, timerCancelled], timeout: 10)
+        await fulfillment(of: [completed, timerCancelled], timeout: timeoutRaceWatchdog)
         let cancelled = await timeout.cancellationObserved
         await timeout.fire()
         operation.cancel()
@@ -570,9 +573,9 @@ final class ArtworkMatchingServiceTests: XCTestCase {
             returned.fulfill()
             return result
         }
-        await fulfillment(of: [lookupStarted, timeoutScheduled], timeout: 10)
+        await fulfillment(of: [lookupStarted, timeoutScheduled], timeout: timeoutRaceWatchdog)
         await timeout.fire()
-        await fulfillment(of: [returned], timeout: 10)
+        await fulfillment(of: [returned], timeout: timeoutRaceWatchdog)
         // Release only after checking the deadline, including on failure, to avoid leaked tasks.
         await mock.release()
         operation.cancel()
