@@ -78,8 +78,9 @@ public
 // swiftlint:disable:next type_body_length
 final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, EmulatorSessionHost, PVAudioDelegate {
     public let core: PVEmulatorCore
-    @ThreadSafe
-    public var game: PVGame!
+    private let temporaryGame: PVGame?
+    private let managedGame: ThreadSafe<PVGame>
+    public var game: PVGame! { temporaryGame ?? managedGame.wrappedValue }
     public internal(set) var autosaveTimer: Timer?
     /// Tracks emulation session play time. Replaces the old KVO + gameStartTime approach.
     var playTimeTracker: PlayTimeTracker?
@@ -354,7 +355,9 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, Emulato
 
     public required init(game: PVGame, core: PVEmulatorCore) {
         self.core = core
-        self.game = game
+        let isTemporary = game.isTemporaryServerGame
+        temporaryGame = isTemporary ? game : nil
+        managedGame = ThreadSafe(wrappedValue: isTemporary ? nil : game)
 
         super.init(nibName: nil, bundle: nil)
 
@@ -378,14 +381,14 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, Emulato
 
         staticSelf = self
 
-        if Defaults[.autoSave] {
+        if !isTemporary && Defaults[.autoSave] {
             NSSetUncaughtExceptionHandler(uncaughtExceptionHandler)
         } else {
             NSSetUncaughtExceptionHandler(nil)
         }
 
         // Initialize play time tracker and start observing core running state via Combine.
-        playTimeTracker = PlayTimeTracker(game: game)
+        if !isTemporary { playTimeTracker = PlayTimeTracker(game: game) }
         observeRunningState()
 
         features.register(EmulatorFeatureCatalog.all, host: self)
@@ -976,7 +979,7 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, Emulato
 
         /// Rehydrate game from Realm to avoid stale/frozen file metadata after async sync/download work.
         if let refreshedGame = refreshedGameForROMResolution() {
-            self.game = refreshedGame
+            managedGame.wrappedValue = refreshedGame
             if romPathMaybe == nil {
                 romPathMaybe = refreshedGame.file?.url
                 romPathMaybe = await handleArchives(atPath: romPathMaybe)
@@ -1601,6 +1604,7 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, Emulato
     /// Resolves the latest Realm-backed game row before final ROM URL resolution.
     /// This prevents stale snapshots from carrying pre-download file metadata.
     private func refreshedGameForROMResolution() -> PVGame? {
+        guard temporaryGame == nil else { return nil }
         let md5 = game.md5Hash
         guard !md5.isEmpty else {
             return nil
@@ -2079,6 +2083,9 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, Emulato
         CoreOptionsContext.currentGameMD5 = nil
 
         AppState.shared.emulationUIState.reset()
+        if temporaryGame != nil {
+            SceneCoordinator.shared.closeEmulator()
+        }
     }
 
     /// Dismisses the currently presented navigation and optionally resumes emulation

@@ -151,6 +151,18 @@ final class ECSSourceTests: XCTestCase {
         XCTAssertTrue(absent.items.isEmpty)
     }
 
+    func testInteractiveBrowseReturnsFirstPageBeforeRequestingContinuation() async throws {
+        let ecs = source(FakeContentServer(), systems: [])
+        let libraries = try await ecs.libraries()
+        let first = try await ecs.browseCatalogue(libraryIDs: libraries.map(\.id), search: "", playableSystems: [.SNES, .Wii])
+        XCTAssertEqual(first.catalogue.items.map(\.id), ["i1"])
+
+        let next = try XCTUnwrap(first.next)
+        let second = try await ecs.browseCatalogue(after: next)
+        XCTAssertEqual(second.catalogue.items.map(\.id), ["i3"])
+        XCTAssertNil(second.next)
+    }
+
     func testContentCannotUseAnotherPortOrScheme() async throws {
         let ecs = source(FakeContentServer())
         let staging = try makeTemporaryFolder()

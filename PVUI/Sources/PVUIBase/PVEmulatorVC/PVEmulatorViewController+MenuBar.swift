@@ -131,7 +131,7 @@ extension PVEmulatorViewController {
     /// Newest save state for the current game, or `nil` when there is none.
     /// Also drives the enabled state of the ⌘L menu item.
     private var mostRecentSaveState: PVSaveState? {
-        guard let game, !game.isInvalidated else { return nil }
+        guard let game, !game.isInvalidated, !game.isTemporaryServerGame else { return nil }
         return game.saveStates.sorted(byKeyPath: "date", ascending: false).first
     }
 

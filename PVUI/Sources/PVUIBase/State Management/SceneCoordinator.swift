@@ -276,7 +276,8 @@ public class SceneCoordinator: ObservableObject {
 
     /// Takes ownership of the verified staging directory for the duration of play.
     public func launchTemporaryServerGame(_ game: PVGame, folder: URL) {
-        guard game.isTemporaryServerGame, activeLaunchTask == nil, !showEmulator else {
+        let hasActiveGame = showEmulator && AppState.shared.emulationUIState.currentGame != nil
+        guard game.isTemporaryServerGame, activeLaunchTask == nil, !hasActiveGame else {
             try? FileManager.default.removeItem(at: folder)
             return
         }

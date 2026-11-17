@@ -260,18 +260,26 @@ final class NearbyLibrariesModel {
 
     // MARK: - Local library
 
+    fileprivate func refreshPlayableSystems() {
+        guard let realm = try? Realm(configuration: RealmConfiguration.realmConfig) else { return }
+        updatePlayableSystems(in: realm)
+    }
+
+    private func updatePlayableSystems(in realm: Realm) {
+        // Lite builds carry records for cores they do not ship.
+        let available = Set(realm.objects(PVSystem.self)
+            .filter { system in system.cores.contains { !$0.disabled && $0.hasCoreClass } }
+            .compactMap { SystemIdentifier(rawValue: $0.identifier) })
+        if playableSystems != available { playableSystems = available }
+    }
+
     /// Reads which systems have a core and the MD5s of the games on the
     /// systems peers can serve. Single-file images only: Provenance hashes the
     /// cue/m3u/gdi text of CD sets, which never matches a peer's MD5.
     func loadLocalLibrary() {
         do {
             let realm = try Realm(configuration: RealmConfiguration.realmConfig)
-            playableSystems = Set(realm.objects(PVSystem.self)
-                // A system is playable only with a core that can actually launch:
-                // enabled, and its class or bundled libretro dylib present. Lite
-                // builds carry rows for cores they do not ship.
-                .filter { system in system.cores.contains { !$0.disabled && $0.hasCoreClass } }
-                .compactMap { SystemIdentifier(rawValue: $0.identifier) })
+            updatePlayableSystems(in: realm)
 
             let shareable = PeerApp.allCases.reduce(into: Set<SystemIdentifier>()) {
                 $0.formUnion(SystemMap.systems(servedBy: $1))
@@ -343,7 +351,10 @@ final class NearbyPeerLibraryModel {
         let name: String
     }
     private(set) var serverLibraries: [ServerLibrary] = []
-    var selectedLibraryID = ""
+    private(set) var nextServerPage: ECSSource.CatalogueCursor?
+    private(set) var loadingMore = false
+    private(set) var pageError: String?
+    private(set) var selectedLibraryID = ""
     var searchText = "" {
         didSet {
             guard peer.app == .contentServer, searchText != oldValue else { return }
@@ -351,9 +362,7 @@ final class NearbyPeerLibraryModel {
             searchTask = Task { [weak self] in
                 do { try await Task.sleep(for: .milliseconds(250)) }
                 catch { return }
-                self?.loadTask?.cancel()
-                self?.loadTask = nil
-                self?.load(keepCatalogue: true)
+                self?.reloadCatalogue()
             }
         }
     }
@@ -465,14 +474,37 @@ final class NearbyPeerLibraryModel {
         if phase == .idle { load() }
     }
 
-    func load(keepCatalogue: Bool = false) {
+    func selectLibrary(_ id: String) {
+        guard selectedLibraryID != id else { return }
+        selectedLibraryID = id
+        searchTask?.cancel()
+        reloadCatalogue()
+    }
+
+    private func reloadCatalogue() {
+        loadTask?.cancel()
+        loadTask = nil
+        load(keepCatalogue: true)
+    }
+
+    func load(keepCatalogue: Bool = false, more: Bool = false) {
         guard loadTask == nil else { return }
-        if !keepCatalogue || catalogue == nil { phase = .loading(.connecting) }
+        if more {
+            guard nextServerPage != nil else { return }
+        } else {
+            nextServerPage = nil
+            if !keepCatalogue || catalogue == nil { phase = .loading(.connecting) }
+        }
+        loadingMore = more
+        pageError = nil
         let id = UUID()
         loadID = id
         loadTask = Task { [weak self] in
-            await self?.runLoad()
-            if self?.loadID == id { self?.loadTask = nil }
+            await self?.runLoad(more: more)
+            if self?.loadID == id {
+                self?.loadTask = nil
+                self?.loadingMore = false
+            }
         }
     }
 
@@ -483,11 +515,12 @@ final class NearbyPeerLibraryModel {
         searchTask?.cancel()
         loadTask?.cancel()
         loadTask = nil
+        loadingMore = false
         if case .loading = phase { phase = .idle }
         if phase == .confirmingCode { phase = .needsPairing }
     }
 
-    private func runLoad() async {
+    private func runLoad(more: Bool) async {
         do {
             if let ecs = source as? ECSSource, serverLibraries.isEmpty {
                 let available = try await ecs.libraries()
@@ -502,7 +535,23 @@ final class NearbyPeerLibraryModel {
             }
             let loaded: RemoteCatalogue
             if let ecs = source as? ECSSource {
-                loaded = try await ecs.catalogue(libraryID: selectedLibraryID.isEmpty ? nil : selectedLibraryID, search: searchText, progress: report)
+                let page: ECSSource.CataloguePage
+                if more, let cursor = nextServerPage {
+                    page = try await ecs.browseCatalogue(after: cursor)
+                } else {
+                    let ids = serverLibraries.map(\.id).filter { selectedLibraryID.isEmpty || $0 == selectedLibraryID }
+                    // A saved tab can create its source before the app finishes loading its cores.
+                    owner?.refreshPlayableSystems()
+                    page = try await ecs.browseCatalogue(libraryIDs: ids, search: searchText, playableSystems: owner?.playableSystems)
+                }
+                try Task.checkCancellation()
+                nextServerPage = page.next
+                var updated = page.catalogue
+                if more, let catalogue {
+                    let existing = Set(catalogue.items.map(\.id))
+                    updated.items = catalogue.items + updated.items.filter { !existing.contains($0.id) }
+                }
+                loaded = updated
             } else {
                 loaded = try await source.catalogue(progress: report)
             }
@@ -526,8 +575,10 @@ final class NearbyPeerLibraryModel {
             // and "not sharing with you", so after a successful pairing it's the latter.
             phase = .failed("\(title) isn't sharing its library with this device. Check Library Sharing in iCube.")
         } catch {
+            guard !Task.isCancelled else { return }
             WLOG("Nearby Libraries: browsing \(peer.serviceName) failed: \(error)")
-            phase = .failed(error.localizedDescription)
+            if more { pageError = error.localizedDescription }
+            else { phase = .failed(error.localizedDescription) }
         }
     }
 
@@ -668,11 +719,20 @@ final class NearbyPeerLibraryModel {
                         GameImporter.shared.startProcessing()
                         try await NearbyImportCompletion(item: queued).wait()
                     }
-                    let computedMD5 = await queued.gameMD5Async()
-                    guard let gameID = queued.gameDatabaseID ?? computedMD5?.uppercased(),
-                          let realm = try? await Realm(configuration: RealmConfiguration.realmConfig),
-                          let game = realm.object(ofType: PVGame.self, forPrimaryKey: gameID),
-                          game.systemIdentifier == system.rawValue else {
+                    guard let realm = try? await Realm(configuration: RealmConfiguration.realmConfig) else {
+                        throw LibrarySharingError.itemUnavailable
+                    }
+                    // The importer reports the row's UUID, while Realm's primary key is the ROM identity MD5.
+                    let imported = queued.gameDatabaseID.flatMap { realm.objects(PVGame.self).filter("id == %@", $0).first }
+                    let game: PVGame?
+                    if let imported {
+                        game = imported
+                    } else if let md5 = await queued.gameMD5Async() {
+                        game = realm.object(ofType: PVGame.self, forPrimaryKey: md5.uppercased())
+                    } else {
+                        game = nil
+                    }
+                    guard let game, game.systemIdentifier == system.rawValue else {
                         throw LibrarySharingError.itemUnavailable
                     }
                     try Task.checkCancellation()
