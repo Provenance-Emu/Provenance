@@ -572,6 +572,10 @@ public final class PVApplicationServices: NSObject, ObservableObject {
 
     private func didBecomeActive() {
         appState?.emulationUIState.isInBackground = false
+        // Launch (the scene phase is observed with `initial: true`) and every return
+        // to the front: tell iFly and iCube we take direct hand-offs, and import
+        // what they left for us.
+        EcosystemHandoffReceiver.shared.appBecameActive()
     }
 
     /// Flushes the running core when the OS delivers a process-termination callback.

@@ -233,17 +233,4 @@ final class EcosystemCallbackParserTests: XCTestCase {
         XCTAssertEqual(result?.games.first?.titleId, "GM8E01")
         XCTAssertEqual(result?.games.first?.developer, "01")
     }
-
-    // MARK: - EcosystemFetchService container naming
-
-    func testEcosystemFetchServiceContainerNamingUsesDisplayName() {
-        // The container-naming rule ("\(source.displayName)-\(hex8)") is exercised end to
-        // end via `download(_:from:)`, which needs network/filesystem plumbing this test
-        // target doesn't set up. Pin the inputs to that rule here instead, so a future
-        // change to `displayName` (or to the naming rule itself) is caught: iFly and iCube
-        // must resolve to visibly different, source-identifying prefixes.
-        let hex8 = "deadbeef"
-        XCTAssertEqual("\(EcosystemApp.ifly.displayName)-\(hex8)", "iFly EMU-deadbeef")
-        XCTAssertEqual("\(EcosystemApp.icube.displayName)-\(hex8)", "iCube-deadbeef")
-    }
 }

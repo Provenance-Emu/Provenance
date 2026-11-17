@@ -309,8 +309,8 @@
 "ecosystem.settings.row.subtitle" = "iCube, iFly and other emulator apps on this device.";
 "ecosystem.header.title" = "Play across your emulators";
 "ecosystem.header.subtitle" = "Browse the games in iCube and iFly, launch them there, or ask for a copy. XeniOS, MeloNX and MeloCafe games launch from here too.";
-"ecosystem.import.hint" = "A copy arrives through %@'s share sheet: approve the request there and choose Provenance.";
-"ecosystem.import.failed" = "%@ could not be fetched from %@. Ask for it again, or send it from %@ with Send to Provenance.";
+"ecosystem.import.hint" = "Approve the request in %@ and the game comes straight to your library. If a share sheet opens instead, choose Provenance.";
+"ecosystem.import.failed" = "%@ from %@ could not be imported. Ask for it again, or send it from %@ with Send to Provenance.";
 "ecosystem.section.detected" = "Available Apps";
 "ecosystem.section.not_detected" = "No Ecosystem Apps Found";
 "ecosystem.empty.body" = "iCube, iFly, XeniOS, MeloNX and MeloCafe were not found on this device.";

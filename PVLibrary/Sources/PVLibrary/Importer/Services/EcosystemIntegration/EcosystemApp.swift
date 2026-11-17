@@ -43,18 +43,18 @@ public enum EcosystemApp: String, CaseIterable, Codable, Sendable {
 
     /// iFly EMU — Dreamcast/Naomi/Atomiswave emulator by the same developer.
     /// URL scheme: `ifly`. Game IDs are the ROM's md5 (lowercased hex) — the
-    /// identity both apps share. Beyond the standard gameInfo/launch flow,
-    /// iFly supports user-confirmed ROM transfer: `ifly://requestGame?md5=…&
-    /// scheme=provenance` answers `provenance://ifly?fetch=<payload>` (see
-    /// EcosystemFetchService).
+    /// identity both apps share. Beyond the standard gameInfo/launch flow, iFly
+    /// answers a user-confirmed `ifly://requestGame?md5=…&scheme=provenance` by
+    /// handing the game over through the shared App Group drop box
+    /// (`EcosystemHandoff`), or its share sheet when Provenance can't receive.
     case ifly = "ifly"
 
     /// iCube — GameCube/Wii emulator by the same developer.
     /// URL scheme: `dolphinios`. Game IDs are the 6-character disc game id
     /// (e.g. `GALE01`), not an md5. Beyond the standard gameInfo/launch flow,
-    /// iCube supports user-confirmed file transfer: `dolphinios://requestGame?
-    /// id=…&scheme=provenance` answers `provenance://dolphinios?fetch=<payload>`
-    /// (see EcosystemFetchService).
+    /// iCube answers a user-confirmed `dolphinios://requestGame?id=…&scheme=
+    /// provenance` with a copy through the drop box (`EcosystemHandoff`) or its
+    /// share sheet.
     case icube = "dolphinios"
 
     // MARK: - Display
@@ -164,11 +164,11 @@ public enum EcosystemApp: String, CaseIterable, Codable, Sendable {
         }
     }
 
-    /// iFly and iCube only: user-confirmed file transfer. The target app
-    /// prompts its user, then answers `<callbackScheme>://<urlScheme>?fetch=
-    /// <payload>` (EcosystemFetchService downloads the file set into the
-    /// import directory). iFly identifies games by md5; iCube by its 6-char
-    /// disc game id — the query key differs accordingly.
+    /// iFly and iCube only: user-confirmed file transfer. The target app prompts
+    /// its user, then leaves the game in Provenance's drop-box inbox and opens
+    /// `provenance://handoff` (`EcosystemHandoffReceiver` imports it), or offers
+    /// it in its share sheet. iFly identifies games by md5; iCube by its 6-char
+    /// disc game id, so the query key differs.
     public func requestGameURL(titleID: String, callbackScheme: String = "provenance") -> URL? {
         switch self {
         case .ifly:

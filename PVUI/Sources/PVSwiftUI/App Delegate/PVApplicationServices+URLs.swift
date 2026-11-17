@@ -29,11 +29,17 @@ extension PVApplicationServices {
         return realm.object(ofType: PVGame.self, forPrimaryKey: md5.uppercased())
     }
 
-    /// Ecosystem callbacks: a queried app answering with its game list
-    /// (`provenance://<source>?games=…`) or a user-approved ROM transfer offer
-    /// (`provenance://<source>?fetch=…`). Returns false when the URL is
-    /// neither, so the caller's invalid-host path still logs.
+    /// Ecosystem callbacks: a sibling app waking us after leaving a game in the
+    /// shared drop box (`provenance://handoff?id=…&from=…`), or a queried app
+    /// answering with its game list (`provenance://<source>?games=…`). Returns
+    /// false when the URL is neither, so the caller's invalid-host path still logs.
     public func handleEcosystemCallback(_ url: URL) -> Bool {
+        if EcosystemHandoff.isWakeURL(url) {
+            let from = URLComponents(url: url, resolvingAgainstBaseURL: false)?.queryItems?["from"] ?? "unknown"
+            ILOG("Ecosystem: hand-off wake-up from \(from)://")
+            EcosystemHandoffReceiver.shared.receivePending()
+            return true
+        }
         if let (source, games) = EcosystemCallbackParser.parse(url: url) {
             ILOG("Ecosystem: received \(games.count) games from \(source.displayName)")
             NotificationCenter.default.post(
@@ -41,31 +47,6 @@ extension PVApplicationServices {
                 object: nil,
                 userInfo: ["source": source.rawValue, "games": games]
             )
-            return true
-        }
-        if let (source, payload) = EcosystemFetchParser.parse(url: url) {
-            ILOG("Ecosystem: fetch offer from \(source.displayName) for '\(payload.name)'")
-            Task {
-                do {
-                    let container = try await EcosystemFetchService.shared.download(payload, from: source)
-                    NotificationCenter.default.post(
-                        name: .ecosystemFetchCompleted,
-                        object: nil,
-                        userInfo: [
-                            "source": source.rawValue,
-                            "name": payload.name,
-                            "path": container.path
-                        ]
-                    )
-                } catch {
-                    ELOG("Ecosystem: fetch of '\(payload.name)' failed: \(error)")
-                    NotificationCenter.default.post(
-                        name: .ecosystemFetchFailed,
-                        object: nil,
-                        userInfo: ["source": source.rawValue, "name": payload.name, "error": "\(error)"]
-                    )
-                }
-            }
             return true
         }
         return false

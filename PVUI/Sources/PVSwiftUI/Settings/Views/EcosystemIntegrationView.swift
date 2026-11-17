@@ -26,8 +26,9 @@ import PVUIBase
 public struct EcosystemIntegrationView: View {
     /// Ecosystem apps whose library can be browsed and pulled from, beyond
     /// the plain launch-by-id every app supports. Each answers a `gameInfo`
-    /// query and a user-confirmed `requestGame` transfer
-    /// (`EcosystemApp.requestGameURL` returns non-nil for exactly these).
+    /// query and a user-confirmed `requestGame` transfer, which arrives as a
+    /// drop-box hand-off (`EcosystemHandoffReceiver`) or through the sender's
+    /// share sheet (`EcosystemApp.requestGameURL` returns non-nil for exactly these).
     private static let browsableApps: [EcosystemApp] = [.ifly, .icube]
 
     @State private var installedApps: [EcosystemApp] = []
@@ -78,13 +79,13 @@ public struct EcosystemIntegrationView: View {
                   let games = note.userInfo?["games"] as? [EcosystemGameScheme] else { return }
             browsedGames[source] = games
         }
-        .onReceive(NotificationCenter.default.publisher(for: .ecosystemFetchCompleted)) { note in
+        .onReceive(NotificationCenter.default.publisher(for: .ecosystemHandoffReceived)) { note in
             guard let sourceRaw = note.userInfo?["source"] as? String,
                   let source = EcosystemApp(rawValue: sourceRaw) else { return }
             lastImportedName[source] = note.userInfo?["name"] as? String
             lastImportFailure[source] = nil
         }
-        .onReceive(NotificationCenter.default.publisher(for: .ecosystemFetchFailed)) { note in
+        .onReceive(NotificationCenter.default.publisher(for: .ecosystemHandoffFailed)) { note in
             guard let sourceRaw = note.userInfo?["source"] as? String,
                   let source = EcosystemApp(rawValue: sourceRaw) else { return }
             lastImportFailure[source] = note.userInfo?["name"] as? String
