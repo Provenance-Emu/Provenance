@@ -177,8 +177,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Provenance-Emu/PVSystems.git",
       "state" : {
-        "revision" : "da78a58c2125ebb629848e4ffc2b0ae7d6bd3b4a",
-        "version" : "1.0.0"
+        "revision" : "da48dce7d7ae3dc3f84a7e0f1a5e3c7a3655c447",
+        "version" : "1.0.1"
       }
     },
     {

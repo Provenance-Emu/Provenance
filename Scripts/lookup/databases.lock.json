@@ -1,6 +1,6 @@
 {
   "repository": "Provenance-Emu/PVLookup",
-  "release": "databases-2026-10-17",
+  "release": "databases-2026-11-16",
   "assets": [
     {
       "name": "libretro_cheats.sqlite.zip",
@@ -8,7 +8,7 @@
     },
     {
       "name": "libretrodb.sqlite.zip",
-      "sha256": "ad8bb489394a006e1af880d31bda412a5659dc245779021215004e03e76d5bfe"
+      "sha256": "52f41042c76d1b0d6e5168eee24403dcfcf58e9e79aa77cfb81910a2a66a0d5a"
     },
     {
       "name": "openvgdb.sqlite.zip",
