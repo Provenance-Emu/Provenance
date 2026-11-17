@@ -1,0 +1,4 @@
+
+/* Auto-translated — please review */
+"ecosystem.import.hint" = "Одобрите запрос в %@ и игра поступит прямо в вашу библиотеку. Если откроется окно общего доступа, выберите Provenance.";
+"ecosystem.import.failed" = "%@ из %@ не удалось импортировать. Запросите его снова или отправьте из %@ через Send to Provenance.";
