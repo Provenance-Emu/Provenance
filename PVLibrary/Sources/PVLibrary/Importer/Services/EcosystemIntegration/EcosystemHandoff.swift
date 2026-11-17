@@ -34,7 +34,8 @@ import PVFileSystem
 ///   non-hidden directory in `Handoff/<own scheme>/` whose manifest it
 ///   understands, move the files into its own library, delete the directory.
 ///   A newer `version`, an unknown `kind` or another recipient is left alone.
-/// - **Clean up.** A sender removes its own hand-offs nobody picked up.
+/// - **Clean up.** A sender removes its own hand-offs nobody picked up after
+///   `staleAfter`, and staging directories older than `stagingStaleAfter`.
 ///
 /// Scheme names are the directory names, lowercased: `provenance`, `ifly`,
 /// `dolphinios` (iCube).
@@ -44,7 +45,7 @@ public enum EcosystemHandoff {
     /// installed whichever runs first takes a hand-off.
     public static let ownScheme = "provenance"
 
-    /// Hand-off version this build reads.
+    /// Hand-off version this build reads and writes.
     public static let protocolVersion = 1
 
     /// The hand-off kind for a game's file set. The only kind in version 1.
@@ -58,6 +59,14 @@ public enum EcosystemHandoff {
     static let handoffDirectoryName = "Handoff"
     static let manifestName = "manifest.json"
     static let filesDirectoryName = "files"
+    /// Suffix of a hand-off still being written: `.<id>.staging`.
+    static let stagingSuffix = ".staging"
+
+    /// A hand-off nobody picked up is removed by its sender after this long.
+    static let staleAfter: TimeInterval = 7 * 24 * 60 * 60
+
+    /// A staging directory this old belongs to a send that died.
+    static let stagingStaleAfter: TimeInterval = 60 * 60
 
     /// `<group container>/Ecosystem`, or nil when this build cannot reach the
     /// group (unsigned simulator run, missing entitlement).
@@ -84,6 +93,19 @@ public enum EcosystemHandoff {
     /// inbox is the source of truth.
     public static func isWakeURL(_ url: URL) -> Bool {
         url.scheme?.lowercased() == ownScheme && url.host(percentEncoded: false)?.lowercased() == urlHost
+    }
+
+    /// The URL that brings a receiver forward to import hand-off `id`:
+    /// `<scheme>://handoff?id=<id>&from=<own scheme>`.
+    public static func wakeURL(to scheme: String, id: String, from sender: String = ownScheme) -> URL? {
+        var components = URLComponents()
+        components.scheme = scheme.lowercased()
+        components.host = urlHost
+        components.queryItems = [
+            URLQueryItem(name: "id", value: id),
+            URLQueryItem(name: "from", value: sender)
+        ]
+        return components.url
     }
 
     /// JSON as every app in the drop box writes it: ISO 8601 dates without
@@ -194,6 +216,17 @@ public struct EcosystemPresence: Codable, Equatable, Sendable {
         self.accepts = accepts
         self.systems = systems
         self.updated = updated
+    }
+
+    /// Can this app take a hand-off of `kind` for `system`? It must receive
+    /// version 1 or later, list the kind, and either take any system (`systems`
+    /// empty) or list this one.
+    public func accepts(kind: String, system: String?) -> Bool {
+        guard handoff >= 1, accepts.contains(kind) else { return false }
+        if let system, !systems.isEmpty {
+            return systems.contains(system)
+        }
+        return true
     }
 
     /// Provenance's own entry: receives version-1 game hand-offs for any system.

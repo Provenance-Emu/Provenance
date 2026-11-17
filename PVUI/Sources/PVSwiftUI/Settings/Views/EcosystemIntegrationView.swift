@@ -384,7 +384,8 @@ private struct EcosystemAppRowView: View {
         case .melonx:   return NSLocalizedString("ecosystem.app.melonx.description", bundle: .module, comment: "")
         case .meloCafe: return NSLocalizedString("ecosystem.app.melocafe.description", bundle: .module, comment: "")
         case .ifly:     return "Dreamcast, Naomi, and Atomiswave emulator by the Provenance team. Supports browsing its library and importing games directly."
-        case .icube:    return "GameCube and Wii emulator by the Provenance team. Supports browsing its library and importing games directly."
+        case .icube:    return "GameCube and Wii emulator by the Provenance team. Supports browsing its library and importing games directly, "
+            + "and Send to iCube in a GameCube or Wii game's menu."
         }
     }
 
