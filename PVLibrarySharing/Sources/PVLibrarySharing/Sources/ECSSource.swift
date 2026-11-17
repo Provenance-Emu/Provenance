@@ -356,7 +356,7 @@ public actor ECSSource: LibrarySource {
     // MARK: - Requests
 
     private func checkCapabilities() async throws {
-        let response = try await transport.send(LibraryHTTPRequest(url: server.appendingRoute("/api/v1/capabilities")))
+        let response = try await sendCatalogueRead(LibraryHTTPRequest(url: server.appendingRoute("/api/v1/capabilities")))
         guard response.status == 200 else { throw Self.error(forStatus: response.status) }
         let capabilities = try JSONDecoder().decode(Capabilities.self, from: response.body)
         guard capabilities.protocol.major == Self.supportedMajor else {
@@ -385,15 +385,27 @@ public actor ECSSource: LibrarySource {
         components?.queryItems = query + [URLQueryItem(name: "limit", value: String(limit))]
             + (cursor.map { [URLQueryItem(name: "cursor", value: $0)] } ?? [])
         guard let url = components?.url else { throw LibrarySharingError.unreachable }
-        let response = try await authorized(LibraryHTTPRequest(url: url))
+        let response = try await authorized(LibraryHTTPRequest(url: url), catalogueRead: true)
         guard response.status == 200 else { throw Self.error(forStatus: response.status) }
         return try JSONDecoder().decode(Page<T>.self, from: response.body)
     }
 
+    /// A transient timeout can interrupt the first catalog read after app launch.
+    /// Retry the same read once without redoing sign-in or changing the server.
+    private func sendCatalogueRead(_ request: LibraryHTTPRequest) async throws -> LibraryHTTPResponse {
+        do {
+            return try await transport.send(request)
+        } catch let error as URLError where error.code == .timedOut {
+            try Task.checkCancellation()
+            return try await transport.send(request)
+        }
+    }
+
     /// Sends with the bearer token, signing in again once on 401.
-    private func authorized(_ request: LibraryHTTPRequest) async throws -> LibraryHTTPResponse {
+    private func authorized(_ request: LibraryHTTPRequest, catalogueRead: Bool = false) async throws -> LibraryHTTPResponse {
         for attempt in 0..<2 {
-            let response = try await transport.send(signedRequest(request))
+            let signed = try await signedRequest(request)
+            let response = try await (catalogueRead ? sendCatalogueRead(signed) : transport.send(signed))
             if response.status == 401, attempt == 0 {
                 forgetToken()
                 continue
