@@ -1,0 +1,4 @@
+
+/* Auto-translated — please review */
+"ecosystem.import.hint" = "Aprove a solicitação em %@ e o jogo vai direto para sua biblioteca. Se uma janela de compartilhamento abrir, escolha Provenance.";
+"ecosystem.import.failed" = "%@ de %@ não pôde ser importado. Solicite novamente ou envie de %@ com Enviar para Provenance.";
