@@ -25,6 +25,8 @@ public struct LogExportSheet: View {
     @State private var exportResult: LogExportResult?
     #if !os(tvOS)
     @State private var isSharing = false
+    /// The share went through: close this sheet once the share sheet has gone.
+    @State private var shareCompleted = false
     #endif
 
     private static let formatLabels: [LogExportOptions.Format: String] = [
@@ -251,10 +253,13 @@ public struct LogExportSheet: View {
             .cornerRadius(8)
         }
         .buttonStyle(.plain)
-        .sheet(isPresented: $isSharing) {
+        .sheet(isPresented: $isSharing, onDismiss: {
+            // Dismissing while the share sheet is still going away is ignored, so wait for it.
+            if shareCompleted { dismiss() }
+        }) {
             ActivityViewController(activityItems: [result.url]) { completed in
+                shareCompleted = completed
                 isSharing = false
-                if completed { dismiss() }
             }
             .presentationDetents([.medium, .large])
         }

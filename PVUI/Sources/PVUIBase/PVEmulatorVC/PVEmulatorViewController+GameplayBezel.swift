@@ -61,7 +61,7 @@ extension PVEmulatorViewController {
             && (gpuViewController as? PVMetalViewController)?.presentsCoreFrames == true
         #if os(tvOS)
         return .init(isAppleTV: true, isLandscape: true, controls: .bare, layoutSupportsTV: presentsFrames,
-                     choiceIsAutomatic: choiceIsAutomatic)
+                     choiceIsAutomatic: choiceIsAutomatic, droppedForSession: gameplayBezelDropped)
         #else
         // The light gun's touch layer aims against the GPU view's own frame and cannot follow
         // the tube, so a TV steps aside while it is up.
@@ -79,7 +79,7 @@ extension PVEmulatorViewController {
         let isLandscape = size.width > 0 && size.height > 0 ? size.width > size.height : currentOrientation == .landscape
         return .init(isAppleTV: false, isLandscape: isLandscape, controls: controls,
                      layoutSupportsTV: layoutSupportsTV, choiceIsAutomatic: choiceIsAutomatic,
-                     editingLayout: isOverlayLayoutEditing)
+                     editingLayout: isOverlayLayoutEditing, droppedForSession: gameplayBezelDropped)
         #endif
     }
 
@@ -132,6 +132,14 @@ extension PVEmulatorViewController {
         }
     }
 
+    /// The GPU could not draw the TV on the device: none is shown again this game. A second
+    /// try risks another GPU restart, after which the system refuses every frame.
+    func gameplayBezelWasDropped() {
+        guard !gameplayBezelDropped else { return }
+        gameplayBezelDropped = true
+        updateGameplayBezel()
+    }
+
     /// While a TV shows, the GPU view fills the emulator view so the cabinet and room sit
     /// behind the controls and the picture goes in the tube; without one it goes back to the
     /// rect the controls or the skin publish. tvOS keeps its own layout.
@@ -141,8 +149,11 @@ extension PVEmulatorViewController {
         #if os(iOS)
         if showing {
             applyFrameToGPUView(view.bounds, reason: Self.tvViewportReason, force: true)
+        } else if !isProgrammaticOverlayActive, let frame = currentTargetFrame {
+            // A skin's frame is still the one it last published, so its next broadcast would be
+            // dropped as unchanged: put the picture back in it now.
+            applyFrameToGPUView(frame, reason: "viewport-tv-removed", force: true)
         } else {
-            lastAppliedViewportFrame = nil
             applyViewportFromCurrentSkin()
         }
         refreshVirtualMouseLayout()

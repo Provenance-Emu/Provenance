@@ -78,7 +78,7 @@ public struct ExternalDisplayOptionsView: View {
                         TVBezelPickerView(selection: Binding(get: { bezelID }, set: { bezelID = $0 ?? ExternalDisplayBezelRules.noBezelID }),
                                           offersSystemAutomatic: true)
                     } label: {
-                        LabeledContent(String(localized: "TV"), value: chosenBezel?.name ?? String(localized: "None"))
+                        LabeledContent(String(localized: "TV"), value: chosenBezelName)
                     }
                     if hasBezel {
                         Toggle(String(localized: "Match the System's Screen"), isOn: $bezelMatchesSystem)
@@ -175,12 +175,22 @@ public struct ExternalDisplayOptionsView: View {
         return TVBezelCatalog.bezel(id: bezelID)
     }
 
-    /// A TV is chosen (the one shown may be another, when the system has a screen of its own).
-    private var hasBezel: Bool { chosenBezel != nil }
+    /// The choice is left to each game's system, which is not a TV in the catalogue.
+    private var isAutomatic: Bool { bezelID == ExternalDisplayBezelRules.automaticBezelID }
+
+    private var chosenBezelName: String {
+        if isAutomatic { return String(localized: "Automatic") }
+        return chosenBezel?.name ?? String(localized: "None")
+    }
+
+    /// A TV is chosen or left to the system (the one shown may be another, when the system has
+    /// a screen of its own).
+    private var hasBezel: Bool { isAutomatic || chosenBezel != nil }
 
     /// The chosen TV is a built-in one, with glass and a look of its own.
     private var hasGlassTV: Bool {
-        chosenBezel.map { $0.image == nil && $0.presetID == nil } ?? false
+        // Automatic only ever picks a built-in TV.
+        isAutomatic || (chosenBezel.map { $0.image == nil && $0.presetID == nil } ?? false)
     }
 
     /// The TV pinned to `game`: `nil` is automatic.
