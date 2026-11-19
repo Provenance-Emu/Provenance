@@ -86,7 +86,63 @@ extension PVEmulatorViewController {
     /// Whether the external display is showing the game picture on its own right now.
     var isGameOnExternalDisplay: Bool { externalDisplayWindow != nil }
 
+    /// A display is attached, whether or not it is showing the game picture. In Mirror Device
+    /// mode on iOS 27 the app holds no scene for it, so the accessory is asked instead.
+    var isExternalDisplayAttached: Bool {
+        if ExternalDisplayCoordinator.shared.isConnected { return true }
+        #if compiler(>=6.4)
+        if #available(iOS 27.0, *), let registration = externalDisplayAccessory as? UISceneAccessoryRegistration {
+            return registration.isAvailable
+        }
+        #endif
+        return false
+    }
+
+    /// Asks the system for the external display's scene.
+    ///
+    /// An app built with the iOS 27 SDK is no longer handed that scene when a display connects:
+    /// it gets one only while a view controller has an external-display scene accessory
+    /// registered. Without this the display is always a mirror and
+    /// `ExternalDisplayCoordinator` never hears about it. Earlier systems still connect the
+    /// scene by themselves (`PVSystemEvents.application(_:configurationForConnecting:options:)`).
+    private func registerExternalDisplayAccessory() {
+        #if compiler(>=6.4)
+        guard #available(iOS 27.0, *), externalDisplayAccessory == nil else { return }
+        let configuration = UISceneConfiguration(name: nil, sessionRole: .windowExternalDisplayNonInteractive)
+        configuration.delegateClass = PVExternalDisplaySceneDelegate.self
+        let registration = registerSceneAccessory(.externalNonInteractive(sceneConfiguration: configuration))
+        // Off until `updateExternalDisplay` knows the game goes there: a scene with no window
+        // must not take the display away from mirroring.
+        registration.isEnabled = false
+        externalDisplayAccessory = registration
+        ILOG("External display: scene accessory registered")
+        #endif
+    }
+
+    func unregisterExternalDisplayAccessory() {
+        #if compiler(>=6.4)
+        if #available(iOS 27.0, *), let registration = externalDisplayAccessory as? UISceneAccessoryRegistration {
+            unregisterSceneAccessory(registration)
+        }
+        #endif
+        externalDisplayAccessory = nil
+    }
+
+    /// Takes the external display's scene only while the game picture is meant to go there;
+    /// otherwise the system mirrors the device.
+    private func updateExternalDisplayAccessory() {
+        #if compiler(>=6.4)
+        guard #available(iOS 27.0, *),
+              let registration = externalDisplayAccessory as? UISceneAccessoryRegistration else { return }
+        let wanted = Defaults[.externalDisplayMode] == .dedicated && coreCanPresentExternally
+        guard registration.isEnabled != wanted else { return }
+        registration.isEnabled = wanted
+        ILOG("External display: scene accessory \(wanted ? "enabled" : "disabled")")
+        #endif
+    }
+
     func observeExternalDisplay() {
+        registerExternalDisplayAccessory()
         NotificationCenter.default.addObserver(self, selector: #selector(externalDisplayInputsDidChange),
                                                name: ExternalDisplayCoordinator.didChangeNotification, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(externalDisplayFilterDidChange),
@@ -120,6 +176,9 @@ extension PVEmulatorViewController {
     /// Brings both screens in line with `externalDisplayPlan`. Cheap and safe to call whenever
     /// one of its inputs may have changed.
     func updateExternalDisplay() {
+        // The scene arrives later through `ExternalDisplayCoordinator.didChangeNotification`,
+        // which calls back here.
+        updateExternalDisplayAccessory()
         if ExternalDisplayCoordinator.shared.isConnected { findExternalDisplayGameArt() }
         let plan = externalDisplayPlan
         let metalVC = gpuViewController as? PVMetalViewController

@@ -464,7 +464,7 @@ final class PauseTileMenuViewModel: ObservableObject {
         if emulatorVC.core.supportsAudioVisualizer {
             screenDisplayTiles.append(Self.audioVisualizerTile(currentMode: emulatorVC.visualizerMode))
         }
-        if ExternalDisplayCoordinator.shared.isConnected {
+        if emulatorVC.isExternalDisplayAttached {
             screenDisplayTiles.append(PauseMenuTile(
                 id: Self.externalDisplayTileID,
                 icon: "tv",

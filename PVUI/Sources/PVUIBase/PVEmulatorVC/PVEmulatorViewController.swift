@@ -298,6 +298,9 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, Emulato
     /// (see PVEmulatorViewController+ExternalDisplay.swift).
     var externalDisplayWindow: UIWindow?
     var externalDisplaySettingsObservation: Task<Void, Never>?
+    /// The `UISceneAccessoryRegistration` that asks iOS 27 for the external display's scene.
+    /// Untyped because the class does not exist before iOS 27.
+    var externalDisplayAccessory: Any?
     #endif
     var menuGestureRecognizer: UITapGestureRecognizer?
 
@@ -2040,6 +2043,7 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, Emulato
         #if os(iOS)
         externalDisplaySettingsObservation?.cancel()
         removeExternalDisplayWindow()
+        unregisterExternalDisplayAccessory()
         #endif
         #if os(iOS) && !targetEnvironment(macCatalyst)
         volumeHUDSettingObservation?.cancel()
