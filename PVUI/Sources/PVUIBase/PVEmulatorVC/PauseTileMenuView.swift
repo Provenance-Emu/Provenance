@@ -14,6 +14,7 @@
 //  - iOS and tvOS compatible; controller/keyboard focus via FocusState
 //
 
+import Combine
 import SwiftUI
 import PVCoreBridge
 import PVFeatureFlags
@@ -158,6 +159,8 @@ struct PauseTileMenuView: View {
     @State private var showingShaderSettings = false
     @State private var showingShaderBrowser = false
     @State private var showingBezels = false
+    /// The TV switcher strip has taken the menu's place over the paused game.
+    @State private var showingBezelSwitcher = false
     @State private var showingPortDevices = false
     #if os(iOS)
     @State private var showingExternalDisplay = false
@@ -469,6 +472,17 @@ struct PauseTileMenuView: View {
         return true
     }
 
+    #if os(iOS) || os(tvOS)
+    /// The controller input the TV switcher reads on iOS; tvOS moves focus instead.
+    private var bezelSwitcherCommands: AnyPublisher<PauseMenuNavigationCommand, Never>? {
+        #if os(iOS)
+        controllerInput.commands.eraseToAnyPublisher()
+        #else
+        nil
+        #endif
+    }
+    #endif
+
     /// Handles controller/menu back by popping submenus before dismissing the pause menu.
     private func handleBackCommand() {
         if !popRoute() {
@@ -483,6 +497,7 @@ struct PauseTileMenuView: View {
         emulatorVC.menuPresentationViewController?.presentedViewController != nil
             || emulatorVC.isPresentingPVAlert
             || showingBezels
+            || showingBezelSwitcher
             || gamepadManager.isModalAlertPresented
     }
 
@@ -637,7 +652,7 @@ struct PauseTileMenuView: View {
             dismissForSubSheetThen { self.emulatorVC.showCheatsMenu() }
         #if os(iOS) || os(tvOS)
         case PauseTileMenuViewModel.bezelsTileID:
-            showingBezels = true
+            showingBezelSwitcher = true
         #endif
         case "gameInfo":
             dismissForSubSheetThen { self.emulatorVC.showMoreInfo() }
@@ -2052,6 +2067,24 @@ struct PauseTileMenuView: View {
         }
         #endif
         #if os(iOS) || os(tvOS)
+        // The TV switcher takes the menu's place: the paused game shows in full behind a strip.
+        .opacity(showingBezelSwitcher ? 0 : 1)
+        .disabled(showingBezelSwitcher)
+        .overlay(alignment: .bottom) {
+            if showingBezelSwitcher {
+                BezelSwitcherHost(emulatorVC: emulatorVC,
+                                  commands: bezelSwitcherCommands,
+                                  onClose: {
+                                      showingBezelSwitcher = false
+                                      rebuildSections()
+                                  },
+                                  onMore: {
+                                      showingBezelSwitcher = false
+                                      showingBezels = true
+                                  })
+                    .transition(.move(edge: .bottom).combined(with: .opacity))
+            }
+        }
         .fullScreenCover(isPresented: $showingBezels, onDismiss: rebuildSections) {
             GameplayBezelOptionsView(emulatorVC: emulatorVC)
         }
@@ -2298,7 +2331,10 @@ struct PauseTileMenuView: View {
             controllerInput.start()
             openNetworkPlayIfRequested()
         }
-        .onDisappear { controllerInput.stop() }
+        .onDisappear {
+            controllerInput.stop()
+            emulatorVC.bezelPreview = nil
+        }
         .onChange(of: focusedTileID) { newID in
             withAnimation(.easeInOut(duration: 0.2)) {
                 infoText = description(forCursor: newID)
@@ -2315,10 +2351,13 @@ struct PauseTileMenuView: View {
             controllerInput.start()
             openNetworkPlayIfRequested()
         }
-        .onDisappear { controllerInput.stop() }
+        .onDisappear {
+            controllerInput.stop()
+            emulatorVC.bezelPreview = nil
+        }
         /// The focus engine moves the cursor here; the shoulder buttons change page.
         .onReceive(controllerInput.commands) { command in
-            guard !showingBezels else { return }
+            guard !showingBezels, !showingBezelSwitcher else { return }
             if command == .previousTab { switchTab(by: -1) }
             if command == .nextTab { switchTab(by: 1) }
         }
