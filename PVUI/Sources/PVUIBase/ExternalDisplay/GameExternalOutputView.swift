@@ -46,6 +46,10 @@ final class GameExternalOutputView: UIView {
     var isBezelPending: Bool {
         bezelLoadInFlight || (bezelScene != nil && !bezelProcessor.isReady && !bezelProcessor.hasFailed)
     }
+    /// The GPU could not draw a TV on this screen: none is shown for the rest of the game.
+    private var bezelDroppedForSession = false
+    /// A TV or an image bezel is on screen.
+    var hasBezel: Bool { bezelScene != nil || hasImageBezel }
     /// A TV is being loaded or is waiting for its shader, whether or not another still shows.
     var isBezelLoading: Bool { bezelLoadInFlight || pendingBezelScene != nil }
     /// What `showBezel` was last asked for, to ask again when the display changes size.
@@ -171,7 +175,7 @@ final class GameExternalOutputView: UIView {
     ///   - flatGlass: keep the glass flat, because the filter inside bends the picture itself.
     ///   - didChange: called once what is on screen has changed, so a paused game can be redrawn.
     func showBezel(_ bezel: TVBezel?, lightsRoom: Bool, flatGlass: Bool, didChange: @escaping () -> Void) {
-        guard let bezel else {
+        guard let bezel, !bezelDroppedForSession else {
             bezelRequest = nil
             guard bezelKey != nil else { return }
             bezelLoad?.cancel()
@@ -284,6 +288,18 @@ final class GameExternalOutputView: UIView {
             }
             didChange()
         }
+    }
+
+    /// Takes the TV off this screen and keeps it off until the view is rebuilt for another
+    /// game: the GPU could not draw it, and trying again risks a hang.
+    func dropBezelForSession() {
+        bezelDroppedForSession = true
+        bezelRequest = nil
+        bezelLoad?.cancel()
+        bezelLoadInFlight = false
+        bezelKey = nil
+        clearShaderBezel()
+        clearImageBezel()
     }
 
     private func clearShaderBezel() {

@@ -231,6 +231,8 @@ final class PVMetalViewController: PVGPUViewController, PVRenderDelegate, MTKVie
 
     #if os(iOS) || os(tvOS)
     private var localBezelOutput: GameExternalOutputView?
+    /// The player has been told a TV was turned off this game; once is enough.
+    private var didReportTVDropped = false
 
     /// The TV on the device is being loaded or is waiting for its shader.
     var isLocalBezelLoading: Bool { localBezelOutput?.isBezelLoading ?? false }
@@ -2492,6 +2494,7 @@ final class PVMetalViewController: PVGPUViewController, PVRenderDelegate, MTKVie
         if dualScreenLayout == nil, let output = localBezelOutput, output.superview === view,
            drawBezel(inputTexture, into: drawable.texture, output: output, emulatorCore: emulatorCore, commandBuffer: commandBuffer) {
             commandBuffer.present(drawable)
+            watchTVFrame(commandBuffer, output: output, screen: "the device")
             commandBuffer.commit()
             previousCommandBuffer = commandBuffer
             frameCount += 1
@@ -2791,6 +2794,7 @@ final class PVMetalViewController: PVGPUViewController, PVRenderDelegate, MTKVie
 
         if drawBezel(source, into: target, output: output, emulatorCore: emulatorCore, commandBuffer: commandBuffer) {
             commandBuffer.present(drawable)
+            watchTVFrame(commandBuffer, output: output, screen: "the external display")
             commandBuffer.commit()
             return
         }
@@ -2799,12 +2803,55 @@ final class PVMetalViewController: PVGPUViewController, PVRenderDelegate, MTKVie
         guard drawExternalPicture(source, into: target, rect: contentRect, filter: output.filter,
                                   emulatorCore: emulatorCore, commandBuffer: commandBuffer) else { return }
         commandBuffer.present(drawable)
+        watchTVFrame(commandBuffer, output: output, screen: "the external display")
         commandBuffer.commit()
     }
 
     #endif
 
     #if os(iOS) || os(tvOS)
+    /// The alert for a GPU cut-off has been shown; once per run of the app is enough.
+    private static var didReportGPUAccessRevoked = false
+
+    /// Watches a frame drawn for `output` (the TV on the device, or an external display).
+    /// These frames used to be committed unwatched, so a GPU that rejected them did so silently.
+    private func watchTVFrame(_ commandBuffer: MTLCommandBuffer, output: GameExternalOutputView, screen: String) {
+        commandBuffer.addCompletedHandler { [weak self, weak output] buffer in
+            guard let error = buffer.error else { return }
+            ELOG("GPU error drawing the TV on \(screen): \(error)")
+            let action = TVFrameFailure.action(for: error)
+            DispatchQueue.main.async {
+                self?.handleTVFrameFailure(action, output: output)
+            }
+        }
+    }
+
+    private func handleTVFrameFailure(_ action: TVFrameFailure.Action, output: GameExternalOutputView?) {
+        // Buffers in flight when the app leaves the foreground time out as a matter of course.
+        guard UIApplication.shared.applicationState == .active else { return }
+        switch action {
+        case .logOnly:
+            return
+        case .dropTV:
+            guard let output, output.hasBezel else { return }
+            output.dropBezelForSession()
+            redrawPausedFrame()
+            guard !didReportTVDropped else { return }
+            didReportTVDropped = true
+            PVToastManager.post(String(localized: "The TV was turned off: this device could not draw it"),
+                                type: .warning, duration: 4.0, icon: "tv")
+        case .accessRevoked:
+            // A new command queue is refused as well, so there is nothing to recover: say so.
+            guard !Self.didReportGPUAccessRevoked else { return }
+            Self.didReportGPUAccessRevoked = true
+            PVAlertCenter.shared.present(PVAlert(
+                title: String(localized: "Graphics Stopped"),
+                message: String(localized: "iOS has stopped Provenance from drawing after a graphics error. Reopen Provenance to continue playing."),
+                type: .error,
+                actions: [.ok()]))
+        }
+    }
+
     private func drawBezel(_ source: MTLTexture, into target: MTLTexture, output: GameExternalOutputView,
                            emulatorCore: PVEmulatorCore, commandBuffer: MTLCommandBuffer) -> Bool {
         let drawableSize = CGSize(width: target.width, height: target.height)
