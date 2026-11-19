@@ -1840,6 +1840,16 @@ private struct VideoSection: View {
             #if os(tvOS)
             .retroFocusButtonStyle(showBorder: false)
             #endif
+            #if os(iOS) || os(tvOS)
+            NavigationLink(destination: BezelOptionsView()) {
+                SettingsRow(title: "Bezels",
+                            subtitle: "A TV or monitor around the game picture.",
+                            icon: .sfSymbol("tv"))
+            }
+            #if os(tvOS)
+            .retroFocusButtonStyle(showBorder: false)
+            #endif
+            #endif
             #if os(iOS)
             NavigationLink(destination: ExternalDisplaySettingsView()) {
                 SettingsRow(title: "External Display",

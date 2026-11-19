@@ -38,6 +38,20 @@ The working list for the 3.4.0 release. Update it in the same commit as the work
     - Left as designed: a ROM that is not in the multiplayer catalog must have its details confirmed on every device before Join is enabled.
     - Still needs devices: Wi-Fi discovery between two devices, the local network permission prompt, and a thin libretro netpacket core such as gpSP (the buildbot dylibs cannot load in a simulator).
 
+## TV bezels on by default (built 2026-11-19, nothing seen running yet)
+
+Design and plan: `docs/superpowers/specs/2026-11-19-bezels-on-by-default-design.md`,
+`docs/superpowers/plans/2026-11-19-bezels-on-by-default.md`. Unit tests pass; these need a person:
+
+- [ ] Simulator, iPhone and iPad, landscape touch play: the picture sits in the Living Room TV, the generated buttons do not cover the tube, rotating to portrait removes the TV and the picture returns to its usual rect.
+- [ ] Pause menu, Bezels tile: the strip shows over the paused game; stepping changes the TV with no bare frame between two shader TVs; Keep saves, Cancel restores, "This game only" pins.
+- [ ] Controller in the strip: d-pad steps, L1/R1 jump groups, A keeps, B cancels, X room light, Y this game only. Button hints are generic letters, wrong on PlayStation pads.
+- [ ] Apple TV: focus moves along the strip, Select keeps, Menu returns to the pause menu. The GPU view layout on tvOS was left as it is.
+- [ ] A12Z iPad Pro, twenty game launches with Automatic and a video filter selected, device log watched for a GPU hang (`idevicesyslog`, see CLAUDE.md). The filter that hung it on 2026-11-18 is still unidentified.
+- [ ] Fifteen minutes of touch play in a TV on the oldest supported iPhone: frame pacing and heat.
+- [ ] External display on iOS 27 (scene accessory, `ccfccf0d76`): the game goes to the display in Game on External Display mode, Mirror Device still mirrors, the pause tile still shows in Mirror mode.
+- [ ] Known gaps: the light gun turns the TV off while its touch layer is up; switching between an image bezel and a shader TV still passes through the bare picture.
+
 ## Backlog
 
 - [ ] **Core capability coverage.** Verify link cable, mouse, camera, microphone, and netplay support for specific shipped cores before adding badges. Extend the curated recommendations to more systems. [#3341](https://github.com/Provenance-Emu/Provenance/issues/3341)
