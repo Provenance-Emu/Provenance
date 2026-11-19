@@ -10,11 +10,14 @@ public struct ActivityViewController: UIViewControllerRepresentable {
     var applicationActivities: [UIActivity]? = nil
     /// Activity types to exclude from the share sheet
     var excludedActivityTypes: [UIActivity.ActivityType]? = nil
-    
-    public init(activityItems: [Any], applicationActivities: [UIActivity]? = nil, excludedActivityTypes: [UIActivity.ActivityType]? = nil) {
+    /// Called when the share sheet finishes; the flag is true when an activity completed, false when the user cancelled
+    var onComplete: ((Bool) -> Void)? = nil
+
+    public init(activityItems: [Any], applicationActivities: [UIActivity]? = nil, excludedActivityTypes: [UIActivity.ActivityType]? = nil, onComplete: ((Bool) -> Void)? = nil) {
         self.activityItems = activityItems
         self.applicationActivities = applicationActivities
         self.excludedActivityTypes = excludedActivityTypes
+        self.onComplete = onComplete
     }
 
     public func makeUIViewController(context: UIViewControllerRepresentableContext<ActivityViewController>) -> UIActivityViewController {
@@ -23,6 +26,10 @@ public struct ActivityViewController: UIViewControllerRepresentable {
             applicationActivities: applicationActivities
         )
         controller.excludedActivityTypes = excludedActivityTypes
+        let onComplete = onComplete
+        controller.completionWithItemsHandler = { _, completed, _, _ in
+            onComplete?(completed)
+        }
         return controller
     }
 

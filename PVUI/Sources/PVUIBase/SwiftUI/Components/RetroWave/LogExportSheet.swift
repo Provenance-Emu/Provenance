@@ -23,6 +23,9 @@ public struct LogExportSheet: View {
     @State private var isExporting = false
     @State private var exportError: String?
     @State private var exportResult: LogExportResult?
+    #if !os(tvOS)
+    @State private var isSharing = false
+    #endif
 
     private static let formatLabels: [LogExportOptions.Format: String] = [
         .text: "Text File (.log)",
@@ -228,8 +231,11 @@ public struct LogExportSheet: View {
                 .strokeBorder(Color.green.opacity(0.5), lineWidth: 1)
         )
 #else
-        // File ready — present the native share sheet via ShareLink.
-        ShareLink(item: result.url) {
+        // File ready. A ShareLink reports no completion, so the share sheet is presented here
+        // to close this sheet once the share goes through.
+        Button {
+            isSharing = true
+        } label: {
             HStack {
                 Image(systemName: "square.and.arrow.up")
                 Text("Share \(result.url.lastPathComponent)")
@@ -245,6 +251,13 @@ public struct LogExportSheet: View {
             .cornerRadius(8)
         }
         .buttonStyle(.plain)
+        .sheet(isPresented: $isSharing) {
+            ActivityViewController(activityItems: [result.url]) { completed in
+                isSharing = false
+                if completed { dismiss() }
+            }
+            .presentationDetents([.medium, .large])
+        }
 #endif
     }
 
