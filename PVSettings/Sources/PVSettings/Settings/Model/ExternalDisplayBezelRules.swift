@@ -132,6 +132,16 @@ public enum ExternalDisplayBezelRules {
                 candidates: candidates, pinned: pinned, gameArt: gameArt).bezelID
     }
 
+    /// Whether the picture lights the room around the TV.
+    ///
+    /// - Parameters:
+    ///   - stored: the player's setting; `nil` when they never set it.
+    ///   - gpuIsRecent: the device's GPU is new enough to run the room-light preset, which
+    ///     costs several times the plain one, without strain.
+    public static func lightsRoom(stored: Bool?, gpuIsRecent: Bool) -> Bool {
+        stored ?? gpuIsRecent
+    }
+
     /// What draws the tube look inside a TV's glass.
     public enum TubeFilter: Equatable, Sendable {
         /// The look the TV suggests.

@@ -20,7 +20,8 @@ public struct ExternalDisplayOptionsView: View {
     @Default(.externalDisplaySkin) private var externalSkin
     @Default(.externalDisplayBezel) private var bezelID
     @Default(.externalDisplayBezelMatchesSystem) private var bezelMatchesSystem
-    @Default(.externalDisplayBezelLightsRoom) private var bezelLightsRoom
+    /// Stored only once the player sets it; until then it goes by the device.
+    @Default(.externalDisplayBezelLightsRoom) private var storedBezelLightsRoom
     @Default(.externalDisplayGameBezels) private var gameBezels
     @Default(.externalDisplayBezelByGame) private var pins
     @Default(.hideOnScreenControlsWithController) private var hideControlsWithController
@@ -80,7 +81,9 @@ public struct ExternalDisplayOptionsView: View {
                     if hasBezel {
                         Toggle(String(localized: "Match the System's Screen"), isOn: $bezelMatchesSystem)
                         if hasGlassTV {
-                            Toggle(String(localized: "Light the Room"), isOn: $bezelLightsRoom)
+                            Toggle(String(localized: "Light the Room"),
+                                   isOn: Binding(get: { storedBezelLightsRoom ?? TVBezelRoomLight.gpuIsRecent },
+                                                 set: { storedBezelLightsRoom = $0 }))
                         }
                     }
                 } header: {

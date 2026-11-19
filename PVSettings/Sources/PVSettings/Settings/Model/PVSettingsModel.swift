@@ -78,7 +78,8 @@ extension Defaults.Keys {
     static let externalDisplayBezelMatchesSystem = Key<Bool>("externalDisplayBezelMatchesSystem", default: true)
 
     /// The picture lights the room around the TV. Off keeps the reflections and costs less GPU time.
-    static let externalDisplayBezelLightsRoom = Key<Bool>("externalDisplayBezelLightsRoom", default: true)
+    /// `nil` (never set) goes by the device: see `ExternalDisplayBezelRules.lightsRoom`.
+    static let externalDisplayBezelLightsRoom = Key<Bool?>("externalDisplayBezelLightsRoom", default: nil)
 
     /// Show artwork made for the running game around the picture on an external display,
     /// downloaded from The Bezel Project the first time the game is played.

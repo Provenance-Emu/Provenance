@@ -51,7 +51,7 @@ extension PVEmulatorViewController {
                 tubeFilter = ResolvedShader(entry: entry, values: values, revision: bezel.id.hashValue)
             }
         }
-        renderer.updateLocalBezel(bezel, filter: tubeFilter, lightsRoom: Defaults[.externalDisplayBezelLightsRoom],
+        renderer.updateLocalBezel(bezel, filter: tubeFilter, lightsRoom: TVBezelRoomLight.isOn,
                                   flatGlass: tubeFilter.map { TVBezelShader.bendsPictureItself($0.entry) } ?? false)
 
         guard canShowGameplayBezels, gameBezels, pinned == nil, let context = gameplayBezelGame else { return }

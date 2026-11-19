@@ -191,4 +191,13 @@ struct ExternalDisplayBezelRulesTests {
         #expect(Rules.automaticBezelID == "auto")
         #expect(Rules.automaticDefaultBezelID == "living-room-tv")
     }
+
+    @Test("Room light follows the device until the player sets it")
+    func roomLightByDevice() {
+        #expect(Rules.lightsRoom(stored: nil, gpuIsRecent: true))
+        #expect(!Rules.lightsRoom(stored: nil, gpuIsRecent: false))
+        #expect(Rules.lightsRoom(stored: true, gpuIsRecent: false))
+        #expect(!Rules.lightsRoom(stored: false, gpuIsRecent: true))
+        #expect(Defaults.Keys.externalDisplayBezelLightsRoom.defaultValue == nil)
+    }
 }
