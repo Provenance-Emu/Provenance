@@ -43,7 +43,7 @@ let package = Package(
         .package(url: "https://github.com/Provenance-Emu/PVLookup.git", from: "1.0.0"),
         /// Skin model, manager, catalog and skin views, shared with iFly and iCube.
         /// Keep both direct dependencies and all consumer resolver files on the tested SkinKit revision.
-        .package(url: "https://github.com/Provenance-Emu/SkinKit", revision: "ab9dbb008675a03f9820e2b7c9a0f228ca5eae6d"),
+        .package(url: "https://github.com/Provenance-Emu/SkinKit", revision: "6cfcebdddf2ea9da8a2c9ab7182af9b16c8cff83"),
         .package(path: "../PVLogging"),
         .package(path: "../PVPatreon"),
         .package(path: "../PVSupport"),
@@ -136,9 +136,9 @@ let package = Package(
                 .product(name: "SkinCatalogKit", package: "SkinKit"),
                 .product(name: "SkinKitManager", package: "SkinKit"),
                 .product(name: "SkinKitUI", package: "SkinKit"),
-                // Format 2 documents draw the TVs around the picture on an external display.
-                .product(name: "SkinKit2Core", package: "SkinKit"),
-                .product(name: "SkinKit2Render", package: "SkinKit"),
+                // The TV around the game picture: rules, bundled TVs, the pause-menu switcher.
+                .product(name: "SkinKitBezels", package: "SkinKit"),
+                .product(name: "SkinKitBezelsUI", package: "SkinKit"),
                 "ActivityIndicatorView",
                 "AnimatedGradient",
                 "FloatingButton",
@@ -187,8 +187,6 @@ let package = Package(
                 .copy("Resources/PrivacyInfo.xcprivacy"),
                 .copy("Resources/catalog_seed.json"),
                 .copy("Resources/DefaultSkins"),
-                // TVs for the external display: catalog.json and one format 2 document each.
-                .copy("Resources/TVBezels"),
                 // Offline wiki navigation (SUMMARY.md); see ProvenanceWiki.
                 .copy("Resources/WikiContent"),
                 .process("Resources/en.lproj"),
@@ -223,6 +221,7 @@ let package = Package(
                 .product(name: "SkinCatalogKit", package: "SkinKit"),
                 .product(name: "SkinKitManager", package: "SkinKit"),
                 .product(name: "SkinKitUI", package: "SkinKit"),
+                .product(name: "SkinKitBezels", package: "SkinKit"),
                 "PVUIBase",
                 "PVCoreBridge",
                 "PVLogging",

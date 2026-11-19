@@ -17,6 +17,7 @@ import PVLogging
 import PVSettings
 import PVShaders
 import PVSystems
+import SkinKitBezels
 import simd
 
 private struct SimpleCRTUniforms {

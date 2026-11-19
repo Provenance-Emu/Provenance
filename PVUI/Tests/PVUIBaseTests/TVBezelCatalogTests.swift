@@ -2,40 +2,57 @@
 //  TVBezelCatalogTests.swift
 //  PVUI
 //
-//  The TVs that ship with the app: the catalogue file and each TV's artwork.
+//  The shared package's TVs as Provenance uses them: its systems, its shader library and its
+//  stored choices. The catalogue file, the artwork and the selection rules are tested in SkinKit.
 //
 
 #if os(iOS)
 import CoreGraphics
+import Defaults
 import Foundation
 import Testing
 import PVSettings
-import PVShaders
+@testable import PVShaders
 import PVSystems
+import SkinKitBezels
 @testable import PVUIBase
 
 @Suite("TVBezelCatalog")
 struct TVBezelCatalogTests {
 
-    private let bezels = TVBezelCatalog.bundled
+    private let bezels: [TVBezel]
 
-    @Test("The bundled catalogue has TVs with distinct ids, none of them the 'no TV' value")
+    init() {
+        ProvenanceBezels.configure()
+        bezels = TVBezelCatalog.bundled
+    }
+
+    @Test("The bundled catalogue reaches Provenance with its TVs")
     func catalogueDecodes() {
         #expect(!bezels.isEmpty)
         #expect(Set(bezels.map(\.id)).count == bezels.count)
         #expect(!bezels.contains { $0.id == ExternalDisplayBezelRules.noBezelID })
-        #expect(!bezels.contains { $0.name.isEmpty })
     }
 
-    @Test("Preferred systems are real, and no two TVs claim the same one")
+    @Test("Preferred systems are systems Provenance has")
     func preferredSystems() {
-        var claimed: Set<String> = []
         for bezel in bezels {
             for system in bezel.preferredSystems {
                 #expect(SystemIdentifier(rawValue: system) != nil, "\(bezel.id) lists unknown system \(system)")
-                #expect(claimed.insert(system).inserted, "\(system) is claimed by two TVs")
             }
         }
+    }
+
+    @Test("The Bezel Project's table names systems Provenance has, none of them with two screens")
+    func bezelProjectSystems() {
+        let systems = BezelProjectService.systems
+        #expect(!systems.isEmpty)
+        for systemID in systems.keys {
+            #expect(SystemIdentifier(rawValue: systemID) != nil, "unknown system \(systemID)")
+        }
+        #expect(systems[SystemIdentifier.DS.rawValue] == nil)
+        #expect(systems[SystemIdentifier._3DS.rawValue] == nil)
+        #expect(BezelProjectService.repositories(systemID: SystemIdentifier.SNES.rawValue, style: .systemArt).first?.name == "bezelprojectSA-SNES")
     }
 
     @Test("Every TV's own look names a filter by a well-formed id")
@@ -49,50 +66,25 @@ struct TVBezelCatalogTests {
         }
     }
 
-    @Test("A TV cannot place or shape its tube through the frame's values")
-    func frameValuesLeaveGeometryAlone() {
-        let geometry = Set(TVBezelShader.geometryValues(tubeAspect: 1, tubeHeightFraction: 1).keys)
-        for bezel in bezels {
-            #expect(geometry.isDisjoint(with: bezel.frame.keys), "\(bezel.id) sets tube geometry in its frame values")
+    @Test("The package's preset ids are Provenance's shader ids")
+    func presetIDs() {
+        #expect(ShaderID(rawValue: TVBezelShader.bezelOnlyID) == .slang("bezel/uborder/preset_tools/append-uborder-bezel-reflections"))
+        #expect(ShaderID(rawValue: TVBezelShader.ambientID) == .slang("bezel/uborder/uborder-koko-ambi"))
+        for bezel in TVBezelCatalog.shaderPresets {
+            #expect(bezel.presetShaderID?.kind == .slang)
+            #expect(bezel.presetShaderID.flatMap { ShaderCatalog.shared.entry(for: $0) } != nil)
         }
     }
 
-    @Test("Every TV's artwork loads, with one centred 4:3 tube that leaves room for a cabinet")
+    @Test("Every TV's artwork loads from the package's bundle")
     func artwork() throws {
         for bezel in bezels {
             let artwork = try TVBezelArtwork(bezel: bezel)
-            let tube = artwork.tubeRect
-            let canvas = TVBezelArtwork.canvas
-            #expect(abs(tube.midX - canvas.width / 2) < 0.5, "\(bezel.id): tube is not centred across")
-            #expect(abs(tube.midY - canvas.height / 2) < 0.5, "\(bezel.id): tube is not centred down")
             #expect(abs(artwork.tubeAspect - 4.0 / 3.0) < 0.001, "\(bezel.id): tube is not 4:3")
-            #expect(artwork.tubeHeightFraction > 0.4 && artwork.tubeHeightFraction < 0.9)
         }
-    }
-
-    @Test("Artwork renders at the size asked for")
-    func artworkRenders() throws {
-        let bezel = try #require(bezels.first)
-        let artwork = try TVBezelArtwork(bezel: bezel)
-        let image = try #require(artwork.image(pixelWidth: 480))
+        let first = try #require(bezels.first)
+        let image = try #require(try TVBezelArtwork(bezel: first).image(pixelWidth: 480))
         #expect(image.width == 480 && image.height == 270)
-        #expect(artwork.image(pixelWidth: 0) == nil)
-        let png = try #require(artwork.pngData(pixelWidth: 480))
-        #expect(png.starts(with: [0x89, 0x50, 0x4E, 0x47]))
-    }
-
-    @Test("A document needs exactly one screen to be a TV")
-    func artworkScreenCount() {
-        func document(screens: Int) -> Data {
-            let nodes = (0 ..< screens).map { #"{"type":"screen","id":"s\#($0)","layout":{"frame":[\#($0 * 10),0,8,6]}}"# }
-            let json = #"{"formatVersion":"2.0","requires":[],"identifier":"t","name":"t","gameTypes":["t"],"#
-                + #""reference":{"shortSide":1080,"minScale":1,"maxScale":1},"#
-                + #""root":{"type":"group","id":"root","children":[\#(nodes.joined(separator: ","))]}}"#
-            return Data(json.utf8)
-        }
-        #expect(throws: TVBezelArtwork.ArtworkError.screenCount(0)) { try TVBezelArtwork(data: document(screens: 0)) }
-        #expect(throws: TVBezelArtwork.ArtworkError.screenCount(2)) { try TVBezelArtwork(data: document(screens: 2)) }
-        #expect(throws: Never.self) { try TVBezelArtwork(data: document(screens: 1)) }
     }
 
     @Test("The catalogue resolves the stored choice through the selection rules")
@@ -106,26 +98,92 @@ struct TVBezelCatalogTests {
         #expect(tv("not-a-tv", matches: true) == nil)
     }
 
-    @Test("The catalogue holds the TV Automatic falls back to")
+    @Test("Automatic gives a console the living room TV and a handheld none")
     func automaticDefaultExists() {
         #expect(TVBezelCatalog.bezel(id: ExternalDisplayBezelRules.automaticDefaultBezelID) != nil)
         let console = TVBezelCatalog.resolve(chosen: ExternalDisplayBezelRules.automaticBezelID, matchesSystem: true,
-                                             systemID: "com.provenance.snes", systemSuitsTV: true)
+                                             systemID: SystemIdentifier.SNES.rawValue, systemSuitsTV: true)
         #expect(console.bezel?.id == "living-room-tv")
         #expect(console.resolution.isAutomatic)
         let handheld = TVBezelCatalog.resolve(chosen: ExternalDisplayBezelRules.automaticBezelID, matchesSystem: true,
-                                              systemID: "com.provenance.gba", systemSuitsTV: false)
+                                              systemID: SystemIdentifier.GBA.rawValue, systemSuitsTV: false)
         #expect(handheld.bezel == nil)
         #expect(handheld.resolution.outcome == .noneForSystem)
     }
 
-    @Test("A catalogue entry needs only an id, a name and artwork")
-    func decodesMinimalEntry() throws {
-        let data = Data(#"{"bezels":[{"id":"a","name":"A","artwork":"a.skin.json"}]}"#.utf8)
-        let bezel = try #require(try TVBezelCatalog.decode(data).first)
-        #expect(bezel.lightsRoom)
-        #expect(bezel.look == nil)
-        #expect(bezel.frame.isEmpty && bezel.preferredSystems.isEmpty)
+    @Test("The stored choices keep their keys and defaults")
+    func storedChoices() {
+        #expect(Defaults.Keys.externalDisplayBezel.name == "externalDisplayBezel")
+        #expect(Defaults.Keys.externalDisplayBezel.defaultValue == ExternalDisplayBezelRules.automaticBezelID)
+        #expect(Defaults.Keys.externalDisplayBezelMatchesSystem.name == "externalDisplayBezelMatchesSystem")
+        #expect(Defaults.Keys.externalDisplayBezelLightsRoom.name == "externalDisplayBezelLightsRoom")
+        #expect(Defaults.Keys.externalDisplayBezelLightsRoom.defaultValue == nil)
+        #expect(Defaults.Keys.externalDisplayGameBezels.name == "externalDisplayGameBezels")
+        #expect(Defaults.Keys.externalDisplayBezelProjectStyle.name == "externalDisplayBezelProjectStyle")
+        #expect(Defaults.Keys.externalDisplayBezelByGame.name == "externalDisplayBezelByGame")
+    }
+
+    @Test("The package is pointed at Provenance's folders, settings and systems")
+    func environment() {
+        let environment = BezelEnvironment.current
+        #expect(environment.libraryRootURL.lastPathComponent == "Bezels")
+        #expect(environment.cacheURL.lastPathComponent == "BezelProject")
+        #expect(environment.userAgent == "Provenance")
+        #expect(environment.settings is DefaultsBezelSettings)
+        #expect(environment.systemName(SystemIdentifier.SNES.rawValue) == SystemIdentifier.SNES.fullName)
+        #expect(!environment.hasShaderPreset("slang:not/a-preset"))
+    }
+
+    // MARK: - Filters inside a TV (Provenance's shader library)
+
+    private func entry(_ path: String, category: String = "crt", parameters: [ShaderParameterDescriptor]) -> ShaderCatalogEntry {
+        ShaderCatalogEntry(id: .slang(path), name: path, category: category, passes: 1, historyFrames: 0,
+                           usesFeedback: false, lutCount: 0, parameters: parameters, directory: nil)
+    }
+
+    private func parameter(_ name: String, initial: Float = 1, minimum: Float = 0, maximum: Float = 1) -> ShaderParameterDescriptor {
+        ShaderParameterDescriptor(name: name, label: name, initial: initial, minimum: minimum, maximum: maximum, step: 1)
+    }
+
+    @Test("A filter's own curvature is switched off inside a TV")
+    func curvatureOff() {
+        let geom = entry("crt/crt-geom", parameters: [parameter("CURVATURE"), parameter("R", initial: 2, minimum: 0.1, maximum: 10)])
+        #expect(TVBezelShader.curvatureOffValues(for: geom) == ["CURVATURE": 0])
+
+        let lottes = entry("crt/crt-lottes", parameters: [parameter("warpX", initial: 0.031, maximum: 0.125),
+                                                           parameter("warpY", initial: 0.041, maximum: 0.125)])
+        #expect(TVBezelShader.curvatureOffValues(for: lottes) == ["warpX": 0, "warpY": 0])
+    }
+
+    @Test("A filter with no curvature switch is left alone")
+    func noCurvature() {
+        let plain = entry("crt/scanline", parameters: [parameter("SCANLINE_STRENGTH")])
+        #expect(TVBezelShader.curvatureOffValues(for: plain).isEmpty)
+        // A parameter that cannot be 0 is not a switch.
+        let radius = entry("crt/other", parameters: [parameter("curvature", initial: 2, minimum: 1, maximum: 4)])
+        #expect(TVBezelShader.curvatureOffValues(for: radius).isEmpty)
+    }
+
+    @Test("A built-in filter with its own curvature flattens the glass instead")
+    func nativeCurvature() {
+        let native = ShaderCatalogEntry(id: .native(.complexCRT), name: "Complex CRT", category: ShaderCatalog.nativeCategory,
+                                        passes: 1, historyFrames: 0, usesFeedback: false, lutCount: 0,
+                                        parameters: [parameter("complexCRTWarpX", initial: 0.03, maximum: 0.05)], directory: nil)
+        #expect(TVBezelShader.bendsPictureItself(native))
+        // A library filter is told to stop instead (curvatureOffValues), so the glass keeps its curve.
+        let library = entry("crt/crt-geom", parameters: [parameter("CURVATURE")])
+        #expect(!TVBezelShader.bendsPictureItself(library))
+        let flat = ShaderCatalogEntry(id: .native(.lcd), name: "LCD", category: ShaderCatalog.nativeCategory,
+                                      passes: 1, historyFrames: 0, usesFeedback: false, lutCount: 0,
+                                      parameters: [parameter("lcdGridOpacity")], directory: nil)
+        #expect(!TVBezelShader.bendsPictureItself(flat))
+    }
+
+    @Test("Filters with a frame of their own are recognised")
+    func bezelFilters() {
+        #expect(TVBezelShader.isBezelFilter(entry("bezel/uborder/uborder-koko-ambi", category: "bezel", parameters: [])))
+        #expect(TVBezelShader.isBezelFilter(entry("border/sgb/sgb", category: "border", parameters: [])))
+        #expect(!TVBezelShader.isBezelFilter(entry("crt/crt-geom", parameters: [])))
     }
 }
 #endif

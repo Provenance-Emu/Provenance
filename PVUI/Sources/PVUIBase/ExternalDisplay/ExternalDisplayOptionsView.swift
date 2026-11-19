@@ -11,6 +11,7 @@ import SwiftUI
 import Defaults
 import PVSettings
 import PVShaders
+import SkinKitBezelsUI
 
 /// The external display options. Every change applies to a running game at once
 /// (`PVEmulatorViewController.observeExternalDisplay`).
@@ -235,7 +236,7 @@ private struct ExternalDisplayFilterPicker: View {
                 .padding(.vertical, 8)
             }
             ShaderBrowserView(current: store.selection(for: .screen(.external)).map(ShaderBrowserChoice.init),
-                              excludedIDs: Set(TVBezelCatalog.shaderPresets.compactMap(\.presetID))) { choice in
+                              excludedIDs: Set(TVBezelCatalog.shaderPresets.compactMap(\.presetShaderID))) { choice in
                 store.setSelection(choice.selection, for: .screen(.external))
             }
         }

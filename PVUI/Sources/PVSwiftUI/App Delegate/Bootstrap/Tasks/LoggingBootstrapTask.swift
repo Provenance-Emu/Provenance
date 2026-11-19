@@ -9,9 +9,10 @@
 import Foundation
 import PVLogging
 import PVLookup
+import PVUIBase
 
-/// Initialises the shared ``PVLogging`` instance and routes PVLookup's log
-/// messages into it.
+/// Initialises the shared ``PVLogging`` instance and routes the log messages of
+/// PVLookup and the TV bezel package into it.
 ///
 /// All other tasks that emit log output should declare `BootstrapKey.logging`
 /// as a dependency so that logging is ready before they run.
@@ -42,5 +43,7 @@ struct LoggingBootstrapTask: BootstrapTask {
                 }
             }
         }
+        // The bezel package reads its folders and settings once, the first time it is used.
+        ProvenanceBezels.configure()
     }
 }

@@ -69,28 +69,6 @@ extension Defaults.Keys {
     /// Whether the device's skin is drawn around the picture on an external display.
     static let externalDisplaySkin = Key<ExternalDisplaySkin>("externalDisplaySkin", default: .realSkinsOnly)
 
-    /// The TV drawn around the picture, on the device and on an external display: a `TVBezel`
-    /// id, `ExternalDisplayBezelRules.noBezelID` for none, or `automaticBezelID` (the default)
-    /// to go by the game's system.
-    static let externalDisplayBezel = Key<String>("externalDisplayBezel", default: ExternalDisplayBezelRules.automaticBezelID)
-
-    /// Use the TV that suits the game's system, when one does, instead of the chosen one.
-    static let externalDisplayBezelMatchesSystem = Key<Bool>("externalDisplayBezelMatchesSystem", default: true)
-
-    /// The picture lights the room around the TV. Off keeps the reflections and costs less GPU time.
-    /// `nil` (never set) goes by the device: see `ExternalDisplayBezelRules.lightsRoom`.
-    static let externalDisplayBezelLightsRoom = Key<Bool?>("externalDisplayBezelLightsRoom", default: nil)
-
-    /// Show artwork made for the running game around the picture on an external display,
-    /// downloaded from The Bezel Project the first time the game is played.
-    static let externalDisplayGameBezels = Key<Bool>("externalDisplayGameBezels", default: false)
-
-    /// Which of The Bezel Project's two families of artwork is browsed and downloaded.
-    static let externalDisplayBezelProjectStyle = Key<BezelProjectStyle>("externalDisplayBezelProjectStyle", default: .gameArt)
-
-    /// TVs pinned to single games: game MD5 to `TVBezel` id (`ExternalDisplayBezelRules.noBezelID` for none).
-    static let externalDisplayBezelByGame = Key<[String: String]>("externalDisplayBezelByGame", default: [:])
-
     static let showRecentSaveStates = Key<Bool>("showRecentSaveStates", default: true)
 
     /// When false (default), the Recent Saves carousel collapses timed autosaves: only the

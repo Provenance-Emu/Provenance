@@ -10,17 +10,14 @@ import Defaults
 import PVPrimitives
 import PVSettings
 import PVShaders
+import SkinKitBezels
 import UIKit
 
 extension PVEmulatorViewController {
 
     /// A choice being tried in the pause menu's switcher. It is read ahead of the saved
-    /// settings and saved nowhere. `choice` is a TV's id, `ExternalDisplayBezelRules.noBezelID`
-    /// for Off or `automaticBezelID`; no preview at all is a `nil` `bezelPreview`.
-    struct BezelPreview: Equatable {
-        var choice: String
-        var lightsRoom: Bool
-    }
+    /// settings and saved nowhere; no preview at all is a `nil` `bezelPreview`.
+    typealias BezelPreview = SkinKitBezels.BezelPreview
 
     /// The reason given when the GPU view is sized to the whole view for a TV.
     static let tvViewportReason = "viewport-tv"
@@ -41,16 +38,9 @@ extension PVEmulatorViewController {
     /// What the rules decide for the running game, for the device and an external display
     /// alike: the switcher's preview first, then the pin, game artwork and the saved choice.
     func resolvedBezel() -> (resolution: ExternalDisplayBezelRules.Resolution, bezel: TVBezel?) {
-        let matchesSystem = Defaults[.externalDisplayBezelMatchesSystem]
-        if let preview = bezelPreview {
-            return TVBezelCatalog.resolve(chosen: preview.choice, matchesSystem: matchesSystem,
-                                          systemID: shaderSystemID, systemSuitsTV: systemSuitsTV)
-        }
-        let gameArt = Defaults[.externalDisplayGameBezels]
-            ? ExternalDisplayGameArtwork.shared.bezelID(forGame: shaderGameMD5) : nil
-        return TVBezelCatalog.resolve(chosen: Defaults[.externalDisplayBezel], matchesSystem: matchesSystem,
-                                      systemID: shaderSystemID, systemSuitsTV: systemSuitsTV,
-                                      pinned: pinnedBezelID, gameArt: gameArt)
+        ProvenanceBezels.configure()
+        return BezelChoice.resolve(gameID: shaderGameMD5, systemID: shaderSystemID, systemSuitsTV: systemSuitsTV,
+                                   preview: bezelPreview)
     }
 
     /// The game picture's frame in `view` coordinates while a TV shows: the part of the scene
@@ -63,7 +53,7 @@ extension PVEmulatorViewController {
     }
 
     /// Whether the picture lights the room: the switcher's preview first, then the setting.
-    var bezelLightsRoom: Bool { bezelPreview?.lightsRoom ?? TVBezelRoomLight.isOn }
+    var bezelLightsRoom: Bool { BezelChoice.lightsRoom(preview: bezelPreview) }
 
     /// What `GameplayBezelPlacement` needs to know about the game as it is being played now.
     func bezelPlacementInputs(choiceIsAutomatic: Bool) -> GameplayBezelPlacement.Inputs {
@@ -136,12 +126,8 @@ extension PVEmulatorViewController {
         // Artwork made for this game: looked for once per session and style, never while previewing.
         guard bezelPreview == nil, GameplayBezelPlacement.offersSwitcher(placement),
               Defaults[.externalDisplayGameBezels], pinnedBezelID == nil, let context = gameplayBezelGame else { return }
-        let artwork = ExternalDisplayGameArtwork.shared
-        let style = Defaults[.externalDisplayBezelProjectStyle]
-        guard artwork.begin(game: context.md5, style: style) else { return }
         Task { @MainActor [weak self] in
-            let downloaded = await BezelProjectService.shared.artwork(for: context, style: style)
-            guard let downloaded, artwork.finish(game: context.md5, style: style, bezelID: downloaded.id) else { return }
+            guard await BezelChoice.fetchGameArtwork(for: context) else { return }
             self?.refreshBezels()
         }
     }
