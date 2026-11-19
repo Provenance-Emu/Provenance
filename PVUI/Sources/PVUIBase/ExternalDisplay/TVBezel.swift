@@ -192,14 +192,19 @@ public enum TVBezelCatalog {
         }
     }
 
-    /// The TV to show for a game from the current settings, or `nil` for the picture alone.
+    /// What the selection rules decide for a game from the given settings, and the TV to show
+    /// (`nil` for the picture alone).
     ///
     /// - Parameters:
-    ///   - pinned: the TV pinned to the game (`ExternalDisplayBezelRules.bezelID`).
+    ///   - systemSuitsTV: the system was played on a TV or monitor (see `ExternalDisplayBezelRules.resolve`).
+    ///   - pinned: the TV pinned to the game.
     ///   - gameArt: artwork for the game that is on the device, when game artwork is wanted.
-    public static func bezel(chosen: String, matchesSystem: Bool, systemID: String?,
-                             pinned: String? = nil, gameArt: String? = nil) -> TVBezel? {
-        ExternalDisplayBezelRules.bezelID(chosen: chosen, matchesSystem: matchesSystem, systemID: systemID,
-                                          candidates: candidates, pinned: pinned, gameArt: gameArt).flatMap(bezel(id:))
+    public static func resolve(chosen: String, matchesSystem: Bool, systemID: String?, systemSuitsTV: Bool,
+                               pinned: String? = nil, gameArt: String? = nil)
+        -> (resolution: ExternalDisplayBezelRules.Resolution, bezel: TVBezel?) {
+        let resolution = ExternalDisplayBezelRules.resolve(chosen: chosen, matchesSystem: matchesSystem,
+                                                           systemID: systemID, systemSuitsTV: systemSuitsTV,
+                                                           candidates: candidates, pinned: pinned, gameArt: gameArt)
+        return (resolution, resolution.bezelID.flatMap(bezel(id:)))
     }
 }

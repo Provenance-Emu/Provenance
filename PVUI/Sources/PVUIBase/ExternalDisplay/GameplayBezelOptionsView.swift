@@ -5,69 +5,6 @@ import PVSettings
 import PVShaders
 import SwiftUI
 
-extension PVEmulatorViewController {
-    var canShowGameplayBezels: Bool {
-        guard filtersApplyToCurrentLayout, hostGPUViewDrawsGame,
-              (gpuViewController as? PVMetalViewController)?.presentsCoreFrames == true else { return false }
-        #if os(iOS)
-        return PVControllerManager.shared.hasControllers
-        #else
-        return true
-        #endif
-    }
-
-    var gameplayBezelGame: ExternalDisplayGameContext? {
-        guard let game, !game.isInvalidated, let systemID = shaderSystemID else { return nil }
-        let rom = (game.romPath as NSString).lastPathComponent as NSString
-        return ExternalDisplayGameContext(md5: game.md5Hash, systemID: systemID, romName: rom.deletingPathExtension, title: game.title)
-    }
-
-    /// Resolves the same bezel choice on Apple TV and controller-driven iOS gameplay.
-    func updateGameplayBezel() {
-        guard let renderer = gpuViewController as? PVMetalViewController else { return }
-        let pinned = shaderGameMD5.flatMap { Defaults[.externalDisplayBezelByGame][$0] }
-        let gameBezels = Defaults[.externalDisplayGameBezels]
-        let artwork = ExternalDisplayGameArtwork.shared
-        let bezel = canShowGameplayBezels ? TVBezelCatalog.bezel(
-            chosen: Defaults[.externalDisplayBezel],
-            matchesSystem: Defaults[.externalDisplayBezelMatchesSystem],
-            systemID: shaderSystemID,
-            pinned: pinned,
-            gameArt: gameBezels ? artwork.bezelID(forGame: shaderGameMD5) : nil
-        ) : nil
-        let store = ShaderLibraryStore.shared
-        let selected = store.resolvedShader(gameMD5: shaderGameMD5, systemID: shaderSystemID, screenType: core.screenType)
-        var tubeFilter: ResolvedShader?
-        if let bezel, bezel.presetID == nil {
-            if let selected, !TVBezelShader.isBezelFilter(selected.entry) {
-                if bezel.image == nil {
-                    let values = selected.values.merging(TVBezelShader.curvatureOffValues(for: selected.entry)) { _, off in off }
-                    tubeFilter = ResolvedShader(entry: selected.entry, values: values, revision: selected.revision)
-                } else {
-                    tubeFilter = selected
-                }
-            } else if let look = bezel.look, let entry = ShaderCatalog.shared.entry(for: look.shaderID) {
-                let values = look.values.merging(TVBezelShader.curvatureOffValues(for: entry)) { _, off in off }
-                tubeFilter = ResolvedShader(entry: entry, values: values, revision: bezel.id.hashValue)
-            }
-        }
-        renderer.updateLocalBezel(bezel, filter: tubeFilter, lightsRoom: TVBezelRoomLight.isOn,
-                                  flatGlass: tubeFilter.map { TVBezelShader.bendsPictureItself($0.entry) } ?? false)
-
-        guard canShowGameplayBezels, gameBezels, pinned == nil, let context = gameplayBezelGame else { return }
-        let style = Defaults[.externalDisplayBezelProjectStyle]
-        guard artwork.begin(game: context.md5, style: style) else { return }
-        Task { @MainActor [weak self] in
-            let downloaded = await BezelProjectService.shared.artwork(for: context, style: style)
-            guard let downloaded, artwork.finish(game: context.md5, style: style, bezelID: downloaded.id) else { return }
-            self?.updateGameplayBezel()
-            #if os(iOS)
-            self?.updateExternalDisplay()
-            #endif
-        }
-    }
-}
-
 struct GameplayBezelOptionsView: View {
     let emulatorVC: PVEmulatorViewController
     @Environment(\.dismiss) private var dismiss
@@ -105,6 +42,7 @@ struct GameplayBezelOptionsView: View {
                 switch destination {
                 case .global:
                     TVBezelPickerView(selection: Binding(get: { bezel }, set: { bezel = $0 ?? "" }),
+                                      offersSystemAutomatic: true,
                                       controllerCommands: commands)
                 case .game:
                     if let game = emulatorVC.gameplayBezelGame {

@@ -259,6 +259,8 @@ extension PVEmulatorViewController {
     /// 3) Last known valid viewport cache
     /// 4) Full view fallback only for non-DeltaSkin layouts
     private func resolvedVirtualMouseViewportFrame() -> CGRect? {
+        // Inside a TV the GPU view holds the whole scene; the picture is the part in the tube.
+        if let frame = gameplayBezelPictureFrame, isTrustedVirtualMouseViewportFrame(frame) { return frame }
         if let gpuView = gpuViewController.viewIfLoaded, gpuView.superview === view, hostGPUViewDrawsGame {
             let frame = gpuView.convert(gpuView.bounds, to: view)
             if isTrustedVirtualMouseViewportFrame(frame) { return frame }

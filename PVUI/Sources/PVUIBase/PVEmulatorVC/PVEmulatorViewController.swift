@@ -122,6 +122,10 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, Emulato
             // A skin picked mid-game also changes what frames the picture on an external display.
             if externalDisplayWindow != nil { updateExternalDisplay() }
             #endif
+            #if os(iOS) || os(tvOS)
+            // A skin frames the picture itself; the generated controls leave room for a TV.
+            updateGameplayBezel()
+            #endif
         }
     }
 
@@ -292,6 +296,20 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, Emulato
     public func feature<T: EmulatorSessionFeature>(_ type: T.Type) -> T? {
         features.feature(type)
     }
+
+    /// The switcher's preview of a TV choice (see PVEmulatorViewController+GameplayBezel.swift).
+    #if os(iOS) || os(tvOS)
+    var bezelPreview: BezelPreview? {
+        didSet {
+            guard bezelPreview != oldValue else { return }
+            refreshBezels()
+        }
+    }
+    #endif
+    /// A TV is drawn around the picture on the device right now.
+    var isGameplayBezelShowing = false
+    /// The generated controls' layout editor is open.
+    var isOverlayLayoutEditing = false
 
     #if os(iOS)
     /// The window showing the game picture on an external display, while one does
@@ -1593,6 +1611,10 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, Emulato
                     hostView.frame = skinContainer.bounds
                 }
             }
+            #if os(iOS)
+            // A TV shows by the window's shape, which has just settled.
+            self.updateGameplayBezel()
+            #endif
             #if !os(tvOS)
             /// Final post-rotation sync: ensures virtual mouse gating and overlay
             /// stacking use the latest viewport after transition settles.

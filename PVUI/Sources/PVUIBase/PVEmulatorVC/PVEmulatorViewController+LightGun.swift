@@ -39,7 +39,12 @@ extension PVEmulatorViewController {
     /// The touch-interception view for light gun input, if currently installed.
     var lightGunTouchView: LightGunTouchView? {
         get { objc_getAssociatedObject(self, &LGKeys.touchViewKey) as? LightGunTouchView }
-        set { objc_setAssociatedObject(self, &LGKeys.touchViewKey, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC) }
+        set {
+            let wasVisible = isLightGunVisible
+            objc_setAssociatedObject(self, &LGKeys.touchViewKey, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+            // A TV steps aside while the light gun is up (see `bezelPlacementInputs`).
+            if wasVisible != (newValue != nil) { updateGameplayBezel() }
+        }
     }
 
     /// Driver that routes physical GCMouse hardware to the LightGunResponder core.

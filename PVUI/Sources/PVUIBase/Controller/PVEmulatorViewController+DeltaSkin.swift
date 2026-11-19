@@ -382,7 +382,13 @@ extension PVEmulatorViewController {
     @objc private func handleOverlayEditing(_ notification: Notification) {
         guard let editing = OverlayNotificationPayload.editing(from: notification.userInfo) else { return }
         DispatchQueue.main.async { [weak self] in
-            guard let self, self.core.isOn else { return }
+            guard let self else { return }
+            #if os(iOS) || os(tvOS)
+            // Buttons are placed against the bare picture, so the TV steps aside while editing.
+            self.isOverlayLayoutEditing = editing
+            self.updateGameplayBezel()
+            #endif
+            guard self.core.isOn else { return }
             if editing {
                 guard !self.core.isEmulationPaused else { return }
                 self.overlayEditorPausedCore = true
@@ -405,6 +411,10 @@ extension PVEmulatorViewController {
         #if os(iOS)
         // Generated controls and a skin with its own art differ in what the device shows.
         if mounting || unmounting { updateExternalDisplay() }
+        #endif
+        #if os(iOS) || os(tvOS)
+        // The generated controls leave room for a TV; a skin taking their place does not.
+        if mounting || unmounting { updateGameplayBezel() }
         #endif
         guard core.supportsDualScreens else {
             // A returning packaged skin's frame can be stored (`validateAndStoreFrame`) and then

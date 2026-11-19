@@ -41,12 +41,7 @@ extension PVEmulatorViewController {
     /// and the game's system. `nil` for none, and for layouts a TV cannot frame (two screens).
     var externalDisplayBezel: TVBezel? {
         guard filtersApplyToCurrentLayout else { return nil }
-        return TVBezelCatalog.bezel(chosen: Defaults[.externalDisplayBezel],
-                                    matchesSystem: Defaults[.externalDisplayBezelMatchesSystem],
-                                    systemID: shaderSystemID,
-                                    pinned: shaderGameMD5.flatMap { Defaults[.externalDisplayBezelByGame][$0] },
-                                    gameArt: Defaults[.externalDisplayGameBezels]
-                                        ? ExternalDisplayGameArtwork.shared.bezelID(forGame: shaderGameMD5) : nil)
+        return resolvedBezel().bezel
     }
 
     /// The running game as the bezel options and The Bezel Project's lists know it.
@@ -73,7 +68,7 @@ extension PVEmulatorViewController {
 
     @objc private func bezelLibraryDidChange() {
         // A pinned or chosen bezel may have arrived or gone.
-        updateExternalDisplay()
+        refreshBezels()
     }
 
     /// What supplies the controls on the device: the generated touch controls, a skin that
@@ -160,6 +155,7 @@ extension PVEmulatorViewController {
                 // The controls switch sits with the display options, and is otherwise read only
                 // when a controller connects.
                 self?.updateOnScreenControlsVisibility()
+                self?.updateGameplayBezel()
                 self?.updateExternalDisplay()
             }
         }
@@ -257,7 +253,7 @@ extension PVEmulatorViewController {
         }
         output.filter.update(resolved, smoothing: smoothing)
         let flatGlass = resolved.map { TVBezelShader.bendsPictureItself($0.entry) } ?? false
-        output.showBezel(bezel, lightsRoom: TVBezelRoomLight.isOn, flatGlass: flatGlass) { [weak metalVC] in
+        output.showBezel(bezel, lightsRoom: bezelLightsRoom, flatGlass: flatGlass) { [weak metalVC] in
             metalVC?.redrawPausedFrame()
         }
         metalVC.redrawPausedFrame()

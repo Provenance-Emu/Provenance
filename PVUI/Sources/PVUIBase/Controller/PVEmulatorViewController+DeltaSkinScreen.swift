@@ -704,6 +704,11 @@ extension PVEmulatorViewController: PVViewportLayoutDelegate {
     ///   change alters the scaled frame computed from it, not the frame itself).
     internal func applyFrameToGPUView(_ frame: CGRect, reason: String = "?", force: Bool = false) {
         guard !isBridgeShuttingDownForViewport() else { return }
+        #if os(iOS)
+        // While a TV shows, the emulator view's bounds win over whatever the controls or a
+        // skin publish: the cabinet and room fill the view and the picture goes in the tube.
+        let frame = isGameplayBezelShowing && !core.supportsDualScreens ? view.bounds : frame
+        #endif
         guard let gameScreenView = gpuViewController.view else { return }
         guard isValidFrame(frame) else {
             ELOG("🎮 SKIN: Invalid frame: \(frame)")
@@ -836,7 +841,8 @@ extension PVEmulatorViewController: PVViewportLayoutDelegate {
         // Apply the user's chosen scaling mode within the skin's screen container.
         // The skin defines the game screen area, and the scaling mode controls
         // how the game content fits within that area.
-        let scaledFrame = adjustFrameForScalingMode(convertedFrame)
+        // Not inside a TV: the picture is aspect-fit in the tube, and the view holds the whole scene.
+        let scaledFrame = isGameplayBezelShowing ? convertedFrame : adjustFrameForScalingMode(convertedFrame)
         DLOG("🎮 SKIN: Scaling mode \(Defaults[.scalingMode]) adjusted frame: \(convertedFrame) -> \(scaledFrame)")
 
         (metalVC as PVGPUViewController).customFrame = scaledFrame

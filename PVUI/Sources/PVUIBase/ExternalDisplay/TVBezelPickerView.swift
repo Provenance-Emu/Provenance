@@ -19,6 +19,8 @@ struct TVBezelPickerView: View {
     @Binding var selection: String?
     /// The list is choosing for one game, which can also be left to the settings.
     var allowsAutomatic = false
+    /// The list is the choice for every game, which can be left to each game's system.
+    var offersSystemAutomatic = false
     /// The running game, to choose its artwork from The Bezel Project by hand.
     var game: ExternalDisplayGameContext?
     var controllerCommands: AnyPublisher<PauseMenuNavigationCommand, Never>? = nil
@@ -27,7 +29,9 @@ struct TVBezelPickerView: View {
     @State private var pickerVisible = false
 
     private var choices: [String?] {
-        (allowsAutomatic ? [nil] : []) + [ExternalDisplayBezelRules.noBezelID]
+        (allowsAutomatic ? [nil] : [])
+            + (offersSystemAutomatic ? [ExternalDisplayBezelRules.automaticBezelID] : [])
+            + [ExternalDisplayBezelRules.noBezelID]
             + (TVBezelCatalog.bundled + TVBezelCatalog.shaderPresets + myBezels).map { Optional($0.id) }
     }
 
@@ -73,10 +77,15 @@ struct TVBezelPickerView: View {
                 if allowsAutomatic {
                     row(String(localized: "Automatic"), id: nil)
                 }
+                if offersSystemAutomatic {
+                    row(String(localized: "Automatic"), id: ExternalDisplayBezelRules.automaticBezelID)
+                }
                 row(String(localized: "None"), id: ExternalDisplayBezelRules.noBezelID)
             } footer: {
                 if allowsAutomatic {
                     Text("Automatic follows the External Display settings. Anything else is used for this game only.")
+                } else if offersSystemAutomatic {
+                    Text("Automatic shows a TV for consoles and computers in landscape, and none for handhelds.")
                 }
             }
 

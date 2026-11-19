@@ -270,6 +270,19 @@ final class GameExternalOutputView: UIView {
         return tubeTexture
     }
 
+    /// Where the picture sits inside the TV shown, in this view's coordinates (points): in an
+    /// image bezel's screen, or in a shader TV's tube. `nil` with no TV, or before layout.
+    func bezelPictureFrame(aspect: CGSize) -> CGRect? {
+        guard bounds.width > 0, bounds.height > 0 else { return nil }
+        if let screen = bezelScreenFrame { return BezelPictureFit.rect(aspect: aspect, in: screen) }
+        guard let scene = bezelScene else { return nil }
+        let sceneRect = RenderGeometry.sceneRect(aspect: TVBezelShader.sceneAspect, drawableSize: bounds.size)
+        let scale = sceneRect.width / TVBezelArtwork.canvas.width
+        let tube = CGRect(x: sceneRect.minX + scene.tubeRect.minX * scale, y: sceneRect.minY + scene.tubeRect.minY * scale,
+                          width: scene.tubeRect.width * scale, height: scene.tubeRect.height * scale)
+        return RenderGeometry.aspectFit(aspect: aspect, in: tube)
+    }
+
     private func applySkin(image: UIImage?, layout: ExternalDisplaySkinLayout?) {
         skinImageView.image = image
         skinLayout = layout

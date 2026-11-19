@@ -98,9 +98,25 @@ struct TVBezelCatalogTests {
     @Test("The catalogue resolves the stored choice through the selection rules")
     func resolvesChoice() throws {
         let first = try #require(bezels.first)
-        #expect(TVBezelCatalog.bezel(chosen: first.id, matchesSystem: false, systemID: nil) == first)
-        #expect(TVBezelCatalog.bezel(chosen: ExternalDisplayBezelRules.noBezelID, matchesSystem: true, systemID: nil) == nil)
-        #expect(TVBezelCatalog.bezel(chosen: "not-a-tv", matchesSystem: true, systemID: nil) == nil)
+        func tv(_ chosen: String, matches: Bool) -> TVBezel? {
+            TVBezelCatalog.resolve(chosen: chosen, matchesSystem: matches, systemID: nil, systemSuitsTV: true).bezel
+        }
+        #expect(tv(first.id, matches: false) == first)
+        #expect(tv(ExternalDisplayBezelRules.noBezelID, matches: true) == nil)
+        #expect(tv("not-a-tv", matches: true) == nil)
+    }
+
+    @Test("The catalogue holds the TV Automatic falls back to")
+    func automaticDefaultExists() {
+        #expect(TVBezelCatalog.bezel(id: ExternalDisplayBezelRules.automaticDefaultBezelID) != nil)
+        let console = TVBezelCatalog.resolve(chosen: ExternalDisplayBezelRules.automaticBezelID, matchesSystem: true,
+                                             systemID: "com.provenance.snes", systemSuitsTV: true)
+        #expect(console.bezel?.id == "living-room-tv")
+        #expect(console.resolution.isAutomatic)
+        let handheld = TVBezelCatalog.resolve(chosen: ExternalDisplayBezelRules.automaticBezelID, matchesSystem: true,
+                                              systemID: "com.provenance.gba", systemSuitsTV: false)
+        #expect(handheld.bezel == nil)
+        #expect(handheld.resolution.outcome == .noneForSystem)
     }
 
     @Test("A catalogue entry needs only an id, a name and artwork")

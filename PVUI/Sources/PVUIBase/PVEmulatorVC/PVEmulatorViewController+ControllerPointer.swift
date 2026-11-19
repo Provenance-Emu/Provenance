@@ -84,6 +84,10 @@ extension PVEmulatorViewController {
 
     /// The game picture's frame: the cursor's 0-1 range maps onto it.
     private var pointerOverlayFrame: CGRect {
+        #if os(iOS) || os(tvOS)
+        // Inside a TV the picture is the part of the scene in the tube.
+        if let picture = gameplayBezelPictureFrame, !picture.isEmpty { return picture }
+        #endif
         if let target = currentTargetFrame, !target.isEmpty { return target }
         let gpuFrame = gpuViewController.view.frame
         return gpuFrame.isEmpty ? view.bounds : gpuFrame

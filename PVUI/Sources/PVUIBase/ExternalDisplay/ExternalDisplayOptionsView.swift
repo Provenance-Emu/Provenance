@@ -74,7 +74,8 @@ public struct ExternalDisplayOptionsView: View {
 
                 Section {
                     NavigationLink {
-                        TVBezelPickerView(selection: Binding(get: { bezelID }, set: { bezelID = $0 ?? ExternalDisplayBezelRules.noBezelID }))
+                        TVBezelPickerView(selection: Binding(get: { bezelID }, set: { bezelID = $0 ?? ExternalDisplayBezelRules.noBezelID }),
+                                          offersSystemAutomatic: true)
                     } label: {
                         LabeledContent(String(localized: "TV"), value: chosenBezel?.name ?? String(localized: "None"))
                     }

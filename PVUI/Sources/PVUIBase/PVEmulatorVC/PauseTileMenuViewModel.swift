@@ -419,7 +419,7 @@ final class PauseTileMenuViewModel: ObservableObject {
             screenDisplayTiles += [Self.chooseSkinTile, Self.skinCatalogTile]
         }
         #if os(iOS) || os(tvOS)
-        if emulatorVC.canShowGameplayBezels {
+        if emulatorVC.offersBezelSwitcher {
             screenDisplayTiles.append(PauseMenuTile(
                 id: Self.bezelsTileID,
                 icon: "tv",

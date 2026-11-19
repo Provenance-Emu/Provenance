@@ -232,6 +232,15 @@ final class PVMetalViewController: PVGPUViewController, PVRenderDelegate, MTKVie
     #if os(iOS) || os(tvOS)
     private var localBezelOutput: GameExternalOutputView?
 
+    /// The game picture's rect inside the TV on the device, in this view's coordinates
+    /// (points); `nil` when no TV shows or it has not been laid out.
+    func localBezelPictureFrame() -> CGRect? {
+        guard let output = localBezelOutput, output.superview === mtlView, let emulatorCore else { return nil }
+        let coreAspect = emulatorCore.aspectSize
+        let aspect = coreAspect.width > 0 && coreAspect.height > 0 ? coreAspect : emulatorCore.screenRect.size
+        return output.bezelPictureFrame(aspect: aspect)
+    }
+
     func updateLocalBezel(_ bezel: TVBezel?, filter: ResolvedShader?, lightsRoom: Bool, flatGlass: Bool) {
         guard let bezel, let mtlView, let device else {
             localBezelOutput?.removeFromSuperview()
