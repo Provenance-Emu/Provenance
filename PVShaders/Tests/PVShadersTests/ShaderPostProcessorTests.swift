@@ -49,4 +49,24 @@ struct ShaderPostProcessorTests {
         processor.update(nil, smoothing: false)
         #expect(try !drawOnce())
     }
+
+    @Test("a preset that cannot load is reported as failed, so a caller stops waiting for it")
+    func reportsFailedPreset() async throws {
+        let device = try #require(MTLCreateSystemDefaultDevice())
+        let processor = ShaderPostProcessor(device: device)
+        #expect(!processor.hasFailed)
+
+        let missing = ShaderCatalogEntry(id: .slang("test/missing"), name: "missing", category: "test", passes: 1,
+                                         historyFrames: 0, usesFeedback: false, lutCount: 0, parameters: [],
+                                         directory: Bundle.module.bundleURL.appendingPathComponent("Fixtures/no-such-preset"))
+        processor.update(ResolvedShader(entry: missing, values: [:], revision: 1), smoothing: false)
+        for _ in 0 ..< 100 where !processor.hasFailed {
+            try await Task.sleep(nanoseconds: 50_000_000)
+        }
+        #expect(processor.hasFailed)
+        #expect(!processor.isReady)
+
+        processor.update(nil, smoothing: false)
+        #expect(!processor.hasFailed)
+    }
 }

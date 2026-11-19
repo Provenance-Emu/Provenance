@@ -2489,7 +2489,16 @@ final class PVMetalViewController: PVGPUViewController, PVRenderDelegate, MTKVie
         #endif
 
         let drawableSize = CGSize(width: drawable.texture.width, height: drawable.texture.height)
-        let activeShader = dualScreenLayout == nil ? activeShaderEntry(for: emulatorCore) : nil
+        // A TV on its way takes the filter inside its tube. Until it draws, show the plain
+        // picture: running the filter over the whole screen for those few frames compiles a
+        // chain nobody sees, and a heavy preset at full size hung the GPU on an A12Z iPad Pro,
+        // after which iOS refuses every frame from the app until it is relaunched.
+        #if os(iOS) || os(tvOS)
+        let tvIsLoading = localBezelOutput?.isBezelPending == true
+        #else
+        let tvIsLoading = false
+        #endif
+        let activeShader = dualScreenLayout == nil && !tvIsLoading ? activeShaderEntry(for: emulatorCore) : nil
         // Non-linear stretch: draw the frame (filters included) into an intermediate
         // texture as a plain stretch, then warp it into the drawable.
         let stretchTarget = dualScreenLayout == nil ? nonLinearStretchTarget(for: drawable.texture) : nil

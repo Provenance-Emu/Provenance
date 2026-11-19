@@ -35,6 +35,13 @@ final class GameExternalOutputView: UIView {
     /// Identifies the TV artwork shown or being loaded, so repeated updates do no work.
     private var bezelKey: String?
     private var bezelLoad: Task<Void, Never>?
+    /// The TV's artwork is being drawn or read off the main thread.
+    private var bezelLoadInFlight = false
+    /// A TV has been asked for and is on its way but cannot be drawn yet: its artwork is
+    /// loading or its shader is compiling. `false` once it draws, and when it failed.
+    var isBezelPending: Bool {
+        bezelLoadInFlight || (bezelScene != nil && !bezelProcessor.isReady && !bezelProcessor.hasFailed)
+    }
     /// What `showBezel` was last asked for, to ask again when the display changes size.
     private var bezelRequest: (bezel: TVBezel, lightsRoom: Bool, flatGlass: Bool, didChange: () -> Void)?
     /// The picture as the tube shows it, between the two draw stages.
@@ -161,6 +168,7 @@ final class GameExternalOutputView: UIView {
             bezelRequest = nil
             guard bezelKey != nil else { return }
             bezelLoad?.cancel()
+            bezelLoadInFlight = false
             bezelKey = nil
             clearShaderBezel()
             clearImageBezel()
@@ -181,12 +189,14 @@ final class GameExternalOutputView: UIView {
         guard key != bezelKey else { return }
         bezelKey = key
         bezelLoad?.cancel()
+        bezelLoadInFlight = true
         bezelLoad = Task { @MainActor [weak self] in
             let scene = await Task.detached(priority: .userInitiated) {
                 TVBezelScene.make(bezel: bezel, lightsRoom: lit, flatGlass: flatGlass,
                                   scenePixelWidth: sceneRect.width, key: key)
             }.value
             guard let self, self.bezelKey == key else { return }
+            self.bezelLoadInFlight = false
             self.clearImageBezel()
             self.bezelScene = scene
             self.tubeTexture = nil
@@ -210,11 +220,13 @@ final class GameExternalOutputView: UIView {
         guard key != bezelKey else { return }
         bezelKey = key
         bezelLoad?.cancel()
+        bezelLoadInFlight = true
         bezelLoad = Task { @MainActor [weak self] in
             let image = await Task.detached(priority: .userInitiated) {
                 TVBezelImage.displayImage(art.fileURL, maxPixel: maxPixel).map { UIImage(cgImage: $0) }
             }.value
             guard let self, self.bezelKey == key else { return }
+            self.bezelLoadInFlight = false
             self.clearShaderBezel()
             self.imageBezel = image == nil ? nil : art
             self.bezelImageView.image = image

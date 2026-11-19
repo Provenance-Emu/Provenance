@@ -63,6 +63,13 @@ public final class ShaderPostProcessor: @unchecked Sendable {
         return slangRenderer.prepare(resolved.entry, textures: textures)
     }
 
+    /// Whether the selected filter is a library preset that failed to compile on this device,
+    /// so it will never be ready.
+    public var hasFailed: Bool {
+        guard let id = lock.withLock({ resolved?.entry.id }), id.kind == .slang else { return false }
+        return slangRenderer.failedIDs.contains(id)
+    }
+
     /// Encodes the filter from `source` into `contentRect` of `target` (default: all of it),
     /// clearing the rest to black. Returns `false` when nothing was drawn (no filter, or a
     /// library preset still compiling), so the caller must fill `target` itself.
