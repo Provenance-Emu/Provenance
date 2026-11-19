@@ -310,6 +310,8 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, Emulato
     var isGameplayBezelShowing = false
     /// The generated controls' layout editor is open.
     var isOverlayLayoutEditing = false
+    /// The GPU could not draw the TV on the device this game (see `gameplayBezelWasDropped`).
+    var gameplayBezelDropped = false
 
     #if os(iOS)
     /// The window showing the game picture on an external display, while one does

@@ -28,6 +28,9 @@ struct BezelSwitcherStrip: View {
 
     #if os(tvOS)
     @FocusState private var focusedItem: String?
+    /// Focus has reached the item the strip opened on. Until then a focus change is the system
+    /// placing focus, not the player choosing, and must not move the selection.
+    @State private var focusSettled = false
     #endif
 
     var body: some View {
@@ -63,9 +66,18 @@ struct BezelSwitcherStrip: View {
         .padding(.vertical, 12)
         .background(.regularMaterial)
         #if os(tvOS)
-        .onAppear { focusedItem = model.selection.id }
+        .defaultFocus($focusedItem, model.selection.id)
         .onChange(of: focusedItem) { _, id in
-            if let id { model.select(id: id) }
+            guard let id else { return }
+            guard focusSettled else {
+                if id == model.selection.id {
+                    focusSettled = true
+                } else {
+                    focusedItem = model.selection.id
+                }
+                return
+            }
+            model.select(id: id)
         }
         .onExitCommand(perform: onCancel)
         #endif
@@ -127,6 +139,9 @@ struct BezelSwitcherHost: View {
 
     @State private var model: BezelSwitcherModel
     @State private var isLoading = false
+    /// Keep, Cancel or More has run. The strip stays on screen for a moment after that, and
+    /// nothing may preview or close again in it.
+    @State private var isClosed = false
 
     /// How long a selection must rest before the game behind is redrawn in it, so holding a
     /// direction does not load every TV passed over.
@@ -166,7 +181,7 @@ struct BezelSwitcherHost: View {
                            onMore: more)
             .task(id: PreviewKey(id: model.selection.id, lightsRoom: model.lightsRoom)) {
                 try? await Task.sleep(for: Self.previewDelay)
-                guard !Task.isCancelled, model.selection.group != .more else { return }
+                guard !Task.isCancelled, !isClosed, model.selection.group != .more else { return }
                 emulatorVC.bezelPreview = .init(choice: model.selection.id, lightsRoom: model.lightsRoom)
             }
             .onReceive(Timer.publish(every: Self.pollInterval, on: .main, in: .common).autoconnect()) { _ in
@@ -189,7 +204,10 @@ struct BezelSwitcherHost: View {
             if let bezel = automatic.bezel {
                 return String(localized: "Automatic · \(bezel.name)")
             }
-            return String(localized: "Automatic · none for this system")
+            if automatic.resolution.outcome == .noneForSystem {
+                return String(localized: "Automatic · none for this system")
+            }
+            return String(localized: "Automatic · no TV available")
         case BezelSwitcherModel.moreID:
             return String(localized: "More…")
         default:
@@ -215,7 +233,9 @@ struct BezelSwitcherHost: View {
     }
 
     private func keep() {
+        guard !isClosed else { return }
         guard let commit = model.commit(gameHasPin: emulatorVC.pinnedBezelID != nil) else { return more() }
+        isClosed = true
         if let chosen = commit.chosen { Defaults[.externalDisplayBezel] = chosen }
         if let md5 = emulatorVC.shaderGameMD5 {
             switch commit.pin {
@@ -231,11 +251,15 @@ struct BezelSwitcherHost: View {
     }
 
     private func cancel() {
+        guard !isClosed else { return }
+        isClosed = true
         emulatorVC.bezelPreview = nil
         onClose()
     }
 
     private func more() {
+        guard !isClosed else { return }
+        isClosed = true
         emulatorVC.bezelPreview = nil
         onMore()
     }

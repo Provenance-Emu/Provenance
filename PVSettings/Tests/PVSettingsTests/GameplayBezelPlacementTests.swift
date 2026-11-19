@@ -39,6 +39,16 @@ struct GameplayBezelPlacementTests {
                                          layoutSupportsTV: true, choiceIsAutomatic: false, editingLayout: true)))
     }
 
+    @Test("A TV the GPU could not draw stays off for the rest of the game, and the switcher with it")
+    func droppedForSession() {
+        let inputs = Placement.Inputs(isAppleTV: false, isLandscape: true, controls: .generated,
+                                      layoutSupportsTV: true, choiceIsAutomatic: false, droppedForSession: true)
+        #expect(!Placement.showsTV(inputs))
+        #expect(!Placement.offersSwitcher(inputs))
+        #expect(!Placement.showsTV(.init(isAppleTV: true, isLandscape: true, controls: .bare,
+                                         layoutSupportsTV: true, choiceIsAutomatic: false, droppedForSession: true)))
+    }
+
     @Test("The switcher is offered wherever an explicit TV could show, and nowhere else")
     func switcher() {
         #expect(Placement.offersSwitcher(.init(isAppleTV: false, isLandscape: true, controls: .generated,

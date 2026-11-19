@@ -2835,6 +2835,11 @@ final class PVMetalViewController: PVGPUViewController, PVRenderDelegate, MTKVie
         case .dropTV:
             guard let output, output.hasBezel else { return }
             output.dropBezelForSession()
+            if output === localBezelOutput {
+                // The flag on the view dies with it (a rotation rebuilds it): the emulator
+                // view controller remembers, takes the TV away and gives the picture its rect back.
+                (parent as? PVEmulatorViewController)?.gameplayBezelWasDropped()
+            }
             redrawPausedFrame()
             guard !didReportTVDropped else { return }
             didReportTVDropped = true

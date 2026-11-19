@@ -37,15 +37,19 @@ public enum GameplayBezelPlacement {
         public var choiceIsAutomatic: Bool
         /// The layout editor is open: buttons are placed against the bare picture.
         public var editingLayout: Bool
+        /// The GPU could not draw a TV this game. Trying again risks a GPU hang, after which
+        /// the system refuses every frame the app draws.
+        public var droppedForSession: Bool
 
         public init(isAppleTV: Bool, isLandscape: Bool, controls: Controls, layoutSupportsTV: Bool,
-                    choiceIsAutomatic: Bool, editingLayout: Bool = false) {
+                    choiceIsAutomatic: Bool, editingLayout: Bool = false, droppedForSession: Bool = false) {
             self.isAppleTV = isAppleTV
             self.isLandscape = isLandscape
             self.controls = controls
             self.layoutSupportsTV = layoutSupportsTV
             self.choiceIsAutomatic = choiceIsAutomatic
             self.editingLayout = editingLayout
+            self.droppedForSession = droppedForSession
         }
     }
 
@@ -54,7 +58,7 @@ public enum GameplayBezelPlacement {
     /// Apple TV always; elsewhere in landscape unless a skin is on screen. In portrait only a
     /// TV the player chose, and only when a controller hid the on-screen controls.
     public static func showsTV(_ inputs: Inputs) -> Bool {
-        guard inputs.layoutSupportsTV, !inputs.editingLayout else { return false }
+        guard inputs.layoutSupportsTV, !inputs.editingLayout, !inputs.droppedForSession else { return false }
         if inputs.isAppleTV { return true }
         guard inputs.controls != .skin else { return false }
         if inputs.isLandscape { return true }
