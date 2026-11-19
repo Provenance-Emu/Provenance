@@ -232,6 +232,9 @@ final class PVMetalViewController: PVGPUViewController, PVRenderDelegate, MTKVie
     #if os(iOS) || os(tvOS)
     private var localBezelOutput: GameExternalOutputView?
 
+    /// The TV on the device is being loaded or is waiting for its shader.
+    var isLocalBezelLoading: Bool { localBezelOutput?.isBezelLoading ?? false }
+
     /// The game picture's rect inside the TV on the device, in this view's coordinates
     /// (points); `nil` when no TV shows or it has not been laid out.
     func localBezelPictureFrame() -> CGRect? {
@@ -2811,6 +2814,7 @@ final class PVMetalViewController: PVGPUViewController, PVRenderDelegate, MTKVie
             return drawExternalPicture(source, into: target, rect: output.pictureRect(aspect: aspect, drawableSize: drawableSize),
                                        filter: output.filter, emulatorCore: emulatorCore, commandBuffer: commandBuffer)
         }
+        output.promotePendingBezelIfReady()
         guard output.bezelScene != nil, output.bezelProcessor.isReady else { return false }
         let scene = RenderGeometry.sceneRect(aspect: TVBezelShader.sceneAspect, drawableSize: drawableSize)
         guard let tube = output.tubeTarget(sceneSize: scene.size) else { return false }

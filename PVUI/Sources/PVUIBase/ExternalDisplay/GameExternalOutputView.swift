@@ -29,7 +29,11 @@ final class GameExternalOutputView: UIView {
 
     /// The TV around the picture: glass, frame, reflections and room. Runs after `filter`,
     /// which then draws only the tube (see `PVMetalViewController.presentOnExternalOutput`).
-    let bezelProcessor: ShaderPostProcessor
+    private(set) var bezelProcessor: ShaderPostProcessor
+    /// The next TV's shader, compiling while `bezelProcessor` keeps drawing the one on screen.
+    private var pendingBezelProcessor: ShaderPostProcessor
+    /// The TV that takes over once `pendingBezelProcessor` can draw (see `promotePendingBezelIfReady`).
+    private var pendingBezelScene: TVBezelScene?
     /// The TV shown or being loaded, and where its tube is.
     private(set) var bezelScene: TVBezelScene?
     /// Identifies the TV artwork shown or being loaded, so repeated updates do no work.
@@ -42,6 +46,8 @@ final class GameExternalOutputView: UIView {
     var isBezelPending: Bool {
         bezelLoadInFlight || (bezelScene != nil && !bezelProcessor.isReady && !bezelProcessor.hasFailed)
     }
+    /// A TV is being loaded or is waiting for its shader, whether or not another still shows.
+    var isBezelLoading: Bool { bezelLoadInFlight || pendingBezelScene != nil }
     /// What `showBezel` was last asked for, to ask again when the display changes size.
     private var bezelRequest: (bezel: TVBezel, lightsRoom: Bool, flatGlass: Bool, didChange: () -> Void)?
     /// The picture as the tube shows it, between the two draw stages.
@@ -67,6 +73,7 @@ final class GameExternalOutputView: UIView {
     init(device: MTLDevice, onShaderReady: @escaping @MainActor @Sendable () -> Void) {
         filter = ShaderPostProcessor(device: device, onReady: onShaderReady)
         bezelProcessor = ShaderPostProcessor(device: device, onReady: onShaderReady)
+        pendingBezelProcessor = ShaderPostProcessor(device: device, onReady: onShaderReady)
         super.init(frame: .zero)
         backgroundColor = .black
         isUserInteractionEnabled = false
@@ -189,6 +196,12 @@ final class GameExternalOutputView: UIView {
         guard key != bezelKey else { return }
         bezelKey = key
         bezelLoad?.cancel()
+        if let cached = TVBezelSceneCache.shared.scene(for: key) {
+            bezelLoadInFlight = false
+            adopt(cached, name: bezel.name, lit: lit)
+            didChange()
+            return
+        }
         bezelLoadInFlight = true
         bezelLoad = Task { @MainActor [weak self] in
             let scene = await Task.detached(priority: .userInitiated) {
@@ -197,17 +210,49 @@ final class GameExternalOutputView: UIView {
             }.value
             guard let self, self.bezelKey == key else { return }
             self.bezelLoadInFlight = false
-            self.clearImageBezel()
-            self.bezelScene = scene
-            self.tubeTexture = nil
-            self.bezelProcessor.update(scene?.shader, smoothing: true, textures: scene?.textures)
-            if scene == nil {
-                WLOG("External display: TV '\(bezel.name)' could not be drawn; showing the picture alone")
-            } else {
-                ILOG("External display: TV '\(bezel.name)'\(lit ? ", lighting the room" : "")")
-            }
+            if let scene { TVBezelSceneCache.shared.store(scene, for: key) }
+            self.adopt(scene, name: bezel.name, lit: lit)
             didChange()
         }
+    }
+
+    /// Puts a loaded TV on screen. With another TV showing, that one keeps drawing until the
+    /// new one's shader has compiled, so there is no bare picture between the two.
+    private func adopt(_ scene: TVBezelScene?, name: String, lit: Bool) {
+        clearImageBezel()
+        guard let scene else {
+            clearShaderBezel()
+            WLOG("External display: TV '\(name)' could not be drawn; showing the picture alone")
+            return
+        }
+        if bezelScene != nil, bezelProcessor.isReady {
+            pendingBezelScene = scene
+            pendingBezelProcessor.update(scene.shader, smoothing: true, textures: scene.textures)
+        } else {
+            pendingBezelScene = nil
+            pendingBezelProcessor.update(nil, smoothing: true)
+            bezelScene = scene
+            tubeTexture = nil
+            bezelProcessor.update(scene.shader, smoothing: true, textures: scene.textures)
+        }
+        ILOG("External display: TV '\(name)'\(lit ? ", lighting the room" : "")")
+    }
+
+    /// Swaps in the TV that finished loading once its shader can draw, and gives up on one
+    /// whose shader failed. Call before drawing a frame.
+    func promotePendingBezelIfReady() {
+        guard let pending = pendingBezelScene else { return }
+        if pendingBezelProcessor.isReady {
+            swap(&bezelProcessor, &pendingBezelProcessor)
+            bezelScene = pending
+            tubeTexture = nil
+        } else if pendingBezelProcessor.hasFailed {
+            WLOG("External display: the next TV's shader failed; keeping the one on screen")
+        } else {
+            return
+        }
+        pendingBezelScene = nil
+        pendingBezelProcessor.update(nil, smoothing: true)
     }
 
     /// Lays an image bezel over the picture. The image is decoded off the main thread, no
@@ -243,8 +288,10 @@ final class GameExternalOutputView: UIView {
 
     private func clearShaderBezel() {
         bezelScene = nil
+        pendingBezelScene = nil
         tubeTexture = nil
         bezelProcessor.update(nil, smoothing: true)
+        pendingBezelProcessor.update(nil, smoothing: true)
     }
 
     private func clearImageBezel() {
