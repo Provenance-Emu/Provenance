@@ -6,6 +6,7 @@
 //
 
 import Testing
+import Defaults
 @testable import PVSettings
 
 @Suite("ExternalDisplayBezelRules")
@@ -18,6 +19,9 @@ struct ExternalDisplayBezelRulesTests {
         .init(id: "computer", preferredSystems: ["com.provenance.c64", "com.provenance.amiga"]),
         .init(id: "late-claim", preferredSystems: ["com.provenance.c64"])
     ]
+
+    /// The catalogue with the TV Automatic falls back to.
+    private var withDefault: [Rules.Candidate] { candidates + [.init(id: "living-room-tv")] }
 
     private func bezel(chosen: String, matches: Bool = true, system: String? = "com.provenance.snes") -> String? {
         Rules.bezelID(chosen: chosen, matchesSystem: matches, systemID: system, candidates: candidates)
@@ -125,5 +129,66 @@ struct ExternalDisplayBezelRulesTests {
         #expect(resolve(matches: false, system: "com.provenance.c64") == "studio")
         // A TV for a system still needs a TV to be chosen.
         #expect(resolve(chosen: Rules.noBezelID, system: "com.provenance.snes") == nil)
+    }
+
+    // MARK: - Automatic
+
+    @Test("Automatic gives a console the default TV and a handheld none")
+    func automaticBySystem() {
+        let tv = Rules.resolve(chosen: "auto", matchesSystem: true, systemID: "com.provenance.snes",
+                               systemSuitsTV: true, candidates: withDefault)
+        #expect(tv.outcome == .bezel("living-room-tv"))
+        #expect(tv.isAutomatic)
+        let handheld = Rules.resolve(chosen: "auto", matchesSystem: true, systemID: "com.provenance.gba",
+                                     systemSuitsTV: false, candidates: withDefault)
+        #expect(handheld.outcome == .noneForSystem)
+        #expect(handheld.bezelID == nil)
+    }
+
+    @Test("Automatic prefers a TV that lists the system, whatever Match the System's Screen says")
+    func automaticPrefersListingTV() {
+        let resolution = Rules.resolve(chosen: "auto", matchesSystem: false, systemID: "com.provenance.c64",
+                                       systemSuitsTV: true, candidates: withDefault)
+        #expect(resolution.outcome == .bezel("computer"))
+    }
+
+    @Test("Automatic with no default TV in the catalogue shows nothing")
+    func automaticWithoutDefault() {
+        let resolution = Rules.resolve(chosen: "auto", matchesSystem: true, systemID: "com.provenance.snes",
+                                       systemSuitsTV: true, candidates: candidates)
+        #expect(resolution.outcome == .noneAvailable)
+    }
+
+    @Test("A pin and game artwork still come before Automatic, and are not Automatic")
+    func pinBeatsAutomatic() {
+        let pinnedNone = Rules.resolve(chosen: "auto", matchesSystem: true, systemID: "com.provenance.snes",
+                                       systemSuitsTV: true, candidates: withDefault, pinned: "")
+        #expect(pinnedNone.outcome == .noneChosen)
+        #expect(!pinnedNone.isAutomatic)
+        let pinned = Rules.resolve(chosen: "auto", matchesSystem: true, systemID: "com.provenance.gba",
+                                   systemSuitsTV: false, candidates: withDefault, pinned: "studio")
+        #expect(pinned.outcome == .bezel("studio"))
+        #expect(!pinned.isAutomatic)
+    }
+
+    @Test("A stored None stays None, and a chosen TV that is gone shows nothing")
+    func storedChoicesKeepTheirMeaning() {
+        #expect(Rules.resolve(chosen: "", matchesSystem: true, systemID: "com.provenance.snes",
+                              systemSuitsTV: true, candidates: withDefault).outcome == .noneChosen)
+        #expect(Rules.resolve(chosen: "deleted-import", matchesSystem: true, systemID: "com.provenance.snes",
+                              systemSuitsTV: true, candidates: withDefault).outcome == .noneAvailable)
+    }
+
+    @Test("An explicit TV ignores whether the system suits a TV")
+    func explicitIgnoresSystemSuitsTV() {
+        #expect(Rules.resolve(chosen: "studio", matchesSystem: true, systemID: "com.provenance.gba",
+                              systemSuitsTV: false, candidates: withDefault).outcome == .bezel("studio"))
+    }
+
+    @Test("The default choice is Automatic")
+    func defaultIsAutomatic() {
+        #expect(Defaults.Keys.externalDisplayBezel.defaultValue == Rules.automaticBezelID)
+        #expect(Rules.automaticBezelID == "auto")
+        #expect(Rules.automaticDefaultBezelID == "living-room-tv")
     }
 }

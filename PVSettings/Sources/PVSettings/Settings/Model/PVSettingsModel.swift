@@ -69,9 +69,10 @@ extension Defaults.Keys {
     /// Whether the device's skin is drawn around the picture on an external display.
     static let externalDisplaySkin = Key<ExternalDisplaySkin>("externalDisplaySkin", default: .realSkinsOnly)
 
-    /// The TV drawn around the picture on an external display: a `TVBezel` id, or
-    /// `ExternalDisplayBezelRules.noBezelID` for none.
-    static let externalDisplayBezel = Key<String>("externalDisplayBezel", default: ExternalDisplayBezelRules.noBezelID)
+    /// The TV drawn around the picture, on the device and on an external display: a `TVBezel`
+    /// id, `ExternalDisplayBezelRules.noBezelID` for none, or `automaticBezelID` (the default)
+    /// to go by the game's system.
+    static let externalDisplayBezel = Key<String>("externalDisplayBezel", default: ExternalDisplayBezelRules.automaticBezelID)
 
     /// Use the TV that suits the game's system, when one does, instead of the chosen one.
     static let externalDisplayBezelMatchesSystem = Key<Bool>("externalDisplayBezelMatchesSystem", default: true)
