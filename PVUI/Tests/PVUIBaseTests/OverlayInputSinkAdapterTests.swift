@@ -141,14 +141,21 @@ struct OverlayInputSinkAdapterTests {
         adapter.overlayConsoleControl("speed", isPressed: true)
         spy.nextConsoleButton = "slow"
         adapter.overlayConsoleControl("speed", isPressed: false)
-        // The release runs in a main-actor task, which a loaded CI simulator can hold back
-        // well past the press duration.
-        let deadline = ContinuousClock.now + .seconds(5)
-        while spy.hardwareEdges.count < 2, ContinuousClock.now < deadline {
+        // The release runs in a main-actor task, as this test does. On a loaded CI simulator
+        // other suites hold the main actor for seconds; this test's sleep then returns first,
+        // already late, with the release still queued behind it. So the wait is counted in
+        // turns given to the main actor, never in time: a deadline would have passed by then.
+        var turns = 0
+        while spy.hardwareEdges.count < 2, turns < Self.releaseWaitTurns {
             try await Task.sleep(for: .seconds(HardwareSwitchTiming.pressDuration))
+            turns += 1
         }
         #expect(spy.hardwareEdges == ["fast true", "fast false"])
     }
+
+    /// How many times `consoleReleaseMatchesPress` gives the main actor away before it calls
+    /// the release missing: ten seconds on an idle machine.
+    private static let releaseWaitTurns = 200
 
     @Test("WonderSwan d-pad directions resolve to the X cluster, PS3 shape names stay shape names")
     func batch2Normalisation() {
