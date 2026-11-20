@@ -62,7 +62,7 @@ final class NearbyLibrariesModel {
     var identity: PeerIdentity {
         if let loadedIdentity { return loadedIdentity }
         // Name Provenance so the iFly/iCube owner knows which app is asking.
-        let created = KeychainPeerIdentityStore().loadOrCreate(name: "Provenance on \(UIDevice.current.name)")
+        let created = LibrarySourceFactory.identity()
         loadedIdentity = created
         return created
     }
@@ -392,18 +392,8 @@ final class NearbyPeerLibraryModel {
         if peer.app == .contentServer {
             importedGameIDs = UserDefaults.standard.dictionary(forKey: "LibrarySharing.games." + peer.id) as? [String: String] ?? [:]
         }
-        switch peer.app {
-        case .iFly:
-            source = IFlyContinuitySource(baseURLs: peer.baseURLs, identity: owner.identity)
-        case .iCube:
-            source = ICubeContinuitySource(baseURLs: peer.baseURLs, identity: owner.identity, expectedPeerID: peer.advertisement.peerId)
-        case .pvLibrary:
-            // Ask only for what this device plays; the source filters locally too.
-            source = PVLibrarySource(baseURLs: peer.baseURLs, identity: owner.identity, systems: owner.playableSystems)
-        case .contentServer:
-            source = owner.contentServerSource(for: peer)
-                ?? PVLibrarySource(baseURLs: peer.baseURLs, identity: owner.identity, systems: owner.playableSystems)
-        }
+        let peerSource = LibrarySourceFactory.peerSource(for: peer, identity: owner.identity, systems: owner.playableSystems)
+        source = peer.app == .contentServer ? owner.contentServerSource(for: peer) ?? peerSource : peerSource
         receiveEnvironmentObservation = NearbyLibraryAutomaticService.shared.manualEnvironmentDidChange.sink { [weak self] in
             self?.receiveEnvironmentChanged()
         }
@@ -564,6 +554,7 @@ final class NearbyPeerLibraryModel {
                 return
             }
             catalogue = loaded
+            RecoverySourceDirectory.noteCatalogueLoaded(from: peer)
             phase = .loaded
             owner?.didLoad(loaded, for: peer)
         } catch is CancellationError {

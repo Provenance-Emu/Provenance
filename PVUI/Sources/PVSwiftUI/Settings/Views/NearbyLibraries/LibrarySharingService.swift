@@ -24,8 +24,7 @@ import UIKit
 /// Owns the sharing host while "Share this library" is on.
 ///
 /// Runs only while the app is active on iOS (the listeners stop in the
-/// background); tvOS keeps serving while the app is open. Everything is behind
-/// the `nearbyLibraries` feature flag.
+/// background); tvOS keeps serving while the app is open.
 @MainActor
 @Observable
 public final class LibrarySharingService {

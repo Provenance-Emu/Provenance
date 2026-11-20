@@ -385,6 +385,10 @@ public final class PVApplicationServices: NSObject, ObservableObject {
     @MainActor
     private func initializeAppComponents() async {
         loadRocketSimConnect()
+        #if os(iOS) || os(tvOS)
+        // A launch whose ROM file is gone asks nearby libraries and servers for it.
+        MissingROMRecoveryService.register()
+        #endif
 
         let orchestrator = BootstrapOrchestrator()
             .with(LoggingBootstrapTask())

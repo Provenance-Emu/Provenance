@@ -50,8 +50,11 @@ public enum MissingGameMatcher {
         for file in remote { byName[file.fileName.lowercased()] = file }
         let pairs = query.files.map { ($0, byName[$0.name.lowercased()]) }
         if pairs.allSatisfy({ $0.1 != nil }) {
-            let sameSizes = pairs.allSatisfy { local, file in local.size > 0 && file?.size == local.size }
-            return sameSizes ? .exact : .standIn
+            // The library records a size for the primary file only, so an unknown size is not a
+            // disagreement; but at least one size has to be known and equal.
+            let known = pairs.filter { $0.0.size > 0 }
+            let agree = !known.isEmpty && known.allSatisfy { local, file in file?.size == local.size }
+            return agree ? .exact : .standIn
         }
         // One file for one file: the stand-in takes the old file's name.
         return query.files.count == 1 && remote.count == 1 ? .standIn : nil

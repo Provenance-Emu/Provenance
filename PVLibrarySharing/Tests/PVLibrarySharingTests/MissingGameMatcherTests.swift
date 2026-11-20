@@ -127,6 +127,15 @@ final class MissingGameMatcherTests: XCTestCase {
         XCTAssertNil(Matcher.classify(remote, for: query(files: cueSet, single: false)))
     }
 
+    func testClassifyExactWhenOnlyThePrimarySizeIsKnown() {
+        let files = [MissingGameFile(name: "Game.cue", size: 90, isPrimary: true),
+                     MissingGameFile(name: "Game (Track 1).bin", size: 0, isPrimary: false)]
+        let remote = manifest([("Game.cue", 90), ("Game (Track 1).bin", 5000)])
+        XCTAssertEqual(Matcher.classify(remote, for: query(files: files, single: false)), .exact)
+        let other = manifest([("Game.cue", 91), ("Game (Track 1).bin", 5000)])
+        XCTAssertEqual(Matcher.classify(other, for: query(files: files, single: false)), .standIn)
+    }
+
     func testClassifyNilForEmptyManifest() {
         XCTAssertNil(Matcher.classify(manifest([]), for: query()))
     }

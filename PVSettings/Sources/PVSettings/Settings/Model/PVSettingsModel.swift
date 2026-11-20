@@ -723,6 +723,10 @@ public extension Defaults.Keys {
     /// JSON of `PickedLibraryFolder` (PVFileSystem): the security-scoped bookmark of the folder the user chose,
     /// its display name and whether saves live there too. Only `LibraryLocation.switchStored` writes it.
     static let libraryPickedFolder = Key<Data?>("libraryPickedFolder")
+
+    /// "Always Allow" on the missing-file prompt: a game whose file is gone is copied back from a
+    /// nearby library or server without asking. A different version of the game still asks.
+    static let missingROMRecoveryAlwaysAllow = Key<Bool>("missingROMRecoveryAlwaysAllow", default: false)
 }
 
 // MARK: Web Server

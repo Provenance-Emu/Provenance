@@ -2471,6 +2471,7 @@ private struct LibrarySection2: View {
     @ObservedObject var viewModel: PVSettingsViewModel
     @Default(.autoNormalizeROMTitles) var autoNormalizeROMTitles
     @Default(.unsupportedCores) var unsupportedCores
+    @Default(.missingROMRecoveryAlwaysAllow) var restoreMissingWithoutAsking
     @State private var showSaveImportWizard = false
 
     var body: some View {
@@ -2546,6 +2547,14 @@ private struct LibrarySection2: View {
             #if os(tvOS)
             .retroFocusButtonStyle(showBorder: false)
             #endif
+
+            ThemedToggle(isOn: $restoreMissingWithoutAsking) {
+                SettingsRow(title: "Restore Missing Games Without Asking",
+                            subtitle: "When a game's file is gone, copy it back from a nearby library or server and start it. "
+                                + "A different version of the game still asks first.",
+                            icon: .sfSymbol("arrow.down.doc"),
+                            showChevron: false)
+            }
             #endif
 
             #if os(iOS) && canImport(CoreNFC)

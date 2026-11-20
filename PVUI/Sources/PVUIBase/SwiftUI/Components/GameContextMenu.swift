@@ -335,6 +335,15 @@ private struct GameContextMenuItems: View {
                     } label: { Label("Download from Cloud", systemImage: "icloud.and.arrow.down") }
                 }
 
+                // A game whose file is gone and that iCloud cannot bring back: ask nearby libraries.
+                if !isDownloaded, !(iCloudSyncEnabled && hasCloudRecord), MissingROMRecovery.recoverer != nil {
+                    Button {
+                        let md5 = game.md5Hash
+                        let title = game.title
+                        Task { @MainActor in await MissingROMRecovery.run(gameMD5: md5, title: title) }
+                    } label: { Label("Restore Missing File", systemImage: "arrow.down.doc") }
+                }
+
                 // Show offload option for games that are downloaded and have a CloudKit record
                 if iCloudSyncEnabled && hasCloudRecord && isDownloaded {
                     Button {

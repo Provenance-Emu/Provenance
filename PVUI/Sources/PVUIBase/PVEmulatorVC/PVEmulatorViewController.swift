@@ -977,7 +977,19 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, Emulato
 
         // Check if file needs download and handle with improved UI
         var didDownloadOnDemand = false
-        if await needsCloudKitDownload(for: game) {
+        var needsOnDemandDownload = await needsCloudKitDownload(for: game)
+        if needsOnDemandDownload, await !iCloudHoldsFile(of: game), await MissingROMRecovery.recoverer != nil {
+            /// The file is gone and iCloud has no copy (tvOS purged it, or it was too large to
+            /// sync): ask nearby libraries and servers instead of starting a download that
+            /// cannot finish.
+            guard await recoverMissingROM() else {
+                await MainActor.run { self.dismiss(animated: true) }
+                throw CreateEmulatorError.fileDoesNotExist(path: game.file?.url?.path)
+            }
+            didDownloadOnDemand = true
+            needsOnDemandDownload = false
+        }
+        if needsOnDemandDownload {
             do {
                 try await handleOnDemandDownload(for: game)
                 /// Deliberately do NOT read the path here. `game` is the object we
@@ -993,10 +1005,15 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, Emulato
             } catch {
                 // Download was cancelled or failed - dismiss emulator and return
                 ELOG("Download cancelled or failed for \(game.title): \(error.localizedDescription)")
-                await MainActor.run {
-                    self.dismiss(animated: true)
+                /// A failed download (not a cancelled one) gets one try from nearby libraries.
+                if Self.isRecoverableDownloadFailure(error), await recoverMissingROM() {
+                    didDownloadOnDemand = true
+                } else {
+                    await MainActor.run {
+                        self.dismiss(animated: true)
+                    }
+                    throw error
                 }
-                throw error
             }
         }
 
@@ -1743,9 +1760,35 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, Emulato
 
         } catch {
             ELOG("Failed to queue on-demand download for \(game.title): \(error)")
-            await showDownloadErrorAlert(gameTitle: game.title, error: error)
+            /// With a recoverer registered the caller tries nearby libraries next and reports
+            /// the result itself; a cancelled download needs no alert either way.
+            if await MissingROMRecovery.recoverer == nil || !Self.isRecoverableDownloadFailure(error) {
+                await showDownloadErrorAlert(gameTitle: game.title, error: error)
+            }
             throw error
         }
+    }
+
+    /// Whether iCloud is expected to have this game's file: sync is on and the game was uploaded.
+    @MainActor
+    private func iCloudHoldsFile(of game: PVGame) -> Bool {
+        Defaults[.iCloudSync] && game.hasCloudAssets
+    }
+
+    /// A download that failed for a reason other than the user cancelling or the disk being full.
+    private static func isRecoverableDownloadFailure(_ error: Error) -> Bool {
+        if case CloudSyncError.downloadCancelled = error { return false }
+        if case CreateEmulatorError.insufficientSpace = error { return false }
+        return !(error is CancellationError)
+    }
+
+    /// Asks the registered recoverer to copy the missing ROM back from a nearby library or
+    /// server, with its prompts shown here. True when the file is in place.
+    @MainActor
+    private func recoverMissingROM() async -> Bool {
+        guard temporaryGame == nil else { return false }
+        hideBootHUDIfNeeded()
+        return await MissingROMRecovery.run(gameMD5: game.md5Hash, title: game.title, on: self)
     }
 
     /// Show download progress UI with cancel option using SceneCoordinator's syncStatusManager
