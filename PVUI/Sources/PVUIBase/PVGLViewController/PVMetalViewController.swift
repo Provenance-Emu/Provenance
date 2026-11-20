@@ -286,9 +286,11 @@ final class PVMetalViewController: PVGPUViewController, PVRenderDelegate, MTKVie
     }
     var  previousCommandBuffer: MTLCommandBuffer? // used for scheduling with OpenGL context
 
-    /// Count of consecutive frames where `currentDrawable` returned nil. Used to
-    /// detect a wedged CAMetalLayer drawable pool after a background/resume cycle.
-    private var consecutiveNilDrawables = 0
+    /// Counts consecutive frames where `currentDrawable` returned nil and spaces
+    /// out the next requests, so a drained CAMetalLayer pool cannot hold the main
+    /// thread for a second on every frame. The count also detects a wedged pool
+    /// after a background/resume cycle.
+    private var drawableBackoff = DrawableStarvationBackoff()
     /// After this many consecutive nil drawables, reset the pool (see `resetDrawablePoolIfWedged`).
     private let wedgedPoolNilThreshold = 3
 
@@ -745,7 +747,7 @@ final class PVMetalViewController: PVGPUViewController, PVRenderDelegate, MTKVie
                 layer.drawableSize = size
                 ILOG("[FREEZE] resume: reset drawable pool via drawableSize toggle (\(size.width)x\(size.height)) + asserted nextDrawable timeout", category: .freeze)
             }
-            consecutiveNilDrawables = 0
+            drawableBackoff.reset()
         }
 
         // Suppress drawing for one short settle window so the first post-resume frame
@@ -1889,11 +1891,6 @@ final class PVMetalViewController: PVGPUViewController, PVRenderDelegate, MTKVie
                 WLOG("Failed to update texture from core")
             }
         }
-
-        // With `enableSetNeedsDisplay == false`, MTKView is already driven by its display link; extra `setNeedsDisplay` calls can pile up Core Animation work and starve the drawable pool.
-        if !isPaused, view.enableSetNeedsDisplay {
-            view.setNeedsDisplay()
-        }
     }
 
     // MARK: - PVRenderDelegate
@@ -2395,6 +2392,13 @@ final class PVMetalViewController: PVGPUViewController, PVRenderDelegate, MTKVie
         // pressure instead of blocking forever; the nil path below + the resume
         // pool-reset then recover.
         (view.layer as? CAMetalLayer)?.allowsNextDrawableTimeout = true
+        // A request that finds no drawable holds the main thread for the whole
+        // timeout. Asking again on every frame left the app unable to answer a
+        // scene update or a terminate request (0x8BADF00D watchdog kills), so
+        // wait before the next request.
+        if drawableBackoff.shouldSkipDraw(at: CACurrentMediaTime()) {
+            return
+        }
         guard let drawable = view.currentDrawable else {
             // `nextDrawable` timed out (allowsNextDrawableTimeout) or the pool is
             // exhausted. After a background/resume cycle the CAMetalLayer drawable
@@ -2402,16 +2406,16 @@ final class PVMetalViewController: PVGPUViewController, PVRenderDelegate, MTKVie
             // presentation queue from frames presented as the layer went off-screen);
             // every CA-commit-driven draw then blocks ~1s on nextDrawable and the
             // main thread appears frozen. Detect the wedge and reset the pool.
-            consecutiveNilDrawables += 1
-            ILOG("[FREEZE] directRender: no Metal drawable (consecutive nil = \(consecutiveNilDrawables))", category: .freeze)
-            if consecutiveNilDrawables >= wedgedPoolNilThreshold {
+            drawableBackoff.recordMiss(at: CACurrentMediaTime())
+            ILOG("[FREEZE] directRender: no Metal drawable (consecutive nil = \(drawableBackoff.consecutiveMisses))", category: .freeze)
+            if drawableBackoff.consecutiveMisses >= wedgedPoolNilThreshold {
                 DispatchQueue.main.async { [weak self] in self?.resetDrawablePoolIfWedged() }
             }
             return
         }
-        if consecutiveNilDrawables > 0 {
-            ILOG("[FREEZE] directRender: drawable acquired after \(consecutiveNilDrawables) consecutive nil(s)", category: .freeze)
-            consecutiveNilDrawables = 0
+        if drawableBackoff.consecutiveMisses > 0 {
+            ILOG("[FREEZE] directRender: drawable acquired after \(drawableBackoff.consecutiveMisses) consecutive nil(s)", category: .freeze)
+            drawableBackoff.reset()
         }
 
         // Log the current rendering dimensions for debugging
@@ -3766,12 +3770,13 @@ final class PVMetalViewController: PVGPUViewController, PVRenderDelegate, MTKVie
                 ELOG("Cannot recreate input texture: Invalid buffer size or nil emulator core")
             }
 
-            // Reset the MTKView's paused state
+            // Keep the view on its display link, as `setupMTKView` configures it.
+            // Turning on `enableSetNeedsDisplay` here moved every later frame onto
+            // the Core Animation commit, where a missing drawable holds the main
+            // thread inside the commit (0x8BADF00D with the main thread in
+            // `nextDrawable` under `CA::Transaction::commit`).
             mtlView?.isPaused = false
-            mtlView?.enableSetNeedsDisplay = true
-
-            // Request a redraw
-            mtlView?.setNeedsDisplay()
+            mtlView?.enableSetNeedsDisplay = false
 
             ILOG("Metal rendering pipeline reset successful")
         } catch {
@@ -3792,17 +3797,18 @@ final class PVMetalViewController: PVGPUViewController, PVRenderDelegate, MTKVie
             DispatchQueue.main.async { [weak self] in self?.resetDrawablePoolIfWedged() }
             return
         }
-        guard consecutiveNilDrawables >= wedgedPoolNilThreshold, let mtlView = mtlView else { return }
+        guard drawableBackoff.consecutiveMisses >= wedgedPoolNilThreshold, let mtlView = mtlView else { return }
         let size = mtlView.drawableSize
         guard size.width > 1, size.height > 1 else { return }
-        ILOG("[FREEZE] Drawable pool wedged after \(consecutiveNilDrawables) nil(s); resetting pool via drawableSize toggle (\(size.width)x\(size.height))", category: .freeze)
+        ILOG("[FREEZE] Drawable pool wedged after \(drawableBackoff.consecutiveMisses) nil(s); resetting pool via drawableSize toggle (\(size.width)x\(size.height))", category: .freeze)
         let wasAutoResize = mtlView.autoResizeDrawable
         mtlView.autoResizeDrawable = false
         mtlView.drawableSize = CGSize(width: size.width - 1, height: size.height - 1)
         mtlView.drawableSize = size
         mtlView.autoResizeDrawable = wasAutoResize
-        consecutiveNilDrawables = 0
-        mtlView.setNeedsDisplay()
+        // The display link draws the next frame. A `setNeedsDisplay` here would
+        // draw it inside the Core Animation commit instead.
+        drawableBackoff.reset()
     }
 
     /// Safely refreshes the GPU view without directly setting isPaused.
