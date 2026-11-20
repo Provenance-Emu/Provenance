@@ -25,6 +25,13 @@ public func PVOpenGameMD5URI(_ md5: String) -> String {
     ProvenanceDeepLink.openGameMD5URI(md5)
 }
 
+/// Builds a deep-link URI that opens a game from one of its save states.
+/// - Parameter saveStateID: The save state's id.
+/// - Returns: URI string in `provenance://open?saveStateId=<value>` format.
+public func PVOpenSaveStateURI(_ saveStateID: String) -> String {
+    ProvenanceDeepLink.openSaveStateURI(saveStateID)
+}
+
 /// The game MD5 in a launch URL: `provenance://open?md5=<md5>` or the universal link
 /// `https://provenance-emu.com/game/<md5>`. `nil` for any other URL.
 public func PVGameMD5(fromLaunchURL url: URL) -> String? {

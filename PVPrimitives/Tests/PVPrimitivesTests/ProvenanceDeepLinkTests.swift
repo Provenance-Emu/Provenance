@@ -12,6 +12,18 @@ struct ProvenanceDeepLinkTests {
         #expect(url.absoluteString == "https://provenance-emu.com/game/\(md5)")
     }
 
+    @Test("Save state link carries the id in the saveStateId query item")
+    func saveStateLinkFormat() throws {
+        let id = "6F1C2D34-0000-4000-8000-ABCDEF012345"
+        let url = try #require(URL(string: ProvenanceDeepLink.openSaveStateURI(id)))
+        let items = URLComponents(url: url, resolvingAgainstBaseURL: false)?.queryItems
+        #expect(url.scheme == ProvenanceDeepLink.scheme)
+        #expect(url.host == ProvenanceDeepLink.openHost)
+        #expect(items?.first { $0.name == "saveStateId" }?.value == id)
+        // A save state link is not a game-by-MD5 link.
+        #expect(ProvenanceDeepLink.gameMD5(from: url) == nil)
+    }
+
     @Test("MD5 round-trips through both game URL forms")
     func md5RoundTrip() throws {
         let universal = try #require(ProvenanceDeepLink.gameUniversalLink(md5))

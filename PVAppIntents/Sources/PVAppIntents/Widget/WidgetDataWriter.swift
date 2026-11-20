@@ -45,6 +45,23 @@ public enum WidgetPlayActivityTimestamp {
     }
 }
 
+/// Builds the continue list: the newest save state of each game.
+public enum WidgetContinueSelection {
+    /// - Parameters:
+    ///   - saves: One entry per save state, newest first; `id` is the game's MD5.
+    ///   - limit: The most games to return.
+    /// - Returns: The first entry of each game, in the order given.
+    public static func latestPerGame(_ saves: some Sequence<WidgetGameData>, limit: Int) -> [WidgetGameData] {
+        var seen = Set<String>()
+        var result: [WidgetGameData] = []
+        for save in saves {
+            guard result.count < limit else { break }
+            if seen.insert(save.id).inserted { result.append(save) }
+        }
+        return result
+    }
+}
+
 /// Now-playing track info written by Music Player (#2654) and read by extensions.
 /// Canonical declaration lives in `PVLibrarySnapshotLegacy`.
 public typealias WidgetNowPlayingData = LibrarySnapshotNowPlaying
@@ -71,6 +88,7 @@ public final class WidgetDataWriter: Sendable {
     ///   - galleryGames: Games chosen for art gallery rotation (up to 12).
     ///   - favoriteGames: Favorite games sorted by title (up to 16 — covers systemExtraLarge 4×4 grid).
     ///   - recentlyAddedGames: Games ordered by import date descending (up to 16).
+    ///   - continueGames: One entry per game with a save state, newest save first (up to 16).
     ///   - totalCount: Total number of games in the library.
     ///   - systemCount: Number of distinct systems in the library.
     ///   - totalPlayTimeSeconds: Aggregate play time across all games.
@@ -86,6 +104,7 @@ public final class WidgetDataWriter: Sendable {
         galleryGames: [WidgetGameData],
         favoriteGames: [WidgetGameData] = [],
         recentlyAddedGames: [WidgetGameData] = [],
+        continueGames: [WidgetGameData] = [],
         totalCount: Int,
         systemCount: Int = 0,
         totalPlayTimeSeconds: Int = 0,
@@ -104,6 +123,7 @@ public final class WidgetDataWriter: Sendable {
         write(galleryGames, limit: LibrarySnapshotSchema.maxGalleryGames, key: Key.galleryGames)
         write(favoriteGames, limit: LibrarySnapshotSchema.maxFavoriteGames, key: Key.favoriteGames)
         write(recentlyAddedGames, limit: LibrarySnapshotSchema.maxRecentlyAddedGames, key: Key.recentlyAddedGames)
+        write(continueGames, limit: LibrarySnapshotSchema.maxContinueGames, key: Key.continueGames)
 
         defaults.set(totalCount, forKey: Key.gameCount)
         defaults.set(systemCount, forKey: Key.systemCount)

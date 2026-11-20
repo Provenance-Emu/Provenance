@@ -48,6 +48,39 @@ final class WidgetDataWriterTests: XCTestCase {
         XCTAssertNil(decoded.systemIdentifier)
     }
 
+    func testSaveStateIDRoundTripsAndIsOptional() throws {
+        let encoder = JSONEncoder()
+        let decoder = JSONDecoder()
+        let resumed = WidgetGameData(id: "abc", title: "F-Zero", systemName: "SNES", saveStateID: "save-1")
+        XCTAssertEqual(try decoder.decode(WidgetGameData.self, from: encoder.encode(resumed)).saveStateID, "save-1")
+
+        // Entries written before the field existed still decode.
+        let old = Data(#"{"id":"abc","title":"F-Zero","systemName":"SNES"}"#.utf8)
+        XCTAssertNil(try decoder.decode(WidgetGameData.self, from: old).saveStateID)
+    }
+
+    // MARK: - WidgetContinueSelection
+
+    private func save(_ game: String, _ saveID: String) -> WidgetGameData {
+        WidgetGameData(id: game, title: game, systemName: "SNES", saveStateID: saveID)
+    }
+
+    func testContinueKeepsOnlyTheNewestSaveOfEachGame() {
+        let saves = [save("zelda", "z3"), save("mario", "m2"), save("zelda", "z2"), save("mario", "m1"), save("metroid", "s1")]
+        let result = WidgetContinueSelection.latestPerGame(saves, limit: 16)
+        XCTAssertEqual(result.map(\.id), ["zelda", "mario", "metroid"])
+        XCTAssertEqual(result.map(\.saveStateID), ["z3", "m2", "s1"])
+    }
+
+    func testContinueStopsAtTheLimit() {
+        let saves = (0..<10).map { save("game\($0)", "s\($0)") }
+        XCTAssertEqual(WidgetContinueSelection.latestPerGame(saves, limit: 4).map(\.id), ["game0", "game1", "game2", "game3"])
+    }
+
+    func testContinueWithNoSavesIsEmpty() {
+        XCTAssertTrue(WidgetContinueSelection.latestPerGame([], limit: 16).isEmpty)
+    }
+
     // MARK: - WidgetPlayActivityTimestamp
 
     func testWidgetPlayActivityTimestampPrefersLatestOfRecentAndGame() {

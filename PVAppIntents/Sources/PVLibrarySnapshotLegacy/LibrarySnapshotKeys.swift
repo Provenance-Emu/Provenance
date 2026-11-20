@@ -32,6 +32,9 @@ public enum LibrarySnapshotKeys {
     public static let favoriteGames = "widget.favoriteGames"
     /// JSON array of `LibrarySnapshotGame`, most-recently-imported first.
     public static let recentlyAddedGames = "widget.recentlyAddedGames"
+    /// JSON array of `LibrarySnapshotGame`, one per game that has a save state,
+    /// most recent save first. Each carries `saveStateID`.
+    public static let continueGames = "widget.continueGames"
     /// JSON `LibrarySnapshotNowPlaying` for the music player, or absent.
     public static let nowPlaying = "widget.nowPlaying"
 
@@ -81,4 +84,10 @@ public enum LibrarySnapshotSchema {
     public static let maxFavoriteGames = 16
     /// Maximum recently-added entries persisted.
     public static let maxRecentlyAddedGames = 16
+    /// Maximum continue entries persisted (one per game).
+    public static let maxContinueGames = 16
+    /// How many save states, newest first, the host app scans to build the
+    /// continue list. Larger than `maxContinueGames` because a game often has
+    /// several saves and only its newest one is kept.
+    public static let continueScanDepth = 200
 }

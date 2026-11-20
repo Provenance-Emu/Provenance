@@ -57,6 +57,8 @@ public enum WidgetSharedDefaults {
         static let favoriteGames = "widget.favoriteGames"
         /// JSON array of games ordered by import date, newest first.
         static let recentlyAddedGames = "widget.recentlyAddedGames"
+        /// JSON array, one per game with a save state, newest save first.
+        static let continueGames = "widget.continueGames"
         /// Total number of distinct systems in the library (Int).
         static let systemCount = "widget.systemCount"
         /// Aggregate play time across all games, in seconds (Int).
@@ -91,6 +93,8 @@ public struct WidgetGameEntry: Codable, Identifiable {
     /// straight into the pixel budget it is drawn at.
     public let artworkPath: String?
     public let lastPlayedDate: Date?
+    /// Id of the save state this entry resumes; set only in the continue list.
+    public let saveStateID: String?
 
     // MARK: Derived helpers (not stored)
 
@@ -102,6 +106,9 @@ public struct WidgetGameEntry: Codable, Identifiable {
 
     /// Deep-link URL for launching the game from a widget tap.
     public var launchURL: URL? {
+        if let saveStateID, !saveStateID.isEmpty {
+            return URL(string: PVOpenSaveStateURI(saveStateID))
+        }
         guard !id.isEmpty else { return nil }
         return URL(string: PVOpenGameMD5URI(id))
     }
@@ -112,7 +119,8 @@ public struct WidgetGameEntry: Codable, Identifiable {
         systemName: String,
         systemIdentifier: String? = nil,
         artworkPath: String? = nil,
-        lastPlayedDate: Date? = nil
+        lastPlayedDate: Date? = nil,
+        saveStateID: String? = nil
     ) {
         self.id = id
         self.title = title
@@ -120,6 +128,7 @@ public struct WidgetGameEntry: Codable, Identifiable {
         self.systemIdentifier = systemIdentifier
         self.artworkPath = artworkPath
         self.lastPlayedDate = lastPlayedDate
+        self.saveStateID = saveStateID
     }
 }
 
@@ -224,6 +233,13 @@ extension WidgetSharedDefaults {
 
     static func loadRecentlyAddedGames() -> [WidgetGameEntry] {
         guard let data = shared?.data(forKey: Keys.recentlyAddedGames) else { return [] }
+        let decoder = JSONDecoder()
+        decoder.dateDecodingStrategy = .iso8601
+        return (try? decoder.decode([WidgetGameEntry].self, from: data)) ?? []
+    }
+
+    static func loadContinueGames() -> [WidgetGameEntry] {
+        guard let data = shared?.data(forKey: Keys.continueGames) else { return [] }
         let decoder = JSONDecoder()
         decoder.dateDecodingStrategy = .iso8601
         return (try? decoder.decode([WidgetGameEntry].self, from: data)) ?? []

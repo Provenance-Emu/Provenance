@@ -41,6 +41,8 @@ public enum LibrarySnapshotList: String, Sendable, CaseIterable {
     case favorites
     /// Most-recently-imported first.
     case recentlyAdded
+    /// One entry per game that has a save state, most recent save first.
+    case continues
 
     var storageKey: String {
         switch self {
@@ -48,6 +50,7 @@ public enum LibrarySnapshotList: String, Sendable, CaseIterable {
         case .gallery: return LibrarySnapshotKeys.galleryGames
         case .favorites: return LibrarySnapshotKeys.favoriteGames
         case .recentlyAdded: return LibrarySnapshotKeys.recentlyAddedGames
+        case .continues: return LibrarySnapshotKeys.continueGames
         }
     }
 }

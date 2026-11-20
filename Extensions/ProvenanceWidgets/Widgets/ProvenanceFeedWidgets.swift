@@ -17,7 +17,7 @@ import SwiftUI
 /// the PVWidgets package (github.com/Provenance-Emu/PVWidgets), shared with iCube and iFly.
 struct ProvenanceWidgetDataSource: WidgetDataSource {
 
-    var feeds: [WidgetFeed] { [Self.recentlyPlayed, Self.favorites, Self.recentlyAdded] }
+    var feeds: [WidgetFeed] { [Self.recentlyPlayed, Self.continues, Self.favorites, Self.recentlyAdded] }
 
     func items(for feed: WidgetFeed.ID, limit: Int) -> [WidgetItem] {
         let games: [WidgetGameEntry]
@@ -25,10 +25,12 @@ struct ProvenanceWidgetDataSource: WidgetDataSource {
         case .recentlyPlayed: games = WidgetSharedDefaults.loadRecentGames()
         case .favorites: games = WidgetSharedDefaults.loadFavoriteGames()
         case .recentlyAdded: games = WidgetSharedDefaults.loadRecentlyAddedGames()
+        case .continues: games = WidgetSharedDefaults.loadContinueGames()
         default: games = []
         }
-        // Favorites and new imports may never have been played, so only recents show a date.
-        let showsDate = feed == .recentlyPlayed
+        // Favorites and new imports may never have been played, so only recents and
+        // continues (dated by the save) show a date.
+        let showsDate = feed == .recentlyPlayed || feed == .continues
         return games.prefix(limit).map { Self.item(for: $0, showsDate: showsDate) }
     }
 
@@ -50,6 +52,13 @@ struct ProvenanceWidgetDataSource: WidgetDataSource {
         title: String(localized: "widget.recent.display-name", defaultValue: "Recently Played", comment: "Recently Played widget display name"),
         symbolName: "clock.arrow.circlepath",
         emptyMessage: String(localized: "widget.recent.empty-message", defaultValue: "Play a game\nto see it here", comment: "Recently Played widget empty state message")
+    )
+
+    static let continues = WidgetFeed(
+        id: .continues,
+        title: String(localized: "widget.continue.display-name", defaultValue: "Continue", comment: "Continue game list name: games with a save state"),
+        symbolName: "play.circle",
+        emptyMessage: String(localized: "widget.continue.empty-message", defaultValue: "Save a game\nto continue it here", comment: "Continue game list empty state message")
     )
 
     static let favorites = WidgetFeed(

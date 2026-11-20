@@ -11,6 +11,9 @@ public enum ProvenanceDeepLink {
     /// Query item that carries the game MD5 in the custom-scheme open link.
     public static let md5QueryName = "md5"
 
+    /// Query item that carries a save state's id: `provenance://open?saveStateId=<value>`.
+    public static let saveStateQueryName = "saveStateId"
+
     /// Universal-link host. Must match `applinks:provenance-emu.com` in the entitlements
     /// and the `apple-app-site-association` file that host serves.
     public static let universalLinkHost = "provenance-emu.com"
@@ -40,6 +43,13 @@ public enum ProvenanceDeepLink {
     /// - Returns: URI string in `provenance://open?md5=<value>` format.
     public static func openGameMD5URI(_ md5: String) -> String {
         "\(scheme)://\(openHost)?\(md5QueryName)=\(md5)"
+    }
+
+    /// Builds a deep-link URI that opens a game from one of its save states.
+    /// - Parameter saveStateID: The save state's id (`PVSaveState.id`).
+    /// - Returns: URI string in `provenance://open?saveStateId=<value>` format.
+    public static func openSaveStateURI(_ saveStateID: String) -> String {
+        "\(scheme)://\(openHost)?\(saveStateQueryName)=\(saveStateID)"
     }
 
     /// Builds the universal link for a game: `https://provenance-emu.com/game/<md5>`.

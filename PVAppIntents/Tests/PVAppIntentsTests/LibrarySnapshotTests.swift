@@ -94,12 +94,14 @@ final class LibrarySnapshotTests: XCTestCase {
         store([makeGame("gallery")], forKey: LibrarySnapshotKeys.galleryGames)
         store([makeGame("fav")], forKey: LibrarySnapshotKeys.favoriteGames)
         store([makeGame("added")], forKey: LibrarySnapshotKeys.recentlyAddedGames)
+        store([makeGame("continue")], forKey: LibrarySnapshotKeys.continueGames)
 
         let reader = LibrarySnapshotReader(defaults: defaults)
         XCTAssertEqual(reader.games(.recentlyPlayed).first?.id, "recent")
         XCTAssertEqual(reader.games(.gallery).first?.id, "gallery")
         XCTAssertEqual(reader.games(.favorites).first?.id, "fav")
         XCTAssertEqual(reader.games(.recentlyAdded).first?.id, "added")
+        XCTAssertEqual(reader.games(.continues).first?.id, "continue")
     }
 
     func testLimitCapsResults() {

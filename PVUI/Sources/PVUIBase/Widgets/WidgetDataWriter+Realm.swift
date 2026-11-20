@@ -89,6 +89,19 @@ public extension WidgetDataWriter {
                 .prefix(LibrarySnapshotSchema.maxRecentlyAddedGames)
         ).map { $0.asSnapshotGame }
 
+        // Continue: the newest save state of each game.
+        let continues = WidgetContinueSelection.latestPerGame(
+            database.all(PVSaveState.self)
+                .sorted(byKeyPath: "date", ascending: false)
+                .prefix(LibrarySnapshotSchema.continueScanDepth)
+                .lazy
+                .compactMap { save -> WidgetGameData? in
+                    guard let game = save.game, !game.isInvalidated, !game.contentless else { return nil }
+                    return game.asSnapshotGame(resuming: save)
+                },
+            limit: LibrarySnapshotSchema.maxContinueGames
+        )
+
         // Gallery: sample up to 12 *unique* games for the art-rotation widget.
         let galleryCount = min(LibrarySnapshotSchema.maxGalleryGames, totalCount)
         let gallery: [WidgetGameData]
@@ -108,6 +121,7 @@ public extension WidgetDataWriter {
             galleryGames: gallery,
             favoriteGames: favorites,
             recentlyAddedGames: recentlyAdded,
+            continueGames: continues,
             totalCount: totalCount,
             systemCount: systemCount,
             totalPlayTimeSeconds: totalPlayTime,
@@ -233,6 +247,21 @@ private extension PVGame {
                 importDate: importDate
             ),
             remoteArtworkURL: remoteArtworkURLString
+        )
+    }
+
+    /// The continue-list entry for one of this game's save states: dated by the
+    /// save, and carrying its id so a tap resumes it.
+    func asSnapshotGame(resuming save: PVSaveState) -> WidgetGameData {
+        WidgetGameData(
+            id: md5Hash,
+            title: title,
+            systemName: system?.shortName ?? system?.name ?? "",
+            systemIdentifier: systemIdentifier.isEmpty ? nil : systemIdentifier,
+            artworkPath: widgetArtworkPath(for: self),
+            lastPlayedDate: save.date,
+            remoteArtworkURL: remoteArtworkURLString,
+            saveStateID: save.id
         )
     }
 

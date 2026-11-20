@@ -54,3 +54,7 @@
 /* Recently Added */
 "widget.recently-added.display-name" = "Recently Added";
 "widget.recently-added.empty-message" = "Import a game\nto see it here";
+
+/* Continue */
+"widget.continue.display-name" = "Continue";
+"widget.continue.empty-message" = "Save a game\nto continue it here";

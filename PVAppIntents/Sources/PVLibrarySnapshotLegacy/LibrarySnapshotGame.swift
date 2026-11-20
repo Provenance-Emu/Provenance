@@ -35,6 +35,9 @@ public struct LibrarySnapshotGame: Codable, Sendable, Identifiable, Hashable {
     /// `nil`. Top Shelf can fetch this itself; widgets do not (WidgetKit has no
     /// network budget for timeline rendering).
     public let remoteArtworkURL: String?
+    /// Id of the save state this entry resumes. Set only in the continue list,
+    /// where `lastPlayedDate` is the date of that save.
+    public let saveStateID: String?
 
     public init(
         id: String,
@@ -43,7 +46,8 @@ public struct LibrarySnapshotGame: Codable, Sendable, Identifiable, Hashable {
         systemIdentifier: String? = nil,
         artworkPath: String? = nil,
         lastPlayedDate: Date? = nil,
-        remoteArtworkURL: String? = nil
+        remoteArtworkURL: String? = nil,
+        saveStateID: String? = nil
     ) {
         self.id = id
         self.title = title
@@ -52,6 +56,7 @@ public struct LibrarySnapshotGame: Codable, Sendable, Identifiable, Hashable {
         self.artworkPath = artworkPath
         self.lastPlayedDate = lastPlayedDate
         self.remoteArtworkURL = remoteArtworkURL
+        self.saveStateID = saveStateID
     }
 
     /// The game's MD5 hash identifier — same as `id`.
