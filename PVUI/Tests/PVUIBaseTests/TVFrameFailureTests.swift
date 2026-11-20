@@ -2,12 +2,14 @@
 //  TVFrameFailureTests.swift
 //  PVUIBaseTests
 //
-//  What to do when the GPU rejects a frame drawn through a TV.
+//  What to do when the GPU rejects a frame drawn through a TV: the shared package's sorting, as
+//  PVMetalViewController's frame watch relies on it.
 //
 
 import Foundation
 import Metal
 import Testing
+import SkinKitBezels
 @testable import PVUIBase
 
 @Suite("TVFrameFailure")

@@ -3,6 +3,7 @@ import Combine
 import Defaults
 import PVSettings
 import PVShaders
+import SkinKitBezelsUI
 import SwiftUI
 
 struct GameplayBezelOptionsView: View {
@@ -43,14 +44,14 @@ struct GameplayBezelOptionsView: View {
                 case .global:
                     TVBezelPickerView(selection: Binding(get: { bezel }, set: { bezel = $0 ?? "" }),
                                       offersSystemAutomatic: true,
-                                      controllerCommands: commands)
+                                      controllerCommands: commands?.bezelCommands)
                 case .game:
                     if let game = emulatorVC.gameplayBezelGame {
                         TVBezelPickerView(
                             selection: Binding(get: { pins[game.md5] }, set: { pins[game.md5] = $0 }),
                             allowsAutomatic: true,
                             game: game,
-                            controllerCommands: commands
+                            controllerCommands: commands?.bezelCommands
                         )
                     }
                 case .automatic, .done:

@@ -11,6 +11,7 @@ import Defaults
 import PVLogging
 import PVSettings
 import PVShaders
+import SkinKitBezels
 import SkinKitCore
 import SkinKitUI
 
@@ -144,6 +145,7 @@ extension PVEmulatorViewController {
                                                name: ShaderLibraryStore.didChangeNotification, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(bezelLibraryDidChange),
                                                name: TVBezelLibrary.didChangeNotification, object: nil)
+        ProvenanceBezels.configure()
         TVBezelLibrary.shared.refreshIfNeeded()
         externalDisplaySettingsObservation = Task { @MainActor [weak self] in
             for await _ in Defaults.updates([.externalDisplayMode, .externalDisplayDevicePicture, .externalDisplaySkin,

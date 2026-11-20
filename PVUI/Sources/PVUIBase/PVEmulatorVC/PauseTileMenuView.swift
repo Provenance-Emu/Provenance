@@ -24,6 +24,7 @@ import PVPrimitives
 import PVSettings
 import PVShaders
 import PVThemes
+import SkinKitBezelsUI
 import SkinKitManager
 import SkinKitUI
 #if canImport(UIKit)
@@ -2072,8 +2073,9 @@ struct PauseTileMenuView: View {
         .disabled(showingBezelSwitcher)
         .overlay(alignment: .bottom) {
             if showingBezelSwitcher {
-                BezelSwitcherHost(emulatorVC: emulatorVC,
-                                  commands: bezelSwitcherCommands,
+                BezelSwitcherHost(session: EmulatorBezelSession(emulatorVC),
+                                  commands: bezelSwitcherCommands?.bezelCommands,
+                                  showsControllerHints: PVControllerManager.shared.hasControllers,
                                   onClose: {
                                       showingBezelSwitcher = false
                                       rebuildSections()

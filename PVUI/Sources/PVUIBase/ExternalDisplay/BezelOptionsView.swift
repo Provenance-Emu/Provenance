@@ -8,6 +8,7 @@
 #if os(iOS) || os(tvOS)
 import Defaults
 import PVSettings
+import SkinKitBezelsUI
 import SwiftUI
 
 /// The bezel settings outside a game: the choice for every game, room light and game artwork.
@@ -18,7 +19,9 @@ public struct BezelOptionsView: View {
     @Default(.externalDisplayBezelLightsRoom) private var storedLightsRoom
     @Default(.externalDisplayGameBezels) private var gameBezels
 
-    public init() {}
+    public init() {
+        ProvenanceBezels.configure()
+    }
 
     private var choiceName: String {
         switch bezelID {

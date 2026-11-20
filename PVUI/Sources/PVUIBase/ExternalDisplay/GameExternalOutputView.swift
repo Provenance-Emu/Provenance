@@ -12,6 +12,7 @@ import QuartzCore
 import PVLogging
 import PVSettings
 import PVShaders
+import SkinKitBezels
 import SkinKitCore
 import SkinKitUI
 
@@ -224,20 +225,20 @@ final class GameExternalOutputView: UIView {
     /// new one's shader has compiled, so there is no bare picture between the two.
     private func adopt(_ scene: TVBezelScene?, name: String, lit: Bool) {
         clearImageBezel()
-        guard let scene else {
+        guard let scene, let shader = scene.resolvedShader() else {
             clearShaderBezel()
             WLOG("External display: TV '\(name)' could not be drawn; showing the picture alone")
             return
         }
         if bezelScene != nil, bezelProcessor.isReady {
             pendingBezelScene = scene
-            pendingBezelProcessor.update(scene.shader, smoothing: true, textures: scene.textures)
+            pendingBezelProcessor.update(shader, smoothing: true, textures: scene.textures)
         } else {
             pendingBezelScene = nil
             pendingBezelProcessor.update(nil, smoothing: true)
             bezelScene = scene
             tubeTexture = nil
-            bezelProcessor.update(scene.shader, smoothing: true, textures: scene.textures)
+            bezelProcessor.update(shader, smoothing: true, textures: scene.textures)
         }
         ILOG("External display: TV '\(name)'\(lit ? ", lighting the room" : "")")
     }
