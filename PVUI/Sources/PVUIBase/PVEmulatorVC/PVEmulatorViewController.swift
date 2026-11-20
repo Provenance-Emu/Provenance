@@ -978,7 +978,8 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, Emulato
         // Check if file needs download and handle with improved UI
         var didDownloadOnDemand = false
         var needsOnDemandDownload = await needsCloudKitDownload(for: game)
-        if needsOnDemandDownload, await !iCloudHoldsFile(of: game), await MissingROMRecovery.recoverer != nil {
+        if needsOnDemandDownload, await !iCloudHoldsFile(of: game), await !hasFileOnDisk(game),
+           await MissingROMRecovery.recoverer != nil {
             /// The file is gone and iCloud has no copy (tvOS purged it, or it was too large to
             /// sync): ask nearby libraries and servers instead of starting a download that
             /// cannot finish.
@@ -1775,6 +1776,13 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, Emulato
         Defaults[.iCloudSync] && game.hasCloudAssets
     }
 
+    /// Whether anything sits at the game's path, an iCloud placeholder included.
+    @MainActor
+    private func hasFileOnDisk(_ game: PVGame) -> Bool {
+        guard let partialPath = game.file?.partialPath, !partialPath.isEmpty else { return false }
+        return FileLocationResolver.shared.resolve(partialPath).url != nil
+    }
+
     /// A download that failed for a reason other than the user cancelling or the disk being full.
     private static func isRecoverableDownloadFailure(_ error: Error) -> Bool {
         if case CloudSyncError.downloadCancelled = error { return false }
@@ -1786,7 +1794,11 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, Emulato
     /// server, with its prompts shown here. True when the file is in place.
     @MainActor
     private func recoverMissingROM() async -> Bool {
-        guard temporaryGame == nil else { return false }
+        /// Not for a file that exists as an iCloud placeholder (recovery only fills a hole), and
+        /// not once this screen is on its way out: its prompts would have nowhere to show.
+        guard temporaryGame == nil, !hasFileOnDisk(game), viewIfLoaded?.window != nil, !isBeingDismissed else {
+            return false
+        }
         hideBootHUDIfNeeded()
         return await MissingROMRecovery.run(gameMD5: game.md5Hash, title: game.title, on: self)
     }

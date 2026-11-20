@@ -110,6 +110,7 @@ final class MissingROMRecoveryPresenter {
     private var statusAlert: UIAlertController?
     private var lastStatus = ""
     private var asking = false
+    private var cancelled = false
     var onCancel: (() -> Void)?
 
     init(host: UIViewController, title: String) {
@@ -117,16 +118,26 @@ final class MissingROMRecoveryPresenter {
         self.title = title
     }
 
+    /// The host can show an alert: it is on screen, staying there, and showing nothing else.
+    private var presentableHost: UIViewController? {
+        guard let host, host.viewIfLoaded?.window != nil, !host.isBeingDismissed,
+              host.presentedViewController == nil else { return nil }
+        return host
+    }
+
     func setStatus(_ text: String) {
         lastStatus = text
-        guard !asking else { return }
+        guard !asking, !cancelled else { return }
         if let statusAlert, statusAlert.presentingViewController != nil {
             statusAlert.message = text
             return
         }
-        guard let host, host.presentedViewController == nil else { return }
+        guard let host = presentableHost else { return }
         let alert = UIAlertController(title: "Looking for \(title) on your network", message: text, preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "Cancel", style: .cancel) { [weak self] _ in self?.onCancel?() })
+        alert.addAction(UIAlertAction(title: "Cancel", style: .cancel) { [weak self] _ in
+            self?.cancelled = true
+            self?.onCancel?()
+        })
         statusAlert = alert
         host.present(alert, animated: false)
     }
@@ -143,42 +154,70 @@ final class MissingROMRecoveryPresenter {
     func ask(_ prompt: MissingROMRecoveryPrompt) async -> MissingROMRecoveryAnswer {
         asking = true
         await hideStatus()
-        let answer = await withCheckedContinuation { (continuation: CheckedContinuation<MissingROMRecoveryAnswer, Never>) in
-            guard let host, host.presentedViewController == nil else {
-                continuation.resume(returning: .cancel)
-                return
-            }
-            let alert: UIAlertController
-            switch prompt {
-            case let .copy(title, source):
-                alert = UIAlertController(title: "\(title)'s file is missing", message: "Copy it from \(source)?", preferredStyle: .alert)
-                alert.addAction(UIAlertAction(title: "Copy", style: .default) { _ in continuation.resume(returning: .allow) })
-                alert.addAction(UIAlertAction(title: "Always Allow", style: .default) { _ in continuation.resume(returning: .alwaysAllow) })
-            case let .standIn(_, fileName, source):
-                alert = UIAlertController(
-                    title: "A different version was found",
-                    message: "\(source) has \(fileName), which may be a different version. Use it? Save states may not load.",
-                    preferredStyle: .alert
-                )
-                alert.addAction(UIAlertAction(title: "Use It", style: .default) { _ in continuation.resume(returning: .allow) })
-            }
-            alert.addAction(UIAlertAction(title: "Cancel", style: .cancel) { _ in continuation.resume(returning: .cancel) })
-            host.present(alert, animated: true)
+        let alert: AnsweringAlertController<MissingROMRecoveryAnswer>
+        switch prompt {
+        case let .copy(title, source):
+            alert = AnsweringAlertController(
+                title: "\(title)'s file is missing", message: "Copy it from \(source)?", fallback: .cancel
+            )
+            alert.addAnswer("Copy", .allow)
+            alert.addAnswer("Always Allow", .alwaysAllow)
+        case let .standIn(_, fileName, source):
+            alert = AnsweringAlertController(
+                title: "A different version was found",
+                message: "\(source) has \(fileName), which may be a different version. Use it? Save states may not load.",
+                fallback: .cancel
+            )
+            alert.addAnswer("Use It", .allow)
         }
+        alert.addAnswer("Cancel", .cancel, style: .cancel)
+        let answer = await alert.answer(on: presentableHost)
         asking = false
-        if answer != .cancel { setStatus(lastStatus) }
+        if answer == .cancel { cancelled = true } else { setStatus(lastStatus) }
         return answer
     }
 
     func report(_ message: String) async {
-        await withCheckedContinuation { (continuation: CheckedContinuation<Void, Never>) in
-            guard let host, host.presentedViewController == nil else {
-                continuation.resume()
+        let alert = AnsweringAlertController<Bool>(title: "\(title)'s file is missing", message: message, fallback: true)
+        alert.addAnswer("OK", true, style: .cancel)
+        _ = await alert.answer(on: presentableHost)
+    }
+}
+
+/// An alert whose answer can be awaited. It always answers once: with the chosen action, or
+/// with `fallback` when it cannot be shown or goes away without one (its host was dismissed).
+@MainActor
+final class AnsweringAlertController<Answer: Sendable>: UIAlertController {
+    private var fallback: Answer?
+    private var continuation: CheckedContinuation<Answer, Never>?
+
+    convenience init(title: String, message: String, fallback: Answer) {
+        self.init(title: title, message: message, preferredStyle: .alert)
+        self.fallback = fallback
+    }
+
+    func addAnswer(_ title: String, _ answer: Answer, style: UIAlertAction.Style = .default) {
+        addAction(UIAlertAction(title: title, style: style) { [weak self] _ in self?.finish(answer) })
+    }
+
+    func answer(on host: UIViewController?) async -> Answer {
+        await withCheckedContinuation { continuation in
+            self.continuation = continuation
+            guard let host else {
+                if let fallback { finish(fallback) }
                 return
             }
-            let alert = UIAlertController(title: "\(title)'s file is missing", message: message, preferredStyle: .alert)
-            alert.addAction(UIAlertAction(title: "OK", style: .cancel) { _ in continuation.resume() })
-            host.present(alert, animated: true)
+            host.present(self, animated: true)
         }
+    }
+
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        if let fallback { finish(fallback) }
+    }
+
+    private func finish(_ answer: Answer) {
+        continuation?.resume(returning: answer)
+        continuation = nil
     }
 }
