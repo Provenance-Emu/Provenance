@@ -20,6 +20,8 @@
 //    GET  /api/debug/uitree               key-window UIView tree (UIKit only)
 //    POST /api/debug/navigate?url=provenance://screen/...
 //    POST /api/debug/dismiss              dismiss presented sheets / alerts
+//    GET  /api/debug/alert                the showing alert: title, message, buttons
+//    POST /api/debug/alert {button: title}   answer it (system alerts: DEBUG builds only)
 //    POST /api/debug/boot   {md5 | title [, system, core]}
 //    POST /api/debug/exit
 //    POST /api/debug/pause | /resume
@@ -131,6 +133,15 @@ public enum PVDebugAPIRoutes {
                 if !chain.isEmpty { base.dismiss(animated: false) }
                 return .ok(["dismissed": dismissed + chain.map { String(describing: type(of: $0)) }])
             }
+        }
+
+        registry.register("GET", "/api/debug/alert") { _ in
+            await MainActor.run { .ok(alertPayload()) }
+        }
+
+        registry.register("POST", "/api/debug/alert") { request in
+            guard let button = request.value("button"), !button.isEmpty else { return .error("pass button (an action's title)") }
+            return await MainActor.run { answerAlert(button: button) }
         }
 
         registry.register("POST", "/api/debug/boot") { request in
@@ -451,6 +462,48 @@ public enum PVDebugAPIRoutes {
 
     /// Key window of the foreground-active scene (the app has separate main
     /// and emulator scenes), falling back to any visible window.
+    // MARK: Alerts
+
+    /// The system alert on top of the key window, if one is showing.
+    private static func topSystemAlert() -> UIAlertController? {
+        var top = keyWindow()?.rootViewController
+        while let presented = top?.presentedViewController, !presented.isBeingDismissed { top = presented }
+        return top as? UIAlertController
+    }
+
+    private static func alertPayload() -> [String: Any] {
+        if let alert = PVAlertCenter.shared.currentAlertSummary {
+            return ["showing": true, "kind": "app", "title": alert.title, "message": alert.message ?? "", "buttons": alert.actions]
+        }
+        if let alert = topSystemAlert() {
+            return ["showing": true, "kind": "system", "title": alert.title ?? "", "message": alert.message ?? "",
+                    "buttons": alert.actions.compactMap(\.title)]
+        }
+        return ["showing": false]
+    }
+
+    private static func answerAlert(button: String) -> PVDebugAPIResponse {
+        if PVAlertCenter.shared.currentAlertSummary != nil {
+            return PVAlertCenter.shared.answerCurrent(actionTitled: button)
+                ? .ok(["answered": button, "kind": "app"]) : .error("no button titled '\(button)'", status: 404)
+        }
+        guard let alert = topSystemAlert() else { return .error("no alert is showing", status: 404) }
+        guard let action = alert.actions.first(where: { $0.title?.caseInsensitiveCompare(button) == .orderedSame }) else {
+            return .error("no button titled '\(button)'", status: 404)
+        }
+        #if DEBUG
+        // UIAlertAction keeps its handler private; a debug build reads it to stand in for the tap.
+        typealias Handler = @convention(block) (UIAlertAction) -> Void
+        if let block = action.value(forKey: "handler") {
+            unsafeBitCast(block as AnyObject, to: Handler.self)(action)
+        }
+        alert.dismiss(animated: false)
+        return .ok(["answered": button, "kind": "system"])
+        #else
+        return .error("system alerts can be answered in DEBUG builds only", status: 409)
+        #endif
+    }
+
     private static func keyWindow() -> UIWindow? {
         let scenes = UIApplication.shared.connectedScenes.compactMap { $0 as? UIWindowScene }
         let active = scenes.filter { $0.activationState == .foregroundActive }

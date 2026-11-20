@@ -421,7 +421,7 @@ public class SceneCoordinator: ObservableObject {
         // Fast path: check if the game file physically exists on disk.
         // Use FileLocationResolver for consistent local-first file checking.
         // Also checks system ROMs directory for files that were moved between systems.
-        let fileExistsLocally: Bool = {
+        var fileExistsLocally: Bool = {
             // Check 1: FileLocationResolver (local Documents/Caches + iCloud Drive)
             if let partialPath = game.file?.partialPath, !partialPath.isEmpty {
                 if FileLocationResolver.shared.resolve(partialPath) != .notFound {
@@ -467,6 +467,12 @@ public class SceneCoordinator: ObservableObject {
             }
             return false
         }()
+
+        // The file is gone and iCloud holds no copy: nearby libraries and saved servers may.
+        if !fileExistsLocally, MissingROMRecovery.recoverer != nil, !(Defaults[.iCloudSync] && game.hasCloudAssets) {
+            guard await recoverMissingFile(of: game) else { return }
+            fileExistsLocally = true
+        }
 
         /// Result of the pre-download check, when one ran. Reused (after a cheap on-disk
         /// refresh) for the final check so a cloud-only game doesn't repeat the same
@@ -569,6 +575,10 @@ public class SceneCoordinator: ObservableObject {
 
                 if isValid {
                     syncStatusManager.complete()
+                } else if MissingROMRecovery.recoverer != nil {
+                    // iCloud could not supply the file; a nearby library or server may.
+                    syncStatusManager.hide()
+                    guard await recoverMissingFile(of: game) else { return }
                 } else {
                     syncStatusManager.error("Game file is not available. Please ensure iCloud sync is enabled and the game is synced.")
                     DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) { [weak self] in
@@ -1314,7 +1324,7 @@ public class SceneCoordinator: ObservableObject {
         }
 
         // Fast path: same multi-location check as launchGameWithValidation
-        let saveStateFileExistsLocally: Bool = {
+        var saveStateFileExistsLocally: Bool = {
             // Check 1: FileLocationResolver (local Documents/Caches + iCloud Drive)
             if let partialPath = game.file?.partialPath, !partialPath.isEmpty {
                 if FileLocationResolver.shared.resolve(partialPath) != .notFound {
@@ -1352,6 +1362,12 @@ public class SceneCoordinator: ObservableObject {
             }
             return false
         }()
+
+        // The file is gone and iCloud holds no copy: nearby libraries and saved servers may.
+        if !saveStateFileExistsLocally, MissingROMRecovery.recoverer != nil, !(Defaults[.iCloudSync] && game.hasCloudAssets) {
+            guard await recoverMissingFile(of: game) else { return }
+            saveStateFileExistsLocally = true
+        }
 
         /// Result of the pre-download check, when one ran. Reused (after a cheap on-disk
         /// refresh) for the final check so a cloud-only game doesn't repeat the same
@@ -1439,7 +1455,11 @@ public class SceneCoordinator: ObservableObject {
                     return
                 }
 
-                if !isValid {
+                if !isValid, MissingROMRecovery.recoverer != nil {
+                    // iCloud could not supply the file; a nearby library or server may.
+                    syncStatusManager.hide()
+                    guard await recoverMissingFile(of: game) else { return }
+                } else if !isValid {
                     syncStatusManager.error("Game file is not available. Please ensure iCloud sync is enabled and the game is synced.")
                     DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) { [weak self] in
                         self?.syncStatusManager.hide()
@@ -1749,6 +1769,21 @@ public class SceneCoordinator: ObservableObject {
                 message: error.localizedDescription
             )
         }
+    }
+
+    /// Copies a game's missing file back from a nearby library or saved server, with its own
+    /// prompts and result alert. True when the file is on disk again and the launch may go on.
+    private func recoverMissingFile(of game: PVGame) async -> Bool {
+        let md5 = game.md5Hash
+        let title = game.title
+        ILOG("SceneCoordinator: \(title)'s file is missing; looking on nearby libraries and servers")
+        // A prompt waits for the user and a large copy takes minutes: the 60 s launch
+        // safety net must not cancel either. It starts again for the rest of the launch.
+        launchTimeoutTask?.cancel()
+        let restored = await MissingROMRecovery.run(gameMD5: md5, title: title)
+        guard restored, !Task.isCancelled else { return false }
+        scheduleActiveLaunchTimeout()
+        return true
     }
 
     private func showGameLaunchError(title: String,

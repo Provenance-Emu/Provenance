@@ -154,70 +154,33 @@ final class MissingROMRecoveryPresenter {
     func ask(_ prompt: MissingROMRecoveryPrompt) async -> MissingROMRecoveryAnswer {
         asking = true
         await hideStatus()
-        let alert: AnsweringAlertController<MissingROMRecoveryAnswer>
+        let alert: PVAlert
+        var answers: [MissingROMRecoveryAnswer]
         switch prompt {
         case let .copy(title, source):
-            alert = AnsweringAlertController(
-                title: "\(title)'s file is missing", message: "Copy it from \(source)?", fallback: .cancel
+            alert = PVAlert(
+                title: "\(title)'s file is missing", message: "Copy it from \(source)?",
+                actions: [PVAlertAction("Copy"), PVAlertAction("Always Allow"), .cancel()]
             )
-            alert.addAnswer("Copy", .allow)
-            alert.addAnswer("Always Allow", .alwaysAllow)
+            answers = [.allow, .alwaysAllow, .cancel]
         case let .standIn(_, fileName, source):
-            alert = AnsweringAlertController(
+            alert = PVAlert(
                 title: "A different version was found",
                 message: "\(source) has \(fileName), which may be a different version. Use it? Save states may not load.",
-                fallback: .cancel
+                actions: [PVAlertAction("Use It"), .cancel()]
             )
-            alert.addAnswer("Use It", .allow)
+            answers = [.allow, .cancel]
         }
-        alert.addAnswer("Cancel", .cancel, style: .cancel)
-        let answer = await alert.answer(on: presentableHost)
+        // An alert taken down without an answer (its host went away) counts as Cancel.
+        let index = await PVAlertCenter.shared.presentAndWait(alert, from: host)
+        let answer = index.map { answers[$0] } ?? .cancel
         asking = false
         if answer == .cancel { cancelled = true } else { setStatus(lastStatus) }
         return answer
     }
 
     func report(_ message: String) async {
-        let alert = AnsweringAlertController<Bool>(title: "\(title)'s file is missing", message: message, fallback: true)
-        alert.addAnswer("OK", true, style: .cancel)
-        _ = await alert.answer(on: presentableHost)
-    }
-}
-
-/// An alert whose answer can be awaited. It always answers once: with the chosen action, or
-/// with `fallback` when it cannot be shown or goes away without one (its host was dismissed).
-@MainActor
-final class AnsweringAlertController<Answer: Sendable>: UIAlertController {
-    private var fallback: Answer?
-    private var continuation: CheckedContinuation<Answer, Never>?
-
-    convenience init(title: String, message: String, fallback: Answer) {
-        self.init(title: title, message: message, preferredStyle: .alert)
-        self.fallback = fallback
-    }
-
-    func addAnswer(_ title: String, _ answer: Answer, style: UIAlertAction.Style = .default) {
-        addAction(UIAlertAction(title: title, style: style) { [weak self] _ in self?.finish(answer) })
-    }
-
-    func answer(on host: UIViewController?) async -> Answer {
-        await withCheckedContinuation { continuation in
-            self.continuation = continuation
-            guard let host else {
-                if let fallback { finish(fallback) }
-                return
-            }
-            host.present(self, animated: true)
-        }
-    }
-
-    override func viewDidDisappear(_ animated: Bool) {
-        super.viewDidDisappear(animated)
-        if let fallback { finish(fallback) }
-    }
-
-    private func finish(_ answer: Answer) {
-        continuation?.resume(returning: answer)
-        continuation = nil
+        let alert = PVAlert(title: "\(title)'s file is missing", message: message, actions: [.ok()])
+        _ = await PVAlertCenter.shared.presentAndWait(alert, from: host)
     }
 }

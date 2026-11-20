@@ -453,6 +453,10 @@ public extension PVFile {
     //        }
     //    }
 
+    /// The size recorded the last time the file was measured, or 0 when it never was. Unlike
+    /// `size` it reads no disk, so it still answers after the file is gone.
+    var lastKnownSize: Int { sizeCache }
+
     var size: UInt64 {
         get {
             // If we have a recent cache (within last minute), use it

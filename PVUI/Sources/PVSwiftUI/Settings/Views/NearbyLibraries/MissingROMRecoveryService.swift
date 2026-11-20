@@ -28,7 +28,7 @@ public final class MissingROMRecoveryService: MissingROMRecovering {
     }
 
     private let directory = RecoverySourceDirectory()
-    /// One search for the session, so a second missing game reuses the catalogues.
+    /// One search, so games missing at the same time share the fetched game lists.
     private let search = MissingGameSearch()
     private let staging = NearbyLibrariesModel.incomingStaging
     private lazy var hints = GameSourceHints(fileURL: Self.hintsURL)
@@ -54,8 +54,12 @@ public final class MissingROMRecoveryService: MissingROMRecovering {
     ) async -> MissingROMRecoveryOutcome {
         let key = gameMD5.uppercased()
         if let existing = running[key] { return await existing.value }
+        // A game list fetched for an earlier recovery may be minutes or hours old. Games missing
+        // together still share one fetch.
+        let startsFresh = running.isEmpty
         let task = Task { @MainActor in
-            await self.run(md5: key, status: status, ask: ask)
+            if startsFresh { await self.search.reset() }
+            return await self.run(md5: key, status: status, ask: ask)
         }
         running[key] = task
         let outcome = await withTaskCancellationHandler {
@@ -76,6 +80,8 @@ public final class MissingROMRecoveryService: MissingROMRecovering {
             return .failed(message: "The game is no longer in the library.")
         }
         let query = target.query
+        let fileList = query.files.map { "\($0.name) (\($0.size))" }.joined(separator: ", ")
+        ILOG("Missing ROM recovery: \(query.title) [\(query.system.rawValue)] md5 \(query.md5), files: \(fileList), single file: \(query.isSingleFileImage)")
         let available = await directory.sources(for: query.system)
         if Task.isCancelled { return .declined }
         var needsSignIn = available.needsSignIn
@@ -94,6 +100,7 @@ public final class MissingROMRecoveryService: MissingROMRecovering {
             return .notFound(asked: report.asked, unreachable: report.unreachable, needsSignIn: needsSignIn)
         }
 
+        ILOG("Missing ROM recovery: \(origin.name) has \(found.item.title) (md5 \(found.item.md5 ?? "none"), \(found.item.sizeBytes) bytes) as \(found.kind)")
         switch found.kind {
         case .exact:
             if !Defaults[.missingROMRecoveryAlwaysAllow] {
@@ -148,15 +155,24 @@ public final class MissingROMRecoveryService: MissingROMRecovering {
               let system = SystemIdentifier(rawValue: game.systemIdentifier), system != .Unknown,
               let primaryPath = game.file?.partialPath, !primaryPath.isEmpty else { return nil }
         let resolver = FileLocationResolver.shared
+        let primaryURL = resolver.bestURL(for: primaryPath)
+        // The importer does not fill `fileSize`; the file's own last measured size is the fallback.
+        let primarySize = game.fileSize > 0 ? game.fileSize : (game.file?.lastKnownSize ?? 0)
         var files = [RestoreTarget(
-            file: MissingGameFile(name: (primaryPath as NSString).lastPathComponent, size: Int64(game.fileSize), isPrimary: true),
-            url: resolver.bestURL(for: primaryPath)
+            file: MissingGameFile(name: primaryURL.lastPathComponent, size: Int64(primarySize), isPrimary: true),
+            url: primaryURL
         )]
-        for related in game.relatedFiles where !related.partialPath.isEmpty && related.partialPath != primaryPath {
-            // The library keeps no size for related files; 0 means unknown to the matcher.
+        // The related list holds the primary file again, under another form of its path that
+        // resolves elsewhere while the file is missing. Files are matched by name, so a name
+        // counts once.
+        var seen: Set<String> = [primaryURL.lastPathComponent.lowercased()]
+        for related in game.relatedFiles where !related.partialPath.isEmpty {
+            let url = resolver.bestURL(for: related.partialPath)
+            guard seen.insert(url.lastPathComponent.lowercased()).inserted else { continue }
+            // 0 means the size is unknown to the matcher.
             files.append(RestoreTarget(
-                file: MissingGameFile(name: (related.partialPath as NSString).lastPathComponent, size: 0, isPrimary: false),
-                url: resolver.bestURL(for: related.partialPath)
+                file: MissingGameFile(name: url.lastPathComponent, size: Int64(related.lastKnownSize), isPrimary: false),
+                url: url
             ))
         }
         let single = LocalLibraryEntry.isSingleFileImage(

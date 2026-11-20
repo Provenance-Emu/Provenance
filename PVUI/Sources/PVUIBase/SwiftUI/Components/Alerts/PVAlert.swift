@@ -277,6 +277,23 @@ public final class PVAlertCenter {
         }
     }
 
+    /// The showing alert's title, message and action titles, for the debug API.
+    public var currentAlertSummary: (title: String, message: String?, actions: [String])? {
+        guard current != nil, let alert = currentAlert else { return nil }
+        return (alert.title, alert.message, alert.orderedActions.map(\.title))
+    }
+
+    /// Answers the showing alert as if the action with this title was chosen (debug API).
+    /// Text fields answer empty and the toggle keeps its initial value.
+    @discardableResult
+    public func answerCurrent(actionTitled title: String) -> Bool {
+        guard current != nil, let alert = currentAlert,
+              let action = alert.actions.first(where: { $0.title.caseInsensitiveCompare(title) == .orderedSame }) else { return false }
+        let response = PVAlertResponse(textValues: alert.textFields.map(\.text), toggleValue: alert.toggle?.isOn ?? false)
+        finish(action: action, response: response)
+        return true
+    }
+
     private func finish(action: PVAlertAction, response: PVAlertResponse) {
         finish { action.handler?(response) }
     }
