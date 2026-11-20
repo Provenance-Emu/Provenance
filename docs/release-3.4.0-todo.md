@@ -52,6 +52,22 @@ Design and plan: `docs/superpowers/specs/2026-11-19-bezels-on-by-default-design.
 - [ ] External display on iOS 27 (scene accessory, `ccfccf0d76`): the game goes to the display in Game on External Display mode, Mirror Device still mirrors, the pause tile still shows in Mirror mode.
 - [ ] Known gaps: the light gun turns the TV off while its touch layer is up; switching between an image bezel and a shader TV still passes through the bare picture.
 
+## Missing ROM recovery (built 2026-11-20, nothing seen running yet)
+
+Design and plan: `docs/superpowers/specs/2026-11-19-missing-rom-recovery-design.md`,
+`docs/superpowers/plans/2026-11-20-missing-rom-recovery.md`. Unit tests pass and both platforms build; these need a person:
+
+- [ ] Two devices, one sharing its library: import the same ROM on the second, open the first's library once in Nearby Libraries, delete the ROM file, start the game. Expect "Copy it from …?", then the game boots with its saves.
+- [ ] Same again with Always Allow chosen: no question, only the "Looking for … on your network" alert.
+- [ ] Apple TV with a purged game, iCube on a Mac as the host (paired with its 6-digit code first).
+- [ ] iFly as the host: its metering and per-game approval while the copy alert is up.
+- [ ] A content server as the source, with a saved token; and with an expired one ("Needs sign-in" in the alert).
+- [ ] A different version on the host (same name, other region tag never matches; same name, other size does): the "different version" question, then saves and play time still on the game.
+- [ ] Nothing has it: the alert lists who was asked and who could not be reached; the emulator screen closes.
+- [ ] Cancel during the search and during a large copy; start the game again and the copy resumes.
+- [ ] Game menu, Restore Missing File.
+- [ ] Not built: RomM as a source (plan Task 9); same-device apps asked before LAN ones; recovery after an iCloud download fails mid-way is wired but only the "no iCloud copy" path is the common one.
+
 ## Backlog
 
 - [ ] **Core capability coverage.** Verify link cable, mouse, camera, microphone, and netplay support for specific shipped cores before adding badges. Extend the curated recommendations to more systems. [#3341](https://github.com/Provenance-Emu/Provenance/issues/3341)
