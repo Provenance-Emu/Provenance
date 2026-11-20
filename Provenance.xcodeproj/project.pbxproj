@@ -531,6 +531,8 @@
 		B3DD04022F20031900000000 /* WidgetExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = B355E0382920AC1A00E4C858 /* WidgetExtension.appex */; platformFilter = ios; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		B3DD06002F20031900000001 /* Widgets/RecentlyPlayedWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3DD05002F20031900000001 /* Widgets/RecentlyPlayedWidget.swift */; };
 		B3DD06012F20031900000001 /* Widgets/FavoritesWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3DD05012F20031900000001 /* Widgets/FavoritesWidget.swift */; };
+		C0C0CAFE5700000000000005 /* Widgets/ProvenanceFeedWidgets.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0C0CAFE5700000000000004 /* Widgets/ProvenanceFeedWidgets.swift */; };
+		C0C0CAFE5700000000000003 /* PVWidgets in Frameworks */ = {isa = PBXBuildFile; productRef = C0C0CAFE5700000000000002 /* PVWidgets */; };
 		B3DD06022F20031900000001 /* Widgets/LibraryStatsWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3DD05022F20031900000001 /* Widgets/LibraryStatsWidget.swift */; };
 		B3DD06032F20031900000001 /* Views/GameArtworkView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3DD05032F20031900000001 /* Views/GameArtworkView.swift */; };
 		B3DD06042F20031900000001 /* Views/SystemBadgeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3DD05042F20031900000001 /* Views/SystemBadgeView.swift */; };
@@ -1579,6 +1581,7 @@
 		B3DD01052F20031900000000 /* WidgetSharedDefaults.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetSharedDefaults.swift; sourceTree = "<group>"; };
 		B3DD05002F20031900000001 /* Widgets/RecentlyPlayedWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Widgets/RecentlyPlayedWidget.swift; sourceTree = "<group>"; };
 		B3DD05012F20031900000001 /* Widgets/FavoritesWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Widgets/FavoritesWidget.swift; sourceTree = "<group>"; };
+		C0C0CAFE5700000000000004 /* Widgets/ProvenanceFeedWidgets.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Widgets/ProvenanceFeedWidgets.swift; sourceTree = "<group>"; };
 		B3DD05022F20031900000001 /* Widgets/LibraryStatsWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Widgets/LibraryStatsWidget.swift; sourceTree = "<group>"; };
 		B3DD05032F20031900000001 /* Views/GameArtworkView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Views/GameArtworkView.swift; sourceTree = "<group>"; };
 		B3DD05042F20031900000001 /* Views/SystemBadgeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Views/SystemBadgeView.swift; sourceTree = "<group>"; };
@@ -2279,6 +2282,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				B341A9572F78F52B007C483B /* PVLiveActivities in Frameworks */,
+				C0C0CAFE5700000000000003 /* PVWidgets in Frameworks */,
 				B396209C2C66E1F30094F6F0 /* PVSupport in Frameworks */,
 				B396209A2C66E1EF0094F6F0 /* PVLibrary in Frameworks */,
 				B355E03B2920AC1A00E4C858 /* SwiftUI.framework in Frameworks */,
@@ -3271,6 +3275,7 @@
 				B3DD01042F20031900000000 /* NowPlayingStandByWidget.swift */,
 				B3DD05002F20031900000001 /* Widgets/RecentlyPlayedWidget.swift */,
 				B3DD05012F20031900000001 /* Widgets/FavoritesWidget.swift */,
+				C0C0CAFE5700000000000004 /* Widgets/ProvenanceFeedWidgets.swift */,
 				B3DD05022F20031900000001 /* Widgets/LibraryStatsWidget.swift */,
 				B3DD05032F20031900000001 /* Views/GameArtworkView.swift */,
 				B3DD05042F20031900000001 /* Views/SystemBadgeView.swift */,
@@ -3690,6 +3695,9 @@
 			dependencies = (
 			);
 			name = WidgetExtension;
+			packageProductDependencies = (
+				C0C0CAFE5700000000000002 /* PVWidgets */,
+			);
 			productName = WidgetExtensionExtension;
 			productReference = B355E0382920AC1A00E4C858 /* WidgetExtension.appex */;
 			productType = "com.apple.product-type.app-extension";
@@ -4395,6 +4403,7 @@
 				B3D30FBD26F0B4CD0064603F /* XCRemoteSwiftPackageReference "SteamController" */,
 				B357A43627092253002C7C0F /* XCRemoteSwiftPackageReference "appcenter-sdk-apple" */,
 				B3E88CB62977AB4300C90E86 /* XCRemoteSwiftPackageReference "Reachability" */,
+				C0C0CAFE5700000000000001 /* XCRemoteSwiftPackageReference "PVWidgets" */,
 				B323B0072BF46D2800CEA3CF /* XCLocalSwiftPackageReference "PVLibrary" */,
 				B323B00C2BF46DB900CEA3CF /* XCLocalSwiftPackageReference "PVSupport" */,
 				B395958D2BF47033004C5AA9 /* XCRemoteSwiftPackageReference "RxDataSources" */,
@@ -5550,6 +5559,7 @@
 				B3DD07042F20031900000000 /* WidgetLocalizedStrings.swift in Sources */,
 				B3DD06002F20031900000001 /* Widgets/RecentlyPlayedWidget.swift in Sources */,
 				B3DD06012F20031900000001 /* Widgets/FavoritesWidget.swift in Sources */,
+				C0C0CAFE5700000000000005 /* Widgets/ProvenanceFeedWidgets.swift in Sources */,
 				B3DD06022F20031900000001 /* Widgets/LibraryStatsWidget.swift in Sources */,
 				B341A9382F78F4B8007C483B /* GameLiveActivityWidget.swift in Sources */,
 				B3DD06032F20031900000001 /* Views/GameArtworkView.swift in Sources */,
@@ -11325,6 +11335,14 @@
 				minimumVersion = 8.43.0;
 			};
 		};
+		C0C0CAFE5700000000000001 /* XCRemoteSwiftPackageReference "PVWidgets" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/Provenance-Emu/PVWidgets.git";
+			requirement = {
+				kind = upToNextMinorVersion;
+				minimumVersion = 0.1.0;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -12652,6 +12670,11 @@
 		C0C0CAFE64EF4A1E710A7CA8 /* PVPPSSPP-Dynamic */ = {isa = XCSwiftPackageProductDependency; package = C0C0CAFE422FE528D3D897DA /* Cores/PPSSPP */; productName = "PVPPSSPP-Dynamic"; };
 		C0C0CAFE59A6251E4DA9EF11 /* PVPPSSPP-Dynamic */ = {isa = XCSwiftPackageProductDependency; package = C0C0CAFE422FE528D3D897DA /* Cores/PPSSPP */; productName = "PVPPSSPP-Dynamic"; };
 		C0C0CAFECB5B5AA3646435A6 /* PVPPSSPP-Dynamic */ = {isa = XCSwiftPackageProductDependency; package = C0C0CAFE422FE528D3D897DA /* Cores/PPSSPP */; productName = "PVPPSSPP-Dynamic"; };
+		C0C0CAFE5700000000000002 /* PVWidgets */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = C0C0CAFE5700000000000001 /* XCRemoteSwiftPackageReference "PVWidgets" */;
+			productName = PVWidgets;
+		};
 /* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 1A3D408C17B2DCE4004DFFFC /* Project object */;

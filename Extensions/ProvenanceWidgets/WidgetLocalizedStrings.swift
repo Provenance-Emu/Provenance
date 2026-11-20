@@ -20,10 +20,5 @@ enum WidgetLocalizedStrings {
     static var brandName: String {
         String(localized: "widget.common.brand-name", defaultValue: "Provenance", comment: "Product name when no game title is available")
     }
-
-    /// Placeholder when a system abbreviation is missing in compact badges.
-    static var unknownSystemAbbreviation: String {
-        String(localized: "widget.common.unknown-system", defaultValue: "???", comment: "Placeholder when system abbreviation is missing")
-    }
 }
 #endif

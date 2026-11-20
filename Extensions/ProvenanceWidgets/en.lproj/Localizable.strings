@@ -2,7 +2,6 @@
 
 /* Common */
 "widget.common.brand-name" = "Provenance";
-"widget.common.unknown-system" = "???";
 "widget.common.games" = "Games";
 "widget.common.systems" = "Systems";
 "widget.common.played" = "Played";
@@ -51,3 +50,7 @@
 "widget.recent.description" = "See the games you've played most recently.";
 "widget.recent.empty-title" = "No Recent Games";
 "widget.recent.empty-message" = "Play a game\nto see it here";
+
+/* Recently Added */
+"widget.recently-added.display-name" = "Recently Added";
+"widget.recently-added.empty-message" = "Import a game\nto see it here";

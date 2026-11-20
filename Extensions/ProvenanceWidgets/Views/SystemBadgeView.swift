@@ -9,56 +9,6 @@
 #if os(iOS)
 import SwiftUI
 
-/// Visual treatment for the system abbreviation pill (matches host accent vs. RetroWave widget chrome).
-enum SystemBadgeChrome {
-    /// Standard accent-colored capsule (system accent color).
-    case accentPill
-    /// Neon gradient capsule aligned with `RetroWaveWidgetPalette` widgets.
-    case retroWaveNeon
-}
-
-/// Small pill-shaped badge showing the abbreviated system name.
-struct SystemBadgeView: View {
-    let systemShortName: String
-    /// Chrome style; defaults to the app accent pill for backward compatibility.
-    var chrome: SystemBadgeChrome = .accentPill
-
-    var body: some View {
-        Text(systemShortName.isEmpty ? WidgetLocalizedStrings.unknownSystemAbbreviation : systemShortName)
-            .font(.caption2)
-            .fontWeight(.semibold)
-            .foregroundStyle(.white)
-            .padding(.horizontal, 5)
-            .padding(.vertical, 2)
-            .background(backgroundView)
-            .lineLimit(1)
-    }
-
-    @ViewBuilder
-    private var backgroundView: some View {
-        switch chrome {
-        case .accentPill:
-            Capsule().fill(Color.accentColor.opacity(0.85))
-        case .retroWaveNeon:
-            Capsule()
-                .fill(
-                    LinearGradient(
-                        colors: [
-                            RetroWaveWidgetPalette.neonPink.opacity(0.92),
-                            RetroWaveWidgetPalette.neonPurple.opacity(0.88)
-                        ],
-                        startPoint: .leading,
-                        endPoint: .trailing
-                    )
-                )
-                .overlay(
-                    Capsule()
-                        .strokeBorder(RetroWaveWidgetPalette.neonCyan.opacity(0.35), lineWidth: 0.5)
-                )
-        }
-    }
-}
-
 // MARK: - RetroWave widget styling
 
 /// Shared color tokens for RetroWave-inspired widget chrome (dark base + neon accents).

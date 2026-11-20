@@ -7,14 +7,16 @@
 //
 
 #if os(iOS)
+import PVWidgets
 import SwiftUI
 import WidgetKit
 
 /// Entry point for the Provenance Widgets extension.
 ///
 /// Home screen widgets:
-/// - **RecentlyPlayedWidget** — shows recently played games (small/medium/large)
-/// - **FavoritesWidget** — quick-access grid of favourite games (small/medium/large/xLarge)
+/// - **RecentlyPlayedWidget** and **FavoritesWidget** — game lists drawn by the shared
+///   PVWidgets package (small/medium/large/xLarge). Each can be switched to another list
+///   (recents, favorites, recently added) and to a grid or list layout on its edit screen.
 /// - **LibraryStatsWidget** — library overview (small/medium)
 ///
 /// Lock Screen widgets:
@@ -29,6 +31,10 @@ import WidgetKit
 /// - **GameLiveActivityWidget** — Dynamic Island + lock-screen activity for in-game sessions
 @main
 struct ProvenanceWidgetsBundle: WidgetBundle {
+    init() {
+        PVWidgetsHost.configure(dataSource: ProvenanceWidgetDataSource(), theme: ProvenanceWidgetTheme.retroWave)
+    }
+
     var body: some Widget {
         // Home screen
         RecentlyPlayedWidget()

@@ -55,6 +55,8 @@ public enum WidgetSharedDefaults {
         static let galleryGames = "widget.galleryGames"
         /// JSON-encoded array of `WidgetGameData` for favorite games, sorted by title.
         static let favoriteGames = "widget.favoriteGames"
+        /// JSON array of games ordered by import date, newest first.
+        static let recentlyAddedGames = "widget.recentlyAddedGames"
         /// Total number of distinct systems in the library (Int).
         static let systemCount = "widget.systemCount"
         /// Aggregate play time across all games, in seconds (Int).
@@ -213,11 +215,6 @@ extension WidgetSharedDefaults {
             .appendingPathComponent(path)
     }
 
-    /// Returns up to `limit` recently-played games.
-    static func loadRecentGames(limit: Int) -> [WidgetGameEntry] {
-        Array(loadRecentGames().prefix(limit))
-    }
-
     static func loadFavoriteGames() -> [WidgetGameEntry] {
         guard let data = shared?.data(forKey: Keys.favoriteGames) else { return [] }
         let decoder = JSONDecoder()
@@ -225,9 +222,11 @@ extension WidgetSharedDefaults {
         return (try? decoder.decode([WidgetGameEntry].self, from: data)) ?? []
     }
 
-    /// Returns up to `limit` favorite games.
-    static func loadFavoriteGames(limit: Int) -> [WidgetGameEntry] {
-        Array(loadFavoriteGames().prefix(limit))
+    static func loadRecentlyAddedGames() -> [WidgetGameEntry] {
+        guard let data = shared?.data(forKey: Keys.recentlyAddedGames) else { return [] }
+        let decoder = JSONDecoder()
+        decoder.dateDecodingStrategy = .iso8601
+        return (try? decoder.decode([WidgetGameEntry].self, from: data)) ?? []
     }
 
     static func loadLibraryStats() -> WidgetLibraryStats {
@@ -270,50 +269,19 @@ enum WidgetArtworkPixelBudget {
     /// 60pt × 3 × 1.5 = 270 → 288.
     static let inlineThumbnail = 288
 
-    /// Cells in a dense grid — 5 or more covers rendered at once
-    /// (Favorites `.systemLarge` 4×2, Favorites `.systemExtraLarge` 4×4,
-    /// RecentlyPlayed `.systemExtraLarge`).
-    ///
-    /// Densest cell is Favorites `.systemLarge`: `(364 − 24 − 30) / 4 ≈ 77pt`
-    /// → 77 × 3 × 1.5 ≈ 349. Largest is Favorites `.systemExtraLarge` on iPad
-    /// (`@2x`): `(715 − 28 − 36) / 4 ≈ 163pt` → 163 × 2 × 1.5 ≈ 489. 512 covers both
-    /// with no upscale, at 512 × 384 × 4 B ≈ 786 KB decoded per cover.
-    static let denseGridCell = 512
-
-    /// Cells in a sparse grid — 2 to 4 covers rendered at once
-    /// (Favorites `.systemMedium`, RecentlyPlayed `.systemMedium` / `.systemLarge`).
-    ///
-    /// Largest such cell is Favorites `.systemMedium` 2-up: `(364 − 20 − 8) / 2 = 168pt`
-    /// → 168 × 3 × 1.5 = 756 → 768.
+    /// One cover in a small panel that is part of a multi-entry timeline
+    /// (`GameArtGalleryView`): 168pt × 3 × 1.5 = 756 → 768.
     static let gridCell = 768
 
     /// A single cover filling the whole widget, rendered **once per timeline**: the
-    /// StandBy Now Playing background and the `.systemSmall` hero cards.
+    /// StandBy Now Playing background.
     ///
-    /// `.systemSmall` interior is ≈154pt → 154 × 3 × 1.5 ≈ 693, and StandBy enlarges a
-    /// small widget to roughly a 330pt square → ≈ 990. 1024 covers both.
+    /// StandBy enlarges a small widget to roughly a 330pt square → 330 × 3 ≈ 990.
+    /// 1024 covers it.
     ///
     /// Not for a full-bleed cover in a *multi-entry* timeline — WidgetKit renders every
     /// entry in one burst, so the cost multiplies. See `GameArtGalleryView.artworkImage`.
-    ///
-    /// Deliberately a *cap*: Favorites `.systemMedium` holding exactly one favorite
-    /// stretches a cover across the full 344pt width, which would ask for ≈1548px.
-    /// That layout crops the cover to a ~2.3:1 letterbox anyway, so the 1.5× upscale is
-    /// accepted rather than paying 1152 × 1548 × 4 B ≈ 7 MB for one image.
     static let hero = 1024
-
-    /// Budget for a system-family widget that draws `artworkCount` covers at once.
-    ///
-    /// Keyed on the count rather than the family because peak memory is
-    /// `count × budget`: a lone cover can afford the full `hero` budget, a 4×4 grid
-    /// cannot.
-    static func budget(forSimultaneousArtworkCount artworkCount: Int) -> Int {
-        switch artworkCount {
-        case ...1: return hero
-        case 2...4: return gridCell
-        default: return denseGridCell
-        }
-    }
 }
 
 // MARK: - Artwork decoding

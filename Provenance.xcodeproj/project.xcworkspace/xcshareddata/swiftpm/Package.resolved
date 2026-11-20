@@ -225,6 +225,15 @@
       }
     },
     {
+      "identity" : "pvwidgets",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/Provenance-Emu/PVWidgets.git",
+      "state" : {
+        "revision" : "63f04c9846b9bc8dbb6c5c4bf6c4450e00b64399",
+        "version" : "0.1.0"
+      }
+    },
+    {
       "identity" : "realm-core",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/realm/realm-core.git",
