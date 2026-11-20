@@ -54,6 +54,17 @@ MIME_BASE = "application/x-provenance-"
 # ("Don't claim ownership of all ROM filetypes") undid.
 GENERIC_EXTENSIONS_NOT_CLAIMED = {"dat", "lst"}
 
+# Archive and disc image formats Provenance imports but did not define. They get
+# their own Alternate document type: as part of the Owner "ROM" type, a tapped
+# .zip in Files opened in Provenance.
+ARCHIVE_DOCUMENT_TYPE_NAME = "Archive"
+ARCHIVE_CONTENT_TYPES = (
+    "org.7-zip.7-zip-archive",
+    "com.rarlab.rar-archive",
+    "public.zip-archive",
+    "public.iso-image",
+)
+
 SYSTEM_UTI_MAP = {
     "com.provenance.2600":         ("atari2600",    "Atari 2600"),
     "com.provenance.5200":         ("atari5200",    "Atari 5200"),
@@ -298,13 +309,11 @@ def generate_declarations(systems_plist: Path = SYSTEMS_PLIST):
     ))
 
     # ── 5. Artwork ────────────────────────────────────────────────────────────
-    exported.append(make_exported_type(
-        uti_id="com.provenance.artwork",
-        description="Provenance Game Artwork",
-        conforms_to=["public.image"],
-        extensions=["jpg", "jpeg", "png", "gif", "webp"],
-        mime_type="image/jpeg",
-    ))
+    # No exported type. An exported type that claims .jpg/.png/.gif/.webp makes the
+    # system resolve every picture on the device to it, and Files then opens
+    # photos in Provenance instead of previewing them. Artwork is opened through
+    # the "Artwork" document type below, as an Alternate handler of the system's
+    # own image types.
 
     # ── 6. Imported archive types ─────────────────────────────────────────────
     imported_archives.append(make_imported_type(
@@ -347,12 +356,14 @@ def build_document_types() -> list:
             "LSHandlerRank": "Owner",
             "LSItemContentTypes": [
                 "com.provenance.rom",
-                # Archive / generic formats handled via import
-                "org.7-zip.7-zip-archive",
-                "com.rarlab.rar-archive",
-                "public.zip-archive",
-                "public.iso-image",
             ],
+        },
+        {
+            # Formats other apps own: offered in "Open in", never the default.
+            "CFBundleTypeIconFiles": [],
+            "CFBundleTypeName": ARCHIVE_DOCUMENT_TYPE_NAME,
+            "LSHandlerRank": "Alternate",
+            "LSItemContentTypes": list(ARCHIVE_CONTENT_TYPES),
         },
         {
             "CFBundleTypeIconFiles": [],
@@ -381,7 +392,7 @@ def build_document_types() -> list:
 #
 #   * "Generator-owned" UTIs are exactly the identifiers generate_declarations()
 #     emits (com.provenance.rom, com.provenance.rom.<system>, savestate, cheat,
-#     artwork, and the imported archive types). Missing ones are added; existing
+#     and the imported archive types). Missing ones are added; existing
 #     ones are topped up (see merge_declaration) -- never trimmed or reordered.
 #   * Every other declaration is left byte-for-byte untouched, in place.
 #   * CFBundleDocumentTypes are merged by CFBundleTypeName the same way.

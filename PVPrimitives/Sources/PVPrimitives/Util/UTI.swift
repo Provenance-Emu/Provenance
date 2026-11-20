@@ -16,7 +16,6 @@ public extension UTI {
     nonisolated(unsafe) static let rom = UTI(rawValue: "com.provenance.rom")
     nonisolated(unsafe) static let bios = UTI(rawValue: "com.provenance.bios")
     nonisolated(unsafe) static let cheat = UTI(rawValue: "com.provenance.cheat")
-    nonisolated(unsafe) static let artwork = UTI(rawValue: "com.provenance.artwork")
     nonisolated(unsafe) static let savestate = UTI(rawValue: "com.provenance.savestate")
     nonisolated(unsafe) static let pvsave = UTI(rawValue: "com.provenance.pvsave")
     nonisolated(unsafe) static let sevenZipArchive = UTI(rawValue: "org.7-zip.7-zip-archive")
@@ -105,7 +104,6 @@ public extension UTType {
     static let rom: UTType = UTType(exportedAs: "com.provenance.rom", conformingTo: .data)
     static let bios: UTType = UTType(exportedAs: "com.provenance.bios", conformingTo: .rom)
     static let cheat: UTType = UTType(exportedAs: "com.provenance.cheat", conformingTo: .data)
-    static let artwork: UTType = UTType(exportedAs: "com.provenance.artwork", conformingTo: .image)
     static let savestate: UTType = UTType(exportedAs: "com.provenance.savestate", conformingTo: .data)
     /// `.pvsave` bundle format — a zip archive containing a v2 manifest + save state files.
     static let pvsave: UTType = UTType(exportedAs: "com.provenance.pvsave", conformingTo: .zip)

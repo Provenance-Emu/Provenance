@@ -226,11 +226,18 @@ class MergeTests(UtiMergeTestCase):
         ids = _ids(self.info, gen.EXPORTED_KEY)
         self.assertGreater(ids.index("com.provenance.rom.snes"), ids.index("com.provenance.rom.nes"))
 
-        for ident in ("com.provenance.savestate", "com.provenance.cheat", "com.provenance.artwork"):
+        for ident in ("com.provenance.savestate", "com.provenance.cheat"):
             self.assertIn(ident, exported)
         imported = _entries(self.info, gen.IMPORTED_KEY)
         self.assertIn("public.zip-archive", imported)
         self.assertIn("com.rileytestut.delta.skin", imported)
+
+    def test_no_exported_type_claims_a_picture_extension(self):
+        exported, _ = gen.generate_declarations()
+        pictures = {"jpg", "jpeg", "png", "gif", "webp", "heic"}
+        for entry in exported:
+            claimed = set(entry["UTTypeTagSpecification"].get(gen.FILENAME_EXT_KEY, []))
+            self.assertFalse(claimed & pictures, entry["UTTypeIdentifier"])
 
     def test_document_types_merge_by_name(self):
         self.run_main("--update-plist", str(self.info))
@@ -238,7 +245,11 @@ class MergeTests(UtiMergeTestCase):
         self.assertEqual(docs["Log File"]["LSItemContentTypes"], ["public.log"])
         rom = docs["ROM"]["LSItemContentTypes"]
         self.assertEqual(rom[:2], ["com.provenance.rom.nes", "com.provenance.rom"])  # existing order kept
-        self.assertIn("public.zip-archive", rom)  # missing generator entries appended
+        self.assertNotIn("public.zip-archive", rom)  # the Owner type claims no system format
+        archive = docs[gen.ARCHIVE_DOCUMENT_TYPE_NAME]
+        self.assertEqual(archive["LSHandlerRank"], "Alternate")
+        self.assertEqual(archive["LSItemContentTypes"], list(gen.ARCHIVE_CONTENT_TYPES))
+        self.assertEqual(docs["Artwork"]["LSHandlerRank"], "Alternate")
         self.assertIn("Save State", docs)
         self.assertIn("Artwork", docs)
 
@@ -251,7 +262,7 @@ class MergeTests(UtiMergeTestCase):
         self.assertIn("com.provenance.rom.nes", _ids(self.info, gen.EXPORTED_KEY))
         self.assertIn("public.zip-archive", _ids(self.info, gen.IMPORTED_KEY))
         names = [d["CFBundleTypeName"] for d in plistlib.loads(self.info.read_bytes())[gen.DOCTYPES_KEY]]
-        self.assertEqual(names, ["ROM", "Save State", "Artwork"])
+        self.assertEqual(names, ["ROM", gen.ARCHIVE_DOCUMENT_TYPE_NAME, "Save State", "Artwork"])
         code, _ = self.run_main("--check", "--update-plist", str(self.info))
         self.assertEqual(code, 0)
 
