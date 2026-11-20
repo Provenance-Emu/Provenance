@@ -286,7 +286,7 @@ GEM
     molinillo (0.6.6)
     multi_json (1.15.0)
     multipart-post (2.4.1)
-    mustache (1.1.1)
+    mustache (1.1.3)
     mutex_m (0.3.0)
     nanaimo (0.3.0)
     nap (1.1.0)
