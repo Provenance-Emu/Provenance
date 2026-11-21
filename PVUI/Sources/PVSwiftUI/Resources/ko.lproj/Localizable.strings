@@ -19,7 +19,3 @@
 "external_import.skin.subtitle" = "%@";
 "external_import.file.title" = "파일 추가됨";
 "external_import.file.subtitle" = "%@이(가) 가져오기 폴더에 복사되었습니다.";
-
-/* Auto-translated — please review */
-"ecosystem.import.hint" = "%@에서 요청을 승인하면 게임이 바로 라이브러리에 추가됩니다. 공유 시트가 열리면 Provenance를 선택하세요.";
-"ecosystem.import.failed" = "%@의 %@을(를) 가져올 수 없습니다. 다시 요청하거나 %@에서 Provenance로 보내기를 사용하여 전송하세요.";

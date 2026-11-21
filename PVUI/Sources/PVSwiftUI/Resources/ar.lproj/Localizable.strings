@@ -19,7 +19,3 @@
 "external_import.skin.subtitle" = "%@";
 "external_import.file.title" = "تمت إضافة الملف";
 "external_import.file.subtitle" = "تم نسخ %@ إلى مجلد الاستيراد.";
-
-/* Auto-translated — please review */
-"ecosystem.import.hint" = "وافق على الطلب في %@ وستنتقل اللعبة مباشرة إلى مكتبتك. إذا فتحت نافذة المشاركة، اختر Provenance.";
-"ecosystem.import.failed" = "تعذر استيراد %@ من %@. اطلبها مرة أخرى، أو أرسلها من %@ باستخدام إرسال إلى Provenance.";

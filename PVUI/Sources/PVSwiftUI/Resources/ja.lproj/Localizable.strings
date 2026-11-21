@@ -1,4 +1,0 @@
-
-/* Auto-translated — please review */
-"ecosystem.import.hint" = "%@でリクエストを承認すると、ゲームが直接ライブラリに追加されます。シェアシートが開いた場合は、Provenanceを選択してください。";
-"ecosystem.import.failed" = "%@から%@をインポートできませんでした。もう一度リクエストするか、%@から「Send to Provenance」を使用して送信してください。";
