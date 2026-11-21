@@ -240,14 +240,14 @@ final class RealmSharedLibrary: SharedLibraryProviding, @unchecked Sendable {
         guard let realm = try? Realm(configuration: RealmConfiguration.realmConfig) else { return ([], [:]) }
         var games: [SharedGame] = []
         var keys: [String: String] = [:]
-        let rows = realm.objects(PVGame.self).filter("NOT (systemIdentifier IN %@) AND isHiddenPatchVariant == false", excluded)
+        let rows = realm.objects(PVGame.self).filter("NOT (systemIdentifier IN %@) AND isHiddenPatchVariant == false AND contentless == false", excluded)
         for game in rows {
             guard let system = SystemIdentifier(rawValue: game.systemIdentifier),
-                  let primary = game.file?.url, FileManager.default.fileExists(atPath: primary.path) else { continue }
+                  let primary = game.file?.url, isRegularFile(primary) else { continue }
             let folder = primary.deletingLastPathComponent()
             var files = [file(primary, in: folder)]
             for related in game.relatedFiles {
-                guard let url = related.url, url != primary, FileManager.default.fileExists(atPath: url.path) else { continue }
+                guard let url = related.url, url != primary, isRegularFile(url) else { continue }
                 files.append(file(url, in: folder))
             }
             let artKey = [game.customArtworkURL, game.originalArtworkURL].first { !$0.isEmpty && PVMediaCache.fileExists(forKey: $0) }
@@ -258,6 +258,14 @@ final class RealmSharedLibrary: SharedLibraryProviding, @unchecked Sendable {
             ))
         }
         return (games, keys)
+    }
+
+    /// Only games whose file is on this device are shared: an iCloud entry that was never
+    /// downloaded has nothing to send. A folder is not a game file either (an empty stored
+    /// path resolves to the library folder itself).
+    private static func isRegularFile(_ url: URL) -> Bool {
+        var isDirectory: ObjCBool = false
+        return FileManager.default.fileExists(atPath: url.path, isDirectory: &isDirectory) && !isDirectory.boolValue
     }
 
     private static func file(_ url: URL, in folder: URL) -> SharedFile {

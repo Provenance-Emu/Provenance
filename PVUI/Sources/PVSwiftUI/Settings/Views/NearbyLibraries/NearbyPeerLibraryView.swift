@@ -208,6 +208,7 @@ struct NearbyPeerLibraryView: View {
         return NearbyItemAction(
             copyState: model.copies[item.id],
             inLibrary: model.isInLibrary(item),
+            missingFile: model.isMissingFile(item),
             canPlay: isContentServer && model.canPlay(item),
             isContentServer: isContentServer
         )
@@ -219,7 +220,7 @@ struct NearbyPeerLibraryView: View {
         case .play: model.play(item)
         case .downloadAndPlay: downloadSelection = item
         case .retry where isServer: downloadSelection = item
-        case .copy, .retry: model.copy(item)
+        case .copy, .getFile, .retry: model.copy(item)
         case .importing, .inLibrary: break
         }
     }
@@ -303,7 +304,10 @@ enum NearbyItemAction: Equatable {
     /// Already in the library. Nothing to press.
     case inLibrary
 
-    init(copyState: NearbyCopyState?, inLibrary: Bool, canPlay: Bool, isContentServer: Bool) {
+    /// The library lists the game but its file is not on this device. Pressing copies it.
+    case getFile
+
+    init(copyState: NearbyCopyState?, inLibrary: Bool, missingFile: Bool = false, canPlay: Bool, isContentServer: Bool) {
         if copyState?.isActive == true {
             self = .stop
         } else if copyState == .importing {
@@ -314,6 +318,8 @@ enum NearbyItemAction: Equatable {
             self = .inLibrary
         } else if case .failed = copyState {
             self = .retry
+        } else if missingFile && !isContentServer {
+            self = .getFile
         } else {
             self = isContentServer ? .downloadAndPlay : .copy
         }
@@ -324,6 +330,7 @@ enum NearbyItemAction: Equatable {
         case .stop: return "Stop"
         case .play: return "Play"
         case .copy: return "Copy"
+        case .getFile: return "Get File"
         case .retry: return "Retry"
         case .downloadAndPlay: return "Download & Play"
         case .importing: return "Importing"
@@ -336,6 +343,7 @@ enum NearbyItemAction: Equatable {
         case .stop: return "stop.circle"
         case .play: return "play.fill"
         case .copy: return "arrow.down.circle"
+        case .getFile: return "icloud.and.arrow.down"
         case .retry: return "arrow.clockwise"
         case .downloadAndPlay: return "arrow.down.to.line"
         case .importing: return "tray.and.arrow.down.fill"

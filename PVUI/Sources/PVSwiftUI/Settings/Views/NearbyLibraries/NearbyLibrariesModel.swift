@@ -254,6 +254,12 @@ final class NearbyLibrariesModel {
         localIndex.contains(item)
     }
 
+    /// The library lists the game but its file is not on this device (an iCloud entry
+    /// not downloaded, or a purged cache), so the peer's copy can fill it in.
+    func isMissingFile(_ item: RemoteLibraryItem) -> Bool {
+        localIndex.isMissingFile(item)
+    }
+
     func isDiscovered(_ peer: DiscoveredPeer) -> Bool {
         snapshot.peers.contains { $0.id == peer.id && $0.advertisement.peerId == peer.advertisement.peerId }
     }
@@ -285,12 +291,15 @@ final class NearbyLibrariesModel {
                 $0.formUnion(SystemMap.systems(servedBy: $1))
             }
             let ids = shareable.map(\.rawValue)
+            let resolver = FileLocationResolver.shared
             let entries: [LocalLibraryEntry] = realm.objects(PVGame.self)
-                .filter("systemIdentifier IN %@", ids)
+                .filter("systemIdentifier IN %@ AND contentless == false", ids)
                 .compactMap { game in
                     guard let system = SystemIdentifier(rawValue: game.systemIdentifier), !game.md5Hash.isEmpty else {
                         return nil
                     }
+                    let path = game.file?.partialPath ?? ""
+                    let isOnDisk = !path.isEmpty && FileManager.default.fileExists(atPath: resolver.bestURL(for: path).path)
                     return LocalLibraryEntry(
                         md5: game.md5Hash,
                         systemIdentifier: system,
@@ -298,7 +307,8 @@ final class NearbyLibrariesModel {
                         isSingleFileImage: LocalLibraryEntry.isSingleFileImage(
                             primaryFileExtension: (game.romPath as NSString).pathExtension,
                             relatedFileCount: game.relatedFiles.count
-                        )
+                        ),
+                        isOnDisk: isOnDisk
                     )
                 }
             localIndex = LocalLibraryIndex(entries: entries)
@@ -427,6 +437,10 @@ final class NearbyPeerLibraryModel {
     var unsupportedCount: Int {
         guard let catalogue, let owner else { return 0 }
         return catalogue.items.count - catalogue.filtered(to: owner.playableSystems).items.count
+    }
+
+    func isMissingFile(_ item: RemoteLibraryItem) -> Bool {
+        owner?.isMissingFile(item) ?? false
     }
 
     func isInLibrary(_ item: RemoteLibraryItem) -> Bool {
@@ -732,6 +746,16 @@ final class NearbyPeerLibraryModel {
                     staging.markHandedOff(pulled.folder)
                     self?.copies[item.id] = .completed
                     if playAfterImport { SceneCoordinator.shared.launchGame(game.freeze()) }
+                    self?.copyTasks[item.id] = nil
+                    self?.copyGenerations[item.id] = nil
+                    return
+                }
+                // The library already lists this game without its file: put the file where
+                // the game expects it. The game, its saves and its artwork stay as they are.
+                if let md5 = item.md5, self?.isMissingFile(item) == true,
+                   await MissingROMRecoveryService.shared.restore(pulled, toGameWithMD5: md5, staging: staging) {
+                    self?.owner?.loadLocalLibrary()
+                    self?.copies[item.id] = .completed
                     self?.copyTasks[item.id] = nil
                     self?.copyGenerations[item.id] = nil
                     return

@@ -143,6 +143,33 @@ final class LocalLibraryIndexTests: XCTestCase {
         XCTAssertTrue(index.contains(remote(md5: "aa", system: .Dreamcast, size: 0)))
     }
 
+    /// A game the library lists without a file (iCloud entry, purged cache) is not "in the
+    /// library" for a copy: the peer's file is what makes it playable.
+    func testAGameWithoutAFileIsMissingNotPresent() {
+        let index = LocalLibraryIndex(entries: [
+            LocalLibraryEntry(md5: "CC", systemIdentifier: .GameCube, sizeBytes: 1000, isSingleFileImage: true, isOnDisk: false),
+            LocalLibraryEntry(md5: "DD", systemIdentifier: .GameCube, sizeBytes: 1000, isSingleFileImage: true)
+        ])
+        XCTAssertFalse(index.isEmpty)
+        XCTAssertFalse(index.contains(remote(md5: "cc")))
+        XCTAssertTrue(index.isMissingFile(remote(md5: "cc")))
+        XCTAssertFalse(index.isMissingFile(remote(md5: "cc", size: 999)))
+        XCTAssertTrue(index.contains(remote(md5: "dd")))
+        XCTAssertFalse(index.isMissingFile(remote(md5: "dd")))
+        XCTAssertFalse(index.isMissingFile(remote(md5: "ee")))
+    }
+
+    /// Provenance keeps a launcher entry per core ("MAME") whose id is the core's
+    /// identifier, not a hash. An older host lists it; it is not a game.
+    func testCoreLauncherEntriesAreNotGames() {
+        XCTAssertTrue(PVLibrarySource.isCoreLauncher(md5: "com.provenance.core.mame"))
+        XCTAssertTrue(PVLibrarySource.isCoreLauncher(md5: "MAME2003"))
+        XCTAssertFalse(PVLibrarySource.isCoreLauncher(md5: "abcdef0123456789abcdef0123456789"))
+        XCTAssertFalse(PVLibrarySource.isCoreLauncher(md5: "ABCDEF0123456789ABCDEF0123456789"))
+        XCTAssertFalse(PVLibrarySource.isCoreLauncher(md5: nil))
+        XCTAssertFalse(PVLibrarySource.isCoreLauncher(md5: ""))
+    }
+
     /// CD sets hash the cue/m3u/gdi text in Provenance, so they never match.
     func testMultiFileImagesNeverMatch() {
         XCTAssertTrue(LocalLibraryEntry.isSingleFileImage(primaryFileExtension: "rvz", relatedFileCount: 0))

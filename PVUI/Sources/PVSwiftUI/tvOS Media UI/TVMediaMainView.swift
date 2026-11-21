@@ -111,6 +111,8 @@ struct TVMediaMainView: View {
     @StateObject private var libraryModel = TVMediaLibraryModel()
     @StateObject private var saveStatesStore = RetroSaveStatesStore.shared
     @StateObject private var gameActions = TVMediaGameActions()
+    /// Discovery for the sidebar's Libraries list; the Nearby Libraries sheet shares it.
+    @State private var nearbyLibraries = NearbyLibrariesModel()
     @State private var settingsCanPop: Bool = false
 
     @ObservedObject private var alertState = SceneCoordinator.shared.alertState
@@ -153,6 +155,7 @@ struct TVMediaMainView: View {
             router: router,
             libraryModel: libraryModel,
             gameActions: gameActions,
+            nearbyLibraries: nearbyLibraries,
             sidebarCollapsedWidth: sidebarCollapsedWidth,
             mainNamespace: mainNamespace,
             sidebarNamespace: sidebarNamespace,
@@ -236,8 +239,18 @@ struct TVMediaMainView: View {
         @ObservedObject var router: TVMediaRouter
         @ObservedObject var libraryModel: TVMediaLibraryModel
         @ObservedObject var gameActions: TVMediaGameActions
+        let nearbyLibraries: NearbyLibrariesModel
 
         @State private var showingImportsAlert = false
+
+        /// Devices found on the network, then saved servers.
+        private var sidebarLibraries: [TVMediaSidebarLibrary] {
+            let peers = nearbyLibraries.visiblePeers + nearbyLibraries.contentServers.map(nearbyLibraries.contentServerPeer)
+            var seen: Set<String> = []
+            return peers.filter { seen.insert($0.id).inserted }.map {
+                TVMediaSidebarLibrary(id: $0.id, name: $0.serviceName, systemImage: NearbyPeerSymbol.symbol(for: $0.app))
+            }
+        }
 
         let sidebarCollapsedWidth: CGFloat
         let mainNamespace: Namespace.ID
@@ -274,7 +287,10 @@ struct TVMediaMainView: View {
                 .onAppear {
                     gameActions.appState = appState
                     focusCoordinator.closeSidebar()
-                    router.destination = TVMediaDestination(rawValue: lastDestinationRaw) ?? .home
+                    // A library is not restored: it may be off, and opening it can ask its owner.
+                    let last = TVMediaDestination(rawValue: lastDestinationRaw) ?? .home
+                    router.destination = last == .nearbyLibrary ? .home : last
+                    nearbyLibraries.start()
                     router.selectedSystemID = lastSystemIdentifier
                     libraryModel.startObservingLibraryChanges()
                     libraryModel.refresh()
@@ -625,6 +641,12 @@ struct TVMediaMainView: View {
                 onSelectNearby: {
                     router.present(.nearbyLibraries)
                 },
+                libraries: sidebarLibraries,
+                selectedLibraryID: router.selectedLibraryID,
+                onSelectLibrary: { id in
+                    router.selectedLibraryID = id
+                    router.navigate(to: .nearbyLibrary)
+                },
                 onSelectNetplay: {
                     router.activeModal = .netplayLobby
                 },
@@ -717,6 +739,13 @@ struct TVMediaMainView: View {
                         focusCoordinator.closeSidebar()
                     }
                 #endif
+            case .nearbyLibrary:
+                nearbyLibraryContent
+                    .tvMediaOnMoveCommand { direction in
+                        if direction == .left {
+                            focusCoordinator.openSidebar()
+                        }
+                    }
             case .status:
                 RetroStatusControlView()
                     .padding(.horizontal, 8)
@@ -728,6 +757,22 @@ struct TVMediaMainView: View {
                         }
                     }
             }
+        }
+    }
+
+    /// The games of the library picked in the sidebar.
+    @ViewBuilder
+    private var nearbyLibraryContent: some View {
+        if let library = nearbyLibraries.peerModel(forPeerID: router.selectedLibraryID) {
+            NavigationStack {
+                NearbyPeerLibraryView(model: library)
+            }
+            .id(router.selectedLibraryID)
+        } else {
+            TVMediaEmptyStateView(
+                title: "Library Not Found",
+                subtitle: "It is no longer on the network. Check that the other device is on and its app is open."
+            )
         }
     }
 
@@ -828,7 +873,13 @@ struct TVMediaMainView: View {
                 TVMediaROMInstructionsView(onDismiss: { router.dismissModal() })
             }
         case .nearbyLibraries:
-            NearbyLibrariesSheet()
+            // The sheet stops discovery when it closes; the sidebar list needs it back.
+            NearbyLibrariesSheet(model: nearbyLibraries) { id in
+                router.dismissModal()
+                router.selectedLibraryID = id
+                router.navigate(to: .nearbyLibrary)
+            }
+            .onDisappear { nearbyLibraries.start() }
         case .netplayLobby:
             NetplayLibraryLobbyView()
                 #if os(tvOS)
@@ -983,6 +1034,8 @@ enum TVMediaDestination: String, CaseIterable {
     case logs
     case settings
     case status
+    /// A nearby library or saved server picked in the sidebar (`TVMediaRouter.selectedLibraryID`).
+    case nearbyLibrary
 
     var title: String {
         switch self {
@@ -995,6 +1048,7 @@ enum TVMediaDestination: String, CaseIterable {
         case .logs: return "Logs"
         case .settings: return "Settings"
         case .status: return "Status"
+        case .nearbyLibrary: return "Library"
         }
     }
 }

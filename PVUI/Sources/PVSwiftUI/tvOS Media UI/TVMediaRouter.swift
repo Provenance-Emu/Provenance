@@ -38,6 +38,9 @@ final class TVMediaRouter: ObservableObject {
     /// Selected system identifier
     @Published var selectedSystemID: String = ""
 
+    /// The nearby library or saved server shown by `.nearbyLibrary`, by peer id.
+    @Published var selectedLibraryID: String = ""
+
     /// System IDs to filter saves by (empty = show all)
     @Published var saveSystemFilter: Set<String> = []
 

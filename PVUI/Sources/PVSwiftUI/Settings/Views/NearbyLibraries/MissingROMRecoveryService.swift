@@ -144,6 +144,26 @@ public final class MissingROMRecoveryService: MissingROMRecovering {
         }
     }
 
+    /// Puts files already copied from a library at a library game's own paths. False when
+    /// the game is gone from the library or the copy holds none of its files; the caller
+    /// then imports the copy as a new game.
+    public func restore(_ pulled: PulledGame, toGameWithMD5 md5: String, staging: LibraryStaging) async -> Bool {
+        let key = md5.uppercased()
+        guard let target = target(forMD5: key), let primary = target.primaryURL else { return false }
+        do {
+            // The MD5s agree, so a single file goes under the game's own name even when the
+            // other device calls it something else (`standIn` allows that).
+            let result = try MissingGameRestorer.restore(pulled, to: target.files, kind: .standIn, staging: staging)
+            guard !result.restored.isEmpty else { return false }
+            ILOG("Nearby Libraries: put \(result.restored.count) file(s) of \(target.query.title) back in the library")
+        } catch {
+            WLOG("Nearby Libraries: \(target.query.title) could not go back at its own path, importing instead: \(error)")
+            return false
+        }
+        await GameFileStatusService.shared.markDownloaded(md5: key, at: primary)
+        return true
+    }
+
     /// True when the game's primary file is not on disk, for showing "Restore Missing File".
     public func isFileMissing(gameMD5: String) -> Bool {
         guard let target = target(forMD5: gameMD5.uppercased()), let primary = target.primaryURL else { return false }

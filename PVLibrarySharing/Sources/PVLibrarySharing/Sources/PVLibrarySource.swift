@@ -78,7 +78,7 @@ public actor PVLibrarySource: LibrarySource {
             case 200:
                 let page = try Self.decodeCatalog(response.body)
                 deviceName = page.sourceDevice.name
-                items += page.entries.map(Self.item)
+                items += page.entries.filter { !Self.isCoreLauncher(md5: $0.game.md5) }.map(Self.item)
                 if cursor == nil { firstETag = response.header("ETag") }
                 cursor = page.nextCursor
             case 304 where cursor == nil:
@@ -105,6 +105,16 @@ public actor PVLibrarySource: LibrarySource {
         }
         return try JSONDecoder().decode(PVWireCatalog.self, from: data)
     }
+
+    /// Provenance keeps a launcher entry per core that starts with no game ("MAME"). Its
+    /// id is the core's identifier where a game has a 32-digit MD5. Hosts older than
+    /// 3.4.0 build 2 list those entries, so they are dropped here too.
+    static func isCoreLauncher(md5: String?) -> Bool {
+        guard let md5, !md5.isEmpty else { return false }
+        return md5.count != md5HexLength || !md5.allSatisfy(\.isHexDigit)
+    }
+
+    private static let md5HexLength = 32
 
     static func item(_ entry: PVWireCatalog.Entry) -> RemoteLibraryItem {
         let system = (entry.systemIdentifier ?? entry.game.platform).flatMap { SystemMap.systemIdentifier(compact: $0) }
