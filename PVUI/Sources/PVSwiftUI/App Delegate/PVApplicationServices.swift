@@ -302,6 +302,11 @@ public final class PVApplicationServices: NSObject, ObservableObject {
         PVLaunchProfiler.markProcessStart()
         ILOG("PVApplicationServices: Application did finish launching")
 
+        // Sync tasks read these settings off the main thread; their defaults
+        // must be registered here first (see CloudSyncSettingsRegistration).
+        CloudSyncSettingsRegistration.registerDefaults()
+        _ = Defaults.Keys.autoSyncNewContent
+
         // Restore critical user preferences from iCloud KVS (survives reinstalls)
         PVLaunchProfiler.measureSync("launch.iCloudSettingsSync") {
             // Filter selections, parameters and favorites sync as merged blobs.
