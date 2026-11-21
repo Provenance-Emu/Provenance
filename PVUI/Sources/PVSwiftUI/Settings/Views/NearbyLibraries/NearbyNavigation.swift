@@ -170,8 +170,9 @@ enum NearbyCursor {
         case failed
         case needsPairing
         case enteringCode
-        /// Server libraries to pick from ("" is all of them) and the games, top to bottom.
-        case loaded(libraryIDs: [String], itemIDs: [String])
+        /// Server libraries to pick from ("" is all of them) and the games as the grid shows
+        /// them, one array per row of covers.
+        case loaded(libraryIDs: [String], itemRows: [[String]])
     }
 
     /// A content server's libraries share one row.
@@ -187,14 +188,25 @@ enum NearbyCursor {
             return TVMediaCursorLayout(rows: [Row(id: pair, items: [pair])])
         case .enteringCode:
             return TVMediaCursorLayout(rows: [Row(id: code, items: [code]), Row(id: submitCode, items: [submitCode])])
-        case .loaded(let libraryIDs, let itemIDs):
+        case .loaded(let libraryIDs, let itemRows):
             var rows = [searchRow]
             if !libraryIDs.isEmpty {
                 rows.append(Row(id: "peer|libraries", items: libraryIDs.map(library)))
             }
-            rows += itemIDs.map { Row(id: item($0), items: [item($0)]) }
+            rows += itemRows.compactMap { ids in
+                ids.first.map { Row(id: item($0), items: ids.map(item)) }
+            }
             if canLoadMore { rows.append(Row(id: loadMore, items: [loadMore])) }
             return TVMediaCursorLayout(rows: rows)
+        }
+    }
+
+    /// The rows of a cover grid: each system's games in turn, `columns` to a row. A system
+    /// starts a new row.
+    static func gridRows(sections: [[String]], columns: Int) -> [[String]] {
+        let width = max(columns, 1)
+        return sections.flatMap { ids in
+            stride(from: 0, to: ids.count, by: width).map { Array(ids[$0..<min($0 + width, ids.count)]) }
         }
     }
 

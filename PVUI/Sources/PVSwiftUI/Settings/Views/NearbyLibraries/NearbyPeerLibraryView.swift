@@ -16,6 +16,7 @@ struct NearbyPeerLibraryView: View {
     @State private var code = ""
     @State private var cursorID: String?
     @State private var downloadSelection: RemoteLibraryItem?
+    @State private var gridColumns = NearbyCoverGrid.minimumColumns
     @FocusState private var editingField: String?
     @Environment(NearbyNavigator.self) private var navigator: NearbyNavigator?
 
@@ -128,9 +129,9 @@ struct NearbyPeerLibraryView: View {
         case .needsPairing: return NearbyCursor.peerLibrary(.needsPairing)
         case .enteringCode: return NearbyCursor.peerLibrary(.enteringCode)
         case .loaded:
-            let items = model.sections.flatMap(\.items).map(\.id)
+            let rows = NearbyCursor.gridRows(sections: model.sections.map { $0.items.map(\.id) }, columns: gridColumns)
             return NearbyCursor.peerLibrary(
-                .loaded(libraryIDs: libraryChoices, itemIDs: items), canLoadMore: model.nextServerPage != nil && !model.loadingMore
+                .loaded(libraryIDs: libraryChoices, itemRows: rows), canLoadMore: model.nextServerPage != nil && !model.loadingMore
             )
         }
     }
@@ -164,19 +165,23 @@ struct NearbyPeerLibraryView: View {
         }
         ForEach(model.sections) { section in
             NearbySection(header: section.system.fullName) {
-                ForEach(section.items) { item in
-                    NearbyItemRow(
-                        item: item,
-                        image: model.artwork[item.id],
-                        copyState: model.activeServerGame?.id == item.id ? nil : model.copies[item.id],
-                        peerName: model.title,
-                        action: itemAction(item),
-                        perform: { perform(itemAction(item), on: item) }
-                    )
-                    .disabled(isServer && model.activeServerGame != nil)
-                    .task(id: item.id) { await model.loadArtwork(for: item) }
+                LazyVGrid(columns: gridItems, alignment: .leading, spacing: NearbyCoverGrid.spacing) {
+                    ForEach(section.items) { item in
+                        NearbyItemCard(
+                            item: item,
+                            image: model.artwork[item.id],
+                            copyState: model.activeServerGame?.id == item.id ? nil : model.copies[item.id],
+                            peerName: model.title,
+                            action: itemAction(item),
+                            perform: { perform(itemAction(item), on: item) }
+                        )
+                        .disabled(isServer && model.activeServerGame != nil)
+                        .task(id: item.id) { await model.loadArtwork(for: item) }
+                    }
                 }
             }
+            // The controller cursor moves by rows, so it has to know how many cards a row holds.
+            .onGeometryChange(for: Int.self) { NearbyCoverGrid.columns(forWidth: $0.size.width) } action: { gridColumns = $0 }
         }
         if model.unsupportedCount > 0 {
             let count = model.unsupportedCount
@@ -197,6 +202,10 @@ struct NearbyPeerLibraryView: View {
                     .disabled(model.activeServerGame != nil)
             }
         }
+    }
+
+    private var gridItems: [GridItem] {
+        Array(repeating: GridItem(.flexible(), spacing: NearbyCoverGrid.spacing, alignment: .top), count: gridColumns)
     }
 
     private func libraryName(_ id: String) -> String {
@@ -291,8 +300,8 @@ struct NearbyPeerLibraryView: View {
     }
 }
 
-/// What pressing a game row does, from its copy state. One action per row, so the whole
-/// row is the button (a controller or the TV remote cannot reach a button inside a row).
+/// What pressing a game's card does, from its copy state. One action per card, so the whole
+/// card is the button (a controller or the TV remote cannot reach a button inside one).
 enum NearbyItemAction: Equatable {
     case stop
     case play
@@ -351,13 +360,13 @@ enum NearbyItemAction: Equatable {
         }
     }
 
-    /// Whether pressing the row does anything.
+    /// Whether pressing the card does anything.
     var isActionable: Bool {
         self != .importing && self != .inLibrary
     }
 }
 
-private struct NearbyItemRow: View {
+private struct NearbyItemCard: View {
     let item: RemoteLibraryItem
     let image: UIImage?
     let copyState: NearbyCopyState?
@@ -366,87 +375,86 @@ private struct NearbyItemRow: View {
     let perform: () -> Void
     @ObservedObject private var themeManager = ThemeManager.shared
 
+    private let coverFillOpacity = 0.06
+    private let titleLineLimit = 2
+    private let statusLineLimit = 2
+
     var body: some View {
-        // Rows that have nothing to do stay focusable, so the remote can scroll past them.
+        // Cards that have nothing to do stay focusable, so the remote can move past them.
         Button(action: perform) {
-            HStack(spacing: 16) {
-                artwork
-                VStack(alignment: .leading, spacing: 3) {
-                    Text(item.title)
-                        .font(.body.weight(.medium))
-                        .lineLimit(2)
-                    Text(detail)
-                        .font(.caption)
-                        .foregroundStyle(isFailure ? Color.red : themeManager.nearbySecondaryText)
-                        .lineLimit(3)
-                    if case .downloading(let fraction) = copyState {
-                        ProgressView(value: fraction)
-                    }
+            VStack(alignment: .leading, spacing: 6) {
+                cover
+                // Two lines are always reserved, so the cards of a row line up.
+                Text(item.title)
+                    .font(.caption.weight(.semibold))
+                    .lineLimit(titleLineLimit, reservesSpace: true)
+                    .multilineTextAlignment(.leading)
+                status
+            }
+        }
+        .buttonStyle(NearbyCardButtonStyle(cursorID: NearbyCursor.item(item.id)))
+        .accessibilityLabel(Text("\(item.title), \(statusText)"))
+    }
+
+    private var cover: some View {
+        RoundedRectangle(cornerRadius: NearbyCoverGrid.coverCornerRadius, style: .continuous)
+            .fill(Color.white.opacity(coverFillOpacity))
+            .aspectRatio(NearbyCoverGrid.coverAspectRatio, contentMode: .fit)
+            .overlay {
+                if let image {
+                    Image(uiImage: image)
+                        .resizable()
+                        .scaledToFit()
+                } else {
+                    Image(systemName: "photo")
+                        .font(.title)
+                        .foregroundStyle(themeManager.nearbySecondaryText)
                 }
-                Spacer(minLength: 12)
-                actionBadge
             }
-        }
-        .buttonStyle(NearbyRowButtonStyle(cursorID: NearbyCursor.item(item.id)))
+            .clipShape(RoundedRectangle(cornerRadius: NearbyCoverGrid.coverCornerRadius, style: .continuous))
     }
-
-    private var artwork: some View {
-        Group {
-            if let image {
-                Image(uiImage: image)
-                    .resizable()
-                    .scaledToFit()
-            } else {
-                Image(systemName: "photo")
-                    .foregroundStyle(themeManager.nearbySecondaryText)
-            }
-        }
-        .frame(width: NearbyMetrics.artworkSize, height: NearbyMetrics.artworkSize)
-        .clipShape(RoundedRectangle(cornerRadius: 6))
-    }
-
-    private let badgeOpacity = 0.3
 
     @ViewBuilder
-    private var actionBadge: some View {
-        let label = Label(action.title, systemImage: action.systemImage)
-            .font(.caption.bold())
-        if action.isActionable {
-            label
-                .padding(.horizontal, 12)
-                .padding(.vertical, 6)
-                .background(Capsule().fill((action == .stop ? Color.red : Color.retroBlue).opacity(badgeOpacity)))
-        } else {
-            label.foregroundStyle(action == .inLibrary ? Color.green : themeManager.nearbySecondaryText)
+    private var status: some View {
+        if case .downloading(let fraction) = copyState {
+            ProgressView(value: fraction)
+        }
+        Label(statusText, systemImage: action.systemImage)
+            .font(.caption2.weight(.medium))
+            .foregroundStyle(statusColor)
+            .lineLimit(statusLineLimit, reservesSpace: true)
+            .multilineTextAlignment(.leading)
+    }
+
+    private var statusColor: Color {
+        if case .failed = copyState { return .red }
+        switch action {
+        case .inLibrary: return .green
+        case .stop: return .red
+        case .importing: return themeManager.nearbySecondaryText
+        case .play, .copy, .getFile, .retry, .downloadAndPlay: return .retroBlue
         }
     }
 
-    private var isFailure: Bool {
-        if case .failed = copyState { return true }
-        return false
-    }
-
-    private var detail: String {
-        let size = ByteCountFormatter.string(fromByteCount: item.sizeBytes, countStyle: .file)
+    /// What pressing does, or what is happening to the copy.
+    private var statusText: String {
         switch copyState {
         case .preparing(.waitingForApproval):
             return "Waiting for approval on \(peerName)…"
-        case .preparing(.loadingCatalogue):
-            return "Preparing game files…"
         case .preparing:
             return "Connecting…"
         case .downloading(let fraction):
-            return "Copying… \(Int(fraction * 100))%"
+            return "Stop · \(Int(fraction * 100))%"
         case .verifying:
             return "Checking the copy…"
-        case .completed:
-            return "Imported into your library."
         case .importing:
-            return "Copied. Importing into your library…"
+            return "Importing…"
         case .failed(let message):
-            return message
-        case nil:
-            return size
+            return "Retry · \(message)"
+        case .completed, nil:
+            guard action.isActionable else { return action.title }
+            let size = ByteCountFormatter.string(fromByteCount: item.sizeBytes, countStyle: .file)
+            return "\(action.title) · \(size)"
         }
     }
 }

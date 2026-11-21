@@ -35,7 +35,6 @@ enum NearbyMetrics {
     static let rowPadding = EdgeInsets(top: 20, leading: 30, bottom: 20, trailing: 30)
     static let chipPadding = EdgeInsets(top: 12, leading: 24, bottom: 12, trailing: 24)
     static let cornerRadius: CGFloat = 16
-    static let artworkSize: CGFloat = 80
     static let iconWidth: CGFloat = 48
     static let highlightScale: CGFloat = 1.02
     static let maxContentWidth: CGFloat = 1400
@@ -47,7 +46,6 @@ enum NearbyMetrics {
     static let rowPadding = EdgeInsets(top: 12, leading: 16, bottom: 12, trailing: 16)
     static let chipPadding = EdgeInsets(top: 7, leading: 14, bottom: 7, trailing: 14)
     static let cornerRadius: CGFloat = 12
-    static let artworkSize: CGFloat = 44
     static let iconWidth: CGFloat = 32
     static let highlightScale: CGFloat = 1
     static let maxContentWidth: CGFloat = 900
@@ -178,6 +176,41 @@ struct NearbyRowButtonStyle: ButtonStyle {
                 .padding(NearbyMetrics.rowPadding)
                 .frame(maxWidth: .infinity, alignment: .leading)
         }
+    }
+}
+
+/// A cover card in a grid. Lit the same way as a row.
+struct NearbyCardButtonStyle: ButtonStyle {
+    let cursorID: String
+
+    func makeBody(configuration: Configuration) -> some View {
+        NearbyChrome(cursorID: cursorID, isPressed: configuration.isPressed, shape: .row) {
+            configuration.label
+                .padding(NearbyCoverGrid.cardPadding)
+                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+        }
+    }
+}
+
+/// Sizes of the cover grid a library's games are shown in.
+enum NearbyCoverGrid {
+    #if os(tvOS)
+    static let minimumCardWidth: CGFloat = 210
+    static let spacing: CGFloat = 28
+    static let cardPadding: CGFloat = 14
+    #else
+    static let minimumCardWidth: CGFloat = 104
+    static let spacing: CGFloat = 12
+    static let cardPadding: CGFloat = 8
+    #endif
+    static let minimumColumns = 2
+    /// Covers sit in a square box: box art, cartridge labels and screenshots all fit.
+    static let coverAspectRatio: CGFloat = 1
+    static let coverCornerRadius: CGFloat = 8
+
+    /// How many cards fit across `width`.
+    static func columns(forWidth width: CGFloat) -> Int {
+        max(minimumColumns, Int((width + spacing) / (minimumCardWidth + spacing)))
     }
 }
 

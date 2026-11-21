@@ -118,14 +118,31 @@ final class NearbyNavigationTests: XCTestCase {
     }
 
     func testLoadedLibraryStartsBelowSearch() {
-        let layout = NearbyCursor.peerLibrary(.loaded(libraryIDs: ["", "lib1"], itemIDs: ["g1", "g2"]))
+        let layout = NearbyCursor.peerLibrary(.loaded(libraryIDs: ["", "lib1"], itemRows: [["g1", "g2"]]))
         XCTAssertEqual(layout.defaultItem, NearbyCursor.library(""))
         XCTAssertEqual(layout.rows.first?.items, [NearbyCursor.search])
         XCTAssertEqual(layout.move(from: NearbyCursor.library(""), .right), .moved(item: NearbyCursor.library("lib1"), row: "peer|libraries"))
         XCTAssertEqual(layout.move(from: NearbyCursor.library("lib1"), .down), .moved(item: NearbyCursor.item("g1"), row: NearbyCursor.item("g1")))
 
-        let plain = NearbyCursor.peerLibrary(.loaded(libraryIDs: [], itemIDs: ["g1"]))
+        let plain = NearbyCursor.peerLibrary(.loaded(libraryIDs: [], itemRows: [["g1"]]))
         XCTAssertEqual(plain.defaultItem, NearbyCursor.item("g1"))
+    }
+
+    func testCoverGridRowsBreakAtEachSystem() {
+        let rows = NearbyCursor.gridRows(sections: [["a", "b", "c"], ["d"]], columns: 2)
+        XCTAssertEqual(rows, [["a", "b"], ["c"], ["d"]])
+        XCTAssertEqual(NearbyCursor.gridRows(sections: [["a", "b"]], columns: 0), [["a"], ["b"]])
+
+        let layout = NearbyCursor.peerLibrary(.loaded(libraryIDs: [], itemRows: rows))
+        XCTAssertEqual(layout.move(from: NearbyCursor.item("a"), .right), .moved(item: NearbyCursor.item("b"), row: NearbyCursor.item("a")))
+        XCTAssertEqual(layout.move(from: NearbyCursor.item("a"), .down), .moved(item: NearbyCursor.item("c"), row: NearbyCursor.item("c")))
+    }
+
+    func testCoverGridFitsAsManyColumnsAsTheWidthAllows() {
+        XCTAssertEqual(NearbyCoverGrid.columns(forWidth: 0), NearbyCoverGrid.minimumColumns)
+        let two = NearbyCoverGrid.minimumCardWidth * 2 + NearbyCoverGrid.spacing
+        XCTAssertEqual(NearbyCoverGrid.columns(forWidth: two), 2)
+        XCTAssertEqual(NearbyCoverGrid.columns(forWidth: two + NearbyCoverGrid.minimumCardWidth + NearbyCoverGrid.spacing), 3)
     }
 
     func testPeerPhasesOfferTheirOneControl() {
