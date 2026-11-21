@@ -574,7 +574,23 @@ jobs:
           ls -la "archive.xcarchive/Products/Applications/"
           echo "Checking app binary..."
           ls -la "archive.xcarchive/Products/Applications/${{ matrix.APP_NAME }}.app/"
-          ldid -S"Provenance/Provenance-AppStore.entitlements" "archive.xcarchive/Products/Applications/${{ matrix.APP_NAME }}.app/${{ matrix.APP_NAME }}" || echo "::warning::Fakesign failed but continuing build"
+          # The entitlements file holds build-setting placeholders that only a
+          # signed Xcode build expands. Signing with them raw makes SideStore
+          # refuse the IPA ("Application group '$(APP_GROUP_IDENTIFIER)' contains
+          # raw placeholder"), so fill them in from the built Info.plist first.
+          APP_DIR="archive.xcarchive/Products/Applications/${{ matrix.APP_NAME }}.app"
+          BUNDLE_ID=$(/usr/libexec/PlistBuddy -c "Print :CFBundleIdentifier" "$APP_DIR/Info.plist")
+          APP_GROUP=$(/usr/libexec/PlistBuddy -c "Print :APP_GROUP_IDENTIFIER" "$APP_DIR/Info.plist")
+          ICLOUD_CONTAINER="iCloud.${APP_GROUP#group.}"
+          sed -e "s|\$(APP_GROUP_IDENTIFIER)|${APP_GROUP}|g" \
+              -e "s|\$(ICLOUD_CONTAINER_IDENTIFIER)|${ICLOUD_CONTAINER}|g" \
+              -e "s|\$(CFBundleIdentifier)|${BUNDLE_ID}|g" \
+              "Provenance/Provenance-AppStore.entitlements" > /tmp/fakesign.entitlements
+          if grep -q 'APP_GROUP_IDENTIFIER\|ICLOUD_CONTAINER_IDENTIFIER\|CFBundleIdentifier' /tmp/fakesign.entitlements || [ -z "$APP_GROUP" ] || [ -z "$BUNDLE_ID" ]; then
+            echo "::error::Fakesign entitlements still hold placeholders (group='${APP_GROUP}', bundle='${BUNDLE_ID}')"
+            exit 1
+          fi
+          ldid -S/tmp/fakesign.entitlements "$APP_DIR/${{ matrix.APP_NAME }}" || echo "::warning::Fakesign failed but continuing build"
 
       - name: Weak export audit (advisory)
         # Phase 1 of docs/superpowers/specs/2026-10-13-generated-project-and-dependency-dedup-design.md.
@@ -784,7 +800,7 @@ jobs:
           | **Commit** | [\`${SHORT_SHA}\`](https://github.com/${REPO}/commit/${SHA}) |
           | **Built** | ${DATE} |
           | **CI Run** | [View build log](${RUN_URL}) |
-          | **Bundle ID** | \`com.provenance-emu.provenance.alpha\` |
+          | **Bundle ID** | \`org.provenance-emu.provenance.alpha\` |
 
           > **Note:** This alpha build uses a separate bundle ID so it can be installed alongside the stable release.
 
@@ -937,7 +953,7 @@ jobs:
           | **Built** | ${DATE} |
           | **CI Run** | [View build log](${RUN_URL}) |
           | **Download** | [GitHub Release](https://github.com/${REPO}/releases/tag/alpha) |
-          | **Bundle ID** | \`com.provenance-emu.provenance.alpha\` |"
+          | **Bundle ID** | \`org.provenance-emu.provenance.alpha\` |"
 
           ISSUE_BODY="${ISSUE_BODY}
 
@@ -978,7 +994,7 @@ jobs:
           | | Stable | Alpha |
           |---|---|---|
           | **Source** | Tagged releases on \`master\` | Automatic builds from \`develop\` branch |
-          | **Bundle ID** | \`com.provenance-emu.provenance\` | \`com.provenance-emu.provenance.alpha\` |
+          | **Bundle ID** | \`org.provenance-emu.provenance\` | \`org.provenance-emu.provenance.alpha\` |
           | **App Name** | Provenance | Provenance Alpha |
           | **Side-by-side** | N/A | Yes -- install both at once |
           | **Reliability** | Tested and ready for daily use | May contain bugs or incomplete features |
@@ -986,7 +1002,7 @@ jobs:
 
           ### Can I install both stable and alpha at the same time?
 
-          **Yes!** Alpha builds use a different bundle ID (\`com.provenance-emu.provenance.alpha\`) so they install as a separate app called **Provenance Alpha**. Your stable install is not affected.
+          **Yes!** Alpha builds use a different bundle ID (\`org.provenance-emu.provenance.alpha\`) so they install as a separate app called **Provenance Alpha**. Your stable install is not affected.
 
           ### Are alpha builds safe to use?
 

@@ -13,8 +13,8 @@ name: Update Sideload Feed
 # Hugo site whose gh-pages.yml deploys ./public, and Hugo only copies static/
 # into public/ — a file committed at the repo root is never published and 404s.
 #
-# Stable releases appear as "Provenance" (com.provenance-emu.provenance).
-# Alpha builds appear as "Provenance Alpha" (com.provenance-emu.provenance.alpha)
+# Stable releases appear as "Provenance" (org.provenance-emu.provenance).
+# Alpha builds appear as "Provenance Alpha" (org.provenance-emu.provenance.alpha)
 # — a SEPARATE app entry so AltStore/SideStore shows them as two distinct apps.
 # build.yml gives alpha builds that bundle ID via ALPHA_BUNDLE_SUFFIX, so the
 # two install side by side.
@@ -302,7 +302,7 @@ jobs:
               date: (.published_at // .created_at),
               tintColor: "8A2BE2",
               url: .html_url,
-              appID: "com.provenance-emu.provenance",
+              appID: "org.provenance-emu.provenance",
               notify: false
             }
           ]')
@@ -320,7 +320,7 @@ jobs:
               apps: ([
                 {
                   name: "Provenance",
-                  bundleIdentifier: "com.provenance-emu.provenance",
+                  bundleIdentifier: "org.provenance-emu.provenance",
                   developerName: "Provenance-EMU",
                   subtitle: "Multi-system retro emulator for iOS & tvOS",
                   localizedDescription: "Provenance supports 60+ retro gaming systems including NES, SNES, N64, Genesis, PlayStation, GBA, and many more. Features iCloud sync, controller skins, RetroAchievements, and a beautiful native UI.",
@@ -342,7 +342,7 @@ jobs:
                 },
                 {
                   name: "Provenance Alpha",
-                  bundleIdentifier: "com.provenance-emu.provenance.alpha",
+                  bundleIdentifier: "org.provenance-emu.provenance.alpha",
                   developerName: "Provenance-EMU",
                   subtitle: "Latest dev builds - test new features early",
                   localizedDescription: "Alpha builds of Provenance from the develop branch. These builds include the latest features and fixes but may contain bugs. Install alongside the stable version to test new features without losing your stable install.\n\nSupports 60+ retro gaming systems including NES, SNES, N64, Genesis, PlayStation, GBA, and many more.",
