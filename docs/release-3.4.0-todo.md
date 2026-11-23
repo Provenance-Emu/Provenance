@@ -86,6 +86,31 @@ Still needs a person or hardware:
 
 To repeat the simulator run without taps: `GET /api/debug/alert` reads the showing alert and `POST /api/debug/alert {"button": "Copy"}` answers it, on either simulator.
 
+## Libraries in the sidebar, cloud-only games, cover grid (built 2026-11-20 and 21, not run)
+
+From tvOS TestFlight feedback. Commits `259aba49d4` and `e0f59456cc`. Both built for the tvOS and iOS simulators;
+nothing was seen in a simulator or on a device.
+
+- The tvOS Media sidebar's Nearby item is a Libraries section: devices found, saved content servers, "Add or Manage…"
+  (the old screen), and a count when it is closed or the sidebar is icon-only. A picked library shows in the main area.
+- A library's games are a cover grid (`NearbyItemCard`), in the sidebar view and in Nearby Libraries, on both platforms.
+- Core launcher entries (`PVGame.contentless`, "MAME") are not shared, and are dropped from an older host's list by
+  the shape of their MD5.
+- "In your library" needs the file on this device. A game listed without its file shows Get File, and the copy goes
+  to the entry's own path (`MissingROMRecoveryService.restore`). Single-file games only.
+
+Needs a person or hardware:
+
+- [ ] Apple TV: the Libraries section opens and closes, the count shows, focus moves from the sidebar into the grid and back with left.
+- [ ] Apple TV: the grid's columns and card size at 1080p and 4K; long titles; a game without artwork.
+- [ ] iPhone with a controller: the cursor moves left and right in a grid row and down into the next system.
+- [ ] Apple TV with a CloudKit-only game, iPhone as host: Get File, then the game boots with its saves and artwork.
+- [ ] An iPhone on an older build as host: no "mame" entry in the Apple TV's list.
+- [ ] A library that leaves the network while open ("Library Not Found"; iCube goes back to the local library instead).
+- [ ] Not built: RomM servers and unsaved discovered content servers in the sidebar section; Get File for multi-file
+      games and for content server or iCube sources; a host flag for games it lists without a file (a host only
+      lists games on its disk, so none is sent); proxying a file the host does not hold.
+
 ## Home Screen game list widgets from PVWidgets (built 2026-11-19 and 20, not seen on a Home Screen)
 
 Recently Played and Favorites are drawn by the shared PVWidgets package (0.1.0), which lays the grid or list out from
