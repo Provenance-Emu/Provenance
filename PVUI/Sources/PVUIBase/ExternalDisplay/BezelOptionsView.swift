@@ -51,7 +51,7 @@ public struct BezelOptionsView: View {
             } footer: {
                 Text("Automatic shows a TV for consoles and computers in landscape, and none for handhelds. "
                      + "Lighting the room takes more graphics power; turn it off if the picture stutters. "
-                     + "Seat is how close you sit to a built-in TV: Whole Room shows all of it, with bars on a screen that is not 16:9.")
+                     + "Seat is how close you sit to the TV: closer shows less of the room.")
             }
 
             Section {

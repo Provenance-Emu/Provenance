@@ -40,7 +40,8 @@ final class GameExternalOutputView: UIView {
     private(set) var bezelScene: TVBezelScene?
     /// Identifies the TV artwork shown or being loaded, so repeated updates do no work.
     private var bezelKey: String?
-    /// How a built-in TV's scene is placed on this display (see `sceneRect(drawableSize:)`).
+    /// The canvas and framing asked for when a TV was last shown: the scene being loaded.
+    private var requestedCanvas = TVBezelArtwork.canvas
     private var sceneFraming = SceneFraming.whole
     private var bezelLoad: Task<Void, Never>?
     /// The TV's artwork is being drawn or read off the main thread.
@@ -191,17 +192,22 @@ final class GameExternalOutputView: UIView {
             return
         }
         bezelRequest = (bezel, lightsRoom, flatGlass, didChange)
-        sceneFraming = Defaults[.externalDisplayBezelSeat].framing
         let drawableSize = metalLayer?.drawableSize ?? .zero
+        let seat = Defaults[.externalDisplayBezelSeat]
+        // A built-in TV is laid out for this display's shape; one that draws its own scene keeps 16:9.
+        let isBuiltIn = bezel.presetID == nil && bezel.image == nil
+        requestedCanvas = isBuiltIn ? TVBezelCanvas.size(display: drawableSize, seat: seat) : TVBezelArtwork.canvas
+        sceneFraming = SceneFraming(coversDisplay: true, zoom: isBuiltIn ? 1 : seat.standaloneZoom, kept: isBuiltIn ? TVBezelSeat.keptPart : TVBezelSeat.standaloneKeptPart)
+        let canvas = requestedCanvas
         if let art = bezel.image {
             showImageBezel(bezel, art: art, drawableSize: drawableSize, didChange: didChange)
             return
         }
-        let sceneRect = sceneRect(drawableSize: drawableSize)
+        let sceneRect = sceneRect(canvas: canvas, drawableSize: drawableSize)
         // No size yet: `layoutSubviews` asks again once the drawable has one.
         guard sceneRect.width > 0, sceneRect.height > 0 else { return }
         let lit = lightsRoom && bezel.lightsRoom
-        let key = "\(bezel.id)|\(Int(sceneRect.width))|\(lit)|\(flatGlass)"
+        let key = TVBezelScene.key(bezel: bezel, lightsRoom: lit, flatGlass: flatGlass, scenePixelWidth: sceneRect.width, canvas: canvas)
         guard key != bezelKey else { return }
         bezelKey = key
         bezelLoad?.cancel()
@@ -215,7 +221,7 @@ final class GameExternalOutputView: UIView {
         bezelLoad = Task { @MainActor [weak self] in
             let scene = await Task.detached(priority: .userInitiated) {
                 TVBezelScene.make(bezel: bezel, lightsRoom: lit, flatGlass: flatGlass,
-                                  scenePixelWidth: sceneRect.width, key: key)
+                                  scenePixelWidth: sceneRect.width, key: key, canvas: canvas)
             }.value
             guard let self, self.bezelKey == key else { return }
             self.bezelLoadInFlight = false
@@ -322,17 +328,23 @@ final class GameExternalOutputView: UIView {
         layoutImageBezel()
     }
 
-    /// The texture stage one draws the tube's picture into, for a scene `sceneSize` pixels
-    /// large. `nil` when no TV is shown or the texture cannot be made.
-    /// Where a built-in TV's scene goes in a drawable of `drawableSize`, from the seat read when
-    /// the TV was last shown. Larger than the drawable where the room's edges are cropped.
+    /// Where the shown TV's scene goes in a drawable of `drawableSize`: all of it when the
+    /// scene was laid out for this shape, else covering it with the tube kept on screen (the
+    /// rect is then larger than the drawable). While another scene loads, this is still the
+    /// shown scene's own canvas, so its tube stays where its artwork has it.
     func sceneRect(drawableSize: CGSize) -> CGRect {
-        RenderGeometry.sceneRect(aspect: TVBezelShader.sceneAspect, drawableSize: drawableSize, framing: sceneFraming)
+        sceneRect(canvas: bezelScene?.canvas ?? requestedCanvas, drawableSize: drawableSize)
     }
 
+    private func sceneRect(canvas: CGSize, drawableSize: CGSize) -> CGRect {
+        RenderGeometry.sceneRect(aspect: canvas, drawableSize: drawableSize, framing: sceneFraming)
+    }
+
+    /// The texture stage one draws the tube's picture into, for a scene `sceneSize` pixels
+    /// large. `nil` when no TV is shown or the texture cannot be made.
     func tubeTarget(sceneSize: CGSize) -> MTLTexture? {
         guard let scene = bezelScene, let device = metalLayer?.device else { return nil }
-        let size = RenderGeometry.pixelSize(of: scene.tubeRect.size, canvas: TVBezelArtwork.canvas, sceneSize: sceneSize)
+        let size = RenderGeometry.pixelSize(of: scene.tubeRect.size, canvas: scene.canvas, sceneSize: sceneSize)
         if let tubeTexture, tubeTexture.width == size.width, tubeTexture.height == size.height {
             return tubeTexture
         }
@@ -351,7 +363,7 @@ final class GameExternalOutputView: UIView {
         if let screen = bezelScreenFrame { return BezelPictureFit.rect(aspect: aspect, in: screen) }
         guard let scene = bezelScene else { return nil }
         let sceneRect = sceneRect(drawableSize: bounds.size)
-        let scale = sceneRect.width / TVBezelArtwork.canvas.width
+        let scale = sceneRect.width / scene.canvas.width
         let tube = CGRect(x: sceneRect.minX + scene.tubeRect.minX * scale, y: sceneRect.minY + scene.tubeRect.minY * scale,
                           width: scene.tubeRect.width * scale, height: scene.tubeRect.height * scale)
         return RenderGeometry.aspectFit(aspect: aspect, in: tube)

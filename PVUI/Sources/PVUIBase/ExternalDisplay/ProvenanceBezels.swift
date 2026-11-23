@@ -18,35 +18,27 @@ import SkinKitBezels
 
 // MARK: - Stored choices
 
-/// Where the player sits in front of a built-in TV. The room and cabinet are drawn for a 16:9
-/// screen; every seat but `wholeRoom` covers a screen of another shape and loses the room's edges.
-public enum TVBezelSeat: String, CaseIterable, Defaults.Serializable, Sendable {
-    /// All of the room, with bars on a screen that is not 16:9.
-    case wholeRoom
-    /// The room covers the screen.
-    case back
-    case middle
-    case front
-
-    /// The middle of the scene that stays on screen from every seat: the largest built-in
-    /// tube (0.525 by 0.7 of the scene) and a little of its cabinet.
-    static let keptPart = CGSize(width: 0.56, height: 0.76)
-
-    var zoom: CGFloat {
+/// The seat (SkinKitBezels) as a stored choice. A built-in TV's room is drawn for the screen's
+/// shape from the seat's distance; a stored value this build does not know reads as the default.
+extension TVBezelSeat: @retroactive Defaults.Serializable {
+    /// How much a TV that draws its own 16:9 scene (a standalone preset) is enlarged from this
+    /// seat. Built-in TVs are laid out for the seat instead.
+    var standaloneZoom: CGFloat {
         switch self {
-        case .wholeRoom, .back: return 1
+        case .back: return 1
         case .middle: return 1.1
         case .front: return 1.2
         }
     }
 
-    public var framing: SceneFraming {
-        self == .wholeRoom ? .whole : SceneFraming(coversDisplay: true, zoom: zoom, kept: Self.keptPart)
-    }
+    /// The middle of a scene that stays on screen when the scene cannot have the screen's
+    /// shape: the largest built-in tube (0.73 of the canvas's height) and a little cabinet.
+    static let keptPart = CGSize(width: 0.76, height: 0.76)
+    /// The same for a standalone preset's 16:9 scene, whose tube is narrower.
+    static let standaloneKeptPart = CGSize(width: 0.56, height: 0.76)
 
     public var name: String {
         switch self {
-        case .wholeRoom: return String(localized: "Whole Room")
         case .back: return String(localized: "Back")
         case .middle: return String(localized: "Middle")
         case .front: return String(localized: "Front")
@@ -66,7 +58,7 @@ public extension Defaults.Keys {
     /// The picture lights the room around the TV. Off keeps the reflections and costs less GPU time.
     /// `nil` (never set) goes by the device: see `ExternalDisplayBezelRules.lightsRoom`.
     static let externalDisplayBezelLightsRoom = Key<Bool?>("externalDisplayBezelLightsRoom", default: nil)
-    /// How close the player sits to a built-in TV: how much of the room shows around it.
+    /// How close the player sits to a TV: how much of the room is drawn around it.
     static let externalDisplayBezelSeat = Key<TVBezelSeat>("externalDisplayBezelSeat", default: .back)
 
     /// Show artwork made for the running game around the picture, downloaded from The Bezel
