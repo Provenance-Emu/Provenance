@@ -243,8 +243,8 @@ extension SettingsSearchIndex {
         entry("skins.arcademultibutton", "Arcade Multi-Button Touch",
               "Built-in arcade controller: a finger between two buttons presses both, handy for fighting-game combos.",
               .controller, SettingsSectionTitle.deltaSkins, keywords: ["fat finger", "touch controls", "combo", "arcade", "overlay"], tvOS: false),
-        entry("skins.deltastyles", "Visit DeltaStyles.com", "Download more skins from the DeltaStyles website.",
-              .controller, SettingsSectionTitle.deltaSkins, keywords: ["delta skin", "download", "skin", "web"], tvOS: false)
+        entry("skins.emuskins", "Visit emuskins.com", "Download more skins from the EmuSkins website.",
+              .controller, SettingsSectionTitle.deltaSkins, keywords: ["delta skin", "download", "skin", "web", "emuskins", "catalog"], tvOS: false)
     ]
 
     // MARK: Advanced

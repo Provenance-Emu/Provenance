@@ -68,8 +68,8 @@
 "settings.on_screen.transparency_description" = "Transparency amount of on-screen controls overlays.";
 
 "settings.skins.skin_mode" = "SKIN MODE";
-"settings.skins.download_more" = "Download more skins from DeltaStyles";
-"settings.skins.visit_deltastyles" = "Visit DeltaStyles.com";
+"settings.skins.download_more" = "Download more skins from EmuSkins";
+"settings.skins.visit_emuskins" = "Visit emuskins.com";
 
 "settings.plus.active_title" = "PROVENANCE PLUS ACTIVE";
 "settings.plus.thank_you" = "Thank you for your support!";

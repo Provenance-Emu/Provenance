@@ -2848,7 +2848,7 @@ private struct DeltaSkinsSection: View {
 
             buttonTouchFeedback
 
-            DeltaStylesLinkView()
+            EmuSkinsLinkView()
         }
     }
 
@@ -2880,12 +2880,12 @@ private struct DeltaSkinsSection: View {
     }
 }
 
-/// View component for linking to DeltaStyles website
-private struct DeltaStylesLinkView: View {
+/// View component for linking to the EmuSkins catalog website
+private struct EmuSkinsLinkView: View {
     @State private var showSafariView = false
     @ObservedObject private var themeManager = ThemeManager.shared
 
-    private let deltaStylesURL = URL(string: "https://deltastyles.com")!
+    private let emuSkinsURL = URL(string: "https://emuskins.com")!
 
     var body: some View {
         VStack(spacing: 12) {
@@ -2908,7 +2908,7 @@ private struct DeltaStylesLinkView: View {
             }
             .padding(.horizontal, 4)
 
-            // Button to open DeltaStyles
+            // Button to open EmuSkins
             #if !os(tvOS)
             Button {
                 showSafariView = true
@@ -2923,7 +2923,7 @@ private struct DeltaStylesLinkView: View {
                             )
                         )
 
-                    Text("settings.skins.visit_deltastyles", bundle: .module)
+                    Text("settings.skins.visit_emuskins", bundle: .module)
                         .font(.system(size: 16, weight: .semibold))
                         .foregroundStyle(
                             LinearGradient(
@@ -2956,10 +2956,10 @@ private struct DeltaStylesLinkView: View {
                 )
             }
             .sheet(isPresented: $showSafariView) {
-                SafariWebView(url: deltaStylesURL, entersReaderIfAvailable: false)
+                SafariWebView(url: emuSkinsURL, entersReaderIfAvailable: false)
             }
             #else
-            Link(destination: deltaStylesURL) {
+            Link(destination: emuSkinsURL) {
                 HStack {
                     Image(systemName: "safari.fill")
                         .foregroundStyle(
@@ -2970,7 +2970,7 @@ private struct DeltaStylesLinkView: View {
                             )
                         )
 
-                    Text("settings.skins.visit_deltastyles", bundle: .module)
+                    Text("settings.skins.visit_emuskins", bundle: .module)
                         .font(.system(size: 16, weight: .semibold))
                         .foregroundStyle(
                             LinearGradient(
