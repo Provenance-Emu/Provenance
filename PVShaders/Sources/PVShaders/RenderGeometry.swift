@@ -7,6 +7,27 @@
 
 import CoreGraphics
 
+/// How a scene is placed on a display that does not have its proportions.
+public struct SceneFraming: Equatable, Sendable {
+    /// The scene covers the whole display and loses its edges, rather than fitting inside it
+    /// with bars.
+    public var coversDisplay: Bool
+    /// Enlarges the scene about the display's centre. Values under 1 count as 1.
+    public var zoom: CGFloat
+    /// The centred part of the scene that never leaves the display, as a fraction of the
+    /// scene's width and height. Zero keeps nothing in particular.
+    public var kept: CGSize
+
+    public init(coversDisplay: Bool, zoom: CGFloat = 1, kept: CGSize = .zero) {
+        self.coversDisplay = coversDisplay
+        self.zoom = zoom
+        self.kept = kept
+    }
+
+    /// All of the scene, with bars where the display has another shape.
+    public static let whole = SceneFraming(coversDisplay: false)
+}
+
 public enum RenderGeometry {
     /// Largest rect with `aspect`'s proportions that fits in `bounds`, centred.
     /// Returns `bounds` unchanged when either size is empty.
@@ -27,6 +48,25 @@ public enum RenderGeometry {
     public static func sceneRect(aspect: CGSize, drawableSize: CGSize) -> CGRect {
         let full = CGRect(origin: .zero, size: drawableSize)
         return aspectFit(aspect: aspect, in: full).integral.intersection(full)
+    }
+
+    /// A scene of `aspect` placed on a drawable by `framing`, in whole pixels and centred. The
+    /// rect is larger than the drawable where the scene is cropped, so it is a viewport, not a
+    /// region of the drawable.
+    public static func sceneRect(aspect: CGSize, drawableSize: CGSize, framing: SceneFraming) -> CGRect {
+        let fitted = sceneRect(aspect: aspect, drawableSize: drawableSize)
+        guard framing != .whole, aspect.width > 0, aspect.height > 0, !fitted.isEmpty else { return fitted }
+        let fit = min(drawableSize.width / aspect.width, drawableSize.height / aspect.height)
+        let cover = max(drawableSize.width / aspect.width, drawableSize.height / aspect.height)
+        var scale = (framing.coversDisplay ? cover : fit) * max(framing.zoom, 1)
+        if framing.kept.width > 0 { scale = min(scale, drawableSize.width / (framing.kept.width * aspect.width)) }
+        if framing.kept.height > 0 { scale = min(scale, drawableSize.height / (framing.kept.height * aspect.height)) }
+        // Within a hundredth of a pixel of the fitted scene: use it, bars and all.
+        guard scale * aspect.width - fitted.width > 0.01 || scale * aspect.height - fitted.height > 0.01 else { return fitted }
+        let size = CGSize(width: (aspect.width * scale).rounded(), height: (aspect.height * scale).rounded())
+        return CGRect(x: ((drawableSize.width - size.width) / 2).rounded(.down),
+                      y: ((drawableSize.height - size.height) / 2).rounded(.down),
+                      width: size.width, height: size.height)
     }
 
     /// The pixel size of a part of a scene (`part`, in the units of `canvas`) once the scene

@@ -23,6 +23,7 @@ public struct ExternalDisplayOptionsView: View {
     @Default(.externalDisplayBezelMatchesSystem) private var bezelMatchesSystem
     /// Stored only once the player sets it; until then it goes by the device.
     @Default(.externalDisplayBezelLightsRoom) private var storedBezelLightsRoom
+    @Default(.externalDisplayBezelSeat) private var bezelSeat
     @Default(.externalDisplayGameBezels) private var gameBezels
     @Default(.externalDisplayBezelByGame) private var pins
     @Default(.hideOnScreenControlsWithController) private var hideControlsWithController
@@ -86,6 +87,9 @@ public struct ExternalDisplayOptionsView: View {
                             Toggle(String(localized: "Light the Room"),
                                    isOn: Binding(get: { storedBezelLightsRoom ?? TVBezelRoomLight.gpuIsRecent },
                                                  set: { storedBezelLightsRoom = $0 }))
+                            Picker(String(localized: "Seat"), selection: $bezelSeat) {
+                                ForEach(TVBezelSeat.allCases, id: \.self) { Text($0.name).tag($0) }
+                            }
                         }
                     }
                 } header: {

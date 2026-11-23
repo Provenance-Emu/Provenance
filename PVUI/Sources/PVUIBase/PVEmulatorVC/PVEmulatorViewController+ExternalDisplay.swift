@@ -150,7 +150,8 @@ extension PVEmulatorViewController {
         externalDisplaySettingsObservation = Task { @MainActor [weak self] in
             for await _ in Defaults.updates([.externalDisplayMode, .externalDisplayDevicePicture, .externalDisplaySkin,
                                              .externalDisplayBezel, .externalDisplayBezelMatchesSystem,
-                                             .externalDisplayBezelLightsRoom, .externalDisplayGameBezels,
+                                             .externalDisplayBezelLightsRoom, .externalDisplayBezelSeat,
+                                             .externalDisplayGameBezels,
                                              .externalDisplayBezelProjectStyle, .externalDisplayBezelByGame,
                                              .imageSmoothingMode, .hideOnScreenControlsWithController],
                                             initial: false) {

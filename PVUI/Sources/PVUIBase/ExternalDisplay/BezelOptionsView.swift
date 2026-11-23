@@ -17,6 +17,7 @@ public struct BezelOptionsView: View {
     @Default(.externalDisplayBezel) private var bezelID
     /// Stored only once the player sets it; until then it goes by the device.
     @Default(.externalDisplayBezelLightsRoom) private var storedLightsRoom
+    @Default(.externalDisplayBezelSeat) private var seat
     @Default(.externalDisplayGameBezels) private var gameBezels
 
     public init() {
@@ -44,9 +45,13 @@ public struct BezelOptionsView: View {
                 Toggle(String(localized: "Light the Room"),
                        isOn: Binding(get: { storedLightsRoom ?? TVBezelRoomLight.gpuIsRecent },
                                      set: { storedLightsRoom = $0 }))
+                Picker(String(localized: "Seat"), selection: $seat) {
+                    ForEach(TVBezelSeat.allCases, id: \.self) { Text($0.name).tag($0) }
+                }
             } footer: {
                 Text("Automatic shows a TV for consoles and computers in landscape, and none for handhelds. "
-                     + "Lighting the room takes more graphics power; turn it off if the picture stutters.")
+                     + "Lighting the room takes more graphics power; turn it off if the picture stutters. "
+                     + "Seat is how close you sit to a built-in TV: Whole Room shows all of it, with bars on a screen that is not 16:9.")
             }
 
             Section {

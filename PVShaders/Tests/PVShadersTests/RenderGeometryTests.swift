@@ -73,6 +73,50 @@ struct RenderGeometryTests {
         #expect(rect == CGRect(x: 440, y: 0, width: 2560, height: 1440))
     }
 
+    @Test("A scene that covers a 4:3 display is as tall as it and cropped at the sides")
+    func sceneCoversNarrowerDisplay() {
+        let rect = RenderGeometry.sceneRect(aspect: CGSize(width: 16, height: 9), drawableSize: CGSize(width: 1024, height: 768),
+                                            framing: SceneFraming(coversDisplay: true))
+        #expect(rect == CGRect(x: -171, y: 0, width: 1365, height: 768))
+    }
+
+    @Test("Covering a display of the scene's own shape changes nothing")
+    func sceneCoversMatchingDisplay() {
+        let rect = RenderGeometry.sceneRect(aspect: CGSize(width: 16, height: 9), drawableSize: CGSize(width: 1920, height: 1080),
+                                            framing: SceneFraming(coversDisplay: true))
+        #expect(rect == CGRect(x: 0, y: 0, width: 1920, height: 1080))
+    }
+
+    @Test("Zoom enlarges the scene about the display's centre")
+    func sceneZoomed() {
+        let rect = RenderGeometry.sceneRect(aspect: CGSize(width: 16, height: 9), drawableSize: CGSize(width: 1920, height: 1080),
+                                            framing: SceneFraming(coversDisplay: true, zoom: 1.2))
+        #expect(rect == CGRect(x: -192, y: -108, width: 2304, height: 1296))
+    }
+
+    @Test("The kept part of a scene stays on an ultrawide display")
+    func sceneKeepsItsMiddle() {
+        let framing = SceneFraming(coversDisplay: true, kept: CGSize(width: 0.5, height: 0.75))
+        let rect = RenderGeometry.sceneRect(aspect: CGSize(width: 16, height: 9), drawableSize: CGSize(width: 3840, height: 1080),
+                                            framing: framing)
+        // Covering would take a 2160 pixel tall scene; three quarters of 1440 is the display's 1080.
+        #expect(rect == CGRect(x: 640, y: -180, width: 2560, height: 1440))
+    }
+
+    @Test("A scene that must stay whole is fitted, whatever else is asked")
+    func sceneKeptWholeIsFitted() {
+        let framing = SceneFraming(coversDisplay: true, zoom: 1.5, kept: CGSize(width: 1, height: 1))
+        let rect = RenderGeometry.sceneRect(aspect: CGSize(width: 16, height: 9), drawableSize: CGSize(width: 1024, height: 768),
+                                            framing: framing)
+        #expect(rect == CGRect(x: 0, y: 96, width: 1024, height: 576))
+    }
+
+    @Test("An empty drawable gives an empty scene, covered or not")
+    func sceneCoveringEmptyDrawable() {
+        #expect(RenderGeometry.sceneRect(aspect: CGSize(width: 16, height: 9), drawableSize: .zero,
+                                         framing: SceneFraming(coversDisplay: true)).isEmpty)
+    }
+
     @Test("An empty drawable gives an empty scene")
     func sceneEmptyDrawable() {
         #expect(RenderGeometry.sceneRect(aspect: CGSize(width: 16, height: 9), drawableSize: .zero).isEmpty)

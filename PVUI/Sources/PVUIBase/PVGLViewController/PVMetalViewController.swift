@@ -249,8 +249,10 @@ final class PVMetalViewController: PVGPUViewController, PVRenderDelegate, MTKVie
 
     func updateLocalBezel(_ bezel: TVBezel?, filter: ResolvedShader?, lightsRoom: Bool, flatGlass: Bool) {
         guard let bezel, let mtlView, let device else {
+            let hadOutput = localBezelOutput != nil
             localBezelOutput?.removeFromSuperview()
             localBezelOutput = nil
+            if hadOutput { relayoutForLocalBezel() }
             redrawPausedFrame()
             return
         }
@@ -267,12 +269,23 @@ final class PVMetalViewController: PVGPUViewController, PVRenderDelegate, MTKVie
             mtlView.addSubview(output)
             output.layoutIfNeeded()
             localBezelOutput = output
+            relayoutForLocalBezel()
         }
         output.filter.update(filter, smoothing: renderSettings.smoothingMode.usesLinearFiltering)
         output.showBezel(bezel, lightsRoom: lightsRoom, flatGlass: flatGlass) { [weak self] in
             self?.redrawPausedFrame()
         }
         redrawPausedFrame()
+    }
+    #endif
+
+    #if os(iOS) || os(tvOS)
+    /// On Apple TV the view is as large as the screen while a TV shows and goes back to the
+    /// scaling mode's frame without one. iOS sizes the view from the emulator view controller.
+    private func relayoutForLocalBezel() {
+        #if os(tvOS)
+        view.setNeedsLayout()
+        #endif
     }
     #endif
 
@@ -1066,8 +1079,16 @@ final class PVMetalViewController: PVGPUViewController, PVRenderDelegate, MTKVie
             let parentSize = view.window?.bounds.size ?? parent?.view.bounds.size ?? .zero
             let screenScale = view.window?.screen.scale ?? UIScreen.main.scale
             let scalingMode = renderSettings.scalingMode
-            let frame = ScalingModeLayout.frame(for: scalingMode, container: parentSize, contentAspect: aspect,
-                                                nativePixelHeight: effectiveRect.height, screenScale: screenScale)
+            #if os(tvOS)
+            // A TV around the picture is drawn for the whole screen; the picture goes in its tube.
+            let showsTV = localBezelOutput != nil
+            #else
+            let showsTV = false
+            #endif
+            let frame = showsTV
+                ? CGRect(origin: .zero, size: parentSize)
+                : ScalingModeLayout.frame(for: scalingMode, container: parentSize, contentAspect: aspect,
+                                          nativePixelHeight: effectiveRect.height, screenScale: screenScale)
 
 #if DEBUG
             ILOG("Calculated frame: \(frame)")
@@ -2873,7 +2894,7 @@ final class PVMetalViewController: PVGPUViewController, PVRenderDelegate, MTKVie
         }
         output.promotePendingBezelIfReady()
         guard output.bezelScene != nil, output.bezelProcessor.isReady else { return false }
-        let scene = RenderGeometry.sceneRect(aspect: TVBezelShader.sceneAspect, drawableSize: drawableSize)
+        let scene = output.sceneRect(drawableSize: drawableSize)
         guard let tube = output.tubeTarget(sceneSize: scene.size) else { return false }
         let bounds = CGRect(x: 0, y: 0, width: tube.width, height: tube.height)
         let picture = RenderGeometry.aspectFit(aspect: aspect, in: bounds).integral.intersection(bounds)
