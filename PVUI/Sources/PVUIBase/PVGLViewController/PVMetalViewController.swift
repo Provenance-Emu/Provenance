@@ -274,6 +274,10 @@ final class PVMetalViewController: PVGPUViewController, PVRenderDelegate, MTKVie
         output.filter.update(filter, smoothing: renderSettings.smoothingMode.usesLinearFiltering)
         output.showBezel(bezel, lightsRoom: lightsRoom, flatGlass: flatGlass) { [weak self] in
             self?.redrawPausedFrame()
+            #if os(iOS)
+            // The tube's place is known now: the touch mouse covers the picture inside it.
+            (self?.parent as? PVEmulatorViewController)?.refreshVirtualMouseLayout()
+            #endif
         }
         redrawPausedFrame()
     }

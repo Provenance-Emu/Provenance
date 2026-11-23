@@ -756,6 +756,12 @@ struct PauseTileMenuView: View {
         case "mouseToggle":
             #if canImport(UIKit) && !os(tvOS)
             emulatorVC.toggleVirtualMouse()
+            // A game opted in by hand shows this tile in place of Virtual Mouse: turning the
+            // mouse off here takes the opt-in back.
+            if !emulatorVC.isVirtualMouseVisible, let md5 = emulatorVC.core.romMD5,
+               MouseGameRegistry.shared.userOverride(forMD5: md5) == true {
+                MouseGameRegistry.shared.setUserOverride(nil, forMD5: md5)
+            }
             // Dismiss the menu so the user can interact with the mouse overlay.
             dismissAction(true)
             #endif
@@ -811,8 +817,10 @@ struct PauseTileMenuView: View {
             #if os(iOS) && !targetEnvironment(macCatalyst)
             emulatorVC.toggleVirtualMouseManually()
             // Mirror the Light Gun pattern — persist via MouseGameRegistry
-            // so the next launch matches what the user last picked.
-            if let md5 = emulatorVC.core.romMD5 {
+            // so the next launch matches what the user last picked. Not on a system where
+            // every game takes a mouse: the trackpad is on at each launch there.
+            let system = SystemIdentifier(rawValue: emulatorVC.core.systemIdentifier ?? "")
+            if let md5 = emulatorVC.core.romMD5, system.map(MouseGameRegistry.shared.systemAlwaysHasMouse) != true {
                 MouseGameRegistry.shared.setUserOverride(
                     emulatorVC.isVirtualMouseVisible,
                     forMD5: md5

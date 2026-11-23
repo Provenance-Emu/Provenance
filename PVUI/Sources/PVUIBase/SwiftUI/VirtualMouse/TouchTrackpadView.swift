@@ -54,6 +54,19 @@ public final class TouchTrackpadView: UIView {
     /// Increase to make the cursor move faster relative to finger speed.
     public var sensitivity: CGFloat = 1.5
 
+    /// Send finger movement as movement, never as a position (touchpad mode only).
+    ///
+    /// For machines that draw their own pointer (DOS, Atari ST, Amiga, MSX, the SNES Mouse).
+    /// The position kept here stops at the edges of its 0–1 range, and the machine's pointer
+    /// does not start where it does or move at exactly the assumed speed. Once the two drift
+    /// apart, a position stuck at an edge sends nothing more and the real pointer can no
+    /// longer reach that side of the screen.
+    public var sendsRelativeMovement = false
+
+    /// Asked before a touch is taken, with the point in this view's coordinates: `true`
+    /// leaves the touch to an on-screen control underneath.
+    public var yieldsTouch: (@MainActor (CGPoint, UIEvent?) -> Bool)?
+
     // MARK: Public configuration (viewport gating)
 
     /// Weak reference to the GPU / game-screen view.
@@ -198,6 +211,8 @@ public final class TouchTrackpadView: UIView {
             return nil
         }
 
+        if yieldsTouch?(point, event) == true { return nil }
+
         return super.hitTest(point, with: event)
     }
 
@@ -274,13 +289,9 @@ public final class TouchTrackpadView: UIView {
 
         case .touchpad:
             let current = touch.location(in: self)
-            if let prev = previousTouchLocation {
-                let deltaX = (current.x - prev.x) / bounds.width  * sensitivity
-                let deltaY = (current.y - prev.y) / bounds.height * sensitivity
-                var newPos = cursorPosition
-                newPos.x = max(0, min(1, newPos.x + deltaX))
-                newPos.y = max(0, min(1, newPos.y + deltaY))
-                updateCursor(to: newPos, notify: true)
+            if let prev = previousTouchLocation, bounds.width > 0, bounds.height > 0 {
+                moveCursor(by: CGPoint(x: (current.x - prev.x) / bounds.width * sensitivity,
+                                       y: (current.y - prev.y) / bounds.height * sensitivity))
             }
             previousTouchLocation = current
         }
@@ -405,6 +416,14 @@ public final class TouchTrackpadView: UIView {
         rect.height.isFinite &&
         rect.width > 0 &&
         rect.height > 0
+    }
+
+    /// Moves the mouse by a fraction of the trackpad: as plain movement for a machine that
+    /// draws its own pointer and a core that takes it, else as the next cursor position.
+    func moveCursor(by delta: CGPoint) {
+        if sendsRelativeMovement, mouseResponder?.mouseMoved?(byNormalizedDelta: delta) != nil { return }
+        updateCursor(to: CGPoint(x: max(0, min(1, cursorPosition.x + delta.x)),
+                                 y: max(0, min(1, cursorPosition.y + delta.y))), notify: true)
     }
 
     /// Update the tracked cursor position, notify the core and post the overlay notification.

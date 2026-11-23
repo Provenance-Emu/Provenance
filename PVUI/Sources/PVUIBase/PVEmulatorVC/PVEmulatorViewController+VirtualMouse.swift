@@ -16,6 +16,7 @@ import UIKit
 import SwiftUI
 import PVCoreBridge
 import PVLogging
+import PVTouchOverlay
 
 // MARK: - Associated-object keys for extension-level "stored" properties
 
@@ -100,18 +101,24 @@ extension PVEmulatorViewController {
 
         /// Frame is managed by `refreshVirtualMouseLayout()` — no autoresizingMask
         /// so the trackpad stays confined to the game viewport, not the full view.
+        let systemDrawsPointer = MouseCursorOverlayView.systemDrawsOwnPointer(
+            core.systemIdentifier, coreIdentifier: core.coreIdentifier
+        )
         let trackpad = TouchTrackpadView(frame: view.bounds)
         trackpad.mouseResponder = mouseCore
+        trackpad.sendsRelativeMovement = systemDrawsPointer
+        // The trackpad sits above the control layer, so a generated button drawn over the
+        // picture would never be reached: leave those touches to it.
+        trackpad.yieldsTouch = { [weak self, weak trackpad] point, event in
+            guard let self, let trackpad, let controls = self.skinContainerView, !controls.isHidden else { return false }
+            return controls.hitTest(trackpad.convert(point, to: controls), with: event) is OverlayTouchCluster
+        }
         view.addSubview(trackpad)
         touchTrackpadView = trackpad
 
         /// Still installed when it draws nothing: `cursorHostingController` marks the
         /// virtual mouse as on.
-        let overlay = MouseCursorOverlayView(
-            showsCursor: !MouseCursorOverlayView.systemDrawsOwnPointer(
-                core.systemIdentifier, coreIdentifier: core.coreIdentifier
-            )
-        )
+        let overlay = MouseCursorOverlayView(showsCursor: !systemDrawsPointer)
         let host = UIHostingController(rootView: overlay)
         host.view.backgroundColor = .clear
         host.view.isOpaque = false
@@ -261,6 +268,9 @@ extension PVEmulatorViewController {
     private func resolvedVirtualMouseViewportFrame() -> CGRect? {
         // Inside a TV the GPU view holds the whole scene; the picture is the part in the tube.
         if let frame = gameplayBezelPictureFrame, isTrustedVirtualMouseViewportFrame(frame) { return frame }
+        // The TV is still loading: every other source describes the layout without it. The
+        // renderer asks for a refresh when the TV is ready.
+        if isGameplayBezelShowing { return nil }
         if let gpuView = gpuViewController.viewIfLoaded, gpuView.superview === view, hostGPUViewDrawsGame {
             let frame = gpuView.convert(gpuView.bounds, to: view)
             if isTrustedVirtualMouseViewportFrame(frame) { return frame }
@@ -283,7 +293,7 @@ extension PVEmulatorViewController {
 
     /// Validates viewport frames used by the touch trackpad.
     ///
-    /// In DeltaSkin mode, a near full-screen frame is rejected to prevent stale
+    /// Under a packaged skin, a near full-screen frame is rejected to prevent stale
     /// rotation fallback from turning the trackpad into a global touch interceptor.
     private func isTrustedVirtualMouseViewportFrame(_ frame: CGRect) -> Bool {
         guard !frame.isEmpty,
@@ -303,7 +313,9 @@ extension PVEmulatorViewController {
         let maxHeight = fullBounds.height + 2
         guard frame.width <= maxWidth, frame.height <= maxHeight else { return false }
 
-        if isDeltaSkinEnabled {
+        // The generated controls are reached through the trackpad (`yieldsTouch`), so a picture
+        // that fills the view is safe there: a 4:3 game does exactly that on an iPad.
+        if isDeltaSkinEnabled, !isProgrammaticOverlayActive {
             let epsilon: CGFloat = 1.0
             let isNearFullscreen =
                 abs(frame.minX - fullBounds.minX) <= epsilon &&

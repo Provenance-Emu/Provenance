@@ -276,11 +276,17 @@ public final class MouseGameRegistry: Sendable {
         state.withLock { $0.hasAnySupport(system) }
     }
 
+    /// Whether every game on `system` takes a mouse (DOS, Atari ST, Macintosh and the like).
+    /// A per-game override is not consulted for these.
+    public func systemAlwaysHasMouse(_ system: SystemIdentifier) -> Bool {
+        state.withLock { $0.alwaysSystems.contains(system) }
+    }
+
     /// Determine whether the currently loaded game supports a mouse peripheral.
     ///
     /// Decision order:
-    /// 1. User override (UserDefaults) — always wins.
-    /// 2. Always-mouse system → `true`.
+    /// 1. Always-mouse system → `true`.
+    /// 2. User override (UserDefaults) — wins on every other system.
     /// 3. System not in any mouse list → `false`.
     /// 4. Known MD5 in database → `true`.
     /// 5. Title keyword match in database → `true`.
@@ -295,13 +301,19 @@ public final class MouseGameRegistry: Sendable {
         md5: String?,
         title: String?
     ) -> Bool {
-        // 1. User override takes absolute precedence.
+        // The lock is held only for the copy; the title search runs on the snapshot.
+        let snapshot = state.withLock { $0 }
+
+        // A machine built around the mouse keeps it whatever was saved for the game: an "off"
+        // there only ever meant "hide the touch trackpad", and it also cut off a hardware
+        // mouse and the pause menu's Mouse switch on every later launch.
+        if snapshot.alwaysSystems.contains(systemIdentifier) { return true }
+
+        // 1. On every other system the user override takes precedence.
         if let md5, let override = userOverride(forMD5: md5) {
             return override
         }
 
-        // The lock is held only for the copy; the title search runs on the snapshot.
-        let snapshot = state.withLock { $0 }
         return snapshot.supports(systemIdentifier: systemIdentifier, md5: md5, title: title)
     }
 

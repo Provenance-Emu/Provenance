@@ -164,6 +164,17 @@ final class MouseGameRegistryTests: XCTestCase {
         )
     }
 
+    /// "Off" saved for a DOS game used to hide the mouse for good, hardware mouse included.
+    func testOverrideCannotTurnMouseOffOnAlwaysMouseSystem() {
+        let md5 = "d05d05d05d05d05d05d05d05d05d05d0"
+        MouseGameRegistry.shared.setUserOverride(false, forMD5: md5)
+        defer { MouseGameRegistry.shared.setUserOverride(nil, forMD5: md5) }
+
+        XCTAssertTrue(MouseGameRegistry.shared.gameSupportsMouse(systemIdentifier: .DOS, md5: md5, title: nil))
+        XCTAssertTrue(MouseGameRegistry.shared.systemAlwaysHasMouse(.DOS))
+        XCTAssertFalse(MouseGameRegistry.shared.systemAlwaysHasMouse(.Saturn))
+    }
+
     func testUserOverrideForcesMouseOffForKnownGame() {
         let md5 = "d6f64fd0642a514a5fba4707fca4f1ed" // Mario Paint (USA)
         MouseGameRegistry.shared.setUserOverride(false, forMD5: md5)

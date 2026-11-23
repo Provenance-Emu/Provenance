@@ -20,6 +20,7 @@ import GameController
 import PVCoreBridge
 import PVLogging
 import PVSettings
+import PVSystems
 
 // MARK: - Associated-object keys
 
@@ -133,11 +134,18 @@ extension PVEmulatorViewController {
         }
 
         // 2. Fall back to the hard-coded default for this game type
-        if let gameType = currentSkin?.gameType {
+        if let gameType = keyboardGameType {
             return DeltaSkinDefaults.defaultKeyboardOverlay(for: gameType)
         }
 
         return nil
+    }
+
+    /// The machine whose keyboard is drawn: the skin's, or the running system's when the
+    /// generated controls stand in for a skin (which then has no game type to ask).
+    private var keyboardGameType: DeltaSkinGameType? {
+        currentSkin?.gameType
+            ?? SystemIdentifier(rawValue: core.systemIdentifier ?? "").flatMap(DeltaSkinGameType.init(systemIdentifier:))
     }
 
     /// Call this after the emulator has started (e.g. at the end of `viewDidAppear` /
@@ -200,21 +208,18 @@ extension PVEmulatorViewController {
     ///
     /// Priority:
     ///   1. Explicit skin JSON `keyboardOverlay` — skin authors' intent wins.
-    ///   2. User's persisted `preferredKeyboardVariant` — last layout the user chose.
+    ///   2. User's persisted `preferredKeyboardVariant` — last layout the user chose. Its
+    ///      untouched value is "full", which is not a choice: a C64 or an Atari ST would
+    ///      otherwise always come up with the PC keyboard.
     ///   3. System default from `DeltaSkinDefaults` — built-in per-game-type fallback.
     ///   4. `.full` — universal fallback.
     private func resolvedKeyboardLayout() -> VirtualKeyboardLayout {
         if let skinConfig = currentSkin?.keyboardOverlay {
             return skinConfig.variant.toLayout()
         }
-        if let variant = VirtualKeyboardVariant(rawValue: Defaults[.preferredKeyboardVariant]) {
-            return variant.toLayout()
-        }
-        if let gameType = currentSkin?.gameType,
-           let defaultConfig = DeltaSkinDefaults.defaultKeyboardOverlay(for: gameType) {
-            return defaultConfig.variant.toLayout()
-        }
-        return .full
+        let systemDefault = keyboardGameType.flatMap(DeltaSkinDefaults.defaultKeyboardOverlay(for:))?.variant
+        let chosen = VirtualKeyboardVariant(rawValue: Defaults[.preferredKeyboardVariant])
+        return VirtualKeyboardVariant.resolved(chosen: chosen, systemDefault: systemDefault).toLayout()
     }
 
     /// Show the virtual keyboard overlay.
@@ -464,6 +469,17 @@ extension PVEmulatorViewController: VirtualKeyboardDelegate {
     ) {
         guard let keyboardResponder = core as? KeyboardResponder else { return }
         keyboardResponder.keyUp(keyCode)
+    }
+}
+
+// MARK: - Layout choice
+
+extension VirtualKeyboardVariant {
+    /// The layout the keyboard opens with. `.full` is what the saved choice holds before the
+    /// player has picked anything, so it gives way to the machine's own keyboard.
+    static func resolved(chosen: VirtualKeyboardVariant?, systemDefault: VirtualKeyboardVariant?) -> VirtualKeyboardVariant {
+        if let chosen, chosen != .full { return chosen }
+        return systemDefault ?? .full
     }
 }
 

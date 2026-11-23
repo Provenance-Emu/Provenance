@@ -132,6 +132,27 @@ Needs a person or hardware:
 - [ ] iCube: the app writes real saves into its Continue list (seen with seeded data only).
 - [ ] iFly: either widget on a Home Screen (its test simulator hung).
 
+## Computer systems boot with working controls (written 2026-11-23, not built or run)
+
+After an iPad report on DOSBox Pure: the touch mouse had to be switched off and on, then
+reached only the left half of the screen, and the keyboard was off.
+
+- [ ] **Device check, iPad and iPhone.** Boot a DOS game, an Atari ST disk, an Amiga disk
+  (PUAE) and an Apple II disk with no hardware attached. Expect: the keyboard handle at the
+  bottom, the touch mouse working at once, the pointer reaching all four edges after several
+  swipes, and the generated buttons still pressing where they overlap the picture.
+- [ ] Same with a hardware keyboard connected at launch: no on-screen keyboard; it comes back
+  when the keyboard disconnects.
+- [ ] Landscape with a TV around the picture: the mouse works over the tube as soon as the TV
+  has loaded.
+- What changed: the trackpad sends movement, not clamped positions, to machines that draw
+  their own pointer; a saved per-game "off" no longer disables the mouse on always-mouse
+  systems, and the pause menu shows one mouse tile; a picture that fills the view is accepted
+  under the generated controls, whose buttons the trackpad now leaves alone; home computers
+  put the keyboard up at launch with their own layout; PUAE (Amiga) gets keyboard and mouse.
+- Not looked at: port device defaults (still the joypad on every port) and packaged skins
+  whose picture fills the screen, where the touch mouse stays off as before.
+
 ## Backlog
 
 - [ ] **Core capability coverage.** Verify link cable, mouse, camera, microphone, and netplay support for specific shipped cores before adding badges. Extend the curated recommendations to more systems. [#3341](https://github.com/Provenance-Emu/Provenance/issues/3341)

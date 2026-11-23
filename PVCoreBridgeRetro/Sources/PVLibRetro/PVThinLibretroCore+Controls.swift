@@ -45,7 +45,9 @@ private extension SystemIdentifier {
     /// Systems whose libretro cores accept keyboard input.
     var supportsKeyboard: Bool { Self.keyboardSystems.contains(self) }
 
-    /// Systems that require a keyboard to be usable.
+    /// Systems whose on-screen keyboard is put up at launch (collapsed to its handle), and
+    /// stays away while a hardware keyboard is connected: home computers, which boot to a
+    /// prompt, a desktop or a menu that expects typing.
     var requiresKeyboard: Bool { Self.requiresKeyboardSystems.contains(self) }
 
     private static let keyboardSystems: Set<SystemIdentifier> = [
@@ -55,7 +57,8 @@ private extension SystemIdentifier {
     ]
 
     private static let requiresKeyboardSystems: Set<SystemIdentifier> = [
-        .Atari8bit, .EP128, .TIC80, .ZXSpectrum,
+        .AppleII, .Atari8bit, .AtariST, .C64, .DOS, .EP128, .Macintosh, .MSX, .MSX2, .PC98,
+        .TIC80, .ZXSpectrum,
     ]
 
     // MARK: Arcade — suppress L3/R3 → libretro JOYPAD_L3/R3
@@ -1368,10 +1371,17 @@ extension PVThinLibretroCore: PVPCFXSystemResponderClient {
 extension PVThinLibretroCore: KeyboardResponder {
 
     public var gameSupportsKeyboard: Bool {
-        SystemIdentifier(rawValue: systemIdentifier ?? "")?.supportsKeyboard ?? false
+        Self.keyboardSupport(system: SystemIdentifier(rawValue: systemIdentifier ?? ""), coreIdentifier: coreIdentifier).supported
     }
     public var requiresKeyboard: Bool {
-        SystemIdentifier(rawValue: systemIdentifier ?? "")?.requiresKeyboard ?? false
+        Self.keyboardSupport(system: SystemIdentifier(rawValue: systemIdentifier ?? ""), coreIdentifier: coreIdentifier).shownAtLaunch
+    }
+
+    /// Whether a game on `system`, run by `coreIdentifier`, takes a keyboard, and whether the
+    /// on-screen one is put up at launch. The Amiga counts by its core (see `isAmigaCore`).
+    static func keyboardSupport(system: SystemIdentifier?, coreIdentifier: String?) -> (supported: Bool, shownAtLaunch: Bool) {
+        if isAmigaCore(coreIdentifier) { return (true, true) }
+        return (system?.supportsKeyboard ?? false, system?.requiresKeyboard ?? false)
     }
 
 #if canImport(GameController)
@@ -1524,6 +1534,9 @@ extension PVThinLibretroCore: KeyboardResponder {
 extension PVThinLibretroCore: MouseResponder {
 
     public var gameSupportsMouse: Bool {
+        // Workbench and most Amiga software are driven by the mouse; the Amiga has no system
+        // of its own for the registry to list.
+        if Self.isAmigaCore(coreIdentifier) { return true }
         guard let sysID = SystemIdentifier(rawValue: systemIdentifier ?? "") else { return false }
         // Delegate entirely to the registry so user overrides always take precedence,
         // even for systems not in the static always/conditional sets.

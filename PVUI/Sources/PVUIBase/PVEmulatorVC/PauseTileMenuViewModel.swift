@@ -600,9 +600,10 @@ final class PauseTileMenuViewModel: ObservableObject {
         // support (SNES Mouse, Dreamcast, PSX, PCE, etc.), even when the
         // specific ROM isn't in MouseGameRegistry's static MD5/title list.
         // Auto-install is per-game; this tile is the manual override so users
-        // can opt in on unrecognised titles.
+        // can opt in on unrecognised titles. A game that takes a mouse already has the
+        // Mouse tile above, which does the same thing.
         #if os(iOS) && !targetEnvironment(macCatalyst)
-        if (emulatorVC.core as? MouseResponder) != nil,
+        if (emulatorVC.core as? MouseResponder) != nil, !emulatorVC.coreSupportsVirtualMouse,
            let sysID = SystemIdentifier(rawValue: emulatorVC.core.systemIdentifier ?? ""),
            MouseGameRegistry.shared.systemHasAnyMouseSupport(sysID) {
             let isOn = emulatorVC.isVirtualMouseVisible
