@@ -153,20 +153,31 @@ public enum CrossAppEntitlementPublisher {
     @MainActor
     public static func refresh() async {
         CloudSyncUpsellView.reconcileFreeSyncScope()
-        let entitlement = await currentPlusEntitlement()
-        if let entitlement {
-            let mirror = Mirror(period: entitlement.period, status: "active", expiresAt: entitlement.expiresAt)
-            let encoder = JSONEncoder()
-            encoder.dateEncodingStrategy = .secondsSince1970
-            if let data = try? encoder.encode(mirror), let value = String(data: data, encoding: .utf8) {
-                SharedEntitlementKeychain.write(account: account, value: value)
-            }
+        let environment: AppStore.Environment?
+        if case let .verified(transaction)? = try? await AppTransaction.shared {
+            environment = transaction.environment
         } else {
-            SharedEntitlementKeychain.delete(account: account)
+            environment = nil
+        }
+        let entitlement = await currentPlusEntitlement(environment: environment)
+        let publishAccount = environment == .sandbox ? account + ".sandbox" : account
+        if environment == .production || environment == .sandbox {
+            if let entitlement {
+                let mirror = Mirror(period: entitlement.period, status: "active", expiresAt: entitlement.expiresAt)
+                let encoder = JSONEncoder()
+                encoder.dateEncodingStrategy = .secondsSince1970
+                if let data = try? encoder.encode(mirror), let value = String(data: data, encoding: .utf8) {
+                    SharedEntitlementKeychain.write(account: publishAccount, value: value)
+                }
+            } else {
+                SharedEntitlementKeychain.delete(account: publishAccount)
+            }
         }
         directlyOwnsPlus = entitlement != nil
         storeKitSettled = true
-        CrossAppEntitlementReader.applySiblingGrantIfNeeded(directlyOwned: entitlement != nil)
+        CrossAppEntitlementReader.applySiblingGrantIfNeeded(
+            directlyOwned: entitlement != nil, environment: environment
+        )
         CloudSyncUpsellView.reconcileFreeSyncScope()
     }
 
@@ -184,11 +195,12 @@ public enum CrossAppEntitlementPublisher {
 
     /// Only verified, unrevoked matching transactions may be published. A
     /// debug/promo tier or a sibling mirror is not an independent purchase.
-    private static func currentPlusEntitlement() async -> (period: String, expiresAt: Date?)? {
+    private static func currentPlusEntitlement(environment: AppStore.Environment?) async -> (period: String, expiresAt: Date?)? {
         var best: (period: String, expiresAt: Date?)?
         for await result in StoreKit.Transaction.currentEntitlements {
             guard case .verified(let transaction) = result,
                   transaction.revocationDate == nil,
+                  environment == nil || transaction.environment == environment,
                   transaction.productID.hasPrefix(plusProductIDPrefix),
                   let period = period(forProductID: transaction.productID) else { continue }
             if period == "lifetime", transaction.expirationDate == nil { return (period, nil) }
@@ -218,7 +230,7 @@ public enum CrossAppEntitlementPublisher {
 /// match iFly's reader exactly so both directions decay identically.
 public enum CrossAppEntitlementReader {
     private static let iFlyProAccount = "ifly.pro"
-    private static let iCubePlusAccount = "icube.plus"
+    @MainActor private static var storeEnvironment: AppStore.Environment?
 
     /// FreemiumKit tier that corresponds to Provenance Plus.
     private static let plusTier = 1
@@ -293,11 +305,16 @@ public enum CrossAppEntitlementReader {
     /// Reconcile a previous sibling override against the completed direct
     /// ownership snapshot so expiry/refunds do not leave a sticky grant.
     @MainActor
-    public static func applySiblingGrantIfNeeded(directlyOwned: Bool = false) {
+    public static func applySiblingGrantIfNeeded(
+        directlyOwned: Bool = false, environment: AppStore.Environment? = nil
+    ) {
         #if canImport(FreemiumKit)
-        let active = iFlyProActive || grantsPlus(
-            rawValue: SharedEntitlementKeychain.read(account: iCubePlusAccount), now: Date()
-        )
+        if let environment { storeEnvironment = environment }
+        let iCubeAccount = storeEnvironment == .sandbox ? "icube.plus.sandbox" : "icube.plus"
+        let recognizedEnvironment = storeEnvironment == .production || storeEnvironment == .sandbox
+        let active = iFlyProActive || (recognizedEnvironment && grantsPlus(
+            rawValue: SharedEntitlementKeychain.read(account: iCubeAccount), now: Date()
+        ))
         if didGrantPlusFromSibling {
             // Both interpretations of override(nil) are safe after a completed
             // direct StoreKit snapshot: restore a real purchase explicitly.

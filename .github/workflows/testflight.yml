@@ -16,6 +16,10 @@ name: TestFlight
 on:
   workflow_dispatch:
     inputs:
+      internal_only:
+        description: 'Upload for internal TestFlight without external distribution or Beta App Review'
+        type: boolean
+        default: false
       platform:
         description: 'Platform(s) to archive and upload'
         required: true
@@ -458,7 +462,7 @@ jobs:
       # in Provenance Internal). Waits for processing, adds the build to every
       # external group with a public link, submits for Beta App Review.
       - name: Distribute to external TestFlight groups
-        if: success()
+        if: success() && !inputs.internal_only
         uses: ./.github/actions/testflight-distribute
         with:
           api-key-id: ${{ secrets.ASC_API_KEY_ID }}
