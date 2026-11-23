@@ -73,6 +73,11 @@ GitHub Actions (`.github/workflows/build.yml`) builds all target variants on pus
 
 - **Symbolicating a crash log.** `release.sh` (local and `testflight.yml`) copies each archive's dSYMs to `build/export/<version>-<build>/dSYMs/<ios|tvos>/` and uploads them to Sentry (`provenance-emu/provenance`, needs `SENTRY_AUTH_TOKEN` or `~/.sentryclirc`; a failed upload only warns). Sentry's crash handler is off, so crashes arrive via MetricKit and on-device `.ips` files. To symbolicate by hand, match the `.ips` binary UUID to a dSYM (`dwarfdump --uuid <x>.dSYM`), then `xcrun atos -arch arm64 -o <x>.dSYM/Contents/Resources/DWARF/<name> -l <load address> <address>` (frames in an embedded framework need that framework's dSYM). Prebuilt binaries — libretro buildbot `*.libretro.framework`, ffmpeg, MoltenVK, Sentry, `PVlibDolphin-ios` — ship no dSYM and stay unsymbolicated.
 
+- **Sideload feed (AltStore/SideStore).** `sideload-feed.yml` writes `apps.json` into the `provenance-emu.github.io` repo's `static/`; that repo's `gh-pages.yml` (Hugo) publishes it to `provenance-emu.com/apps.json`. Three things must agree with the IPA or SideStore refuses the install:
+  - `bundleIdentifier` is `org.provenance-emu.provenance` (alpha: `.alpha`), from `ORG_IDENTIFIER` in `Build.xcconfig`. The source's own `identifier` (`com.provenance-emu.provenance.altstore` / `.sidestore`) is a different thing and must not change.
+  - `build.yml`'s "Fakesign app" step fills the `$(APP_GROUP_IDENTIFIER)`, `$(ICLOUD_CONTAINER_IDENTIFIER)` and `$(CFBundleIdentifier)` placeholders of `Provenance-AppStore.entitlements` from the built Info.plist before `ldid`; a new build-setting placeholder in that file needs a line there.
+  - A stale live feed (compare `buildVersion` with the alpha release) means the site deploy failed, not the feed job. Hugo is pinned to 0.169.0 there because 0.170 dropped the extended build the theme's Sass needs. `gh workflow run sideload-feed.yml --ref develop` regenerates the feed by hand.
+
 ## Architecture
 
 ### Module Structure
