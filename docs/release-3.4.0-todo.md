@@ -38,10 +38,14 @@ The working list for the 3.4.0 release. Update it in the same commit as the work
     - Left as designed: a ROM that is not in the multiplayer catalog must have its details confirmed on every device before Join is enabled.
     - Still needs devices: Wi-Fi discovery between two devices, the local network permission prompt, and a thin libretro netpacket core such as gpSP (the buildbot dylibs cannot load in a simulator).
 
-## TV bezels on by default (built 2026-11-19, nothing seen running yet)
+## TV bezels on by default (built 2026-11-19, in TestFlight since 2026-11-20)
 
 Design and plan: `docs/superpowers/specs/2026-11-19-bezels-on-by-default-design.md`,
-`docs/superpowers/plans/2026-11-19-bezels-on-by-default.md`. Unit tests pass; these need a person:
+`docs/superpowers/plans/2026-11-19-bezels-on-by-default.md`. The rules, catalogue, strip and picker
+moved to the shared SkinKit package on 2026-11-20 (`docs/superpowers/specs/2026-11-19-shared-bezel-module-design.md`,
+#3820), which iCube and iFly also use. The TestFlight run of 2026-11-19 failed; the runs of
+2026-11-20 to 2026-11-22 succeeded and carry this work. One simulator screenshot showed the Living
+Room TV filling a landscape iPhone with the picture in its tube. Unit tests pass; the rest needs a person:
 
 - [ ] Simulator, iPhone and iPad, landscape touch play: the picture sits in the Living Room TV, the generated buttons do not cover the tube, rotating to portrait removes the TV and the picture returns to its usual rect.
 - [ ] Pause menu, Bezels tile: the strip shows over the paused game; stepping changes the TV with no bare frame between two shader TVs; Keep saves, Cancel restores, "This game only" pins.
