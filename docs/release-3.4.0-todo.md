@@ -82,6 +82,27 @@ Still needs a person or hardware:
 
 To repeat the simulator run without taps: `GET /api/debug/alert` reads the showing alert and `POST /api/debug/alert {"button": "Copy"}` answers it, on either simulator.
 
+## Home Screen game list widgets from PVWidgets (built 2026-11-19 and 20, not seen on a Home Screen)
+
+Recently Played and Favorites are drawn by the shared PVWidgets package (0.1.0), which lays the grid or list out from
+the widget's real size. Commits `9683a32931` and `01b3acd288`. Checked by package tests, renders at iPhone and iPad
+widget sizes, and a Lite simulator build; nothing was placed on a Home Screen. iCube and iFly use the same package
+(Provenance-Emu/iCube#116 and #117, JoeMatt/iFly#937 and #940, all merged).
+
+- Edit Widget has Show (Recently Played, Continue, Favorites, Recently Added) and Layout (Automatic, Grid, List).
+- Covers are fitted whole, not cropped to squares; a large widget holds up to 12 games.
+- Continue is the newest save state of each game, up to 16. A tap opens `provenance://open?saveStateId=`.
+- Both widgets kept their `kind` but moved from a fixed to a configurable widget.
+
+Needs a person or hardware:
+
+- [ ] A widget placed before the update is still on the Home Screen and still shows games.
+- [ ] Edit Widget shows Show and Layout, and each choice changes what is drawn.
+- [ ] iPad, large and extra large: no cover or title is clipped (the original report).
+- [ ] Continue: a tap resumes the save, not a fresh boot; a save made on quit shows without opening the app again.
+- [ ] iCube: the app writes real saves into its Continue list (seen with seeded data only).
+- [ ] iFly: either widget on a Home Screen (its test simulator hung).
+
 ## Backlog
 
 - [ ] **Core capability coverage.** Verify link cable, mouse, camera, microphone, and netplay support for specific shipped cores before adding badges. Extend the curated recommendations to more systems. [#3341](https://github.com/Provenance-Emu/Provenance/issues/3341)

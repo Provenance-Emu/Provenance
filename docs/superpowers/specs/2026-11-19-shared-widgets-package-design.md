@@ -1,6 +1,7 @@
 # Shared home screen widgets package (PVWidgets)
 
-Date: 2026-11-19. Status: package 0.1.0 tagged; Provenance switched; iCube and iFly pending.
+Date: 2026-11-19. Status (2026-11-22): package 0.1.0 tagged; Provenance, iCube and iFly all switched and merged.
+Nothing has been checked on a device; the checks owed are in `docs/release-3.4.0-todo.md`.
 
 ## Why
 
@@ -87,8 +88,12 @@ Layout rules (builder's call):
   from `StaticConfiguration` to `AppIntentConfiguration`, so widgets already on a
   Home Screen stay. The adapter reads the existing `widget.*` app group keys.
   Feeds on day one: recents, favorites and recently added (the app already wrote
-  `widget.recentlyAddedGames`). Continues need the app to write save states first.
-- iCube and iFly: separate sessions, after the first tag.
+  `widget.recentlyAddedGames`). Continue was added on 2026-11-20 (`01b3acd288`): the app writes the newest save
+  state of each game, up to 16, to `widget.continueGames`; each entry is a normal game entry with an optional
+  `saveStateID`, and a tap opens `provenance://open?saveStateId=`.
+- iCube: Provenance-Emu/iCube#116 (the switch, all four sizes) and #117 (Continue), merged. The widget is named
+  "Games" in the gallery (`d4b41dfe01`).
+- iFly: JoeMatt/iFly#937 (the switch, Layout option, extra large) and #940 (Continue holds one save per game), merged.
 
 ## Left to the builder
 
