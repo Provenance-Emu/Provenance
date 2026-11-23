@@ -5,7 +5,7 @@
 // Shared contract with iFly and iCube:
 // group $(AppIdentifierPrefix)com.joemattiello.shared
 // service com.joemattiello.shared.entitlements
-// seller-owned accounts provenance.plus / ifly.pro
+// seller-owned accounts provenance.plus / ifly.pro / icube.plus
 // v1 JSON: v, period (monthly/yearly/lifetime), status (active/grace/expired),
 // expiresAt (Unix seconds, required for subscriptions, absent for lifetime),
 // updatedAt (Unix seconds). Legacy bare "active" remains supported.
@@ -213,11 +213,12 @@ public enum CrossAppEntitlementPublisher {
 
 // MARK: - Reader (iFly Pro → Provenance Plus)
 
-/// Reads the sibling `ifly.pro` mirror and, when it grants, unlocks Provenance
+/// Reads the iFly and iCube sibling mirrors and, when either grants, unlocks Provenance
 /// Plus. The reverse of `CrossAppEntitlementPublisher`; the status/expiry rules
 /// match iFly's reader exactly so both directions decay identically.
 public enum CrossAppEntitlementReader {
     private static let iFlyProAccount = "ifly.pro"
+    private static let iCubePlusAccount = "icube.plus"
 
     /// FreemiumKit tier that corresponds to Provenance Plus.
     private static let plusTier = 1
@@ -279,7 +280,7 @@ public enum CrossAppEntitlementReader {
         grantsPlus(rawValue: SharedEntitlementKeychain.read(account: iFlyProAccount), now: Date())
     }
 
-    /// Unlock Provenance Plus if the sibling `ifly.pro` mirror grants it.
+    /// Unlock Provenance Plus if an active sibling mirror grants it.
     /// Call at launch and on foreground (the user may buy Pro in iFly while
     /// Provenance is backgrounded); idempotent and cheap after the first grant.
     ///
@@ -294,7 +295,9 @@ public enum CrossAppEntitlementReader {
     @MainActor
     public static func applySiblingGrantIfNeeded(directlyOwned: Bool = false) {
         #if canImport(FreemiumKit)
-        let active = iFlyProActive
+        let active = iFlyProActive || grantsPlus(
+            rawValue: SharedEntitlementKeychain.read(account: iCubePlusAccount), now: Date()
+        )
         if didGrantPlusFromSibling {
             // Both interpretations of override(nil) are safe after a completed
             // direct StoreKit snapshot: restore a real purchase explicitly.
