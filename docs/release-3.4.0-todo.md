@@ -132,7 +132,7 @@ Needs a person or hardware:
 - [ ] iCube: the app writes real saves into its Continue list (seen with seeded data only).
 - [ ] iFly: either widget on a Home Screen (its test simulator hung).
 
-## Computer systems boot with working controls (written 2026-11-23, not built or run)
+## Computer systems boot with working controls (written 2026-11-23; packages build and the new unit tests pass in the simulator, not run on a device)
 
 After an iPad report on DOSBox Pure: the touch mouse had to be switched off and on, then
 reached only the left half of the screen, and the keyboard was off.
