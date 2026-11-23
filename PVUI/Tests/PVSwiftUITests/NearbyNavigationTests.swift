@@ -118,7 +118,7 @@ final class NearbyNavigationTests: XCTestCase {
     }
 
     func testLoadedLibraryStartsBelowSearch() {
-        let layout = NearbyCursor.peerLibrary(.loaded(libraryIDs: ["", "lib1"], itemRows: [["g1", "g2"]]))
+        let layout = NearbyCursor.peerLibrary(.loaded(libraryIDs: ["", "lib1"], itemRows: [["g1"], ["g2"]]))
         XCTAssertEqual(layout.defaultItem, NearbyCursor.library(""))
         XCTAssertEqual(layout.rows.first?.items, [NearbyCursor.search])
         XCTAssertEqual(layout.move(from: NearbyCursor.library(""), .right), .moved(item: NearbyCursor.library("lib1"), row: "peer|libraries"))
