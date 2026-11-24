@@ -484,6 +484,17 @@ struct PauseTileMenuView: View {
     }
     #endif
 
+    /// Puts focus back on the tile that opened the TV switcher. The menu was disabled under the
+    /// strip, so tvOS has no focused tile to come back to and would pick one itself.
+    private func returnFocusToBezelsTile() {
+        #if os(tvOS)
+        // After this update, when the tiles can take focus again.
+        DispatchQueue.main.async {
+            focusedTileID = PauseTileMenuViewModel.bezelsTileID
+        }
+        #endif
+    }
+
     /// Handles controller/menu back by popping submenus before dismissing the pause menu.
     private func handleBackCommand() {
         if !popRoute() {
@@ -2087,6 +2098,7 @@ struct PauseTileMenuView: View {
                                   onClose: {
                                       showingBezelSwitcher = false
                                       rebuildSections()
+                                      returnFocusToBezelsTile()
                                   },
                                   onMore: {
                                       showingBezelSwitcher = false
