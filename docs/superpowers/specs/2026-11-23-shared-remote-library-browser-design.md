@@ -1,8 +1,9 @@
 # Shared remote-library browser (Provenance, iFly, iCube)
 
 Date: 2026-11-23. Status (2026-11-24): the owner accepted the recommended answers below. The package's
-first cut exists at github.com/Provenance-Emu/PVRemoteLibrary (private; 25 tests pass on the Mac, builds
-for iOS and tvOS). No app uses it yet.
+first cut is github.com/Provenance-Emu/PVRemoteLibrary 0.2.0 (public; 25 tests pass on the Mac, builds
+for iOS and tvOS). Provenance has the dependency and a source bridge (`LibrarySourceBridge`, `RomMSource`
+in `PVLibrarySharing`); no screen uses them yet.
 
 ## Why
 
@@ -129,11 +130,12 @@ resume, verification and background sessions differ too much between RomM (one
 whole-file download), the content server (Provenance's verified, resumable puller)
 and iCube's background downloader to share one request shape.
 
-The package ships `RomMSource` in its own product, `PVRemoteLibraryRomM`, so the core
-does not depend on the server client package. The content-server source is not in the
-package yet: Provenance's `ECSSource` leans on `PVLibrarySharing`'s transport, puller
-and staging, so Provenance adapts it in place first, and it moves into the package when
-iFly switches. A source that cannot page returns everything as one page. A source
+The package ships no server sources yet. A package that apps depend on by version
+cannot depend on a package pinned to a revision, and `emulator-content-server` has no
+stable version tags, so the content-server and RomM sources stay in the apps for now:
+in Provenance, `LibrarySourceBridge` (any `LibrarySource`, the content server included)
+and `RomMSource` in `PVLibrarySharing`. They move into the package once the client
+package is tagged. A source that cannot page returns everything as one page. A source
 without server search is filtered by the browser.
 
 ### 4. Catalogue store
