@@ -73,8 +73,10 @@ public actor LibrarySourceBridge: RemoteLibrarySource {
         let page: ECSSource.CataloguePage
         if let cursor {
             // A cursor from before this bridge was made (a relaunch) cannot be continued.
-            guard let position = serverCursors.removeValue(forKey: cursor.rawValue) else { return CataloguePage(games: []) }
+            guard let position = serverCursors[cursor.rawValue] else { return CataloguePage(games: []) }
             page = try await server.browseCatalogue(after: position)
+            // Dropped only once the page arrived, so a failed request can be retried with the same cursor.
+            serverCursors[cursor.rawValue] = nil
         } else {
             let ids: [String]
             if let libraryIDs {

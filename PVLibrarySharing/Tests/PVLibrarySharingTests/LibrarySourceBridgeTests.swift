@@ -109,6 +109,17 @@ final class LibrarySourceBridgeTests: XCTestCase {
         XCTAssertEqual(fetched.files.count, 2)
     }
 
+    func testRomMFilesPutTheSetIndexOrTheNamedFileFirst() {
+        func urls(_ names: String...) -> [URL] { names.map { URL(fileURLWithPath: "/tmp/game/" + $0) } }
+        func names(_ files: [URL], _ game: String) -> [String] {
+            RomMSource.primaryFirst(files, gameFileName: game).map(\.lastPathComponent)
+        }
+        XCTAssertEqual(names(urls("track01.bin", "game.cue", "track02.bin"), "game"), ["game.cue", "track01.bin", "track02.bin"])
+        XCTAssertEqual(names(urls("disc1.cue", "disc1.bin", "set.m3u"), "set"), ["set.m3u", "disc1.cue", "disc1.bin"])
+        XCTAssertEqual(names(urls("extra.txt", "game.sfc"), "game.sfc"), ["game.sfc", "extra.txt"])
+        XCTAssertEqual(names(urls("a.bin", "b.bin"), "missing"), ["a.bin", "b.bin"])
+    }
+
     func testAnItemSurvivesTheRoundTripThroughTheSharedModel() {
         let item = RemoteLibraryItem(
             id: "k", title: "T", platform: "gc", systemIdentifier: .GameCube, md5: "aa", sizeBytes: 5,

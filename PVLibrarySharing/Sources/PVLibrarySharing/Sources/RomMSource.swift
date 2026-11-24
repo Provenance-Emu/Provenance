@@ -78,7 +78,24 @@ public actor RomMSource: RemoteLibrarySource {
         guard let native = native[game.id] else { throw RomMError.invalidContent }
         progress(.preparing)
         let download = try await client.download(native)
-        return FetchedGame(directory: download.directory, files: download.files)
+        do {
+            // The files come from a server: check a cue, gdi or m3u names only files that came with it.
+            try ECSDownloadedGame.validate(files: download.files)
+        } catch {
+            try? FileManager.default.removeItem(at: download.directory)
+            throw error
+        }
+        return FetchedGame(directory: download.directory, files: Self.primaryFirst(download.files, gameFileName: native.fsName))
+    }
+
+    /// The file the importer should open, first: the set's index (m3u, cue, gdi, ccd)
+    /// when there is one, else the file RomM names for the game. The rest keep their order.
+    static func primaryFirst(_ files: [URL], gameFileName: String) -> [URL] {
+        let index = RemoteManifest.indexExtensions.lazy.compactMap { ext in
+            files.first { $0.pathExtension.lowercased() == ext }
+        }.first
+        guard let primary = index ?? files.first(where: { $0.lastPathComponent == gameFileName }) else { return files }
+        return [primary] + files.filter { $0 != primary }
     }
 
     private func mappedPlatforms() async throws -> [(platform: RomMPlatform, system: SystemIdentifier)] {
