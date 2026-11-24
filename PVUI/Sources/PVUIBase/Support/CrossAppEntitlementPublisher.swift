@@ -5,7 +5,7 @@
 // Shared contract with iFly and iCube:
 // group $(AppIdentifierPrefix)com.joemattiello.shared
 // service com.joemattiello.shared.entitlements
-// seller-owned accounts provenance.plus / ifly.pro
+// seller-owned accounts provenance.plus / ifly.pro / icube.plus
 // v1 JSON: v, period (monthly/yearly/lifetime), status (active/grace/expired),
 // expiresAt (Unix seconds, required for subscriptions, absent for lifetime),
 // updatedAt (Unix seconds). Legacy bare "active" remains supported.
@@ -153,20 +153,31 @@ public enum CrossAppEntitlementPublisher {
     @MainActor
     public static func refresh() async {
         CloudSyncUpsellView.reconcileFreeSyncScope()
-        let entitlement = await currentPlusEntitlement()
-        if let entitlement {
-            let mirror = Mirror(period: entitlement.period, status: "active", expiresAt: entitlement.expiresAt)
-            let encoder = JSONEncoder()
-            encoder.dateEncodingStrategy = .secondsSince1970
-            if let data = try? encoder.encode(mirror), let value = String(data: data, encoding: .utf8) {
-                SharedEntitlementKeychain.write(account: account, value: value)
-            }
+        let environment: AppStore.Environment?
+        if case let .verified(transaction)? = try? await AppTransaction.shared {
+            environment = transaction.environment
         } else {
-            SharedEntitlementKeychain.delete(account: account)
+            environment = nil
+        }
+        let entitlement = await currentPlusEntitlement(environment: environment)
+        let publishAccount = environment == .sandbox ? account + ".sandbox" : account
+        if environment == .production || environment == .sandbox {
+            if let entitlement {
+                let mirror = Mirror(period: entitlement.period, status: "active", expiresAt: entitlement.expiresAt)
+                let encoder = JSONEncoder()
+                encoder.dateEncodingStrategy = .secondsSince1970
+                if let data = try? encoder.encode(mirror), let value = String(data: data, encoding: .utf8) {
+                    SharedEntitlementKeychain.write(account: publishAccount, value: value)
+                }
+            } else {
+                SharedEntitlementKeychain.delete(account: publishAccount)
+            }
         }
         directlyOwnsPlus = entitlement != nil
         storeKitSettled = true
-        CrossAppEntitlementReader.applySiblingGrantIfNeeded(directlyOwned: entitlement != nil)
+        CrossAppEntitlementReader.applySiblingGrantIfNeeded(
+            directlyOwned: entitlement != nil, environment: environment
+        )
         CloudSyncUpsellView.reconcileFreeSyncScope()
     }
 
@@ -184,11 +195,12 @@ public enum CrossAppEntitlementPublisher {
 
     /// Only verified, unrevoked matching transactions may be published. A
     /// debug/promo tier or a sibling mirror is not an independent purchase.
-    private static func currentPlusEntitlement() async -> (period: String, expiresAt: Date?)? {
+    private static func currentPlusEntitlement(environment: AppStore.Environment?) async -> (period: String, expiresAt: Date?)? {
         var best: (period: String, expiresAt: Date?)?
         for await result in StoreKit.Transaction.currentEntitlements {
             guard case .verified(let transaction) = result,
                   transaction.revocationDate == nil,
+                  environment == nil || transaction.environment == environment,
                   transaction.productID.hasPrefix(plusProductIDPrefix),
                   let period = period(forProductID: transaction.productID) else { continue }
             if period == "lifetime", transaction.expirationDate == nil { return (period, nil) }
@@ -213,11 +225,12 @@ public enum CrossAppEntitlementPublisher {
 
 // MARK: - Reader (iFly Pro → Provenance Plus)
 
-/// Reads the sibling `ifly.pro` mirror and, when it grants, unlocks Provenance
+/// Reads the iFly and iCube sibling mirrors and, when either grants, unlocks Provenance
 /// Plus. The reverse of `CrossAppEntitlementPublisher`; the status/expiry rules
 /// match iFly's reader exactly so both directions decay identically.
 public enum CrossAppEntitlementReader {
     private static let iFlyProAccount = "ifly.pro"
+    @MainActor private static var storeEnvironment: AppStore.Environment?
 
     /// FreemiumKit tier that corresponds to Provenance Plus.
     private static let plusTier = 1
@@ -279,7 +292,7 @@ public enum CrossAppEntitlementReader {
         grantsPlus(rawValue: SharedEntitlementKeychain.read(account: iFlyProAccount), now: Date())
     }
 
-    /// Unlock Provenance Plus if the sibling `ifly.pro` mirror grants it.
+    /// Unlock Provenance Plus if an active sibling mirror grants it.
     /// Call at launch and on foreground (the user may buy Pro in iFly while
     /// Provenance is backgrounded); idempotent and cheap after the first grant.
     ///
@@ -292,9 +305,16 @@ public enum CrossAppEntitlementReader {
     /// Reconcile a previous sibling override against the completed direct
     /// ownership snapshot so expiry/refunds do not leave a sticky grant.
     @MainActor
-    public static func applySiblingGrantIfNeeded(directlyOwned: Bool = false) {
+    public static func applySiblingGrantIfNeeded(
+        directlyOwned: Bool = false, environment: AppStore.Environment? = nil
+    ) {
         #if canImport(FreemiumKit)
-        let active = iFlyProActive
+        if let environment { storeEnvironment = environment }
+        let iCubeAccount = storeEnvironment == .sandbox ? "icube.plus.sandbox" : "icube.plus"
+        let recognizedEnvironment = storeEnvironment == .production || storeEnvironment == .sandbox
+        let active = iFlyProActive || (recognizedEnvironment && grantsPlus(
+            rawValue: SharedEntitlementKeychain.read(account: iCubeAccount), now: Date()
+        ))
         if didGrantPlusFromSibling {
             // Both interpretations of override(nil) are safe after a completed
             // direct StoreKit snapshot: restore a real purchase explicitly.
