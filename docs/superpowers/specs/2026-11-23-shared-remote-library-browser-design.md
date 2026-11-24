@@ -97,8 +97,10 @@ public struct LibraryGame: Identifiable, Hashable, Codable, Sendable {
     var sizeBytes: Int64
     var fileName: String?
     var artKey: String?
-    var discCount: Int
+    var discCount: Int             // how many discs the set has
     var gameID: String?            // GameCube/Wii id and similar
+    var discNumber: Int?           // which disc of the set this entry is
+    var revision: Int?
     var ownerLastPlayed: Date?     // what the source knows; nil for most
     var ownerFavorite: Bool?
 }
@@ -150,7 +152,8 @@ Each app gives the package its local games as plain values:
 public struct LocalGameRef: Sendable {
     var id: String; var title: String; var system: SystemIdentifier
     var md5: String?; var sizeBytes: Int64; var fileName: String?
-    var gameID: String?; var isSingleFileImage: Bool; var isOnDisk: Bool
+    var gameID: String?; var discNumber: Int?; var revision: Int?
+    var isSingleFileImage: Bool; var isOnDisk: Bool
 }
 ```
 
@@ -160,7 +163,8 @@ public struct LocalGameRef: Sendable {
 2. A recorded link: the local game was downloaded from that source entry. The package
    keeps this table; it replaces Provenance's `LibrarySharing.games.<peer>` defaults
    key and iFly's install-folder check.
-3. Same system and same `gameID` plus disc number (iCube).
+3. Same system, same `gameID` and same `discNumber` (iCube). An entry with no disc
+   number matches only another with none; `discCount` is never used to match.
 4. Same system and same normalised file name.
 
 Titles are never matched. A disc set whose MD5 is not the image's own
