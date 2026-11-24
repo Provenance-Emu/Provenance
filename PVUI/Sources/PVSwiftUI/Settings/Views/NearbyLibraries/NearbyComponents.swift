@@ -108,6 +108,16 @@ struct NearbyScreen<Content: View>: View {
     }
 }
 
+extension View {
+    /// The library's backdrop behind everything a Nearby sheet shows.
+    ///
+    /// A tvOS sheet is see-through: a `Form` there has no background of its own,
+    /// so without this the sheet is drawn straight over the library.
+    func nearbySheetBackdrop() -> some View {
+        background(TVMediaBackground().ignoresSafeArea())
+    }
+}
+
 /// A titled group of rows with an optional note under it.
 struct NearbySection<Content: View>: View {
     var header: String?
