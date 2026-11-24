@@ -311,6 +311,9 @@ public actor ECSSource: LibrarySource {
                   names.insert(path.lowercased()).inserted else { throw LibrarySharingError.unsafePath(path) }
             total += file.size
         }
+        // An indexed file has no digest on the server, so it is downloaded to scratch
+        // space, hashed, then copied into staging: it is on disk twice for a moment.
+        try DiskSpace.require(total * 2, available: DiskSpace.available(at: preparationRoot))
         progress(.loadingCatalogue)
         try FileManager.default.createDirectory(at: preparationRoot, withIntermediateDirectories: true)
         var manifestFiles: [RemoteFile] = []

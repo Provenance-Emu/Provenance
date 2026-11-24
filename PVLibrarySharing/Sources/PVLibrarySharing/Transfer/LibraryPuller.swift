@@ -53,6 +53,9 @@ public struct LibraryPuller: Sendable {
     /// Distinguishes peers in staging folder names (`DiscoveredPeer.id`).
     public let peerKey: String
 
+    /// Free bytes on the volume holding a folder; replaced in tests.
+    var freeSpace: @Sendable (URL) -> Int64? = DiskSpace.available
+
     public init(staging: LibraryStaging, peerKey: String) {
         self.staging = staging
         self.peerKey = peerKey
@@ -127,6 +130,17 @@ public struct LibraryPuller: Sendable {
 
         let ordered = games.sorted { ($0.size, $0.relativePath) < ($1.size, $1.relativePath) }
         let totalBytes = manifest.gameBytes
+        // Checked once the sizes are known and before the first byte: a copy that
+        // cannot fit should say so now, not after an hour of downloading.
+        let onDisk = ordered.reduce(Int64(0)) { sum, file in
+            guard let destination = destinations[file.relativePath] else { return sum }
+            let partial = destination.appendingPathExtension("part")
+            let present = [destination, partial].lazy.compactMap {
+                (try? $0.resourceValues(forKeys: [.fileSizeKey]))?.fileSize
+            }.first
+            return sum + min(Int64(present ?? 0), file.size)
+        }
+        try DiskSpace.require(totalBytes - onDisk, available: freeSpace(folder))
         var bytesBefore: Int64 = 0
         for (index, file) in ordered.enumerated() {
             try Task.checkCancellation()

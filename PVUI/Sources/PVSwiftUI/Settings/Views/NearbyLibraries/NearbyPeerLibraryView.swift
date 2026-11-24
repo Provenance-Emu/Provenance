@@ -7,12 +7,15 @@
 
 #if os(iOS) || os(tvOS)
 import PVLibrarySharing
+import PVRemoteLibraryUI
 import PVSystems
 import PVThemes
 import SwiftUI
 
 struct NearbyPeerLibraryView: View {
     let model: NearbyPeerLibraryModel
+    /// False when a parent view tells the model it appeared and went away.
+    var managesLifetime = true
     @State private var code = ""
     @State private var cursorID: String?
     @State private var downloadSelection: RemoteLibraryItem?
@@ -57,8 +60,8 @@ struct NearbyPeerLibraryView: View {
                 transferBar(current)
             }
         }
-        .onAppear { model.appear() }
-        .onDisappear { model.cancel() }
+        .onAppear { if managesLifetime { model.appear() } }
+        .onDisappear { if managesLifetime { model.cancel() } }
         .alert(
             downloadSelection?.title ?? "Play Game",
             isPresented: Binding(get: { downloadSelection != nil }, set: { if !$0 { downloadSelection = nil } }),
@@ -74,28 +77,11 @@ struct NearbyPeerLibraryView: View {
     }
 
     private func transferBar(_ item: RemoteLibraryItem) -> some View {
-        let progress = model.copies[item.id]
-        return HStack {
-            VStack(alignment: .leading, spacing: 6) {
-                Text(item.title).font(.headline).lineLimit(1)
-                switch progress {
-                case .downloading(let fraction):
-                    ProgressView("Downloading", value: fraction)
-                case .verifying:
-                    ProgressView("Verifying files")
-                case .importing:
-                    ProgressView("Adding to Library")
-                default:
-                    ProgressView("Preparing download")
-                }
-            }
-            if progress != .importing {
-                Button("Cancel", systemImage: "xmark.circle") { model.cancelCopy(item) }
-                    .labelStyle(.iconOnly)
-            }
-        }
-        .padding()
-        .background(.regularMaterial)
+        TransferBanner(
+            title: item.title, state: model.copies[item.id]?.transferState ?? .queued,
+            onCancel: { model.cancelCopy(item) }
+        )
+        .tint(Color.retroPink)
     }
 
     private var progressText: String {

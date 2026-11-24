@@ -50,6 +50,8 @@ public enum LibrarySharingError: Error, Equatable, Sendable {
     case unsafePath(String)
     /// The host offered no game file for the item.
     case nothingToCopy
+    /// The game does not fit on this device. Nothing was downloaded.
+    case notEnoughSpace(needed: Int64, available: Int64)
 
     // MARK: Content servers (phase 5)
 
@@ -96,6 +98,9 @@ extension LibrarySharingError: LocalizedError {
             return "The other device offered a file with an unsafe path (\(path))."
         case .nothingToCopy:
             return "The other device offered nothing to copy for this game."
+        case .notEnoughSpace(let needed, let available):
+            let format = { ByteCountFormatter.string(fromByteCount: $0, countStyle: .file) }
+            return "Not enough free space: this game needs \(format(needed)) and \(format(available)) is free."
         case .signInFailed:
             return "The content server didn't accept that username and password."
         case .unsupportedServer(let detail):

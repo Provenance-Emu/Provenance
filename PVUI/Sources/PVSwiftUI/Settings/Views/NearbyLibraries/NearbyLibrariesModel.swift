@@ -15,7 +15,9 @@ import Observation
 import PVLibrary
 import PVLibrarySharing
 import PVLogging
+import PVMediaCache
 import PVRealm
+import enum PVRemoteLibrary.TransferState
 import PVSystems
 import PVUIBase
 import RealmSwift
@@ -335,6 +337,18 @@ enum NearbyCopyState: Equatable {
         case .importing, .completed, .failed: return false
         }
     }
+
+    /// What the shared progress views show for this copy; nil once it is done.
+    var transferState: TransferState? {
+        switch self {
+        case .preparing: return .queued
+        case .downloading(let fraction): return .downloading(fraction)
+        case .verifying: return .verifying
+        case .importing: return .importing
+        case .completed: return nil
+        case .failed(let message): return .failed(message)
+        }
+    }
 }
 
 /// Browsing one peer: auth or pairing, catalogue, art, copies.
@@ -382,6 +396,8 @@ final class NearbyPeerLibraryModel {
     /// Set when a code entry was rejected, shown under the code field.
     private(set) var codeError: String?
     private(set) var artwork: [String: UIImage] = [:]
+    /// Covers written to the media cache, by item id, so the library's own cells can draw them.
+    private(set) var coverKeys: [String: String] = [:]
     /// Copies started from this peer, by item id.
     private(set) var copies: [String: NearbyCopyState] = [:]
 
@@ -395,6 +411,7 @@ final class NearbyPeerLibraryModel {
     @ObservationIgnored private var searchTask: Task<Void, Never>?
     @ObservationIgnored private var pairedThisSession = false
     @ObservationIgnored private var artRequested: Set<String> = []
+    @ObservationIgnored private var libraryGames: [String: PVGame] = [:]
 
     init(peer: DiscoveredPeer, owner: NearbyLibrariesModel) {
         self.peer = peer
@@ -808,6 +825,31 @@ final class NearbyPeerLibraryModel {
         guard item.artKey != nil, artRequested.insert(item.id).inserted else { return }
         guard let data = try? await source.artwork(for: item), let image = UIImage(data: data) else { return }
         artwork[item.id] = image
+        let key = "nearby-cover|\(peer.id)|\(item.id)"
+        let written = await Task.detached(priority: .utility) {
+            (try? PVMediaCache.writeImage(toDisk: image, withKey: key)) != nil
+        }.value
+        if written { coverKeys[item.id] = key }
+    }
+
+    /// `item` as a game the library's cells can draw. It is not in the database and has no file.
+    func libraryGame(for item: RemoteLibraryItem) -> PVGame {
+        let cover = coverKeys[item.id] ?? ""
+        let cacheKey = item.id + "|" + cover
+        if let cached = libraryGames[cacheKey] { return cached }
+        let game = PVGame()
+        game.id = Self.libraryGameID(for: item)
+        game.md5Hash = game.id
+        game.title = item.title
+        game.systemIdentifier = item.systemIdentifier?.rawValue ?? ""
+        game.customArtworkURL = cover
+        libraryGames[cacheKey] = game
+        return game
+    }
+
+    /// The id of `item`'s cell: unique per peer, and never a real game's id.
+    static func libraryGameID(for item: RemoteLibraryItem) -> String {
+        "remote|" + item.source.rawValue + "|" + item.id
     }
 }
 extension NearbyPeerLibraryModel {

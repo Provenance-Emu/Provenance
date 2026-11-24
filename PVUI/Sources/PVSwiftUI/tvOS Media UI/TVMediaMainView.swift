@@ -764,10 +764,8 @@ struct TVMediaMainView: View {
     @ViewBuilder
     private var nearbyLibraryContent: some View {
         if let library = nearbyLibraries.peerModel(forPeerID: router.selectedLibraryID) {
-            NavigationStack {
-                NearbyPeerLibraryView(model: library)
-            }
-            .id(router.selectedLibraryID)
+            TVMediaRemoteLibraryView(model: library)
+                .id(router.selectedLibraryID)
         } else {
             TVMediaEmptyStateView(
                 title: "Library Not Found",
