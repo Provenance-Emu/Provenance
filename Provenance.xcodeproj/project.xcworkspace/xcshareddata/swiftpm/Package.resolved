@@ -211,8 +211,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Provenance-Emu/PVRemoteLibrary.git",
       "state" : {
-        "revision" : "dc6b3e5f919e79cd6656c6df85d83e0ecebf8ef8",
-        "version" : "0.2.0"
+        "revision" : "68fc5bed724543618d7d4049408e73a8b81fab16",
+        "version" : "0.3.0"
       }
     },
     {
