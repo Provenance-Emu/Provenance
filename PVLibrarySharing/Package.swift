@@ -26,7 +26,8 @@ let package = Package(
     dependencies: [
         .package(url: "https://github.com/Provenance-Emu/PVSystems.git", from: "1.0.0"),
         .package(path: "../PVLogging"),
-        .package(url: "https://github.com/Provenance-Emu/emulator-content-server.git", revision: "7b30839778e502573ee0cfb91c4bf94a1de51fa8")
+        .package(url: "https://github.com/Provenance-Emu/emulator-content-server.git", revision: "7b30839778e502573ee0cfb91c4bf94a1de51fa8"),
+        .package(url: "https://github.com/Provenance-Emu/PVRemoteLibrary.git", from: "0.2.0")
     ],
     targets: [
         .target(
@@ -34,14 +35,20 @@ let package = Package(
             dependencies: [
                 .product(name: "PVSystems", package: "PVSystems"),
                 "PVLogging",
-                .product(name: "EmulatorContentClient", package: "emulator-content-server")
+                .product(name: "EmulatorContentClient", package: "emulator-content-server"),
+                .product(name: "RomMClient", package: "emulator-content-server"),
+                .product(name: "PVRemoteLibrary", package: "PVRemoteLibrary")
             ]
         ),
 
         // MARK: SwiftPM tests
         .testTarget(
             name: "PVLibrarySharingTests",
-            dependencies: ["PVLibrarySharing", .product(name: "PVSystems", package: "PVSystems")],
+            dependencies: [
+                "PVLibrarySharing",
+                .product(name: "PVSystems", package: "PVSystems"),
+                .product(name: "PVRemoteLibrary", package: "PVRemoteLibrary")
+            ],
             resources: [.copy("Fixtures")]
         )
     ],

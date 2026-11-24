@@ -207,6 +207,15 @@
       }
     },
     {
+      "identity" : "pvremotelibrary",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/Provenance-Emu/PVRemoteLibrary.git",
+      "state" : {
+        "revision" : "dc6b3e5f919e79cd6656c6df85d83e0ecebf8ef8",
+        "version" : "0.2.0"
+      }
+    },
+    {
       "identity" : "pvsystems",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Provenance-Emu/PVSystems.git",
