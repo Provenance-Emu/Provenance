@@ -234,7 +234,10 @@ final class PVLibraryDialectTests: XCTestCase {
             transport: InProcessTransport { request in
                 if request.path == TestPaths.iCubeCatalog, request.query["cursor"] != nil, !changed.value {
                     changed.value = true
-                    big.append(SharedGame(id: "NEW", title: "New Game", system: .NES, md5: "ffff", files: [file], hasArtwork: false))
+                    // A full 32-digit MD5: the client drops entries whose "MD5" is a core's identifier.
+                    big.append(SharedGame(
+                        id: "NEW", title: "New Game", system: .NES, md5: String(repeating: "f", count: 32), files: [file], hasArtwork: false
+                    ))
                 }
                 return await server.handle(request)
             },
