@@ -1,6 +1,8 @@
 # Shared remote-library browser (Provenance, iFly, iCube)
 
-Date: 2026-11-23. Status: design for the owner's decision. Nothing is built.
+Date: 2026-11-23. Status (2026-11-24): the owner accepted the recommended answers below. The package's
+first cut exists at github.com/Provenance-Emu/PVRemoteLibrary (private; 25 tests pass on the Mac, builds
+for iOS and tvOS). No app uses it yet.
 
 ## Why
 
@@ -117,15 +119,22 @@ public protocol RemoteLibrarySource: Actor {
     nonisolated var capabilities: SourceCapabilities { get }   // serverSearch, paging, temporaryPlay, saveSync
     func page(_ query: CatalogueQuery, after cursor: CatalogueCursor?) async throws -> CataloguePage
     func artwork(for game: LibraryGame, etag: String?) async throws -> ArtworkResult
-    func files(for game: LibraryGame) async throws -> [RemoteGameFile]
-    func download(_ file: RemoteGameFile, to url: URL, resumeOffset: Int64,
-                  progress: @Sendable (Int64) -> Void) async throws
+    func fetch(_ game: LibraryGame, into directory: URL,
+               progress: @Sendable (FetchProgress) -> Void) async throws -> FetchedGame
 }
 ```
 
-The package ships `ContentServerSource` and `RomMSource`, moved from Provenance's
-`ECSSource` and the apps' RomM code. A source that cannot page returns everything as
-one page. A source without server search is filtered by the store.
+A source owns its whole transfer and hands back the files (`fetch`). Ranged requests,
+resume, verification and background sessions differ too much between RomM (one
+whole-file download), the content server (Provenance's verified, resumable puller)
+and iCube's background downloader to share one request shape.
+
+The package ships `RomMSource` in its own product, `PVRemoteLibraryRomM`, so the core
+does not depend on the server client package. The content-server source is not in the
+package yet: Provenance's `ECSSource` leans on `PVLibrarySharing`'s transport, puller
+and staging, so Provenance adapts it in place first, and it moves into the package when
+iFly switches. A source that cannot page returns everything as one page. A source
+without server search is filtered by the browser.
 
 ### 4. Catalogue store
 
@@ -185,6 +194,7 @@ public enum Availability: Sendable {
     case onDevice                         // local file present, on no source
     case onDeviceAndSources               // local file present and at least one source has it
     case localRecordOnly                  // in the library, file not on this device, a reachable source has it
+    case missingFile                      // in the library, file not on this device, no reachable source has it
     case remoteOnly                       // on a reachable source only
     case unreachable                      // known only from a cached catalogue whose source is offline
 }
