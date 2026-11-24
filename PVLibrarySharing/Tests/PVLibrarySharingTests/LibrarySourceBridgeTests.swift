@@ -34,10 +34,13 @@ private actor StubPeer: LibrarySource {
         ])
     }
 
+    private(set) var downloads = 0
+
     func download(
         _ file: RemoteFile, of manifest: RemoteManifest, to partialFile: URL, resumeOffset: Int64,
         progress: @escaping @Sendable (Int64) -> Void
     ) async throws -> LibraryDownloadResponse {
+        downloads += 1
         let data = file.relativePath == "sonic.gdi" ? Self.index : Self.disc
         try data.write(to: partialFile)
         progress(Int64(data.count))
@@ -107,6 +110,34 @@ final class LibrarySourceBridgeTests: XCTestCase {
         let fresh = try bridge(StubPeer())
         let fetched = try await fresh.fetch(game, into: try makeTemporaryFolder()) { _ in }
         XCTAssertEqual(fetched.files.count, 2)
+    }
+
+    func testACopyThatCannotFitFailsBeforeAnythingIsDownloaded() async throws {
+        let peer = StubPeer()
+        var puller = LibraryPuller(staging: LibraryStaging(root: try makeTemporaryFolder()), peerKey: "p")
+        puller.freeSpace = { _ in DiskSpace.reserve + 5 }
+        do {
+            _ = try await puller.pull(peer.item, from: peer) { _ in }
+            XCTFail("expected notEnoughSpace")
+        } catch let error as LibrarySharingError {
+            XCTAssertEqual(error, .notEnoughSpace(needed: 15, available: DiskSpace.reserve + 5))
+            XCTAssertEqual(error.errorDescription?.hasPrefix("Not enough free space"), true)
+        }
+        let downloads = await peer.downloads
+        XCTAssertEqual(downloads, 0)
+
+        puller.freeSpace = { _ in DiskSpace.reserve + 15 }
+        let pulled = try await puller.pull(peer.item, from: peer) { _ in }
+        XCTAssertEqual(pulled.gameFiles.count, 2)
+    }
+
+    func testFreeSpaceRulesAndProbe() throws {
+        XCTAssertNoThrow(try DiskSpace.require(100, available: nil), "unknown capacity lets the copy try")
+        XCTAssertNoThrow(try DiskSpace.require(0, available: 0))
+        XCTAssertNoThrow(try DiskSpace.require(100, available: DiskSpace.reserve + 100))
+        XCTAssertThrowsError(try DiskSpace.require(101, available: DiskSpace.reserve + 100))
+        let missing = try makeTemporaryFolder().appendingPathComponent("not/made/yet")
+        XCTAssertGreaterThan(try XCTUnwrap(DiskSpace.available(at: missing)), 0)
     }
 
     func testRomMFilesPutTheSetIndexOrTheNamedFileFirst() {
