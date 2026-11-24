@@ -51,8 +51,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Provenance-Emu/PVLookup.git",
       "state" : {
-        "revision" : "25cbe7c83ec2ef5ecb31fbb04c1ddd3453dc13f6",
-        "version" : "1.0.0"
+        "revision" : "63a07596732a344e2d54d36398939e19e67b60f3",
+        "version" : "1.0.1"
       }
     },
     {
