@@ -255,10 +255,8 @@ struct NearbyPeerLibraryView: View {
             NearbyTextFieldRow(
                 placeholder: "6-digit code", text: $code, cursorID: NearbyCursor.code, editing: $editingField
             )
-                #if os(iOS)
                 .keyboardType(.numberPad)
                 .textContentType(.oneTimeCode)
-                #endif
             Button { submitCode(handle) } label: {
                 NearbyRowLabel(title: "Pair", systemImage: "checkmark.circle")
             }

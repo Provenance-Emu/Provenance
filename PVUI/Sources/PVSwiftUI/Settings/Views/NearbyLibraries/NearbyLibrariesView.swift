@@ -119,6 +119,7 @@ struct NearbyLibrariesView: View {
                 }
             }
             .environment(navigator)
+            .nearbySheetBackdrop()
         }
         .onChange(of: addServer?.id) { _, id in
             navigator?.isSubsheetPresented = id != nil
@@ -286,6 +287,7 @@ struct NearbyLibrariesSheet: View {
                 #endif
         }
         .environment(navigator)
+        .nearbySheetBackdrop()
         .onAppear {
             navigator.onClose = { dismiss() }
         }
@@ -404,6 +406,9 @@ private struct AddContentServerView: View {
                 onAdd(target.origin, "", "", token)
                 paired = true
             }
+            // The PIN is the sheet's only text field. The package asks for the number pad on iOS only.
+            .keyboardType(.numberPad)
+            .nearbySheetBackdrop()
         }
         #if os(iOS)
         .sheet(isPresented: $showingInvitationScanner, onDismiss: { if paired { dismiss() } }) {
