@@ -6,7 +6,7 @@ import SwiftUI
 
 @MainActor
 struct RomMLibraryView: View {
-    @AppStorage("RomM.lastServer") private var lastServer = ""
+    @AppStorage(RomMLoginStore.lastServerKey) private var lastServer = ""
     @State private var address = ""
     @State private var token = ""
     @State private var username = ""

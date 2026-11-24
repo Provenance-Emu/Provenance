@@ -78,6 +78,9 @@ public actor PVLibraryDialectServer {
         }
         switch (request.method, request.path) {
         case ("GET", ContinuityRoutes.iCubeLibraryCatalog): return await catalog(request)
+        case ("GET", ContinuityRoutes.libraryFind):
+            guard let lookup = LibraryLookup(request.query) else { return .error(400, "invalid lookup") }
+            return await catalog(request, lookup: lookup)
         case ("GET", ContinuityRoutes.libraryArt): return await art(request)
         case ("GET", ContinuityRoutes.iCubeLibraryManifest): return await manifest(request, peerId: peerId)
         case ("GET", ContinuityRoutes.libraryFile): return await file(request, peerId: peerId)
@@ -108,9 +111,9 @@ public actor PVLibraryDialectServer {
             .sorted { $0.entry.key < $1.entry.key }
     }
 
-    private func catalog(_ request: ServerRequest) async -> ServerResponse {
+    private func catalog(_ request: ServerRequest, lookup: LibraryLookup? = nil) async -> ServerResponse {
         let query = CatalogueQuery(query: request.query)
-        let all = await entries().filter { query.admits($0.game.system) }.map(\.entry)
+        let all = await entries().filter { query.admits($0.game.system) && (lookup?.admits($0.game) ?? true) }.map(\.entry)
         let version = PVWireCatalog.version(of: all)
         if query.cursor == nil, request.header("If-None-Match") == version {
             return ServerResponse(status: 304)

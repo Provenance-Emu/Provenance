@@ -138,7 +138,28 @@ public actor ECSSource: LibrarySource {
         try await browsePage(after: cursor, limit: min(pageSize, 40))
     }
 
-    private func browsePage(after cursor: CatalogueCursor, limit: Int) async throws -> CataloguePage {
+    public func lookup(_ query: MissingGameQuery) async throws -> RemoteCatalogue? {
+        let libraries = try await libraries().map(\.id)
+        let lookup = LibraryLookup(query).items.filter { $0.name != "system" }
+        var cursor: CatalogueCursor? = CatalogueCursor(libraries: libraries[...], search: "", systems: [query.system])
+        var items: [RemoteLibraryItem] = []
+        var seen = Set<CatalogueCursor>()
+        do {
+            while let current = cursor {
+                guard seen.insert(current).inserted else { throw LibrarySharingError.invalidResponse(status: 200) }
+                let page = try await browsePage(after: current, limit: pageSize, lookup: lookup)
+                items += page.catalogue.items
+                cursor = page.next
+            }
+        } catch LibrarySharingError.sharingUnavailable {
+            return nil
+        } catch LibrarySharingError.invalidResponse(let status) where status == 405 {
+            return nil
+        }
+        return catalogue(items, systems: [query.system])
+    }
+
+    private func browsePage(after cursor: CatalogueCursor, limit: Int, lookup: [URLQueryItem]? = nil) async throws -> CataloguePage {
         guard let library = cursor.libraries.first else { return CataloguePage(catalogue: catalogue([], systems: cursor.systems), next: nil) }
         var query = [URLQueryItem(name: "libraryId", value: library), URLQueryItem(name: "category", value: "games")]
         if !cursor.search.isEmpty {
@@ -148,7 +169,8 @@ public actor ECSSource: LibrarySource {
             query.append(URLQueryItem(name: "systemIds", value: systems.map(\.rawValue).sorted().joined(separator: ",")))
         }
         let page: Page<EmulatorContentClient.LibraryBrowseEntry> = try await readPage(
-            path: "/api/v1/browse", query: query, limit: limit, cursor: cursor.serverCursor
+            path: lookup == nil ? "/api/v1/browse" : "/api/v1/browse/find",
+            query: query + (lookup ?? []), limit: limit, cursor: cursor.serverCursor
         )
         let next: CatalogueCursor?
         if let serverCursor = page.nextCursor {

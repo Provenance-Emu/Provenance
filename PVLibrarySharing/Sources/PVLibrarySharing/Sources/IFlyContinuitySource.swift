@@ -84,6 +84,18 @@ public actor IFlyContinuitySource: LibrarySource {
         }
     }
 
+    public func lookup(_ query: MissingGameQuery) async throws -> RemoteCatalogue? {
+        let items = LibraryLookup(query).items
+        var response = try await fetchManifest(find: items, progress: { _ in })
+        if response.status == 401 {
+            token = nil
+            response = try await fetchManifest(find: items, progress: { _ in })
+        }
+        if response.status == 404 || response.status == 405 { return nil }
+        guard response.status == 200 else { throw Self.error(forStatus: response.status) }
+        return Self.catalogue(from: try JSONDecoder().decode(IFlyLibraryManifest.self, from: response.body))
+    }
+
     public func artwork(for item: RemoteLibraryItem) async throws -> Data? {
         guard let artKey = item.artKey else { return nil }
         let token = try await libraryToken(progress: { _ in })
@@ -207,17 +219,20 @@ public actor IFlyContinuitySource: LibrarySource {
     }
 
     private func fetchManifest(
+        find: [URLQueryItem]? = nil,
         progress: @escaping @Sendable (LibraryBrowseProgress) -> Void
     ) async throws -> LibraryHTTPResponse {
         let token = try await libraryToken(progress: progress)
         progress(.loadingCatalogue)
-        let etag = cached?.etag
+        let etag = find == nil ? cached?.etag : nil
         let (response, base) = try await sendToFirstReachable(
             candidates: candidates, preferred: activeBase, transport: transport
         ) { base in
-            var request = LibraryHTTPRequest.authorizedGet(
-                url: ContinuityRoutes.url(base: base, path: ContinuityRoutes.iFlyLibraryManifest), token: token
-            )
+            let path = find == nil ? ContinuityRoutes.iFlyLibraryManifest : ContinuityRoutes.libraryFind
+            let url = ContinuityRoutes.url(base: base, path: path)
+            var components = URLComponents(url: url, resolvingAgainstBaseURL: false)
+            components?.queryItems = find
+            var request = LibraryHTTPRequest.authorizedGet(url: components?.url ?? url, token: token)
             if let etag { request.headers["If-None-Match"] = etag }
             return request
         }

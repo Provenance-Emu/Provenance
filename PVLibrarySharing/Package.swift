@@ -46,6 +46,7 @@ let package = Package(
             name: "PVLibrarySharingTests",
             dependencies: [
                 "PVLibrarySharing",
+                .product(name: "RomMClient", package: "emulator-content-server"),
                 .product(name: "PVSystems", package: "PVSystems"),
                 .product(name: "PVRemoteLibrary", package: "PVRemoteLibrary")
             ],

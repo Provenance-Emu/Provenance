@@ -81,7 +81,9 @@ Still needs a person or hardware:
 - [ ] A multi-file game (cue and bins). Its sizes are known only when the library measured them before the loss; otherwise it asks as a different version.
 - [ ] Cancel during a large copy; start the game again and the copy resumes.
 - [ ] Game menu, Restore Missing File.
-- [ ] Not built: RomM as a source (plan Task 9); same-device apps asked before LAN ones.
+- [ ] Recover from a saved RomM server on iOS and tvOS. Confirm the same-name prompt and restoration under the original filename.
+- [ ] Exercise fast lookup against updated iCube, iFly and ECS builds, and catalogue fallback against older hosts.
+- [ ] Prefer same-device apps before LAN ones.
 - [ ] Seen once, not reproduced: the host's row left the client's Nearby Libraries list right after it was tapped, and was back on reopening the screen.
 
 To repeat the simulator run without taps: `GET /api/debug/alert` reads the showing alert and `POST /api/debug/alert {"button": "Copy"}` answers it, on either simulator.

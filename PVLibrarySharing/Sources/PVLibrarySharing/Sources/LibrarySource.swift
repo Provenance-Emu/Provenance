@@ -27,6 +27,9 @@ public protocol LibrarySource: Actor {
     /// The whole shared catalogue, authenticating first when needed.
     func catalogue(progress: @escaping @Sendable (LibraryBrowseProgress) -> Void) async throws -> RemoteCatalogue
 
+    /// Returns only recovery candidates. Nil indicates that this host does not support lookup.
+    func lookup(_ query: MissingGameQuery) async throws -> RemoteCatalogue?
+
     /// Cover art bytes for `item`, or nil when the host has none.
     func artwork(for item: RemoteLibraryItem) async throws -> Data?
 
@@ -48,6 +51,10 @@ public protocol LibrarySource: Actor {
         resumeOffset: Int64,
         progress: @escaping @Sendable (Int64) -> Void
     ) async throws -> LibraryDownloadResponse
+}
+
+public extension LibrarySource {
+    func lookup(_ query: MissingGameQuery) async throws -> RemoteCatalogue? { nil }
 }
 
 /// 200, 206 and 416 go back to `LibraryPuller`, which decides how to resume.

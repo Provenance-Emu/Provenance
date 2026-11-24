@@ -78,6 +78,9 @@ public actor IFlyDialectServer {
         }
         switch (request.method, request.path) {
         case ("GET", ContinuityRoutes.iFlyLibraryManifest): return await catalogue(request)
+        case ("GET", ContinuityRoutes.libraryFind):
+            guard let lookup = LibraryLookup(request.query) else { return .error(400, "invalid lookup") }
+            return await catalogue(request, lookup: lookup)
         case ("GET", ContinuityRoutes.libraryArt): return await art(request)
         case ("POST", ContinuityRoutes.iFlyLibraryPull): return await pull(request, peerId: peerId)
         case ("GET", ContinuityRoutes.libraryFile): return file(request)
@@ -102,10 +105,10 @@ public actor IFlyDialectServer {
         game.md5 ?? FileSHA256.hex(of: Data(game.id.utf8))
     }
 
-    private func catalogue(_ request: ServerRequest) async -> ServerResponse {
+    private func catalogue(_ request: ServerRequest, lookup: LibraryLookup? = nil) async -> ServerResponse {
         // v1.1 filter and paging are additive: iFly itself sends neither.
         let query = CatalogueQuery(query: request.query)
-        let games = await servedGames().filter { query.admits($0.game.system) }.map(\.wire).sorted { $0.id < $1.id }
+        let games = await servedGames().filter { query.admits($0.game.system) && (lookup?.admits($0.game) ?? true) }.map(\.wire).sorted { $0.id < $1.id }
         let version = IFlyWireLibraryManifest.version(of: games)
         if query.cursor == nil, request.header("If-None-Match") == version {
             return ServerResponse(status: 304)

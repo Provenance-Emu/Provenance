@@ -88,6 +88,57 @@ public actor RomMSource: RemoteLibrarySource {
         return FetchedGame(directory: download.directory, files: Self.primaryFirst(download.files, gameFileName: native.fsName))
     }
 
+    /// Reuses RomM's platform-scoped search and requires an exact normalized title or filename.
+    /// The pinned client does not expose a game hash, so the caller asks before using the result.
+    public func recoveryCandidate(for query: MissingGameQuery) async throws -> LibraryGame? {
+        let title = query.title.trimmingCharacters(in: .whitespacesAndNewlines)
+        let filename = query.primaryFile.map { ($0.name as NSString).deletingPathExtension } ?? ""
+        let terms = [title, filename].filter { !MissingGameMatcher.normalised($0).isEmpty }
+        let keys = Set([title, query.primaryFile?.name ?? ""].map(MissingGameMatcher.normalised)).subtracting([""])
+        var tried = Set<String>()
+        var best: LibraryGame?
+        for term in terms where tried.insert(term.lowercased()).inserted {
+            var cursor: PVRemoteLibrary.CatalogueCursor?
+            repeat {
+                try Task.checkCancellation()
+                let page = try await page(.init(search: term, systems: [query.system]), after: cursor)
+                for game in page.games where keys.contains(MissingGameMatcher.normalised(game.title))
+                    || game.fileName.map({ keys.contains(MissingGameMatcher.normalised($0)) }) == true {
+                    if let size = query.primaryFile?.size, query.isSingleFileImage, size > 0, size == game.sizeBytes {
+                        return game
+                    }
+                    if best == nil { best = game }
+                }
+                cursor = page.next
+            } while cursor != nil
+        }
+        return best
+    }
+
+    /// Downloads the approved substitute, checks RomM's file sizes and set references,
+    /// and rejects file layouts that cannot restore the existing entry.
+    public func recoveryPull(_ game: LibraryGame, for query: MissingGameQuery) async throws -> PulledGame {
+        let staged = try await fetch(game, into: FileManager.default.temporaryDirectory) { _ in }
+        do {
+            guard let primary = staged.files.first else { throw RomMError.invalidContent }
+            let names = staged.files.map { $0.lastPathComponent.lowercased() }
+            let expected = Set(query.files.map { $0.name.lowercased() })
+            guard Set(names).count == names.count,
+                  (query.isSingleFileImage && names.count == 1 && primary.pathExtension.caseInsensitiveCompare(
+                    query.primaryFile.map { ($0.name as NSString).pathExtension } ?? ""
+                  ) == .orderedSame) || (Set(names) == expected && staged.files.allSatisfy({
+                    $0.deletingLastPathComponent().standardizedFileURL == staged.directory.standardizedFileURL
+                  })) else {
+                throw RomMError.invalidContent
+            }
+            return PulledGame(folder: staged.directory, gameFiles: staged.files, primaryFile: primary,
+                              systemIdentifier: query.system, skippedKinds: [])
+        } catch {
+            try? FileManager.default.removeItem(at: staged.directory)
+            throw error
+        }
+    }
+
     /// The file the importer should open, first: the set's index (m3u, cue, gdi, ccd)
     /// when there is one, else the file RomM names for the game. The rest keep their order.
     static func primaryFirst(_ files: [URL], gameFileName: String) -> [URL] {

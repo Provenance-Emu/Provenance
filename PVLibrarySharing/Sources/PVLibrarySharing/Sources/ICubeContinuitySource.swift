@@ -96,6 +96,18 @@ public actor ICubeContinuitySource: LibrarySource {
         }
     }
 
+    public func lookup(_ query: MissingGameQuery) async throws -> RemoteCatalogue? {
+        let items = LibraryLookup(query).items
+        var response = try await authorizedGet(path: ContinuityRoutes.libraryFind, key: nil, items: items, progress: { _ in })
+        if response.status == 401 {
+            token = nil
+            response = try await authorizedGet(path: ContinuityRoutes.libraryFind, key: nil, items: items, progress: { _ in })
+        }
+        if response.status == 404 || response.status == 405 { return nil }
+        guard response.status == 200 else { throw Self.error(forStatus: response.status) }
+        return try Self.decodeCatalogue(response.body)
+    }
+
     public func artwork(for item: RemoteLibraryItem) async throws -> Data? {
         guard let artKey = item.artKey else { return nil }
         let response = try await authorizedGet(path: ContinuityRoutes.libraryArt, key: artKey, progress: { _ in })
@@ -285,6 +297,7 @@ public actor ICubeContinuitySource: LibrarySource {
     private func authorizedGet(
         path: String,
         key: String?,
+        items: [URLQueryItem] = [],
         progress: @escaping @Sendable (LibraryBrowseProgress) -> Void
     ) async throws -> LibraryHTTPResponse {
         let token = try await libraryToken()
@@ -292,7 +305,10 @@ public actor ICubeContinuitySource: LibrarySource {
         let (response, base) = try await sendToFirstReachable(
             candidates: candidates, preferred: activeBase, transport: transport
         ) { base in
-            .authorizedGet(url: ContinuityRoutes.url(base: base, path: path, key: key), token: token)
+            let url = ContinuityRoutes.url(base: base, path: path, key: key)
+            var components = URLComponents(url: url, resolvingAgainstBaseURL: false)
+            if !items.isEmpty { components?.queryItems = items }
+            return .authorizedGet(url: components?.url ?? url, token: token)
         }
         activeBase = base
         return response
