@@ -106,6 +106,13 @@ public final class FilterChain {
             scaleX != nil && scaleY != nil
         }
 
+        /// The preset gives this pass a size in pixels on at least one axis.
+        var hasAbsoluteSize: Bool {
+            if case .absolute = scaleX { return true }
+            if case .absolute = scaleY { return true }
+            return false
+        }
+
         func getOutputSize(viewport: CGSize, source: CGSize) -> CGSize {
             let width: CGFloat = switch scaleX {
             case let .source(scale):
@@ -1083,6 +1090,113 @@ public final class FilterChain {
         }
     }
 
+    // MARK: - Render target memory budget
+
+    /// One pass's render target, as the preset asks for it.
+    struct RenderTargetRequest: Equatable {
+        var size: CGSize
+        var bytesPerPixel: Int
+        /// 0 when the pass draws straight into the output, 2 when it also keeps a feedback copy.
+        var copies: Int
+        /// False for the last pass (the output's own size) and for a pass the preset sizes in pixels.
+        var canShrink: Bool
+
+        func bytes(at size: CGSize) -> Double {
+            Double(copies) * Double(bytesPerPixel) * Double(size.width) * Double(size.height)
+        }
+    }
+
+    /// The most memory one chain's render targets and history may take. Starts at
+    /// `renderTargetBudget(physicalMemory:)` for this device.
+    var renderTargetBudget = FilterChain.renderTargetBudget(physicalMemory: ProcessInfo.processInfo.physicalMemory) {
+        didSet {
+            guard renderTargetBudget != oldValue else { return }
+            renderTargetsNeedResize = true
+            didLogBudgetShrink = false
+        }
+    }
+
+    private var didLogBudgetShrink = false
+
+    /// An eighth of the device's memory, between 256 MB and 2 GB: about 700 MB on a 6 GB iPad.
+    static func renderTargetBudget(physicalMemory: UInt64) -> Int {
+        let mib: UInt64 = 1_048_576
+        return Int(min(max(physicalMemory / 8, 256 * mib), 2048 * mib))
+    }
+
+    /// The sizes to allocate so the chain stays inside `budget` bytes, or `nil` when it cannot.
+    ///
+    /// Presets size their passes as multiples of the source, cumulatively, and they were written
+    /// for 240-line pictures. Given a display-sized picture, a "4x" pass asks for a target four
+    /// times the display, and nothing bounded the chain's total: in iCube one bundled preset's
+    /// targets came to 3.8 GB on an iPad Pro and iOS killed the app for memory (2026-11-25). Every
+    /// dimension was inside Metal's limit, so a per-texture check does not catch it.
+    ///
+    /// Over budget, the targets that may shrink are scaled by one common factor, which keeps the
+    /// ratio between consecutive passes. `fixedBytes` (the history copies) and targets that may not
+    /// shrink are counted but left alone.
+    static func fitRenderTargets(_ requests: [RenderTargetRequest], fixedBytes: Double, budget: Double) -> [CGSize]? {
+        var fixed = fixedBytes
+        var shrinkable = 0.0
+        for request in requests {
+            if request.canShrink {
+                shrinkable += request.bytes(at: request.size)
+            } else {
+                fixed += request.bytes(at: request.size)
+            }
+        }
+        guard fixed.isFinite, shrinkable.isFinite, budget.isFinite else { return nil }
+        if fixed + shrinkable <= budget { return requests.map(\.size) }
+        guard fixed < budget, shrinkable > 0 else { return nil }
+        // Bytes go with the square of the linear factor. Rounding down keeps the total under budget.
+        let factor = ((budget - fixed) / shrinkable).squareRoot()
+        return requests.map { request in
+            guard request.canShrink else { return request.size }
+            return CGSize(
+                width: max(1, (request.size.width * factor).rounded(.down)),
+                height: max(1, (request.size.height * factor).rounded(.down))
+            )
+        }
+    }
+
+    /// The chain's render target sizes as the loaded preset asks for them, or `nil` when one is not
+    /// a usable size.
+    private func renderTargetRequests(viewportSize: CGSize) -> [RenderTargetRequest]? {
+        var sourceSize = sourceRect.size
+        var requests: [RenderTargetRequest] = []
+        for i in 0 ..< passCount {
+            let p = pass[i]
+            let size = p.isScaled ? p.getOutputSize(viewport: viewportSize, source: sourceSize)
+                : (i == lastPassIndex ? viewportSize : sourceSize)
+            guard size.width.isFinite, size.height.isFinite, size.width >= 1, size.height >= 1 else { return nil }
+            let isLast = i == lastPassIndex
+            let drawsToOutput = isLast && size == viewportSize && p.format == outputColorPixelFormat
+            requests.append(RenderTargetRequest(
+                size: size,
+                bytesPerPixel: p.format.bytesPerPixel,
+                copies: drawsToOutput ? 0 : (p.hasFeedback ? 2 : 1),
+                canShrink: !isLast && !p.hasAbsoluteSize
+            ))
+            sourceSize = size
+        }
+        return requests
+    }
+
+    /// History keeps `historyCount + 1` BGRA copies of the source.
+    private var historyBytes: Double {
+        historyCount > 0 ? Double(historyCount + 1) * Double(sourceRect.width) * Double(sourceRect.height) * 4 : 0
+    }
+
+    private func logBudgetShrink(from requested: CGSize, to size: CGSize) {
+        guard !didLogBudgetShrink else { return }
+        didLogBudgetShrink = true
+        os_log(
+            "[Shaders] render targets shrunk to fit %d MB (a pass asked for %d x %d, gets %d x %d)",
+            log: .default, type: .info, renderTargetBudget / 1_048_576,
+            Int(requested.width), Int(requested.height), Int(size.width), Int(size.height)
+        )
+    }
+
     private func resizeRenderTargets() {
         guard renderTargetsNeedResize else { return }
 
@@ -1091,16 +1205,25 @@ public final class FilterChain {
 
         let viewportSize = CGSize(width: outputFrame.viewport.width, height: outputFrame.viewport.height)
 
+        // Sizes that keep the whole chain inside the memory budget. `nil` (a pass with no usable
+        // size, or a chain whose fixed targets alone are over) leaves every pass as the preset
+        // asks, which is what this function always did.
+        let fitted: [CGSize]? = renderTargetRequests(viewportSize: viewportSize).flatMap { requests in
+            Self.fitRenderTargets(requests, fixedBytes: historyBytes, budget: Double(renderTargetBudget))
+        }
+
         for i in 0 ..< passCount {
             let pass = pass[i]
 
-            let passSize: CGSize = if !pass.isScaled {
+            let requestedSize: CGSize = if !pass.isScaled {
                 i == lastPassIndex ? viewportSize : sourceSize
             } else {
                 pass.getOutputSize(viewport: viewportSize, source: sourceSize)
             }
+            let passSize = fitted?[i] ?? requestedSize
+            if passSize != requestedSize { logBudgetShrink(from: requestedSize, to: passSize) }
 
-            sourceSize = passSize // capture source size for next pass
+            sourceSize = requestedSize // capture source size for next pass
 
             // Ensure per-pass viewport matches the render target size
             self.pass[i].viewport = MTLViewport(

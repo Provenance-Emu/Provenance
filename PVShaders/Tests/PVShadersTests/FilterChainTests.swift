@@ -45,6 +45,17 @@ struct FilterChainTests {
         }
     }
 
+    @Test("a two-pass preset still renders when the memory budget shrinks its intermediate target")
+    func twoPassRendersInsideATinyBudget() throws {
+        let device = try #require(Self.device)
+        // The 32x32 intermediate target is 4 KB or more; 1 KB forces it down to about a quarter.
+        let pixel = try renderFlatColour(device: device, preset: "linear-gamma-correct", bgra: [40, 120, 200, 255],
+                                         renderTargetBudget: 1024)
+        for (got, want) in zip(pixel, [40, 120, 200, 255] as [UInt8]) {
+            #expect(abs(Int(got) - Int(want)) <= 3)
+        }
+    }
+
     @Test("a hand-written preset with a vertex_main entry point loads")
     func nativeMetalEntryPoint() throws {
         let device = try #require(Self.device)
@@ -78,10 +89,12 @@ struct FilterChainTests {
 
     /// Fills a 32x32 source with one colour, renders `preset` into a 64x64
     /// target and returns the centre pixel as BGRA bytes.
-    private func renderFlatColour(device: MTLDevice, preset: String, bgra: [UInt8]) throws -> [UInt8] {
+    private func renderFlatColour(device: MTLDevice, preset: String, bgra: [UInt8],
+                                  renderTargetBudget: Int? = nil) throws -> [UInt8] {
         let sourceSize = 32
         let targetSize = 64
         let chain = try FilterChain(device: device)
+        if let renderTargetBudget { chain.renderTargetBudget = renderTargetBudget }
         try chain.setCompiledShader(DirectoryCompiledShaderContainer(directory: Self.fixture(preset)))
 
         let sourceDescriptor = MTLTextureDescriptor.texture2DDescriptor(
