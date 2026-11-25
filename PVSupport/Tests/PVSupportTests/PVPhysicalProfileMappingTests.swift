@@ -90,7 +90,7 @@ final class PVPhysicalProfileMappingTests: XCTestCase {
         for (index, input) in md {
             XCTAssertEqual(PVPhysicalProfileMapping.input(forElementNamed: "Button \(index)", pad: .megaDrive), input, "MD Button \(index)")
         }
-        XCTAssertNil(PVPhysicalProfileMapping.input(forElementNamed: "Button 9", pad: .generic), "indexed names need a known pad family")
+        XCTAssertNil(PVPhysicalProfileMapping.input(forElementNamed: "Button 9", pad: .generic), "by name alone, indexed names need a known pad family")
     }
 
     func testStandardNamesWinOverAliasesForTheSameInput() {
@@ -208,6 +208,185 @@ final class PVPhysicalProfileMappingTests: XCTestCase {
         XCTAssertTrue(PVPhysicalProfilePad.n64.isSwitchOnline)
         XCTAssertTrue(PVPhysicalProfilePad.megaDrive.isSwitchOnline)
         XCTAssertFalse(PVPhysicalProfilePad.generic.isSwitchOnline)
+    }
+
+    // MARK: Stick clicks
+
+    func testStickClicksResolveByStandardNameAndAlias() {
+        XCTAssertEqual(PVPhysicalProfileMapping.input(forElementNamed: "Left Thumbstick Button"), .leftThumbstickButton)
+        XCTAssertEqual(PVPhysicalProfileMapping.input(forElementNamed: "Right Thumbstick Button"), .rightThumbstickButton)
+        XCTAssertEqual(PVPhysicalProfileMapping.input(forElementNamed: "L3"), .leftThumbstickButton)
+        XCTAssertEqual(PVPhysicalProfileMapping.input(forElementNamed: "Button R3"), .rightThumbstickButton)
+        XCTAssertEqual(PVPhysicalProfileMapping.input(forElementNamed: "Left Thumbstick"), .leftThumbstick, "the stick itself is not its click")
+        let bindings = PVPhysicalProfileMapping.bindings(forElementNames: ["Left Thumbstick", "Left Thumbstick Button", "L3", "Button A"])
+        XCTAssertEqual(bindings["Left Thumbstick"], .leftThumbstick)
+        XCTAssertEqual(bindings["Left Thumbstick Button"], .leftThumbstickButton)
+        XCTAssertNil(bindings["L3"], "the standard name keeps the input")
+    }
+
+    // MARK: Generic HID pads
+
+    func testNumberedButtonsAndAnUnnamedDirectionFillInputsInOrder() {
+        let buttons = (1 ... 13).map { "Button \($0)" }
+        let bindings = PVPhysicalProfileMapping.genericBindings(buttonNames: buttons, directionNames: ["Hat Switch"])
+        XCTAssertEqual(bindings, [
+            "Hat Switch": .dpad,
+            "Button 1": .buttonA, "Button 2": .buttonB, "Button 3": .buttonX, "Button 4": .buttonY,
+            "Button 5": .leftShoulder, "Button 6": .rightShoulder, "Button 7": .leftTrigger, "Button 8": .rightTrigger,
+            "Button 9": .options, "Button 10": .menu,
+            "Button 11": .leftThumbstickButton, "Button 12": .rightThumbstickButton,
+        ])
+        XCTAssertNil(bindings["Button 13"], "nothing is left to hand out")
+        XCTAssertTrue(PVPhysicalProfileMapping.isUsable(bindings: bindings))
+        XCTAssertEqual(PVPhysicalProfileMapping.pauseTrigger(forBindings: bindings), .chord([.options, .menu]))
+    }
+
+    func testNumberedButtonsOrderByNumberNotByText() {
+        // "Button 10" sorts before "Button 2" as text; zero-based names work the same way.
+        let bindings = PVPhysicalProfileMapping.genericBindings(buttonNames: ["Button 10", "Button 2", "Button 0", "Button 1"], directionNames: ["Direction Pad"])
+        XCTAssertEqual(bindings["Button 0"], .buttonA)
+        XCTAssertEqual(bindings["Button 1"], .buttonB)
+        XCTAssertEqual(bindings["Button 2"], .buttonX)
+        XCTAssertEqual(bindings["Button 10"], .buttonY)
+    }
+
+    func testUnnamedDirectionsFillDpadThenSticks() {
+        let bindings = PVPhysicalProfileMapping.genericBindings(buttonNames: ["Button 1"], directionNames: ["Pad C", "Pad A", "Pad B", "Pad D"])
+        XCTAssertEqual(bindings["Pad A"], .dpad)
+        XCTAssertEqual(bindings["Pad B"], .leftThumbstick)
+        XCTAssertEqual(bindings["Pad C"], .rightThumbstick)
+        XCTAssertNil(bindings["Pad D"])
+        // A named direction keeps its input; the unnamed one takes the first free.
+        let mixed = PVPhysicalProfileMapping.genericBindings(buttonNames: ["Button 1"], directionNames: ["Direction Pad", "Pad A"])
+        XCTAssertEqual(mixed["Direction Pad"], .dpad)
+        XCTAssertEqual(mixed["Pad A"], .leftThumbstick)
+    }
+
+    func testNamedElementsKeepTheirInputAndDirectionHalvesAreNotButtons() {
+        let bindings = PVPhysicalProfileMapping.genericBindings(
+            buttonNames: ["Button A", "Button B", "Button Menu", "Direction Pad Up", "Direction Pad Left",
+                          "Left Thumbstick Button", "Button Share"],
+            directionNames: ["Direction Pad", "Left Thumbstick"])
+        XCTAssertEqual(bindings["Button A"], .buttonA)
+        XCTAssertEqual(bindings["Direction Pad"], .dpad)
+        XCTAssertEqual(bindings["Left Thumbstick"], .leftThumbstick)
+        XCTAssertNil(bindings["Direction Pad Up"])
+        XCTAssertNil(bindings["Direction Pad Left"])
+        XCTAssertEqual(bindings["Left Thumbstick Button"], .leftThumbstickButton)
+        XCTAssertNil(bindings["Button Share"], "a named extra is left alone once the names gave a face button")
+    }
+
+    func testDirectionHalvesAreNotButtonsEvenWhenNoFaceButtonIsNamed() {
+        let bindings = PVPhysicalProfileMapping.genericBindings(
+            buttonNames: ["Hat Switch Up", "Hat Switch Down", "Left Thumbstick Left", "Fire"],
+            directionNames: ["Hat Switch", "Left Thumbstick"])
+        XCTAssertEqual(bindings, ["Hat Switch": .dpad, "Left Thumbstick": .leftThumbstick, "Fire": .buttonA])
+    }
+
+    func testOddlyNamedButtonsAreTakenWhenNamesGiveNoFaceButton() {
+        let bindings = PVPhysicalProfileMapping.genericBindings(buttonNames: ["Fire", "Jump"], directionNames: ["Direction Pad"])
+        XCTAssertEqual(bindings, ["Direction Pad": .dpad, "Fire": .buttonA, "Jump": .buttonB])
+    }
+
+    func testNumberedButtonsFillAroundNamedOnes() {
+        let bindings = PVPhysicalProfileMapping.genericBindings(
+            buttonNames: ["Button A", "Button B", "Left Shoulder", "Button 5", "Button 6"], directionNames: ["Direction Pad"])
+        XCTAssertEqual(bindings["Button 5"], .buttonX)
+        XCTAssertEqual(bindings["Button 6"], .buttonY)
+        XCTAssertEqual(bindings["Left Shoulder"], .leftShoulder)
+    }
+
+    // MARK: Trigger axes
+
+    func testATriggerAxisTakesTheTriggerOnlyWhenNoButtonDid() {
+        let named = PVPhysicalProfileMapping.genericBindings(
+            buttonNames: ["Button A", "Button B"], directionNames: ["Direction Pad"],
+            axisNames: ["Left Trigger", "R2", "Left Thumbstick X Axis"])
+        XCTAssertEqual(named["Left Trigger"], .leftTrigger)
+        XCTAssertEqual(named["R2"], .rightTrigger)
+        XCTAssertNil(named["Left Thumbstick X Axis"])
+
+        // Numbered buttons already cover the triggers; the axes are left alone.
+        let numbered = PVPhysicalProfileMapping.genericBindings(
+            buttonNames: (1 ... 10).map { "Button \($0)" }, directionNames: ["Hat Switch"],
+            axisNames: ["Left Trigger", "Right Trigger"])
+        XCTAssertEqual(numbered["Button 7"], .leftTrigger)
+        XCTAssertNil(numbered["Left Trigger"])
+        XCTAssertNil(numbered["Right Trigger"])
+        XCTAssertEqual(numbered["Button 10"], .menu)
+    }
+
+    func testAnAxisNeverTakesAnInputThatIsNotATrigger() {
+        let bindings = PVPhysicalProfileMapping.genericBindings(
+            buttonNames: ["Button A"], directionNames: ["Direction Pad"], axisNames: ["Start", "Button B", "L"])
+        XCTAssertEqual(bindings, ["Button A": .buttonA, "Direction Pad": .dpad])
+    }
+
+    func testATriggerAxisRestingAtZeroReadsAsItsValue() {
+        XCTAssertFalse(PVPhysicalProfileMapping.axisReadingIsBipolar(0))
+        XCTAssertFalse(PVPhysicalProfileMapping.axisReadingIsBipolar(0.6))
+        let rest = PVPhysicalProfileMapping.triggerState(forAxisValue: 0, restsAtMinusOne: false)
+        XCTAssertEqual(rest.value, 0)
+        XCTAssertFalse(rest.pressed)
+        let light = PVPhysicalProfileMapping.triggerState(forAxisValue: 0.2, restsAtMinusOne: false)
+        XCTAssertEqual(light.value, 0.2, accuracy: 0.0001)
+        XCTAssertFalse(light.pressed)
+        let full = PVPhysicalProfileMapping.triggerState(forAxisValue: 1, restsAtMinusOne: false)
+        XCTAssertEqual(full.value, 1)
+        XCTAssertTrue(full.pressed)
+        XCTAssertEqual(PVPhysicalProfileMapping.triggerState(forAxisValue: 1.4, restsAtMinusOne: false).value, 1, "clamped")
+    }
+
+    func testATriggerAxisRestingAtMinusOneIsRescaled() {
+        XCTAssertTrue(PVPhysicalProfileMapping.axisReadingIsBipolar(-1))
+        XCTAssertTrue(PVPhysicalProfileMapping.axisReadingIsBipolar(-0.1))
+        XCTAssertFalse(PVPhysicalProfileMapping.axisReadingIsBipolar(-0.01), "noise around zero is not a resting position")
+        let rest = PVPhysicalProfileMapping.triggerState(forAxisValue: -1, restsAtMinusOne: true)
+        XCTAssertEqual(rest.value, 0)
+        XCTAssertFalse(rest.pressed)
+        let half = PVPhysicalProfileMapping.triggerState(forAxisValue: 0, restsAtMinusOne: true)
+        XCTAssertEqual(half.value, 0.5, accuracy: 0.0001)
+        XCTAssertTrue(half.pressed)
+        let full = PVPhysicalProfileMapping.triggerState(forAxisValue: 1, restsAtMinusOne: true)
+        XCTAssertEqual(full.value, 1)
+        XCTAssertTrue(full.pressed)
+    }
+
+    // MARK: Which pads to wrap
+
+    /// Element names a Siri Remote exposes that resolve to inputs.
+    private let remoteBindings: [String: PVSynthesizedInput] = ["Direction Pad": .dpad, "Button A": .buttonA, "Button X": .buttonX, "Button Menu": .menu]
+    private let hidBindings = PVPhysicalProfileMapping.genericBindings(buttonNames: (1 ... 10).map { "Button \($0)" }, directionNames: ["Hat Switch"])
+
+    func testRemotesAreNeverSynthesized() {
+        for category in ["Siri Remote", "Siri Remote (2nd Generation)", "Coalesced Remote", "Control Center Remote", "Universal Electronics Remote"] {
+            XCTAssertTrue(PVPhysicalProfileMapping.isRemoteCategory(category), category)
+            XCTAssertFalse(PVPhysicalProfileMapping.shouldSynthesize(pad: .generic, productCategory: category, hasMicroGamepad: true, bindings: remoteBindings), category)
+            XCTAssertFalse(PVPhysicalProfileMapping.shouldSynthesize(pad: .generic, productCategory: category, hasMicroGamepad: false, bindings: hidBindings), category)
+        }
+        XCTAssertFalse(PVPhysicalProfileMapping.isRemoteCategory("HID"))
+        XCTAssertFalse(PVPhysicalProfileMapping.isRemoteCategory(nil))
+        // A remote under a category that does not say so still has only A and X.
+        XCTAssertFalse(PVPhysicalProfileMapping.shouldSynthesize(pad: .generic, productCategory: "MFi", hasMicroGamepad: true, bindings: remoteBindings))
+    }
+
+    func testGenericPadsAreSynthesizedWithOrWithoutAMicroProfile() {
+        XCTAssertTrue(PVPhysicalProfileMapping.shouldSynthesize(pad: .generic, productCategory: "HID", hasMicroGamepad: false, bindings: hidBindings))
+        XCTAssertTrue(PVPhysicalProfileMapping.shouldSynthesize(pad: .generic, productCategory: "HID", hasMicroGamepad: true, bindings: hidBindings))
+        // Without a micro profile the old rule holds: a direction and one face button are enough.
+        XCTAssertTrue(PVPhysicalProfileMapping.shouldSynthesize(pad: .generic, productCategory: "HID", hasMicroGamepad: false, bindings: ["Direction Pad": .dpad, "Button A": .buttonA]))
+        XCTAssertFalse(PVPhysicalProfileMapping.shouldSynthesize(pad: .generic, productCategory: "HID", hasMicroGamepad: false, bindings: ["Button A": .buttonA]))
+    }
+
+    func testSwitchOnlinePadsAreSynthesizedWhateverTheirCategorySays() {
+        let bindings = PVPhysicalProfileMapping.bindings(forElementNames: appleSNESElementNames, pad: .snes)
+        XCTAssertTrue(PVPhysicalProfileMapping.shouldSynthesize(pad: .snes, productCategory: "Switch SNES Controller", hasMicroGamepad: true, bindings: bindings))
+        XCTAssertTrue(PVPhysicalProfileMapping.shouldSynthesize(pad: .n64, productCategory: "Remote", hasMicroGamepad: true, bindings: ["Direction Pad": .dpad, "Button A": .buttonA]))
+    }
+
+    func testUnnamedPadsGetANameFromTheirCategory() {
+        XCTAssertEqual(PVPhysicalProfileMapping.fallbackVendorName(productCategory: "HID"), "HID Gamepad")
+        XCTAssertEqual(PVPhysicalProfileMapping.fallbackVendorName(productCategory: "  "), "Gamepad")
     }
 
     /// The tester's RetroArch autoconfig for this pad agrees with the SNES HID index table.

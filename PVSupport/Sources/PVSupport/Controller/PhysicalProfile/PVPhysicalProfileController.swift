@@ -3,8 +3,9 @@
 //  PVSupport
 //
 //  Wraps a GCController the system exposes without an extended gamepad (the
-//  Nintendo Switch Online N64/SNES/Mega Drive controllers) and synthesizes one from
-//  its physical input profile, so cores that only read `extendedGamepad` work.
+//  Nintendo Switch Online N64/SNES/Mega Drive controllers, and plain USB/Bluetooth
+//  HID pads) and synthesizes one from its physical input profile, so cores that
+//  only read `extendedGamepad` work.
 //
 
 #if canImport(UIKit) && canImport(GameController)
@@ -31,21 +32,37 @@ public final class PVPhysicalProfileController: GCController {
     private var held: Set<PVSynthesizedInput> = []
     /// Set once the pause trigger fires; its inputs stay released to the game until all are let go.
     private var triggerLatched = false
+    /// Trigger axes seen below zero, so known to rest at -1 rather than 0.
+    private var bipolarAxes: Set<String> = []
 
-    /// True when `controller` has no extended profile, its physical profile has a
-    /// direction input and a face button to synthesize from, and it is either a
-    /// Switch Online pad or a pad with no micro profile either.
+    /// True when `controller` has no extended profile and its physical profile has a
+    /// direction input and a face button to synthesize from: a Switch Online pad, or a
+    /// generic HID pad (product category "HID", such as an 8BitDo pad over USB-C).
     ///
     /// Apple builds the Switch Online SNES pad from the same description class it uses
     /// for a basic (non-extended) MFi gamepad, so it reports a legacy `gamepad` and a
-    /// `microGamepad` but no `extendedGamepad`. Generic pads with a micro profile (the
-    /// Siri Remote) are left alone.
+    /// `microGamepad` but no `extendedGamepad`. A generic pad may report a micro profile
+    /// too, so that alone no longer rules a pad out; remotes are left alone
+    /// (``PVPhysicalProfileMapping/shouldSynthesize(pad:productCategory:hasMicroGamepad:bindings:)``).
     public static func isNeeded(for controller: GCController) -> Bool {
         guard controller.extendedGamepad == nil, !(controller is PVPhysicalProfileController) else { return false }
         let pad = PVPhysicalProfilePad.detect(vendorName: controller.vendorName, productCategory: controller.productCategory)
-        guard pad.isSwitchOnline || controller.microGamepad == nil else { return false }
-        let names = Array(controller.physicalInputProfile.elements.keys)
-        return PVPhysicalProfileMapping.isUsable(bindings: PVPhysicalProfileMapping.bindings(forElementNames: names, pad: pad))
+        return PVPhysicalProfileMapping.shouldSynthesize(pad: pad,
+                                                         productCategory: controller.productCategory,
+                                                         hasMicroGamepad: controller.microGamepad != nil,
+                                                         bindings: resolveBindings(for: controller, pad: pad))
+    }
+
+    /// Element name → input for `controller`. A Switch Online pad resolves by its
+    /// family's names; any other pad also takes leftover elements by position.
+    private static func resolveBindings(for controller: GCController, pad: PVPhysicalProfilePad) -> [String: PVSynthesizedInput] {
+        let profile = controller.physicalInputProfile
+        guard pad == .generic else {
+            return PVPhysicalProfileMapping.bindings(forElementNames: Array(profile.elements.keys), pad: pad)
+        }
+        return PVPhysicalProfileMapping.genericBindings(buttonNames: Array(profile.buttons.keys),
+                                                        directionNames: Array(profile.dpads.keys),
+                                                        axisNames: Array(profile.axes.keys))
     }
 
     public init(wrapping controller: GCController) {
@@ -58,10 +75,12 @@ public final class PVPhysicalProfileController: GCController {
     private func bind() {
         let profile = base.physicalInputProfile
         pad = PVPhysicalProfilePad.detect(vendorName: base.vendorName, productCategory: base.productCategory)
-        bindings = PVPhysicalProfileMapping.bindings(forElementNames: Array(profile.elements.keys), pad: pad)
+        bindings = Self.resolveBindings(for: base, pad: pad)
         pauseTrigger = PVPhysicalProfileMapping.pauseTrigger(forBindings: bindings)
         synthesized.hasOptions = bindings.values.contains(.options)
         synthesized.hasHome = bindings.values.contains(.home)
+        synthesized.hasLeftThumbstickButton = bindings.values.contains(.leftThumbstickButton)
+        synthesized.hasRightThumbstickButton = bindings.values.contains(.rightThumbstickButton)
         let described = bindings.sorted { $0.key < $1.key }.map { "\($0.key)→\($0.value.rawValue)" }.joined(separator: ", ")
         ILOG("PVPhysicalProfileController[\(base.vendorName ?? "?") \(pad.rawValue)] pause=\(String(describing: pauseTrigger)): \(described)")
 
@@ -83,6 +102,10 @@ public final class PVPhysicalProfileController: GCController {
                     self?.setCButton(input, pressed: pressed)
                 }
             default:
+                if let axis = element as? GCControllerAxisInput {
+                    if PVPhysicalProfileMapping.triggerInputs.contains(input) { bindTriggerAxis(axis, to: input, named: name) }
+                    continue
+                }
                 guard let source = element as? GCControllerButtonInput else { continue }
                 if input == .menu || input == .options {
                     // Start and Select are game buttons; on tvOS the system would otherwise
@@ -93,6 +116,19 @@ public final class PVPhysicalProfileController: GCController {
                     self?.setButton(input, named: name, value: value, pressed: pressed)
                 }
             }
+        }
+    }
+
+    /// Drives a trigger from an axis. A trigger axis rests at 0 (range 0...1) on some
+    /// pads and at -1 (range -1...1) on others; once it has reported a negative value
+    /// it is treated as the second kind.
+    private func bindTriggerAxis(_ axis: GCControllerAxisInput, to input: PVSynthesizedInput, named name: String) {
+        if PVPhysicalProfileMapping.axisReadingIsBipolar(axis.value) { bipolarAxes.insert(name) }
+        axis.valueChangedHandler = { [weak self] _, raw in
+            guard let self else { return }
+            if PVPhysicalProfileMapping.axisReadingIsBipolar(raw) { self.bipolarAxes.insert(name) }
+            let state = PVPhysicalProfileMapping.triggerState(forAxisValue: raw, restsAtMinusOne: self.bipolarAxes.contains(name))
+            self.setButton(input, named: name, value: state.value, pressed: state.pressed)
         }
     }
 
@@ -146,7 +182,11 @@ public final class PVPhysicalProfileController: GCController {
     public override var extendedGamepad: GCExtendedGamepad? { synthesized }
     public override var microGamepad: GCMicroGamepad? { nil }
     public override var physicalInputProfile: GCPhysicalInputProfile { base.physicalInputProfile }
-    public override var vendorName: String? { base.vendorName }
+    /// Never nil: remaps are stored per vendor name, and every unnamed pad would
+    /// otherwise share the "unknown" entry.
+    public override var vendorName: String? {
+        base.vendorName ?? PVPhysicalProfileMapping.fallbackVendorName(productCategory: base.productCategory)
+    }
     public override var productCategory: String { base.productCategory }
     public override var isAttachedToDevice: Bool { false }
     public override var haptics: GCDeviceHaptics? { base.haptics }
