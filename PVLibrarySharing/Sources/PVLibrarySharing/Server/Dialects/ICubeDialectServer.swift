@@ -103,6 +103,9 @@ public actor ICubeDialectServer {
         }
         switch (request.method, request.path) {
         case ("GET", ContinuityRoutes.iCubeLibraryCatalog): return await catalog(request)
+        case ("GET", ContinuityRoutes.libraryFind):
+            guard let lookup = LibraryLookup(request.query) else { return .error(400, "invalid lookup") }
+            return await catalog(request, lookup: lookup)
         case ("GET", ContinuityRoutes.libraryArt): return await art(request)
         case ("GET", ContinuityRoutes.iCubeLibraryManifest): return await manifestRoute(request)
         case ("GET", ContinuityRoutes.libraryFile): return await file(request, peer: peer)
@@ -174,11 +177,11 @@ public actor ICubeDialectServer {
         await entries().first { $0.identity.stableKey == key }
     }
 
-    private func catalog(_ request: ServerRequest) async -> ServerResponse {
+    private func catalog(_ request: ServerRequest, lookup: LibraryLookup? = nil) async -> ServerResponse {
         // v1.1 filter and paging are additive: iCube itself sends neither.
         let query = CatalogueQuery(query: request.query)
         let all = await entries()
-            .filter { query.admits($0.game.system) }
+            .filter { query.admits($0.game.system) && (lookup?.admits($0.game) ?? true) }
             .map { ICubeWireCatalog.Entry(key: $0.identity.stableKey, game: $0.identity, sizeBytes: $0.game.sizeBytes, hasArtwork: $0.game.hasArtwork) }
             .sorted { $0.key < $1.key }
         let version = FileSHA256.hex(of: Data(all.map { "\($0.key)|\($0.sizeBytes)\n" }.joined().utf8))

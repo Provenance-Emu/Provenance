@@ -50,8 +50,8 @@ public actor MissingGameSearch {
         self.catalogueTimeout = catalogueTimeout
     }
 
-    /// Asks `sources` by rank, the hinted one first. Returns the first exact match, else the
-    /// first stand-in seen, else nil. At most one manifest is requested from each source.
+    /// Looks up candidates in parallel, then considers the hinted source first and the rest
+    /// by rank. Pull manifests remain sequential because hosts may meter or prompt for them.
     public func find(
         _ query: MissingGameQuery,
         hint: GameSourceHint?,
@@ -64,21 +64,58 @@ public actor MissingGameSearch {
             return left < right
         }.map(\.element)
 
-        var report = SearchReport()
-        var standIn: FoundGame?
-        for candidate in ordered {
-            if Task.isCancelled { break }
-            progress(candidate.name)
-            guard let catalogue = await catalogue(of: candidate) else {
-                report.unreachable.append(candidate.name)
-                continue
+        let timeout = catalogueTimeout
+        return await withTaskGroup(of: (Int, LookupResult).self) { group in
+            for (index, candidate) in ordered.enumerated() {
+                group.addTask { (index, await Self.lookup(query, from: candidate.source, timeout: timeout)) }
             }
-            report.asked.append(candidate.name)
-            guard let found = await match(query, hint: hint, in: catalogue, from: candidate) else { continue }
-            if found.kind == .exact { return (found, report) }
-            if standIn == nil { standIn = found }
+            defer { group.cancelAll() }
+
+            var lookups: [Int: LookupResult] = [:]
+            var report = SearchReport()
+            var standIn: FoundGame?
+            for (index, candidate) in ordered.enumerated() {
+                if Task.isCancelled { break }
+                progress(candidate.name)
+                while lookups[index] == nil, let (finished, result) = await group.next() {
+                    lookups[finished] = result
+                }
+                let catalogue: RemoteCatalogue?
+                switch lookups.removeValue(forKey: index) ?? .failed {
+                case .answered(let narrowed) where !narrowed.items.isEmpty || candidate.identity != hint?.sourceIdentity:
+                    catalogue = narrowed
+                case .answered, .unsupported:
+                    catalogue = await self.catalogue(of: candidate)
+                case .failed:
+                    catalogue = nil
+                }
+                guard let catalogue else {
+                    report.unreachable.append(candidate.name)
+                    continue
+                }
+                report.asked.append(candidate.name)
+                guard let found = await match(query, hint: hint, in: catalogue, from: candidate) else { continue }
+                if found.kind == .exact { return (found, report) }
+                if standIn == nil { standIn = found }
+            }
+            return (standIn, report)
         }
-        return (standIn, report)
+    }
+
+    private enum LookupResult: Sendable {
+        case answered(RemoteCatalogue)
+        case unsupported
+        case failed
+    }
+
+    private static func lookup(_ query: MissingGameQuery, from source: any LibrarySource, timeout: Duration) async -> LookupResult {
+        let result = await withTimeout(timeout) {
+            if let catalogue = try await source.lookup(query) {
+                return LookupResult.answered(catalogue)
+            }
+            return .unsupported
+        }
+        return result ?? .failed
     }
 
     /// Forgets cached catalogues, for a library that changed.
@@ -103,14 +140,18 @@ public actor MissingGameSearch {
             return FoundGame(source: candidate, item: item, manifest: nil, kind: .exact)
         }
         if let hint, hint.sourceIdentity == candidate.identity, hint.standInMD5 == nil,
-           let item = catalogue.items.first(where: { $0.id == hint.remoteItemID && $0.systemIdentifier == query.system }) {
+           let item = catalogue.items.first(where: { $0.id == hint.remoteItemID && $0.systemIdentifier == query.system
+               && (!query.isSingleFileImage || $0.md5 == nil || $0.md5?.caseInsensitiveCompare(query.md5) == .orderedSame) }) {
             return FoundGame(source: candidate, item: item, manifest: nil, kind: .exact)
         }
         guard let item = MissingGameMatcher.nameCandidates(for: query, in: catalogue).first else { return nil }
         let source = candidate.source
         guard let manifest = try? await source.pullManifest(for: item, progress: { _ in }),
               let kind = MissingGameMatcher.classify(manifest, for: query) else { return nil }
-        return FoundGame(source: candidate, item: item, manifest: manifest, kind: kind)
+        // A comparable hash that differs takes precedence over an equal filename and size.
+        let hashDiffers = query.isSingleFileImage && !query.md5.isEmpty
+            && item.md5.map { $0.caseInsensitiveCompare(query.md5) != .orderedSame } == true
+        return FoundGame(source: candidate, item: item, manifest: manifest, kind: hashDiffers ? .standIn : kind)
     }
 
     /// `operation`'s value, or nil when it throws or outlasts `timeout`. Returns at the timeout

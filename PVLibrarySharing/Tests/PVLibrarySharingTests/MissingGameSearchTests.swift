@@ -5,6 +5,7 @@ import PVSystems
 private actor FakeSource: LibrarySource {
     nonisolated let app: PeerApp = .pvLibrary
     var items: [RemoteLibraryItem]
+    var lookupItems: [RemoteLibraryItem]?
     var manifests: [String: RemoteManifest] = [:]
     var delay: Duration = .zero
     var fails = false
@@ -22,6 +23,12 @@ private actor FakeSource: LibrarySource {
     func set(delay: Duration) { self.delay = delay }
     func setFails() { fails = true }
     func set(manifest: RemoteManifest, for id: String) { manifests[id] = manifest }
+
+    func setLookupItems(_ items: [RemoteLibraryItem]) { lookupItems = items }
+
+    func lookup(_ query: MissingGameQuery) async throws -> RemoteCatalogue? {
+        lookupItems.map { RemoteCatalogue(deviceName: name, items: $0, source: app) }
+    }
 
     func catalogue(progress: @escaping @Sendable (LibraryBrowseProgress) -> Void) async throws -> RemoteCatalogue {
         catalogueCalls += 1
@@ -97,6 +104,26 @@ final class MissingGameSearchTests: XCTestCase {
         let source = FakeSource(name, items: [item("s")], log: log)
         await source.set(manifest: manifest("s", name: fileName, size: 222), for: "s")
         return source
+    }
+
+    func testLookupHitAndMissBothSkipCatalogue() async {
+        let hit = FakeSource("Hit")
+        await hit.setLookupItems([item("hit", md5: md5)])
+        let miss = FakeSource("Miss", items: [item("stale", md5: md5)])
+        await miss.setLookupItems([])
+        let result = await find([entry(miss, "Miss"), entry(hit, "Hit")])
+        XCTAssertEqual(result.found?.item.id, "hit")
+        let hitReads = await hit.catalogueCalls
+        let missReads = await miss.catalogueCalls
+        XCTAssertEqual(hitReads, 0)
+        XCTAssertEqual(missReads, 0)
+    }
+
+    func testKnownDifferentHashRequiresApprovalEvenWithSameNameAndSize() async {
+        let source = FakeSource("A", items: [item("a", md5: String(repeating: "b", count: 32))])
+        await source.set(manifest: manifest("a", name: fileName, size: 100), for: "a")
+        let result = await find([entry(source, "A")])
+        XCTAssertEqual(result.found?.kind, .standIn)
     }
 
     func testStopsAtFirstExactMatch() async {

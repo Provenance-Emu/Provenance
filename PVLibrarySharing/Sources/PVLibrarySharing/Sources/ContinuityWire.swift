@@ -19,6 +19,7 @@ import Foundation
 enum ContinuityRoutes {
     static let libraryAuthStart = "/api/continuity/library/auth/start"
     static let libraryAuthComplete = "/api/continuity/library/auth/complete"
+    static let libraryFind = "/api/continuity/library/find"
     static let libraryArt = "/api/continuity/library/art"
     /// iFly only: the whole catalogue.
     static let iFlyLibraryManifest = "/api/continuity/library/manifest"

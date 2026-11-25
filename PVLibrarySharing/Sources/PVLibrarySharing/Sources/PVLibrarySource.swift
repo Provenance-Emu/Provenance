@@ -65,6 +65,16 @@ public actor PVLibrarySource: LibrarySource {
         }
     }
 
+    public func lookup(_ query: MissingGameQuery) async throws -> RemoteCatalogue? {
+        let response = try await authorizedGet(ContinuityRoutes.libraryFind, items: LibraryLookup(query).items,
+                                               ifNoneMatch: nil, progress: { _ in })
+        if response.status == 404 || response.status == 405 { return nil }
+        guard response.status == 200 else { throw Self.error(forStatus: response.status) }
+        let page = try Self.decodeCatalog(response.body)
+        let items = page.entries.filter { !Self.isCoreLauncher(md5: $0.game.md5) }.map(Self.item)
+        return RemoteCatalogue(deviceName: page.sourceDevice.name, items: items, source: .pvLibrary)
+    }
+
     private func loadAllPages(progress: @escaping @Sendable (LibraryBrowseProgress) -> Void) async throws -> RemoteCatalogue {
         var items: [RemoteLibraryItem] = []
         var deviceName = ""

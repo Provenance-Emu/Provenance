@@ -7,7 +7,7 @@ import RomMClient
 
 @MainActor
 enum RomMGameImport {
-    static func system(for platform: RomMPlatform) -> SystemIdentifier? {
+    nonisolated static func system(for platform: RomMPlatform) -> SystemIdentifier? {
         let aliases: [String: SystemIdentifier] = [
             "dc": .Dreamcast, "naomi-2": .NAOMI2, "ngc": .GameCube, "gc": .GameCube,
             "arcade": .MAME, "ps1": .PSX, "sega32x": .Sega32X, "sega32": .Sega32X, "megacd": .SegaCD,
@@ -102,6 +102,7 @@ enum RomMGameImport {
 }
 
 enum RomMLoginStore {
+    static let lastServerKey = "RomM.lastServer"
     private static let store = KeychainECSTokenStore(service: "org.provenance-emu.romm")
 
     static func read(_ server: RomMAddress) -> String? {

@@ -51,3 +51,44 @@ public enum RecoveryMatchKind: Sendable, Equatable {
     /// The same name but possibly another version. Fills the hole only after the user agrees.
     case standIn
 }
+
+/// Filters the authenticated find route without fetching a pull manifest.
+struct LibraryLookup {
+    let system: String
+    let md5: String?
+    let names: Set<String>
+
+    init(_ query: MissingGameQuery) {
+        system = query.system.rawValue
+        md5 = query.isSingleFileImage ? query.md5.lowercased() : nil
+        names = Set([query.title, query.primaryFile?.name ?? ""].map(MissingGameMatcher.normalised)).subtracting([""])
+    }
+
+    init?(_ query: [String: String]) {
+        guard let system = query["system"], !system.isEmpty, system.count <= 120 else { return nil }
+        let md5 = query["md5"]?.lowercased()
+        if let md5, md5.count != 32 || !md5.allSatisfy(\.isHexDigit) { return nil }
+        let names = query["names"] ?? ""
+        guard names.count <= 1025, md5 != nil || !names.isEmpty else { return nil }
+        self.system = system
+        self.md5 = md5
+        self.names = Set(names.split(separator: ",").map(String.init))
+    }
+
+    var items: [URLQueryItem] {
+        var items = [URLQueryItem(name: "system", value: system)]
+        if let md5, md5.count == 32, md5.allSatisfy(\.isHexDigit) {
+            items.append(URLQueryItem(name: "md5", value: md5))
+        }
+        if !names.isEmpty {
+            items.append(URLQueryItem(name: "names", value: names.sorted().map { String($0.prefix(512)) }.joined(separator: ",")))
+        }
+        return items
+    }
+
+    func admits(_ game: SharedGame) -> Bool {
+        guard game.system.rawValue == system else { return false }
+        if let md5, game.md5?.lowercased() == md5 { return true }
+        return names.contains(MissingGameMatcher.normalised(game.title))
+    }
+}

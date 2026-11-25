@@ -41,6 +41,20 @@ final class IFlyDialectServerTests: XCTestCase {
         XCTAssertEqual(catalogue.items.first { $0.title == "Rez" }?.md5, "bbbb1111bbbb1111bbbb1111bbbb1111")
     }
 
+    func testLookupFindsHashOrNormalizedNameWithoutFullCatalogue() async throws {
+        let client = source(fixture.iFlyServer())
+        let query = MissingGameQuery(
+            md5: "bbbb1111bbbb1111bbbb1111bbbb1111", system: .Dreamcast, title: "Ikaruga!",
+            files: [], isSingleFileImage: true
+        )
+        let matches = try await client.lookup(query)
+        XCTAssertEqual(Set(matches?.items.map(\.title) ?? []), ["Rez", "Ikaruga"])
+        var wrongSystem = query
+        wrongSystem.system = .GameCube
+        let empty = try await client.lookup(wrongSystem)
+        XCTAssertEqual(empty?.items, [])
+    }
+
     func testLibraryManifestDecodesWithIFlysOwnFields() async throws {
         let server = fixture.iFlyServer()
         let transport = InProcessTransport { await server.handle($0) }

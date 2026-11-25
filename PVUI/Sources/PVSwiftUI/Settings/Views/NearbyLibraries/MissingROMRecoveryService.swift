@@ -13,10 +13,12 @@ import PVLibrary
 import PVLibrarySharing
 import PVLogging
 import PVRealm
+import PVRemoteLibrary
 import PVSettings
 import PVSystems
 import PVUIBase
 import RealmSwift
+import RomMClient
 
 @MainActor
 public final class MissingROMRecoveryService: MissingROMRecovering {
@@ -97,7 +99,11 @@ public final class MissingROMRecoveryService: MissingROMRecovering {
         }
         if Task.isCancelled { return .declined }
         guard let found, let origin = byIdentity[found.source.identity] else {
+            #if os(iOS) || os(tvOS)
+            return await recoverFromRomM(target, report: report, needsSignIn: needsSignIn, status: status, ask: ask)
+            #else
             return .notFound(asked: report.asked, unreachable: report.unreachable, needsSignIn: needsSignIn)
+            #endif
         }
 
         ILOG("Missing ROM recovery: \(origin.name) has \(found.item.title) (md5 \(found.item.md5 ?? "none"), \(found.item.sizeBytes) bytes) as \(found.kind)")
@@ -126,7 +132,10 @@ public final class MissingROMRecoveryService: MissingROMRecovering {
                 Task { @MainActor in status("Copying from \(origin.name): \(percent)%") }
             }
             try Task.checkCancellation()
-            let result = try MissingGameRestorer.restore(pulled, to: target.files, kind: found.kind, staging: staging)
+            // A verified single-file hash can be restored under the original filename.
+            let sameHash = query.isSingleFileImage && found.item.md5?.caseInsensitiveCompare(query.md5) == .orderedSame
+            let layout: RecoveryMatchKind = sameHash ? .standIn : found.kind
+            let result = try MissingGameRestorer.restore(pulled, to: target.files, kind: layout, staging: staging)
             ILOG("Missing ROM recovery: restored \(result.restored.count) file(s) of \(query.title) from \(origin.name)")
             if let primary = target.primaryURL {
                 await GameFileStatusService.shared.markDownloaded(md5: md5, at: primary)
@@ -143,6 +152,63 @@ public final class MissingROMRecoveryService: MissingROMRecovering {
             return .failed(message: error.localizedDescription)
         }
     }
+
+    #if os(iOS) || os(tvOS)
+    private func recoverFromRomM(
+        _ target: Target,
+        report: SearchReport,
+        needsSignIn: [String],
+        status: @escaping @MainActor (String) -> Void,
+        ask: @escaping @MainActor (MissingROMRecoveryPrompt) async -> MissingROMRecoveryAnswer
+    ) async -> MissingROMRecoveryOutcome {
+        func notFound(asked: [String] = [], unreachable: [String] = [], signIn: [String] = []) -> MissingROMRecoveryOutcome {
+            .notFound(asked: report.asked + asked, unreachable: report.unreachable + unreachable, needsSignIn: needsSignIn + signIn)
+        }
+        guard let saved = UserDefaults.standard.string(forKey: RomMLoginStore.lastServerKey), !saved.isEmpty,
+              let address = try? RomMAddress(saved) else { return notFound() }
+        let name = "RomM (\(address.baseURL.host ?? address.baseURL.absoluteString))"
+        guard let stored = RomMLoginStore.read(address), let login = RomMSavedLogin(storedValue: stored) else {
+            return notFound(signIn: [name])
+        }
+
+        let source: RomMSource
+        let query = target.query
+        status("Asking \(name)…")
+        let game: PVRemoteLibrary.LibraryGame
+        do {
+            let client = try RomMClient(address: address, credential: login.credential, allowHTTP: login.allowHTTP)
+            source = RomMSource(client: client, systemFor: { RomMGameImport.system(for: $0) })
+            guard let candidate = try await source.recoveryCandidate(for: query) else { return notFound(asked: [name]) }
+            game = candidate
+        } catch is CancellationError {
+            return .declined
+        } catch RomMError.accessDenied {
+            return notFound(signIn: [name])
+        } catch {
+            return notFound(unreachable: [name])
+        }
+
+        guard !Task.isCancelled,
+              await ask(.standIn(title: query.title, fileName: game.fileName ?? game.title, source: name)) != .cancel
+        else { return .declined }
+
+        do {
+            status("Copying from \(name)…")
+            let pulled = try await source.recoveryPull(game, for: query)
+            defer { try? FileManager.default.removeItem(at: pulled.folder) }
+            try Task.checkCancellation()
+            _ = try MissingGameRestorer.restore(pulled, to: target.files, kind: .standIn, staging: staging)
+            if let primary = target.primaryURL {
+                await GameFileStatusService.shared.markDownloaded(md5: query.md5, at: primary)
+            }
+            return .restored
+        } catch is CancellationError {
+            return .declined
+        } catch {
+            return .failed(message: error.localizedDescription)
+        }
+    }
+    #endif
 
     /// Puts files already copied from a library at a library game's own paths. False when
     /// the game is gone from the library or the copy holds none of its files; the caller
