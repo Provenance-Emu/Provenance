@@ -1,7 +1,8 @@
 # Moving Provenance's CloudKit sync onto PVSyncRules and PVCloudSync
 
-Date: 2026-11-25. Status: scope approved by the owner on 2026-11-25 ("move partly");
-decisions 2 to 9 in section 9 are still open.
+Date: 2026-11-25. Status: **deferred by the owner on 2026-11-25.** Provenance keeps its own
+CloudKit sync for now. If the work is picked up again the owner's preferred scope is
+"move partly"; decisions 2 to 9 in section 9 are still open.
 No sync code has been changed. Nothing here should land before 3.4.0 ships.
 
 Line numbers are from `develop` at `1592e26faa`, PVSyncRules 1.0.4, PVCloudSync 1.1.1
