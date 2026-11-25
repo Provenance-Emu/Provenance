@@ -36,7 +36,7 @@ let package = Package(
         .package(name: "PVPlists", path: "../PVPlists/"),
         .package(name: "PVObjCUtils", path: "../PVObjCUtils/"),
         .package(name: "PVPrimitives", path: "../PVPrimitives/"),
-        .package(url: "https://github.com/Provenance-Emu/PVSystems.git", from: "1.0.0"),
+        .package(url: "https://github.com/Provenance-Emu/PVSystems.git", from: "1.0.3"),
         .package(name: "PVSettings", path: "../PVSettings/"),
         .package(url: "https://github.com/sindresorhus/Defaults.git", from: "9.0.2"),
 

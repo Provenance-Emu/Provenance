@@ -34,7 +34,7 @@ let package = Package(
             path: "../PVHashing"
         ),
         // System identifiers and metadata, shared with iCube and iFly.
-        .package(url: "https://github.com/Provenance-Emu/PVSystems.git", from: "1.0.0")
+        .package(url: "https://github.com/Provenance-Emu/PVSystems.git", from: "1.0.3")
     ],
 
     targets: [

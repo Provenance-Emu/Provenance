@@ -39,7 +39,7 @@ let package = Package(
         // without the full PVLibrary stack. The host app bridges PVGame/PVSystem
         // objects into the value-type entities.
         // Shared with iCube and iFly; system frameworks only.
-        .package(url: "https://github.com/Provenance-Emu/PVLibrarySnapshot.git", from: "1.0.0")
+        .package(url: "https://github.com/Provenance-Emu/PVLibrarySnapshot.git", from: "1.0.2")
     ],
     targets: [
         .target(

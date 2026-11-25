@@ -21,7 +21,7 @@ let package = Package(
         .package(path: "../PVLogging"),
         // Streaming IPS/BPS/UPS/PPF/xdelta3 engine shared with iCube and iFly. Change it in that
         // repo, tag a release, then bump the version here; there is no local copy to edit.
-        .package(url: "https://github.com/Provenance-Emu/PVPatchEngine.git", from: "1.0.0")
+        .package(url: "https://github.com/Provenance-Emu/PVPatchEngine.git", from: "1.0.2")
     ],
     targets: [
         .target(

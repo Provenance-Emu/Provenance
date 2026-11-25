@@ -24,10 +24,10 @@ let package = Package(
         )
     ],
     dependencies: [
-        .package(url: "https://github.com/Provenance-Emu/PVSystems.git", from: "1.0.0"),
+        .package(url: "https://github.com/Provenance-Emu/PVSystems.git", from: "1.0.3"),
         .package(path: "../PVLogging"),
         .package(url: "https://github.com/Provenance-Emu/emulator-content-server.git", revision: "7b30839778e502573ee0cfb91c4bf94a1de51fa8"),
-        .package(url: "https://github.com/Provenance-Emu/PVRemoteLibrary.git", from: "0.3.0")
+        .package(url: "https://github.com/Provenance-Emu/PVRemoteLibrary.git", from: "0.3.1")
     ],
     targets: [
         .target(

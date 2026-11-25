@@ -121,7 +121,7 @@ let package = Package(
         .package(path: "../../PVObjCUtils"),
         .package(path: "../../PVPlists"),
         .package(name: "PVPrimitives", path: "../../PVPrimitives/"),
-        .package(url: "https://github.com/Provenance-Emu/PVSystems.git", from: "1.0.0"),
+        .package(url: "https://github.com/Provenance-Emu/PVSystems.git", from: "1.0.3"),
         .package(path: "../../PVSettings"),
         .package(path: "../../PVRcheevos"),
         .package(name: "PVRcheevosBridge", path: "../../PVRcheevosBridge"),

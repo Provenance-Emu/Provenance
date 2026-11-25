@@ -29,9 +29,9 @@ let package = Package(
         .package(path: "../PVFeatureFlags"),
         .package(path: "../PVNetplay"),
         .package(path: "../PVLibrarySharing"),
-        .package(url: "https://github.com/Provenance-Emu/PVRemoteLibrary.git", from: "0.3.0"),
+        .package(url: "https://github.com/Provenance-Emu/PVRemoteLibrary.git", from: "0.3.1"),
         .package(url: "https://github.com/Provenance-Emu/emulator-content-server.git", revision: "7b30839778e502573ee0cfb91c4bf94a1de51fa8"),
-        .package(url: "https://github.com/Provenance-Emu/PVHelp.git", from: "1.0.0"),
+        .package(url: "https://github.com/Provenance-Emu/PVHelp.git", from: "1.0.2"),
         .package(path: "../PVCoreAudio"),
         .package(path: "../PVCoreBridge"),
         .package(path: "../PVCoreLoader"),
@@ -40,7 +40,7 @@ let package = Package(
         .package(path: "../PVLibrary"),
         /// Direct dependency so `PVUIBase` can `import PVSystems` (`SystemIdentifier` cheat lookup helpers).
         .package(path: "../PVPrimitives"),
-        .package(url: "https://github.com/Provenance-Emu/PVSystems.git", from: "1.0.0"),
+        .package(url: "https://github.com/Provenance-Emu/PVSystems.git", from: "1.0.3"),
         .package(url: "https://github.com/Provenance-Emu/PVLookup.git", from: "1.0.0"),
         /// Skin model, manager, catalog and skin views, shared with iFly and iCube.
         /// Keep both direct dependencies and all consumer resolver files on the tested SkinKit revision.
