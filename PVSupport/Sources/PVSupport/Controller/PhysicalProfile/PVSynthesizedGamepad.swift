@@ -25,11 +25,15 @@ public final class PVSynthesizedGamepad: GCExtendedGamepad {
     let _menu = PViCadeGamepadButtonInput()
     let _options = PViCadeGamepadButtonInput()
     let _home = PViCadeGamepadButtonInput()
+    let _leftThumbstickButton = PViCadeGamepadButtonInput()
+    let _rightThumbstickButton = PViCadeGamepadButtonInput()
 
     /// Optional buttons are reported only when the physical pad has them, so the
     /// pause binding and the pause-menu "missing buttons" tiles see the truth.
     var hasOptions = false
     var hasHome = false
+    var hasLeftThumbstickButton = false
+    var hasRightThumbstickButton = false
 
     weak var owner: GCController?
     private var _valueChangedHandler: GCExtendedGamepadValueChangedHandler?
@@ -50,8 +54,8 @@ public final class PVSynthesizedGamepad: GCExtendedGamepad {
     public override var buttonMenu: GCControllerButtonInput { _menu }
     public override var buttonOptions: GCControllerButtonInput? { hasOptions ? _options : nil }
     public override var buttonHome: GCControllerButtonInput? { hasHome ? _home : nil }
-    public override var leftThumbstickButton: GCControllerButtonInput? { nil }
-    public override var rightThumbstickButton: GCControllerButtonInput? { nil }
+    public override var leftThumbstickButton: GCControllerButtonInput? { hasLeftThumbstickButton ? _leftThumbstickButton : nil }
+    public override var rightThumbstickButton: GCControllerButtonInput? { hasRightThumbstickButton ? _rightThumbstickButton : nil }
 
     public override var valueChangedHandler: GCExtendedGamepadValueChangedHandler? {
         get { _valueChangedHandler }
@@ -72,6 +76,8 @@ public final class PVSynthesizedGamepad: GCExtendedGamepad {
         case .menu: return _menu
         case .options: return _options
         case .home: return _home
+        case .leftThumbstickButton: return _leftThumbstickButton
+        case .rightThumbstickButton: return _rightThumbstickButton
         default: return nil
         }
     }

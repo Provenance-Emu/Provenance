@@ -15,6 +15,8 @@ public enum PVSynthesizedInput: String, CaseIterable, Sendable {
     case buttonA, buttonB, buttonX, buttonY
     case leftShoulder, rightShoulder, leftTrigger, rightTrigger
     case menu, options, home
+    /// Stick clicks (L3/R3).
+    case leftThumbstickButton, rightThumbstickButton
     /// Digital buttons that stand in for the right thumbstick: the N64 C cluster.
     case rightStickUp, rightStickDown, rightStickLeft, rightStickRight
 }
@@ -61,7 +63,8 @@ public enum PVPhysicalProfilePad: String, Sendable {
 /// the four face names resolve as printed labels), then the printed-label aliases of
 /// the pad family, then
 /// bare "Button <n>" names resolved through RetroArch's HID autoconfig for that pad
-/// (libretro/retroarch-joypad-autoconfig, `hid/*_Switch_Online.cfg`).
+/// (libretro/retroarch-joypad-autoconfig, `hid/*_Switch_Online.cfg`). A generic pad
+/// then takes what is left by position (``genericBindings(buttonNames:directionNames:axisNames:)``).
 ///
 /// RetroPad → extended gamepad: B → `buttonA`, A → `buttonB`, Y → `buttonX`,
 /// X → `buttonY`, L/R → shoulders, L2/R2 → triggers, Select → `options`,
@@ -69,16 +72,17 @@ public enum PVPhysicalProfilePad: String, Sendable {
 /// thin libretro wrapper read.
 public enum PVPhysicalProfileMapping {
 
-    /// Element names the system uses for standard inputs.
     /// The system's face element names; on a ``PVPhysicalProfilePad/namesFacesByLabel`` pad
     /// these mean the printed labels and resolve through ``faceAliases``.
     static let standardFaceNames: Set<String> = ["button a", "button b", "button x", "button y"]
 
+    /// Element names the system uses for standard inputs.
     static let standardNames: [String: PVSynthesizedInput] = [
         "button a": .buttonA, "button b": .buttonB, "button x": .buttonX, "button y": .buttonY,
         "direction pad": .dpad, "left thumbstick": .leftThumbstick, "right thumbstick": .rightThumbstick,
         "left shoulder": .leftShoulder, "right shoulder": .rightShoulder,
         "left trigger": .leftTrigger, "right trigger": .rightTrigger,
+        "left thumbstick button": .leftThumbstickButton, "right thumbstick button": .rightThumbstickButton,
         "button menu": .menu, "button options": .options, "button home": .home,
     ]
 
@@ -93,6 +97,10 @@ public enum PVPhysicalProfileMapping {
         "dpad": .dpad, "d pad": .dpad, "hat": .dpad,
         "left stick": .leftThumbstick, "joystick": .leftThumbstick, "stick": .leftThumbstick,
         "right stick": .rightThumbstick,
+        "l3": .leftThumbstickButton, "left stick button": .leftThumbstickButton,
+        "left stick click": .leftThumbstickButton, "thumbl": .leftThumbstickButton,
+        "r3": .rightThumbstickButton, "right stick button": .rightThumbstickButton,
+        "right stick click": .rightThumbstickButton, "thumbr": .rightThumbstickButton,
     ]
 
     /// Face labels per family (RetroPad layout: B bottom, A right, Y left, X top).
@@ -196,11 +204,149 @@ public enum PVPhysicalProfileMapping {
         return result
     }
 
+    /// Inputs handed, in this order, to buttons whose names say nothing ("Button 3").
+    static let fallbackButtonOrder: [PVSynthesizedInput] = [
+        .buttonA, .buttonB, .buttonX, .buttonY, .leftShoulder, .rightShoulder,
+        .leftTrigger, .rightTrigger, .options, .menu, .leftThumbstickButton, .rightThumbstickButton,
+    ]
+    /// Inputs handed, in this order, to direction elements with unknown names.
+    static let fallbackDirectionOrder: [PVSynthesizedInput] = [.dpad, .leftThumbstick, .rightThumbstick]
+
+    /// Bindings for a generic pad the system exposes without an extended gamepad (a
+    /// plain USB/Bluetooth HID pad): names first, as ``bindings(forElementNames:pad:)``,
+    /// then leftover elements by position, so a pad whose elements are only numbered
+    /// still works. The position order is a guess; the player corrects it in the
+    /// controller remap screen.
+    ///
+    /// Leftover direction elements fill the unused direction inputs. Leftover buttons
+    /// fill the unused button inputs when their name is only a number, or when the
+    /// names alone gave no face button. A button that is one direction of a direction
+    /// element ("Direction Pad Up") is never taken.
+    ///
+    /// Last, an axis NAMED as a trigger ("Left Trigger", "L2", "ZL") takes that
+    /// trigger if no button did: some pads report analog triggers as axes only.
+    /// Axes go last so a pad that has both digital trigger buttons and the axes
+    /// keeps its positional button order. Axis names never take part in the names
+    /// pass, so an axis cannot claim an input a button should have.
+    /// - Parameters:
+    ///   - buttonNames: the keys of `physicalInputProfile.buttons`.
+    ///   - directionNames: the keys of `physicalInputProfile.dpads`.
+    ///   - axisNames: the keys of `physicalInputProfile.axes`.
+    public static func genericBindings(buttonNames: [String],
+                                       directionNames: [String],
+                                       axisNames: [String] = []) -> [String: PVSynthesizedInput] {
+        var result = bindings(forElementNames: buttonNames + directionNames, pad: .generic)
+        var taken = Set(result.values)
+
+        var freeDirections = fallbackDirectionOrder.filter { !taken.contains($0) }
+        for name in directionNames.sorted(by: naturalOrder) where result[name] == nil && !freeDirections.isEmpty {
+            let input = freeDirections.removeFirst()
+            result[name] = input
+            taken.insert(input)
+        }
+
+        let directionPrefixes = directionNames.map { normalize($0) + " " }
+        let leftover = buttonNames.filter { name in
+            guard result[name] == nil else { return false }
+            let normalized = normalize(name)
+            return !directionPrefixes.contains { normalized.hasPrefix($0) } && !normalized.contains("thumbstick")
+        }
+        let hasFace = !taken.isDisjoint(with: faceInputs)
+        var freeButtons = fallbackButtonOrder.filter { !taken.contains($0) }
+        for name in leftover.sorted(by: naturalOrder) where !freeButtons.isEmpty {
+            guard !hasFace || buttonIndex(name) != nil else { continue }
+            let input = freeButtons.removeFirst()
+            result[name] = input
+            taken.insert(input)
+        }
+
+        for name in axisNames.sorted() where result[name] == nil {
+            guard let input = input(forElementNamed: name), triggerInputs.contains(input), !taken.contains(input) else { continue }
+            result[name] = input
+            taken.insert(input)
+        }
+        return result
+    }
+
+    static let faceInputs: Set<PVSynthesizedInput> = [.buttonA, .buttonB, .buttonX, .buttonY]
+    static let triggerInputs: Set<PVSynthesizedInput> = [.leftTrigger, .rightTrigger]
+
+    /// The number in a bare "Button <n>" / "<n>" element name.
+    static func buttonIndex(_ name: String) -> Int? {
+        let normalized = normalize(name)
+        return Int(normalized.hasPrefix("button ") ? String(normalized.dropFirst("button ".count)) : normalized)
+    }
+
+    /// "Button 2" before "Button 10"; other names alphabetically, after the numbered ones.
+    private static func naturalOrder(_ lhs: String, _ rhs: String) -> Bool {
+        switch (buttonIndex(lhs), buttonIndex(rhs)) {
+        case let (left?, right?): return left != right ? left < right : lhs < rhs
+        case (_?, nil): return true
+        case (nil, _?): return false
+        case (nil, nil): return lhs < rhs
+        }
+    }
+
+    // MARK: Trigger axes
+
+    /// A trigger axis reporting below this is known to rest at -1 (range -1...1)
+    /// rather than at 0 (range 0...1).
+    static let bipolarAxisThreshold: Float = -0.05
+    /// A trigger driven from an axis counts as pressed above this value (0...1).
+    static let axisTriggerPressThreshold: Float = 0.25
+
+    /// Whether a raw trigger-axis reading shows the axis rests at -1.
+    public static func axisReadingIsBipolar(_ raw: Float) -> Bool {
+        raw < bipolarAxisThreshold
+    }
+
+    /// Trigger value (0...1) and pressed state for a raw trigger-axis reading.
+    /// - Parameter restsAtMinusOne: the axis has been seen below zero, so its
+    ///   range is -1...1 and its midpoint is a half press.
+    public static func triggerState(forAxisValue raw: Float, restsAtMinusOne: Bool) -> (value: Float, pressed: Bool) {
+        let value = max(0, min(1, restsAtMinusOne ? (raw + 1) / 2 : raw))
+        return (value, value > axisTriggerPressThreshold)
+    }
+
+    // MARK: Which pads to wrap
+
+    /// Whether a product category names a remote (Siri Remote, Control Center remote,
+    /// a TV's own remote) rather than a gamepad. A remote has a direction pad and
+    /// buttons too, but it navigates menus and must stay a micro gamepad.
+    public static func isRemoteCategory(_ productCategory: String?) -> Bool {
+        productCategory?.lowercased().contains("remote") ?? false
+    }
+
+    /// Whether a pad with no extended gamepad should get a synthesized one.
+    ///
+    /// A Switch Online pad needs only usable bindings. A generic pad must also not be
+    /// a remote by category. A generic pad that has a micro profile must in addition
+    /// have a button no remote has (B or Y): a remote that reports an unknown product
+    /// category then still stays a remote, at the cost of not wrapping a one-button
+    /// pad that also reports a micro profile.
+    public static func shouldSynthesize(pad: PVPhysicalProfilePad,
+                                        productCategory: String?,
+                                        hasMicroGamepad: Bool,
+                                        bindings: [String: PVSynthesizedInput]) -> Bool {
+        guard isUsable(bindings: bindings) else { return false }
+        guard pad == .generic else { return true }
+        if isRemoteCategory(productCategory) { return false }
+        guard hasMicroGamepad else { return true }
+        return !Set(bindings.values).isDisjoint(with: [.buttonB, .buttonY])
+    }
+
+    /// Name for a pad the system reports without one, so its remaps and its row in
+    /// controller lists are not shared with every other unnamed pad ("unknown").
+    public static func fallbackVendorName(productCategory: String) -> String {
+        let category = productCategory.trimmingCharacters(in: .whitespacesAndNewlines)
+        return category.isEmpty ? "Gamepad" : "\(category) Gamepad"
+    }
+
     /// Whether a profile exposes enough to be worth synthesizing: a direction input and a face button.
     public static func isUsable(bindings: [String: PVSynthesizedInput]) -> Bool {
         let inputs = Set(bindings.values)
         let hasDirection = !inputs.isDisjoint(with: [.dpad, .leftThumbstick])
-        let hasButton = !inputs.isDisjoint(with: [.buttonA, .buttonB, .buttonX, .buttonY])
+        let hasButton = !inputs.isDisjoint(with: faceInputs)
         return hasDirection && hasButton
     }
 
