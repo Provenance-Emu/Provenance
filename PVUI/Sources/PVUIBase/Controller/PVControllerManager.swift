@@ -136,7 +136,7 @@ public final class PVControllerManager: NSObject, ObservableObject {
     public private(set) var iCadeController: PViCadeController?
 
     /// Wrappers for pads the system exposes with no extended profile (the Nintendo
-    /// Switch Online N64/SNES/Mega Drive controllers, generic HID pads). Keyed by the real controller;
+    /// Switch Online N64/SNES/Mega Drive controllers). Keyed by the real controller;
     /// everything downstream (slots, cores, pause binding) sees only the wrapper.
     private var physicalProfileWrappers: [ObjectIdentifier: PVPhysicalProfileController] = [:]
 
