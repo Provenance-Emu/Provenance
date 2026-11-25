@@ -9,6 +9,7 @@
 
 import Foundation
 import GameController
+import GamepadKit
 import PVCoreBridge   // ButtonIdentifier — moved from PVRemappableController to PVCoreBridge
 import PVLibrary
 import PVSupport
@@ -138,15 +139,15 @@ public final class PVControllerManager: NSObject, ObservableObject {
     /// Wrappers for pads the system exposes with no extended profile (the Nintendo
     /// Switch Online N64/SNES/Mega Drive controllers). Keyed by the real controller;
     /// everything downstream (slots, cores, pause binding) sees only the wrapper.
-    private var physicalProfileWrappers: [ObjectIdentifier: PVPhysicalProfileController] = [:]
+    private var physicalProfileWrappers: [ObjectIdentifier: PhysicalProfileController] = [:]
 
     /// The wrapper standing in for `controller`, creating one when the pad needs it.
     private func physicalProfileWrapper(for controller: GCController) -> GCController {
-        if controller is PVPhysicalProfileController || controller is PViCadeController { return controller }
+        if controller is PhysicalProfileController || controller is PViCadeController { return controller }
         let id = ObjectIdentifier(controller)
         if let existing = physicalProfileWrappers[id] { return existing }
-        guard PVPhysicalProfileController.isNeeded(for: controller) else { return controller }
-        let wrapper = PVPhysicalProfileController(wrapping: controller)
+        guard PhysicalProfileController.isNeeded(for: controller) else { return controller }
+        let wrapper = PhysicalProfileController(wrapping: controller)
         physicalProfileWrappers[id] = wrapper
         ILOG("[INPUT-DIAG] synthesized extended gamepad for \(controller.vendorName ?? "?") (no extended profile)")
         return wrapper

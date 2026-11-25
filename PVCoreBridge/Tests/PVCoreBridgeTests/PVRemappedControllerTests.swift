@@ -243,7 +243,7 @@ final class PVRemappedControllerTests: XCTestCase {
 
     // MARK: Wrapped pads with their own identity
 
-    /// `PVPhysicalProfileController` (PVSupport) returns itself from `capture()` and is
+    /// GamepadKit's `PhysicalProfileController` returns itself from `capture()` and is
     /// recognized by bridges through `PVIsPhysicalProfileController`, which reads `base` by KVC.
     func testSelfCapturingControllerStaysReachableThroughBase() throws {
         let profileLike = SelfCapturingController(wrapping: makeController())
@@ -292,7 +292,7 @@ final class PVRemappedControllerTests: XCTestCase {
     }
 }
 
-/// Stands in for `PVPhysicalProfileController`: wraps a pad and is its own snapshot.
+/// Stands in for GamepadKit's `PhysicalProfileController`: wraps a pad and is its own snapshot.
 private final class SelfCapturingController: GCController {
     let inner: GCController
 

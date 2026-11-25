@@ -7,12 +7,15 @@
 
 import Foundation
 import GameController
+#if canImport(UIKit)
+import GamepadKit
+#endif
 import PVCoreBridge
 import PVSupport
 
 public extension GCController {
     /// The hardware pad behind the wrappers the app puts in front of it
-    /// (`PVRemappedController`, `PVPhysicalProfileController`), or this controller.
+    /// (`PVRemappedController`, `PhysicalProfileController`), or this controller.
     var hardwareController: GCController {
         var controller = self
         while let inner = controller.wrappedController {
@@ -24,7 +27,7 @@ public extension GCController {
     private var wrappedController: GCController? {
         if let remapped = self as? PVRemappedController { return remapped.base }
         #if canImport(UIKit)
-        if let profile = self as? PVPhysicalProfileController { return profile.base }
+        if let profile = self as? PhysicalProfileController { return profile.base }
         #endif
         return nil
     }

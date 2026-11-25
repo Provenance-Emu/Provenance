@@ -92,6 +92,7 @@ The app is split into ~26 `PV*` Swift Package frameworks. Key modules:
 - **PVCoreLoader** — Dynamic loading of emulator core packages
 - **PVEmulatorCore** — Base classes for emulator implementations
 - **PVFeatureFlags** — Feature flags manager
+- **GamepadKit** (separate repo, github.com/Provenance-Emu/GamepadKit, shared with iFly and iCube) — the synthesized extended gamepad for pads the system exposes without one (Switch Online SNES/N64/Mega Drive pads, plain USB/Bluetooth HID pads): name tables, positional fallback, pad family, wrap rules, pause triggers, the wrapping `PhysicalProfileController` (Objective-C name `GPKPhysicalProfileController`, which `PVIsPhysicalProfileController` looks up). Provenance's choices are `PhysicalProfileConfiguration.provenance` in PVSupport (`Controller/PhysicalProfile/ProvenancePhysicalProfile.swift`); `PVControllerManager` holds the wrappers. Change the package there, run its **Release XCFramework** workflow, then bump the requirement in `PVSupport/Package.swift` and `PVUI/Package.swift` and the pin in `Provenance.xcworkspace`'s `Package.resolved` by hand
 - **PVHashing** — ROM file hashing for identification
 - **PVHelp** (separate repo, github.com/Provenance-Emu/PVHelp, shared with iCube) — wiki navigation, page fetch/cache and GitBook preprocessing. App-neutral: Provenance's URLs, page paths and offline SUMMARY.md are `ProvenanceWiki` in PVUIBase (`Resources/WikiContent`)
 - **PVJIT** — JIT compilation support for emulator cores

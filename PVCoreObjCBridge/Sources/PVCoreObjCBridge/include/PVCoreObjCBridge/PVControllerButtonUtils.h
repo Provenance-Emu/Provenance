@@ -110,7 +110,8 @@ PVShareLikeButtonForController(GCController * _Nonnull controller) {
 #pragma mark - Synthesized Pads
 
 /**
- Whether `controller` is the PVSupport wrapper that synthesizes an extended gamepad
+ Whether `controller` is the GamepadKit wrapper (`PhysicalProfileController`, exported to
+ Objective-C as `GPKPhysicalProfileController`) that synthesizes an extended gamepad
  from a pad's physical input profile (the Nintendo Switch Online N64, SNES and
  Mega Drive pads, which the system exposes without one).
 
@@ -126,7 +127,7 @@ PVIsPhysicalProfileController(GCController * _Nullable controller) {
     static Class remappedControllerClass = Nil;
     static dispatch_once_t once;
     dispatch_once(&once, ^{
-        profileControllerClass = NSClassFromString(@"PVPhysicalProfileController");
+        profileControllerClass = NSClassFromString(@"GPKPhysicalProfileController");
         remappedControllerClass = NSClassFromString(@"PVRemappedController");
     });
     // The PVCoreBridge remap wrapper stands in front of the pad when the player has

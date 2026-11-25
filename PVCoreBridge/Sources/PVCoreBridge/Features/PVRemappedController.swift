@@ -114,7 +114,7 @@ public final class PVRemappedController: GCController {
     /// The real controller's snapshot with the remap written into it, so its class and
     /// family are the real pad's. Mupen captures every controller every frame, and a
     /// fresh wrapper costs a gamepad initialisation (~0.5 ms) where writing costs µs.
-    /// A controller that is its own snapshot (`PVPhysicalProfileController`) can't be
+    /// A controller that is its own snapshot (GamepadKit's `PhysicalProfileController`) can't be
     /// written to, so this wrapper is its snapshot too.
     public override func capture() -> GCController {
         let snapshot = base.capture()

@@ -26,7 +26,7 @@ public enum PauseMenuTrigger: String, Equatable, Sendable, CaseIterable {
     /// The single Menu button of a pad with nothing else (Siri Remote, first-generation MFi),
     /// delivered through `controllerPausedHandler`.
     case legacyPause
-    /// A Switch Online pad's own trigger (Home, or Select + Start), fired by `PVPhysicalProfileController`.
+    /// A Switch Online pad's own trigger (Home, or Select + Start), fired by GamepadKit's `PhysicalProfileController`.
     case profileTrigger
 }
 
