@@ -73,7 +73,7 @@ What the user sees today: iFly shows a Nearby section inside its normal library 
 ### 2.1 ContinuityKit 2.0 is the package
 
 - **No app-specific dependency.** PVContinuity's public interface imports `PVSyncRules`, whose categories are iCube's, and `PVWebServer`'s route types. ContinuityKit depends on nothing an app would not want.
-- **Licence.** PVContinuity is GPL-2.0-or-later; ContinuityKit and Provenance's code are not. Version 2 is mostly new code plus code moved from `PVLibrarySharing`, so ContinuityKit keeps its licence. Where PVContinuity's own files would be useful, the owner as author can relicense them (decision 2).
+- **Licence.** PVContinuity is GPL-2.0-or-later; ContinuityKit and Provenance's code are not. Version 2 is mostly new code plus code moved from `PVLibrarySharing`, so ContinuityKit keeps its licence. Where PVContinuity's own files would be useful, the owner as author can relicense them (decision 2). Until that is decided, nothing is copied from PVContinuity into ContinuityKit: not source, tests or fixtures. Tests are written new or moved from `PVLibrarySharing`, and fixtures are the v2 ones from step 1.
 - **Platforms.** ContinuityKit already declares watchOS and visionOS; it moves to iOS 17 and tvOS 17 to match PVSystems and PVRemoteLibrary.
 - **The name fits all three apps.**
 
