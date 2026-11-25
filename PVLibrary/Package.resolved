@@ -29,15 +29,6 @@
       }
     },
     {
-      "identity" : "lighter",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/JoeMatt/Lighter.git",
-      "state" : {
-        "revision" : "b1c78989db429349427cd90b9b99925ff3253853",
-        "version" : "1.0.0"
-      }
-    },
-    {
       "identity" : "plzmasdk",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/OlehKulykov/PLzmaSDK.git",
@@ -47,12 +38,21 @@
       }
     },
     {
+      "identity" : "pvdependencies",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/Provenance-Emu/PVDependencies.git",
+      "state" : {
+        "revision" : "cd29d1a4be90eab2a8266832813597fb4dcfa6fc",
+        "version" : "1.0.0"
+      }
+    },
+    {
       "identity" : "pvlookup",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Provenance-Emu/PVLookup.git",
       "state" : {
-        "revision" : "63a07596732a344e2d54d36398939e19e67b60f3",
-        "version" : "1.0.1"
+        "revision" : "3d31815c5d383ca1e6f0e0c5abf705f22b598b42",
+        "version" : "1.1.0"
       }
     },
     {
@@ -106,15 +106,6 @@
       "state" : {
         "revision" : "b06a8c8596e4c3e8e7788e08e720e3248563ce6a",
         "version" : "6.7.1"
-      }
-    },
-    {
-      "identity" : "sqlite.swift",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/stephencelis/SQLite.swift.git",
-      "state" : {
-        "revision" : "a95fc6df17d108bd99210db5e8a9bac90fe984b8",
-        "version" : "0.15.3"
       }
     },
     {
@@ -223,15 +214,6 @@
       "state" : {
         "revision" : "38e0ce0598e06b034271f296a8e15b149c91aa19",
         "version" : "2.4.3"
-      }
-    },
-    {
-      "identity" : "zipfoundation",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/weichsel/ZIPFoundation.git",
-      "state" : {
-        "revision" : "02b6abe5f6eef7e3cbd5f247c5cc24e246efcfe0",
-        "version" : "0.9.19"
       }
     }
   ],

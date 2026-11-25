@@ -41,10 +41,11 @@ let package = Package(
         /// Direct dependency so `PVUIBase` can `import PVSystems` (`SystemIdentifier` cheat lookup helpers).
         .package(path: "../PVPrimitives"),
         .package(url: "https://github.com/Provenance-Emu/PVSystems.git", from: "1.0.3"),
-        .package(url: "https://github.com/Provenance-Emu/PVLookup.git", from: "1.0.0"),
+        .package(url: "https://github.com/Provenance-Emu/PVLookup.git", from: "1.1.0"),
         /// Skin model, manager, catalog and skin views, shared with iFly and iCube.
         /// Keep both direct dependencies and all consumer resolver files on the tested SkinKit revision.
-        .package(url: "https://github.com/Provenance-Emu/SkinKit", revision: "a37bf8be8f6314248f2914db535437491c0cfa2e"),
+        .package(url: "https://github.com/Provenance-Emu/SkinKit", .upToNextMinor(from: "0.8.0")),
+        .package(url: "https://github.com/Provenance-Emu/PVDependencies.git", from: "1.0.0"),
         .package(path: "../PVLogging"),
         .package(path: "../PVPatreon"),
         .package(path: "../PVSupport"),
@@ -134,6 +135,8 @@ let package = Package(
                 .product(name: "PVSystems", package: "PVSystems"),
                 .product(name: "PVLookup", package: "PVLookup"),
                 .product(name: "SkinKitCore", package: "SkinKit"),
+                // LogFileRouter and RetroLogViewModel zip log files; the same prebuilt copy SkinKit links.
+                .product(name: "ZIPFoundation", package: "PVDependencies"),
                 .product(name: "SkinCatalogKit", package: "SkinKit"),
                 .product(name: "SkinKitManager", package: "SkinKit"),
                 .product(name: "SkinKitUI", package: "SkinKit"),

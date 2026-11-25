@@ -23,7 +23,7 @@ let package = Package(
         .package(url: "https://github.com/sindresorhus/Defaults.git", from: "9.0.2"),
         /// `TouchInputRole` and `SkinTouchSelection` live in SkinKitUI, shared with the skin view.
         /// Keep this revision aligned with PVUI and the other SkinKit consumers.
-        .package(url: "https://github.com/Provenance-Emu/SkinKit", revision: "a37bf8be8f6314248f2914db535437491c0cfa2e")
+        .package(url: "https://github.com/Provenance-Emu/SkinKit", .upToNextMinor(from: "0.8.0"))
     ],
     targets: [
         .target(
