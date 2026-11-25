@@ -64,7 +64,7 @@ let package = Package(
         .map { .package(path: "../PV\($0)") }
         + [
         .package(url: "https://github.com/Provenance-Emu/PVSystems.git", from: "1.0.3"),
-        .package(url: "https://github.com/Provenance-Emu/PVLookup.git", from: "1.0.0"),
+        .package(url: "https://github.com/Provenance-Emu/PVLookup.git", from: "1.1.0"),
         .package(url: "https://github.com/ReactiveX/RxSwift.git",
                  .upToNextMajor(from: "6.7.1")),
         .package(url: "https://github.com/RxSwiftCommunity/RxRealm.git",
@@ -80,8 +80,9 @@ let package = Package(
                  from: "1.0.0"),
         .package(url: "https://github.com/Provenance-Emu/SwiftGenPlugin.git",
                  from: "1.1.3"),
-        .package(url: "https://github.com/stephencelis/SQLite.swift.git",
-                 .upToNextMajor(from: "0.15.3")),
+        // Prebuilt SQLite.swift (and ZIPFoundation), shared with PVLookup and SkinKit. The
+        // graph cannot hold this and the upstream packages at once.
+        .package(url: "https://github.com/Provenance-Emu/PVDependencies.git", from: "1.0.0"),
         /// https://github.com/mtgto/Unrar.swift
         .package(url: "https://github.com/mtgto/Unrar.swift.git",
                     .upToNextMajor(from: "0.3.16")),
@@ -125,7 +126,7 @@ let package = Package(
                 "PVArchiving",
                 .product(name: "Unrar", package: "Unrar.swift"),
                 .product(name: "ZipArchive", package: "ZipArchive"),
-                .product(name: "SQLite", package: "SQLite.swift"),
+                .product(name: "SQLite", package: "PVDependencies"),
                 .product(name: "RxCocoa", package: "RxSwift"),
                 .product(name: "RxSwift", package: "RxSwift"),
                 .product(name: "RxRealm", package: "RxRealm"),
@@ -157,7 +158,7 @@ let package = Package(
                 "PVPatching",
                 .product(name: "PVEmulatorCore", package: "PVEmulatorCore"),
                 .product(name: "PVCoreLoader", package: "PVCoreLoader"),
-                .product(name: "SQLite", package: "SQLite.swift"),
+                .product(name: "SQLite", package: "PVDependencies"),
                 .product(name: "RxCocoa", package: "RxSwift"),
                 .product(name: "RxSwift", package: "RxSwift"),
                 .product(name: "RxRealm", package: "RxRealm"),
@@ -232,7 +233,7 @@ let package = Package(
                 .product(name: "Unrar", package: "Unrar.swift"),
                 .product(name: "PVEmulatorCore", package: "PVEmulatorCore"),
                 .product(name: "PVCoreLoader", package: "PVCoreLoader"),
-                .product(name: "SQLite", package: "SQLite.swift"),
+                .product(name: "SQLite", package: "PVDependencies"),
                 .product(name: "RxCocoa", package: "RxSwift"),
                 .product(name: "RxSwift", package: "RxSwift"),
                 .product(name: "RxRealm", package: "RxRealm"),
