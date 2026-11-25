@@ -1148,15 +1148,28 @@ public final class FilterChain {
         guard fixed.isFinite, shrinkable.isFinite, budget.isFinite else { return nil }
         if fixed + shrinkable <= budget { return requests.map(\.size) }
         guard fixed < budget, shrinkable > 0 else { return nil }
-        // Bytes go with the square of the linear factor. Rounding down keeps the total under budget.
-        let factor = ((budget - fixed) / shrinkable).squareRoot()
-        return requests.map { request in
-            guard request.canShrink else { return request.size }
-            return CGSize(
-                width: max(1, (request.size.width * factor).rounded(.down)),
-                height: max(1, (request.size.height * factor).rounded(.down))
-            )
+        let available = budget - fixed
+        func sizes(at factor: Double) -> [CGSize] {
+            requests.map { request in
+                guard request.canShrink else { return request.size }
+                return CGSize(
+                    width: max(1, (request.size.width * factor).rounded(.down)),
+                    height: max(1, (request.size.height * factor).rounded(.down))
+                )
+            }
         }
+        // Bytes go with the square of the linear factor, and rounding down keeps the total under
+        // budget, except where a dimension is held at one pixel. Then the others shrink further.
+        var factor = (available / shrinkable).squareRoot()
+        for _ in 0 ..< 64 {
+            let fitted = sizes(at: factor)
+            let total = zip(requests, fitted).reduce(0.0) { $0 + ($1.0.canShrink ? $1.0.bytes(at: $1.1) : 0) }
+            if total <= available { return fitted }
+            let canShrinkFurther = zip(requests, fitted).contains { $0.canShrink && ($1.width > 1 || $1.height > 1) }
+            guard canShrinkFurther else { return nil }
+            factor *= available / total
+        }
+        return nil
     }
 
     /// The chain's render target sizes as the loaded preset asks for them, or `nil` when one is not

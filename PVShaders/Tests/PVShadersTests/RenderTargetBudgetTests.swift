@@ -91,6 +91,14 @@ struct RenderTargetBudgetTests {
         let wide = Request(size: CGSize(width: 16000, height: 1), bytesPerPixel: 16, copies: 2, canShrink: true)
         let sizes = try #require(FilterChain.fitRenderTargets([wide], fixedBytes: 0, budget: 1024))
         #expect(sizes[0].width >= 1)
-        #expect(sizes[0].height >= 1)
+        #expect(sizes[0].height == 1)
+        // The height cannot go below one pixel, so the width has to make up for it.
+        #expect(bytes([wide], sizes) <= 1024)
+    }
+
+    @Test("a chain over budget with every target at one pixel is refused")
+    func cannotFitAtOnePixel() {
+        let wide = Request(size: CGSize(width: 16000, height: 1), bytesPerPixel: 16, copies: 2, canShrink: true)
+        #expect(FilterChain.fitRenderTargets([wide], fixedBytes: 0, budget: 16) == nil)
     }
 }
