@@ -322,17 +322,38 @@ This is the "classification only" step, possible once step 2 exists.
 
 - New zone and record type (rule 2). Scanner root is the saves root; kinds limited to
   battery saves at first.
-- **Import, once per device:** list the old `File` records for `Battery States`.
-  Download any whose file is missing locally. Change nothing remotely.
-- **Then run the new engine.** With no index it uploads what is local and downloads
-  what is only in the new zone.
-- **Bridge for older versions:** keep the old uploader running for battery saves, so a
-  device on 3.4.x still receives new saves. The old *download* path is limited to
-  files missing locally, which removes the unconditional overwrite.
-- Deletes travel only in the new zone. An old device still holding a deleted save will
-  upload it to the old zone, where the new engine ignores it after the import is done.
-- The bridge is removed in a later release, when the owner decides old versions no
-  longer need new saves (decision 4).
+- **The old zone is a second remote, read on every run while the bridge is on.** It is
+  never written by the new engine and nothing in it is deleted.
+- **Old-zone ledger.** A small file beside the index records, per path, the old
+  record's change tag as last seen and the checksum of the bytes this device last
+  took from it or sent to it. It tells "an old device wrote this" apart from "this is
+  my own bridge upload".
+- **Reading an old record whose change tag is new** (this covers the first import and
+  every later save from a device on 3.4.x). Old records carry a date and size but no
+  checksum, so the asset is downloaded to a temporary file and hashed, then:
+
+  | Local file | Action |
+  |---|---|
+  | Missing, no tombstone for the path | Take the old-zone copy |
+  | Same bytes | Record it in the ledger only |
+  | Differs, local unchanged since this device's last sync | Take the old-zone copy if its date is newer. The local file goes to the trash first |
+  | Differs, local also changed since the last sync, or no index entry yet | Conflict for the user. Both copies are kept: the old-zone copy is stored beside the save until the user picks |
+  | Path has a tombstone in the new zone, old record changed before the delete | Ignore. The delete stands |
+  | Path has a tombstone in the new zone, old record changed after the delete | Restore it and upload, the planner's existing rule that a change after a delete wins |
+
+- **Only after that pass does the new engine run** and build its index, so a stale
+  local save is never uploaded as the first version of a path.
+- **Bridge upload.** After a save is synced in the new zone, the same bytes are
+  written to the old record so a 3.4.x device receives them, and the ledger is
+  updated. Skipped while the path has an open conflict.
+- Deletes travel only in the new zone. An old device still holding a deleted save
+  keeps it; if it plays and saves again, the last table row applies.
+- **What the bridge cannot fix:** a 3.4.x device still replaces its local save with
+  whatever is newest in the old zone, with no check. That is today's behaviour and
+  only updating that device changes it.
+- The alternative to all of the above is to require every device on the account to
+  update before the new engine turns on, with no bridge (decision 4).
+- The bridge is removed in a later release (decision 4).
 
 Screenshots and skins follow in the same way once items 4 and 5 of section 4.4 exist.
 
@@ -341,11 +362,13 @@ Screenshots and skins follow in the same way once items 4 and 5 of section 4.4 e
 | Case | Result |
 |---|---|
 | Two devices import the same old records | Same paths, same bytes: the planner marks them synced |
-| Old device overwrites a newer save in the old zone | The new engine does not read the old zone after import. The newer save stays in the new zone |
-| Old device has an older save, new device a newer one | Old device keeps receiving through the bridge upload. The newer one is not lost |
-| User deletes a save on a new device | Tombstone in the new zone. Old devices keep their copy and may re-upload it to the old zone only |
-| Apple TV cache purge | No tombstone (rule 4). The next run downloads the saves again |
-| Different iCloud account signs in | Index is wiped for the new account. One additive run |
+| First device to update holds an older save than the old zone | The old-zone pass runs first. The newer copy is taken, or it is a conflict; the stale one is never seeded |
+| A 3.4.x device keeps playing after others update | Its save lands in the old zone, the change tag differs from the ledger, and updated devices take it through the table above |
+| Updated device and 3.4.x device both played | Conflict for the user on the updated device, both copies kept |
+| User deletes a save on a new device | Tombstone in the new zone. An untouched old copy is ignored; one saved after the delete is restored |
+| A device's own bridge upload comes back | Change tag and checksum match the ledger: nothing to do |
+| Apple TV cache purge | No tombstone (rule 4). Index and ledger are rebuilt by one additive run, and differing copies become conflicts |
+| Different iCloud account signs in | Index and ledger are wiped for the new account. One additive run |
 | Plus lapses | No effect. Saves sync without Plus today and that stays |
 | Sync mode is iCloud Drive | Not covered. See decision 5 |
 
@@ -354,8 +377,8 @@ Screenshots and skins follow in the same way once items 4 and 5 of section 4.4 e
 - Step 1: small. One adapter, two call sites, one settings list, tests.
 - Step 2: medium, in the package repos, and it touches iCube and iFly.
 - Step 3: small to medium, all inside PVLibrary.
-- Step 4: large. A Provenance run loop (or the shared one from item 7), the import,
-  the bridge, settings screens for conflicts, and a device test pass on iPhone and
+- Step 4: large. A Provenance run loop (or the shared one from item 7), the old-zone
+  pass and its ledger, the bridge upload, settings screens for conflicts, and a device test pass on iPhone and
   Apple TV with a real library.
 
 About 1,500 lines of Provenance's 27,000 lines of sync code would go at the end of
@@ -370,8 +393,9 @@ and BIOS syncers remain. The move is justified by safer saves, not by less code.
 3. **Package 2.0.** Approve a breaking release of PVSyncRules and PVCloudSync that
    makes the classifier and the kinds app-supplied, with iCube and iFly bumped in the
    same pass.
-4. **Bridge length.** How many releases keep uploading battery saves to the old zone
-   for devices that have not updated.
+4. **Bridge or coordinated update.** Build the two-way bridge in step 4 and say how
+   many releases it runs, or require every device on the account to update before the
+   new engine turns on. The bridge is most of step 4's cost.
 5. **iCloud Drive mode.** Keep it as is, or retire it before step 4. Step 4 does not
    cover it.
 6. **Shared run loop.** Lift iCube's coordinator into PVCloudSync (item 7), or let
