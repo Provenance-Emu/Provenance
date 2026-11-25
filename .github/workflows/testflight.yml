@@ -103,7 +103,8 @@ jobs:
       matrix:
         platform: ${{ fromJSON(needs.plan.outputs.matrix) }}
     # A single cold archive has measured >100 min.
-    timeout-minutes: 300
+    # Plus up to 180 min queued behind another app's release (the lockf wait below).
+    timeout-minutes: 480
     env:
       # release.sh labels its inner, unformatted logs iOS/tvOS (not the matrix's ios/tvos).
       RAW_ARCHIVE_LOG: build/archives/xcodebuild-${{ matrix.platform == 'ios' && 'iOS' || 'tvOS' }}.log
