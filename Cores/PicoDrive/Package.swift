@@ -38,7 +38,7 @@ let package = Package(
         .package(path: "../../PVSettings"),
         .package(path: "../../PVSupport"),
         .package(name: "PVPrimitives", path: "../../PVPrimitives/"),
-        .package(url: "https://github.com/Provenance-Emu/PVSystems.git", from: "1.0.0"),
+        .package(url: "https://github.com/Provenance-Emu/PVSystems.git", from: "1.0.3"),
         .package(name: "PVNetplay", path: "../../PVNetplay"),
         .package(path: "../../PVRcheevos"),
         .package(name: "PVRcheevosBridge", path: "../../PVRcheevosBridge"),

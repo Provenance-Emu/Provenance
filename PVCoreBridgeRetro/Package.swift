@@ -79,7 +79,7 @@ let package = Package(
         .package(path: "../PVRcheevos"),
         .package(path: "../PVJIT"),
         .package(path: "../MoltenVK"),
-        .package(url: "https://github.com/Provenance-Emu/PVSystems.git", from: "1.0.0"),
+        .package(url: "https://github.com/Provenance-Emu/PVSystems.git", from: "1.0.3"),
         .package(url: "https://github.com/sindresorhus/Defaults.git", from: "9.0.2")
     ],
     targets: [

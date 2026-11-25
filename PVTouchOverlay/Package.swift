@@ -16,7 +16,7 @@ let package = Package(
     ],
     dependencies: [
         .package(path: "../PVPrimitives"),
-        .package(url: "https://github.com/Provenance-Emu/PVSystems.git", from: "1.0.0"),
+        .package(url: "https://github.com/Provenance-Emu/PVSystems.git", from: "1.0.3"),
         .package(path: "../PVCoreBridge"),
         .package(path: "../PVLogging"),
         .package(path: "../PVSettings"),
