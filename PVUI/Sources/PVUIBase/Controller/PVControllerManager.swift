@@ -137,21 +137,9 @@ public final class PVControllerManager: NSObject, ObservableObject {
     public private(set) var iCadeController: PViCadeController?
 
     /// Wrappers for pads the system exposes with no extended profile (the Nintendo
-    /// Switch Online N64/SNES/Mega Drive controllers). Keyed by the real controller;
-    /// everything downstream (slots, cores, pause binding) sees only the wrapper.
-    private var physicalProfileWrappers: [ObjectIdentifier: PhysicalProfileController] = [:]
-
-    /// The wrapper standing in for `controller`, creating one when the pad needs it.
-    private func physicalProfileWrapper(for controller: GCController) -> GCController {
-        if controller is PhysicalProfileController || controller is PViCadeController { return controller }
-        let id = ObjectIdentifier(controller)
-        if let existing = physicalProfileWrappers[id] { return existing }
-        guard PhysicalProfileController.isNeeded(for: controller) else { return controller }
-        let wrapper = PhysicalProfileController(wrapping: controller)
-        physicalProfileWrappers[id] = wrapper
-        ILOG("[INPUT-DIAG] synthesized extended gamepad for \(controller.vendorName ?? "?") (no extended profile)")
-        return wrapper
-    }
+    /// Switch Online N64/SNES/Mega Drive controllers, plain HID pads). Keyed by the real
+    /// controller; everything downstream (slots, cores, pause binding) sees only the wrapper.
+    private let physicalProfileWrappers = PhysicalProfileControllerRegistry()
 #endif
     public private(set) var keyboardController: GCController?
     public var hasControllers: Bool {
@@ -417,7 +405,7 @@ public final class PVControllerManager: NSObject, ObservableObject {
 
     @MainActor
     @objc func disconnectController(_ controller: GCController) {
-        let controller = physicalProfileWrappers.removeValue(forKey: ObjectIdentifier(controller)) ?? controller
+        let controller = physicalProfileWrappers.remove(base: controller) ?? controller
         ILOG("Controller disconnected: \(controller.vendorName ?? "No Vendor")")
         guard !PVControllerManager.shared.skipControllerBinding else {
             return
@@ -631,7 +619,7 @@ public final class PVControllerManager: NSObject, ObservableObject {
     }
 
     public var controllers: [GCController] {
-        var controllers = GCController.controllers().map { physicalProfileWrappers[ObjectIdentifier($0)] ?? $0 }
+        var controllers = physicalProfileWrappers.substituting(GCController.controllers())
         if let aController = iCadeController {
             controllers.append(aController)
         } else if let aController = keyboardController {
@@ -821,6 +809,21 @@ public final class PVControllerManager: NSObject, ObservableObject {
         }
     }
 }
+
+#if canImport(UIKit) && canImport(GameController)
+private extension PVControllerManager {
+    /// The wrapper standing in for `controller`, creating one when the pad needs it.
+    func physicalProfileWrapper(for controller: GCController) -> GCController {
+        if controller is PhysicalProfileController || controller is PViCadeController { return controller }
+        if let existing = physicalProfileWrappers.wrapper(for: controller) { return existing }
+        guard PhysicalProfileController.isNeeded(for: controller) else { return controller }
+        let wrapper = PhysicalProfileController(wrapping: controller)
+        physicalProfileWrappers.register(wrapper)
+        ILOG("[INPUT-DIAG] synthesized extended gamepad for \(controller.vendorName ?? "?") (no extended profile)")
+        return wrapper
+    }
+}
+#endif
 
 // MARK: - ControllerButtonPress protocol
 public protocol ControllerButtonPress : UIViewController {
