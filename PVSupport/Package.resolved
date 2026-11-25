@@ -11,6 +11,15 @@
       }
     },
     {
+      "identity" : "gamepadkit",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/Provenance-Emu/GamepadKit.git",
+      "state" : {
+        "revision" : "3e6a79ed3105caf2cf59b5dead032fe21c4dd21a",
+        "version" : "0.3.0"
+      }
+    },
+    {
       "identity" : "swift-log",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/apple/swift-log.git",

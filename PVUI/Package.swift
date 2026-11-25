@@ -47,7 +47,7 @@ let package = Package(
         .package(url: "https://github.com/Provenance-Emu/SkinKit", .upToNextMinor(from: "0.8.0")),
         .package(url: "https://github.com/Provenance-Emu/PVDependencies.git", from: "1.0.0"),
         /// Direct dependency so `PVUIBase` can `import GamepadKit` (the synthesized-pad wrapper PVSupport configures).
-        .package(url: "https://github.com/Provenance-Emu/GamepadKit.git", branch: "feat/app-adoption-gaps"),
+        .package(url: "https://github.com/Provenance-Emu/GamepadKit.git", .upToNextMinor(from: "0.3.0")),
         .package(path: "../PVLogging"),
         .package(path: "../PVPatreon"),
         .package(path: "../PVSupport"),
