@@ -1,6 +1,7 @@
 # Moving Provenance's CloudKit sync onto PVSyncRules and PVCloudSync
 
-Date: 2026-11-25. Status: proposal, waiting for the owner's decisions in section 9.
+Date: 2026-11-25. Status: scope approved by the owner on 2026-11-25 ("move partly");
+decisions 2 to 9 in section 9 are still open.
 No sync code has been changed. Nothing here should land before 3.4.0 ships.
 
 Line numbers are from `develop` at `1592e26faa`, PVSyncRules 1.0.4, PVCloudSync 1.1.1
@@ -362,8 +363,8 @@ and BIOS syncers remain. The move is justified by safer saves, not by less code.
 
 ## 9. Decisions for the owner
 
-1. **Scope.** Accept "move partly" (plain files only), or stop after step 1, or ask
-   for a design that also moves save states.
+1. **Scope.** Decided 2026-11-25: move partly. Plain files move; ROMs, BIOS, save
+   states and game metadata stay.
 2. **Step 1 timing.** Ship trash and retry in the first release after 3.4.0?
 3. **Package 2.0.** Approve a breaking release of PVSyncRules and PVCloudSync that
    makes the classifier and the kinds app-supplied, with iCube and iFly bumped in the
