@@ -100,6 +100,16 @@ public final class JITContextualPromptManager {
         #if canImport(JITManager)
         guard !DOLJitManager.acquired else { return .proceed }
 
+        // A stock TestFlight or App Store install cannot turn JIT on, so it is told
+        // nothing about JIT. The one exception is a core that cannot run without it.
+        if let storeInstallAnswer = Self.recommendationWithoutJITUI(
+            showsJITUI: Self.showsJITUI,
+            coreIsJITRequired: JITCoreCapability.coreIsJITRequired(coreIdentifier),
+            coreName: coreName
+        ) {
+            return storeInstallAnswer
+        }
+
         // Determine whether JIT can be acquired on this device/build.
         //
         // • Non-App Store builds and sideloaded App Store builds: JIT is acquirable on
@@ -170,6 +180,28 @@ public final class JITContextualPromptManager {
         return .proceed
     }
 
+    /// Whether this install may show any JIT status or notice: the one gate every
+    /// JIT surface in the app asks. `false` on a stock TestFlight or App Store
+    /// install unless JIT is in fact on.
+    public nonisolated static var showsJITUI: Bool {
+        #if canImport(JITManager)
+        return JITManager.DOLJitManager.uiPolicy.showsJITUI
+        #else
+        return false
+        #endif
+    }
+
+    /// Pure decision for installs that show no JIT UI: `nil` when JIT UI is allowed
+    /// (the normal rules apply), otherwise the launch answer.
+    public nonisolated static func recommendationWithoutJITUI(
+        showsJITUI: Bool,
+        coreIsJITRequired: Bool,
+        coreName: String
+    ) -> JITLaunchRecommendation? {
+        guard !showsJITUI else { return nil }
+        return coreIsJITRequired ? .showRequiredWarning(coreName: coreName) : .proceed
+    }
+
     /// Resets the per-session suppression state (call e.g. on foreground resume).
     public func resetSessionState() {
         sessionShownCoreIDs.removeAll()
@@ -187,15 +219,17 @@ public final class JITContextualPromptManager {
     }
 
     /// Pure decision: should a core with `requirement` get the non-blocking toast?
-    /// Only `.automaticWithFallback` cores qualify — `.requiredOrCrash` cores get the
+    /// Never on an install that shows no JIT UI (`showsJITUI`, a stock TestFlight or
+    /// App Store install). Only `.automaticWithFallback` cores qualify — `.requiredOrCrash` cores get the
     /// blocking pre-launch warning, and cores without JIT never need a notice.
     public static func noJITNotice(
         requirement: PVJITRequirement,
         coreName: String,
         jitAcquired: Bool,
-        jitEnableAvailable: Bool
+        jitEnableAvailable: Bool,
+        showsJITUI: Bool
     ) -> NoJITNotice? {
-        guard requirement == .automaticWithFallback, !jitAcquired else { return nil }
+        guard showsJITUI, requirement == .automaticWithFallback, !jitAcquired else { return nil }
         return NoJITNotice(
             message: "\(coreName) is running without JIT. It works fine; JIT can make it faster.",
             offersEnable: jitEnableAvailable
@@ -207,7 +241,7 @@ public final class JITContextualPromptManager {
         #if os(tvOS) || !canImport(JITManager)
         return false
         #else
-        return !JITManager.DOLJitManager.isGenuinelyAppStoreDistributed() && !DOLJitManager.isWXEnforced
+        return JITManager.DOLJitManager.uiPolicy.offersJITEnable
         #endif
     }
 
@@ -235,7 +269,8 @@ public final class JITContextualPromptManager {
                 requirement: core.jitRequirement,
                 coreName: coreName,
                 jitAcquired: core.isJITActive,
-                jitEnableAvailable: Self.jitEnableAvailable
+                jitEnableAvailable: Self.jitEnableAvailable,
+                showsJITUI: Self.showsJITUI
               ) else { return }
         sessionNoJITToastCoreIDs.insert(coreID)
 

@@ -187,7 +187,7 @@ public final class PVIndicatorRegistry: ObservableObject {
             if DOLJitManager.shared.appHasAcquiredJit() {
                 self?.updateJIT(.active)
             } else {
-                self?.updateJIT(.failed)
+                self?.updateJIT(JITContextualPromptManager.showsJITUI ? .failed : .notApplicable)
             }
             #else
             self?.updateJIT(.failed)
@@ -222,7 +222,8 @@ public final class PVIndicatorRegistry: ObservableObject {
             #if targetEnvironment(simulator)
             updateJIT(.notApplicable)
             #else
-            updateJIT(.interpreter)
+            // A stock TestFlight or App Store install shows no JIT light.
+            updateJIT(JITContextualPromptManager.showsJITUI ? .interpreter : .notApplicable)
             #endif
         }
         #elseif targetEnvironment(simulator)

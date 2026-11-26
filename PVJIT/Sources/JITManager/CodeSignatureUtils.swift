@@ -61,7 +61,7 @@ private struct ParsedCodeSignature {
 
 /// Normalizes plist entitlement values (bool, `NSNumber`, or presence for string-style keys).
 @available(iOS 13.4, tvOS 13.4, *)
-private func entitlementPlistIndicatesEnabled(_ dict: [String: Any]?, key: String) -> Bool {
+func entitlementPlistIndicatesEnabled(_ dict: [String: Any]?, key: String) -> Bool {
     guard let dict, let value = dict[key] else { return false }
     switch value {
     case let b as Bool:
@@ -78,7 +78,7 @@ private func entitlementPlistIndicatesEnabled(_ dict: [String: Any]?, key: Strin
 /// Extracts the signed provisioning plist payload from `embedded.mobileprovision` (XML or binary plist after the CMS wrapper).
 /// Sideload / AltStore / enterprise installs keep this file in the app bundle; its `Entitlements` dict mirrors what was signed onto the app.
 @available(iOS 13.4, tvOS 13.4, *)
-private func entitlementsFromEmbeddedMobileProvision() -> [String: Any]? {
+func entitlementsFromEmbeddedMobileProvision() -> [String: Any]? {
     guard let url = Bundle.main.url(forResource: "embedded", withExtension: "mobileprovision") else { return nil }
     guard let raw = try? Data(contentsOf: url), raw.count > 32 else { return nil }
 

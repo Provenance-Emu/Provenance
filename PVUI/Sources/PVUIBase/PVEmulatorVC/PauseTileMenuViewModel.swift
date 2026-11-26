@@ -1080,7 +1080,7 @@ final class PauseTileMenuViewModel: ObservableObject {
 
 
     private static func jitStatusTile(core: PVEmulatorCore, indicatorRegistry: PVIndicatorRegistry) -> PauseMenuTile? {
-        guard core.jitRequirement.hasJIT else { return nil }
+        guard core.jitRequirement.hasJIT, JITContextualPromptManager.showsJITUI else { return nil }
         let jitState = indicatorRegistry.state(for: .jitStatus)
         let isActive = jitState?.color == .green
         return PauseMenuTile(

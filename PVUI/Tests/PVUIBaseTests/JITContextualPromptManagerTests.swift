@@ -155,7 +155,7 @@ struct JITContextualPromptManagerTests {
     @Test("automaticWithFallback core without JIT gets a notice")
     func noticeForAutomaticFallback() {
         let n = JITContextualPromptManager.noJITNotice(
-            requirement: .automaticWithFallback, coreName: "GameCube", jitAcquired: false, jitEnableAvailable: true)
+            requirement: .automaticWithFallback, coreName: "GameCube", jitAcquired: false, jitEnableAvailable: true, showsJITUI: true)
         #expect(n?.offersEnable == true)
         #expect(n?.message.contains("without JIT") == true)
     }
@@ -163,18 +163,35 @@ struct JITContextualPromptManagerTests {
     @Test("No notice when JIT is active or core is not automaticWithFallback")
     func noNoticeOtherwise() {
         #expect(JITContextualPromptManager.noJITNotice(
-            requirement: .automaticWithFallback, coreName: "X", jitAcquired: true, jitEnableAvailable: true) == nil)
+            requirement: .automaticWithFallback, coreName: "X", jitAcquired: true, jitEnableAvailable: true, showsJITUI: true) == nil)
         for req in [PVJITRequirement.notSupported, .optional(fallback: "Interpreter"), .requiredOrCrash] {
             #expect(JITContextualPromptManager.noJITNotice(
-                requirement: req, coreName: "X", jitAcquired: false, jitEnableAvailable: true) == nil)
+                requirement: req, coreName: "X", jitAcquired: false, jitEnableAvailable: true, showsJITUI: true) == nil)
         }
     }
 
     @Test("Enable action is omitted when JIT cannot be enabled")
     func noEnableActionWhenUnavailable() {
         let n = JITContextualPromptManager.noJITNotice(
-            requirement: .automaticWithFallback, coreName: "X", jitAcquired: false, jitEnableAvailable: false)
+            requirement: .automaticWithFallback, coreName: "X", jitAcquired: false, jitEnableAvailable: false, showsJITUI: true)
         #expect(n?.offersEnable == false)
+    }
+
+    @Test("No notice on an install that shows no JIT UI (stock TestFlight or App Store)")
+    func noNoticeWithoutJITUI() {
+        #expect(JITContextualPromptManager.noJITNotice(
+            requirement: .automaticWithFallback, coreName: "GameCube", jitAcquired: false,
+            jitEnableAvailable: false, showsJITUI: false) == nil)
+    }
+
+    @Test("Without JIT UI, launch is silent unless the core cannot run without JIT")
+    func launchAnswerWithoutJITUI() {
+        #expect(JITContextualPromptManager.recommendationWithoutJITUI(
+            showsJITUI: false, coreIsJITRequired: false, coreName: "GameCube") == .proceed)
+        #expect(JITContextualPromptManager.recommendationWithoutJITUI(
+            showsJITUI: false, coreIsJITRequired: true, coreName: "X") == .showRequiredWarning(coreName: "X"))
+        #expect(JITContextualPromptManager.recommendationWithoutJITUI(
+            showsJITUI: true, coreIsJITRequired: true, coreName: "X") == nil)
     }
 
     @Test("StikDebug URL carries the bundle id and pid")

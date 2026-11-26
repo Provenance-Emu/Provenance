@@ -169,6 +169,9 @@ public extension PVEmulatorViewController {
         // Quick-exit: if the JIT manager has no JIT type configured, JIT is not in play at all
         guard DOLJitManager.shared.getJitType() != .none else { return false }
 
+        // A stock TestFlight or App Store install shows no JIT status at all.
+        guard JITContextualPromptManager.showsJITUI else { return false }
+
         // Use the core's own jitRequirement property — set as a Swift override on each
         // PVEmulatorCore subclass. hasJIT is true for .optional, .requiredOrCrash, and
         // .automaticWithFallback; false only for .notSupported.
