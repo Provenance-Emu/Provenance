@@ -172,10 +172,15 @@ pass. Each item names its devices.
       there. Press Home during a game, wait a minute, return, five times:
       the app resumes and is not relaunched (the 0xDEAD10CC kill).
 - [ ] Apple TV: if the first launch shows an empty library, stop and keep
-      the device as it is and pull its log. A failed move is not retried:
-      Realm creates a new file at the destination, and
-      `RealmConfiguration.moveDatabase` skips the move once a file is
-      there, so the old library stays behind in the App Group.
+      the device as it is and pull its log. With
+      [#3841](https://github.com/Provenance-Emu/Provenance/pull/3841) a
+      failed move opens the old database in place and is tried again on
+      the next launch, so an empty library should not happen. Without it,
+      Realm creates a new file at the destination and the move is never
+      retried; check that the build under test includes #3841.
+- [ ] Apple TV, if a failed move can be provoked (log shows "Failed to
+      move the database"): the library is still shown on that launch, and
+      the next launch logs "Moved the database" and shows it again.
 
 **Skins and on-screen controls**
 
