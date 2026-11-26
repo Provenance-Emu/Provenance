@@ -5375,6 +5375,10 @@ NSNotificationName const PVEmulatorCoreDidFailToStartNotification =
     return [self handleEnvironmentCommand:cmd data:data];
 }
 
+- (int16_t)_testInputStateForPort:(unsigned)port device:(unsigned)device index:(unsigned)index id:(unsigned)buttonID {
+    return [self _thinInputStatePort:port device:device index:index id:buttonID];
+}
+
 - (void)_testRunNetpacketFrame {
     _thinCurrentTLS = self;
     [self _thinNetpacketRunFrame];
