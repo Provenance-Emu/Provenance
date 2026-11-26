@@ -95,8 +95,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Provenance-Emu/GamepadKit.git",
       "state" : {
-        "revision" : "3e6a79ed3105caf2cf59b5dead032fe21c4dd21a",
-        "version" : "0.3.0"
+        "revision" : "cf27b303fa4dd2e982f3b4bfae6ef7aece0b999e",
+        "version" : "0.3.1"
       }
     },
     {
@@ -336,8 +336,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Provenance-Emu/SkinKit",
       "state" : {
-        "revision" : "bdceb0cf6156544cb91e05a8f8bdf04c3d21704a",
-        "version" : "0.8.1"
+        "revision" : "2653a71bc23cf1692419400fbf9d9b1cfdf97250",
+        "version" : "0.9.0"
       }
     },
     {
