@@ -134,6 +134,155 @@ v29 migration and Realm compaction run; test once with a large library
       `com.joemattiello.shared`) and the new `ROM File ProviderUI` App ID.
 - [ ] Files app: the Provenance location still opens and imports.
 
+#### Added 2026-11-25: changes on `develop` since the 2026-10-12 audit
+
+Second audit (`git log --since=2026-10-12`, 643 commits, compared with the
+`3.3.1` tag). The schema is still 28 → 29 and no persisted Realm property
+changed. What did change for an existing install: the tvOS database moved,
+skins moved to SkinKit, the classic on-screen controller was deleted, TVs
+show around the game by default, the filter store replaced the single
+filter setting, the core picker recommends cores, and several defaults and
+stored enums changed. The items above still apply; run these in the same
+pass. Each item names its devices.
+
+**Extra setup on 3.3.1**
+
+6. Skins (iPhone, iPad): pick a skin for one system and a different one for
+   one game of that system; import one `.deltaskin` file; leave one system
+   with no pick; on one device set skins Off and drag a button of the
+   classic controller to a new place.
+7. Picture: set a video filter (CRT or LCD), turn Image Smoothing on, and
+   on one device pick the CGA Rainbow theme.
+8. iPhone, iPad: add the Recently Played and Favorites widgets to the Home
+   Screen; make a Shortcut that opens a game; find a game in Spotlight.
+9. Sign in to RetroAchievements. Add cheats to one game and enable one.
+10. Remap one button of a controller (Settings, controller profiles).
+11. Change one option of a native core (e.g. N64, Dolphin, PSP).
+12. One install with no Plus purchase and iCloud sync on; one with Plus.
+13. Apple TV: play two games so Top Shelf has recents; note the library
+    size.
+
+**Database location (Apple TV)**
+
+- [ ] Apple TV: the library is intact on first launch. The log has one
+      "Moved the database from … to …/Library/Caches/Database/default.realm"
+      (`7ef6dadd9b`; the file leaves the App Group). Games, favourites,
+      recents and save states are all there.
+- [ ] Apple TV: second launch moves nothing and the library is still
+      there. Press Home during a game, wait a minute, return, five times:
+      the app resumes and is not relaunched (the 0xDEAD10CC kill).
+- [ ] Apple TV: if the first launch shows an empty library, stop and keep
+      the device as it is and pull its log. A failed move is not retried:
+      Realm creates a new file at the destination, and
+      `RealmConfiguration.moveDatabase` skips the move once a file is
+      there, so the old library stays behind in the App Group.
+
+**Skins and on-screen controls**
+
+- [ ] iPhone, iPad: the per-system and the per-game skin picks from 3.3.1
+      are still selected (same `com.provenance.deltaskin.*` keys, now read
+      by SkinKit) and the imported skin is still listed
+      (`Documents/DeltaSkins`).
+- [ ] iPhone, iPad: the system with no pick shows controls, never a bare
+      picture. Note whether it is the built-in controls or a bundled skin,
+      and confirm that is the intended look for an upgrader.
+- [ ] iPhone, iPad: skins Off now reads "Off (Built-in Controller)" and
+      shows the new touch overlay. The dragged button position from 3.3.1
+      is gone (expected: the classic controller and `movableButtons` were
+      deleted). The overlay's own layout editor works.
+- [ ] Apple TV: no skin or touch controls appear.
+
+**Bezels, filters, external display**
+
+- [ ] iPhone and iPad in landscape with a controller, and Apple TV: the
+      first CRT-system game after the upgrade shows a TV around the picture
+      (`externalDisplayBezel` now defaults to `auto`). A handheld system
+      shows none, and nothing is drawn around a skin. Confirm this is
+      wanted for upgraders who never chose it; Settings → Bezels → Off
+      removes it and the choice survives a relaunch.
+- [ ] Same check on the oldest supported iPhone and on Apple TV HD: the
+      picture is not black, the log has no `[NO-FRAME]` and no "Deny
+      submissions", and room light is off there.
+- [ ] iPhone, iPad, Apple TV: the filter set in 3.3.1 is the active filter
+      (the old `metalFilterMode` is carried into the filter store once) and
+      is listed as the global selection in the filter browser.
+- [ ] iPhone, iPad, Apple TV: Image Smoothing on in 3.3.1 reads Bilinear,
+      off reads Nearest; never touched reads Bilinear.
+- [ ] iPhone, iPad with a cabled or AirPlay display: for a user who never
+      chose, the game now goes to the display alone (default changed from
+      mirror to dedicated). A stored choice is kept.
+
+**Cores**
+
+- [ ] iPhone, iPad, Apple TV: a game with 3.3.1 save states on a core that
+      is no longer the recommended one, and no explicit preference (try
+      GBA, SNES, NES, N64, PS1, Genesis, DS): the picker shows the save
+      counts, loading a state uses the core that made it, and Continue does
+      not start a fresh game on another core.
+- [ ] iPhone, iPad, Apple TV: the native core option changed in 3.3.1 kept
+      its value. Dolphin's Texture Cache Accuracy is the exception (its key
+      was wrong before `11225dd7d6`); note what it reads.
+- [ ] iPhone, iPad, Apple TV: the controller remap from 3.3.1 is still
+      there and now also applies in native cores (`d167e46f8b`). No button
+      is swapped twice.
+- [ ] Deprecated cores (Atari800, Bliss, CrabEMU, Gambatte): run the item
+      in "Retired native cores" below on the upgraded install, not a fresh
+      one.
+
+**Widgets, Spotlight, Shortcuts, Top Shelf**
+
+- [ ] iPhone, iPad: the two widgets added on 3.3.1 are still on the Home
+      Screen after the update (kinds unchanged), fill in once the app has
+      been opened, and a tap opens the game. The edit screen offers Show
+      and Layout.
+- [ ] iPhone, iPad: Spotlight still finds the game and opens it; the
+      Shortcut made on 3.3.1 still launches its game.
+- [ ] Apple TV: after one launch Top Shelf shows the recents with covers
+      (it now reads the shared snapshot, not the database).
+
+**Accounts, Plus, iCloud**
+
+- [ ] iPhone, iPad, Apple TV: RetroAchievements is still signed in and an
+      achievement unlocks (the password moves from UserDefaults to the
+      Keychain on first read).
+- [ ] The install with no Plus: iCloud sync is still on and still syncs,
+      and save states still open (`5111a15b2d`).
+- [ ] The install with Plus: Plus is recognized online and offline. With
+      iFly or iCube installed beside it, ownership neither disappears nor
+      is granted to an app that does not own it.
+- [ ] Two devices after both are upgraded: a ROM imported on one appears
+      on the other, and a save state made on one loads on the other. Sync
+      frequency reads Automatic for a user who never chose and keeps a
+      stored choice. Repeat once with "keep replaced files" on if
+      [#3839](https://github.com/Provenance-Emu/Provenance/pull/3839) has
+      merged; it is off by default and changes no stored data.
+
+**Library**
+
+- [ ] iPhone, iPad, Apple TV: no "missing ROM" recovery prompt appears at
+      launch for a library whose files are all present, including files
+      that are still iCloud placeholders (`9ca7e1c372`).
+- [ ] The cheats added on 3.3.1 are still on the game, with the same one
+      enabled.
+- [ ] The library count matches the 3.3.1 screenshot with a patched game
+      present (`showPatchedVersionsAsSeparateItems` is new and on).
+- [ ] The CGA Rainbow theme becomes CGA Blue (expected: Rainbow and Random
+      were removed); every other theme is kept. A library that used the
+      UIKit layout opens in the platform's default layout.
+- [ ] More defaults that changed for users who never touched them: Netplay
+      on, N64 Transfer Pak on, light gun crosshair on. Settings that are
+      gone: V-Sync, MSAA, multithreaded GL, the OpenGL filter, haptic
+      feedback toggle, button tints. Confirm each is intended.
+
+**App Store packaging (additions)**
+
+- [ ] Profiles also carry NFC tag reading, increased memory limit and the
+      sibling iCloud containers (`f2909646bf`, `2c5b3933b3`); the tvOS
+      Info.plists declare `LSSupportsGameMode`.
+- [ ] iPhone, iPad: a `.zip`, a `.7z` and a ROM in Files still offer
+      Provenance and import; pictures no longer list Provenance as their
+      owner (`05e71356be`).
+
 ### Retired native cores (pruning PR, `feature/prune-dead-cores`)
 
 Migrations run on first launch after the update; use a library that existed

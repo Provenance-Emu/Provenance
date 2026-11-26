@@ -6,6 +6,15 @@ The working list for the 3.4.0 release. Update it in the same commit as the work
 
 - [x] **Core picker first pass.** Add the RetroArch logo to libretro cores, show a short reason for the recommended core, and keep save counts and explicit preferences. Start with GB/GBC, GBA, SNES, DS, and 3DS. Recommend Azahar for new 3DS launches where it ships and keep emuThreeDS available for its existing save states. [#3341](https://github.com/Provenance-Emu/Provenance/issues/3341) · [PR #3814](https://github.com/Provenance-Emu/Provenance/pull/3814)
 
+## Release gate
+
+- [ ] **Upgrade from the App Store build (3.3.1).** 3.4.0 does not ship until this pass is done on an iPhone, an iPad and an Apple TV. Install 3.3.1 from the App Store, set it up as described, update in place to the release candidate from TestFlight, and tick every item in [Upgrade from 3.3.1](RELEASE_SMOKE_TESTS.md#upgrade-from-331-full-app-first-app-store-update-in-9-months) in `docs/RELEASE_SMOKE_TESTS.md`, including the part added on 2026-11-25. Owner request of 2026-11-25: every existing user takes this path and nine months of changes sit between the two builds.
+  - Run it on the build that will be submitted. A change to the Realm schema, a `Defaults` key, a storage location or a first-launch migration after the pass means running the affected items again.
+  - The 3.3.1 setup has to be done before updating, and a device cannot go back to 3.3.1 without deleting the app. Keep one device on 3.3.1 with the setup done until the release is out.
+  - Out of scope by earlier decisions: the Lite build (never published) and save states of retired cores other than Jaguar.
+  - Any item that fails is a release blocker until it is fixed or the owner accepts it. The items worded "confirm this is intended" need the owner's answer, not a tester's.
+  - Not run yet on any device.
+
 ## After the picker
 
 - [ ] **Console mouse smoke test.** Check Mario Paint on native and libretro Snes9x, a known mouse game on Flycast, and a joypad-only game. Verify touch mouse, physical mouse where supported, and the per-game override. Close the remaining mouse epics if the shipped cores pass. This is the smaller follow-up and supplies evidence for the picker badges. [#3329](https://github.com/Provenance-Emu/Provenance/issues/3329) · [#3330](https://github.com/Provenance-Emu/Provenance/issues/3330)
