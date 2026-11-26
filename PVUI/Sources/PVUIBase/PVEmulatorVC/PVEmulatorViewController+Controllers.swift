@@ -1,6 +1,7 @@
 // MARK: - Controllers
 import PVLogging
 import GameController
+import GamepadKit
 import PVCoreBridge
 import PVSupport
 import PVSettings
@@ -106,9 +107,9 @@ extension PVEmulatorViewController {
     /// The keyboard-backed controller (a snapshot) and the Siri Remote don't count.
     private func pauseIfLastGamepadDisconnected(_ controller: GCController?) {
         guard let controller, Self.isGameplayController(controller) else { return }
-        let disconnected = (controller as? PVPhysicalProfileController)?.base ?? controller
+        let disconnected = (controller as? PhysicalProfileController)?.base ?? controller
         let gamepadRemains = PVControllerManager.shared.controllers.contains { candidate in
-            let physical = (candidate as? PVPhysicalProfileController)?.base ?? candidate
+            let physical = (candidate as? PhysicalProfileController)?.base ?? candidate
             return physical !== disconnected && Self.isGameplayController(candidate)
         }
         guard !gamepadRemains, core.isOn, !isShowingMenu, !isQuitting else { return }
@@ -142,10 +143,10 @@ extension PVEmulatorViewController {
     /// Resolve synthesized profiles to their hardware identity. A disconnect notification carries
     /// the original controller even when the manager exposes its synthesized Nintendo profile.
     private static func isGameplayController(_ controller: GCController) -> Bool {
-        let physical = (controller as? PVPhysicalProfileController)?.base ?? controller
+        let physical = (controller as? PhysicalProfileController)?.base ?? controller
         return !physical.isSnapshot && !physical.isRemote
             && (physical.extendedGamepad != nil || physical.microGamepad != nil
-                || PVPhysicalProfileController.isNeeded(for: physical))
+                || PhysicalProfileController.isNeeded(for: physical))
     }
 
     /// Shows or hides the on-screen controls (the skin layer, which also hosts the touch overlay).

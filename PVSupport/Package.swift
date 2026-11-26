@@ -5,14 +5,20 @@ import PackageDescription
 #if os(Linux)
 let platformDeps: [Package.Dependency] = []
 let platformTargetDeps: [Target.Dependency] = []
+let gamepadKitDeps: [Target.Dependency] = []
 #else
 let platformDeps: [Package.Dependency] = [
     .package(path: "../PVSettings/"),
-    .package(url: "https://github.com/Provenance-Emu/SwiftGenPlugin.git", from: "1.1.3")
+    .package(url: "https://github.com/Provenance-Emu/SwiftGenPlugin.git", from: "1.1.3"),
+    /// Synthesized extended gamepad for pads the system exposes without one, shared with iFly and iCube.
+    .package(url: "https://github.com/Provenance-Emu/GamepadKit.git", .upToNextMinor(from: "0.3.0"))
 ]
-let platformTargetDeps: [Target.Dependency] = [
-    "PVSettings"
+/// GamepadKit ships iOS, tvOS, Mac Catalyst and macOS slices; its code here is behind `canImport(UIKit)`.
+let gamepadKitDeps: [Target.Dependency] = [
+    .product(name: "GamepadKit", package: "GamepadKit",
+             condition: .when(platforms: [.iOS, .tvOS, .macCatalyst, .macOS]))
 ]
+let platformTargetDeps: [Target.Dependency] = ["PVSettings"] + gamepadKitDeps
 #endif
 
 let package = Package(
@@ -71,8 +77,7 @@ let package = Package(
 
         .testTarget(
             name: "PVSupportTests",
-            dependencies: ["PVSupport"],
-            resources: [.copy("Fixtures")]
+            dependencies: ["PVSupport"] + gamepadKitDeps
         )
     ],
     swiftLanguageModes: [.v5, .v6],

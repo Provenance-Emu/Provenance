@@ -7,6 +7,7 @@
 
 import Foundation
 import GameController
+import GamepadKit
 import PVLogging
 import PVSupport
 import QuartzCore
@@ -43,7 +44,7 @@ public extension GCController {
 
     private var hasPauseMenuProfileTrigger: Bool {
         #if canImport(UIKit)
-        return (self as? PVPhysicalProfileController)?.pauseTrigger != nil
+        return (self as? PhysicalProfileController)?.pauseTrigger != nil
         #else
         return false
         #endif

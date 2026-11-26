@@ -46,6 +46,8 @@ let package = Package(
         /// Keep both direct dependencies and all consumer resolver files on the tested SkinKit revision.
         .package(url: "https://github.com/Provenance-Emu/SkinKit", .upToNextMinor(from: "0.8.0")),
         .package(url: "https://github.com/Provenance-Emu/PVDependencies.git", from: "1.0.0"),
+        /// Direct dependency so `PVUIBase` can `import GamepadKit` (the synthesized-pad wrapper PVSupport configures).
+        .package(url: "https://github.com/Provenance-Emu/GamepadKit.git", .upToNextMinor(from: "0.3.0")),
         .package(path: "../PVLogging"),
         .package(path: "../PVPatreon"),
         .package(path: "../PVSupport"),
@@ -133,6 +135,7 @@ let package = Package(
             name: "PVUIBase",
             dependencies: [
                 .product(name: "PVSystems", package: "PVSystems"),
+                .product(name: "GamepadKit", package: "GamepadKit"),
                 .product(name: "PVLookup", package: "PVLookup"),
                 .product(name: "SkinKitCore", package: "SkinKit"),
                 // LogFileRouter and RetroLogViewModel zip log files; the same prebuilt copy SkinKit links.
