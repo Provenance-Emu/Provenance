@@ -144,3 +144,35 @@ public func systemMenuButtons(for system: SystemIdentifier) -> [SystemMenuButton
         return []
     }
 }
+
+// MARK: - Player slots
+
+/// Player slots a coin-op system's cabinet can have, or `nil` for a system
+/// whose menu-button tiles follow the connected controllers.
+///
+/// Every slot gets its own tiles whether or not a controller is assigned to
+/// it: an arcade core reads Insert Coin and Start per player, and the thin
+/// wrapper never forwards a pad's Options button as coin, so the tile is the
+/// only way to credit a player.
+///
+/// The count is per system, not per game. The arcade cores do not report a
+/// game's player count in one common way, and a tile for a slot the game
+/// ignores does nothing, while a missing tile leaves a player unable to join.
+/// CPS-3 boards have two player panels; the other boards run games for up to
+/// four.
+public func systemMenuButtonPlayerSlots(for system: SystemIdentifier) -> Int? {
+    switch system {
+    case .MAME, .CPS1, .CPS2:
+        return SystemMenuButtonPlayerSlots.fourPlayerCabinet
+    case .CPS3:
+        return SystemMenuButtonPlayerSlots.twoPlayerCabinet
+    default:
+        return nil
+    }
+}
+
+/// Cabinet sizes used by `systemMenuButtonPlayerSlots(for:)`.
+public enum SystemMenuButtonPlayerSlots {
+    public static let twoPlayerCabinet = 2
+    public static let fourPlayerCabinet = 4
+}

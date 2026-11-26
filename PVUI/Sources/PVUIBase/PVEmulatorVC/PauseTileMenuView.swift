@@ -2722,23 +2722,13 @@ struct PauseTileMenuView: View {
             default: break
             }
         case .MAME, .CPS1, .CPS2, .CPS3:
-            guard let r = core as? PVMAMESystemResponderClient else { return }
-            switch btn {
-            case "start":
-                r.didPush(.start, forPlayer: player)
-                fireMomentaryRelease { r.didRelease(.start, forPlayer: player) }
-            case "select":
-                r.didPush(.select, forPlayer: player)
-                fireMomentaryRelease { r.didRelease(.select, forPlayer: player) }
-            case "coin":
-                // Coin has no physical-controller equivalent, so this entry is
-                // the only way to trigger it. It needs a longer press than the
-                // other buttons to register.
-                r.didPush(.coin, forPlayer: player)
-                fireMomentaryRelease(after: HardwareSwitchTiming.coinPressDuration) {
-                    r.didRelease(.coin, forPlayer: player)
-                }
-            default: break
+            // Coin has no physical-controller equivalent, so its tile is the
+            // only way to trigger it; `arcadePress` gives it a longer hold.
+            guard let r = core as? PVMAMESystemResponderClient,
+                  let press = SystemButtonTileProvider.arcadePress(player: player, buttonID: btn) else { return }
+            r.didPush(press.button, forPlayer: press.player)
+            fireMomentaryRelease(after: press.holdDuration) {
+                r.didRelease(press.button, forPlayer: press.player)
             }
         case .NeoGeo, .NeoGeoCD:
             guard let r = core as? PVNeoGeoSystemResponderClient else { return }

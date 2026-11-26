@@ -430,6 +430,9 @@ FOUNDATION_EXPORT NSNotificationName const PVEmulatorCoreDidFailToStartNotificat
 /// Testing: deliver an environment command as the core would from inside retro_run.
 - (BOOL)_testHandleEnvironmentCommand:(unsigned)cmd data:(void *)data;
 
+/// Testing: read input as the core would through its `retro_input_state_t` callback.
+- (int16_t)_testInputStateForPort:(unsigned)port device:(unsigned)device index:(unsigned)index id:(unsigned)buttonID;
+
 // MARK: Utility
 
 /// Probe a core dylib without fully loading it — reads retro_get_system_info.
