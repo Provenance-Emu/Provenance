@@ -29,7 +29,7 @@ let package = Package(
         .package(path: "../PVFeatureFlags"),
         .package(path: "../PVNetplay"),
         .package(path: "../PVLibrarySharing"),
-        .package(url: "https://github.com/Provenance-Emu/PVRemoteLibrary.git", from: "0.3.1"),
+        .package(url: "https://github.com/Provenance-Emu/PVRemoteLibrary.git", from: "0.3.2"),
         .package(url: "https://github.com/Provenance-Emu/emulator-content-server.git", revision: "7b30839778e502573ee0cfb91c4bf94a1de51fa8"),
         .package(url: "https://github.com/Provenance-Emu/PVHelp.git", from: "1.0.2"),
         .package(path: "../PVCoreAudio"),
@@ -44,7 +44,7 @@ let package = Package(
         .package(url: "https://github.com/Provenance-Emu/PVLookup.git", from: "1.1.0"),
         /// Skin model, manager, catalog and skin views, shared with iFly and iCube.
         /// Keep both direct dependencies and all consumer resolver files on the tested SkinKit revision.
-        .package(url: "https://github.com/Provenance-Emu/SkinKit", .upToNextMinor(from: "0.8.0")),
+        .package(url: "https://github.com/Provenance-Emu/SkinKit", .upToNextMinor(from: "0.8.1")),
         .package(url: "https://github.com/Provenance-Emu/PVDependencies.git", from: "1.0.0"),
         /// Direct dependency so `PVUIBase` can `import GamepadKit` (the synthesized-pad wrapper PVSupport configures).
         .package(url: "https://github.com/Provenance-Emu/GamepadKit.git", .upToNextMinor(from: "0.3.0")),
