@@ -1622,7 +1622,6 @@ public class CloudSyncManager { // swiftlint:disable:this type_body_length
         // Keep existing Realm notifications for game changes
         NotificationCenter.default.addObserver(self, selector: #selector(handleGameAdded(_:)), name: Notification.Name.PVGameImported, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(handleGameWillBeDeleted(_:)), name: .PVGameWillBeDeleted, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(handleSaveStateAdded(_:)), name: Notification.Name.PVSaveStateSaved, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(handleSaveStateWillBeDeleted(_:)), name: .PVSaveStateWillBeDeleted, object: nil)
     }
 
@@ -1647,7 +1646,6 @@ public class CloudSyncManager { // swiftlint:disable:this type_body_length
         // Keep existing Realm notifications for game changes
         NotificationCenter.default.addObserver(self, selector: #selector(handleGameAdded(_:)), name: Notification.Name.PVGameImported, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(handleGameWillBeDeleted(_:)), name: .PVGameWillBeDeleted, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(handleSaveStateAdded(_:)), name: Notification.Name.PVSaveStateSaved, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(handleSaveStateWillBeDeleted(_:)), name: .PVSaveStateWillBeDeleted, object: nil)
 
         // Add observer for app returning from background
@@ -1707,31 +1705,39 @@ public class CloudSyncManager { // swiftlint:disable:this type_body_length
                 case .update(let collection, _, let insertions, _):
                     guard !insertions.isEmpty else { return }
 
-                    // Skip enqueueing uploads while emulation is active to avoid I/O during gameplay
-                    if self.isPausedForEmulation {
-                        DLOG("[SYNC] Skipping save-state upload enqueue (paused for emulation)")
-                        return
-                    }
-
+                    // A state saved during a game is enqueued like any other: the upload queue
+                    // itself holds its work until the game ends. Skipping it here left in-game
+                    // saves waiting for the next full sync.
                     let newSaveStates = insertions.compactMap { idx -> PVSaveState? in
                         guard idx < collection.count else { return nil }
                         let ss = collection[idx]
                         guard !ss.isInvalidated else { return nil }
-                        if let cloudRecordID = ss.cloudRecordID, !cloudRecordID.isEmpty { return nil }
                         return ss.freeze()
                     }
 
-                    guard !newSaveStates.isEmpty else { return }
-
+                    let isManual = self.currentSyncCadence == .manual
+                    var holdsUploads = false
                     for saveState in newSaveStates {
-                        let title = saveState.game?.title ?? "Unknown"
-                        Task {
-                            await CloudKitUploadQueueActor.shared.enqueueSaveStateUpload(
-                                saveStateID: saveState.id,
-                                gameTitle: title,
-                                priority: .high
-                            )
+                        let hasCloudRecord = !(saveState.cloudRecordID ?? "").isEmpty
+                        switch NewSaveStateUpload.decide(hasCloudRecord: hasCloudRecord, isManualCadence: isManual) {
+                        case .ignore:
+                            continue
+                        case .hold:
+                            holdsUploads = true
+                        case .enqueue:
+                            let title = saveState.game?.title ?? "Unknown"
+                            Task {
+                                await CloudKitUploadQueueActor.shared.enqueueSaveStateUpload(
+                                    saveStateID: saveState.id,
+                                    gameTitle: title,
+                                    priority: .high
+                                )
+                            }
                         }
+                    }
+                    if holdsUploads {
+                        DLOG("Manual sync: save state upload waits for the next Sync")
+                        Task { @MainActor in self.deferUpload() }
                     }
                 case .error(let error):
                     Self.syncLog.event(.sync, item: "save-state/observer", status: .failed, detail: error.localizedDescription)
@@ -1962,26 +1968,6 @@ public class CloudSyncManager { // swiftlint:disable:this type_body_length
                 await errorHandler.handle(error: error)
                 // Update status? Or rely on errorHandler?
                 updateSyncStatus(.error(error))
-            }
-        }
-    }
-
-    @objc private func handleSaveStateAdded(_ notification: Notification) {
-        guard Defaults[.iCloudSync], let saveState = notification.object as? PVSaveState else { return }
-        // Save states stay prompt on every interval (small, and what people switch devices for);
-        // only Manual holds them for the next Sync.
-        if currentSyncCadence == .manual {
-            DLOG("Manual sync: save state upload waits for the next Sync")
-            Task { @MainActor in self.deferUpload() }
-            return
-        }
-        DLOG("Save state added, uploading: \(saveState.file?.fileName ?? "unknown") for game \(saveState.game.title)")
-        Task {
-            do {
-                try await uploadSaveState(for: saveState)
-            } catch {
-                // Error already logged and status updated in uploadSaveState
-                // errorHandler.handle(error: error) // Potentially redundant if uploadSaveState handles it
             }
         }
     }
