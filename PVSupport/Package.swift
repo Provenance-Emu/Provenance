@@ -11,7 +11,7 @@ let platformDeps: [Package.Dependency] = [
     .package(path: "../PVSettings/"),
     .package(url: "https://github.com/Provenance-Emu/SwiftGenPlugin.git", from: "1.1.3"),
     /// Synthesized extended gamepad for pads the system exposes without one, shared with iFly and iCube.
-    .package(url: "https://github.com/Provenance-Emu/GamepadKit.git", .upToNextMinor(from: "0.3.0"))
+    .package(url: "https://github.com/Provenance-Emu/GamepadKit.git", .upToNextMinor(from: "0.3.1"))
 ]
 /// GamepadKit ships iOS, tvOS, Mac Catalyst and macOS slices; its code here is behind `canImport(UIKit)`.
 let gamepadKitDeps: [Target.Dependency] = [
