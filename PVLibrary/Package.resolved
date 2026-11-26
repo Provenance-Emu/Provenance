@@ -69,8 +69,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Provenance-Emu/PVPatchEngine.git",
       "state" : {
-        "revision" : "663ee9ebf848574f92ae6ee1d7fdb2baa4aa28b9",
-        "version" : "1.0.2"
+        "revision" : "403f2c1bbe03290dbf14d0858096bf657092c9ad",
+        "version" : "1.0.3"
       }
     },
     {

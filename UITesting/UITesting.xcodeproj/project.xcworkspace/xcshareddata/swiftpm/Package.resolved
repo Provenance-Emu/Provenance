@@ -177,8 +177,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Provenance-Emu/PVPatchEngine.git",
       "state" : {
-        "revision" : "663ee9ebf848574f92ae6ee1d7fdb2baa4aa28b9",
-        "version" : "1.0.2"
+        "revision" : "403f2c1bbe03290dbf14d0858096bf657092c9ad",
+        "version" : "1.0.3"
       }
     },
     {
@@ -292,8 +292,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Provenance-Emu/SkinKit",
       "state" : {
-        "revision" : "929e0b0d8b5938dc49b050c39dae6afc924c1abb",
-        "version" : "0.8.0"
+        "revision" : "bdceb0cf6156544cb91e05a8f8bdf04c3d21704a",
+        "version" : "0.8.1"
       }
     },
     {
