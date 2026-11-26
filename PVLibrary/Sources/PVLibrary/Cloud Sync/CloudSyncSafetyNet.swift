@@ -10,7 +10,9 @@ import CloudKit
 import Defaults
 import PVCloudSync
 import PVLogging
+import PVRealm
 import PVSupport
+import RealmSwift
 
 public extension Defaults.Keys {
     /// Keeps the local copy of a file for 30 days when an iCloud download replaces it. On by
@@ -102,6 +104,46 @@ public enum CloudSyncSafetyNet {
     /// be undone. The restored file gets the current date, so the next sync uploads it.
     public static func restore(_ file: ReplacedFile) async throws {
         try await restore(file.entry, libraryRoot: URL.documentsPath, trash: sharedTrash)
+        await uploadRestoredSaveState(relativePath: file.relativePath)
+    }
+
+    /// Folder under the library root that holds save states.
+    private static let saveStatesFolder = "Saves"
+
+    /// The file name of a save state, when `relativePath` is inside the save states folder.
+    static func saveStateFileName(forRestoredPath relativePath: String) -> String? {
+        let components = relativePath.split(separator: "/")
+        guard components.count >= 2, components.first.map(String.init) == saveStatesFolder else { return nil }
+        return components.last.map(String.init)
+    }
+
+    /// A plain file syncs after a restore because its date is new. A save state does not: the
+    /// syncer uploads only states with no cloud record or no upload date, and a restored one
+    /// has both. So its upload date is cleared and the upload is asked for here.
+    private static func uploadRestoredSaveState(relativePath: String) async {
+        guard let fileName = saveStateFileName(forRestoredPath: relativePath) else { return }
+        do {
+            let restored = try await RealmContext.withBackgroundRealm { realm -> PVSaveState? in
+                let candidates = realm.objects(PVSaveState.self)
+                    .filter("file.partialPath == %@ OR file.partialPath ENDSWITH %@", fileName, "/" + fileName)
+                // Two games can hold a state of the same name; take the one whose stored path
+                // agrees with the restored one, or the only candidate.
+                let match = candidates.first { state in
+                    guard let partialPath = state.file?.partialPath else { return false }
+                    return relativePath.hasSuffix(partialPath) || partialPath.hasSuffix(relativePath)
+                } ?? (candidates.count == 1 ? candidates.first : nil)
+                guard let state = match else { return nil }
+                try realm.write { state.lastUploadedDate = nil }
+                return state.freeze()
+            }
+            guard let restored else {
+                WLOG("Restored save state \(relativePath) has no library entry; it was not uploaded")
+                return
+            }
+            try await CloudSyncManager.shared.uploadSaveState(for: restored)
+        } catch {
+            ELOG("Could not upload restored save state \(relativePath): \(error.localizedDescription)")
+        }
     }
 
     static func restore(_ entry: SyncTrashEntry, libraryRoot: URL, trash: SyncTrash, now: Date = Date()) async throws {

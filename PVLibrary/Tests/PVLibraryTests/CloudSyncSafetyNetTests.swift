@@ -141,6 +141,13 @@ final class CloudSyncSafetyNetTests: XCTestCase {
         XCTAssertEqual(listed.map(\.relativePath), ["Battery States/NES/Recent.sav"])
     }
 
+    func testOnlyPathsInTheSaveStatesFolderAreTreatedAsSaveStates() {
+        XCTAssertEqual(CloudSyncSafetyNet.saveStateFileName(forRestoredPath: "Saves/GBA/Game/slot1.svs"), "slot1.svs")
+        XCTAssertNil(CloudSyncSafetyNet.saveStateFileName(forRestoredPath: "Battery States/GBA/Game.sav"))
+        XCTAssertNil(CloudSyncSafetyNet.saveStateFileName(forRestoredPath: "Saves"))
+        XCTAssertNil(CloudSyncSafetyNet.saveStateFileName(forRestoredPath: "Screenshots/Saves/shot.png"))
+    }
+
     // MARK: - Retry
 
     func testTheServersRetryAfterIsUsed() {
