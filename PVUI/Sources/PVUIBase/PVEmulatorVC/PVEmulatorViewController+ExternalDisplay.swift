@@ -256,7 +256,7 @@ extension PVEmulatorViewController {
         }
         output.filter.update(resolved, smoothing: smoothing)
         let flatGlass = resolved.map { TVBezelShader.bendsPictureItself($0.entry) } ?? false
-        output.showBezel(bezel, lightsRoom: bezelLightsRoom, flatGlass: flatGlass) { [weak metalVC] in
+        output.showBezel(bezel, lightsRoom: bezelLightsRoom, flatGlass: flatGlass, pictureAspect: metalVC.bezelPictureAspect) { [weak metalVC] in
             metalVC?.redrawPausedFrame()
         }
         metalVC.redrawPausedFrame()
