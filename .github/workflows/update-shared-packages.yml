@@ -52,12 +52,14 @@ jobs:
           git checkout -B "$branch"
           git commit -am "build(deps): $PACKAGES"
           # Same content as the branch already has: leave it, so CI does not rerun every hour.
+          # The pull request is still opened or updated below: an earlier run may have pushed
+          # the branch and then failed, or the pull request may have been closed.
           if git fetch --quiet --depth 1 origin "$branch" 2>/dev/null && git diff --quiet FETCH_HEAD HEAD; then
             echo "The pull request branch is already up to date"
-            exit 0
+          else
+            # The branch belongs to this workflow and is rebuilt from the default branch each run.
+            git push --force origin "$branch"
           fi
-          # The branch belongs to this workflow and is rebuilt from the default branch each run.
-          git push --force origin "$branch"
           {
             echo "Shared packages with a newer release than this app asks for."
             echo
@@ -67,5 +69,5 @@ jobs:
           if [ -n "$(gh pr list --head "$branch" --state open --json number --jq '.[0].number')" ]; then
             gh pr edit "$branch" --title "[Agent] build(deps): update shared packages" --body-file "$RUNNER_TEMP/body.md"
           else
-            gh pr create --head "$branch" --title "[Agent] build(deps): update shared packages" --body-file "$RUNNER_TEMP/body.md"
+            gh pr create --head "$branch" --base "${{ github.event.repository.default_branch }}" --title "[Agent] build(deps): update shared packages" --body-file "$RUNNER_TEMP/body.md"
           fi
