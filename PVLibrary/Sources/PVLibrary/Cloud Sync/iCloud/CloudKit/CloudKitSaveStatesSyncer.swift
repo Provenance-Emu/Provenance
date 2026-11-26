@@ -13,7 +13,7 @@ import PVSettings
 import Defaults
 
 /// Save states syncer for all OS's using CloudKit
-public class CloudKitSaveStatesSyncer: CloudKitSyncer, SaveStatesSyncing {
+public class CloudKitSaveStatesSyncer: CloudKitSyncer, SaveStatesSyncing { // swiftlint:disable:this type_body_length
     /// Track save-state records that need a deferred retry once ROM metadata is available.
     private var pendingRecordRetries = ConcurrentSet<String>()
     private let pendingROMMetadataFetches = PendingROMMetadataFetches()
