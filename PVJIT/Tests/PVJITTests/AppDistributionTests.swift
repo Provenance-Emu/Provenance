@@ -77,6 +77,15 @@ final class AppDistributionTests: XCTestCase {
         XCTAssertEqual(Set(store), [.testFlight, .appStore])
     }
 
+    func testPurchaseRulesIgnoreJailbreakMarkers() {
+        XCTAssertTrue(AppDistribution.isAppStorePurchaseInstall(inputs(receipt: "receipt")))
+        XCTAssertTrue(AppDistribution.isAppStorePurchaseInstall(inputs(receipt: "receipt", jailbreak: true)))
+        XCTAssertFalse(AppDistribution.isAppStorePurchaseInstall(inputs(receipt: "sandboxReceipt")))
+        XCTAssertFalse(AppDistribution.isAppStorePurchaseInstall(inputs(profile: true, getTaskAllow: true)))
+        XCTAssertFalse(AppDistribution.isAppStorePurchaseInstall(inputs(bundleID: "com.someone.provenance")))
+        XCTAssertFalse(AppDistribution.isAppStorePurchaseInstall(inputs(simulator: true)))
+    }
+
     // MARK: - JIT UI gate
 
     func testStoreInstallsShowNoJITUI() {

@@ -929,11 +929,10 @@ struct GameMoreInfoView: View {
         )
     }
 
-    /// JIT preference section — only shown for JIT-capable systems, on installs that show JIT UI.
+    /// JIT preference section — only shown for JIT-capable systems.
     @ViewBuilder
     private var jitPreferenceSection: some View {
-        if JITContextualPromptManager.showsJITUI,
-           let md5 = viewModel.pvGame?.md5Hash,
+        if let md5 = viewModel.pvGame?.md5Hash,
            let sysID = viewModel.pvGame?.systemIdentifier,
            JITCoreCapability.systemHasJITCapability(sysID) {
             JITGameSettingsView(

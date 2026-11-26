@@ -94,7 +94,19 @@ public extension AppDistribution {
     }
 
     /// This install's distribution. Decided once: none of the inputs change while the app runs.
-    static let current: AppDistribution = resolve(.current())
+    static let current: AppDistribution = resolve(currentInputs)
+
+    /// The facts ``current`` was decided from, read once at first use.
+    static let currentInputs: AppDistributionInputs = .current()
+
+    /// Whether the store installed this build and its purchase rules apply. Unlike
+    /// ``isStoreInstall`` this ignores jailbreak markers: a jailbreak makes JIT
+    /// possible, it does not make an App Store install a sideload.
+    static func isAppStorePurchaseInstall(_ inputs: AppDistributionInputs) -> Bool {
+        var stock = inputs
+        stock.hasJailbreakMarkers = false
+        return resolve(stock) == .appStore
+    }
 }
 
 public extension AppDistributionInputs {

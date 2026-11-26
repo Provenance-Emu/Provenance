@@ -30,7 +30,15 @@ struct JITGameSettingsView: View {
         preferences[gameMD5] ?? .automatic
     }
 
+    /// Empty on an install that shows no JIT UI (a stock TestFlight or App Store install).
+    @ViewBuilder
     var body: some View {
+        if JITContextualPromptManager.showsJITUI {
+            preferenceCard
+        }
+    }
+
+    private var preferenceCard: some View {
         VStack(alignment: .leading, spacing: 8) {
             // Header row
             HStack {
