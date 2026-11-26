@@ -103,7 +103,8 @@ jobs:
       matrix:
         platform: ${{ fromJSON(needs.plan.outputs.matrix) }}
     # A single cold archive has measured >100 min.
-    timeout-minutes: 300
+    # Plus up to 180 min queued behind another app's release (the lockf wait below).
+    timeout-minutes: 480
     env:
       # release.sh labels its inner, unformatted logs iOS/tvOS (not the matrix's ios/tvos).
       RAW_ARCHIVE_LOG: build/archives/xcodebuild-${{ matrix.platform == 'ios' && 'iOS' || 'tvOS' }}.log
@@ -334,7 +335,11 @@ jobs:
           security set-key-partition-list -S apple-tool:,apple:,codesign: \
             -s -k "$KEYCHAIN_PASSWORD" "$KEYCHAIN" >/dev/null
           # Prepend to the search list so xcodebuild finds the identities.
-          security list-keychains -d user -s "$KEYCHAIN" $(security list-keychains -d user | tr -d '"')
+          # The search list is shared by every job of this user on the machine. Change it only
+          # while holding the release lock (see "Archive and upload"), so it never moves under
+          # another app's codesign.
+          lockf -k -t 10800 /tmp/provenance-emu-release-signing.lock sh -c \
+            'security list-keychains -d user -s "$1" $(security list-keychains -d user | tr -d "\"")' sh "$KEYCHAIN"
           # Without -v this also lists rejected identities with the reason
           # (e.g. CSSMERR_TP_NOT_TRUSTED), which is what a failure needs.
           echo "Signing identities available:"
@@ -395,7 +400,14 @@ jobs:
           BUILD=$(date +%s)
           echo "build=$BUILD" >> "$GITHUB_OUTPUT"
           ARGS+=(--build "$BUILD")
-          ./Scripts/release/release.sh "${ARGS[@]}" 2>&1 | tee /tmp/testflight.log | "$FORMATTER"
+          # One release at a time on a build machine. Provenance, iCube and iFly each sign from
+          # their own temporary keychain but share the build user's security session, and
+          # overlapping archives failed codesign with errSecInternalComponent twice on 2026-11-25
+          # (Provenance runs 45581755556 and 45588055170, iFly 45582857351); the same commits
+          # passed when run alone. lockf(1) waits for any other app's archive or export to
+          # finish. All three workflows use this lock file name.
+          SIGNING_LOCK=/tmp/provenance-emu-release-signing.lock
+          lockf -k -t 10800 "$SIGNING_LOCK" ./Scripts/release/release.sh "${ARGS[@]}" 2>&1 | tee /tmp/testflight.log | "$FORMATTER"
 
       # release.sh prepared this platform's core slices; publish them to Provenance-Emu/core-slices
       # like build.yml does (a no-op when the asset exists; never fails the release).
@@ -506,7 +518,13 @@ jobs:
         if: always()
         run: |
           # Delete only this job's keychain; preserve peer jobs in the shared search list.
-          security delete-keychain "$RUNNER_TEMP/signing.keychain-db" 2>/dev/null || true
+          KEYCHAIN="$RUNNER_TEMP/signing.keychain-db"
+          # Lock it at once: that touches only this keychain. Deleting it rewrites the shared
+          # search list, so that waits for the release lock. If another app is still releasing
+          # after 10 minutes, the locked file is left for the runner, which clears RUNNER_TEMP
+          # before its next job.
+          security lock-keychain "$KEYCHAIN" 2>/dev/null || true
+          lockf -k -t 600 /tmp/provenance-emu-release-signing.lock security delete-keychain "$KEYCHAIN" 2>/dev/null || true
           # Persistent self-hosted runner: don't leave the archive log behind to be
           # mistaken for the next job's.
           rm -f /tmp/testflight.log "$RAW_ARCHIVE_LOG"
