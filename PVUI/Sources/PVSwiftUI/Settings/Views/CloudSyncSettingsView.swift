@@ -1538,6 +1538,15 @@ public struct CloudSyncSettingsView: View {
 
             VStack(spacing: 8) {
                 CloudSyncToggleRow(
+                    title: "Keep Replaced Files",
+                    subtitle: "Keep your copy for 30 days when an iCloud download replaces it",
+                    isOn: Binding(
+                        get: { Defaults[.cloudSyncSafetyNet] },
+                        set: { Defaults[.cloudSyncSafetyNet] = $0 }
+                    )
+                )
+
+                CloudSyncToggleRow(
                     title: "Auto Resolve Conflicts",
                     subtitle: "Automatically choose most recent version",
                     isOn: Binding(
