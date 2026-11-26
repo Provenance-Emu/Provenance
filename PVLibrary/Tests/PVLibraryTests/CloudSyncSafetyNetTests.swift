@@ -104,9 +104,14 @@ final class CloudSyncSafetyNetTests: XCTestCase {
         let entry = try XCTUnwrap(kept)
         try FileManager.default.copyItem(at: incoming, to: local)
 
-        try await trash.restore(entry, into: libraryRoot)
+        try await CloudSyncSafetyNet.restore(entry, libraryRoot: libraryRoot, trash: trash)
 
         XCTAssertEqual(try String(contentsOf: local, encoding: .utf8), "local state")
+        // The cloud copy the restore replaced is kept in turn, so the restore can be undone.
+        let listed = await trash.entries()
+        XCTAssertEqual(listed.count, 1)
+        let keptAgain = try XCTUnwrap(listed.first)
+        XCTAssertEqual(try String(contentsOf: keptAgain.url, encoding: .utf8), "cloud state")
     }
 
     func testFilesOlderThanTheRetentionArePurgedOnTheNextKeep() async throws {

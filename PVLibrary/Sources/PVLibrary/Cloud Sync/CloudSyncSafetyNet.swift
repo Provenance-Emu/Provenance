@@ -30,6 +30,9 @@ public enum CloudSyncSafetyNet {
 
     public static var isEnabled: Bool { Defaults[.cloudSyncSafetyNet] }
 
+    /// Smallest time between two trash entries for one path that keeps them apart.
+    private static let minimumStampGap: TimeInterval = 0.002
+
     // MARK: - Replaced files
 
     /// Outside the library folders, so no syncer scans it and Files never shows it. Apple TV can
@@ -67,7 +70,8 @@ public enum CloudSyncSafetyNet {
         replacedBy incomingURL: URL,
         libraryRoot: URL,
         trash: SyncTrash,
-        now: Date = Date()
+        now: Date = Date(),
+        purgesExpired: Bool = true
     ) async -> SyncTrashEntry? {
         let fileManager = FileManager.default
         guard fileManager.fileExists(atPath: localURL.path) else { return nil }
@@ -79,7 +83,9 @@ public enum CloudSyncSafetyNet {
         do {
             let entry = try await trash.move(fileAt: localURL, relativePath: relativePath, now: now)
             ILOG("Cloud sync kept the replaced copy of \(relativePath)")
-            _ = await trash.purge(olderThan: now.addingTimeInterval(-trashRetention))
+            if purgesExpired {
+                _ = await trash.purge(olderThan: now.addingTimeInterval(-trashRetention))
+            }
             return entry
         } catch {
             ELOG("Cloud sync could not keep the replaced copy of \(relativePath): \(error.localizedDescription)")
@@ -92,9 +98,31 @@ public enum CloudSyncSafetyNet {
         await sharedTrash.entries().map(ReplacedFile.init)
     }
 
-    /// Puts a replaced file back where it was, replacing what is there now.
+    /// Puts a kept file back where it was. The file it replaces is kept in turn, so a restore can
+    /// be undone. The restored file gets the current date, so the next sync uploads it.
     public static func restore(_ file: ReplacedFile) async throws {
-        try await sharedTrash.restore(file.entry, into: URL.documentsPath)
+        try await restore(file.entry, libraryRoot: URL.documentsPath, trash: sharedTrash)
+    }
+
+    static func restore(_ entry: SyncTrashEntry, libraryRoot: URL, trash: SyncTrash, now: Date = Date()) async throws {
+        let destination = libraryRoot.appendingPathComponent(entry.relativePath)
+        // The trash files entries by millisecond. A later stamp keeps the displaced file from
+        // landing on the entry being restored, and no purge runs while that entry is in use.
+        let displacedAt = max(now, entry.deletedAt.addingTimeInterval(Self.minimumStampGap))
+        await preserveLocalFile(
+            at: destination,
+            replacedBy: entry.url,
+            libraryRoot: libraryRoot,
+            trash: trash,
+            now: displacedAt,
+            purgesExpired: false
+        )
+        try await trash.restore(entry, into: libraryRoot, now: now)
+    }
+
+    /// Removes a kept file for good.
+    public static func delete(_ file: ReplacedFile) async throws {
+        try await sharedTrash.delete(file.entry)
     }
 
     /// A file the safety net kept. Wraps the package's type so callers need not import it.

@@ -47,6 +47,7 @@ public struct CloudSyncSettingsView: View {
     @State private var isResetting = false
     @State private var selectedTab = 0
     @State internal var showDiagnostics = false
+    @State private var showKeptFiles = false
 
     @StateObject internal var viewModel = UnifiedCloudSyncViewModel()
     /// How often the per-type pending counts refresh while a sync runs.
@@ -88,6 +89,19 @@ public struct CloudSyncSettingsView: View {
         }
         .onAppear {
             viewModel.loadSyncInfo()
+        }
+        .sheet(isPresented: $showKeptFiles) {
+            NavigationStack {
+                CloudSyncKeptFilesView()
+                    .toolbar {
+                        ToolbarItem(placement: .confirmationAction) {
+                            Button("Done") { showKeptFiles = false }
+                        }
+                    }
+            }
+            #if os(tvOS)
+            .settingsSheetDetachedFromSubpageDepth()
+            #endif
         }
         .sheet(isPresented: $showDiagnostics) {
             NavigationStack {
@@ -1545,6 +1559,19 @@ public struct CloudSyncSettingsView: View {
                         set: { Defaults[.cloudSyncSafetyNet] = $0 }
                     )
                 )
+
+                Button {
+                    showKeptFiles = true
+                } label: {
+                    HStack {
+                        Image(systemName: "clock.arrow.circlepath")
+                        Text("Replaced Files")
+                        Spacer()
+                        Image(systemName: "chevron.right")
+                    }
+                    .cloudSyncCard()
+                }
+                .buttonStyle(.plain)
 
                 CloudSyncToggleRow(
                     title: "Auto Resolve Conflicts",
