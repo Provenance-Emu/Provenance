@@ -13,9 +13,9 @@ import PVLogging
 import PVSupport
 
 public extension Defaults.Keys {
-    /// Keeps the local copy of a file that a cloud download is about to replace, and uses the
-    /// shared retry policy. Off by default until it has run against real libraries.
-    static let cloudSyncSafetyNet = Key<Bool>("cloudSyncSafetyNet", default: false)
+    /// Keeps the local copy of a file for 30 days when an iCloud download replaces it. On by
+    /// default: a save lost to an overwrite cannot be got back any other way.
+    static let cloudSyncSafetyNet = Key<Bool>("cloudSyncSafetyNet", default: true)
 }
 
 /// The only file in PVLibrary that imports PVCloudSync. That module's `SyncProvider` and
@@ -49,7 +49,7 @@ public enum CloudSyncSafetyNet {
 
     private static let sharedTrash = SyncTrash(rootURL: trashRootURL)
 
-    /// Call before a downloaded file replaces `localURL`. When the safety net is on and the two
+    /// Call before a downloaded file replaces `localURL`. When the setting is on and the two
     /// files differ, the local one is moved into the trash; the caller's own "remove if it
     /// exists" then finds nothing. A failure is logged and the download goes ahead as before.
     public static func preserveLocalFile(at localURL: URL, replacedBy incomingURL: URL) async {

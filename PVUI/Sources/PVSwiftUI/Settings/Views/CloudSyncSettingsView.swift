@@ -1553,7 +1553,7 @@ public struct CloudSyncSettingsView: View {
             VStack(spacing: 8) {
                 CloudSyncToggleRow(
                     title: "Keep Replaced Files",
-                    subtitle: "Keep your copy for 30 days when an iCloud download replaces it",
+                    subtitle: "When a newer save, screenshot or skin from iCloud replaces yours, your copy is kept on this device for 30 days",
                     isOn: Binding(
                         get: { Defaults[.cloudSyncSafetyNet] },
                         set: { Defaults[.cloudSyncSafetyNet] = $0 }
@@ -1565,7 +1565,12 @@ public struct CloudSyncSettingsView: View {
                 } label: {
                     HStack {
                         Image(systemName: "clock.arrow.circlepath")
-                        Text("Replaced Files")
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text("Replaced Files")
+                            Text("See the copies that were kept, and put one back")
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
+                        }
                         Spacer()
                         Image(systemName: "chevron.right")
                     }

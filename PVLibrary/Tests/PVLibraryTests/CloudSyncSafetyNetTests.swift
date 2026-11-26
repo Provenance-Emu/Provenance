@@ -1,5 +1,6 @@
 import XCTest
 import CloudKit
+import Defaults
 import PVCloudSync
 @testable import PVLibrary
 
@@ -30,6 +31,10 @@ final class CloudSyncSafetyNetTests: XCTestCase {
     }
 
     // MARK: - Replaced files
+
+    func testKeepingReplacedFilesIsOnUnlessTheUserTurnsItOff() {
+        XCTAssertTrue(Defaults.Keys.cloudSyncSafetyNet.defaultValue)
+    }
 
     func testADifferentLocalFileIsMovedToTheTrashUnderItsLibraryPath() async throws {
         let local = libraryRoot.appendingPathComponent("Battery States/SNES/Game.srm")

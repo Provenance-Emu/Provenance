@@ -26,32 +26,11 @@ extension CKError {
             return false
         }
     }
-    
-    /// Get a recommended retry delay for this error
-    public var recommendedRetryDelay: TimeInterval {
-        if let retryAfter = self.userInfo[CKErrorRetryAfterKey] as? TimeInterval {
-            return retryAfter
-        }
-        
-        // Default delays based on error type
-        switch self.code {
-        case .requestRateLimited:
-            return 5.0
-        case .zoneBusy:
-            return 3.0
-        case .serviceUnavailable:
-            return 2.0
-        case .networkFailure, .networkUnavailable:
-            return 1.0
-        default:
-            return 1.0
-        }
-    }
 }
 
 /// CloudKit retry strategy for handling transient errors
 public enum CloudKitRetryStrategy {
-    /// Retry with exponential backoff
+    /// Retry as `SyncRetryPolicy` (PVCloudSync) decides
     /// - Parameters:
     ///   - operation: The CloudKit operation to retry
     ///   - maxRetries: Maximum number of retry attempts
@@ -79,52 +58,22 @@ public enum CloudKitRetryStrategy {
             } catch let error as CKError {
                 lastError = error
                 
-                if CloudSyncSafetyNet.isEnabled {
-                    // The shared policy: the server's retry-after when it gives one, otherwise
-                    // exponential backoff, and no retry for errors that cannot succeed.
-                    guard let delay = CloudSyncSafetyNet.retryDelay(
-                        after: error,
-                        attempt: retryCount + 1,
-                        maximumAttempts: maxRetries
-                    ) else {
-                        ELOG("CloudKit operation not retried: \(error.localizedDescription)")
-                        throw error
-                    }
-                    retryCount += 1
-                    DLOG("Retrying CloudKit operation in \(delay)s (\(retryCount)/\(maxRetries)): \(error.localizedDescription)")
-                    Task { @MainActor in
-                        progressTracker?.currentOperation = "Waiting to retry... (\(Int(delay))s)"
-                    }
-                    try await Task.sleep(nanoseconds: UInt64(delay * 1_000_000_000))
-                    continue
-                }
-
-                // Only retry for specific error codes that are recoverable
-                if error.isRecoverableCloudKitError {
-                    retryCount += 1
-                    
-                    // Log the retry attempt
-                    DLOG("""
-                         Retrying CloudKit operation after error: \(error.localizedDescription)
-                         Retry \(retryCount)/\(maxRetries)
-                         """)
-                    
-                    // Use the recommended delay or exponential backoff
-                    let delay = error.recommendedRetryDelay
-                    
-                    // Update progress tracker if available
-                    Task { @MainActor in
-                        progressTracker?.currentOperation = "Waiting to retry... (\(Int(delay))s)"
-                    }
-                    
-                    // Wait before retrying
-                    try await Task.sleep(nanoseconds: UInt64(delay * 1_000_000_000))
-                    continue
-                } else {
-                    // Non-recoverable error
-                    ELOG("Non-recoverable CloudKit error: \(error.localizedDescription)")
+                // The shared policy: the server's retry-after when it gives one, otherwise
+                // exponential backoff, and no retry for errors that cannot succeed.
+                guard let delay = CloudSyncSafetyNet.retryDelay(
+                    after: error,
+                    attempt: retryCount + 1,
+                    maximumAttempts: maxRetries
+                ) else {
+                    ELOG("CloudKit operation not retried: \(error.localizedDescription)")
                     throw error
                 }
+                retryCount += 1
+                DLOG("Retrying CloudKit operation in \(delay)s (\(retryCount)/\(maxRetries)): \(error.localizedDescription)")
+                Task { @MainActor in
+                    progressTracker?.currentOperation = "Waiting to retry... (\(Int(delay))s)"
+                }
+                try await Task.sleep(nanoseconds: UInt64(delay * 1_000_000_000))
             } catch {
                 // Other non-CloudKit error
                 ELOG("Non-CloudKit error: \(error.localizedDescription)")
