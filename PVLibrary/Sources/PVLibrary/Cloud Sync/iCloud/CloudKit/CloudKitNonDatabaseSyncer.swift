@@ -512,6 +512,7 @@ public class CloudKitNonDatabaseSyncer: CloudKitSyncer, NonDatabaseFileSyncing {
                 let parentURL = fileURL.deletingLastPathComponent()
                 try FileManager.default.createDirectory(at: parentURL, withIntermediateDirectories: true, attributes: nil)
 
+                await CloudSyncSafetyNet.preserveLocalFile(at: fileURL, replacedBy: assetURL)
                 if FileManager.default.fileExists(atPath: fileURL.path) {
                     try await FileManager.default.removeItem(at: fileURL)
                 }
@@ -572,6 +573,7 @@ public class CloudKitNonDatabaseSyncer: CloudKitSyncer, NonDatabaseFileSyncing {
                     let parentURL = fileURL.deletingLastPathComponent()
                     try FileManager.default.createDirectory(at: parentURL, withIntermediateDirectories: true, attributes: nil)
 
+                    await CloudSyncSafetyNet.preserveLocalFile(at: fileURL, replacedBy: assetURL)
                     if FileManager.default.fileExists(atPath: fileURL.path) {
                         try await FileManager.default.removeItem(at: fileURL)
                     }

@@ -79,6 +79,26 @@ public enum CloudKitRetryStrategy {
             } catch let error as CKError {
                 lastError = error
                 
+                if CloudSyncSafetyNet.isEnabled {
+                    // The shared policy: the server's retry-after when it gives one, otherwise
+                    // exponential backoff, and no retry for errors that cannot succeed.
+                    guard let delay = CloudSyncSafetyNet.retryDelay(
+                        after: error,
+                        attempt: retryCount + 1,
+                        maximumAttempts: maxRetries
+                    ) else {
+                        ELOG("CloudKit operation not retried: \(error.localizedDescription)")
+                        throw error
+                    }
+                    retryCount += 1
+                    DLOG("Retrying CloudKit operation in \(delay)s (\(retryCount)/\(maxRetries)): \(error.localizedDescription)")
+                    Task { @MainActor in
+                        progressTracker?.currentOperation = "Waiting to retry... (\(Int(delay))s)"
+                    }
+                    try await Task.sleep(nanoseconds: UInt64(delay * 1_000_000_000))
+                    continue
+                }
+
                 // Only retry for specific error codes that are recoverable
                 if error.isRecoverableCloudKitError {
                     retryCount += 1

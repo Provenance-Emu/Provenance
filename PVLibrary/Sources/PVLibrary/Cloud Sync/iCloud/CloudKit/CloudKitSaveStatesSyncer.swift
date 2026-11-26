@@ -729,6 +729,7 @@ public class CloudKitSaveStatesSyncer: CloudKitSyncer, SaveStatesSyncing {
                         try FileManager.default.createDirectory(at: directoryURL, withIntermediateDirectories: true)
 
                         // Copy file from asset to local storage
+                        await CloudSyncSafetyNet.preserveLocalFile(at: destinationURL, replacedBy: fileURL)
                         if FileManager.default.fileExists(atPath: destinationURL.path) {
                             try await FileManager.default.removeItem(at: destinationURL)
                         }
@@ -817,6 +818,7 @@ public class CloudKitSaveStatesSyncer: CloudKitSyncer, SaveStatesSyncing {
                         try FileManager.default.createDirectory(at: directoryURL, withIntermediateDirectories: true)
 
                         // Copy file from asset to local storage
+                        await CloudSyncSafetyNet.preserveLocalFile(at: destinationURL, replacedBy: fileURL)
                         if FileManager.default.fileExists(atPath: destinationURL.path) {
                             try await FileManager.default.removeItem(at: destinationURL)
                         }
