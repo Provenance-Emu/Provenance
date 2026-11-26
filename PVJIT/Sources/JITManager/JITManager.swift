@@ -375,56 +375,15 @@ public final class DOLJitManager {
 
     // MARK: - Distribution Detection
 
-    /// Returns `true` only when the build was compiled for App Store distribution
-    /// **and** is genuinely running as an official App Store install (not sideloaded or resigned).
+    /// Returns `true` for a TestFlight or App Store install on a stock device, where no
+    /// tool can enable JIT and sideloading tools must not be named.
     ///
-    /// GitHub CI produces App Store–flavored builds (`APP_STORE` define) that users can
-    /// sideload by resigning the IPA — changing the bundle ID or injecting the
-    /// `com.apple.developer.kernel.allow-jit` entitlement in the process.  This function
-    /// detects that at runtime so the JIT UI can show sideloading-tool suggestions even
-    /// in App Store–compiled builds when the build has clearly been modified.
-    ///
-    /// Detection heuristics (all must pass to return `true`):
-    /// - Compiled with `APP_STORE` define (compile-time guard)
-    /// - Bundle ID still has the official `org.provenance-emu.provenance` prefix
-    /// - The `com.apple.developer.kernel.allow-jit` entitlement is **absent** (a resigned
-    ///   IPA would have added it)
-    /// - No `embedded.mobileprovision` present (App Store strips this; sideloaders keep it)
-    ///
-    /// - Returns: `true` for a genuine App Store install, `false` for any dev / sideload build.
+    /// A re-signed or sideloaded copy of the same build (it carries a provisioning
+    /// profile or a changed bundle id), a development build, and a jailbroken or
+    /// TrollStore device all return `false`. See ``AppDistribution/resolve(_:)``.
     public static func isGenuinelyAppStoreDistributed() -> Bool {
-        #if !APP_STORE
-        return false
-        #else
-        return _cachedIsGenuinelyAppStoreDistributed
-        #endif
+        AppDistribution.current.isStoreInstall
     }
-
-    #if APP_STORE
-    /// Cached once — bundle ID, entitlements, and provisioning profile layout do not change at runtime.
-    private static let _cachedIsGenuinelyAppStoreDistributed: Bool = {
-        guard let bundleID = Bundle.main.bundleIdentifier,
-              bundleID.hasPrefix("org.provenance-emu.provenance") else {
-            return false
-        }
-        #if false
-        if #available(iOS 13.4, tvOS 13.4, *) {
-            if HasBooleanEntitlement("com.apple.developer.kernel.allow-jit") {
-                return false
-            }
-        }
-        if Bundle.main.url(forResource: "embedded", withExtension: "mobileprovision") != nil {
-            return false
-        }
-        #endif
-        // If the bundle ID is our official one, this is a genuine App Store or
-        // TestFlight build — JIT is never available through sideloading tools
-        // because sideloaders must change the bundle ID. Skip the Mach-O code
-        // signature parsing which crashes on some TestFlight/App Store signed
-        // binaries (objc_retain on garbage from parsedCodeSignature()).
-        return true
-    }()
-    #endif
 
     // MARK: - iOS 26 W×X Detection
 

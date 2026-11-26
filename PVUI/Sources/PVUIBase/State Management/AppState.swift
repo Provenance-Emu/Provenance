@@ -21,6 +21,9 @@ import RxSwift
 import CoreSpotlight
 #endif
 import Defaults
+#if canImport(JITManager)
+import JITManager
+#endif
 
 
 // Main AppState class
@@ -185,58 +188,59 @@ public class AppState: ObservableObject {
     }
 
     /// Distribution channel of the currently running install.
-    public enum DistributionChannel: String {
+    public enum DistributionChannel: String, CaseIterable, Sendable {
         case debug
         case simulator
         case sideload
         case testFlight
         case appStore
-    }
 
-    /// Returns true when the app bundle includes an embedded provisioning profile.
-    ///
-    /// TestFlight and sideloaded installs usually include this file, while App Store
-    /// installs strip it from the final bundle.
-    public var hasEmbeddedProvisioningProfile: Bool {
-        Bundle.main.url(forResource: "embedded", withExtension: "mobileprovision") != nil
-    }
-
-    /// Returns true when an official App Store flavor build is running via TestFlight.
-    ///
-    /// TestFlight installs use a `sandboxReceipt`.
-    public var isTestFlight: Bool {
-        guard isAppStore else { return false }
-        #if targetEnvironment(simulator)
-        return false
-        #else
-        return Bundle.main.appStoreReceiptURL?.lastPathComponent == "sandboxReceipt"
+        #if canImport(JITManager)
+        /// Pure mapping from the one install decision (`AppDistribution`, PVJIT) that
+        /// the JIT gate also uses. A debug build is `.debug` wherever it runs.
+        public static func resolve(distribution: AppDistribution, isDebugBuild: Bool) -> DistributionChannel {
+            if isDebugBuild { return .debug }
+            switch distribution {
+            case .simulator: return .simulator
+            case .development, .sideloaded, .jailbroken: return .sideload
+            case .testFlight: return .testFlight
+            case .appStore: return .appStore
+            }
+        }
         #endif
     }
 
-    /// Returns true only for official App Store builds installed from the App Store.
-    ///
-    /// This intentionally excludes TestFlight and sideloaded installs of official
-    /// bundle IDs so internal/debug settings can remain visible there.
-    public var isInstalledFromAppStore: Bool {
-        guard isAppStore else { return false }
-        #if targetEnvironment(simulator)
-        return false
+    /// Returns true for a TestFlight install on a stock device.
+    public var isTestFlight: Bool {
+        #if canImport(JITManager)
+        return AppDistribution.current == .testFlight
         #else
-        return !isTestFlight && !hasEmbeddedProvisioningProfile
+        return false
+        #endif
+    }
+
+    /// Returns true only for builds installed from the App Store, where its purchase
+    /// rules apply. TestFlight, development and sideloaded installs are excluded; an
+    /// App Store install on a jailbroken device is still an App Store install here.
+    public var isInstalledFromAppStore: Bool {
+        #if canImport(JITManager)
+        return AppDistribution.isAppStorePurchaseInstall(AppDistribution.currentInputs)
+        #else
+        return false
         #endif
     }
 
     /// Returns the effective distribution channel used for install-specific behavior.
     public var distributionChannel: DistributionChannel {
+        #if canImport(JITManager)
         #if DEBUG
-        return .debug
-        #elseif targetEnvironment(simulator)
-        return .simulator
+        let isDebugBuild = true
         #else
-        guard isAppStore else { return .sideload }
-        if isTestFlight { return .testFlight }
-        if hasEmbeddedProvisioningProfile { return .sideload }
-        return .appStore
+        let isDebugBuild = false
+        #endif
+        return DistributionChannel.resolve(distribution: .current, isDebugBuild: isDebugBuild)
+        #else
+        return .sideload
         #endif
     }
 

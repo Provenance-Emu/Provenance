@@ -7,7 +7,7 @@
 
 import XCTest
 @testable import PVJIT
-import JITManager
+@testable import JITManager
 
 final class JITSourceTests: XCTestCase {
 

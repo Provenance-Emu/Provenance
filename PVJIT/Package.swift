@@ -59,7 +59,6 @@ let package = Package(
             // this needs to be worked into CI or replaced with all runtime checks
             swiftSettings: [
                 .define("_USE_ALTKIT", .when(platforms: [.iOS])),
-                .define("APP_STORE"),
                 .define("NONJAILBROKEN"),
             ],
             linkerSettings: [
@@ -92,7 +91,6 @@ let package = Package(
             ],
             swiftSettings: [
                 .define("_USE_ALTKIT", .when(platforms: [.iOS])),
-                .define("APP_STORE"),
             ],
             linkerSettings: [
                 .linkedFramework("Security")
