@@ -81,4 +81,45 @@ final class RealmDatabaseRelocationTests: XCTestCase {
         XCTAssertNil(RealmConfiguration.moveDatabase(from: [root.appendingPathComponent("none.realm")], to: destination))
         XCTAssertFalse(FileManager.default.fileExists(atPath: destination.path))
     }
+
+    // MARK: - Which file is opened
+
+    func testOpensTheDestinationOnceADatabaseIsThere() throws {
+        let source = try makeFile("group/default.realm", contents: "group")
+        let destination = try makeFile("caches/Database/default.realm", contents: "current")
+
+        XCTAssertEqual(RealmConfiguration.databaseURL(preferring: destination, over: [source]), destination)
+    }
+
+    func testOpensTheDestinationOnAFreshInstall() {
+        let destination = root.appendingPathComponent("caches/Database/default.realm")
+        let source = root.appendingPathComponent("group/default.realm")
+
+        XCTAssertEqual(RealmConfiguration.databaseURL(preferring: destination, over: [source]), destination)
+    }
+
+    func testOpensTheOldDatabaseInPlaceWhenItWasNotMoved() throws {
+        let missing = root.appendingPathComponent("group/default.realm")
+        let legacy = try makeFile("documents/default.realm", contents: "legacy")
+        let destination = root.appendingPathComponent("caches/Database/default.realm")
+
+        XCTAssertEqual(RealmConfiguration.databaseURL(preferring: destination, over: [missing, legacy]), legacy)
+    }
+
+    func testAFailedMoveIsTriedAgainOnTheNextLaunch() throws {
+        let source = try makeFile("group/default.realm", contents: "group")
+        // A file where the destination's folder should be makes the first move fail.
+        let blocker = try makeFile("caches/Database", contents: "in the way")
+        let destination = blocker.appendingPathComponent("default.realm")
+
+        XCTAssertNil(RealmConfiguration.moveDatabase(from: [source], to: destination))
+        XCTAssertEqual(RealmConfiguration.databaseURL(preferring: destination, over: [source]), source)
+        XCTAssertEqual(try contents(of: source), "group")
+
+        try FileManager.default.removeItem(at: blocker)
+
+        XCTAssertEqual(RealmConfiguration.moveDatabase(from: [source], to: destination), source)
+        XCTAssertEqual(RealmConfiguration.databaseURL(preferring: destination, over: [source]), destination)
+        XCTAssertEqual(try contents(of: destination), "group")
+    }
 }
