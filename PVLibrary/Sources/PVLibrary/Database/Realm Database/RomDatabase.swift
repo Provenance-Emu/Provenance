@@ -393,10 +393,26 @@ public extension RealmConfiguration {
     ///         touches `default.realm`.
     public static var realmFileURL: URL {
         #if os(tvOS)
-        return privateRealmFileURL
+        return databaseURL(preferring: privateRealmFileURL, over: tvOSLegacyDatabaseURLs)
         #else
         return realmFileURLInSharedContainer
         #endif
+    }
+
+    /// Where an older tvOS build may have left the database, newest location first.
+    internal static var tvOSLegacyDatabaseURLs: [URL] {
+        [realmFileURLInSharedContainer, legacyRealmFileURL]
+    }
+
+    /// The database to open: `destination`, unless it holds none and one of `sources` still does.
+    ///
+    /// A move that failed leaves the library at its old place. Opening `destination` then would
+    /// make Realm create an empty database there, and `moveDatabase` never replaces a file, so
+    /// the library would stay out of sight for good. Opening the old file in place keeps the
+    /// library on screen and leaves `destination` free, so the next launch tries the move again.
+    internal static func databaseURL(preferring destination: URL, over sources: [URL], fileManager: FileManager = .default) -> URL {
+        if fileManager.fileExists(atPath: destination.path) { return destination }
+        return sources.first(where: { fileManager.fileExists(atPath: $0.path) }) ?? destination
     }
 
     /// The database's place in the App Group container, or the legacy location without one.
@@ -535,7 +551,9 @@ public extension RealmConfiguration {
     internal static func relocateLegacyDatabaseIfNeeded() {
         #if os(tvOS)
         // Out of the App Group (see `privateRealmFileURL`); an older build's copy comes along.
-        moveDatabase(from: [realmFileURLInSharedContainer, legacyRealmFileURL], to: privateRealmFileURL)
+        // A failed move is tried again on the next launch: `realmFileURL` opens the old file in
+        // place for this run instead of letting Realm create an empty one at the new path.
+        moveDatabase(from: tvOSLegacyDatabaseURLs, to: privateRealmFileURL)
         // Realm creates the file but not its folder; a fresh install has neither.
         try? FileManager.default.createDirectory(at: privateRealmFileURL.deletingLastPathComponent(), withIntermediateDirectories: true)
         #else
