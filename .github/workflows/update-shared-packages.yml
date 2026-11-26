@@ -1,0 +1,73 @@
+name: Update shared packages
+
+# Moves this app onto the latest release of each shared Provenance-Emu package and
+# opens (or updates) one pull request. How it works:
+# https://github.com/Provenance-Emu/.github/blob/main/docs/xcframework-releases.md
+on:
+  schedule:
+    - cron: '17 * * * *'   # hourly; a run with nothing to bump takes under a minute
+  repository_dispatch:
+    types: [shared-package-released]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: update-shared-packages
+  cancel-in-progress: false
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+
+      - uses: actions/checkout@v4
+        with:
+          # A pull request opened with the default token does not start CI.
+          token: ${{ secrets.SHARED_PACKAGES_TOKEN || github.token }}
+          submodules: false
+          lfs: false
+
+      - name: Bump to the latest releases
+        id: bump
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          curl -fsSL https://raw.githubusercontent.com/Provenance-Emu/.github/main/scripts/bump-shared-packages.py \
+            -o "$RUNNER_TEMP/bump-shared-packages.py"
+          python3 "$RUNNER_TEMP/bump-shared-packages.py" --summary "$RUNNER_TEMP/summary.md"
+
+      - name: Open or update the pull request
+        if: steps.bump.outputs.changed == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.SHARED_PACKAGES_TOKEN || github.token }}
+          PACKAGES: ${{ steps.bump.outputs.packages }}
+        run: |
+          branch=deps/shared-packages
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git checkout -B "$branch"
+          git commit -am "build(deps): $PACKAGES"
+          # Same content as the branch already has: leave it, so CI does not rerun every hour.
+          # The pull request is still opened or updated below: an earlier run may have pushed
+          # the branch and then failed, or the pull request may have been closed.
+          if git fetch --quiet --depth 1 origin "$branch" 2>/dev/null && git diff --quiet FETCH_HEAD HEAD; then
+            echo "The pull request branch is already up to date"
+          else
+            # The branch belongs to this workflow and is rebuilt from the default branch each run.
+            git push --force origin "$branch"
+          fi
+          {
+            echo "Shared packages with a newer release than this app asks for."
+            echo
+            cat "$RUNNER_TEMP/summary.md"
+            echo "Opened by the \`Update shared packages\` workflow; it rewrites this branch while the PR is open. Nothing was built before opening it: CI on this PR is the check."
+          } > "$RUNNER_TEMP/body.md"
+          if [ -n "$(gh pr list --head "$branch" --state open --json number --jq '.[0].number')" ]; then
+            gh pr edit "$branch" --title "[Agent] build(deps): update shared packages" --body-file "$RUNNER_TEMP/body.md"
+          else
+            gh pr create --head "$branch" --base "${{ github.event.repository.default_branch }}" --title "[Agent] build(deps): update shared packages" --body-file "$RUNNER_TEMP/body.md"
+          fi
