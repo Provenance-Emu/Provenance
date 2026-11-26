@@ -1568,6 +1568,7 @@ public class CloudKitSyncer: SyncProvider { // swiftlint:disable:this type_body_
                         await progressTracker.updateProgress(0.5)
 
                         // Remove existing file if needed
+                        await CloudSyncSafetyNet.preserveLocalFile(at: destinationURL, replacedBy: fileURL)
                         if FileManager.default.fileExists(atPath: destinationURL.path) {
                             DLOG("Removing existing file at: \(destinationURL.path)")
                             try await FileManager.default.removeItem(at: destinationURL)

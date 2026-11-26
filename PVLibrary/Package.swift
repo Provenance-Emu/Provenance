@@ -65,6 +65,8 @@ let package = Package(
         + [
         .package(url: "https://github.com/Provenance-Emu/PVSystems.git", from: "1.0.3"),
         .package(url: "https://github.com/Provenance-Emu/PVLookup.git", from: "1.1.0"),
+        // Only CloudSyncSafetyNet.swift imports it: its SyncProvider and SyncStatus share names with PVLibrary's.
+        .package(url: "https://github.com/Provenance-Emu/PVCloudSync.git", from: "1.1.2"),
         .package(url: "https://github.com/ReactiveX/RxSwift.git",
                  .upToNextMajor(from: "6.7.1")),
         .package(url: "https://github.com/RxSwiftCommunity/RxRealm.git",
@@ -105,6 +107,7 @@ let package = Package(
             name: "PVLibrary",
             dependencies: [
                 .product(name: "PVSystems", package: "PVSystems"),
+                .product(name: "PVCloudSync", package: "PVCloudSync"),
                 "PVSupport",
                 "PLzmaSDK",
                 "SWCompression",

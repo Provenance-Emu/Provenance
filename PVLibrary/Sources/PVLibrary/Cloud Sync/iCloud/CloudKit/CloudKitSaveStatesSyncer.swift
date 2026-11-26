@@ -13,7 +13,7 @@ import PVSettings
 import Defaults
 
 /// Save states syncer for all OS's using CloudKit
-public class CloudKitSaveStatesSyncer: CloudKitSyncer, SaveStatesSyncing {
+public class CloudKitSaveStatesSyncer: CloudKitSyncer, SaveStatesSyncing { // swiftlint:disable:this type_body_length
     /// Track save-state records that need a deferred retry once ROM metadata is available.
     private var pendingRecordRetries = ConcurrentSet<String>()
     private let pendingROMMetadataFetches = PendingROMMetadataFetches()
@@ -729,6 +729,7 @@ public class CloudKitSaveStatesSyncer: CloudKitSyncer, SaveStatesSyncing {
                         try FileManager.default.createDirectory(at: directoryURL, withIntermediateDirectories: true)
 
                         // Copy file from asset to local storage
+                        await CloudSyncSafetyNet.preserveLocalFile(at: destinationURL, replacedBy: fileURL)
                         if FileManager.default.fileExists(atPath: destinationURL.path) {
                             try await FileManager.default.removeItem(at: destinationURL)
                         }
@@ -817,6 +818,7 @@ public class CloudKitSaveStatesSyncer: CloudKitSyncer, SaveStatesSyncing {
                         try FileManager.default.createDirectory(at: directoryURL, withIntermediateDirectories: true)
 
                         // Copy file from asset to local storage
+                        await CloudSyncSafetyNet.preserveLocalFile(at: destinationURL, replacedBy: fileURL)
                         if FileManager.default.fileExists(atPath: destinationURL.path) {
                             try await FileManager.default.removeItem(at: destinationURL)
                         }

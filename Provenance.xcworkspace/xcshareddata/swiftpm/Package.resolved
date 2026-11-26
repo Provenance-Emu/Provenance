@@ -171,6 +171,15 @@
       }
     },
     {
+      "identity" : "pvcloudsync",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/Provenance-Emu/PVCloudSync.git",
+      "state" : {
+        "revision" : "db7545228eed30a272f0c75013af9eac481d1a86",
+        "version" : "1.1.2"
+      }
+    },
+    {
       "identity" : "pvdependencies",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Provenance-Emu/PVDependencies.git",
@@ -222,6 +231,15 @@
       "state" : {
         "revision" : "c86d924b5efb1590d4e7ee4774ea8f07937d415e",
         "version" : "0.3.1"
+      }
+    },
+    {
+      "identity" : "pvsyncrules",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/Provenance-Emu/PVSyncRules.git",
+      "state" : {
+        "revision" : "157ccd5958778aba12d8f966c0d2bcd4ac98c508",
+        "version" : "1.0.5"
       }
     },
     {
