@@ -42,7 +42,14 @@ struct GameplayBezelOptionsView: View {
             .navigationDestination(for: Destination.self) { destination in
                 switch destination {
                 case .global:
-                    TVBezelPickerView(selection: Binding(get: { bezel }, set: { bezel = $0 ?? "" }),
+                    // Over a running game the TV picked is the TV that shows: the game's pin goes,
+                    // as it does for Keep in the strip.
+                    TVBezelPickerView(selection: Binding(get: { bezel }, set: { choice in
+                        BezelChoice.chooseForEveryGame(choice ?? ExternalDisplayBezelRules.noBezelID,
+                                                       playing: emulatorVC.shaderGameMD5,
+                                                       systemID: emulatorVC.shaderSystemID,
+                                                       systemSuitsTV: emulatorVC.systemSuitsTV)
+                    }),
                                       offersSystemAutomatic: true,
                                       controllerCommands: commands?.bezelCommands)
                 case .game:

@@ -422,16 +422,18 @@ extension GameExternalOutputView {
         let maxPixel = max(drawableSize.width, drawableSize.height)
         // No size yet: `layoutSubviews` asks again once the drawable has one.
         guard maxPixel > 0 else { return }
-        let key = "\(bezel.id)|portrait|\(Int(maxPixel))|\(Int(canvas.width))x\(Int(canvas.height))|\(shape.rawValue)"
+        // The set hangs from the top of the screen: it goes below a notch or Dynamic Island.
+        let topInset = bounds.width > 0 ? safeAreaTopInWindow * canvas.width / bounds.width : 0
+        let key = "\(bezel.id)|portrait|\(Int(maxPixel))|\(Int(canvas.width))x\(Int(canvas.height))|\(shape.rawValue)|\(Int(topInset))"
         guard key != bezelKey else { return }
         bezelKey = key
         bezelLoad?.cancel()
         bezelLoadInFlight = true
         bezelLoad = Task { @MainActor [weak self] in
             let drawn = await Task.detached(priority: .userInitiated) { () -> (image: UIImage, tube: CGRect)? in
-                guard let tube = TVBezelPlainArtwork.tubeRect(of: bezel, canvas: canvas, shape: shape),
+                guard let tube = TVBezelPlainArtwork.tubeRect(of: bezel, canvas: canvas, shape: shape, topInset: topInset),
                       let image = TVBezelPlainArtwork.image(for: bezel, maxPixel: maxPixel, canvas: canvas, shape: shape,
-                                                            cutsOutTube: true) else { return nil }
+                                                            topInset: topInset, cutsOutTube: true) else { return nil }
                 return (UIImage(cgImage: image), tube)
             }.value
             guard let self, self.bezelKey == key else { return }
@@ -449,6 +451,13 @@ extension GameExternalOutputView {
             }
             didChange()
         }
+    }
+
+    /// How much of this view's top the window's safe area covers, in points. The view's own
+    /// inset is not used: the GPU view it sits in is laid out by frame, not by safe area.
+    private var safeAreaTopInWindow: CGFloat {
+        guard let window else { return 0 }
+        return max(0, window.safeAreaInsets.top - convert(bounds.origin, to: window).y)
     }
 
     /// Tells the view the picture's shape while a TV shows. A core may report its shape only

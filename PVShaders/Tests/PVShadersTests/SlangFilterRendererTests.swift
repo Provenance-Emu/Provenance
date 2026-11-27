@@ -33,6 +33,44 @@ struct SlangFilterRendererTests {
         #expect(pixel(60) == 0)
     }
 
+    @Test("A load that failed with one set of textures does not stop the preset loading with another")
+    func failureIsPerTextures() async throws {
+        let device = try #require(MTLCreateSystemDefaultDevice())
+        let fixture = try #require(Bundle.module.resourceURL).appendingPathComponent("Fixtures/nearest")
+        let missing = ShaderCatalogEntry(id: .slang("test/missing"), name: "missing", category: "test", passes: 1,
+                                         historyFrames: 0, usesFeedback: false, lutCount: 0, parameters: [],
+                                         directory: fixture.appendingPathComponent("no-such-preset"))
+        let renderer = SlangFilterRenderer(device: device)
+        let first = ShaderTextureOverrides(key: "tv-a", textures: [:])
+        let second = ShaderTextureOverrides(key: "tv-b", textures: [:])
+        #expect(!renderer.prepare(missing, textures: first))
+        for _ in 0 ..< 100 where !renderer.hasFailed(missing.id, textureKey: first.key) {
+            try await Task.sleep(for: .milliseconds(50))
+        }
+        #expect(renderer.hasFailed(missing.id, textureKey: first.key))
+        // Another TV on the same preset, and the preset with its own textures, are still to be tried.
+        #expect(!renderer.hasFailed(missing.id, textureKey: second.key))
+        #expect(!renderer.hasFailed(missing.id, textureKey: nil))
+        #expect(renderer.failedIDs.isEmpty)
+
+        // The same preset loads with other textures in the same renderer.
+        var ready = false
+        let loader = SlangFilterRenderer(device: device) { ready = true }
+        let good = ShaderCatalogEntry(id: missing.id, name: "nearest", category: "test", passes: 1,
+                                      historyFrames: 0, usesFeedback: false, lutCount: 0, parameters: [],
+                                      directory: fixture)
+        #expect(!loader.prepare(missing, textures: first))
+        for _ in 0 ..< 100 where !loader.hasFailed(missing.id, textureKey: first.key) {
+            try await Task.sleep(for: .milliseconds(50))
+        }
+        #expect(!loader.prepare(good, textures: second))
+        for _ in 0 ..< 100 where !ready {
+            try await Task.sleep(for: .milliseconds(50))
+        }
+        #expect(ready)
+        #expect(loader.prepare(good, textures: second))
+    }
+
     /// Renders a white 64x64 frame into rows 16..<48 of a 64x64 target; returns a row reader.
     private func renderRows(renderer: SlangFilterRenderer, device: MTLDevice) throws -> (Int) -> UInt8 {
         let size = 64
