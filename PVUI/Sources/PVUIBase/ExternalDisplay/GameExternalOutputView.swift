@@ -211,7 +211,7 @@ final class GameExternalOutputView: UIView {
         let shape = pictureShape
         // The bezel presets place a centred tube only, so a portrait room, whose TV is at the
         // top, is laid over the picture as a plain image: no glass or reflections there.
-        if isBuiltIn, bezel.drawsPortrait, let portrait = TVBezelCanvas.portraitSize(display: drawableSize, seat: seat) {
+        if isBuiltIn, let portrait = TVBezelPlainArtwork.portraitCanvas(of: bezel, display: drawableSize, seat: seat) {
             showPortraitBezel(bezel, canvas: portrait, shape: shape, drawableSize: drawableSize, didChange: didChange)
             return
         }
