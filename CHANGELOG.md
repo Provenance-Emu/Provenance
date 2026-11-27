@@ -260,6 +260,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Staleness warning** — `get-modules.sh` now emits a build-time warning when `pinned_date` is more than 30 days old, prompting developers to run the update checker.
 
 ### Fixed
+- **Background crash during iCloud sync** — the app could be closed by iOS while it was saving sync changes to the library in the background; it now finishes the save first and puts the rest off until the app is open (#3852)
 - **SNES light guns (snes9x)** — Super Scope and Justifier support never compiled into the app; it is now included, which also removes a missing-method call on every native snes9x ROM load (#3713)
 - **NES RetroAchievements (FCEU)** — Achievements never evaluated on the FCEU core; they now do (#3713)
 - **melonDS cheats** — The melonDS core now accepts Action Replay cheat codes (#3713)
