@@ -44,7 +44,7 @@ let package = Package(
         .package(url: "https://github.com/Provenance-Emu/PVLookup.git", from: "1.1.0"),
         /// Skin model, manager, catalog and skin views, shared with iFly and iCube.
         /// Keep both direct dependencies and all consumer resolver files on the tested SkinKit revision.
-        .package(url: "https://github.com/Provenance-Emu/SkinKit", .upToNextMinor(from: "0.9.0")),
+        .package(url: "https://github.com/Provenance-Emu/SkinKit", .upToNextMinor(from: "0.10.0")),
         .package(url: "https://github.com/Provenance-Emu/PVDependencies.git", from: "1.0.0"),
         /// Direct dependency so `PVUIBase` can `import GamepadKit` (the synthesized-pad wrapper PVSupport configures).
         .package(url: "https://github.com/Provenance-Emu/GamepadKit.git", .upToNextMinor(from: "0.3.2")),
