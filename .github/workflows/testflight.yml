@@ -400,14 +400,8 @@ jobs:
           BUILD=$(date +%s)
           echo "build=$BUILD" >> "$GITHUB_OUTPUT"
           ARGS+=(--build "$BUILD")
-          # One release at a time on a build machine. Provenance, iCube and iFly each sign from
-          # their own temporary keychain but share the build user's security session, and
-          # overlapping archives failed codesign with errSecInternalComponent twice on 2026-11-25
-          # (Provenance runs 45581755556 and 45588055170, iFly 45582857351); the same commits
-          # passed when run alone. lockf(1) waits for any other app's archive or export to
-          # finish. All three workflows use this lock file name.
-          SIGNING_LOCK=/tmp/provenance-emu-release-signing.lock
-          lockf -k -t 10800 "$SIGNING_LOCK" ./Scripts/release/release.sh "${ARGS[@]}" 2>&1 | tee /tmp/testflight.log | "$FORMATTER"
+          # release.sh holds the shared machine lock during archive and export.
+          ./Scripts/release/release.sh "${ARGS[@]}" 2>&1 | tee /tmp/testflight.log | "$FORMATTER"
 
       # release.sh prepared this platform's core slices; publish them to Provenance-Emu/core-slices
       # like build.yml does (a no-op when the asset exists; never fails the release).

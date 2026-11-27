@@ -117,7 +117,7 @@ run()  {
 # that is rsync 3.x, which rejects openrsync's -E ("--extended-attributes: unknown
 # option") and the export fails with only "exportArchive Copy failed".
 export_archive() {
-    (export PATH="/usr/bin:/bin:/usr/sbin:/sbin:$PATH"; run xcodebuild -exportArchive "$@")
+    (export PATH="/usr/bin:/bin:/usr/sbin:/sbin:$PATH"; run lockf -k -t 10800 /tmp/provenance-emu-release-signing.lock xcodebuild -exportArchive "$@")
 }
 # True when the requested channel includes "$1" (or is "all").
 should_run() { [[ "$CHANNEL" == "all" || "$CHANNEL" == "$1" ]]; }
@@ -311,7 +311,7 @@ do_archive() {
         done
         log "Archiving $label ($scheme)..."
         run mkdir -p "$ARCHIVES_DIR"
-        local cmd=(xcodebuild archive
+        local cmd=(lockf -k -t 10800 /tmp/provenance-emu-release-signing.lock xcodebuild archive
             -workspace "$WORKSPACE"
             -scheme "$scheme"
             -destination "$destination"
