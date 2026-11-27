@@ -166,6 +166,63 @@ struct SentryEventFilterTests {
         #expect(SentryEventFilter.shouldReport(snapshot))
     }
 
+    @Test("Drops unsymbolicated mx_cpu_exception in an emulator-host executable (ICUBE-KQ)")
+    func dropsEmulatorHostBinaryCPUException() {
+        let snapshot = SentryEventSnapshot(
+            mechanismType: "mx_cpu_exception",
+            exceptionValue: "MXCPUException totalCPUTime:90 sec totalSampledTime:160.504 sec",
+            exceptionType: "MXCPUException",
+            level: "warning",
+            transaction: nil,
+            requestURL: nil,
+            title: nil,
+            tags: [:],
+            frames: [
+                SentryEventFrame(function: nil, filename: nil, package: "libsystem_pthread.dylib", inApp: false),
+                SentryEventFrame(function: nil, filename: nil, package: "iCube", inApp: true)
+            ]
+        )
+        #expect(!SentryEventFilter.shouldReport(snapshot))
+    }
+
+    @Test("Keeps emulator-host mx_cpu_exception that also runs through a PV* framework")
+    func keepsEmulatorHostWithPVFrameworkCPUException() {
+        let snapshot = SentryEventSnapshot(
+            mechanismType: "mx_cpu_exception",
+            exceptionValue: "MXCPUException totalCPUTime:90 sec",
+            exceptionType: "MXCPUException",
+            level: "warning",
+            transaction: nil,
+            requestURL: nil,
+            title: nil,
+            tags: [:],
+            frames: [
+                SentryEventFrame(function: nil, filename: nil, package: "iCube", inApp: true),
+                SentryEventFrame(function: nil, filename: nil, package: "PVLibrary", inApp: false)
+            ]
+        )
+        #expect(SentryEventFilter.shouldReport(snapshot))
+    }
+
+    @Test("Keeps unsymbolicated mx_cpu_exception in a non-emulator main executable")
+    func keepsUnsymbolicatedMainExecutableCPUException() {
+        let snapshot = SentryEventSnapshot(
+            mechanismType: "mx_cpu_exception",
+            exceptionValue: "MXCPUException totalCPUTime:90 sec",
+            exceptionType: "MXCPUException",
+            level: "warning",
+            transaction: nil,
+            requestURL: nil,
+            title: nil,
+            tags: [:],
+            frames: [
+                SentryEventFrame(function: nil, filename: nil, package: "libsystem_pthread.dylib", inApp: false),
+                SentryEventFrame(function: nil, filename: nil, package: "Provenance", inApp: true)
+            ]
+        )
+        #expect(SentryEventFilter.shouldReport(snapshot))
+    }
+
     @Test("Drops mx_disk_write_exception in artwork pipeline")
     func dropsArtworkDiskWriteException() {
         let snapshot = SentryEventSnapshot(

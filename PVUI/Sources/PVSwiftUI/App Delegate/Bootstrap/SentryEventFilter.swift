@@ -139,10 +139,26 @@ public enum SentryEventFilter {
         return !snapshot.frames.contains(where: isAppCode)
     }
 
+    /// Main executables that statically link an emulator core (iCube embeds Dolphin), so
+    /// their on-device MetricKit frames are emulator code even though Sentry marks them
+    /// `inApp`. Unsymbolicated frames from these binaries are not counted as app code
+    /// (ICUBE-KQ, ICUBE-T4). Tests and host apps may override this set.
+    nonisolated(unsafe) static var emulatorHostBinaries: Set<String> = ["iCube"]
+
     /// Sentry's `inApp` covers only the main executable, but most `PV*` modules ship as
     /// dynamic frameworks whose binary name is the module name.
     private static func isAppCode(_ frame: SentryEventFrame) -> Bool {
-        frame.inApp || frame.package?.hasPrefix("PV") == true
+        if isEmulatorHostFrame(frame) { return false }
+        return frame.inApp || frame.package?.hasPrefix("PV") == true
+    }
+
+    /// An unsymbolicated frame from an emulator-host executable. Symbolicated frames are
+    /// left to `matchesEmulatorFunction`, so real app functions in those binaries still
+    /// count as app code and keep their CPU exceptions reported.
+    private static func isEmulatorHostFrame(_ frame: SentryEventFrame) -> Bool {
+        guard frame.function == nil, let package = frame.package else { return false }
+        let binary = (package as NSString).lastPathComponent
+        return emulatorHostBinaries.contains(binary)
     }
 
     // MARK: - MetricKit disk write (PROVENANCE-1AW, PROVENANCE-13C)
