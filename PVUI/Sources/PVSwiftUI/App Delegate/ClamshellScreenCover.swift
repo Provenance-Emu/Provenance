@@ -25,7 +25,7 @@ final class ClamshellScreenCover {
 
     private var subscriptions = Set<AnyCancellable>()
     private var sceneObservers: [NSKeyValueObservation] = []
-    private let shortenedWindows = NSHashTable<UIWindow>.weakObjects()
+    private let managedWindows = NSHashTable<UIWindow>.weakObjects()
 
     private init() {}
 
@@ -53,7 +53,14 @@ final class ClamshellScreenCover {
             .filter { $0.session.role == .windowApplication }
         sceneObservers = scenes.map { scene in
             scene.observe(\.effectiveGeometry, options: [.new]) { [weak self] scene, _ in
-                MainActor.assumeIsolated { self?.apply(to: scene) }
+                MainActor.assumeIsolated {
+                    self?.apply(to: scene)
+                    let transition = scene.keyWindow?.rootViewController?.transitionCoordinator
+                    transition?.animate(alongsideTransition: nil) { [weak self, weak scene] _ in
+                        guard let scene else { return }
+                        self?.apply(to: scene)
+                    }
+                }
             }
         }
         scenes.forEach { apply(to: $0) }
@@ -73,12 +80,13 @@ final class ClamshellScreenCover {
         let target = CGRect(origin: full.origin, size: CGSize(width: full.width, height: full.height - inset))
 
         for window in scene.windows {
-            if inset > 0 {
-                guard window.frame == full || shortenedWindows.contains(window) else { continue }
-                shortenedWindows.add(window)
+            // Keep tracking the window in landscape. During rotation its frame may lag scene geometry.
+            if cover > 0 {
+                guard window.frame == full || managedWindows.contains(window) else { continue }
+                managedWindows.add(window)
             } else {
-                guard shortenedWindows.contains(window) else { continue }
-                shortenedWindows.remove(window)
+                guard managedWindows.contains(window) else { continue }
+                managedWindows.remove(window)
             }
             if window.frame != target { window.frame = target }
         }
