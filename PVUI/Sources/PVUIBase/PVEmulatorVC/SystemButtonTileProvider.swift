@@ -65,9 +65,9 @@ public struct SystemButtonTileProvider {
     /// Builds the system-button tiles for the active system.
     ///
     /// `slots` is indexed by player (0 is P1); slots past its end count as
-    /// empty. A button shows for a player when it is always shown (Insert
-    /// Coin), when missing buttons are forced on, or when that player's slot
-    /// cannot reach it.
+    /// empty. On tvOS, four-player arcade cabinets show all three actions for
+    /// each slot. Elsewhere, each button follows its descriptor and the slot's
+    /// controller capabilities.
     public static func tiles(
         for system: SystemIdentifier,
         slots: [PlayerSlot],
@@ -77,12 +77,17 @@ public struct SystemButtonTileProvider {
         guard !buttons.isEmpty else { return [] }
 
         let players = playerIndices(for: system, slots: slots, missingButtonsAlwaysOn: missingButtonsAlwaysOn)
+        #if os(tvOS)
+        let showAllArcadeButtons = systemMenuButtonPlayerSlots(for: system) == SystemMenuButtonPlayerSlots.fourPlayerCabinet
+        #else
+        let showAllArcadeButtons = false
+        #endif
 
         var tiles: [PauseMenuTile] = []
         for playerIdx in players {
             let needsTiles = slot(playerIdx, in: slots).needsMissingButtons
             for btn in buttons {
-                guard btn.alwaysShow || missingButtonsAlwaysOn || needsTiles else { continue }
+                guard showAllArcadeButtons || btn.alwaysShow || missingButtonsAlwaysOn || needsTiles else { continue }
                 let prefix = players.count > 1 ? "P\(playerIdx + 1) " : ""
                 tiles.append(PauseMenuTile(
                     id: tileID(player: playerIdx, buttonID: btn.id),
