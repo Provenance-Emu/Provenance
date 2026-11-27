@@ -4010,8 +4010,8 @@
 				B3F7E3C3297736BE00362B92 /* Resources */,
 				C0C0CAFE5A4C000000000050 /* Script: Embed Slang Shaders */,
 				C0C0CAFE6DB0000000000050 /* Script: Embed Lookup Databases */,
-				B3F7E3E6297736BE00362B92 /* Script: Set Build Number */,
 				B3FD98902D615CF000397643 /* Embed Frameworks */,
+				B3F7E3E6297736BE00362B92 /* Script: Set Build Number */,
 			);
 			buildRules = (
 			);
