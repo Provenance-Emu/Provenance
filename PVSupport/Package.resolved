@@ -15,8 +15,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Provenance-Emu/GamepadKit.git",
       "state" : {
-        "revision" : "cf27b303fa4dd2e982f3b4bfae6ef7aece0b999e",
-        "version" : "0.3.1"
+        "revision" : "14bdd81420b4239ba309b4fbc6c69d0f315e36bf",
+        "version" : "0.3.2"
       }
     },
     {
