@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased] — 3.4.0 (in development)
 
 ### Added
+- **TV Bezels in Portrait** — On iPhone and iPad a TV now shows around the picture in portrait as well, drawn close so the picture has nearly the whole width, with the controls over the console under it. (#3855)
 - **Log Import** — the retrowave log viewer can now import a previously exported `.txt`/`.log` file or `.zip` bundle and display it in place of live logs, with a banner to return to live logs. (#3645)
 - **AspectRatioOverride enum** — New `AspectRatioOverride` enum in `PVPrimitives` defines per-core aspect ratio overrides (Auto, 4:3, 16:9, 1:1, 8:7, Stretch) with display metadata and aspect ratio values. (#3619)
 - **File Provider Save States & Screenshots** — Provenance now exposes Save States and Screenshots as browsable top-level folders in Files.app; each game with saves/screenshots gets a named sub-folder, and files can be copied out or deleted from Files.app. (#3617)
@@ -260,6 +261,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Staleness warning** — `get-modules.sh` now emits a build-time warning when `pinned_date` is more than 30 days old, prompting developers to run the update checker.
 
 ### Fixed
+- **Portrait TV Under the Notch** — A portrait TV started at the very top of the screen, under the notch or Dynamic Island; it now starts below it. (#3855)
+- **Bezel Picked While Playing Did Not Show** — A TV chosen from the pause menu's list could stay hidden behind the game's own TV or its Bezel Project artwork; the TV picked is now the TV shown. (#3855)
+- **Bezel Change Needed a Restart** — After one TV failed to load, no other built-in TV would load until the game was restarted or the device rotated. (#3855)
 - **8BitDo FlipPad screen clearance** — with a FlipPad attached in portrait the app was pushed far too high up the screen; it now stops just above the pad (#3854)
 - **Background crash during iCloud sync** — the app could be closed by iOS while it was saving sync changes to the library in the background; it now finishes the save first and puts the rest off until the app is open (#3852)
 - **SNES light guns (snes9x)** — Super Scope and Justifier support never compiled into the app; it is now included, which also removes a missing-method call on every native snes9x ROM load (#3713)
