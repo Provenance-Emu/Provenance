@@ -462,8 +462,15 @@ extension GameExternalOutputView {
 
     /// Tells the view the picture's shape while a TV shows. A core may report its shape only
     /// once the game is running; the TV is then drawn again for it.
+    ///
+    /// The shape is kept even with no TV showing: the renderer asks again on every frame whose
+    /// shape differs from `pictureShape`, so a wide picture with no TV (PSP on an external
+    /// display) must not look changed forever.
     func pictureAspectDidChange(_ aspect: CGSize) {
-        guard TVBezelPictureShape(aspect: aspect) != pictureShape, let request = bezelRequest else { return }
+        let shape = TVBezelPictureShape(aspect: aspect)
+        guard shape != pictureShape else { return }
+        pictureShape = shape
+        guard let request = bezelRequest else { return }
         showBezel(request.bezel, lightsRoom: request.lightsRoom, flatGlass: request.flatGlass, pictureAspect: aspect,
                   didChange: request.didChange)
     }
