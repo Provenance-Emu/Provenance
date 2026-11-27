@@ -1965,10 +1965,6 @@
 					CodeSignOnCopy,
 					RemoveHeadersOnCopy,
 				);
-				OpenSSL.xcframework = (
-					CodeSignOnCopy,
-					RemoveHeadersOnCopy,
-				);
 			};
 			buildPhase = B3FD98902D615CF000397643 /* Embed Frameworks */;
 			membershipExceptions = (
@@ -1979,7 +1975,6 @@
 				FFMpeg/xcframeworks/libavutil.xcframework,
 				FFMpeg/xcframeworks/libswresample.xcframework,
 				FFMpeg/xcframeworks/libswscale.xcframework,
-				OpenSSL.xcframework,
 			);
 		};
 		B3FD98A22D615D1300397643 /* PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet */ = {
