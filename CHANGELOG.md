@@ -524,6 +524,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **RetroAchievements Password No Longer Written to Disk** — Provenance now stores the revocable session token in `retroarch.cfg` instead of your password, matching what RetroArch itself does. Existing configs are scrubbed on launch, and signing out clears the token
 - **Web Server Rename Checks the Source File** — Renaming or moving a file through the web uploader or WebDAV validated only the new name, so a hidden file could be renamed into a visible one and then downloaded
 - **Arcade pause menu tiles for players 3 and 4** — MAME, FBNeo, CPS-1 and CPS-2 games now show Insert Coin, Start and Select tiles for all four players (two on CPS-3), whether or not a controller is connected for that player
+- **Apple TV Arcade Controls** — Keep Insert Coin, Start, and Select visible for every slot in four-player arcade games, even with full controllers connected
 
 ### Changed
 - **ScalingMode renderer enabled by default** — The `scalingModeRenderer` feature flag is now enabled by default; the new `ScalingMode`-driven renderer paths (Stretch, Aspect Fill, Integer Scale, Native Resolution) are active for all users. Legacy boolean shims remain for backwards compatibility. (#3619)
