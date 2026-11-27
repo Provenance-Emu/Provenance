@@ -55,12 +55,17 @@ struct SystemButtonTileProviderTests {
         #expect(tileIDs(.MAME, slots: []).count == 12)
     }
 
-    /// A pad that has Start keeps its player's Start and Select tiles away,
-    /// but no pad can insert a coin.
-    @Test func aFullPadLeavesOnlyTheCoinTileForItsPlayer() {
-        let ids = tileIDs(.MAME, slots: [Self.fullPad, Self.fullPad, Self.fullPad, Self.fullPad])
-
+    @Test(arguments: [SystemIdentifier.MAME, .CPS1, .CPS2])
+    func fourPlayerCabinetActionsWithFullPads(system: SystemIdentifier) {
+        let ids = tileIDs(system, slots: Array(repeating: Self.fullPad, count: 4))
+        #if os(tvOS)
+        let expected = (0..<4).flatMap { player in
+            [id(player, "start"), id(player, "select"), id(player, "coin")]
+        }
+        #expect(ids == expected)
+        #else
         #expect(ids == (0..<4).map { id($0, "coin") })
+        #endif
     }
 
     @Test func forcingMissingButtonsShowsAllTwelveArcadeTiles() {
