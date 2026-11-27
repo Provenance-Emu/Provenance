@@ -385,6 +385,9 @@ struct ControllerSettingsView: View {
                 Toggle(isOn: $autoLoadCaseSkin) {
                     Label("Auto-load case skin on detection", systemImage: "iphone.gen3.badged.gamecontroller")
                 }
+                #if !targetEnvironment(macCatalyst)
+                ClamshellDockSettingsRows()
+                #endif
             } header: {
                 HStack {
                     Image(systemName: "iphone.gen3.badged.gamecontroller")

@@ -297,6 +297,7 @@ let package = Package(
         .target(
             name: "PVSwiftUI",
             dependencies: [
+                .product(name: "GamepadKit", package: "GamepadKit", condition: .when(platforms: [.iOS])),
                 .product(name: "PVSystems", package: "PVSystems"),
                 .product(name: "PVLookup", package: "PVLookup"),
                 .product(name: "SkinKitCore", package: "SkinKit"),
