@@ -29,6 +29,8 @@ Environment:
                      groups that have a public link enabled
   WHATS_NEW          optional "What to Test" text
   TIMEOUT_MINUTES    how long to wait for processing (default 60)
+  REVIEW_WAIT_MINUTES  how long to keep retrying the review submission while
+                     another build of the same version is in review (default 20)
   SUBMIT_FOR_REVIEW  true|false (default true)
   DRY_RUN            true|false (default false) -- read-only, prints the plan
 
@@ -219,6 +221,36 @@ def choose_groups(groups: list[dict], wanted: str) -> list[dict]:
             and g["attributes"]["publicLinkEnabled"]]
 
 
+REVIEW_BUSY_CODE = "ANOTHER_BUILD_IN_REVIEW"
+REVIEW_RETRY_SECONDS = 120
+
+
+def submit_for_review(client: Client, build_id: str, wait_minutes: int) -> bool:
+    """Submits the build for Beta App Review. False when Apple still refuses it
+    because another build of the same version is in review after `wait_minutes`.
+
+    Only one build per version may be in beta review at a time, so the second
+    platform of one release (or a release cut soon after another) is refused
+    with a 422 until the first review ends. That is a wait, not a failure: the
+    build is uploaded and in its groups, and can be submitted later.
+    """
+    deadline = time.time() + wait_minutes * 60
+    while True:
+        try:
+            client.call("POST", "/v1/betaAppReviewSubmissions",
+                        {"data": {"type": "betaAppReviewSubmissions",
+                                  "relationships": {"build": {"data": {"type": "builds", "id": build_id}}}}})
+            return True
+        except ApiError as exc:
+            if REVIEW_BUSY_CODE not in exc.detail:
+                raise
+        if time.time() + REVIEW_RETRY_SECONDS > deadline:
+            return False
+        print(f"another build of this version is in Beta App Review; "
+              f"retrying in {REVIEW_RETRY_SECONDS}s", flush=True)
+        time.sleep(REVIEW_RETRY_SECONDS)
+
+
 def main() -> None:
     bundle_id = env("BUNDLE_ID")
     build_number = env("BUILD_NUMBER")
@@ -226,6 +258,7 @@ def main() -> None:
     wanted = env("GROUPS", "")
     whats_new = env("WHATS_NEW", "")
     timeout_minutes = int(env("TIMEOUT_MINUTES", "60"))
+    review_wait_minutes = int(env("REVIEW_WAIT_MINUTES", "20"))
     submit = truthy(env("SUBMIT_FOR_REVIEW", "true"))
     dry_run = truthy(env("DRY_RUN", "false"))
 
@@ -278,12 +311,17 @@ def main() -> None:
             else:
                 raise
 
+    review_pending = False
     if submit and build["_review"] is None:
         try:
-            client.call("POST", "/v1/betaAppReviewSubmissions",
-                        {"data": {"type": "betaAppReviewSubmissions",
-                                  "relationships": {"build": {"data": {"type": "builds", "id": build_id}}}}})
-            print("submitted for Beta App Review")
+            if submit_for_review(client, build_id, review_wait_minutes):
+                print("submitted for Beta App Review")
+            else:
+                review_pending = True
+                print(f"::warning::build {build_number} ({platform}) is in its groups but was not "
+                      f"submitted for Beta App Review: another build of this version was still in "
+                      f"review after {review_wait_minutes} min. Submit it in App Store Connect, or "
+                      f"re-run this step, once that review ends.")
         except ApiError as exc:
             # ASC may have auto-submitted when the first external group was
             # attached; a duplicate submission is a 409, not a failure.
