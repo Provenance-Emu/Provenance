@@ -59,6 +59,9 @@ final class GameExternalOutputView: UIView {
     var isBezelLoading: Bool { bezelLoadInFlight || pendingBezelScene != nil }
     /// What `showBezel` was last asked for, to ask again when the display changes size.
     private var bezelRequest: (bezel: TVBezel, lightsRoom: Bool, flatGlass: Bool, didChange: () -> Void)?
+    /// The shape of the game picture the TV is drawn for: a built-in TV has a 16:9 tube for
+    /// a wide picture.
+    private(set) var pictureShape: TVBezelPictureShape = .standard
     /// The picture as the tube shows it, between the two draw stages.
     private var tubeTexture: MTLTexture?
 
@@ -179,7 +182,9 @@ final class GameExternalOutputView: UIView {
     ///   - lightsRoom: the picture lights the room (the costlier preset).
     ///   - flatGlass: keep the glass flat, because the filter inside bends the picture itself.
     ///   - didChange: called once what is on screen has changed, so a paused game can be redrawn.
-    func showBezel(_ bezel: TVBezel?, lightsRoom: Bool, flatGlass: Bool, didChange: @escaping () -> Void) {
+    func showBezel(_ bezel: TVBezel?, lightsRoom: Bool, flatGlass: Bool, pictureAspect: CGSize? = nil,
+                   didChange: @escaping () -> Void) {
+        if let pictureAspect { pictureShape = TVBezelPictureShape(aspect: pictureAspect) }
         guard let bezel, !bezelDroppedForSession else {
             bezelRequest = nil
             guard bezelKey != nil else { return }
@@ -203,11 +208,19 @@ final class GameExternalOutputView: UIView {
             showImageBezel(bezel, art: art, drawableSize: drawableSize, didChange: didChange)
             return
         }
+        let shape = pictureShape
+        // The bezel presets place a centred tube only, so a portrait room, whose TV is at the
+        // top, is laid over the picture as a plain image: no glass or reflections there.
+        if isBuiltIn, let portrait = TVBezelPlainArtwork.portraitCanvas(of: bezel, display: drawableSize, seat: seat) {
+            showPortraitBezel(bezel, canvas: portrait, shape: shape, drawableSize: drawableSize, didChange: didChange)
+            return
+        }
         let sceneRect = sceneRect(canvas: canvas, drawableSize: drawableSize)
         // No size yet: `layoutSubviews` asks again once the drawable has one.
         guard sceneRect.width > 0, sceneRect.height > 0 else { return }
         let lit = lightsRoom && bezel.lightsRoom
-        let key = TVBezelScene.key(bezel: bezel, lightsRoom: lit, flatGlass: flatGlass, scenePixelWidth: sceneRect.width, canvas: canvas)
+        let key = TVBezelScene.key(bezel: bezel, lightsRoom: lit, flatGlass: flatGlass, scenePixelWidth: sceneRect.width,
+                                   canvas: canvas, shape: shape)
         guard key != bezelKey else { return }
         bezelKey = key
         bezelLoad?.cancel()
@@ -221,7 +234,7 @@ final class GameExternalOutputView: UIView {
         bezelLoad = Task { @MainActor [weak self] in
             let scene = await Task.detached(priority: .userInitiated) {
                 TVBezelScene.make(bezel: bezel, lightsRoom: lit, flatGlass: flatGlass,
-                                  scenePixelWidth: sceneRect.width, key: key, canvas: canvas)
+                                  scenePixelWidth: sceneRect.width, key: key, canvas: canvas, shape: shape)
             }.value
             guard let self, self.bezelKey == key else { return }
             self.bezelLoadInFlight = false
@@ -397,3 +410,68 @@ final class GameExternalOutputView: UIView {
     }
 }
 #endif
+
+// MARK: - Portrait rooms and the picture's shape
+
+extension GameExternalOutputView {
+
+    /// Lays a built-in TV's portrait room over the picture: its artwork as one image with the
+    /// tube left see-through, shown the way an image bezel is. Drawn off the main thread.
+    private func showPortraitBezel(_ bezel: TVBezel, canvas: CGSize, shape: TVBezelPictureShape, drawableSize: CGSize,
+                                   didChange: @escaping () -> Void) {
+        let maxPixel = max(drawableSize.width, drawableSize.height)
+        // No size yet: `layoutSubviews` asks again once the drawable has one.
+        guard maxPixel > 0 else { return }
+        // The set hangs from the top of the screen: it goes below a notch or Dynamic Island.
+        let topInset = bounds.width > 0 ? safeAreaTopInWindow * canvas.width / bounds.width : 0
+        let key = "\(bezel.id)|portrait|\(Int(maxPixel))|\(Int(canvas.width))x\(Int(canvas.height))|\(shape.rawValue)|\(Int(topInset))"
+        guard key != bezelKey else { return }
+        bezelKey = key
+        bezelLoad?.cancel()
+        bezelLoadInFlight = true
+        bezelLoad = Task { @MainActor [weak self] in
+            let drawn = await Task.detached(priority: .userInitiated) { () -> (image: UIImage, tube: CGRect)? in
+                guard let tube = TVBezelPlainArtwork.tubeRect(of: bezel, canvas: canvas, shape: shape, topInset: topInset),
+                      let image = TVBezelPlainArtwork.image(for: bezel, maxPixel: maxPixel, canvas: canvas, shape: shape,
+                                                            topInset: topInset, cutsOutTube: true) else { return nil }
+                return (UIImage(cgImage: image), tube)
+            }.value
+            guard let self, self.bezelKey == key else { return }
+            self.bezelLoadInFlight = false
+            self.clearShaderBezel()
+            // The canvas has the display's proportions, so the artwork fits it whole and the tube is its screen.
+            self.imageBezel = drawn.map { TVBezel.ImageArtwork(fileURL: URL(fileURLWithPath: bezel.artwork), size: canvas, screen: $0.tube) }
+            self.bezelImageView.image = drawn?.image
+            self.setNeedsLayout()
+            self.layoutIfNeeded()
+            if drawn == nil {
+                WLOG("External display: TV '\(bezel.name)' could not be drawn for portrait; showing the picture alone")
+            } else {
+                ILOG("External display: TV '\(bezel.name)' in portrait, \(shape.rawValue) picture")
+            }
+            didChange()
+        }
+    }
+
+    /// How much of this view's top the window's safe area covers, in points. The view's own
+    /// inset is not used: the GPU view it sits in is laid out by frame, not by safe area.
+    private var safeAreaTopInWindow: CGFloat {
+        guard let window else { return 0 }
+        return max(0, window.safeAreaInsets.top - convert(bounds.origin, to: window).y)
+    }
+
+    /// Tells the view the picture's shape while a TV shows. A core may report its shape only
+    /// once the game is running; the TV is then drawn again for it.
+    ///
+    /// The shape is kept even with no TV showing: the renderer asks again on every frame whose
+    /// shape differs from `pictureShape`, so a wide picture with no TV (PSP on an external
+    /// display) must not look changed forever.
+    func pictureAspectDidChange(_ aspect: CGSize) {
+        let shape = TVBezelPictureShape(aspect: aspect)
+        guard shape != pictureShape else { return }
+        pictureShape = shape
+        guard let request = bezelRequest else { return }
+        showBezel(request.bezel, lightsRoom: request.lightsRoom, flatGlass: request.flatGlass, pictureAspect: aspect,
+                  didChange: request.didChange)
+    }
+}

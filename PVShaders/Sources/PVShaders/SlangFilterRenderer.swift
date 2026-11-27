@@ -31,6 +31,15 @@ public final class SlangFilterRenderer: @unchecked Sendable {
     private var loadedTextureKey: String?
     private var loadingTextureKey: String?
     private var _failedIDs: Set<ShaderID> = []
+    /// Loads with replaced textures that failed, by preset and textures key. Kept apart from
+    /// `_failedIDs`: every TV bezel runs the same preset with its own textures, and one TV
+    /// that could not load must not stop the next one from being tried.
+    private var failedOverrides: Set<FailedOverride> = []
+
+    private struct FailedOverride: Hashable {
+        let id: ShaderID
+        let textureKey: String
+    }
     private var generation = 0
     private var appliedParameterRevision: Int?
     private let loadQueue = DispatchQueue(label: "org.provenance-emu.shaders.load", qos: .userInitiated)
@@ -46,8 +55,21 @@ public final class SlangFilterRenderer: @unchecked Sendable {
     /// The preset the current chain runs.
     public var loadedID: ShaderID? { lock.withLock { _loadedID } }
 
-    /// Presets that failed to compile on this device; not retried this session.
+    /// Presets that failed to compile on this device with their own textures; not retried
+    /// this session.
     public var failedIDs: Set<ShaderID> { lock.withLock { _failedIDs } }
+
+    /// Whether loading `id` with these textures (`nil` for its own) failed. Such a load is
+    /// not retried, but the same preset with other textures is.
+    public func hasFailed(_ id: ShaderID, textureKey: String?) -> Bool {
+        lock.withLock { hasFailedLocked(id, textureKey: textureKey) }
+    }
+
+    /// Call with `lock` held.
+    private func hasFailedLocked(_ id: ShaderID, textureKey: String?) -> Bool {
+        guard let textureKey else { return _failedIDs.contains(id) }
+        return failedOverrides.contains(FailedOverride(id: id, textureKey: textureKey))
+    }
 
     /// Unchecked box so a chain built on the load queue can be handed over.
     private struct ChainBox: @unchecked Sendable {
@@ -81,7 +103,7 @@ public final class SlangFilterRenderer: @unchecked Sendable {
         lock.withLock {
             if _loadedID == entry.id, loadedTextureKey == textures?.key { return true }
             let isLoading = loadingID == entry.id && loadingTextureKey == textures?.key
-            guard !isLoading, !_failedIDs.contains(entry.id), let directory = entry.directory else {
+            guard !isLoading, !hasFailedLocked(entry.id, textureKey: textures?.key), let directory = entry.directory else {
                 return false
             }
             loadingID = entry.id
@@ -124,7 +146,11 @@ public final class SlangFilterRenderer: @unchecked Sendable {
                     Task { @MainActor in onReady() }
                 }
             case .failure(let error):
-                _failedIDs.insert(id)
+                if let textureKey {
+                    failedOverrides.insert(FailedOverride(id: id, textureKey: textureKey))
+                } else {
+                    _failedIDs.insert(id)
+                }
                 ELOG("Shader library: \(id) failed to load: \(error)")
             }
         }

@@ -241,10 +241,16 @@ final class PVMetalViewController: PVGPUViewController, PVRenderDelegate, MTKVie
     /// The game picture's rect inside the TV on the device, in this view's coordinates
     /// (points); `nil` when no TV shows or it has not been laid out.
     func localBezelPictureFrame() -> CGRect? {
-        guard let output = localBezelOutput, output.superview === mtlView, let emulatorCore else { return nil }
-        let coreAspect = emulatorCore.aspectSize
-        let aspect = coreAspect.width > 0 && coreAspect.height > 0 ? coreAspect : emulatorCore.screenRect.size
+        guard let output = localBezelOutput, output.superview === mtlView, let aspect = bezelPictureAspect else { return nil }
         return output.bezelPictureFrame(aspect: aspect)
+    }
+
+    /// The game picture's shape as a TV is told it: a built-in TV has a wide tube for a wide
+    /// picture. `nil` before there is a core.
+    var bezelPictureAspect: CGSize? {
+        guard let emulatorCore else { return nil }
+        let coreAspect = emulatorCore.aspectSize
+        return coreAspect.width > 0 && coreAspect.height > 0 ? coreAspect : emulatorCore.screenRect.size
     }
 
     func updateLocalBezel(_ bezel: TVBezel?, filter: ResolvedShader?, lightsRoom: Bool, flatGlass: Bool) {
@@ -272,7 +278,7 @@ final class PVMetalViewController: PVGPUViewController, PVRenderDelegate, MTKVie
             relayoutForLocalBezel()
         }
         output.filter.update(filter, smoothing: renderSettings.smoothingMode.usesLinearFiltering)
-        output.showBezel(bezel, lightsRoom: lightsRoom, flatGlass: flatGlass) { [weak self] in
+        output.showBezel(bezel, lightsRoom: lightsRoom, flatGlass: flatGlass, pictureAspect: bezelPictureAspect) { [weak self] in
             self?.redrawPausedFrame()
             #if os(iOS)
             // The tube's place is known now: the touch mouse covers the picture inside it.
@@ -2892,6 +2898,10 @@ final class PVMetalViewController: PVGPUViewController, PVRenderDelegate, MTKVie
         let drawableSize = CGSize(width: target.width, height: target.height)
         let coreAspect = emulatorCore.aspectSize
         let aspect = coreAspect.width > 0 && coreAspect.height > 0 ? coreAspect : emulatorCore.screenRect.size
+        if TVBezelPictureShape(aspect: aspect) != output.pictureShape {
+            // The core reported its shape after the TV was asked for (thin cores do, late): draw the TV for it.
+            Task { @MainActor [weak output] in output?.pictureAspectDidChange(aspect) }
+        }
         if output.hasImageBezel {
             return drawExternalPicture(source, into: target, rect: output.pictureRect(aspect: aspect, drawableSize: drawableSize),
                                        filter: output.filter, emulatorCore: emulatorCore, commandBuffer: commandBuffer)

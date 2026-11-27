@@ -79,7 +79,9 @@ extension PVEmulatorViewController {
         let isLandscape = size.width > 0 && size.height > 0 ? size.width > size.height : currentOrientation == .landscape
         return .init(isAppleTV: false, isLandscape: isLandscape, controls: controls,
                      layoutSupportsTV: layoutSupportsTV, choiceIsAutomatic: choiceIsAutomatic,
-                     editingLayout: isOverlayLayoutEditing, droppedForSession: gameplayBezelDropped)
+                     editingLayout: isOverlayLayoutEditing, droppedForSession: gameplayBezelDropped,
+                     // A portrait room is laid over the picture as a plain image (`GameExternalOutputView`).
+                     supportsPortrait: true)
         #endif
     }
 
