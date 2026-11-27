@@ -48,7 +48,9 @@ public enum RealmContext {
         _ operation: @escaping (Realm) throws -> T
     ) async throws -> T {
         try await Task.detached(priority: .utility) {
-            try BackgroundActivity.runSync(Self.activityReason) {
+            // Sync work can wait: when iOS will not keep the process awake, fail here
+            // instead of starting a commit that suspension would catch.
+            try BackgroundActivity.runSyncRequiringGrant(Self.activityReason) {
                 let realm = try Realm(configuration: Realm.Configuration.defaultConfiguration)
                 return try operation(realm)
             }
