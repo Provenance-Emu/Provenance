@@ -31,6 +31,10 @@ public final class PVSceneDelegate: UIResponder, UIWindowSceneDelegate {
         willConnectTo session: UISceneSession,
         options connectionOptions: UIScene.ConnectionOptions
     ) {
+        #if os(iOS) && !targetEnvironment(macCatalyst)
+        ClamshellScreenCover.shared.start()
+        #endif
+
         if let shortcutItem = connectionOptions.shortcutItem {
             ILOG("PVSceneDelegate: cold-launch shortcut \(shortcutItem.type)")
             Task { @MainActor in
