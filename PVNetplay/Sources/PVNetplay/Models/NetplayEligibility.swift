@@ -13,34 +13,6 @@ public enum NetplayPlayMode: String, Codable, CaseIterable, Sendable {
         case .nativeNetwork: return "Native network"
         }
     }
-
-    public var isSharedConsole: Bool { self == .sharedConsole || self == .alternating }
-}
-
-/// Multiplayer facts, independent of whether an emulator can carry that mode online.
-public struct NetplayMultiplayerMetadata: Codable, Equatable, Sendable {
-    public struct Mode: Codable, Equatable, Sendable {
-        public var kind: NetplayPlayMode
-        public var maxPlayers: Int
-        public init(_ kind: NetplayPlayMode, maxPlayers: Int) {
-            self.kind = kind
-            self.maxPlayers = maxPlayers
-        }
-    }
-
-    public enum Source: String, Codable, Sendable { case gameTDB, userConfirmed }
-    public var modes: [Mode]
-    /// True only when the source establishes that no useful multiplayer mode exists.
-    public var singlePlayerOnly: Bool
-    public var source: Source
-    public var reference: String
-
-    public init(modes: [Mode], singlePlayerOnly: Bool = false, source: Source, reference: String) {
-        self.modes = modes
-        self.singlePlayerOnly = singlePlayerOnly
-        self.source = source
-        self.reference = reference
-    }
 }
 
 /// A platform-specific, installed core capability supplied by the host application.
@@ -70,13 +42,22 @@ public struct NetplayGameOption: Hashable, Sendable, Identifiable {
     public var id: String { core.coreIdentifier + ":" + mode.rawValue }
 }
 
+extension NetplayCoreSupport {
+    /// The mode a room on this core is advertised with: the first the core carries, in `NetplayPlayMode` order.
+    public var primaryMode: NetplayPlayMode? { NetplayPlayMode.allCases.first(where: modes.contains) }
+}
+
+/// Whether a game can be played over the network on this device. Every game is assumed to
+/// work: the only requirements are a local file and an installed core that carries netplay.
 public enum NetplayEligibility: Equatable, Sendable {
-    case supported([NetplayGameOption])
-    case unverified
+    case available([NetplayGameOption])
     case unavailable(String)
 
+    /// The fewest seats a room can have.
+    public static let minimumPlayers = 2
+
     public var options: [NetplayGameOption] {
-        if case .supported(let options) = self { return options }
+        if case .available(let options) = self { return options }
         return []
     }
 
@@ -85,46 +66,37 @@ public enum NetplayEligibility: Equatable, Sendable {
         guard !room.isFull, !room.coreIdentifier.isEmpty, !gameMD5.isEmpty,
               room.gameHash.caseInsensitiveCompare(gameMD5) == .orderedSame,
               room.systemIdentifier.isEmpty || room.systemIdentifier == systemIdentifier else { return nil }
-        let matches = options.filter {
-            $0.core.coreIdentifier == room.coreIdentifier && room.maxPlayers >= 2 && room.maxPlayers <= $0.maxPlayers
+        return options.first {
+            $0.core.coreIdentifier == room.coreIdentifier
+                && room.maxPlayers >= Self.minimumPlayers && room.maxPlayers <= $0.maxPlayers
                 && (room.coreVersion.isEmpty || room.coreVersion == $0.core.coreVersion)
-                && (room.playMode == nil || room.playMode == $0.mode)
+                && (room.playMode.map($0.core.modes.contains) ?? true)
         }
-        return matches.count == 1 ? matches.first : nil
     }
 
-    /// Fail closed: core availability never substitutes for game-mode metadata.
-    public static func evaluate(localFileAvailable: Bool, metadata: NetplayMultiplayerMetadata?, cores: [NetplayCoreSupport], hasUnverifiedCore: Bool = false) -> Self {
+    /// One option per installed core that carries netplay. Nothing about the game itself is consulted.
+    public static func evaluate(localFileAvailable: Bool, cores: [NetplayCoreSupport]) -> Self {
         guard localFileAvailable else { return .unavailable("Download the game first.") }
-        guard let metadata else { return .unverified }
-        guard !metadata.singlePlayerOnly else { return .unavailable("Single-player only.") }
-        guard !metadata.modes.isEmpty else { return .unverified }
-        let options = cores.flatMap { core in
-            metadata.modes.compactMap { mode -> NetplayGameOption? in
-                let limit = min(mode.maxPlayers, core.maxPlayers)
-                guard core.modes.contains(mode.kind), limit >= 2 else { return nil }
-                return NetplayGameOption(core: core, mode: mode.kind, maxPlayers: limit)
-            }
+        let options = cores.compactMap { core -> NetplayGameOption? in
+            guard let mode = core.primaryMode, core.maxPlayers >= minimumPlayers else { return nil }
+            return NetplayGameOption(core: core, mode: mode, maxPlayers: core.maxPlayers)
         }
-        if !options.isEmpty { return .supported(options) }
-        return hasUnverifiedCore ? .unverified : .unavailable("No installed core supports this multiplayer mode.")
+        return options.isEmpty ? .unavailable("No installed core supports network play for this system.") : .available(options)
     }
 }
 
 public enum NetplayGameList: String, CaseIterable, Sendable {
-    case suggested, allSupported, recent, favorites, unverified
+    case all, recent, favorites
     public var title: String {
         switch self {
-        case .suggested: return "Suggested"
-        case .allSupported: return "All supported"
+        case .all: return "All Games"
         case .recent: return "Recent"
         case .favorites: return "Favorites"
-        case .unverified: return "Unverified"
         }
     }
 }
 
-/// Value snapshots keep eligibility/ranking independent of Realm and UI threads.
+/// Value snapshots keep ranking independent of Realm and UI threads.
 public struct NetplayRankedGame: Sendable {
     public var id: String
     public var title: String
@@ -145,22 +117,22 @@ public struct NetplayRankedGame: Sendable {
         self.eligibility = eligibility
     }
 
+    /// Games with an open room to join come first in every list; then Recent is last played
+    /// first and the others are A to Z. Title, system and ROM identity break ties.
     public static func select(_ games: [Self], list: NetplayGameList) -> [Self] {
         games.filter { game in
-            if list == .unverified { return game.eligibility == .unverified }
             guard !game.eligibility.options.isEmpty else { return false }
             return (list != .recent || game.lastPlayed != nil) && (list != .favorites || game.favorite)
         }.sorted { lhs, rhs in
-            if list == .suggested {
-                if lhs.hasJoinableRoom != rhs.hasJoinableRoom { return lhs.hasJoinableRoom }
-                if lhs.favorite != rhs.favorite { return lhs.favorite }
-            }
-            if list == .suggested || list == .recent, lhs.lastPlayed != rhs.lastPlayed {
+            if lhs.hasJoinableRoom != rhs.hasJoinableRoom { return lhs.hasJoinableRoom }
+            if list == .recent, lhs.lastPlayed != rhs.lastPlayed {
                 return (lhs.lastPlayed ?? .distantPast) > (rhs.lastPlayed ?? .distantPast)
             }
-            let left = [lhs.title, lhs.system, lhs.id].map { $0.folding(options: [.caseInsensitive, .diacriticInsensitive], locale: Locale(identifier: "en_US_POSIX")) }
-            let right = [rhs.title, rhs.system, rhs.id].map { $0.folding(options: [.caseInsensitive, .diacriticInsensitive], locale: Locale(identifier: "en_US_POSIX")) }
-            return left.lexicographicallyPrecedes(right)
+            return lhs.sortKey.lexicographicallyPrecedes(rhs.sortKey)
         }
+    }
+
+    private var sortKey: [String] {
+        [title, system, id].map { $0.folding(options: [.caseInsensitive, .diacriticInsensitive], locale: Locale(identifier: "en_US_POSIX")) }
     }
 }

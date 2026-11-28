@@ -141,14 +141,14 @@ public struct NetplayRoomBrowserView: View {
             Button(action: refresh) {
                 Label("Refresh", systemImage: "arrow.clockwise")
             }
-            .buttonStyle(.bordered)
+            .netplayButtonStyle()
             .netplayCursorItem(NetplayRoomBrowserCursor.refresh, cursor: cursor)
             Button {
                 showManualConnect = true
             } label: {
                 Label("Manual Connect", systemImage: "plus")
             }
-            .buttonStyle(.bordered)
+            .netplayButtonStyle()
             .netplayCursorItem(NetplayRoomBrowserCursor.manual, cursor: cursor)
         }
     }
@@ -230,7 +230,7 @@ public struct NetplayRoomBrowserView: View {
                     Text("Spectate")
                         .font(.caption)
                 }
-                .buttonStyle(.bordered)
+                .netplayButtonStyle()
                 .disabled(isJoining)
                 .netplayCursorItem(NetplayRoomBrowserCursor.spectate(room.id), cursor: cursor)
             }

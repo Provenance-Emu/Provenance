@@ -23,15 +23,16 @@ enum NetplayCoreCompatibility {
             return NetplayCoreSupport(coreIdentifier: coreIdentifier, modes: [.sharedConsole, .alternating], maxPlayers: 4,
                                       supportsSpectators: true, coreVersion: coreVersion)
         default:
-            // Other thin cores must register env 78 at runtime. A bundled dylib or
-            // a historical RetroArch netplay flag doesn't establish this capability.
+            // Other thin cores carry netplay through env 78. They are offered until a run of
+            // this build shows the core did not register it; a bundled dylib or a historical
+            // RetroArch netplay flag alone doesn't put a core on the list below.
             guard let mode = netpacketMode(coreIdentifier: coreIdentifier, systemIdentifier: systemIdentifier),
-                  UserDefaults.standard.bool(forKey: observationKey(coreIdentifier, coreVersion)) else { return nil }
+                  UserDefaults.standard.object(forKey: observationKey(coreIdentifier, coreVersion)) as? Bool ?? true else { return nil }
             return NetplayCoreSupport(coreIdentifier: coreIdentifier, modes: [mode], maxPlayers: 2, coreVersion: coreVersion)
         }
     }
 
-    /// These cores must demonstrate env 78 in this build before the library recommends them.
+    /// The thin cores known to register env 78, and the mode they carry.
     static func netpacketMode(coreIdentifier: String, systemIdentifier: String) -> NetplayPlayMode? {
         switch (coreIdentifier, SystemIdentifier(rawValue: systemIdentifier)) {
         case ("gpsp.libretro.framework", .GBA): return .linkCable

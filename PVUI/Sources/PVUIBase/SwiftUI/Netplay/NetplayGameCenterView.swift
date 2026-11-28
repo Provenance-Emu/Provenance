@@ -421,7 +421,7 @@ public struct NetplayGameCenterView: View {
                     Button("Sign In") {
                         gkManager.authenticate()
                     }
-                    .buttonStyle(.bordered)
+                    .netplayButtonStyle()
                 }
             }
             .padding(.vertical, 4)
@@ -442,7 +442,7 @@ public struct NetplayGameCenterView: View {
                     Label("Find Match via Game Center", systemImage: "person.badge.plus")
                         .frame(maxWidth: .infinity)
                 }
-                .buttonStyle(.borderedProminent)
+                .netplayButtonStyle(prominent: true)
                 .disabled(!gkManager.isAuthenticated || coordinator.isExchangingAddresses)
                 #else
                 Text("Game Center matchmaking requires the iOS or visionOS version of Provenance.")

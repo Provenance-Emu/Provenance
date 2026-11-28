@@ -148,8 +148,8 @@ extension PVEmulatorViewController {
                       room.coreIdentifier == core.coreIdentifier else { throw NetplayError.romMismatch }
                 let version = RomDatabase.sharedInstance.realm.object(ofType: PVCore.self, forPrimaryKey: room.coreIdentifier)?.projectVersion ?? ""
                 guard room.coreVersion.isEmpty || room.coreVersion == version,
-                      room.playMode == nil || room.playMode == intent.option?.mode else {
-                    throw NetplayError.invalidSettings("The host uses a different core version or multiplayer mode.")
+                      room.playMode.map({ intent.option?.core.modes.contains($0) ?? false }) ?? true else {
+                    throw NetplayError.invalidSettings("The host uses a different core version or play style.")
                 }
                 var settings = NetplaySettings.fromStoredDefaults()
                 settings.password = intent.password

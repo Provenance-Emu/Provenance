@@ -311,20 +311,6 @@ needs = ["macos", "xcodegen"]
 mode = "manual"
 cli_only = true
 
-[jobs.netplay-multiplayer-catalog]
-title = "Build the multiplayer metadata catalog"
-category = "Netplay"
-description = "Extracts player-count facts from an explicitly supplied official GameTDB archive; emulator compatibility is checked separately."
-run = ["python3", "Scripts/netplay/build_multiplayer_catalog.py"]
-args_hint = "<official-wiitdb.zip>"
-mode = "manual"
-cli_only = true
-
-[jobs.netplay-multiplayer-catalog-tests]
-title = "Multiplayer catalog extraction tests"
-category = "Audits"
-run = ["python3", "Scripts/tests/test_multiplayer_catalog.py"]
-
 # ─────────────────────────────────────────────────────────── audits
 
 [jobs.pbxproj-sources]

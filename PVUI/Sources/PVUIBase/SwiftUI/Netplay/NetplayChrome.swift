@@ -125,21 +125,20 @@ extension View {
     }
 }
 
-/// A choice among a few values (a list filter, a play style): a plain button that touch, the
-/// tvOS focus engine and the iOS controller cursor all drive. Selection and focus have
-/// separate colors so both stay readable on a TV.
+/// A choice among a few values (a tab, a list filter): a plain button that touch, the tvOS
+/// focus engine and the iOS controller cursor all drive. Selection is the theme's tint; focus
+/// on a TV is the app's own highlight (`retroFocusButtonStyle`), so both stay readable.
 struct NetplayChoiceChip: View {
     let title: String
     let selected: Bool
     /// The iOS controller cursor is on this chip.
     var isCursor = false
     let action: () -> Void
-    @FocusState private var focused: Bool
     @ObservedObject private var themeManager = ThemeManager.shared
 
     var body: some View {
         let accent = Color(themeManager.currentPalette.defaultTintColor)
-        let lit = focused || isCursor
+        let lit = isCursor
         Button(action: action) {
             Text(title)
                 .font(chipFont)
@@ -154,8 +153,7 @@ struct NetplayChoiceChip: View {
                 }
                 .contentShape(RoundedRectangle(cornerRadius: 16))
         }
-        .buttonStyle(.plain)
-        .focused($focused)
+        .retroFocusButtonStyle(focusScale: 1.05, cornerRadius: 16)
         .accessibilityAddTraits(selected ? .isSelected : [])
     }
 
@@ -172,6 +170,68 @@ struct NetplayChoiceChip: View {
         18
         #else
         10
+        #endif
+    }
+}
+
+#if os(tvOS)
+/// A text button on a TV, drawn from the theme with the app's focus highlight in place of
+/// the system's white platter.
+private struct NetplayTVButtonStyle: ButtonStyle {
+    let prominent: Bool
+
+    func makeBody(configuration: Configuration) -> some View {
+        NetplayTVButtonBody(configuration: configuration, prominent: prominent)
+    }
+}
+
+private struct NetplayTVButtonBody: View {
+    let configuration: ButtonStyle.Configuration
+    let prominent: Bool
+    @Environment(\.isFocused) private var isFocused
+    @Environment(\.isEnabled) private var isEnabled
+    @ObservedObject private var themeManager = ThemeManager.shared
+
+    private static let cornerRadius: CGFloat = 14
+    private static let focusScale: CGFloat = 1.05
+
+    var body: some View {
+        let palette = themeManager.currentPalette
+        let accent = Color(palette.defaultTintColor)
+        let shape = RoundedRectangle(cornerRadius: Self.cornerRadius)
+        configuration.label
+            .font(.system(size: 27, weight: .semibold))
+            .foregroundStyle(Color(palette.gameLibraryCellText))
+            .padding(.horizontal, 32)
+            .padding(.vertical, 18)
+            .background(accent.opacity(prominent ? 0.45 : 0.12), in: shape)
+            .overlay {
+                shape.strokeBorder(LinearGradient(colors: isFocused ? [.retroPink, .retroBlue] : [accent.opacity(prominent ? 0.9 : 0.35)],
+                                                  startPoint: .topLeading, endPoint: .bottomTrailing),
+                                   lineWidth: isFocused ? 3 : 1)
+            }
+            .shadow(color: isFocused ? Color.retroPink.opacity(0.6) : .clear, radius: isFocused ? 10 : 0)
+            .scaleEffect(configuration.isPressed ? 0.95 : (isFocused ? Self.focusScale : 1))
+            .opacity(isEnabled ? 1 : 0.4)
+            .animation(.spring(response: 0.25, dampingFraction: 0.8), value: isFocused)
+            .tvOSDisableFocusEffect()
+    }
+}
+#endif
+
+extension View {
+    /// The Network Play text button: the system's bordered styles on iOS, a themed button with
+    /// the app's focus highlight on a TV.
+    @ViewBuilder
+    func netplayButtonStyle(prominent: Bool = false) -> some View {
+        #if os(tvOS)
+        buttonStyle(NetplayTVButtonStyle(prominent: prominent))
+        #else
+        if prominent {
+            buttonStyle(.borderedProminent)
+        } else {
+            buttonStyle(.bordered)
+        }
         #endif
     }
 }

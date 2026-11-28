@@ -110,10 +110,10 @@ public struct NetplayJoinConfirmView: View {
     private var actionButtons: some View {
         HStack(spacing: 16) {
             Button("Cancel", role: .cancel, action: onCancel)
-                .buttonStyle(.bordered)
+                .netplayButtonStyle()
                 .netplayCursorItem(NetplayJoinConfirmCursor.cancel, cursor: cursor)
             Button("Join", action: onConfirm)
-                .buttonStyle(.borderedProminent)
+                .netplayButtonStyle(prominent: true)
                 .disabled(!canJoin)
                 .netplayCursorItem(NetplayJoinConfirmCursor.join, cursor: cursor)
         }

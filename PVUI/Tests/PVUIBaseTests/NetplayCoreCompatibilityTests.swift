@@ -26,13 +26,14 @@ struct NetplayCoreCompatibilityTests {
         #expect(!support.supportsFrameDelay)
     }
 
-    @Test func netpacketMustBeObservedAndObservationIsVersionScoped() throws {
+    @Test func netpacketCoreIsOfferedUntilARunShowsItCannotAndObservationIsVersionScoped() throws {
         let version = "test-" + UUID().uuidString
         let identifier = "gpsp.libretro.framework"
-        defer { NetplayCoreCompatibility.recordNetpacket(coreIdentifier: identifier, coreVersion: version, available: false) }
-        #expect(NetplayCoreCompatibility.support(coreIdentifier: identifier, systemIdentifier: "com.provenance.gba", coreVersion: version) == nil)
-        NetplayCoreCompatibility.recordNetpacket(coreIdentifier: identifier, coreVersion: version, available: true)
-        #expect(NetplayCoreCompatibility.support(coreIdentifier: identifier, systemIdentifier: "com.provenance.gba", coreVersion: version)?.modes == [.linkCable])
-        #expect(NetplayCoreCompatibility.support(coreIdentifier: identifier, systemIdentifier: "com.provenance.gba", coreVersion: version + "new") == nil)
+        let system = "com.provenance.gba"
+        defer { NetplayCoreCompatibility.recordNetpacket(coreIdentifier: identifier, coreVersion: version, available: true) }
+        #expect(NetplayCoreCompatibility.support(coreIdentifier: identifier, systemIdentifier: system, coreVersion: version)?.modes == [.linkCable])
+        NetplayCoreCompatibility.recordNetpacket(coreIdentifier: identifier, coreVersion: version, available: false)
+        #expect(NetplayCoreCompatibility.support(coreIdentifier: identifier, systemIdentifier: system, coreVersion: version) == nil)
+        #expect(NetplayCoreCompatibility.support(coreIdentifier: identifier, systemIdentifier: system, coreVersion: version + "new") != nil)
     }
 }

@@ -121,7 +121,7 @@ public struct NetplayInviteView: View {
                         Label("Share Link", systemImage: "square.and.arrow.up")
                             .frame(maxWidth: .infinity)
                     }
-                    .buttonStyle(.borderedProminent)
+                    .netplayButtonStyle(prominent: true)
                     #endif
                 }
                 .padding(.vertical, 4)

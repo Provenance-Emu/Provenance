@@ -9,7 +9,8 @@ import PVLogging
 import Defaults
 import PVSettings
 
-/// Library-first network play. Eligibility is evaluated before every list is ranked.
+/// Library-first network play: every game with a netplay-capable core, the rooms nearby and
+/// the settings, as tabs of one screen.
 @MainActor
 public struct NetplayLibraryLobbyView: View {
     private let initialGameMD5: String?
@@ -18,14 +19,11 @@ public struct NetplayLibraryLobbyView: View {
     #if !os(tvOS)
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
     #endif
-    @AppStorage(NetplayDefaultsKey.showUnverified) private var showUnverified = false
-    @AppStorage(NetplayDefaultsKey.playStyle) private var playStyle = "any"
     @State private var query = ""
-    @State private var list = NetplayGameList.suggested
+    @State private var list = NetplayGameList.all
     @State private var entries: [NetplayLibraryEligibility.Entry] = []
     @State private var selected: NetplayLibraryEligibility.Entry?
-    @State private var showSettings = false
-    @State private var showRooms = false
+    @State private var pane = NetplayHubPane.games
     @State private var pageLimit = 40
     @State private var pendingLaunch: (PVGame, NetplayGameOption, NetplayLaunchIntent.Action, String?)?
     @State private var errorMessage: String?
@@ -47,14 +45,23 @@ public struct NetplayLibraryLobbyView: View {
                 if !Defaults[.netplayEnabled] {
                     Label("Enable Netplay in Settings > Advanced to host or join.", systemImage: "exclamationmark.triangle")
                 }
-                #if os(tvOS)
-                HStack(alignment: .top, spacing: 48) {
-                    gamesPanel.frame(maxWidth: .infinity)
-                    roomsPanel.frame(maxWidth: 520)
+                switch pane {
+                case .games:
+                    #if os(tvOS)
+                    HStack(alignment: .top, spacing: 48) {
+                        gamesPanel.frame(maxWidth: .infinity)
+                        roomsPanel.frame(maxWidth: 520)
+                    }
+                    #else
+                    gamesPanel
+                    #endif
+                case .rooms:
+                    roomsPanel
+                case .settings:
+                    // The pane answers the controller while it shows, with the tabs as its header.
+                    NetplaySettingsPane(headerRows: headerCursorRows, cursor: $cursor) { dismiss() }
+                        .padding(.horizontal, -horizontalInset)
                 }
-                #else
-                if showRooms { roomsPanel } else { gamesPanel }
-                #endif
             }
             .padding(.horizontal, horizontalInset)
             .padding(.top, topInset)
@@ -68,13 +75,13 @@ public struct NetplayLibraryLobbyView: View {
                 }
             }
             #endif
-            .netplayControllerNavigation(cursorRows, cursor: $cursor, isCovered: errorMessage != nil) {
+            .netplayControllerNavigation(pane == .settings ? [] : cursorRows, cursor: pane == .settings ? .constant(nil) : $cursor,
+                                         isCovered: errorMessage != nil || pane == .settings) {
                 if searchFocused { searchFocused = false } else { dismiss() }
             }
         }
-        .netplayPresentation(isPresented: $showSettings, onDismiss: refresh) { NetplaySettingsView() }
         .netplayPresentation(item: $selected, onDismiss: launchPending) { entry in
-            NetplayLibraryGameDetail(entry: entry, rooms: discovery.rooms, onMetadataChanged: refresh) { option, action, password in
+            NetplayLibraryGameDetail(entry: entry, rooms: discovery.rooms) { option, action, password in
                 pendingLaunch = (entry.game, option, action, password)
                 selected = nil
             }
@@ -89,9 +96,8 @@ public struct NetplayLibraryLobbyView: View {
         }
         .onDisappear {
             // A TV child cover hides the hub too. Keep rooms alive while its details are open.
-            if selected == nil && !showSettings { discovery.stopDiscovery() }
+            if selected == nil { discovery.stopDiscovery() }
         }
-        .onChange(of: showUnverified) { _, enabled in if !enabled && list == .unverified { list = .suggested } }
         .onChange(of: list) { _, _ in pageLimit = Self.pageSize }
         .onChange(of: query) { _, _ in pageLimit = Self.pageSize }
         .pvAlert(item: $errorMessage) { message in
@@ -117,31 +123,31 @@ public struct NetplayLibraryLobbyView: View {
         #endif
     }
 
-    /// Search, the games/rooms switch (iOS; TV shows both side by side) and Settings, in the
-    /// content rather than the toolbar, so the focus engine and the controller cursor reach them.
+    /// The tabs and the game search, in the content rather than the toolbar, so the focus
+    /// engine and the controller cursor reach them.
     @ViewBuilder
     private var headerControls: some View {
         #if os(tvOS)
         HStack(spacing: 12) {
-            searchField
-            settingsButton
+            paneChips
+            if pane == .games { searchField }
+            Spacer(minLength: 0)
         }
+        .focusSection()
         #else
         if searchHasOwnRow {
-            // A phone has no room for the field beside the panes: it shrank to an ellipsis.
+            // A phone has no room for the field beside the tabs: it shrank to an ellipsis.
             VStack(spacing: 12) {
                 HStack(spacing: 12) {
                     paneChips
                     Spacer(minLength: 0)
-                    settingsButton
                 }
-                searchField
+                if pane == .games { searchField }
             }
         } else {
             HStack(spacing: 12) {
                 paneChips
-                searchField
-                settingsButton
+                if pane == .games { searchField } else { Spacer(minLength: 0) }
             }
         }
         #endif
@@ -149,19 +155,19 @@ public struct NetplayLibraryLobbyView: View {
 
     #if !os(tvOS)
     private var searchHasOwnRow: Bool { horizontalSizeClass == .compact }
+    #endif
 
     private var paneChips: some View {
-        ForEach([false, true], id: \.self) { rooms in
-            let id = NetplayHubCursor.tab(rooms: rooms)
-            NetplayChoiceChip(title: rooms ? "Nearby Rooms" : "Your Games", selected: showRooms == rooms, isCursor: cursor == id) {
-                showRooms = rooms
+        ForEach(NetplayHubPane.shown) { shown in
+            let id = NetplayHubCursor.tab(shown)
+            NetplayChoiceChip(title: shown.title, selected: pane == shown, isCursor: cursor == id) {
+                pane = shown
             }
             .fixedSize()
             .netplayCursorItem(id, cursor: cursor, cornerRadius: 16)
+            .accessibilityIdentifier("netplay.pane.\(shown.rawValue)")
         }
-        .accessibilityIdentifier("netplay.panes")
     }
-    #endif
 
     private var searchField: some View {
         TextField("Game or system", text: $query)
@@ -174,33 +180,6 @@ public struct NetplayLibraryLobbyView: View {
             .accessibilityIdentifier("netplay.hub.search")
     }
 
-    /// Beside the panes on a phone there is room for the gear alone: the word wrapped mid-syllable.
-    @ViewBuilder
-    private var settingsLabel: some View {
-        #if os(tvOS)
-        Label("Settings", systemImage: "gearshape")
-        #else
-        if searchHasOwnRow {
-            Label("Settings", systemImage: "gearshape").labelStyle(.iconOnly)
-        } else {
-            Label("Settings", systemImage: "gearshape")
-        }
-        #endif
-    }
-
-    private var settingsButton: some View {
-        Button {
-            showSettings = true
-        } label: {
-            settingsLabel
-                .padding(searchPadding)
-                .contentShape(Rectangle())
-        }
-        .retroFocusButtonStyle(focusScale: 1.05)
-        .netplayCursorItem(NetplayHubCursor.settings, cursor: cursor)
-        .accessibilityIdentifier("netplay.hub.settings")
-    }
-
     private var searchPadding: CGFloat {
         #if os(tvOS)
         16
@@ -209,31 +188,24 @@ public struct NetplayLibraryLobbyView: View {
         #endif
     }
 
-    private var availableLists: [NetplayGameList] {
-        NetplayGameList.allCases.filter { $0 != .unverified || showUnverified }
-    }
-
     private var gamesPanel: some View {
         VStack(alignment: .leading, spacing: 20) {
-            NetplayChoiceRow(title: "", choices: availableLists.map { ($0, $0.title) }, selection: $list,
+            NetplayChoiceRow(title: "", choices: NetplayGameList.allCases.map { ($0, $0.title) }, selection: $list,
                              cursorPrefix: NetplayHubCursor.listPrefix, cursor: cursor)
                 .accessibilityIdentifier("netplay.gameList")
-            if list == .unverified {
-                Text("Multiplayer details are missing. These games are never recommended. Select one to review its details.")
-                    .font(.subheadline).foregroundStyle(.secondary)
-            }
             ScrollView {
                 let visible = visibleEntries
                 if visible.isEmpty {
-                    ContentUnavailableView(list == .unverified ? "No Unverified Games" : "No Compatible Games", systemImage: "gamecontroller",
-                                           description: Text("Games need multiplayer details and an installed core for that mode. Enable Unverified in Settings to review missing details."))
+                    ContentUnavailableView("No Games Here Yet", systemImage: "gamecontroller",
+                                           description: Text("Every downloaded game appears here when its system has an installed core that supports network play."))
+                        .accessibilityIdentifier("netplay.hub.empty")
                 }
                 LazyVGrid(columns: [GridItem(.adaptive(minimum: cardWidth), spacing: Self.gridSpacing)], spacing: Self.gridSpacing) {
                     ForEach(visible.prefix(pageLimit)) { entry in
                         VStack(alignment: .leading, spacing: 8) {
                             GameItemView(game: entry.game) { selected = entry }
                                 .accessibilityIdentifier("netplay.game.\(entry.id)")
-                            Text(entry.eligibility.options.first?.mode.title ?? "Multiplayer unverified")
+                            Text(Self.caption(for: entry))
                                 .font(.caption).foregroundStyle(.secondary)
                         }
                         .netplayCursorItem(NetplayHubCursor.game(entry.id), cursor: cursor)
@@ -249,7 +221,7 @@ public struct NetplayLibraryLobbyView: View {
                 }
                 if visible.count > pageLimit {
                     Button("Show More (\(visible.count) games)") { pageLimit += Self.pageSize }
-                        .buttonStyle(.bordered)
+                        .netplayButtonStyle()
                         .netplayCursorItem(NetplayHubCursor.showMore, cursor: cursor)
                 }
             }
@@ -257,6 +229,11 @@ public struct NetplayLibraryLobbyView: View {
             .focusSection()
             #endif
         }
+    }
+
+    /// How the game connects, and its hint when there is one.
+    private static func caption(for entry: NetplayLibraryEligibility.Entry) -> String {
+        [entry.eligibility.options.first?.mode.title, entry.hint.label].compactMap { $0 }.joined(separator: " · ")
     }
 
     private static let gridSpacing: CGFloat = 28
@@ -273,12 +250,8 @@ public struct NetplayLibraryLobbyView: View {
     private var visibleEntries: [NetplayLibraryEligibility.Entry] {
         let search = query.trimmingCharacters(in: .whitespacesAndNewlines)
         let filtered = entries.filter { entry in
-            let matchesSearch = search.isEmpty || entry.game.title.localizedStandardContains(search)
+            search.isEmpty || entry.game.title.localizedStandardContains(search)
                 || (entry.game.system?.name.localizedStandardContains(search) ?? false)
-            let options = entry.eligibility.options
-            let matchesStyle = list == .unverified || playStyle == "any"
-                || options.contains { playStyle == "shared" ? $0.mode.isSharedConsole : !$0.mode.isSharedConsole }
-            return matchesSearch && matchesStyle
         }
         let snapshots = filtered.map { entry in
             NetplayRankedGame(id: entry.id, title: entry.game.title, system: entry.game.system?.name ?? entry.game.systemIdentifier,
@@ -309,7 +282,7 @@ public struct NetplayLibraryLobbyView: View {
                     .netplayCursorItem(NetplayHubCursor.room(room.id), cursor: cursor, cornerRadius: 18)
                 }
                 Button("Refresh Rooms", systemImage: "arrow.clockwise", action: refreshRooms)
-                    .buttonStyle(.bordered)
+                    .netplayButtonStyle()
                     .netplayCursorItem(NetplayHubCursor.refresh, cursor: cursor)
             }
             .padding(12)
@@ -330,28 +303,26 @@ public struct NetplayLibraryLobbyView: View {
         refresh()
     }
 
-    /// What the iOS controller cursor can reach, in the order it is drawn.
-    private var cursorRows: [NetplayCursorRow] {
-        var header: [NetplayCursorTarget] = []
-        #if !os(tvOS)
-        header += [false, true].map { rooms in
-            NetplayCursorTarget(id: NetplayHubCursor.tab(rooms: rooms)) { showRooms = rooms }
+    /// The tabs and the search field as cursor rows, in the order they are drawn.
+    private var headerCursorRows: [NetplayCursorRow] {
+        let tabs = NetplayHubPane.shown.map { shown in
+            NetplayCursorTarget(id: NetplayHubCursor.tab(shown)) { pane = shown }
         }
-        #endif
+        guard pane == .games else { return [NetplayCursorRow(id: "row.header", isHeader: true, targets: tabs)] }
         let search = NetplayCursorTarget(id: NetplayHubCursor.search) { searchFocused = true }
-        let settings = NetplayCursorTarget(id: NetplayHubCursor.settings) { showSettings = true }
-        var rows: [NetplayCursorRow]
-        #if os(tvOS)
-        rows = [NetplayCursorRow(id: "row.header", isHeader: true, targets: header + [search, settings])]
-        #else
+        #if !os(tvOS)
         if searchHasOwnRow {
-            rows = [NetplayCursorRow(id: "row.header", isHeader: true, targets: header + [settings]),
+            return [NetplayCursorRow(id: "row.header", isHeader: true, targets: tabs),
                     NetplayCursorRow(id: "row.search", isHeader: true, targets: [search])]
-        } else {
-            rows = [NetplayCursorRow(id: "row.header", isHeader: true, targets: header + [search, settings])]
         }
         #endif
-        if showRooms {
+        return [NetplayCursorRow(id: "row.header", isHeader: true, targets: tabs + [search])]
+    }
+
+    /// What the iOS controller cursor can reach on the Games and Rooms tabs, in the order it is drawn.
+    private var cursorRows: [NetplayCursorRow] {
+        var rows = headerCursorRows
+        if pane == .rooms {
             rows += sortedRooms.map { room in
                 let entry = entry(for: room)
                 return .single(NetplayCursorTarget(id: NetplayHubCursor.room(room.id), isEnabled: entry != nil && Defaults[.netplayEnabled]) {
@@ -360,7 +331,7 @@ public struct NetplayLibraryLobbyView: View {
             }
             rows.append(.single(NetplayCursorTarget(id: NetplayHubCursor.refresh, action: refreshRooms)))
         } else {
-            rows.append(NetplayChoiceRow.cursorRow(NetplayHubCursor.listPrefix, choices: availableLists, selection: $list))
+            rows.append(NetplayChoiceRow.cursorRow(NetplayHubCursor.listPrefix, choices: NetplayGameList.allCases, selection: $list))
             let visible = visibleEntries
             let shown = Array(visible.prefix(pageLimit))
             let columns = ControllerGridMetrics.adaptiveColumnCount(availableWidth: gridWidth - 2 * Self.gridPadding,
@@ -384,7 +355,7 @@ public struct NetplayLibraryLobbyView: View {
         if room.isFull { return "Full" }
         if ready { return room.isPasswordProtected ? "Password required" : "Join" }
         if room.gameHash.caseInsensitiveCompare(entry?.id ?? "") != .orderedSame { return "Different ROM — matching file required" }
-        return "Compatibility unverified or unsupported"
+        return "Host's core or version is not installed"
     }
 
     private func refresh() {
@@ -431,15 +402,42 @@ public struct NetplayLibraryLobbyView: View {
         })
     }
 }
+/// The hub's tabs. A TV shows the rooms beside the games, so it has no Rooms tab.
+enum NetplayHubPane: String, CaseIterable, Identifiable {
+    case games, rooms, settings
+
+    var id: String { rawValue }
+
+    static var shown: [NetplayHubPane] {
+        #if os(tvOS)
+        [.games, .settings]
+        #else
+        allCases
+        #endif
+    }
+
+    var title: String {
+        switch self {
+        case .games:
+            #if os(tvOS)
+            "Games and Rooms"
+            #else
+            "Games"
+            #endif
+        case .rooms: "Rooms"
+        case .settings: "Settings"
+        }
+    }
+}
+
 /// Cursor IDs on the hub.
 enum NetplayHubCursor {
     static let search = "search"
-    static let settings = "settings"
     static let refresh = "refresh"
     static let showMore = "showMore"
     static let listPrefix = "list"
 
-    static func tab(rooms: Bool) -> String { rooms ? "tab.rooms" : "tab.games" }
+    static func tab(_ pane: NetplayHubPane) -> String { "tab.\(pane.rawValue)" }
     static func game(_ md5: String) -> String { "game.\(md5)" }
     static func room(_ id: some CustomStringConvertible) -> String { "room.\(id)" }
 

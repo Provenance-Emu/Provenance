@@ -33,7 +33,6 @@ public struct NetplayLobbyView: View {
     let gameSerial: String
     let systemIdentifier: String
     let coreVersion: String
-    let isPatched: Bool
     let startHosting: Bool
 
     @State private var showRoomBrowser = false
@@ -59,7 +58,6 @@ public struct NetplayLobbyView: View {
         gameSerial: String = "",
         systemIdentifier: String = "",
         coreVersion: String = "",
-        isPatched: Bool = false,
         startHosting: Bool = false
     ) {
         self.gameName = gameName
@@ -68,7 +66,6 @@ public struct NetplayLobbyView: View {
         self.gameSerial = gameSerial
         self.systemIdentifier = systemIdentifier
         self.coreVersion = coreVersion
-        self.isPatched = isPatched
         self.startHosting = startHosting
     }
 
@@ -80,7 +77,6 @@ public struct NetplayLobbyView: View {
             systemIdentifier: systemIdentifier,
             coreIdentifier: coreIdentifier
         )
-        game.isPatched = isPatched
         game.coreVersion = coreVersion
         return game
     }
