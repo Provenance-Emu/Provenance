@@ -26,9 +26,8 @@ public struct NetplayCreateRoomView: View {
 
     @StateObject private var netplay = ObservableNetplayManager.shared
     @State private var settings = NetplaySettings.fromStoredDefaults()
-    @State private var selectedOptionID = ""
-    @State private var options: [NetplayGameOption] = []
-    @State private var showMetadata = false
+    /// How the running core carries this room, nil when it cannot.
+    @State private var selectedOption: NetplayGameOption?
     @State private var isStarting = false
     @State private var errorMessage: String?
     @State private var showError = false
@@ -51,18 +50,10 @@ public struct NetplayCreateRoomView: View {
         self.hostedGame = hostedGame
     }
 
-    private var selectedOption: NetplayGameOption? { options.first { $0.id == selectedOptionID } ?? options.first }
-
     private func loadOptions() {
-        guard let game = hostedGame,
-              let support = NetplayCoreCompatibility.support(coreIdentifier: coreIdentifier, systemIdentifier: game.systemIdentifier, coreVersion: game.coreVersion) else {
-            options = []
-            return
-        }
-        let metadata = NetplayMetadataStore.shared.metadata(md5: game.md5, system: game.systemIdentifier, serial: game.serial,
-                                                           isPatched: game.isPatched)
-        options = NetplayEligibility.evaluate(localFileAvailable: true, metadata: metadata, cores: [support]).options
-        if !options.contains(where: { $0.id == selectedOptionID }) { selectedOptionID = options.first?.id ?? "" }
+        selectedOption = hostedGame.flatMap { game in
+            NetplayCoreCompatibility.support(coreIdentifier: coreIdentifier, systemIdentifier: game.systemIdentifier, coreVersion: game.coreVersion)
+        }.flatMap { NetplayEligibility.evaluate(localFileAvailable: true, cores: [$0]).options.first }
         normalizeSettings()
     }
 
@@ -79,15 +70,10 @@ public struct NetplayCreateRoomView: View {
                 // Game info
                 NetplayFormSection("Game") {
                     LabeledContent("Title", value: gameName)
-                    if options.isEmpty {
-                        Label("Multiplayer details or core support are missing.", systemImage: "questionmark.circle")
+                    if let option = selectedOption {
+                        LabeledContent("Play style", value: option.mode.title)
                     } else {
-                        NetplayChoiceRow(title: "Play style", choices: options.map { ($0.id, $0.mode.title) },
-                                         selection: selectedOptionBinding, cursorPrefix: NetplayCreateRoomCursor.optionPrefix, cursor: cursor)
-                    }
-                    if hostedGame != nil {
-                        Button("Review Multiplayer Details") { showMetadata = true }
-                            .netplayCursorItem(NetplayCreateRoomCursor.metadata, cursor: cursor)
+                        Label("This core does not support network play.", systemImage: "exclamationmark.triangle")
                     }
                 }
 
@@ -173,12 +159,6 @@ public struct NetplayCreateRoomView: View {
                 }
             }
             .task { hostingRestartsGame = await netplay.hostingRestartsGame(); loadOptions() }
-            .onChange(of: selectedOptionID) { _, _ in normalizeSettings() }
-            .netplayPresentation(isPresented: $showMetadata, onDismiss: loadOptions) {
-                if let game = hostedGame {
-                    NetplayMetadataEditor(title: gameName, md5: game.md5, system: game.systemIdentifier, onSave: loadOptions)
-                }
-            }
             .netplayNavigationTitle("Create Room")
             #if !os(tvOS)
             .navigationBarTitleDisplayMode(.inline)
@@ -230,22 +210,10 @@ public struct NetplayCreateRoomView: View {
 
     private var canStart: Bool { !isStarting && !settings.roomName.isEmpty && selectedOption != nil }
 
-    /// The chosen play style; with none chosen yet, the first one (what hosting would use).
-    private var selectedOptionBinding: Binding<String> {
-        Binding(get: { selectedOption?.id ?? "" }, set: { selectedOptionID = $0 })
-    }
-
     /// What the iOS controller cursor can reach, in the order it is drawn. Everything above
     /// Start Hosting is a header row, so the cursor starts on Start Hosting.
     private var cursorRows: [NetplayCursorRow] {
         var rows: [NetplayCursorRow] = []
-        if !options.isEmpty {
-            rows.append(NetplayChoiceRow.cursorRow(NetplayCreateRoomCursor.optionPrefix, choices: options.map(\.id),
-                                                   selection: selectedOptionBinding))
-        }
-        if hostedGame != nil {
-            rows.append(.single(NetplayCursorTarget(id: NetplayCreateRoomCursor.metadata) { showMetadata = true }, isHeader: true))
-        }
         rows.append(.single(NetplayCursorTarget(id: NetplayCreateRoomCursor.roomName) { focusedField = .roomName }, isHeader: true))
         var players = NetplayStepperView.cursorRow(NetplayCreateRoomCursor.maxPlayers, value: $settings.maxPlayers, in: playerRange)
         players.isHeader = true
@@ -279,7 +247,7 @@ public struct NetplayCreateRoomView: View {
         Task { @MainActor in
             do {
                 loadOptions()
-                guard let option = selectedOption else { throw NetplayError.invalidSettings("Confirm a supported multiplayer mode first.") }
+                guard let option = selectedOption else { throw NetplayError.invalidSettings("This core does not support network play.") }
                 normalizeSettings()
                 var game = hostedGame
                 game?.option = option
@@ -299,8 +267,6 @@ public struct NetplayCreateRoomView: View {
 enum NetplayCreateRoomCursor {
     enum Field: Hashable { case roomName, password }
 
-    static let optionPrefix = "option"
-    static let metadata = "metadata"
     static let roomName = "roomName"
     static let maxPlayers = "maxPlayers"
     static let spectators = "spectators"

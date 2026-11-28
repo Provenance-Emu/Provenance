@@ -2235,7 +2235,6 @@ struct PauseTileMenuView: View {
                 gameSerial: emulatorVC.game?.romSerial ?? "",
                 systemIdentifier: emulatorVC.game?.systemIdentifier ?? "",
                 coreVersion: RomDatabase.sharedInstance.realm.object(ofType: PVCore.self, forPrimaryKey: emulatorVC.core.coreIdentifier ?? "")?.projectVersion ?? "",
-                isPatched: emulatorVC.game?.isPatchVariant ?? false,
                 startHosting: startNetplayHosting
             )
             // The host started the game or this device joined a room: close the netplay

@@ -10,19 +10,15 @@ import PVSettings
 struct NetplayLibraryGameDetail: View {
     let entry: NetplayLibraryEligibility.Entry
     let rooms: [NetplayRoom]
-    let onMetadataChanged: () -> Void
     let onLaunch: (NetplayGameOption, NetplayLaunchIntent.Action, String?) -> Void
     @Environment(\.dismiss) private var dismiss
     @State private var optionID = ""
-    @State private var showMetadata = false
     @State private var password = ""
-    @State private var refreshedEntry: NetplayLibraryEligibility.Entry?
     /// The iOS controller cursor (plain state: iOS has no focus engine for buttons).
     @State private var cursor: String?
     @FocusState private var passwordFocused: Bool
 
-    private var current: NetplayLibraryEligibility.Entry { refreshedEntry ?? entry }
-    private var options: [NetplayGameOption] { current.eligibility.options }
+    private var options: [NetplayGameOption] { entry.eligibility.options }
     private var chosen: NetplayGameOption? { options.first { $0.id == optionID } ?? options.first }
 
     var body: some View {
@@ -31,18 +27,17 @@ struct NetplayLibraryGameDetail: View {
                 NetplayFormSection {
                     GameItemView(game: entry.game, viewType: .row) { }
                         .allowsHitTesting(false)
-                    if let metadata = current.metadata {
-                        Text(metadata.source == .gameTDB ? "Multiplayer details: GameTDB" : "Multiplayer details: your confirmation")
-                            .font(.caption).foregroundStyle(.secondary)
-                        Text(metadata.reference).font(.caption).foregroundStyle(.secondary)
+                    let hint = entry.hint(for: chosen)
+                    if let label = hint.label {
+                        Label(label, systemImage: hint == .reportedBroken ? "exclamationmark.bubble" : "checkmark.bubble")
+                            .font(.subheadline).foregroundStyle(.secondary)
+                            .accessibilityIdentifier("netplay.detail.hint")
                     }
-                    switch current.eligibility {
-                    case .unverified:
-                        Label("Multiplayer Unverified", systemImage: "questionmark.circle")
-                        Text("Confirm this game's multiplayer mode to check its available cores. It will stay out of recommendations until then.")
+                    switch entry.eligibility {
                     case .unavailable(let reason):
                         Label(reason, systemImage: "exclamationmark.triangle")
-                    case .supported:
+                            .accessibilityIdentifier("netplay.detail.unavailable")
+                    case .available:
                         Text("Play with").font(.subheadline).foregroundStyle(.secondary)
                         ForEach(options) { option in
                             let id = NetplayDetailCursor.option(option.id)
@@ -55,17 +50,15 @@ struct NetplayLibraryGameDetail: View {
                         Text("Both players need the same game and compatible core. The running core is checked again before connecting.")
                             .font(.caption).foregroundStyle(.secondary)
                         Button("Host This Game", systemImage: "person.2.fill", action: host)
-                            .buttonStyle(.borderedProminent)
+                            .netplayButtonStyle(prominent: true)
                             .disabled(!Defaults[.netplayEnabled])
                             .netplayCursorItem(NetplayDetailCursor.host, cursor: cursor)
                     }
-                    Button("Review Multiplayer Details", systemImage: "info.circle") { showMetadata = true }
-                        .netplayCursorItem(NetplayDetailCursor.metadata, cursor: cursor)
                 }
                 if !roomsForGame.isEmpty {
                     NetplayFormSection("Rooms for This Game") {
                         ForEach(roomsForGame) { room in
-                            let option = NetplayLibraryEligibility.option(for: room, entry: current)
+                            let option = NetplayLibraryEligibility.option(for: room, entry: entry)
                             VStack(alignment: .leading, spacing: 12) {
                                 Text("\(room.hostName) · \(room.playerCountDisplay)")
                                 if room.isPasswordProtected {
@@ -76,10 +69,10 @@ struct NetplayLibraryGameDetail: View {
                                 if room.gameHash.caseInsensitiveCompare(entry.id) != .orderedSame {
                                     Text("Different ROM: use the same file as the host.").foregroundStyle(.secondary)
                                 } else if option == nil && !room.isFull {
-                                    Text("This core and multiplayer mode are not verified on this device.").foregroundStyle(.secondary)
+                                    Text("The host uses a core or version that is not installed on this device.").foregroundStyle(.secondary)
                                 }
                                 Button(room.isFull ? "Room Full" : "Join Room") { join(room) }
-                                    .buttonStyle(.borderedProminent)
+                                    .netplayButtonStyle(prominent: true)
                                     .disabled(!canJoin(room))
                                     .netplayCursorItem(NetplayDetailCursor.join(room.id), cursor: cursor)
                             }
@@ -94,9 +87,6 @@ struct NetplayLibraryGameDetail: View {
             .netplayControllerNavigation(cursorRows, cursor: $cursor) {
                 if passwordFocused { passwordFocused = false } else { dismiss() }
             }
-        }
-        .netplayPresentation(isPresented: $showMetadata, onDismiss: refresh) {
-            NetplayMetadataEditor(title: entry.game.title, md5: entry.id, system: entry.game.systemIdentifier, onSave: refresh)
         }
         .onAppear { optionID = options.first?.id ?? "" }
     }
@@ -113,25 +103,24 @@ struct NetplayLibraryGameDetail: View {
     }
 
     private func canJoin(_ room: NetplayRoom) -> Bool {
-        NetplayLibraryEligibility.option(for: room, entry: current) != nil && Defaults[.netplayEnabled]
+        NetplayLibraryEligibility.option(for: room, entry: entry) != nil && Defaults[.netplayEnabled]
             && !(room.isPasswordProtected && password.isEmpty)
     }
 
     private func join(_ room: NetplayRoom) {
-        guard canJoin(room), let option = NetplayLibraryEligibility.option(for: room, entry: current) else { return }
+        guard canJoin(room), let option = NetplayLibraryEligibility.option(for: room, entry: entry) else { return }
         onLaunch(option, .join(room), password.isEmpty ? nil : password)
     }
 
     /// What the iOS controller cursor can reach, in the order it is drawn.
     private var cursorRows: [NetplayCursorRow] {
         var rows: [NetplayCursorRow] = []
-        if case .supported = current.eligibility {
+        if case .available = entry.eligibility {
             rows += options.map { option in
                 .single(NetplayCursorTarget(id: NetplayDetailCursor.option(option.id)) { optionID = option.id }, isHeader: true)
             }
             rows.append(.single(NetplayCursorTarget(id: NetplayDetailCursor.host, isEnabled: Defaults[.netplayEnabled], action: host)))
         }
-        rows.append(.single(NetplayCursorTarget(id: NetplayDetailCursor.metadata) { showMetadata = true }))
         for room in roomsForGame {
             if room.isPasswordProtected {
                 rows.append(.single(NetplayCursorTarget(id: NetplayDetailCursor.password(room.id)) { passwordFocused = true }))
@@ -144,16 +133,10 @@ struct NetplayLibraryGameDetail: View {
     private func coreName(_ option: NetplayGameOption) -> String {
         RomDatabase.sharedInstance.realm.object(ofType: PVCore.self, forPrimaryKey: option.core.coreIdentifier)?.projectName ?? option.core.coreIdentifier
     }
-
-    private func refresh() {
-        refreshedEntry = NetplayLibraryEligibility.entry(entry.game, realm: RomDatabase.sharedInstance.realm)
-        onMetadataChanged()
-    }
 }
 /// Cursor IDs on a game's Network Play screen.
 enum NetplayDetailCursor {
     static let host = "host"
-    static let metadata = "metadata"
 
     static func option(_ id: String) -> String { "option.\(id)" }
     static func password(_ room: UUID) -> String { "password.\(room)" }

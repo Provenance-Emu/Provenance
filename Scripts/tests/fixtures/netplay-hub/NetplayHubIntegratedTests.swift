@@ -40,11 +40,8 @@ final class NetplayHubIntegratedTests: XCTestCase {
         select(entry, in: app)
         #endif
         XCTAssertTrue(app.staticTexts["Pick a game. Bring your friends."].waitForExistence(timeout: 20))
-        #if os(tvOS)
-        let settings = app.navigationBars["Network Play"].buttons["Settings"]
-        #else
-        let settings = app.buttons["netplay.hub.settings"]
-        #endif
+        let settings = app.buttons["netplay.pane.settings"]
+        let games = app.buttons["netplay.pane.games"]
         XCTAssertTrue(settings.waitForExistence(timeout: 5))
         #if os(tvOS)
         XCTAssertFalse(app.keyboards.firstMatch.exists, "Opening the hub must not force a full-screen search keyboard")
@@ -57,56 +54,33 @@ final class NetplayHubIntegratedTests: XCTestCase {
         XCTAssertTrue(app.staticTexts["netplay.hub.heading"].exists)
         #endif
         save("Real library netplay hub")
+        // Settings is a tab of the hub, not a screen over it.
         select(settings, in: app)
-        let toggle = app.descendants(matching: .any)["netplay.showUnverified"].firstMatch
-        #if os(tvOS)
-        for _ in 0..<12 {
-            if toggle.exists { break }
-            XCUIRemote.shared.press(.down)
+        XCTAssertTrue(app.staticTexts["Player Profile"].waitForExistence(timeout: 10))
+        XCTAssertTrue(app.staticTexts["netplay.hub.heading"].exists)
+        XCTAssertFalse(app.descendants(matching: .any)["netplay.showUnverified"].exists, "No setting edits which games are offered")
+        save("Real hub - settings tab")
+        select(games, in: app)
+        // Every list is the same set of games; none is a recommendation.
+        for title in ["All Games", "Recent", "Favorites"] {
+            XCTAssertTrue(app.buttons[title].waitForExistence(timeout: 5), "Missing list \(title)")
         }
-        #endif
-        XCTAssertTrue(toggle.waitForExistence(timeout: 10))
-        if ["0", "Off"].contains(toggle.value as? String ?? "") { select(toggle, in: app) }
-        #if os(tvOS)
-        XCUIRemote.shared.press(.menu)
-        #else
-        select(app.buttons["Done"].firstMatch, in: app)
-        #endif
-        XCTAssertTrue(settings.waitForExistence(timeout: 10))
-        #if !os(tvOS)
-        select(app.descendants(matching: .any)["netplay.gameList"].firstMatch, in: app)
-        #endif
-        let unverified = app.buttons["Unverified"].firstMatch
-        XCTAssertTrue(unverified.waitForExistence(timeout: 5))
-        selectList(unverified, in: app)
+        XCTAssertFalse(app.buttons["Suggested"].exists)
+        XCTAssertFalse(app.buttons["Unverified"].exists)
+        // The fixture app has no netplay core for the fixture game's system, which is the
+        // only reason a game is left out.
         let cards = app.descendants(matching: .any).matching(NSPredicate(format: "identifier BEGINSWITH %@", "netplay.game."))
-        XCTAssertTrue(cards.firstMatch.waitForExistence(timeout: 10), "Expected the imported synthetic Theme Preview ROM in the separate Unverified list")
-        save("Real hub - unverified library artwork")
-        select(cards.firstMatch, in: app)
-        XCTAssertTrue(app.staticTexts["Multiplayer Unverified"].waitForExistence(timeout: 10))
-        XCTAssertFalse(app.buttons["Host This Game"].exists)
-        save("Real game details - unverified cannot host")
-        #if os(tvOS)
-        XCUIRemote.shared.press(.menu)
-        #else
-        select(app.buttons["Back"].firstMatch, in: app)
-        #endif
-        XCTAssertTrue(cards.firstMatch.waitForExistence(timeout: 10))
-        XCTAssertFalse(app.staticTexts["Multiplayer Unverified"].exists, "Back must not reopen details")
+        if !cards.firstMatch.waitForExistence(timeout: 5) {
+            XCTAssertTrue(app.descendants(matching: .any)["netplay.hub.empty"].exists)
+        }
         #if !os(tvOS)
-        select(app.descendants(matching: .any)["netplay.gameList"].firstMatch, in: app)
-        #endif
-        selectList(app.buttons["Suggested"].firstMatch, in: app)
-        XCTAssertFalse(cards.firstMatch.exists, "Unknown multiplayer must never appear in recommendations")
-        XCTAssertTrue(app.staticTexts["No Compatible Games"].exists)
-        #if !os(tvOS)
-        select(app.buttons["Nearby Rooms"].firstMatch, in: app)
+        select(app.buttons["netplay.pane.rooms"], in: app)
         XCTAssertTrue(app.staticTexts["Looking for rooms nearby"].waitForExistence(timeout: 5))
-        select(app.buttons["Your Games"].firstMatch, in: app)
+        select(games, in: app)
         #else
         XCTAssertTrue(app.staticTexts["Looking for rooms nearby"].exists)
         #endif
-        save("Real hub - recommendations exclude unknown game")
+        save("Real hub - games list")
         print("NETPLAY HUB TREE\n" + app.debugDescription)
     }
 
@@ -131,32 +105,23 @@ final class NetplayHubIntegratedTests: XCTestCase {
         #else
         network.tap()
         #endif
-        XCTAssertTrue(app.staticTexts["Multiplayer Unverified"].waitForExistence(timeout: 15))
-        XCTAssertFalse(app.buttons["Host This Game"].exists)
-        save("Context menu opens exact ROM multiplayer details")
+        // Details open for the exact ROM: hosting where a netplay core is installed, else the reason.
+        let host = app.buttons["Host This Game"]
+        let unavailable = app.descendants(matching: .any)["netplay.detail.unavailable"]
+        XCTAssertTrue(host.waitForExistence(timeout: 15) || unavailable.waitForExistence(timeout: 5))
+        XCTAssertFalse(app.buttons["Review Multiplayer Details"].exists)
+        save("Context menu opens exact ROM network play details")
         #if os(tvOS)
         XCUIRemote.shared.press(.menu)
         #else
         select(app.buttons["Back"].firstMatch, in: app)
         #endif
         XCTAssertTrue(app.staticTexts["netplay.hub.heading"].waitForExistence(timeout: 10))
-        XCTAssertFalse(app.staticTexts["Multiplayer Unverified"].exists)
+        XCTAssertFalse(host.exists || unavailable.exists, "Back must not reopen details")
         #if os(tvOS)
         select(app.navigationBars["Network Play"].buttons["Done"], in: app)
         #else
         select(app.buttons["netplay.hub.done"], in: app)
-        #endif
-    }
-
-    @MainActor private func selectList(_ target: XCUIElement, in app: XCUIApplication) {
-        #if os(tvOS)
-        focus(target, in: app)
-        // Wait for focus to settle before activating a library filter.
-        let selected = NSPredicate(format: "selected == true")
-        if !target.isSelected { XCUIRemote.shared.press(.select) }
-        XCTAssertEqual(XCTWaiter.wait(for: [XCTNSPredicateExpectation(predicate: selected, object: target)], timeout: 3), .completed)
-        #else
-        select(target, in: app)
         #endif
     }
 

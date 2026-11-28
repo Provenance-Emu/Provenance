@@ -94,8 +94,12 @@ extension PVEmulatorViewController {
                let game = self.game, let identifier = self.core.coreIdentifier {
                 let ready = await PVNetplayManager.shared.waitUntilNetplayReady(timeout: NetplayLaunchIntentDefaults.readyTimeout)
                 guard !Task.isCancelled else { return }
-                let version = RomDatabase.sharedInstance.realm.object(ofType: PVCore.self, forPrimaryKey: identifier)?.projectVersion ?? ""
-                NetplayCoreCompatibility.recordNetpacket(coreIdentifier: identifier, coreVersion: version, available: ready && packet.hasNetpacketInterface)
+                // A timeout proves nothing (a slow boot looks the same), so only a core that
+                // came up is recorded; the core stays offered otherwise.
+                if ready {
+                    let version = RomDatabase.sharedInstance.realm.object(ofType: PVCore.self, forPrimaryKey: identifier)?.projectVersion ?? ""
+                    NetplayCoreCompatibility.recordNetpacket(coreIdentifier: identifier, coreVersion: version, available: packet.hasNetpacketInterface)
+                }
             }
             await self?.runNetplayLaunchIntentIfAny()
         }
@@ -148,8 +152,8 @@ extension PVEmulatorViewController {
                       room.coreIdentifier == core.coreIdentifier else { throw NetplayError.romMismatch }
                 let version = RomDatabase.sharedInstance.realm.object(ofType: PVCore.self, forPrimaryKey: room.coreIdentifier)?.projectVersion ?? ""
                 guard room.coreVersion.isEmpty || room.coreVersion == version,
-                      room.playMode == nil || room.playMode == intent.option?.mode else {
-                    throw NetplayError.invalidSettings("The host uses a different core version or multiplayer mode.")
+                      room.playMode.map({ intent.option?.core.modes.contains($0) ?? false }) ?? true else {
+                    throw NetplayError.invalidSettings("The host uses a different core version or play style.")
                 }
                 var settings = NetplaySettings.fromStoredDefaults()
                 settings.password = intent.password
