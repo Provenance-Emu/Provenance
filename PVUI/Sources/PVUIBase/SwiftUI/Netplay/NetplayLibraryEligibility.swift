@@ -15,7 +15,9 @@ enum NetplayLibraryEligibility {
         var id: String { game.md5Hash }
 
         /// Advice shown beside the game for the core it would run on (the first one when
-        /// none is chosen). It never changes `eligibility`.
+        /// none is chosen). It never changes `eligibility`. A nested type does not take the
+        /// enum's main-actor isolation, and `NetplayGameHints` is main-actor only.
+        @MainActor
         func hint(for option: NetplayGameOption? = nil) -> NetplayGameHint {
             guard let core = (option ?? eligibility.options.first)?.core.coreIdentifier else { return .unknown }
             return NetplayGameHints.hint(for: NetplayGameIdentity(md5: game.md5Hash, systemIdentifier: game.systemIdentifier, coreIdentifier: core))
