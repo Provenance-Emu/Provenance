@@ -27,8 +27,9 @@ struct NetplayLibraryGameDetail: View {
                 NetplayFormSection {
                     GameItemView(game: entry.game, viewType: .row) { }
                         .allowsHitTesting(false)
-                    if let hint = entry.hint.label {
-                        Label(hint, systemImage: entry.hint == .reportedBroken ? "exclamationmark.bubble" : "checkmark.bubble")
+                    let hint = entry.hint(for: chosen)
+                    if let label = hint.label {
+                        Label(label, systemImage: hint == .reportedBroken ? "exclamationmark.bubble" : "checkmark.bubble")
                             .font(.subheadline).foregroundStyle(.secondary)
                             .accessibilityIdentifier("netplay.detail.hint")
                     }

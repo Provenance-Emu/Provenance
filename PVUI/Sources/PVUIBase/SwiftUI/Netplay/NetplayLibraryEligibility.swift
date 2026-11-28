@@ -12,9 +12,14 @@ enum NetplayLibraryEligibility {
     struct Entry: Identifiable {
         let game: PVGame
         let eligibility: NetplayEligibility
-        /// Advice shown beside the game. It never changes `eligibility`.
-        let hint: NetplayGameHint
         var id: String { game.md5Hash }
+
+        /// Advice shown beside the game for the core it would run on (the first one when
+        /// none is chosen). It never changes `eligibility`.
+        func hint(for option: NetplayGameOption? = nil) -> NetplayGameHint {
+            guard let core = (option ?? eligibility.options.first)?.core.coreIdentifier else { return .unknown }
+            return NetplayGameHints.hint(for: NetplayGameIdentity(md5: game.md5Hash, systemIdentifier: game.systemIdentifier, coreIdentifier: core))
+        }
     }
 
     static func availableCores(in realm: Realm) -> [String: [NetplayCoreSupport]] {
@@ -35,10 +40,8 @@ enum NetplayLibraryEligibility {
         let cores = (available ?? availableCores(in: realm))[game.systemIdentifier] ?? []
         let fileIsPresent = game.file?.url.map { FileManager.default.fileExists(atPath: $0.path) } ?? false
         let localFileAvailable = !game.contentless && game.isDownloaded && !game.isHiddenPatchVariant && fileIsPresent
-        let eligibility = NetplayEligibility.evaluate(localFileAvailable: localFileAvailable, cores: cores)
-        let identity = NetplayGameIdentity(md5: game.md5Hash, systemIdentifier: game.systemIdentifier,
-                                           coreIdentifier: eligibility.options.first?.core.coreIdentifier ?? "")
-        return Entry(game: game.isFrozen ? game : game.freeze(), eligibility: eligibility, hint: NetplayGameHints.hint(for: identity))
+        return Entry(game: game.isFrozen ? game : game.freeze(),
+                     eligibility: .evaluate(localFileAvailable: localFileAvailable, cores: cores))
     }
 
     /// A room must name an installed compatible core. Never fall back silently to the user's default core.

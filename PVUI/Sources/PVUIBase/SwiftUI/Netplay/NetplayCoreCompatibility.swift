@@ -24,7 +24,7 @@ enum NetplayCoreCompatibility {
                                       supportsSpectators: true, coreVersion: coreVersion)
         default:
             // Other thin cores carry netplay through env 78. They are offered until a run of
-            // this build shows the core did not register it; a bundled dylib or a historical
+            // this build comes up without that interface; a bundled dylib or a historical
             // RetroArch netplay flag alone doesn't put a core on the list below.
             guard let mode = netpacketMode(coreIdentifier: coreIdentifier, systemIdentifier: systemIdentifier),
                   UserDefaults.standard.object(forKey: observationKey(coreIdentifier, coreVersion)) as? Bool ?? true else { return nil }

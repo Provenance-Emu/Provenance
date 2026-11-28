@@ -233,7 +233,7 @@ public struct NetplayLibraryLobbyView: View {
 
     /// How the game connects, and its hint when there is one.
     private static func caption(for entry: NetplayLibraryEligibility.Entry) -> String {
-        [entry.eligibility.options.first?.mode.title, entry.hint.label].compactMap { $0 }.joined(separator: " · ")
+        [entry.eligibility.options.first?.mode.title, entry.hint().label].compactMap { $0 }.joined(separator: " · ")
     }
 
     private static let gridSpacing: CGFloat = 28
