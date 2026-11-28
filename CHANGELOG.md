@@ -261,6 +261,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Staleness warning** — `get-modules.sh` now emits a build-time warning when `pinned_date` is more than 30 days old, prompting developers to run the update checker.
 
 ### Fixed
+- **Network Play focus on Apple TV** — Buttons and filter chips on the Network Play screens use the same focus highlight and theme colours as the rest of the app. (#3867)
 - **Portrait TV Under the Notch** — A portrait TV started at the very top of the screen, under the notch or Dynamic Island; it now starts below it. (#3855)
 - **Bezel Picked While Playing Did Not Show** — A TV chosen from the pause menu's list could stay hidden behind the game's own TV or its Bezel Project artwork; the TV picked is now the TV shown. (#3855)
 - **Bezel Change Needed a Restart** — After one TV failed to load, no other built-in TV would load until the game was restarted or the device rotated. (#3855)
@@ -531,6 +532,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Apple TV Arcade Controls** — Keep Insert Coin, Start, and Select visible for every slot in four-player arcade games, even with full controllers connected
 
 ### Changed
+- **Network Play offers every game** — Any downloaded game whose system has a core that supports network play can be hosted or joined. The "Unverified" list, the multiplayer details editor and the play-style filter are gone. (#3867)
+- **Network Play settings are a tab** — Settings sit beside Games and Rooms on the Network Play screen instead of opening as a separate screen. (#3867)
 - **ScalingMode renderer enabled by default** — The `scalingModeRenderer` feature flag is now enabled by default; the new `ScalingMode`-driven renderer paths (Stretch, Aspect Fill, Integer Scale, Native Resolution) are active for all users. Legacy boolean shims remain for backwards compatibility. (#3619)
 - **Metal & GL Renderers** — Both `PVMetalViewController` and `PVGLViewController` now contain the new `ScalingMode`-based layout paths, activated only when the `scalingModeRenderer` feature flag is on. (#3616)
 - **PVUSBManager Package.swift** — added `defaultLocalization: "en"` and `.process("Resources")` to support bundled localized strings. (#3600)
