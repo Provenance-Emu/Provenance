@@ -12,6 +12,7 @@ struct GameplayBezelOptionsView: View {
     @Default(.externalDisplayBezel) private var bezel
     @Default(.externalDisplayBezelByGame) private var pins
     @Default(.externalDisplayGameBezels) private var gameBezels
+    @Default(.externalDisplayBezelSeat) private var seat
     @State private var path: [Destination] = []
     #if os(iOS)
     @State private var input = PauseMenuControllerInput()
@@ -51,14 +52,16 @@ struct GameplayBezelOptionsView: View {
                                                        systemSuitsTV: emulatorVC.systemSuitsTV)
                     }),
                                       offersSystemAutomatic: true,
-                                      controllerCommands: commands?.bezelCommands)
+                                      controllerCommands: commands?.bezelCommands,
+                                      seat: $seat)
                 case .game:
                     if let game = emulatorVC.gameplayBezelGame {
                         TVBezelPickerView(
                             selection: Binding(get: { pins[game.md5] }, set: { pins[game.md5] = $0 }),
                             allowsAutomatic: true,
                             game: game,
-                            controllerCommands: commands?.bezelCommands
+                            controllerCommands: commands?.bezelCommands,
+                            seat: $seat
                         )
                     }
                 case .automatic, .done:

@@ -228,6 +228,8 @@ struct PauseTileMenuView: View {
 
     // Haptic feedback toggle
     @Default(.rumbleEnabled) private var rumbleEnabled
+    /// The Seat setting, for the TV switcher's Seat button.
+    @Default(.externalDisplayBezelSeat) private var bezelSeat
     @Default(.showFPSCount) private var showFPSCount
     @Default(.buttonPressEffect) private var buttonPressEffect
     @Default(.buttonSound) private var buttonSound
@@ -2095,6 +2097,7 @@ struct PauseTileMenuView: View {
                 BezelSwitcherHost(session: EmulatorBezelSession(emulatorVC),
                                   commands: bezelSwitcherCommands?.bezelCommands,
                                   showsControllerHints: PVControllerManager.shared.hasControllers,
+                                  seat: $bezelSeat,
                                   onClose: {
                                       showingBezelSwitcher = false
                                       rebuildSections()
