@@ -185,6 +185,42 @@ struct SentryEventFilterTests {
         #expect(!SentryEventFilter.shouldReport(snapshot))
     }
 
+    @Test("Drops unsymbolicated mx_cpu_exception in the iFly host binary")
+    func dropsIFlyHostBinaryCPUException() {
+        let snapshot = SentryEventSnapshot(
+            mechanismType: "mx_cpu_exception",
+            exceptionValue: "MXCPUException totalCPUTime:90 sec",
+            exceptionType: "MXCPUException",
+            level: "warning",
+            transaction: nil,
+            requestURL: nil,
+            title: nil,
+            tags: [:],
+            frames: [
+                SentryEventFrame(function: nil, filename: nil, package: "iFly", inApp: true)
+            ]
+        )
+        #expect(!SentryEventFilter.shouldReport(snapshot))
+    }
+
+    @Test("Drops mx_cpu_exception tagged emulating:true (ICUBE-T4)")
+    func dropsEmulatingTaggedCPUException() {
+        let snapshot = SentryEventSnapshot(
+            mechanismType: "mx_cpu_exception",
+            exceptionValue: "MXCPUException totalCPUTime:90 sec totalSampledTime:142.413 sec",
+            exceptionType: "MXCPUException",
+            level: "warning",
+            transaction: nil,
+            requestURL: nil,
+            title: nil,
+            tags: ["emulating": "true"],
+            frames: [
+                SentryEventFrame(function: nil, filename: nil, package: "SomeApp", inApp: true)
+            ]
+        )
+        #expect(!SentryEventFilter.shouldReport(snapshot))
+    }
+
     @Test("Keeps emulator-host mx_cpu_exception that also runs through a PV* framework")
     func keepsEmulatorHostWithPVFrameworkCPUException() {
         let snapshot = SentryEventSnapshot(

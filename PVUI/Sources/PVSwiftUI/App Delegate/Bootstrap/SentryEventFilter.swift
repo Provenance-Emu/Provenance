@@ -133,8 +133,12 @@ public enum SentryEventFilter {
     // non-emulator app code is actionable. MetricKit frames are unsymbolicated on device
     // (`function` is nil, `package` is the binary name), so this cannot rely on function
     // names: a stack of only system and emulator binaries is dropped (PROVENANCE-251).
+    // Single-core apps (iCube, iFly) link their core into the main executable, so its
+    // frames arrive as `inApp` with the app's binary name and never match an emulator
+    // pattern (ICUBE-T4). Those are recognized by the `emulating` tag or the host binary.
     private static func shouldDropMetricKitCPUException(_ snapshot: SentryEventSnapshot) -> Bool {
         guard snapshot.mechanismType == "mx_cpu_exception" else { return false }
+        if snapshot.tags["emulating"] == "true" { return true }
         if framesIndicateEmulator(snapshot.frames) { return true }
         return !snapshot.frames.contains(where: isAppCode)
     }
@@ -143,7 +147,7 @@ public enum SentryEventFilter {
     /// their on-device MetricKit frames are emulator code even though Sentry marks them
     /// `inApp`. Unsymbolicated frames from these binaries are not counted as app code
     /// (ICUBE-KQ, ICUBE-T4). Tests and host apps may override this set.
-    nonisolated(unsafe) static var emulatorHostBinaries: Set<String> = ["iCube"]
+    nonisolated(unsafe) static var emulatorHostBinaries: Set<String> = ["iCube", "iFly"]
 
     /// Sentry's `inApp` covers only the main executable, but most `PV*` modules ship as
     /// dynamic frameworks whose binary name is the module name.
