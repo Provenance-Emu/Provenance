@@ -114,20 +114,18 @@ public actor GameHackingOrgLookup {
     /// Try fetching with system filter first; fall back to no-system search on failure.
     /// - Returns: the codes found (possibly none), or `nil` when the site could not be reached.
     private func fetchWithFallback(title: String, systemSlug: String?) async -> [CheatDatabaseEntry]? {
-        var reachedSite = false
         // Strategy 1: search with system filter (if we have a slug)
-        if let slug = systemSlug {
-            switch await fetchSearchResults(title: title, systemSlug: slug) {
-            case .found(let results) where !results.isEmpty: return results
-            case .found, .noMatch: reachedSite = true
-            case .unreachable: break
-            }
+        if let slug = systemSlug,
+           case .found(let results) = await fetchSearchResults(title: title, systemSlug: slug),
+           !results.isEmpty {
+            return results
         }
-        // Strategy 2: search without system filter
+        // Strategy 2: search without system filter. If this one cannot reach the
+        // site the answer is unknown, whatever the first search said.
         switch await fetchSearchResults(title: title, systemSlug: nil) {
         case .found(let results): return results
         case .noMatch: return []
-        case .unreachable: return reachedSite ? [] : nil
+        case .unreachable: return nil
         }
     }
 

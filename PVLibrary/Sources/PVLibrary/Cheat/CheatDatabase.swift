@@ -164,28 +164,21 @@ public actor CheatDatabase {
         }
 
         // 4. GeckoCodes online lookup for GameCube / Wii (requires romSerial from disc header).
-        // Gate by valid 6-char alphanumeric disc ID format and GC/Wii system when known,
-        // to avoid spurious requests for ROMs from other platforms.
         if let serial = romSerial, !serial.isEmpty {
-            let isValidDiscID = serial.count == 6 && serial.allSatisfy({ $0.isLetter || $0.isNumber })
-            let isGCWiiSystem = systemIdentifier?.contains("GameCube") == true
-                || systemIdentifier?.contains("Wii") == true
-            if isValidDiscID && isGCWiiSystem {
-                do {
-                    let geckoResults = try await GeckoCodesLookup.shared.searchCheats(gameID: serial, forceRefresh: forceRefresh)
-                    for entry in geckoResults {
-                        let key = entry.cheatCode.lowercased()
-                        if seenCodes.insert(key).inserted {
-                            results.append(entry)
-                        }
+            do {
+                let geckoResults = try await searchDiscSerialCheats(
+                    romSerial: serial, systemIdentifier: systemIdentifier, forceRefresh: forceRefresh
+                )
+                for entry in geckoResults {
+                    let key = entry.cheatCode.lowercased()
+                    if seenCodes.insert(key).inserted {
+                        results.append(entry)
                     }
-                    DLOG("CheatDatabase: \(geckoResults.count) results from GeckoCodes for serial '\(serial)'")
-                } catch {
-                    WLOG("CheatDatabase: GeckoCodes lookup error for serial '\(serial)': \(error)")
-                    // GeckoCodes failure is non-fatal; do not update lastError
                 }
-            } else {
-                DLOG("CheatDatabase: skipping GeckoCodes for serial '\(serial)' — not a GC/Wii disc ID or wrong system")
+                DLOG("CheatDatabase: \(geckoResults.count) results from GeckoCodes for serial '\(serial)'")
+            } catch {
+                WLOG("CheatDatabase: GeckoCodes lookup error for serial '\(serial)': \(error)")
+                // GeckoCodes failure is non-fatal; do not update lastError
             }
         }
 
@@ -266,6 +259,34 @@ public actor CheatDatabase {
             ))
         }
         return results
+    }
+
+    // MARK: - Disc Serial Search
+
+    /// Fetch Gecko codes for a GameCube or Wii disc by its serial.
+    ///
+    /// Gated by a valid 6-character alphanumeric disc ID and a GameCube or Wii
+    /// system, to avoid spurious requests for ROMs from other platforms: any
+    /// other serial or system answers with an empty array and no request.
+    ///
+    /// - Parameters:
+    ///   - romSerial: The disc ID from the ROM header (e.g. "RMCE01").
+    ///   - systemIdentifier: The libretro system directory name.
+    ///   - forceRefresh: Skip the lookup's 24-hour cache and fetch again.
+    /// - Throws: Network errors, so a caller can tell "unreachable" from "no codes".
+    public func searchDiscSerialCheats(
+        romSerial serial: String,
+        systemIdentifier: String?,
+        forceRefresh: Bool = false
+    ) async throws -> [CheatDatabaseEntry] {
+        let isValidDiscID = serial.count == 6 && serial.allSatisfy({ $0.isLetter || $0.isNumber })
+        let isGCWiiSystem = systemIdentifier?.contains("GameCube") == true
+            || systemIdentifier?.contains("Wii") == true
+        guard isValidDiscID && isGCWiiSystem else {
+            DLOG("CheatDatabase: skipping GeckoCodes for serial '\(serial)' — not a GC/Wii disc ID or wrong system")
+            return []
+        }
+        return try await GeckoCodesLookup.shared.searchCheats(gameID: serial, forceRefresh: forceRefresh)
     }
 
     // MARK: - Pre-warming

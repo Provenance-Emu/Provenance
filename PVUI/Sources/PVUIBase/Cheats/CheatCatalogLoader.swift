@@ -182,14 +182,15 @@ extension CheatCatalogLoader {
         }
 
         if let serial = query.romSerial, !serial.isEmpty {
-            // With no MD5 and no title this runs the disc-serial lookup alone.
-            // It ignores its own network errors, so it adds codes or nothing.
-            let gecko = (try? await CheatDatabase.shared.searchAllCheats(
-                systemIdentifier: query.systemName,
-                romSerial: serial,
-                forceRefresh: forceRefresh
-            )) ?? []
-            found.append(contentsOf: gecko)
+            do {
+                found.append(contentsOf: try await CheatDatabase.shared.searchDiscSerialCheats(
+                    romSerial: serial,
+                    systemIdentifier: query.systemName,
+                    forceRefresh: forceRefresh
+                ))
+            } catch {
+                failure = failure ?? error
+            }
         }
 
         if found.isEmpty, let failure { throw failure }
