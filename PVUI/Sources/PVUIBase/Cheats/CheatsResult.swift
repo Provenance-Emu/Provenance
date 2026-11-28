@@ -13,5 +13,6 @@ public enum CheatsResult {
 public typealias CheatsCompletion = (CheatsResult) -> Void
 
 /// Applies a cheat to the running core and saves it: code, name, code type,
-/// index, enabled. Returns whether the core accepted it and it was saved.
-public typealias CheatSaveHandler = @MainActor (String, String, String, UInt8, Bool) async -> Bool
+/// index, enabled. Returns `nil` when the core accepted it and it was saved,
+/// else what went wrong.
+public typealias CheatSaveHandler = @MainActor (String, String, String, UInt8, Bool) async -> CheatsStateError?

@@ -180,12 +180,8 @@ public struct iOSCheatsView: View {
                 CheatExportView(entry: entry)
             }
         }
-        .pvAlert(item: $enableFailure) { name in
-            PVAlert(
-                title: "Cheat Not Switched On",
-                message: "\"\(name)\" was not accepted by this core.",
-                type: .error
-            )
+        .pvAlert(item: $enableFailure) { message in
+            PVAlert(title: "Cheat Not Switched On", message: message, type: .error)
         }
         .onAppear { loadCheats() }
         .task { await loader.loadIfNeeded() }
@@ -292,11 +288,11 @@ public struct iOSCheatsView: View {
         enableChain = Task {
             await previous?.value
             let index = nextCheatIndex
-            let accepted = await onSaveCheat(item.code, item.name, item.codeType, index, true)
+            let failure = await onSaveCheat(item.code, item.name, item.codeType, index, true)
             loadCheats()
             pendingKeys.remove(item.key)
-            if !accepted {
-                enableFailure = item.name
+            if let failure {
+                enableFailure = failure.failureMessage(forCheatNamed: item.name)
             }
         }
     }

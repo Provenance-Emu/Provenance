@@ -210,15 +210,15 @@ extension PVEmulatorViewController {
         let romSerial = game.romSerial
 
         let onSaveCheat: CheatSaveHandler = { [weak self] code, type, codeType, cheatIndex, enabled in
-            guard let self else { return false }
+            guard let self else { return .cheatsUnsupportedByCore }
             do {
                 try await self.setCheatState(code: code, type: type, codeType: codeType,
                                              cheatIndex: cheatIndex, enabled: enabled)
                 DLOG("Cheat saved successfully")
-                return true
+                return nil
             } catch {
                 ELOG("Error saving cheat: \(error.localizedDescription)")
-                return false
+                return error
             }
         }
 

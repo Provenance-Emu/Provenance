@@ -247,12 +247,8 @@ public struct TVOSCheatsView: View {
                 ]
             )
         }
-        .pvAlert(item: $enableFailure) { name in
-            PVAlert(
-                title: "Cheat Not Switched On",
-                message: "\"\(name)\" was not accepted by this core.",
-                type: .error
-            )
+        .pvAlert(item: $enableFailure) { message in
+            PVAlert(title: "Cheat Not Switched On", message: message, type: .error)
         }
     }
 
@@ -507,14 +503,14 @@ extension TVOSCheatsView {
         enableChain = Task {
             await previous?.value
             let index = nextCheatIndex
-            let accepted = await onSaveCheat(item.code, item.name, item.codeType, index, true)
-            if accepted, focusedItemID == item.id, let neighbourID {
+            let failure = await onSaveCheat(item.code, item.name, item.codeType, index, true)
+            if failure == nil, focusedItemID == item.id, let neighbourID {
                 focusedItemID = neighbourID
             }
             loadCheats()
             pendingKeys.remove(item.key)
-            if !accepted {
-                enableFailure = item.name
+            if let failure {
+                enableFailure = failure.failureMessage(forCheatNamed: item.name)
             }
         }
     }
