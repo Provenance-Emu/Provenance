@@ -216,9 +216,12 @@ extension PVEmulatorViewController {
                                              cheatIndex: cheatIndex, enabled: enabled)
                 DLOG("Cheat saved successfully")
                 return nil
-            } catch {
+            } catch let error as CheatsStateError {
                 ELOG("Error saving cheat: \(error.localizedDescription)")
                 return error
+            } catch {
+                ELOG("Error saving cheat: \(error.localizedDescription)")
+                return .coreCheatsError(error)
             }
         }
 
