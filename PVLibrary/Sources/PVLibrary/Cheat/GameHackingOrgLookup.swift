@@ -64,19 +64,20 @@ public actor GameHackingOrgLookup {
     /// - Parameters:
     ///   - title: The game title to search for.
     ///   - systemSlug: Optional GameHacking.org system slug (e.g. `"gc"`, `"n64"`, `"gba"`).
+    ///   - forceRefresh: Skip the memory and disk caches and fetch again.
     /// - Returns: Array of `CheatDatabaseEntry` values with `isOnlineResult == true`
     ///   and `deviceName == "GameHacking.org"`.  Returns empty on parse failure.
-    public func searchCheats(title: String, systemSlug: String?) async -> [CheatDatabaseEntry] {
+    public func searchCheats(title: String, systemSlug: String?, forceRefresh: Bool = false) async -> [CheatDatabaseEntry] {
         let key = makeCacheKey(title: title, slug: systemSlug)
 
         // 1. Memory cache
-        if let hit = memoryCache[key], Date().timeIntervalSince(hit.fetchedAt) < Self.cacheTTL {
+        if !forceRefresh, let hit = memoryCache[key], Date().timeIntervalSince(hit.fetchedAt) < Self.cacheTTL {
             DLOG("GameHackingOrgLookup: memory cache hit for '\(title)'")
             return hit.entries
         }
 
         // 2. Disk cache
-        if let diskHit = loadDiskCache(forKey: key) {
+        if !forceRefresh, let diskHit = loadDiskCache(forKey: key) {
             DLOG("GameHackingOrgLookup: disk cache hit for '\(title)'")
             evictMemoryCacheIfNeeded()
             memoryCache[key] = (fetchedAt: diskHit.fetchedAt, entries: diskHit.entries)
@@ -85,7 +86,13 @@ public actor GameHackingOrgLookup {
 
         // 3. Network fetch — never throws outward; always returns empty on failure.
         DLOG("GameHackingOrgLookup: fetching online for title='\(title)' slug=\(systemSlug ?? "nil")")
-        let results = await fetchWithFallback(title: title, systemSlug: systemSlug)
+        guard let results = await fetchWithFallback(title: title, systemSlug: systemSlug) else {
+            // The site could not be reached. Don't cache that as "no cheats": the
+            // cheats menu looks cheats up every time it opens, and one open while
+            // offline would otherwise hide this source for a day. A forced refresh
+            // that fails falls back to what was cached.
+            return memoryCache[key]?.entries ?? loadDiskCache(forKey: key)?.entries ?? []
+        }
 
         evictMemoryCacheIfNeeded()
         memoryCache[key] = (Date(), results)
@@ -97,39 +104,49 @@ public actor GameHackingOrgLookup {
 
     // MARK: - Fetch Logic
 
+    /// What one search attempt produced.
+    private enum SearchOutcome {
+        case found([CheatDatabaseEntry])
+        case noMatch
+        case unreachable
+    }
+
     /// Try fetching with system filter first; fall back to no-system search on failure.
-    private func fetchWithFallback(title: String, systemSlug: String?) async -> [CheatDatabaseEntry] {
+    /// - Returns: the codes found (possibly none), or `nil` when the site could not be reached.
+    private func fetchWithFallback(title: String, systemSlug: String?) async -> [CheatDatabaseEntry]? {
+        var reachedSite = false
         // Strategy 1: search with system filter (if we have a slug)
         if let slug = systemSlug {
-            if let results = await fetchSearchResults(title: title, systemSlug: slug),
-               !results.isEmpty {
-                return results
+            switch await fetchSearchResults(title: title, systemSlug: slug) {
+            case .found(let results) where !results.isEmpty: return results
+            case .found, .noMatch: reachedSite = true
+            case .unreachable: break
             }
         }
         // Strategy 2: search without system filter
-        if let results = await fetchSearchResults(title: title, systemSlug: nil),
-           !results.isEmpty {
-            return results
+        switch await fetchSearchResults(title: title, systemSlug: nil) {
+        case .found(let results): return results
+        case .noMatch: return []
+        case .unreachable: return reachedSite ? [] : nil
         }
-        return []
     }
 
     /// Perform a title search and return parsed cheat entries for the best match.
-    private func fetchSearchResults(title: String, systemSlug: String?) async -> [CheatDatabaseEntry]? {
+    private func fetchSearchResults(title: String, systemSlug: String?) async -> SearchOutcome {
         guard let searchPageHTML = await fetchHTML(
             searchURLFor(title: title, systemSlug: systemSlug)
-        ) else { return nil }
+        ) else { return .unreachable }
 
         // Find the best-matching game link in the search results HTML.
         guard let gamePagePath = bestGameLink(in: searchPageHTML, for: title) else {
             DLOG("GameHackingOrgLookup: no game link found in search results for '\(title)'")
-            return nil
+            return .noMatch
         }
 
         let gamePageURL = Self.baseURL + gamePagePath
-        guard let gamePageHTML = await fetchHTML(gamePageURL) else { return nil }
+        guard let gamePageHTML = await fetchHTML(gamePageURL) else { return .unreachable }
 
-        return parseCheatPage(gamePageHTML, title: title)
+        return .found(parseCheatPage(gamePageHTML, title: title))
     }
 
     // MARK: - URL Construction

@@ -96,7 +96,10 @@ private final class TVOSFocusableTextView: UITextView {
 }
 
 /// SwiftUI-based Cheats View for tvOS
-/// This replaces the storyboard-based PVCheatsViewController on tvOS
+///
+/// One list: the game's saved cheats, then every cheat the bundled database
+/// and the online sources know for it. The lookups start when the view
+/// appears; nothing is switched on until the user selects it.
 public struct TVOSCheatsView: View {
     @Environment(\.dismiss) private var dismiss
     @ObservedObject private var themeManager = ThemeManager.shared
@@ -105,20 +108,24 @@ public struct TVOSCheatsView: View {
     let coreID: String?
     let cheatTypes: [String]
     let gameMD5: String?
-    let gameTitle: String?
-    let gameSystemIdentifier: String?
-    let romSerial: String?
-    let onSaveCheat: (String, String, String, UInt8, Bool) -> Void
+    let onSaveCheat: CheatSaveHandler
     let onUpdateCheat: (PVCheats, UInt8) -> Void
     let onDone: () -> Void
 
+    /// Rows before the filter field is worth the space it takes.
+    private static let filterThreshold = 12
+
+    @State private var loader: CheatCatalogLoader
     @State private var allCheats: [PVCheats] = []
+    @State private var filterText = ""
+    /// Codes being switched on: saved to the database but not yet reloaded.
+    @State private var pendingKeys: Set<String> = []
+    @State private var enableFailure: String?
     @State private var showingAddCheat = false
-    @State private var showingSearchDB = false
     @State private var showingDeleteAlert = false
     @State private var cheatToDelete: PVCheats?
     @State private var cheatToEdit: CheatEditContext?
-    @FocusState private var focusedCheatId: String?
+    @FocusState private var focusedItemID: String?
 
     private struct CheatEditContext: Identifiable {
         let id: String
@@ -133,6 +140,10 @@ public struct TVOSCheatsView: View {
         Color(themeManager.currentPalette.gameLibraryBackground)
     }
 
+    private var textColor: Color {
+        themeManager.currentPalette.gameLibraryText.swiftUIColor
+    }
+
     public init(
         cheats: [PVCheats],
         coreID: String?,
@@ -141,7 +152,7 @@ public struct TVOSCheatsView: View {
         gameTitle: String? = nil,
         gameSystemIdentifier: String? = nil,
         romSerial: String? = nil,
-        onSaveCheat: @escaping (String, String, String, UInt8, Bool) -> Void,
+        onSaveCheat: @escaping CheatSaveHandler,
         onUpdateCheat: @escaping (PVCheats, UInt8) -> Void,
         onDone: @escaping () -> Void
     ) {
@@ -149,15 +160,32 @@ public struct TVOSCheatsView: View {
         self.coreID = coreID
         self.cheatTypes = cheatTypes
         self.gameMD5 = gameMD5
-        self.gameTitle = gameTitle
-        self.gameSystemIdentifier = gameSystemIdentifier
-        self.romSerial = romSerial
         self.onSaveCheat = onSaveCheat
         self.onUpdateCheat = onUpdateCheat
         self.onDone = onDone
+        _loader = State(initialValue: CheatCatalogLoader(query: CheatCatalogQuery(
+            gameMD5: gameMD5,
+            gameTitle: gameTitle,
+            systemName: gameSystemIdentifier,
+            romSerial: romSerial
+        )))
+    }
+
+    private var nextCheatIndex: UInt8 {
+        UInt8(min(allCheats.count, Int(UInt8.max)))
+    }
+
+    private var allItems: [CheatCatalogItem] {
+        CheatCatalog.merge(
+            saved: allCheats.compactMap { SavedCheatSnapshot($0) },
+            bundled: loader.bundled,
+            online: loader.online
+        )
     }
 
     public var body: some View {
+        let allItems = self.allItems
+        let items = CheatCatalog.filter(allItems, matching: filterText)
         NavigationStack {
             ZStack {
                 // Background
@@ -174,10 +202,10 @@ public struct TVOSCheatsView: View {
                     // Header
                     headerView
 
-                    if allCheats.isEmpty {
+                    if allItems.isEmpty, !loader.isLoading {
                         emptyStateView
                     } else {
-                        cheatsListView
+                        cheatsListView(items: items, showsFilter: allItems.count > Self.filterThreshold)
                     }
                 }
             }
@@ -186,29 +214,20 @@ public struct TVOSCheatsView: View {
         .onAppear {
             loadCheats()
         }
-        .sheet(isPresented: $showingAddCheat, onDismiss: { delayedReload() }) {
+        .task { await loader.loadIfNeeded() }
+        .sheet(isPresented: $showingAddCheat) {
             TVOSAddCheatView(
                 cheatTypes: cheatTypes,
-                cheatIndex: UInt8(min(allCheats.count, Int(UInt8.max))),
+                cheatIndex: nextCheatIndex,
                 onSave: { code, type, codeType, index, enabled in
-                    onSaveCheat(code, type, codeType, index, enabled)
+                    Task {
+                        _ = await onSaveCheat(code, type, codeType, index, enabled)
+                        loadCheats()
+                    }
                 }
             )
         }
-        .sheet(isPresented: $showingSearchDB, onDismiss: { delayedReload() }) {
-            TVOSCheatSearchView(
-                gameMD5: gameMD5,
-                gameTitle: gameTitle,
-                gameSystemIdentifier: gameSystemIdentifier,
-                romSerial: romSerial,
-                cheatTypes: cheatTypes,
-                cheatIndex: UInt8(min(allCheats.count, Int(UInt8.max))),
-                onImport: { code, name, deviceName, index, enabled in
-                    onSaveCheat(code, name, deviceName, index, enabled)
-                }
-            )
-        }
-        .sheet(item: $cheatToEdit, onDismiss: { delayedReload() }) { ctx in
+        .sheet(item: $cheatToEdit, onDismiss: { loadCheats() }) { ctx in
             TVOSEditCheatView(cheat: ctx.cheat, cheatTypes: cheatTypes)
         }
         .pvAlert(isPresented: $showingDeleteAlert) {
@@ -226,9 +245,33 @@ public struct TVOSCheatsView: View {
                 ]
             )
         }
+        .pvAlert(item: $enableFailure) { name in
+            PVAlert(
+                title: "Cheat Not Switched On",
+                message: "\"\(name)\" was not accepted by this core.",
+                type: .error
+            )
+        }
     }
 
     // MARK: - Views
+
+    /// An outlined header button's label.
+    private func headerLabel(_ title: String, systemImage: String) -> some View {
+        HStack(spacing: 8) {
+            Image(systemName: systemImage)
+                .font(.system(size: 24, weight: .bold))
+            Text(verbatim: title)
+                .font(.system(size: 24, weight: .bold))
+        }
+        .foregroundStyle(accentColor)
+        .padding(.horizontal, 24)
+        .padding(.vertical, 12)
+        .background(
+            RoundedRectangle(cornerRadius: 12)
+                .stroke(accentColor, lineWidth: 2)
+        )
+    }
 
     private var headerView: some View {
         HStack {
@@ -236,19 +279,7 @@ public struct TVOSCheatsView: View {
                 onDone()
                 dismiss()
             }) {
-                HStack(spacing: 8) {
-                    Image(systemName: "xmark")
-                        .font(.system(size: 24, weight: .bold))
-                    Text("DONE")
-                        .font(.system(size: 24, weight: .bold))
-                }
-                .foregroundStyle(accentColor)
-                .padding(.horizontal, 24)
-                .padding(.vertical, 12)
-                .background(
-                    RoundedRectangle(cornerRadius: 12)
-                        .stroke(accentColor, lineWidth: 2)
-                )
+                headerLabel("DONE", systemImage: "xmark")
             }
             .buttonStyle(.plain)
 
@@ -263,40 +294,18 @@ public struct TVOSCheatsView: View {
 
             HStack(spacing: 16) {
                 NavigationLink(destination: WikiPageView(path: "info/cheats.md", title: "Cheats Guide")) {
-                    HStack(spacing: 8) {
-                        Image(systemName: "questionmark.circle")
-                            .font(.system(size: 24, weight: .bold))
-                        Text("HELP")
-                            .font(.system(size: 24, weight: .bold))
-                    }
-                    .foregroundStyle(accentColor)
-                    .padding(.horizontal, 24)
-                    .padding(.vertical, 12)
-                    .background(
-                        RoundedRectangle(cornerRadius: 12)
-                            .stroke(accentColor, lineWidth: 2)
-                    )
+                    headerLabel("HELP", systemImage: "questionmark.circle")
                 }
                 .buttonStyle(.plain)
 
                 Button(action: {
-                    showingSearchDB = true
+                    Task { await loader.refresh() }
                 }) {
-                    HStack(spacing: 8) {
-                        Image(systemName: "magnifyingglass")
-                            .font(.system(size: 24, weight: .bold))
-                        Text("SEARCH")
-                            .font(.system(size: 24, weight: .bold))
-                    }
-                    .foregroundStyle(accentColor)
-                    .padding(.horizontal, 24)
-                    .padding(.vertical, 12)
-                    .background(
-                        RoundedRectangle(cornerRadius: 12)
-                            .stroke(accentColor, lineWidth: 2)
-                    )
+                    headerLabel("REFRESH", systemImage: "arrow.clockwise")
                 }
                 .buttonStyle(.plain)
+                .disabled(loader.isLoading)
+                .opacity(loader.isLoading ? 0.5 : 1.0)
 
                 Button(action: {
                     showingAddCheat = true
@@ -334,54 +343,132 @@ public struct TVOSCheatsView: View {
 
             Text("NO CHEAT CODES")
                 .font(.system(size: 32, weight: .bold))
-                .foregroundStyle(themeManager.currentPalette.gameLibraryText.swiftUIColor.opacity(0.7))
+                .foregroundStyle(textColor.opacity(0.7))
 
-            Text("Add a cheat code to get started")
+            Text(verbatim: loader.onlineState == .failed
+                 ? "Online cheats are unavailable right now. Add a code, or try again later."
+                 : "No cheats were found for this game. Add a code to get started.")
                 .font(.system(size: 24))
-                .foregroundStyle(themeManager.currentPalette.gameLibraryText.swiftUIColor.opacity(0.5))
+                .foregroundStyle(textColor.opacity(0.5))
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 
-    private var cheatsListView: some View {
-        ScrollView {
+    private func sectionHeader(_ title: String) -> some View {
+        Text(verbatim: title)
+            .font(.system(size: 22, weight: .bold))
+            .foregroundStyle(accentColor)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .padding(.top, 8)
+    }
+
+    private func cheatsListView(items: [CheatCatalogItem], showsFilter: Bool) -> some View {
+        let savedItems = items.filter(\.isSaved)
+        let offeredItems = items.filter { !$0.isSaved }
+        return ScrollView {
             LazyVStack(spacing: 16) {
-                ForEach(Array(allCheats.enumerated()), id: \.element.id) { index, cheat in
-                    CheatRowView(
-                        cheat: cheat,
-                        index: UInt8(min(index, Int(UInt8.max))),
-                        accentColor: accentColor,
-                        onToggle: { toggleCheat(cheat, at: index) },
-                        onEdit: {
-                            cheatToEdit = CheatEditContext(id: cheat.id, cheat: cheat)
-                        },
-                        onDelete: {
-                            cheatToDelete = cheat
-                            showingDeleteAlert = true
-                        }
-                    )
-                    .focused($focusedCheatId, equals: cheat.id)
+                if showsFilter {
+                    TextField("Filter by name or code", text: $filterText)
+                        .font(.system(size: 24))
                 }
+
+                if !savedItems.isEmpty {
+                    sectionHeader("MY CHEATS")
+                    ForEach(savedItems) { item in
+                        savedRow(item)
+                    }
+                }
+
+                if !offeredItems.isEmpty {
+                    sectionHeader("AVAILABLE FOR THIS GAME")
+                    ForEach(offeredItems) { item in
+                        TVOSOfferedCheatRow(
+                            item: item,
+                            isPending: pendingKeys.contains(item.key),
+                            accentColor: accentColor,
+                            onEnable: { enable(item, among: offeredItems) }
+                        )
+                        .focused($focusedItemID, equals: item.id)
+                    }
+                }
+
+                statusRow(isEmpty: items.isEmpty)
             }
             .padding(.horizontal, 80)
             .padding(.vertical, 24)
         }
     }
 
-    // MARK: - Actions
+}
 
-    /// Reload the cheats list after a short delay to allow the async Realm write to complete.
-    private func delayedReload() {
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-            loadCheats()
+// MARK: - Rows and Actions
+
+extension TVOSCheatsView {
+    @ViewBuilder
+    private func savedRow(_ item: CheatCatalogItem) -> some View {
+        if let index = allCheats.firstIndex(where: { !$0.isInvalidated && $0.id == item.savedID }) {
+            let cheat = allCheats[index]
+            CheatRowView(
+                cheat: cheat,
+                index: UInt8(min(index, Int(UInt8.max))),
+                accentColor: accentColor,
+                onToggle: { toggleCheat(cheat, at: index) },
+                onEdit: {
+                    cheatToEdit = CheatEditContext(id: cheat.id, cheat: cheat)
+                },
+                onDelete: {
+                    cheatToDelete = cheat
+                    showingDeleteAlert = true
+                }
+            )
+            .focused($focusedItemID, equals: item.id)
         }
     }
 
+    /// The last row: what the lookups are doing, or that they found nothing.
+    @ViewBuilder
+    private func statusRow(isEmpty: Bool) -> some View {
+        if loader.isLoading {
+            HStack(spacing: 16) {
+                ProgressView()
+                    .tint(accentColor)
+                Text(verbatim: loader.isLoadingBundled ? "Looking up cheats…" : "Looking for more cheats online…")
+                    .font(.system(size: 22))
+                    .foregroundStyle(textColor.opacity(0.6))
+            }
+            .padding(.vertical, 16)
+        } else if loader.onlineState == .failed {
+            HStack(spacing: 24) {
+                Image(systemName: "wifi.slash")
+                    .font(.system(size: 24))
+                    .foregroundStyle(textColor.opacity(0.6))
+                Text("Online cheats are unavailable right now.")
+                    .font(.system(size: 22))
+                    .foregroundStyle(textColor.opacity(0.6))
+                Button(action: {
+                    Task { await loader.refresh() }
+                }) {
+                    headerLabel("RETRY", systemImage: "arrow.clockwise")
+                }
+                .buttonStyle(.plain)
+            }
+            .padding(.vertical, 16)
+        } else if isEmpty {
+            Text("No cheats match \"\(filterText)\".")
+                .font(.system(size: 22))
+                .foregroundStyle(textColor.opacity(0.6))
+                .padding(.vertical, 16)
+        }
+    }
+
+    // MARK: - Actions
+
     private func loadCheats() {
-        // Re-query Realm when gameMD5 is available so newly added/imported cheats
+        // Re-query Realm when gameMD5 is available so newly added cheats
         // (written after this view was presented) are reflected on reload.
         let source: [PVCheats]
         if let md5 = gameMD5, !md5.isEmpty, let realm = try? Realm() {
+            realm.refresh()
             source = Array(realm.objects(PVCheats.self).filter("game.md5Hash == %@", md5))
         } else {
             source = cheats
@@ -394,6 +481,36 @@ public struct TVOSCheatsView: View {
             filtered = valid
         }
         allCheats = filtered.sorted { $0.date < $1.date }
+    }
+
+    /// Switches on a cheat from the database or an online source, which saves it.
+    ///
+    /// The row then moves up to the saved cheats. Focus goes to the row that
+    /// takes its place, so that several cheats can be switched on in a row
+    /// without the list jumping to the top.
+    private func enable(_ item: CheatCatalogItem, among offeredItems: [CheatCatalogItem]) {
+        guard !pendingKeys.contains(item.key) else { return }
+        pendingKeys.insert(item.key)
+        let index = nextCheatIndex
+        var neighbourID: String?
+        if let position = offeredItems.firstIndex(of: item) {
+            if position + 1 < offeredItems.count {
+                neighbourID = offeredItems[position + 1].id
+            } else if position > 0 {
+                neighbourID = offeredItems[position - 1].id
+            }
+        }
+        Task {
+            let accepted = await onSaveCheat(item.code, item.name, item.codeType, index, true)
+            if accepted, focusedItemID == item.id, let neighbourID {
+                focusedItemID = neighbourID
+            }
+            loadCheats()
+            pendingKeys.remove(item.key)
+            if !accepted {
+                enableFailure = item.name
+            }
+        }
     }
 
     private func toggleCheat(_ cheat: PVCheats, at index: Int) {
@@ -423,6 +540,88 @@ public struct TVOSCheatsView: View {
         } catch {
             ELOG("Error deleting cheat: \(error)")
         }
+    }
+}
+
+// MARK: - Offered Cheat Row
+
+/// A cheat from the database or an online source that is not switched on yet.
+private struct TVOSOfferedCheatRow: View {
+    let item: CheatCatalogItem
+    let isPending: Bool
+    let accentColor: Color
+    let onEnable: () -> Void
+
+    @ObservedObject private var themeManager = ThemeManager.shared
+    @FocusState private var isFocused: Bool
+
+    private var textColor: Color {
+        themeManager.currentPalette.gameLibraryText.swiftUIColor
+    }
+
+    var body: some View {
+        Button(action: onEnable) {
+            HStack(spacing: 24) {
+                Circle()
+                    .fill(isPending ? Color.green : Color.gray.opacity(0.5))
+                    .frame(width: 20, height: 20)
+                    .overlay(
+                        Circle()
+                            .stroke(Color.gray.opacity(0.3), lineWidth: 4)
+                    )
+
+                VStack(alignment: .leading, spacing: 8) {
+                    HStack(spacing: 10) {
+                        Text(verbatim: item.name)
+                            .font(.system(size: 28, weight: .bold))
+                            .foregroundStyle(textColor)
+                            .lineLimit(1)
+                        if item.source == .online {
+                            Image(systemName: "globe")
+                                .font(.system(size: 20))
+                                .foregroundStyle(.blue)
+                                .accessibilityLabel("From the internet")
+                        }
+                    }
+                    Text(verbatim: item.code)
+                        .font(.system(size: 22, weight: .medium, design: .monospaced))
+                        .foregroundStyle(textColor.opacity(0.7))
+                        .lineLimit(1)
+                    if let detail = item.detail {
+                        Text(verbatim: detail)
+                            .font(.system(size: 18))
+                            .foregroundStyle(textColor.opacity(0.55))
+                            .lineLimit(1)
+                    }
+                }
+
+                Spacer()
+
+                if isPending {
+                    ProgressView()
+                        .tint(accentColor)
+                } else {
+                    Text("DISABLED")
+                        .font(.system(size: 20, weight: .bold))
+                        .foregroundStyle(.gray)
+                }
+            }
+            .padding(.horizontal, 32)
+            .padding(.vertical, 24)
+            .background(
+                RoundedRectangle(cornerRadius: 16)
+                    .fill(Color.black.opacity(0.3))
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 16)
+                            .stroke(isFocused ? accentColor : Color.gray.opacity(0.3), lineWidth: isFocused ? 3 : 1.5)
+                    )
+            )
+            .scaleEffect(isFocused ? 1.02 : 1.0)
+            .shadow(color: isFocused ? accentColor.opacity(0.5) : .clear, radius: 15)
+            .animation(.easeOut(duration: 0.15), value: isFocused)
+        }
+        .buttonStyle(.plain)
+        .focused($isFocused)
     }
 }
 
@@ -1005,7 +1204,7 @@ public class TVOSCheatsHostingController: UIHostingController<TVOSCheatsView> {
         gameTitle: String? = nil,
         gameSystemIdentifier: String? = nil,
         romSerial: String? = nil,
-        onSaveCheat: @escaping (String, String, String, UInt8, Bool) -> Void,
+        onSaveCheat: @escaping CheatSaveHandler,
         onUpdateCheat: @escaping (PVCheats, UInt8) -> Void,
         onDone: @escaping () -> Void
     ) {
@@ -1026,316 +1225,6 @@ public class TVOSCheatsHostingController: UIHostingController<TVOSCheatsView> {
 
     @MainActor required dynamic init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
-    }
-}
-
-// MARK: - Cheat Database Search View (tvOS)
-
-/// SwiftUI sheet shown when the user taps "SEARCH" in the cheat codes screen on tvOS.
-struct TVOSCheatSearchView: View {
-    @Environment(\.dismiss) private var dismiss
-    @ObservedObject private var themeManager = ThemeManager.shared
-
-    let gameMD5: String?
-    let gameTitle: String?
-    let gameSystemIdentifier: String?
-    let romSerial: String?
-    /// Available cheat code types passed through from the parent view.
-    /// Currently unused by the tvOS cheat database search UI, but kept to
-    /// support future code-type selection/filtering when importing cheats
-    /// and to maintain API consistency with other cheat views.
-    let cheatTypes: [String]
-    let cheatIndex: UInt8
-    let onImport: (String, String, String, UInt8, Bool) -> Void
-
-    @State private var results: [CheatDatabaseEntry] = []
-    @State private var isLoading = false
-    @State private var isOnlineSearching = false
-    @State private var errorMessage: String?
-    @State private var onlineErrorMessage: String?
-    @State private var filterText = ""
-    @State private var hasSearchedOnline = false
-    @FocusState private var focusedID: Int?
-
-    private var accentColor: Color {
-        themeManager.currentPalette.defaultTintColor.swiftUIColor
-    }
-
-    private var backgroundColor: Color {
-        Color(themeManager.currentPalette.gameLibraryBackground)
-    }
-
-    private var onlineLookupEnabled: Bool { true }
-    private var hasOnlineResults: Bool { results.contains { $0.isOnlineResult } }
-
-    private var filtered: [CheatDatabaseEntry] {
-        guard !filterText.isEmpty else { return results }
-        let lower = filterText.lowercased()
-        return results.filter {
-            $0.cheatName.lowercased().contains(lower) ||
-            $0.category.lowercased().contains(lower) ||
-            $0.deviceName.lowercased().contains(lower)
-        }
-    }
-
-    var body: some View {
-        ZStack {
-            backgroundColor.ignoresSafeArea()
-            RetroGrid(lineSpacing: 30, lineColor: accentColor.opacity(0.1))
-                .opacity(0.3)
-
-            VStack(spacing: 0) {
-                // Header
-                HStack {
-                    Button(action: { dismiss() }) {
-                        HStack(spacing: 8) {
-                            Image(systemName: "xmark")
-                            Text("CLOSE")
-                        }
-                        .font(.system(size: 24, weight: .bold))
-                        .foregroundStyle(accentColor)
-                        .padding(.horizontal, 24)
-                        .padding(.vertical, 12)
-                        .background(RoundedRectangle(cornerRadius: 12).stroke(accentColor, lineWidth: 2))
-                    }
-                    .buttonStyle(.plain)
-
-                    Spacer()
-
-                    Text("CHEAT DATABASE")
-                        .font(.system(size: 38, weight: .bold, design: .rounded))
-                        .foregroundStyle(themeManager.currentPalette.gameLibraryHeaderText.swiftUIColor)
-                        .shadow(color: accentColor.opacity(0.8), radius: 10)
-
-                    Spacer()
-
-                    // Filter field
-                    TextField("Filter...", text: $filterText)
-                        .textFieldStyle(.plain)
-                        .font(.system(size: 22))
-                        .foregroundStyle(.white)
-                        .padding(12)
-                        .frame(width: 300)
-                        .background(
-                            RoundedRectangle(cornerRadius: 10)
-                                .fill(Color.black.opacity(0.5))
-                                .overlay(RoundedRectangle(cornerRadius: 10).stroke(accentColor.opacity(0.4), lineWidth: 2))
-                        )
-                }
-                .padding(.horizontal, 80)
-                .padding(.vertical, 32)
-
-                // Online results banner
-                if hasOnlineResults {
-                    HStack(spacing: 10) {
-                        Image(systemName: "globe")
-                            .foregroundStyle(.blue)
-                        Text("Some results are from the internet. Globe icon indicates online results.")
-                            .font(.system(size: 20))
-                            .foregroundStyle(themeManager.currentPalette.gameLibraryText.swiftUIColor.opacity(0.7))
-                    }
-                    .padding(.horizontal, 80)
-                    .padding(.bottom, 8)
-                }
-
-                // Content
-                if isLoading {
-                    ProgressView()
-                        .progressViewStyle(.circular)
-                        .tint(accentColor)
-                        .frame(maxWidth: .infinity, maxHeight: .infinity)
-                } else if let error = errorMessage {
-                    Text(error)
-                        .foregroundStyle(.red.opacity(0.8))
-                        .font(.system(size: 24))
-                        .frame(maxWidth: .infinity, maxHeight: .infinity)
-                } else if filtered.isEmpty {
-                    VStack(spacing: 24) {
-                        Image(systemName: "magnifyingglass")
-                            .font(.system(size: 60))
-                            .foregroundStyle(accentColor.opacity(0.4))
-                        Text("No cheat codes found")
-                            .font(.system(size: 28, weight: .medium))
-                            .foregroundStyle(themeManager.currentPalette.gameLibraryText.swiftUIColor.opacity(0.6))
-
-                        if onlineLookupEnabled,
-                           !hasSearchedOnline,
-                           !isOnlineSearching,
-                           filterText.isEmpty,
-                           let systemID = gameSystemIdentifier,
-                           !systemID.isEmpty {
-                            Button {
-                                Task { await searchOnline() }
-                            } label: {
-                                HStack(spacing: 12) {
-                                    Image(systemName: "globe")
-                                    Text("SEARCH ONLINE")
-                                }
-                                .font(.system(size: 26, weight: .bold))
-                                .foregroundStyle(.white)
-                                .padding(.horizontal, 48)
-                                .padding(.vertical, 20)
-                                .background(
-                                    RoundedRectangle(cornerRadius: 12)
-                                        .fill(LinearGradient(
-                                            colors: [.blue, .blue.opacity(0.7)],
-                                            startPoint: .leading,
-                                            endPoint: .trailing
-                                        ))
-                                )
-                            }
-                            .buttonStyle(.plain)
-
-                            Text("Fetches from libretro cheat database on GitHub")
-                                .font(.system(size: 20))
-                                .foregroundStyle(themeManager.currentPalette.gameLibraryText.swiftUIColor.opacity(0.5))
-                        }
-
-                        if isOnlineSearching {
-                            ProgressView("Searching online…")
-                                .tint(accentColor)
-                        }
-                    }
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
-                } else {
-                    ScrollView {
-                        LazyVStack(spacing: 12) {
-                            ForEach(filtered) { entry in
-                                TVOSCheatSearchRow(
-                                    entry: entry,
-                                    accentColor: accentColor,
-                                    onImport: {
-                                        let mappedType = CheatCodeTypes(string: entry.deviceName)?.stringValue ?? entry.deviceName
-                                        onImport(entry.cheatCode, entry.cheatName, mappedType, cheatIndex, true)
-                                        dismiss()
-                                    }
-                                )
-                                .focused($focusedID, equals: entry.id)
-                            }
-                        }
-                        .padding(.horizontal, 80)
-                        .padding(.bottom, 40)
-                    }
-                    .safeAreaInset(edge: .bottom) {
-                        if onlineLookupEnabled, !hasSearchedOnline, !isOnlineSearching, filterText.isEmpty,
-                           let systemID = gameSystemIdentifier, !systemID.isEmpty {
-                            Button {
-                                Task { await searchOnline() }
-                            } label: {
-                                HStack(spacing: 10) {
-                                    Image(systemName: "globe")
-                                    Text("ALSO SEARCH ONLINE")
-                                }
-                                .font(.system(size: 22, weight: .bold))
-                                .foregroundStyle(.blue)
-                                .padding(.vertical, 16)
-                                .frame(maxWidth: .infinity)
-                                .background(Color.black.opacity(0.5))
-                            }
-                            .buttonStyle(.plain)
-                        }
-                    }
-                }
-            }
-        }
-        .task { await loadCheats() }
-        .pvAlert(item: $onlineErrorMessage) { message in
-            PVAlert(title: "Online Search Failed", message: message, type: .error)
-        }
-    }
-
-    private func loadCheats() async {
-        isLoading = true
-        errorMessage = nil
-        do {
-            let found = try await CheatDatabase.shared.searchAllCheats(
-                byMD5: gameMD5,
-                title: gameTitle,
-                systemIdentifier: gameSystemIdentifier,
-                romSerial: romSerial
-            )
-            DLOG("TVOSCheatSearch: \(found.count) results (unified search)")
-            results = found
-        } catch {
-            errorMessage = error.localizedDescription
-        }
-        isLoading = false
-    }
-
-    private func searchOnline() async {
-        guard let title = gameTitle, !title.isEmpty else { return }
-        isOnlineSearching = true
-        defer { isOnlineSearching = false }
-        DLOG("TVOSCheatSearch: online lookup for title='\(title)'")
-        do {
-            let online = try await CheatDatabase.shared.searchCheatsOnline(
-                title: title,
-                systemIdentifier: gameSystemIdentifier
-            )
-            DLOG("TVOSCheatSearch: \(online.count) online results")
-            var seen = Set(results.map { $0.cheatCode.lowercased() })
-            for entry in online where seen.insert(entry.cheatCode.lowercased()).inserted {
-                results.append(entry)
-            }
-            hasSearchedOnline = true
-        } catch {
-            ELOG("TVOSCheatSearch online error: \(error)")
-            onlineErrorMessage = error.localizedDescription
-        }
-    }
-}
-
-private struct TVOSCheatSearchRow: View {
-    let entry: CheatDatabaseEntry
-    let accentColor: Color
-    let onImport: () -> Void
-
-    @ObservedObject private var themeManager = ThemeManager.shared
-    @FocusState private var isFocused: Bool
-
-    var body: some View {
-        Button(action: onImport) {
-            HStack(spacing: 24) {
-                VStack(alignment: .leading, spacing: 6) {
-                    HStack(spacing: 8) {
-                        Text(entry.cheatName)
-                            .font(.system(size: 26, weight: .bold))
-                            .foregroundStyle(themeManager.currentPalette.gameLibraryText.swiftUIColor)
-                        if entry.isOnlineResult {
-                            Image(systemName: "globe")
-                                .font(.system(size: 18))
-                                .foregroundStyle(.blue)
-                        }
-                    }
-                    Text(entry.cheatCode)
-                        .font(.system(size: 20, weight: .medium, design: .monospaced))
-                        .foregroundStyle(accentColor)
-                        .lineLimit(2)
-                    Text("\(entry.deviceFormat ?? entry.deviceName)  ·  \(entry.category)")
-                        .font(.system(size: 18))
-                        .foregroundStyle(themeManager.currentPalette.gameLibraryText.swiftUIColor.opacity(0.55))
-                }
-                Spacer()
-                Image(systemName: "arrow.down.circle")
-                    .font(.system(size: 32))
-                    .foregroundStyle(accentColor)
-            }
-            .padding(.horizontal, 32)
-            .padding(.vertical, 20)
-            .background(
-                RoundedRectangle(cornerRadius: 14)
-                    .fill(Color.black.opacity(0.3))
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 14)
-                            .stroke(isFocused ? accentColor : accentColor.opacity(0.3), lineWidth: isFocused ? 3 : 1.5)
-                    )
-            )
-            .scaleEffect(isFocused ? 1.02 : 1.0)
-            .shadow(color: isFocused ? accentColor.opacity(0.5) : .clear, radius: 15)
-            .animation(.easeOut(duration: 0.15), value: isFocused)
-        }
-        .buttonStyle(.plain)
-        .focused($isFocused)
     }
 }
 

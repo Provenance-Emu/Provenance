@@ -290,11 +290,13 @@ public actor CheatDatabase {
     ///   - title: The game title.
     ///   - systemIdentifier: The libretro system directory name (used to derive
     ///     the GameHacking.org system slug via `SystemIdentifier.gameHackingOrgSlug`).
+    ///   - forceRefresh: Skip each source's 24-hour cache and fetch again.
     /// - Returns: Combined, deduplicated array of `CheatDatabaseEntry` values
     ///   with `isOnlineResult == true`.
     public func searchCheatsOnline(
         title: String,
-        systemIdentifier: String? = nil
+        systemIdentifier: String? = nil,
+        forceRefresh: Bool = false
     ) async throws -> [CheatDatabaseEntry] {
         // Derive the GameHacking.org system slug from the libretro system identifier.
         let ghOrgSlug: String? = {
@@ -310,7 +312,8 @@ public actor CheatDatabase {
         // GameHackingOrgLookup.searchCheats never throws, so it's safe to await independently.
         async let ghOrgFuture: [CheatDatabaseEntry] = GameHackingOrgLookup.shared.searchCheats(
             title: title,
-            systemSlug: ghOrgSlug
+            systemSlug: ghOrgSlug,
+            forceRefresh: forceRefresh
         )
 
         // Run libretro lookup only when systemIdentifier is present — it throws on nil/empty.
@@ -320,7 +323,8 @@ public actor CheatDatabase {
         if let sysID = systemIdentifier, !sysID.isEmpty {
             async let libretroFuture = CheatOnlineLookup.shared.searchCheats(
                 title: title,
-                systemIdentifier: sysID
+                systemIdentifier: sysID,
+                forceRefresh: forceRefresh
             )
             do {
                 libretroResults = try await libretroFuture

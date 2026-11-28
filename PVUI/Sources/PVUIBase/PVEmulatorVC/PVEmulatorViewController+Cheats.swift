@@ -17,40 +17,6 @@ import UIKit
 #endif
 import PVEmulatorCore
 
-// MARK: - Cheat Code Normalization
-
-private enum CheatCodeNormalizer {
-    /// Matches non-alphanumeric characters (excluding hyphens, brackets, colons, and plus)
-    /// and whitespace — replaced with '+' as the canonical multi-code separator.
-    private static let separatorRegex: NSRegularExpression = {
-        // swiftlint:disable:next force_try
-        try! NSRegularExpression(pattern: "[^a-zA-Z0-9-\\[\\]:+]+|[\\s]+", options: .caseInsensitive)
-    }()
-    /// Collapses runs of '+' into a single '+'.
-    private static let multiPlusRegex: NSRegularExpression = {
-        // swiftlint:disable:next force_try
-        try! NSRegularExpression(pattern: "[+]+|[\\s]+", options: .caseInsensitive)
-    }()
-    /// Strips leading and trailing '+' characters.
-    private static let leadTrailPlusRegex: NSRegularExpression = {
-        // swiftlint:disable:next force_try
-        try! NSRegularExpression(pattern: "^[+]+|[+]+$", options: .caseInsensitive)
-    }()
-
-    /// Normalizes a raw cheat code string into a canonical form:
-    /// uppercased, non-alphanumeric separators → '+', collapsed, trimmed.
-    static func normalize(_ code: String) -> String {
-        let upper = code.uppercased()
-        var range = NSRange(upper.startIndex..., in: upper)
-        var result = separatorRegex.stringByReplacingMatches(in: upper, range: range, withTemplate: "+")
-        range = NSRange(result.startIndex..., in: result)
-        result = multiPlusRegex.stringByReplacingMatches(in: result, range: range, withTemplate: "+")
-        range = NSRange(result.startIndex..., in: result)
-        result = leadTrailPlusRegex.stringByReplacingMatches(in: result, range: range, withTemplate: "")
-        return result
-    }
-}
-
 // MARK: - Cheat State Management
 
 extension PVEmulatorViewController {
@@ -174,22 +140,6 @@ extension PVEmulatorViewController {
         )
     }
 
-    /// Legacy completion-based wrapper for callers that haven't migrated to async.
-    @MainActor
-    func setCheatState(
-        code: String, type: String, codeType: String,
-        cheatIndex: UInt8, enabled: Bool,
-        completion: @escaping CheatsCompletion
-    ) async {
-        do {
-            try await setCheatState(code: code, type: type, codeType: codeType,
-                                    cheatIndex: cheatIndex, enabled: enabled)
-            completion(.success)
-        } catch {
-            completion(.error(error))
-        }
-    }
-
     func cheatsViewControllerUpdateState(
         _: Any, cheat: PVCheats, cheatIndex: UInt8,
         completion: @escaping CheatsCompletion
@@ -259,16 +209,16 @@ extension PVEmulatorViewController {
         let systemName = gameLibretroDatabaseName
         let romSerial = game.romSerial
 
-        let onSaveCheat: (String, String, String, UInt8, Bool) -> Void = { [weak self] code, type, codeType, cheatIndex, enabled in
-            guard let self else { return }
-            Task { @MainActor in
-                await self.setCheatState(code: code, type: type, codeType: codeType,
-                                         cheatIndex: cheatIndex, enabled: enabled) { result in
-                    switch result {
-                    case .success: DLOG("Cheat saved successfully")
-                    case let .error(error): ELOG("Error saving cheat: \(error)")
-                    }
-                }
+        let onSaveCheat: CheatSaveHandler = { [weak self] code, type, codeType, cheatIndex, enabled in
+            guard let self else { return false }
+            do {
+                try await self.setCheatState(code: code, type: type, codeType: codeType,
+                                             cheatIndex: cheatIndex, enabled: enabled)
+                DLOG("Cheat saved successfully")
+                return true
+            } catch {
+                ELOG("Error saving cheat: \(error.localizedDescription)")
+                return false
             }
         }
 

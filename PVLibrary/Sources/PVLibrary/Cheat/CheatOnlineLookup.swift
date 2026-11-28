@@ -58,6 +58,8 @@ public actor CheatOnlineLookup {
     ///   - title: The game title used for fuzzy filename matching.
     ///   - systemIdentifier: Libretro system folder name
     ///     (e.g. `"Nintendo - Super Nintendo Entertainment System"`).
+    ///   - forceRefresh: Skip the memory and disk caches and fetch again. A failed
+    ///     fetch leaves the cached copy in place.
     /// - Returns: Array of `CheatDatabaseEntry` values with `isOnlineResult == true`.
     ///   Returns an empty array when no cheats are found for the title.
     /// - Throws: `LookupError.missingSystemIdentifier` when `systemIdentifier` is nil/empty.
@@ -65,19 +67,20 @@ public actor CheatOnlineLookup {
     ///   can distinguish a genuine failure from "no results found".
     public func searchCheats(
         title: String,
-        systemIdentifier: String? = nil
+        systemIdentifier: String? = nil,
+        forceRefresh: Bool = false
     ) async throws -> [CheatDatabaseEntry] {
         let key = makeCacheKey(title: title, system: systemIdentifier)
 
         // 1. Memory cache
-        if let hit = memoryCache[key], Date().timeIntervalSince(hit.fetchedAt) < Self.cacheTTL {
+        if !forceRefresh, let hit = memoryCache[key], Date().timeIntervalSince(hit.fetchedAt) < Self.cacheTTL {
             DLOG("CheatOnlineLookup: memory cache hit for '\(title)'")
             return hit.entries
         }
 
         // 2. Disk cache — populate memory cache with the original fetchedAt so the TTL isn't
         //    inadvertently extended by using Date() on a near-expired entry.
-        if let diskHit = loadDiskCache(forKey: key) {
+        if !forceRefresh, let diskHit = loadDiskCache(forKey: key) {
             DLOG("CheatOnlineLookup: disk cache hit for '\(title)'")
             if memoryCache.count >= Self.maxMemoryCacheEntries {
                 let oldest = memoryCache.min { $0.value.fetchedAt < $1.value.fetchedAt }?.key
