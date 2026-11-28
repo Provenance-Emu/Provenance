@@ -261,6 +261,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Staleness warning** — `get-modules.sh` now emits a build-time warning when `pinned_date` is more than 30 days old, prompting developers to run the update checker.
 
 ### Fixed
+- **Online Cheats Hidden for a Day After Opening Offline** — A cheat lookup made with no network was remembered as "no cheats" for 24 hours. (#3868)
 - **Network Play focus on Apple TV** — Buttons and filter chips on the Network Play screens use the same focus highlight and theme colours as the rest of the app. (#3867)
 - **Portrait TV Under the Notch** — A portrait TV started at the very top of the screen, under the notch or Dynamic Island; it now starts below it. (#3855)
 - **Bezel Picked While Playing Did Not Show** — A TV chosen from the pause menu's list could stay hidden behind the game's own TV or its Bezel Project artwork; the TV picked is now the TV shown. (#3855)
@@ -532,6 +533,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Apple TV Arcade Controls** — Keep Insert Coin, Start, and Select visible for every slot in four-player arcade games, even with full controllers connected
 
 ### Changed
+- **Cheats Menu Finds Cheats by Itself** — Opening the cheats menu for a game now lists your saved cheats together with the cheats known for that game from the built-in database and from online sources, which are fetched in the background. Select a cheat to switch it on; nothing is switched on for you. The separate search and download screen is gone, and Refresh checks online again. (#3868)
 - **Network Play offers every game** — Any downloaded game whose system has a core that supports network play can be hosted or joined. The "Unverified" list, the multiplayer details editor and the play-style filter are gone. (#3867)
 - **Network Play settings are a tab** — Settings sit beside Games and Rooms on the Network Play screen instead of opening as a separate screen. (#3867)
 - **ScalingMode renderer enabled by default** — The `scalingModeRenderer` feature flag is now enabled by default; the new `ScalingMode`-driven renderer paths (Stretch, Aspect Fill, Integer Scale, Native Resolution) are active for all users. Legacy boolean shims remain for backwards compatibility. (#3619)
