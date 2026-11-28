@@ -78,13 +78,15 @@ public actor CheatDatabase {
     ///   - systemIdentifier: The libretro system directory name (e.g. "Nintendo - Super Nintendo Entertainment System").
     ///   - romSerial: The ROM serial / disc ID for GC/Wii GeckoCodes lookup (e.g. "RMCE01").
     ///   - limit: Maximum number of results to return.
+    ///   - forceRefresh: Skip the disc-serial lookup's 24-hour cache and fetch again.
     /// - Returns: Combined, deduplicated array of cheat entries from both databases.
     public func searchAllCheats(
         byMD5 md5: String? = nil,
         title: String? = nil,
         systemIdentifier: String? = nil,
         romSerial: String? = nil,
-        limit: Int = 300
+        limit: Int = 300,
+        forceRefresh: Bool = false
     ) async throws -> [CheatDatabaseEntry] {
         var results: [CheatDatabaseEntry] = []
         var seenCodes = Set<String>()
@@ -162,28 +164,21 @@ public actor CheatDatabase {
         }
 
         // 4. GeckoCodes online lookup for GameCube / Wii (requires romSerial from disc header).
-        // Gate by valid 6-char alphanumeric disc ID format and GC/Wii system when known,
-        // to avoid spurious requests for ROMs from other platforms.
         if let serial = romSerial, !serial.isEmpty {
-            let isValidDiscID = serial.count == 6 && serial.allSatisfy({ $0.isLetter || $0.isNumber })
-            let isGCWiiSystem = systemIdentifier?.contains("GameCube") == true
-                || systemIdentifier?.contains("Wii") == true
-            if isValidDiscID && isGCWiiSystem {
-                do {
-                    let geckoResults = try await GeckoCodesLookup.shared.searchCheats(gameID: serial)
-                    for entry in geckoResults {
-                        let key = entry.cheatCode.lowercased()
-                        if seenCodes.insert(key).inserted {
-                            results.append(entry)
-                        }
+            do {
+                let geckoResults = try await searchDiscSerialCheats(
+                    romSerial: serial, systemIdentifier: systemIdentifier, forceRefresh: forceRefresh
+                )
+                for entry in geckoResults {
+                    let key = entry.cheatCode.lowercased()
+                    if seenCodes.insert(key).inserted {
+                        results.append(entry)
                     }
-                    DLOG("CheatDatabase: \(geckoResults.count) results from GeckoCodes for serial '\(serial)'")
-                } catch {
-                    WLOG("CheatDatabase: GeckoCodes lookup error for serial '\(serial)': \(error)")
-                    // GeckoCodes failure is non-fatal; do not update lastError
                 }
-            } else {
-                DLOG("CheatDatabase: skipping GeckoCodes for serial '\(serial)' — not a GC/Wii disc ID or wrong system")
+                DLOG("CheatDatabase: \(geckoResults.count) results from GeckoCodes for serial '\(serial)'")
+            } catch {
+                WLOG("CheatDatabase: GeckoCodes lookup error for serial '\(serial)': \(error)")
+                // GeckoCodes failure is non-fatal; do not update lastError
             }
         }
 
@@ -266,6 +261,34 @@ public actor CheatDatabase {
         return results
     }
 
+    // MARK: - Disc Serial Search
+
+    /// Fetch Gecko codes for a GameCube or Wii disc by its serial.
+    ///
+    /// Gated by a valid 6-character alphanumeric disc ID and a GameCube or Wii
+    /// system, to avoid spurious requests for ROMs from other platforms: any
+    /// other serial or system answers with an empty array and no request.
+    ///
+    /// - Parameters:
+    ///   - romSerial: The disc ID from the ROM header (e.g. "RMCE01").
+    ///   - systemIdentifier: The libretro system directory name.
+    ///   - forceRefresh: Skip the lookup's 24-hour cache and fetch again.
+    /// - Throws: Network errors, so a caller can tell "unreachable" from "no codes".
+    public func searchDiscSerialCheats(
+        romSerial serial: String,
+        systemIdentifier: String?,
+        forceRefresh: Bool = false
+    ) async throws -> [CheatDatabaseEntry] {
+        let isValidDiscID = serial.count == 6 && serial.allSatisfy({ $0.isLetter || $0.isNumber })
+        let isGCWiiSystem = systemIdentifier?.contains("GameCube") == true
+            || systemIdentifier?.contains("Wii") == true
+        guard isValidDiscID && isGCWiiSystem else {
+            DLOG("CheatDatabase: skipping GeckoCodes for serial '\(serial)' — not a GC/Wii disc ID or wrong system")
+            return []
+        }
+        return try await GeckoCodesLookup.shared.searchCheats(gameID: serial, forceRefresh: forceRefresh)
+    }
+
     // MARK: - Pre-warming
 
     /// Pre-warm both databases to avoid first-use lag when the user opens the cheat search.
@@ -290,11 +313,13 @@ public actor CheatDatabase {
     ///   - title: The game title.
     ///   - systemIdentifier: The libretro system directory name (used to derive
     ///     the GameHacking.org system slug via `SystemIdentifier.gameHackingOrgSlug`).
+    ///   - forceRefresh: Skip each source's 24-hour cache and fetch again.
     /// - Returns: Combined, deduplicated array of `CheatDatabaseEntry` values
     ///   with `isOnlineResult == true`.
     public func searchCheatsOnline(
         title: String,
-        systemIdentifier: String? = nil
+        systemIdentifier: String? = nil,
+        forceRefresh: Bool = false
     ) async throws -> [CheatDatabaseEntry] {
         // Derive the GameHacking.org system slug from the libretro system identifier.
         let ghOrgSlug: String? = {
@@ -310,7 +335,8 @@ public actor CheatDatabase {
         // GameHackingOrgLookup.searchCheats never throws, so it's safe to await independently.
         async let ghOrgFuture: [CheatDatabaseEntry] = GameHackingOrgLookup.shared.searchCheats(
             title: title,
-            systemSlug: ghOrgSlug
+            systemSlug: ghOrgSlug,
+            forceRefresh: forceRefresh
         )
 
         // Run libretro lookup only when systemIdentifier is present — it throws on nil/empty.
@@ -320,7 +346,8 @@ public actor CheatDatabase {
         if let sysID = systemIdentifier, !sysID.isEmpty {
             async let libretroFuture = CheatOnlineLookup.shared.searchCheats(
                 title: title,
-                systemIdentifier: sysID
+                systemIdentifier: sysID,
+                forceRefresh: forceRefresh
             )
             do {
                 libretroResults = try await libretroFuture

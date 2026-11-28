@@ -5,7 +5,6 @@
 //  Created by Joseph Mattiello on 8/10/24.
 //
 
-
 public enum CheatsStateError: Error {
     case coreCheatsError(Error?)
     case coreNoCheatError(Error?)
@@ -13,6 +12,19 @@ public enum CheatsStateError: Error {
     case noCoreFound(String)
     case realmWriteError(Error)
     case realmDeletionError(Error)
+
+    /// What the cheats menu tells the user when the cheat named `name` could
+    /// not be switched on.
+    func failureMessage(forCheatNamed name: String) -> String {
+        switch self {
+        case .coreCheatsError, .coreNoCheatError:
+            return "\"\(name)\" was not accepted by this core."
+        case .cheatsUnsupportedByCore:
+            return "This core does not support cheats."
+        case .noCoreFound, .realmWriteError, .realmDeletionError:
+            return "\"\(name)\" could not be saved. \(localizedDescription)"
+        }
+    }
 
     var localizedDescription: String {
         switch self {

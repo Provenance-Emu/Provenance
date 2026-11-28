@@ -17,6 +17,10 @@ import PVFeatureFlags
 // MARK: - Main Cheats View
 
 /// SwiftUI cheats management view for iOS.
+///
+/// One list: the game's saved cheats, then every cheat the bundled database
+/// and the online sources know for it. The lookups start when the view
+/// appears; nothing is switched on until the user taps it.
 public struct iOSCheatsView: View {
     @Environment(\.dismiss) private var dismiss
 
@@ -26,21 +30,25 @@ public struct iOSCheatsView: View {
     let gameMD5: String?
     let gameTitle: String?
     let gameSystemIdentifier: String?
-    let romSerial: String?
-    let onSaveCheat: (String, String, String, UInt8, Bool) -> Void
+    let onSaveCheat: CheatSaveHandler
     let onUpdateCheat: (PVCheats, UInt8) -> Void
     let onDone: () -> Void
 
+    @State private var loader: CheatCatalogLoader
     @State private var allCheats: [PVCheats] = []
+    @State private var filterText = ""
+    /// Codes being switched on: saved to the database but not yet reloaded.
+    @State private var pendingKeys: Set<String> = []
+    /// The last cheat being switched on; the next one waits for it.
+    @State private var enableChain: Task<Void, Never>?
+    @State private var enableFailure: String?
     @State private var showingAddCheat = false
-    @State private var showingSearchDB = false
     @State private var cheatToEdit: CheatEditContext?
     @State private var cheatToExport: SharedCheatEntry?
 
     private struct CheatEditContext: Identifiable {
         let id: String
         let cheat: PVCheats
-        let index: Int
     }
 
     public init(
@@ -51,7 +59,7 @@ public struct iOSCheatsView: View {
         gameTitle: String? = nil,
         gameSystemIdentifier: String? = nil,
         romSerial: String? = nil,
-        onSaveCheat: @escaping (String, String, String, UInt8, Bool) -> Void,
+        onSaveCheat: @escaping CheatSaveHandler,
         onUpdateCheat: @escaping (PVCheats, UInt8) -> Void,
         onDone: @escaping () -> Void
     ) {
@@ -61,57 +69,66 @@ public struct iOSCheatsView: View {
         self.gameMD5 = gameMD5
         self.gameTitle = gameTitle
         self.gameSystemIdentifier = gameSystemIdentifier
-        self.romSerial = romSerial
         self.onSaveCheat = onSaveCheat
         self.onUpdateCheat = onUpdateCheat
         self.onDone = onDone
+        _loader = State(initialValue: CheatCatalogLoader(query: CheatCatalogQuery(
+            gameMD5: gameMD5,
+            gameTitle: gameTitle,
+            systemName: gameSystemIdentifier,
+            romSerial: romSerial
+        )))
     }
 
     private var nextCheatIndex: UInt8 {
         UInt8(min(allCheats.count, Int(UInt8.max)))
     }
 
+    private var items: [CheatCatalogItem] {
+        CheatCatalog.filter(
+            CheatCatalog.merge(
+                saved: allCheats.compactMap { SavedCheatSnapshot($0) },
+                bundled: loader.bundled,
+                online: loader.online
+            ),
+            matching: filterText
+        )
+    }
+
     public var body: some View {
+        let items = self.items
+        let savedItems = items.filter(\.isSaved)
+        let offeredItems = items.filter { !$0.isSaved }
         NavigationStack {
-            Group {
-                if allCheats.isEmpty {
-                    ContentUnavailableView(
-                        "No Cheat Codes",
-                        systemImage: "wand.and.stars",
-                        description: Text("Add a code manually or search the database")
-                    )
-                } else {
-                    List {
-                        ForEach(Array(allCheats.enumerated()), id: \.element.id) { index, cheat in
-                            iOSCheatRow(cheat: cheat)
-                                .contentShape(Rectangle())
-                                .onTapGesture { toggleCheat(cheat, at: index) }
-                                .swipeActions(edge: .trailing, allowsFullSwipe: true) {
-                                    Button(role: .destructive) {
-                                        deleteCheat(cheat)
-                                    } label: {
-                                        Label("Delete", systemImage: "trash")
-                                    }
-                                }
-                                .swipeActions(edge: .leading) {
-                                    Button {
-                                        cheatToEdit = CheatEditContext(id: cheat.id, cheat: cheat, index: index)
-                                    } label: {
-                                        Label("Edit", systemImage: "pencil")
-                                    }
-                                    .tint(.blue)
-                                    Button {
-                                        cheatToExport = sharedEntry(for: cheat)
-                                    } label: {
-                                        Label("Export", systemImage: "qrcode")
-                                    }
-                                    .tint(.orange)
-                                }
+            List {
+                if !savedItems.isEmpty {
+                    SwiftUI.Section("My Cheats") {
+                        ForEach(savedItems) { item in
+                            savedRow(item)
                         }
                     }
-                    .listStyle(.plain)
+                }
+                if !offeredItems.isEmpty {
+                    SwiftUI.Section {
+                        ForEach(offeredItems) { item in
+                            iOSCheatRow(item: item, isPending: pendingKeys.contains(item.key))
+                                .contentShape(Rectangle())
+                                .onTapGesture { enable(item) }
+                                .accessibilityAddTraits(.isButton)
+                        }
+                    } header: {
+                        Text("Available for This Game")
+                    } footer: {
+                        Text("Tap a cheat to switch it on. Cheats marked with a globe come from the internet.")
+                    }
+                }
+                SwiftUI.Section {
+                    statusRow(isEmpty: items.isEmpty)
                 }
             }
+            .listStyle(.insetGrouped)
+            .searchable(text: $filterText, prompt: "Filter by name or code")
+            .refreshable { await loader.refresh() }
             .navigationTitle("Cheat Codes")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
@@ -124,15 +141,18 @@ public struct iOSCheatsView: View {
                 ToolbarItem(placement: .primaryAction) {
                     HStack(spacing: 16) {
                         Button {
-                            showingSearchDB = true
+                            Task { await loader.refresh() }
                         } label: {
-                            Image(systemName: "magnifyingglass")
+                            Image(systemName: "arrow.clockwise")
                         }
+                        .disabled(loader.isLoading)
+                        .accessibilityLabel("Refresh Cheats")
                         Button {
                             showingAddCheat = true
                         } label: {
                             Image(systemName: "plus")
                         }
+                        .accessibilityLabel("Add Cheat Code")
                     }
                 }
                 ToolbarItem(placement: .secondaryAction) {
@@ -141,56 +161,109 @@ public struct iOSCheatsView: View {
                     }
                 }
             }
-            .sheet(isPresented: $showingAddCheat, onDismiss: { delayedReload() }) {
+            .sheet(isPresented: $showingAddCheat) {
                 iOSAddCheatView(
                     cheatTypes: cheatTypes,
                     cheatIndex: nextCheatIndex,
                     onSave: { code, name, codeType, index, enabled in
-                        onSaveCheat(code, name, codeType, index, enabled)
+                        Task {
+                            _ = await onSaveCheat(code, name, codeType, index, enabled)
+                            loadCheats()
+                        }
                     }
                 )
             }
-            .sheet(isPresented: $showingSearchDB, onDismiss: { delayedReload() }) {
-                iOSCheatSearchView(
-                    gameMD5: gameMD5,
-                    gameTitle: gameTitle,
-                    gameSystemIdentifier: gameSystemIdentifier,
-                    romSerial: romSerial,
-                    cheatIndex: nextCheatIndex,
-                    onImport: { code, name, deviceName, index, enabled in
-                        onSaveCheat(code, name, deviceName, index, enabled)
-                    }
-                )
-            }
-            .sheet(item: $cheatToEdit, onDismiss: { delayedReload() }) { ctx in
+            .sheet(item: $cheatToEdit, onDismiss: { loadCheats() }) { ctx in
                 iOSEditCheatView(cheat: ctx.cheat, cheatTypes: cheatTypes)
             }
             .sheet(item: $cheatToExport) { entry in
                 CheatExportView(entry: entry)
             }
         }
-        .onAppear {
-            loadCheats()
-            // Pre-warm the LibretroCheatDatabase so extraction happens now
-            // (in background) rather than blocking when the user opens search.
-            CheatDatabase.warmUpDatabases()
+        .pvAlert(item: $enableFailure) { message in
+            PVAlert(title: "Cheat Not Switched On", message: message, type: .error)
+        }
+        .onAppear { loadCheats() }
+        .task { await loader.loadIfNeeded() }
+    }
+
+    // MARK: - Rows
+
+    @ViewBuilder
+    private func savedRow(_ item: CheatCatalogItem) -> some View {
+        if let index = allCheats.firstIndex(where: { !$0.isInvalidated && $0.id == item.savedID }) {
+            let cheat = allCheats[index]
+            iOSCheatRow(item: item, isPending: false)
+                .contentShape(Rectangle())
+                .onTapGesture { toggleCheat(cheat, at: index) }
+                .accessibilityAddTraits(.isButton)
+                .swipeActions(edge: .trailing, allowsFullSwipe: true) {
+                    Button(role: .destructive) {
+                        deleteCheat(cheat)
+                    } label: {
+                        Label("Delete", systemImage: "trash")
+                    }
+                }
+                .swipeActions(edge: .leading) {
+                    Button {
+                        cheatToEdit = CheatEditContext(id: cheat.id, cheat: cheat)
+                    } label: {
+                        Label("Edit", systemImage: "pencil")
+                    }
+                    .tint(.blue)
+                    Button {
+                        cheatToExport = sharedEntry(for: cheat)
+                    } label: {
+                        Label("Export", systemImage: "qrcode")
+                    }
+                    .tint(.orange)
+                }
+        }
+    }
+
+    /// The last row: what the lookups are doing, or that they found nothing.
+    @ViewBuilder
+    private func statusRow(isEmpty: Bool) -> some View {
+        if loader.isLoading {
+            HStack(spacing: 12) {
+                ProgressView()
+                Text(verbatim: loader.isLoadingBundled ? "Looking up cheats…" : "Looking for more cheats online…")
+                    .foregroundStyle(.secondary)
+            }
+        } else if loader.onlineState == .failed {
+            HStack(spacing: 12) {
+                Image(systemName: "wifi.slash")
+                    .foregroundStyle(.secondary)
+                Text("Online cheats are unavailable right now.")
+                    .foregroundStyle(.secondary)
+                Spacer()
+                Button("Retry") {
+                    Task { await loader.refresh() }
+                }
+                .buttonStyle(.borderless)
+            }
+        } else if isEmpty {
+            Text(verbatim: filterText.isEmpty
+                 ? "No cheats were found for this game. Tap + to add a code."
+                 : "No cheats match \"\(filterText)\".")
+                .foregroundStyle(.secondary)
+        } else {
+            Button {
+                Task { await loader.refresh() }
+            } label: {
+                Label("Check for New Cheats", systemImage: "arrow.clockwise")
+            }
         }
     }
 
     // MARK: - Helpers
 
-    /// Reload the cheats list after a short delay to allow the async Realm write to complete.
-    private func delayedReload() {
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-            loadCheats()
-        }
-    }
-
     private func loadCheats() {
-        // Re-query Realm when gameMD5 is available so newly added/imported cheats
+        // Re-query Realm when gameMD5 is available so newly added cheats
         // (written after this view was presented) are reflected on reload.
         let source: [PVCheats]
         if let md5 = gameMD5, !md5.isEmpty, let realm = try? Realm() {
+            realm.refresh()
             source = Array(realm.objects(PVCheats.self).filter("game.md5Hash == %@", md5))
         } else {
             source = cheats
@@ -203,6 +276,25 @@ public struct iOSCheatsView: View {
             filtered = valid
         }
         allCheats = filtered.sorted { $0.date < $1.date }
+    }
+
+    /// Switches on a cheat from the database or an online source, which saves it.
+    private func enable(_ item: CheatCatalogItem) {
+        guard !pendingKeys.contains(item.key) else { return }
+        pendingKeys.insert(item.key)
+        // One at a time: a cheat's index is the count of saved cheats, which is
+        // only right once the cheat before it has been saved and reloaded.
+        let previous = enableChain
+        enableChain = Task {
+            await previous?.value
+            let index = nextCheatIndex
+            let failure = await onSaveCheat(item.code, item.name, item.codeType, index, true)
+            loadCheats()
+            pendingKeys.remove(item.key)
+            if let failure {
+                enableFailure = failure.failureMessage(forCheatNamed: item.name)
+            }
+        }
     }
 
     private func toggleCheat(_ cheat: PVCheats, at index: Int) {
@@ -258,40 +350,52 @@ public struct iOSCheatsView: View {
 // MARK: - Cheat Row
 
 private struct iOSCheatRow: View {
-    let cheat: PVCheats
+    let item: CheatCatalogItem
+    let isPending: Bool
 
-    private var displayName: String {
-        let type = cheat.type ?? ""
-        return type.isEmpty ? "Cheat Code" : type
-    }
+    private var isOn: Bool { item.isEnabled || isPending }
 
     var body: some View {
-        // Guard against Realm invalidation: if the object was deleted or the
-        // Realm refreshed mid-render, any property access would crash.
-        if !cheat.isInvalidated {
-            HStack(spacing: 12) {
-                Circle()
-                    .fill(cheat.enabled ? Color.green : Color.gray.opacity(0.4))
-                    .frame(width: 10, height: 10)
+        HStack(spacing: 12) {
+            Circle()
+                .fill(isOn ? Color.green : Color.gray.opacity(0.4))
+                .frame(width: 10, height: 10)
 
-                VStack(alignment: .leading, spacing: 2) {
-                    Text(displayName)
+            VStack(alignment: .leading, spacing: 2) {
+                HStack(alignment: .firstTextBaseline, spacing: 6) {
+                    Text(verbatim: item.name)
                         .font(.headline)
                         .lineLimit(1)
-                    Text(cheat.code ?? "")
-                        .font(.system(.caption, design: .monospaced))
-                        .foregroundStyle(.secondary)
+                    if item.source == .online {
+                        Image(systemName: "globe")
+                            .font(.caption2)
+                            .foregroundStyle(.blue)
+                            .accessibilityLabel("From the internet")
+                    }
+                }
+                Text(verbatim: item.code)
+                    .font(.system(.caption, design: .monospaced))
+                    .foregroundStyle(.secondary)
+                    .lineLimit(1)
+                if !item.isSaved, let detail = item.detail {
+                    Text(verbatim: detail)
+                        .font(.caption2)
+                        .foregroundStyle(.tertiary)
                         .lineLimit(1)
                 }
-
-                Spacer()
-
-                Text(cheat.enabled ? "ON" : "OFF")
-                    .font(.caption.bold())
-                    .foregroundStyle(cheat.enabled ? Color.green : Color.secondary)
             }
-            .padding(.vertical, 4)
+
+            Spacer()
+
+            if isPending {
+                ProgressView()
+            } else {
+                Text(verbatim: isOn ? "ON" : "OFF")
+                    .font(.caption.bold())
+                    .foregroundStyle(isOn ? Color.green : Color.secondary)
+            }
         }
+        .padding(.vertical, 4)
     }
 }
 
@@ -421,268 +525,6 @@ struct iOSAddCheatView: View {
         guard !code.isEmpty else { return }
         onSave(code, name, selectedType, cheatIndex, true)
         dismiss()
-    }
-}
-
-// MARK: - Cheat Database Search View (iOS)
-
-/// Sheet for searching the bundled cheat database and importing entries.
-struct iOSCheatSearchView: View {
-    @Environment(\.dismiss) private var dismiss
-
-    let gameMD5: String?
-    let gameTitle: String?
-    let gameSystemIdentifier: String?
-    let romSerial: String?
-    let cheatIndex: UInt8
-    let onImport: (String, String, String, UInt8, Bool) -> Void
-
-    @State private var results: [CheatDatabaseEntry] = []
-    @State private var isLoading = false
-    @State private var isOnlineSearching = false
-    @State private var errorMessage: String?
-    @State private var onlineErrorMessage: String?
-    @State private var filterText = ""
-    @State private var pendingEntry: CheatDatabaseEntry?
-    @State private var showingConfirm = false
-    @State private var hasSearchedOnline = false
-
-    private var onlineLookupEnabled: Bool { true }
-
-    private var filtered: [CheatDatabaseEntry] {
-        guard !filterText.isEmpty else { return results }
-        let lower = filterText.lowercased()
-        return results.filter {
-            $0.cheatName.lowercased().contains(lower) ||
-            $0.category.lowercased().contains(lower) ||
-            $0.deviceName.lowercased().contains(lower)
-        }
-    }
-
-    private var hasOnlineResults: Bool { results.contains { $0.isOnlineResult } }
-
-    var body: some View {
-        NavigationStack {
-            Group {
-                if isLoading {
-                    ProgressView("Loading database…")
-                        .frame(maxWidth: .infinity, maxHeight: .infinity)
-                } else if let error = errorMessage {
-                    VStack(spacing: 12) {
-                        Image(systemName: "exclamationmark.triangle")
-                            .font(.system(size: 48))
-                            .foregroundStyle(.red)
-                        Text(error)
-                            .multilineTextAlignment(.center)
-                            .foregroundStyle(.secondary)
-                    }
-                    .padding()
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
-                } else if filtered.isEmpty {
-                    emptyStateView
-                } else {
-                    listView
-                }
-            }
-            .navigationTitle("Cheat Database")
-            .navigationBarTitleDisplayMode(.inline)
-            .searchable(text: $filterText, prompt: "Filter by name or category")
-            .toolbar {
-                ToolbarItem(placement: .cancellationAction) {
-                    Button("Close") { dismiss() }
-                }
-            }
-        }
-        .pvAlert(isPresented: $showingConfirm) {
-            let entry = pendingEntry
-            return PVAlert(
-                title: "Import Cheat?",
-                message: entry.map { "\"\($0.cheatName)\"\n\($0.cheatCode)" },
-                actions: [
-                    PVAlertAction("Import") {
-                        guard let entry else { return }
-                        onImport(entry.cheatCode, entry.cheatName, entry.deviceName, cheatIndex, true)
-                        dismiss()
-                    },
-                    .cancel()
-                ]
-            )
-        }
-        .pvAlert(item: $onlineErrorMessage) { message in
-            PVAlert(title: "Online Search Failed", message: message, type: .error)
-        }
-        .task { await loadCheats() }
-    }
-
-    // MARK: - Subviews
-
-    @ViewBuilder
-    private var emptyStateView: some View {
-        VStack(spacing: 20) {
-            if !filterText.isEmpty {
-                ContentUnavailableView.search(text: filterText)
-            } else {
-                VStack(spacing: 12) {
-                    Image(systemName: "magnifyingglass")
-                        .font(.system(size: 48))
-                        .foregroundStyle(.secondary)
-                    Text("No local cheat codes found")
-                        .foregroundStyle(.secondary)
-                }
-            }
-
-            if onlineLookupEnabled, !hasSearchedOnline, !isOnlineSearching, filterText.isEmpty {
-                Button {
-                    Task { await searchOnline() }
-                } label: {
-                    Label("Search Online", systemImage: "globe")
-                        .font(.headline)
-                        .padding(.horizontal, 24)
-                        .padding(.vertical, 10)
-                }
-                .buttonStyle(.borderedProminent)
-
-                Text("Fetches from libretro cheat database and GameHacking.org")
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
-            }
-        }
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .overlay(alignment: .center) {
-            if isOnlineSearching {
-                ProgressView("Searching online…")
-                    .padding()
-                    .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 12))
-            }
-        }
-    }
-
-    @ViewBuilder
-    private var listView: some View {
-        SwiftUI.List {
-            if hasOnlineResults {
-                SwiftUI.Section {
-                    HStack(spacing: 8) {
-                        Image(systemName: "globe")
-                            .foregroundStyle(.blue)
-                        Text("Some results are from the internet. Review before importing.")
-                            .font(.caption)
-                            .foregroundStyle(.secondary)
-                    }
-                }
-            }
-
-            ForEach(filtered) { entry in
-                Button {
-                    pendingEntry = entry
-                    showingConfirm = true
-                } label: {
-                    iOSCheatSearchRow(entry: entry)
-                }
-                .buttonStyle(.plain)
-            }
-        }
-        .listStyle(.plain)
-        .overlay(alignment: .bottom) {
-            if isOnlineSearching {
-                ProgressView("Searching online…")
-                    .padding()
-                    .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 12))
-                    .padding()
-            }
-        }
-        .safeAreaInset(edge: .bottom) {
-            if onlineLookupEnabled, !hasSearchedOnline, !isOnlineSearching, !results.isEmpty, filterText.isEmpty,
-               let sysID = gameSystemIdentifier, !sysID.isEmpty {
-                Button {
-                    Task { await searchOnline() }
-                } label: {
-                    Label("Also Search Online", systemImage: "globe")
-                        .font(.subheadline)
-                        .padding(.vertical, 8)
-                        .frame(maxWidth: .infinity)
-                }
-                .buttonStyle(.bordered)
-                .padding()
-                .background(.regularMaterial)
-            }
-        }
-    }
-
-    // MARK: - Data Loading
-
-    private func loadCheats() async {
-        isLoading = true
-        errorMessage = nil
-        DLOG("iOSCheatSearch: Starting search md5=\(gameMD5 ?? "nil") title=\(gameTitle ?? "nil") system=\(gameSystemIdentifier ?? "nil") serial=\(romSerial ?? "nil")")
-        do {
-            let found = try await CheatDatabase.shared.searchAllCheats(
-                byMD5: gameMD5,
-                title: gameTitle,
-                systemIdentifier: gameSystemIdentifier,
-                romSerial: romSerial
-            )
-            DLOG("iOSCheatSearch: \(found.count) results (unified search)")
-            results = found
-        } catch {
-            ELOG("iOSCheatSearch error: \(error)")
-            errorMessage = "\(error)"
-        }
-        isLoading = false
-    }
-
-    private func searchOnline() async {
-        guard let title = gameTitle, !title.isEmpty else { return }
-        isOnlineSearching = true
-        defer { isOnlineSearching = false }
-        onlineErrorMessage = nil
-        DLOG("iOSCheatSearch: online lookup for title='\(title)' system=\(gameSystemIdentifier ?? "nil")")
-        do {
-            let online = try await CheatDatabase.shared.searchCheatsOnline(
-                title: title,
-                systemIdentifier: gameSystemIdentifier
-            )
-            DLOG("iOSCheatSearch: \(online.count) online results")
-            // Merge, deduplicating by cheat code
-            var seen = Set(results.map { $0.cheatCode.lowercased() })
-            for entry in online where seen.insert(entry.cheatCode.lowercased()).inserted {
-                results.append(entry)
-            }
-            hasSearchedOnline = true
-        } catch {
-            ELOG("iOSCheatSearch online error: \(error)")
-            onlineErrorMessage = error.localizedDescription
-        }
-    }
-}
-
-// MARK: - Search Result Row
-
-private struct iOSCheatSearchRow: View {
-    let entry: CheatDatabaseEntry
-
-    var body: some View {
-        VStack(alignment: .leading, spacing: 3) {
-            HStack(alignment: .firstTextBaseline, spacing: 6) {
-                Text(entry.cheatName)
-                    .font(.headline)
-                    .lineLimit(1)
-                if entry.isOnlineResult {
-                    Image(systemName: "globe")
-                        .font(.caption2)
-                        .foregroundStyle(.blue)
-                        .help("From online database")
-                }
-            }
-            Text(entry.cheatCode)
-                .font(.system(.caption, design: .monospaced))
-                .foregroundStyle(.secondary)
-                .lineLimit(2)
-            Text("\(entry.deviceFormat ?? entry.deviceName) · \(entry.category)")
-                .font(.caption2)
-                .foregroundStyle(.tertiary)
-        }
-        .padding(.vertical, 4)
     }
 }
 
@@ -830,7 +672,7 @@ public class iOSCheatsHostingController: UIHostingController<iOSCheatsView> {
         gameTitle: String? = nil,
         gameSystemIdentifier: String? = nil,
         romSerial: String? = nil,
-        onSaveCheat: @escaping (String, String, String, UInt8, Bool) -> Void,
+        onSaveCheat: @escaping CheatSaveHandler,
         onUpdateCheat: @escaping (PVCheats, UInt8) -> Void,
         onDone: @escaping () -> Void
     ) {
@@ -853,6 +695,5 @@ public class iOSCheatsHostingController: UIHostingController<iOSCheatsView> {
         fatalError("init(coder:) has not been implemented")
     }
 }
-
 
 #endif
