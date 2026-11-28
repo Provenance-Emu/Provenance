@@ -186,7 +186,8 @@ extension CheatCatalogLoader {
             // It ignores its own network errors, so it adds codes or nothing.
             let gecko = (try? await CheatDatabase.shared.searchAllCheats(
                 systemIdentifier: query.systemName,
-                romSerial: serial
+                romSerial: serial,
+                forceRefresh: forceRefresh
             )) ?? []
             found.append(contentsOf: gecko)
         }

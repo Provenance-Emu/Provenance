@@ -39,6 +39,8 @@ public struct iOSCheatsView: View {
     @State private var filterText = ""
     /// Codes being switched on: saved to the database but not yet reloaded.
     @State private var pendingKeys: Set<String> = []
+    /// The last cheat being switched on; the next one waits for it.
+    @State private var enableChain: Task<Void, Never>?
     @State private var enableFailure: String?
     @State private var showingAddCheat = false
     @State private var cheatToEdit: CheatEditContext?
@@ -284,8 +286,12 @@ public struct iOSCheatsView: View {
     private func enable(_ item: CheatCatalogItem) {
         guard !pendingKeys.contains(item.key) else { return }
         pendingKeys.insert(item.key)
-        let index = nextCheatIndex
-        Task {
+        // One at a time: a cheat's index is the count of saved cheats, which is
+        // only right once the cheat before it has been saved and reloaded.
+        let previous = enableChain
+        enableChain = Task {
+            await previous?.value
+            let index = nextCheatIndex
             let accepted = await onSaveCheat(item.code, item.name, item.codeType, index, true)
             loadCheats()
             pendingKeys.remove(item.key)

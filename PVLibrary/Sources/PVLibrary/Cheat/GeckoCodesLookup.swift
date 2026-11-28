@@ -58,21 +58,23 @@ public actor GeckoCodesLookup {
 
     /// Fetch Gecko cheat codes for a GameCube or Wii game.
     ///
-    /// - Parameter gameID: The 6-character disc ID from the ROM header, e.g. `"RMCE01"`.
+    /// - Parameters:
+    ///   - gameID: The 6-character disc ID from the ROM header, e.g. `"RMCE01"`.
+    ///   - forceRefresh: Skip the memory and disk caches and fetch again.
     /// - Returns: Array of `CheatDatabaseEntry` values with `isOnlineResult == true`
     ///   and `deviceName == "Gecko"`.  Returns an empty array if no codes are found.
     /// - Throws: Network errors. Returns empty array for 404 (game not in database).
-    public func searchCheats(gameID: String) async throws -> [CheatDatabaseEntry] {
+    public func searchCheats(gameID: String, forceRefresh: Bool = false) async throws -> [CheatDatabaseEntry] {
         let key = makeCacheKey(gameID)
 
         // 1. Memory cache
-        if let hit = memoryCache[key], Date().timeIntervalSince(hit.fetchedAt) < Self.cacheTTL {
+        if !forceRefresh, let hit = memoryCache[key], Date().timeIntervalSince(hit.fetchedAt) < Self.cacheTTL {
             DLOG("GeckoCodesLookup: memory cache hit for '\(key)'")
             return hit.entries
         }
 
         // 2. Disk cache
-        if let diskHit = loadDiskCache(forKey: key) {
+        if !forceRefresh, let diskHit = loadDiskCache(forKey: key) {
             DLOG("GeckoCodesLookup: disk cache hit for '\(key)'")
             evictMemoryCacheIfNeeded()
             memoryCache[key] = (fetchedAt: diskHit.fetchedAt, entries: diskHit.entries)

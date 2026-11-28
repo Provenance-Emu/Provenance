@@ -78,13 +78,15 @@ public actor CheatDatabase {
     ///   - systemIdentifier: The libretro system directory name (e.g. "Nintendo - Super Nintendo Entertainment System").
     ///   - romSerial: The ROM serial / disc ID for GC/Wii GeckoCodes lookup (e.g. "RMCE01").
     ///   - limit: Maximum number of results to return.
+    ///   - forceRefresh: Skip the disc-serial lookup's 24-hour cache and fetch again.
     /// - Returns: Combined, deduplicated array of cheat entries from both databases.
     public func searchAllCheats(
         byMD5 md5: String? = nil,
         title: String? = nil,
         systemIdentifier: String? = nil,
         romSerial: String? = nil,
-        limit: Int = 300
+        limit: Int = 300,
+        forceRefresh: Bool = false
     ) async throws -> [CheatDatabaseEntry] {
         var results: [CheatDatabaseEntry] = []
         var seenCodes = Set<String>()
@@ -170,7 +172,7 @@ public actor CheatDatabase {
                 || systemIdentifier?.contains("Wii") == true
             if isValidDiscID && isGCWiiSystem {
                 do {
-                    let geckoResults = try await GeckoCodesLookup.shared.searchCheats(gameID: serial)
+                    let geckoResults = try await GeckoCodesLookup.shared.searchCheats(gameID: serial, forceRefresh: forceRefresh)
                     for entry in geckoResults {
                         let key = entry.cheatCode.lowercased()
                         if seenCodes.insert(key).inserted {
