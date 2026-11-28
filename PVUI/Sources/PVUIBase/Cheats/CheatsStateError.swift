@@ -5,7 +5,6 @@
 //  Created by Joseph Mattiello on 8/10/24.
 //
 
-
 public enum CheatsStateError: Error {
     case coreCheatsError(Error?)
     case coreNoCheatError(Error?)
